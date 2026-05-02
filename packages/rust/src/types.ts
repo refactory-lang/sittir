@@ -7068,7 +7068,8 @@ export interface TerminalTransport<ID extends number = number, V extends string 
   readonly $named?: boolean;
   readonly $text: V;
   readonly $span?: { readonly start: number; readonly end: number };
-  readonly $nodeId?: number;
+  readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
 }
 
 export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
@@ -7097,7 +7098,8 @@ export namespace ArrayExpressionList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attributes: readonly (AttributeItem.Transport)[];
     readonly elements: readonly (Expression.Transport)[];
     readonly $children: readonly (AttributeItem.Transport)[];
@@ -7111,7 +7113,8 @@ export namespace ArrayExpressionSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attributes: readonly (AttributeItem.Transport)[];
     readonly elements: Expression.Transport;
     readonly length: Expression.Transport;
@@ -7133,7 +7136,8 @@ export namespace ClosureExpressionBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly return_type?: Type.Transport;
     readonly body: Block.Transport;
   }
@@ -7146,7 +7150,8 @@ export namespace _ClosureExpressionExpr {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: Expression.Transport | LiteralTransport<TSKindId.Anonymous, "_">;
   }
 }
@@ -7182,7 +7187,8 @@ export namespace _DelimTokenTreeBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -7194,7 +7200,8 @@ export namespace _DelimTokenTreeBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -7206,7 +7213,8 @@ export namespace _DelimTokenTreeParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -7218,7 +7226,8 @@ export namespace _ExpressionStatementBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [ExpressionEndingWithBlock.Transport];
   }
 }
@@ -7230,7 +7239,8 @@ export namespace _ExpressionStatementWithSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport];
   }
 }
@@ -7242,7 +7252,8 @@ export namespace FieldIdentifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Identifier.Transport];
   }
 }
@@ -7254,7 +7265,8 @@ export namespace FieldPatternNamed {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: FieldIdentifier.Transport;
     readonly pattern: Pattern.Transport;
   }
@@ -7267,7 +7279,8 @@ export namespace _FieldPatternShorthand {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport;
   }
 }
@@ -7279,7 +7292,8 @@ export namespace _ForeignModItemBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -7295,7 +7309,8 @@ export namespace FunctionTypeFnForm {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly [FunctionModifiers.Transport];
   }
 }
@@ -7307,7 +7322,8 @@ export namespace FunctionTypeTraitForm {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly trait: TypeIdentifier.Transport | ScopedTypeIdentifier.Transport;
   }
 }
@@ -7323,7 +7339,8 @@ export namespace _ImplItemBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -7387,7 +7404,8 @@ export namespace LetChain {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [LetChain.Transport | LetCondition.Transport | Expression.Transport];
   }
 }
@@ -7403,7 +7421,8 @@ export namespace LineCommentDoc {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly doc: LineDocContent.Transport;
   }
 }
@@ -7419,7 +7438,8 @@ export namespace _MacroDefinitionBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -7431,7 +7451,8 @@ export namespace _MacroDefinitionBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -7443,7 +7464,8 @@ export namespace _MacroDefinitionParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -7455,7 +7477,8 @@ export namespace _MatchArmBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: ExpressionEndingWithBlock.Transport;
   }
 }
@@ -7467,7 +7490,8 @@ export namespace MatchArmWithComma {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
   }
 }
@@ -7483,7 +7507,8 @@ export namespace _ModItemInline {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -7503,7 +7528,8 @@ export namespace NonSpecialToken {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Literal.Transport | Identifier.Transport | MutableSpecifier.Transport | Self.Transport | Super.Transport | Crate.Transport | PrimitiveType.Transport];
   }
 }
@@ -7519,7 +7545,8 @@ export namespace OrPatternBinary {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Pattern.Transport;
     readonly right: Pattern.Transport;
   }
@@ -7532,7 +7559,8 @@ export namespace OrPatternPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly right: Pattern.Transport;
   }
 }
@@ -7552,7 +7580,8 @@ export namespace _PointerTypeMut {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [MutableSpecifier.Transport];
   }
 }
@@ -7587,7 +7616,8 @@ export namespace _RangeExpressionBare {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly operator: Operator.Transport;
   }
 }
@@ -7599,7 +7629,8 @@ export namespace RangeExpressionBinary {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly start: Expression.Transport;
     readonly operator: RangeExpressionBinaryOperator.Transport;
     readonly end: Expression.Transport;
@@ -7613,7 +7644,8 @@ export namespace RangeExpressionPostfix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly start: Expression.Transport;
     readonly operator: Operator.Transport;
   }
@@ -7626,7 +7658,8 @@ export namespace RangeExpressionPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly operator: Operator.Transport;
     readonly end: Expression.Transport;
   }
@@ -7643,7 +7676,8 @@ export namespace RangePatternLeftWithRight {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly right: LiteralPattern.Transport | Path.Transport;
   }
 }
@@ -7655,7 +7689,8 @@ export namespace RangePatternPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly right: LiteralPattern.Transport | Path.Transport;
   }
 }
@@ -7675,7 +7710,8 @@ export namespace ReferenceExpressionRawMut {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [MutableSpecifier.Transport];
   }
 }
@@ -7687,7 +7723,8 @@ export namespace ReservedIdentifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Identifier.Transport];
   }
 }
@@ -7703,7 +7740,8 @@ export namespace StructItemBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: FieldDeclarationList.Transport;
     readonly $children?: readonly [WhereClause.Transport];
   }
@@ -7716,7 +7754,8 @@ export namespace StructItemTuple {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: OrderedFieldDeclarationList.Transport;
     readonly $children?: readonly [WhereClause.Transport];
   }
@@ -7754,7 +7793,8 @@ export namespace _TokenTreeBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -7766,7 +7806,8 @@ export namespace _TokenTreeBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -7778,7 +7819,8 @@ export namespace _TokenTreeParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -7790,7 +7832,8 @@ export namespace _TokenTreePatternBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -7802,7 +7845,8 @@ export namespace _TokenTreePatternBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -7814,7 +7858,8 @@ export namespace _TokenTreePatternParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -7826,7 +7871,8 @@ export namespace TypeIdentifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Identifier.Transport];
   }
 }
@@ -7851,7 +7897,8 @@ export namespace _VisibilityModifierCrate {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Crate.Transport];
   }
 }
@@ -7863,7 +7910,8 @@ export namespace VisibilityModifierInPath {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly in: VisibilityModifierInPathIn.Transport;
     readonly $children: readonly [Path.Transport];
   }
@@ -7876,7 +7924,8 @@ export namespace VisibilityModifierPub {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly pub: VisibilityModifierPubPub.Transport;
     readonly $children?: readonly [Self.Transport | Super.Transport | Crate.Transport | VisibilityModifierInPath.Transport];
   }
@@ -7893,7 +7942,8 @@ export namespace AbstractType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type_parameters?: TypeParameters.Transport;
     readonly trait: TypeIdentifier.Transport | ScopedTypeIdentifier.Transport | RemovedTraitBound.Transport | GenericType.Transport | FunctionType.Transport | TupleType.Transport | BoundedType.Transport;
   }
@@ -7906,7 +7956,8 @@ export namespace Arguments {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (AttributeItem.Transport | Expression.Transport)[];
   }
 }
@@ -7919,7 +7970,8 @@ export namespace ArrayExpressionUFormSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [ArrayExpressionSemi.Transport];
   }
 }
@@ -7932,7 +7984,8 @@ export namespace ArrayExpressionUFormList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [ArrayExpressionList.Transport];
   }
 }
@@ -7948,7 +8001,8 @@ export namespace ArrayType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly element: Type.Transport;
     readonly length?: Expression.Transport;
   }
@@ -7961,7 +8015,8 @@ export namespace AssignmentExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Expression.Transport;
     readonly right: Expression.Transport;
   }
@@ -7974,7 +8029,8 @@ export namespace AssociatedType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly bounds?: TraitBounds.Transport;
@@ -7989,7 +8045,8 @@ export namespace AsyncBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly move_marker?: MoveMarker.Transport;
     readonly block: Block.Transport;
   }
@@ -8002,7 +8059,8 @@ export namespace Attribute {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Path.Transport];
   }
 }
@@ -8014,7 +8072,8 @@ export namespace AttributeItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attribute: Attribute.Transport;
   }
 }
@@ -8026,7 +8085,8 @@ export namespace AwaitExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport];
   }
 }
@@ -8038,7 +8098,8 @@ export namespace BaseFieldInitializer {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport];
   }
 }
@@ -8050,7 +8111,8 @@ export namespace BinaryExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Expression.Transport;
     readonly operator: BinaryExpressionOperator.Transport;
     readonly right: Expression.Transport;
@@ -8064,7 +8126,8 @@ export namespace Block {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
     readonly $children: readonly (Statement.Transport | Expression.Transport)[];
   }
@@ -8077,7 +8140,8 @@ export namespace BlockComment {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly doc?: TerminalTransport;
   }
 }
@@ -8097,7 +8161,8 @@ export namespace BoundedType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Lifetime.Transport | Type.Transport | UseBounds.Transport;
     readonly right: Lifetime.Transport | Type.Transport | UseBounds.Transport;
   }
@@ -8110,7 +8175,8 @@ export namespace BracketedType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Type.Transport | QualifiedType.Transport];
   }
 }
@@ -8122,7 +8188,8 @@ export namespace BreakExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
     readonly $children?: readonly [Expression.Transport];
   }
@@ -8135,7 +8202,8 @@ export namespace CallExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly function: ExpressionExceptRange.Transport;
     readonly arguments: Arguments.Transport;
   }
@@ -8148,7 +8216,8 @@ export namespace CapturedPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly identifier: Identifier.Transport;
     readonly $children: readonly [Pattern.Transport];
   }
@@ -8165,7 +8234,8 @@ export namespace ClosureExpressionExpr {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: Expression.Transport | LiteralTransport<TSKindId.Anonymous, "_">;
   }
 }
@@ -8178,7 +8248,8 @@ export namespace ClosureExpressionUFormBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly static_marker?: ClosureExpressionStaticMarker.Transport;
     readonly async_marker?: ClosureExpressionAsyncMarker.Transport;
     readonly move_marker?: MoveMarker.Transport;
@@ -8195,7 +8266,8 @@ export namespace ClosureExpressionUFormExpr {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly static_marker?: ClosureExpressionStaticMarker.Transport;
     readonly async_marker?: ClosureExpressionAsyncMarker.Transport;
     readonly move_marker?: MoveMarker.Transport;
@@ -8215,7 +8287,8 @@ export namespace ClosureParameters {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport | Parameter.Transport)[];
   }
 }
@@ -8227,7 +8300,8 @@ export namespace Comment {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [LineComment.Transport | BlockComment.Transport];
   }
 }
@@ -8239,7 +8313,8 @@ export namespace CompoundAssignmentExpr {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Expression.Transport;
     readonly operator: CompoundAssignmentExprOperator.Transport;
     readonly right: Expression.Transport;
@@ -8253,7 +8328,8 @@ export namespace ConstBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: Block.Transport;
   }
 }
@@ -8265,7 +8341,8 @@ export namespace ConstItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: Identifier.Transport;
     readonly type: Type.Transport;
@@ -8280,7 +8357,8 @@ export namespace ConstParameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport;
     readonly type: Type.Transport;
     readonly value?: Block.Transport | Identifier.Transport | Literal.Transport | NegativeLiteral.Transport;
@@ -8294,7 +8372,8 @@ export namespace ContinueExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
   }
 }
@@ -8310,7 +8389,8 @@ export namespace DeclarationList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DeclarationStatement.Transport)[];
   }
 }
@@ -8322,7 +8402,8 @@ export namespace DelimTokenTreeParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -8334,7 +8415,8 @@ export namespace DelimTokenTreeBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -8346,7 +8428,8 @@ export namespace DelimTokenTreeBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (DelimTokens.Transport)[];
   }
 }
@@ -8359,7 +8442,8 @@ export namespace DelimTokenTreeUFormParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_DelimTokenTreeParen.Transport];
   }
 }
@@ -8372,7 +8456,8 @@ export namespace DelimTokenTreeUFormBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_DelimTokenTreeBracket.Transport];
   }
 }
@@ -8385,7 +8470,8 @@ export namespace DelimTokenTreeUFormBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_DelimTokenTreeBrace.Transport];
   }
 }
@@ -8401,7 +8487,8 @@ export namespace DynamicType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly trait: HigherRankedTraitBound.Transport | TypeIdentifier.Transport | ScopedTypeIdentifier.Transport | GenericType.Transport | FunctionType.Transport | TupleType.Transport;
   }
 }
@@ -8413,7 +8500,8 @@ export namespace ElseClause {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Block.Transport | IfExpression.Transport];
   }
 }
@@ -8429,7 +8517,8 @@ export namespace EnumItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -8445,7 +8534,8 @@ export namespace EnumVariant {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: Identifier.Transport;
     readonly body?: FieldDeclarationList.Transport | OrderedFieldDeclarationList.Transport;
@@ -8460,7 +8550,8 @@ export namespace EnumVariantList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (AttributeItem.Transport | EnumVariant.Transport)[];
   }
 }
@@ -8476,7 +8567,8 @@ export namespace ExpressionStatementWithSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport];
   }
 }
@@ -8488,7 +8580,8 @@ export namespace ExpressionStatementBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [ExpressionEndingWithBlock.Transport];
   }
 }
@@ -8501,7 +8594,8 @@ export namespace ExpressionStatementUFormWithSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_ExpressionStatementWithSemi.Transport];
   }
 }
@@ -8514,7 +8608,8 @@ export namespace ExpressionStatementUFormBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_ExpressionStatementBlockEnding.Transport];
   }
 }
@@ -8530,7 +8625,8 @@ export namespace ExternCrateDeclaration {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly crate: _Crate.Transport;
     readonly name: Identifier.Transport;
@@ -8545,7 +8641,8 @@ export namespace ExternModifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly string_literal?: StringLiteral.Transport;
   }
 }
@@ -8557,7 +8654,8 @@ export namespace FieldDeclaration {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: FieldIdentifier.Transport;
     readonly type: Type.Transport;
@@ -8571,7 +8669,8 @@ export namespace FieldDeclarationList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (AttributeItem.Transport | FieldDeclaration.Transport)[];
   }
 }
@@ -8583,7 +8682,8 @@ export namespace FieldExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
     readonly field: FieldIdentifier.Transport | IntegerLiteral.Transport;
   }
@@ -8596,7 +8696,8 @@ export namespace FieldInitializer {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly field: FieldIdentifier.Transport | IntegerLiteral.Transport;
     readonly value: Expression.Transport;
     readonly $children: readonly (AttributeItem.Transport)[];
@@ -8610,7 +8711,8 @@ export namespace FieldInitializerList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (ShorthandFieldInitializer.Transport | FieldInitializer.Transport | BaseFieldInitializer.Transport)[];
   }
 }
@@ -8622,7 +8724,8 @@ export namespace FieldPatternShorthand {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport;
   }
 }
@@ -8635,7 +8738,8 @@ export namespace FieldPatternUFormShorthand {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly ref_marker?: RefMarker.Transport;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly $children: readonly [_FieldPatternShorthand.Transport];
@@ -8650,7 +8754,8 @@ export namespace FieldPatternUFormNamed {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly ref_marker?: RefMarker.Transport;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly $children: readonly [FieldPatternNamed.Transport];
@@ -8668,7 +8773,8 @@ export namespace ForExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
     readonly pattern: Pattern.Transport;
     readonly value: Expression.Transport;
@@ -8683,7 +8789,8 @@ export namespace ForLifetimes {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Lifetime.Transport)[];
   }
 }
@@ -8695,7 +8802,8 @@ export namespace ForeignModItemBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -8708,7 +8816,8 @@ export namespace ForeignModItemUFormSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly extern_modifier: ExternModifier.Transport;
     readonly $children: readonly [TerminalTransport<TSKindId.Semi, ";">];
@@ -8723,7 +8832,8 @@ export namespace ForeignModItemUFormBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly extern_modifier: ExternModifier.Transport;
     readonly $children: readonly [_ForeignModItemBody.Transport];
@@ -8762,7 +8872,8 @@ export namespace FunctionItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly function_modifiers?: FunctionModifiers.Transport;
     readonly name: Identifier.Transport | Metavariable.Transport;
@@ -8781,7 +8892,8 @@ export namespace FunctionModifiers {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly modifier: readonly (LiteralTransport<TSKindId.Async, "async"> | LiteralTransport<TSKindId.Default, "default"> | LiteralTransport<TSKindId.Const, "const"> | LiteralTransport<TSKindId.Unsafe, "unsafe"> | ExternModifier.Transport)[];
   }
 }
@@ -8793,7 +8905,8 @@ export namespace FunctionSignatureItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly function_modifiers?: FunctionModifiers.Transport;
     readonly name: Identifier.Transport | Metavariable.Transport;
@@ -8811,7 +8924,8 @@ export namespace FunctionType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly for_lifetimes?: ForLifetimes.Transport;
     readonly parameters: Parameters.Transport;
     readonly return_type?: Type.Transport;
@@ -8826,7 +8940,8 @@ export namespace GenBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly move_marker?: MoveMarker.Transport;
     readonly block: Block.Transport;
   }
@@ -8839,7 +8954,8 @@ export namespace GenericFunction {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly function: Identifier.Transport | ScopedIdentifier.Transport | FieldExpression.Transport;
     readonly type_arguments: TypeArguments.Transport;
   }
@@ -8852,7 +8968,8 @@ export namespace GenericPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type_arguments: TypeArguments.Transport;
     readonly $children: readonly [Identifier.Transport | ScopedIdentifier.Transport];
   }
@@ -8865,7 +8982,8 @@ export namespace GenericType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: TypeIdentifier.Transport | ReservedIdentifier.Transport | ScopedTypeIdentifier.Transport;
     readonly type_arguments: TypeArguments.Transport;
   }
@@ -8878,7 +8996,8 @@ export namespace GenericTypeWithTurbofish {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: TypeIdentifier.Transport | ScopedIdentifier.Transport;
     readonly turbofish: GenericTypeWithTurbofishTurbofish.Transport;
     readonly type_arguments: TypeArguments.Transport;
@@ -8892,7 +9011,8 @@ export namespace HigherRankedTraitBound {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type_parameters: TypeParameters.Transport;
     readonly type: Type.Transport;
   }
@@ -8909,7 +9029,8 @@ export namespace IfExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly condition: Condition.Transport;
     readonly consequence: Block.Transport;
     readonly alternative?: ElseClause.Transport;
@@ -8923,7 +9044,8 @@ export namespace ImplItemBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -8936,7 +9058,8 @@ export namespace ImplItemUFormBody {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly negative?: ImplItemNegative.Transport;
@@ -8955,7 +9078,8 @@ export namespace ImplItemUFormSemi {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly type_parameters?: TypeParameters.Transport;
     readonly negative?: ImplItemNegative.Transport;
@@ -8977,7 +9101,8 @@ export namespace IndexExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly object: Expression.Transport;
     readonly index: Expression.Transport;
   }
@@ -8990,7 +9115,8 @@ export namespace InnerAttributeItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attribute: Attribute.Transport;
   }
 }
@@ -9006,7 +9132,8 @@ export namespace Label {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly identifier: Identifier.Transport;
   }
 }
@@ -9018,7 +9145,8 @@ export namespace LastMatchArm {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly pattern: MatchPattern.Transport;
     readonly value: Expression.Transport;
     readonly $children: readonly (AttributeItem.Transport | InnerAttributeItem.Transport)[];
@@ -9032,7 +9160,8 @@ export namespace LetCondition {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly pattern: Pattern.Transport;
     readonly value: Expression.Transport;
   }
@@ -9045,7 +9174,8 @@ export namespace LetDeclaration {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport;
     readonly type?: Type.Transport;
@@ -9061,7 +9191,8 @@ export namespace Lifetime {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly identifier: Identifier.Transport;
   }
 }
@@ -9073,7 +9204,8 @@ export namespace LifetimeParameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Lifetime.Transport;
     readonly bounds?: TraitBounds.Transport;
   }
@@ -9087,7 +9219,8 @@ export namespace LineCommentUFormRegularDslash {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [LineCommentRegularDslash.Transport];
   }
 }
@@ -9100,7 +9233,8 @@ export namespace LineCommentUFormDoc {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [LineCommentDoc.Transport];
   }
 }
@@ -9113,7 +9247,8 @@ export namespace LineCommentUFormContent {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [LineCommentContent.Transport];
   }
 }
@@ -9129,7 +9264,8 @@ export namespace LoopExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
     readonly body: Block.Transport;
   }
@@ -9142,7 +9278,8 @@ export namespace MacroDefinitionParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -9154,7 +9291,8 @@ export namespace MacroDefinitionBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -9166,7 +9304,8 @@ export namespace MacroDefinitionBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MacroRule.Transport)[];
   }
 }
@@ -9179,7 +9318,8 @@ export namespace MacroDefinitionUFormParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport | ReservedIdentifier.Transport;
     readonly $children: readonly [_MacroDefinitionParen.Transport];
   }
@@ -9193,7 +9333,8 @@ export namespace MacroDefinitionUFormBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport | ReservedIdentifier.Transport;
     readonly $children: readonly [_MacroDefinitionBracket.Transport];
   }
@@ -9207,7 +9348,8 @@ export namespace MacroDefinitionUFormBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Identifier.Transport | ReservedIdentifier.Transport;
     readonly $children: readonly [_MacroDefinitionBrace.Transport];
   }
@@ -9224,7 +9366,8 @@ export namespace MacroInvocation {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly macro: ScopedIdentifier.Transport | Identifier.Transport | ReservedIdentifier.Transport;
     readonly token_tree: DelimTokenTree.Transport;
   }
@@ -9237,7 +9380,8 @@ export namespace MacroRule {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: TokenTreePattern.Transport;
     readonly right: TokenTree.Transport;
   }
@@ -9250,7 +9394,8 @@ export namespace MatchArmBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: ExpressionEndingWithBlock.Transport;
   }
 }
@@ -9263,7 +9408,8 @@ export namespace MatchArmUFormWithComma {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly pattern: MatchPattern.Transport;
     readonly $children: readonly (AttributeItem.Transport | InnerAttributeItem.Transport | MatchArmWithComma.Transport)[];
   }
@@ -9277,7 +9423,8 @@ export namespace MatchArmUFormBlockEnding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly pattern: MatchPattern.Transport;
     readonly $children: readonly (AttributeItem.Transport | InnerAttributeItem.Transport | _MatchArmBlockEnding.Transport)[];
   }
@@ -9294,7 +9441,8 @@ export namespace MatchBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly (MatchArm.Transport | LastMatchArm.Transport)[];
   }
 }
@@ -9306,7 +9454,8 @@ export namespace MatchExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
     readonly body: MatchBlock.Transport;
   }
@@ -9319,7 +9468,8 @@ export namespace MatchPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly condition?: Condition.Transport;
     readonly $children: readonly [Pattern.Transport];
   }
@@ -9336,7 +9486,8 @@ export namespace ModItemInline {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly body: DeclarationList.Transport;
   }
 }
@@ -9349,7 +9500,8 @@ export namespace ModItemUFormExternal {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: Identifier.Transport;
     readonly $children: readonly [TerminalTransport<TSKindId.Semi, ";">];
@@ -9364,7 +9516,8 @@ export namespace ModItemUFormInline {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: Identifier.Transport;
     readonly $children: readonly [_ModItemInline.Transport];
@@ -9382,7 +9535,8 @@ export namespace MutPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly mutable_specifier: _MutableSpecifier.Transport;
     readonly $children: readonly [Pattern.Transport];
   }
@@ -9399,7 +9553,8 @@ export namespace NegativeLiteral {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: IntegerLiteral.Transport | FloatLiteral.Transport;
   }
 }
@@ -9416,7 +9571,8 @@ export namespace OrPatternUFormBinary {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [OrPatternBinary.Transport];
   }
 }
@@ -9429,7 +9585,8 @@ export namespace OrPatternUFormPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [OrPatternPrefix.Transport];
   }
 }
@@ -9445,7 +9602,8 @@ export namespace OrderedFieldDeclarationList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: readonly (Type.Transport)[];
   }
 }
@@ -9457,7 +9615,8 @@ export namespace Parameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport | Self.Transport;
     readonly type: Type.Transport;
@@ -9471,7 +9630,8 @@ export namespace Parameters {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (AttributeItem.Transport | Parameter.Transport | SelfParameter.Transport | VariadicParameter.Transport | Type.Transport)[];
   }
 }
@@ -9483,7 +9643,8 @@ export namespace ParenthesizedExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport];
   }
 }
@@ -9495,7 +9656,8 @@ export namespace PointerTypeMut {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [MutableSpecifier.Transport];
   }
 }
@@ -9508,7 +9670,8 @@ export namespace PointerTypeUFormConst {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: Type.Transport;
     readonly $children: readonly [TerminalTransport<TSKindId.Const, "const">];
   }
@@ -9522,7 +9685,8 @@ export namespace PointerTypeUFormMut {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: Type.Transport;
     readonly $children: readonly [_PointerTypeMut.Transport];
   }
@@ -9539,7 +9703,8 @@ export namespace QualifiedType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: Type.Transport;
     readonly alias: Type.Transport;
   }
@@ -9552,7 +9717,8 @@ export namespace RangeExpressionBare {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly operator: Operator.Transport;
   }
 }
@@ -9565,7 +9731,8 @@ export namespace RangeExpressionUFormBinary {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [RangeExpressionBinary.Transport];
   }
 }
@@ -9578,7 +9745,8 @@ export namespace RangeExpressionUFormPostfix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [RangeExpressionPostfix.Transport];
   }
 }
@@ -9591,7 +9759,8 @@ export namespace RangeExpressionUFormPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [RangeExpressionPrefix.Transport];
   }
 }
@@ -9604,7 +9773,8 @@ export namespace RangeExpressionUFormBare {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_RangeExpressionBare.Transport];
   }
 }
@@ -9621,7 +9791,8 @@ export namespace RangePatternUFormLeftWithRight {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: LiteralPattern.Transport | Path.Transport;
     readonly $children: readonly [RangePatternLeftWithRight.Transport];
   }
@@ -9635,7 +9806,8 @@ export namespace RangePatternUFormLeftBare {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: LiteralPattern.Transport | Path.Transport;
     readonly $children: readonly [TerminalTransport<TSKindId.DotDot, "..">];
   }
@@ -9649,7 +9821,8 @@ export namespace RangePatternUFormPrefix {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [RangePatternPrefix.Transport];
   }
 }
@@ -9665,7 +9838,8 @@ export namespace RawStringLiteral {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly raw_string_literal_start?: TerminalTransport;
     readonly string_content: RawStringLiteralContent.Transport;
     readonly raw_string_literal_end?: TerminalTransport;
@@ -9679,7 +9853,8 @@ export namespace RefPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Pattern.Transport];
   }
 }
@@ -9691,7 +9866,8 @@ export namespace ReferenceExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
     readonly $children: readonly [ReferenceExpressionRawConst.Transport | ReferenceExpressionRawMut.Transport | MutableSpecifier.Transport];
   }
@@ -9704,7 +9880,8 @@ export namespace ReferencePattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern: Pattern.Transport;
   }
@@ -9717,7 +9894,8 @@ export namespace ReferenceType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly lifetime?: Lifetime.Transport;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly type: Type.Transport;
@@ -9735,7 +9913,8 @@ export namespace RemovedTraitBound {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Type.Transport];
   }
 }
@@ -9747,7 +9926,8 @@ export namespace ReturnExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly [Expression.Transport];
   }
 }
@@ -9759,7 +9939,8 @@ export namespace ScopedIdentifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path?: Path.Transport | BracketedType.Transport | GenericTypeWithTurbofish.Transport;
     readonly name: Identifier.Transport | Super.Transport;
   }
@@ -9772,7 +9953,8 @@ export namespace ScopedTypeIdentifier {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path?: Path.Transport | GenericTypeWithTurbofish.Transport | BracketedType.Transport;
     readonly name: TypeIdentifier.Transport;
   }
@@ -9785,7 +9967,8 @@ export namespace ScopedTypeIdentifierInExpressionPosition {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path?: Path.Transport | GenericTypeWithTurbofish.Transport;
     readonly name: TypeIdentifier.Transport;
   }
@@ -9798,7 +9981,8 @@ export namespace ScopedUseList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path?: Path.Transport;
     readonly list: UseList.Transport;
   }
@@ -9815,7 +9999,8 @@ export namespace SelfParameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly reference?: LiteralTransport<TSKindId.Amp, "&">;
     readonly lifetime?: Lifetime.Transport;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
@@ -9834,7 +10019,8 @@ export namespace ShorthandFieldInitializer {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attributes: readonly (AttributeItem.Transport)[];
     readonly identifier: Identifier.Transport;
   }
@@ -9847,7 +10033,8 @@ export namespace SlicePattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport)[];
   }
 }
@@ -9859,7 +10046,8 @@ export namespace SourceFile {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly shebang?: Shebang.Transport;
     readonly statements: readonly (Statement.Transport)[];
   }
@@ -9872,7 +10060,8 @@ export namespace StaticItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly mutable_specifier?: RefMarker.Transport | _MutableSpecifier.Transport;
     readonly name: Identifier.Transport;
@@ -9888,7 +10077,8 @@ export namespace StringLiteral {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (EscapeSequence.Transport | StringContent.Transport)[];
   }
 }
@@ -9900,7 +10090,8 @@ export namespace StructExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: TypeIdentifier.Transport | ScopedTypeIdentifierInExpressionPosition.Transport | GenericTypeWithTurbofish.Transport;
     readonly body: FieldInitializerList.Transport;
   }
@@ -9914,7 +10105,8 @@ export namespace StructItemUFormBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -9930,7 +10122,8 @@ export namespace StructItemUFormTuple {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -9946,7 +10139,8 @@ export namespace StructItemUFormUnit {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -9965,7 +10159,8 @@ export namespace StructPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: TypeIdentifier.Transport | ScopedTypeIdentifier.Transport;
     readonly $children: readonly (FieldPattern.Transport | RemainingFieldPattern.Transport)[];
   }
@@ -9982,7 +10177,8 @@ export namespace TokenBindingPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: Metavariable.Transport;
     readonly type: TokenBindingPatternType.Transport;
   }
@@ -9995,7 +10191,8 @@ export namespace TokenRepetition {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -10007,7 +10204,8 @@ export namespace TokenRepetitionPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -10019,7 +10217,8 @@ export namespace TokenTreeParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -10031,7 +10230,8 @@ export namespace TokenTreeBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -10043,7 +10243,8 @@ export namespace TokenTreeBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Tokens.Transport)[];
   }
 }
@@ -10056,7 +10257,8 @@ export namespace TokenTreeUFormParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreeParen.Transport];
   }
 }
@@ -10069,7 +10271,8 @@ export namespace TokenTreeUFormBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreeBracket.Transport];
   }
 }
@@ -10082,7 +10285,8 @@ export namespace TokenTreeUFormBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreeBrace.Transport];
   }
 }
@@ -10098,7 +10302,8 @@ export namespace TokenTreePatternParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -10110,7 +10315,8 @@ export namespace TokenTreePatternBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -10122,7 +10328,8 @@ export namespace TokenTreePatternBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (TokenPattern.Transport)[];
   }
 }
@@ -10135,7 +10342,8 @@ export namespace TokenTreePatternUFormParen {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreePatternParen.Transport];
   }
 }
@@ -10148,7 +10356,8 @@ export namespace TokenTreePatternUFormBracket {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreePatternBracket.Transport];
   }
 }
@@ -10161,7 +10370,8 @@ export namespace TokenTreePatternUFormBrace {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_TokenTreePatternBrace.Transport];
   }
 }
@@ -10177,7 +10387,8 @@ export namespace TraitBounds {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Type.Transport | Lifetime.Transport | HigherRankedTraitBound.Transport)[];
   }
 }
@@ -10189,7 +10400,8 @@ export namespace TraitItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly unsafe_marker?: UnsafeMarker.Transport;
     readonly name: TypeIdentifier.Transport;
@@ -10207,7 +10419,8 @@ export namespace TryBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly block: Block.Transport;
   }
 }
@@ -10219,7 +10432,8 @@ export namespace TryExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
   }
 }
@@ -10231,7 +10445,8 @@ export namespace TupleExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly attributes: readonly (AttributeItem.Transport)[];
     readonly elements?: readonly (Expression.Transport)[];
   }
@@ -10244,7 +10459,8 @@ export namespace TuplePattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport | ClosureExpression.Transport)[];
   }
 }
@@ -10256,7 +10472,8 @@ export namespace TupleStructPattern {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly type: Identifier.Transport | ScopedIdentifier.Transport | GenericTypeWithTurbofish.Transport;
     readonly $children: readonly (Pattern.Transport)[];
   }
@@ -10269,7 +10486,8 @@ export namespace TupleType {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Type.Transport)[];
   }
 }
@@ -10281,7 +10499,8 @@ export namespace TypeArguments {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Type.Transport | TypeBinding.Transport | Lifetime.Transport | Literal.Transport | Block.Transport | TraitBounds.Transport)[];
   }
 }
@@ -10293,7 +10512,8 @@ export namespace TypeBinding {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: TypeIdentifier.Transport;
     readonly type_arguments?: TypeArguments.Transport;
     readonly type: Type.Transport;
@@ -10307,7 +10527,8 @@ export namespace TypeCastExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly value: Expression.Transport;
     readonly type: Type.Transport;
   }
@@ -10320,7 +10541,8 @@ export namespace TypeItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -10337,7 +10559,8 @@ export namespace TypeParameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly name: TypeIdentifier.Transport;
     readonly bounds?: TraitBounds.Transport;
     readonly default_type?: Type.Transport;
@@ -10351,7 +10574,8 @@ export namespace TypeParameters {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (AttributeItem.Transport | Metavariable.Transport | TypeParameter.Transport | LifetimeParameter.Transport | ConstParameter.Transport)[];
   }
 }
@@ -10363,7 +10587,8 @@ export namespace UnaryExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly operator: UnaryExpressionOperator.Transport;
     readonly operand: Expression.Transport;
   }
@@ -10376,7 +10601,8 @@ export namespace UnionItem {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly name: TypeIdentifier.Transport;
     readonly type_parameters?: TypeParameters.Transport;
@@ -10400,7 +10626,8 @@ export namespace UnsafeBlock {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly block: Block.Transport;
   }
 }
@@ -10412,7 +10639,8 @@ export namespace UseAsClause {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path: Path.Transport;
     readonly alias: Identifier.Transport;
   }
@@ -10425,7 +10653,8 @@ export namespace UseBounds {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (Lifetime.Transport | TypeIdentifier.Transport)[];
   }
 }
@@ -10437,7 +10666,8 @@ export namespace UseDeclaration {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly argument: UseClause.Transport;
   }
@@ -10450,7 +10680,8 @@ export namespace UseList {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (UseClause.Transport)[];
   }
 }
@@ -10462,7 +10693,8 @@ export namespace UseWildcard {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly path?: Path.Transport;
   }
 }
@@ -10474,7 +10706,8 @@ export namespace VariadicParameter {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly mutable_specifier?: _MutableSpecifier.Transport;
     readonly pattern?: Pattern.Transport;
   }
@@ -10487,7 +10720,8 @@ export namespace VisibilityModifierCrate {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [Crate.Transport];
   }
 }
@@ -10500,7 +10734,8 @@ export namespace VisibilityModifierUFormInPath {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [VisibilityModifierInPath.Transport];
   }
 }
@@ -10513,7 +10748,8 @@ export namespace VisibilityModifierUFormCrate {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [_VisibilityModifierCrate.Transport];
   }
 }
@@ -10526,7 +10762,8 @@ export namespace VisibilityModifierUFormPub {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly [VisibilityModifierPub.Transport];
   }
 }
@@ -10542,7 +10779,8 @@ export namespace WhereClause {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children: readonly (WherePredicate.Transport)[];
   }
 }
@@ -10554,7 +10792,8 @@ export namespace WherePredicate {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly left: Lifetime.Transport | TypeIdentifier.Transport | ScopedTypeIdentifier.Transport | GenericType.Transport | ReferenceType.Transport | PointerType.Transport | TupleType.Transport | ArrayType.Transport | HigherRankedTraitBound.Transport | PrimitiveType.Transport;
     readonly bounds: TraitBounds.Transport;
   }
@@ -10567,7 +10806,8 @@ export namespace WhileExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly label?: Label.Transport;
     readonly condition: Condition.Transport;
     readonly body: Block.Transport;
@@ -10581,7 +10821,8 @@ export namespace YieldExpression {
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
     readonly $children?: readonly [Expression.Transport];
   }
 }

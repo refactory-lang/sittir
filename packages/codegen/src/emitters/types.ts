@@ -628,7 +628,8 @@ function emitTransportDeclarations(
 	lines.push(
 		'  readonly $span?: { readonly start: number; readonly end: number };'
 	);
-	lines.push('  readonly $nodeId?: number;');
+	lines.push('  readonly $nodeHandle?: number;');
+	lines.push('  readonly $childIndex?: number;');
 	lines.push('}');
 	lines.push('');
 	lines.push(
@@ -791,7 +792,8 @@ function emitTransportInterfaceNamespace(
 	lines.push(
 		'    readonly $span?: { readonly start: number; readonly end: number };'
 	);
-	lines.push('    readonly $nodeId?: number;');
+	lines.push('    readonly $nodeHandle?: number;');
+	lines.push('    readonly $childIndex?: number;');
 
 	if (fields.length > 0) {
 		for (const field of fields) {

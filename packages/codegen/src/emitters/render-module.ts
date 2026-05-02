@@ -3943,12 +3943,14 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push('        let transport_source = obj.get("$source")?;');
 	lines.push('        let transport_named = obj.get("$named")?;');
 	lines.push('        let transport_span = obj.get("$span")?;');
-	lines.push('        let transport_node_id = obj.get("$nodeId")?;');
+	lines.push('        let transport_node_handle = obj.get("$nodeHandle")?;');
+	lines.push('        let transport_child_index = obj.get("$childIndex")?;');
 	lines.push(`        Ok(Self {`);
 	lines.push(`            transport_source,`);
 	lines.push(`            transport_named,`);
 	lines.push(`            transport_span,`);
-	lines.push(`            transport_node_id,`);
+	lines.push(`            transport_node_handle,`);
+	lines.push(`            transport_child_index,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3988,11 +3990,12 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 	lines.push(
 		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]',
 		'    pub transport_span: Option<::sittir_core::types::Span>,',
-		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
-		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
-		// to u64 in the NodeData bridge (transport_node_data).
-		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]',
-		'    pub transport_node_id: Option<f64>,'
+		// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
+		// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]',
+		'    pub transport_node_handle: Option<f64>,',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]',
+		'    pub transport_child_index: Option<f64>,'
 	);
 	return lines;
 }
@@ -4011,10 +4014,10 @@ function renderLeafTransportPlainFields(): string[] {
 		'    pub transport_source: Option<::sittir_core::types::Source>,',
 		'    pub transport_named: Option<bool>,',
 		'    pub transport_span: Option<::sittir_core::types::Span>,',
-		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
-		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
-		// to u64 in the NodeData bridge (transport_node_data).
-		'    pub transport_node_id: Option<f64>,',
+		// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
+		// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
+		'    pub transport_node_handle: Option<f64>,',
+		'    pub transport_child_index: Option<f64>,',
 		'    pub text: String,'
 	];
 }

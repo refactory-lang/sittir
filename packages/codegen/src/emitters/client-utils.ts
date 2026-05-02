@@ -214,7 +214,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('}');
 	lines.push('');
 	lines.push(
-		"const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeId']);"
+		"const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);"
 	);
 	lines.push('');
 	emitNativeTransportProjectionRules(lines, nodeMap);
@@ -255,7 +255,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  const projected: Record<string, unknown> = {};');
 	lines.push("  const isFactory = value.$source === 'factory';");
 	lines.push('  for (const key of transportMetadataKeys) {');
-	lines.push("    if (isFactory && (key === '$span' || key === '$nodeId')) continue;");
+	lines.push("    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;");
 	lines.push('    if (key in value) projected[key] = value[key];');
 	lines.push('  }');
 	lines.push('  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names');
@@ -793,9 +793,14 @@ function emitNativeTransportAssertions(
 	lines.push('  assertOptionalString(node.$text, `${path}.$text`);');
 	lines.push('  assertOptionalSpan(node.$span, `${path}.$span`);');
 	lines.push(
-		"  if (node.$nodeId !== undefined && typeof node.$nodeId !== 'number') {"
+		"  if (node.$nodeHandle !== undefined && typeof node.$nodeHandle !== 'number') {"
 	);
-	lines.push('    throw new TypeError(`${path}.$nodeId must be a number`);');
+	lines.push('    throw new TypeError(`${path}.$nodeHandle must be a number`);');
+	lines.push('  }');
+	lines.push(
+		"  if (node.$childIndex !== undefined && typeof node.$childIndex !== 'number') {"
+	);
+	lines.push('    throw new TypeError(`${path}.$childIndex must be a number`);');
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');

@@ -10,7 +10,7 @@
  */
 
 import { readNode } from '@sittir/core';
-import type { AnyNodeData, NodeId } from '@sittir/types';
+import type { AnyNodeData } from '@sittir/types';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -19,6 +19,8 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
+	readNodeAt,
+	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
 	type TSTree
@@ -190,7 +192,7 @@ export async function validateFrom(
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
-	let readTreeNode: ((tree: unknown, nodeId?: number) => unknown) | undefined;
+	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	try {
 		const fromModule = await import(
 			new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname
@@ -257,16 +259,30 @@ export async function validateFrom(
 			// Resolve via the native data tree; if the kind is an alias target
 			// the native engine emits under a different rule name, skip rather
 			// than fall back to a mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
-			if (nativeId === null && handle.read) continue;
-			const nodeId = nativeId ?? (node1.id as NodeId);
+			const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+			if (nativeCoords === null && handle.read) continue;
 			// Use readTreeNode (wrapped via per-kind dispatch) when available,
 			// so `.from()` sees a fluent NodeData — the supported input shape
 			// per spec 008 US3. Fall back to raw readNode if the wrap module
 			// isn't loaded (bootstrap scenarios).
-			const readData = readTreeNode
-				? (readTreeNode(handle, nodeId) as AnyNodeData)
-				: readNode(handle, nodeId);
+			// ADR-0017: for WASM/JS path, temporarily swap rootNode to target
+			// then call with no navigation coords (reads rootNode).
+			let readData: AnyNodeData;
+			if (nativeCoords && handle.read) {
+				readData = readTreeNode
+					? (readTreeNode(handle, nativeCoords.handle, nativeCoords.childIndex) as AnyNodeData)
+					: readNodeAt(handle, adaptNode(node1), nativeCoords);
+			} else {
+				const prev = handle.rootNode;
+				(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
+				try {
+					readData = readTreeNode
+						? (readTreeNode(handle) as AnyNodeData)
+						: readNodeAt(handle, adaptNode(node1), null);
+				} finally {
+					(handle as { rootNode: typeof prev }).rootNode = prev;
+				}
+			}
 
 			try {
 				const fromResult = fromMap[kind]!(readData) as AnyNodeData;

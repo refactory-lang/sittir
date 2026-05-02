@@ -132,8 +132,10 @@ function assertNativeNodeDataInternal(
 		assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
 	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
-	if (value.$nodeId !== undefined)
-		assertFiniteNumber(value.$nodeId, `${path}.$nodeId`);
+	if (value.$nodeHandle !== undefined)
+		assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
+	if (value.$childIndex !== undefined)
+		assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
 }
 
 /**

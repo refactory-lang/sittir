@@ -28,7 +28,6 @@ import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 import type {
 	AnyNodeData,
 	AnyTreeNode,
-	NodeId,
 	NativeParseResult
 } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
@@ -134,7 +133,7 @@ export async function loadWebTreeSitter(): Promise<{
 export function adaptNode(node: TS.Node): AnyTreeNode {
 	return {
 		type: node.type,
-		id: () => node.id as NodeId,
+		id: () => node.id,
 		text: () => node.text,
 		isNamed: () => node.isNamed,
 		field: (name: string) => {
@@ -177,25 +176,13 @@ export function treeHandle(
 	source?: string,
 	kindIdFromName?: (kind: string) => number | undefined
 ): TreeHandle {
-	const nodeMap = new Map<number, TS.Node>();
-	function collect(node: TS.Node) {
-		nodeMap.set(node.id, node);
-		for (const child of node.children) collect(child);
-	}
-	collect(tree.rootNode);
-
-	// TS handles use nodeById/rootNode directly in readNode(). No `read`
-	// method is set here — native handles set `read` so readNode() dispatches
-	// through the napi engine without a JS-side tree walk.
+	// ADR-0017: nodeById removed. JS-side readNode now navigates via
+	// nodes[handle].children()[childIndex]. The nodes[] array is populated
+	// lazily by pushNode() inside readNode as it walks the tree.
 	// Phase D: kindIdFromName is required for JS-side reads (readNode emits
 	// numeric $type). Supply it from the grammar's types module.
 	const handle: TreeHandle = {
 		rootNode: adaptNode(tree.rootNode),
-		nodeById: (id: NodeId) => {
-			const node = nodeMap.get(id);
-			if (!node) throw new Error(`Node ${id} not found`);
-			return adaptNode(node);
-		},
 		source,
 		kindIdFromName
 	};
@@ -212,7 +199,7 @@ export function treeHandle(
  */
 export interface NativeEngineLike {
 	parseAndRead(source: string): string;
-	readNode(nodeId: NodeId): string;
+	readNode(handle: number, childIndex: number): string;
 }
 export function nativeTreeHandle(
 	engine: NativeEngineLike,
@@ -237,25 +224,20 @@ export function nativeTreeHandle(
 	const handle: TreeHandle = {
 		// The native engine doesn't expose JS-side raw tree-sitter Node
 		// wrappers; reads always go through `read` below. The required
-		// rootNode / nodeById slots throw to surface accidental fallbacks.
+		// rootNode slot throws to surface accidental fallbacks.
 		get rootNode(): AnyTreeNode {
 			throw new Error(
 				'nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()'
 			);
 		},
-		nodeById(_id: NodeId): AnyTreeNode {
-			throw new Error(
-				'nativeTreeHandle: nodeById() unavailable — native handle reads via tree.read()'
-			);
-		},
 		source,
-		read(nodeId?: NodeId) {
-			if (nodeId === undefined) {
+		read(nodeHandle?: number, childIndex?: number) {
+			if (nodeHandle === undefined) {
 				return rootData as unknown as ReturnType<
 					NonNullable<TreeHandle['read']>
 				>;
 			}
-			return JSON.parse(engine.readNode(nodeId)) as ReturnType<
+			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<
 				NonNullable<TreeHandle['read']>
 			>;
 		},
@@ -337,30 +319,71 @@ export function buildReadHandle(
 }
 
 /**
+ * Read a specific tree-sitter node via its adapted AnyTreeNode reference.
+ *
+ * ADR-0017: readNode no longer accepts a nodeId. For the WASM/JS path,
+ * validators use this helper to push the target node into the handle's
+ * nodes[] array and call readNode with the resulting handle + childIndex=0.
+ * For native handles (handle.read present), uses the native coords from
+ * findNativeNodeId.
+ */
+export function readNodeAt(
+	handle: TreeHandle,
+	node: AnyTreeNode,
+	nativeCoords: NativeNodeCoords | null
+): AnyNodeData {
+	if (nativeCoords && handle.read) {
+		return readNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex);
+	}
+	// WASM/JS path: temporarily set rootNode to the target node and read
+	// with no navigation coords (readNode reads rootNode when handle is undefined).
+	const prev = handle.rootNode;
+	(handle as { rootNode: AnyTreeNode }).rootNode = node;
+	try {
+		return readNodeFn(handle);
+	} finally {
+		(handle as { rootNode: AnyTreeNode }).rootNode = prev;
+	}
+}
+
+/**
+ * ADR-0017: navigation coordinates for a native drill-in.
+ * `handle` is the parent's index in the tree's nodes[], `childIndex` is
+ * the position in parent's child array.
+ */
+export interface NativeNodeCoords {
+	handle: number;
+	childIndex: number;
+}
+
+/**
  * For a native TreeHandle (`handle.read` is present), walk the root
- * NodeData tree to find the `$nodeId` of the first node whose `$type`
- * equals `kind`. Native engine IDs and WASM/JS engine IDs occupy
- * different address spaces (pointer-derived usize in Rust vs. WASM
- * linear-memory offset in web-tree-sitter), so WASM node IDs must
- * never be passed to a native handle's `readNode(id)`.
+ * NodeData tree to find the `$nodeHandle` + `$childIndex` of the first
+ * node whose `$type` equals `kind`. Native engine handles and WASM/JS
+ * engine handles occupy different navigation spaces, so WASM coordinates
+ * must never be passed to a native handle's `readNode(handle, childIndex)`.
  *
  * Returns null when `handle` is a WASM handle (no `handle.read`) —
  * callers fall back to the JS tree's `node.id` in that case.
+ *
+ * ADR-0017: returns { handle, childIndex } instead of NodeId.
  */
 export function findNativeNodeId(
 	handle: TreeHandle,
 	kind: string,
 	kindNameFromId?: (id: number) => string | undefined
-): NodeId | null {
+): NativeNodeCoords | null {
 	if (!handle.read) return null;
 	const root = handle.read();
 
-	function walk(d: AnyNodeData): NodeId | null {
+	function walk(d: AnyNodeData): NativeNodeCoords | null {
 		// $type may be numeric (parser.c-derived) or string (hidden/synthetic kind).
 		const nodeKind = typeof d.$type === 'number'
 			? (kindNameFromId?.(d.$type) ?? String(d.$type))
 			: d.$type;
-		if (nodeKind === kind && d.$nodeId !== undefined) return d.$nodeId;
+		if (nodeKind === kind && d.$nodeHandle !== undefined && d.$childIndex !== undefined) {
+			return { handle: d.$nodeHandle, childIndex: d.$childIndex };
+		}
 		const fields = d.$fields;
 		if (fields) {
 			for (const v of Object.values(fields)) {
@@ -729,7 +752,7 @@ export const WRAP_MODULE_PATHS: Record<string, string> = {
  */
 export async function loadReadTreeNode(
 	grammar: string
-): Promise<((handle: TreeHandle, nodeId?: number) => unknown) | null> {
+): Promise<((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null> {
 	const p = WRAP_MODULE_PATHS[grammar];
 	if (!p) return null;
 	try {
@@ -758,13 +781,16 @@ export function walkWrappedTree(
 	root: unknown,
 	visit: (w: WrappedNodeData) => void
 ): void {
-	const seen = new Set<number>();
+	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
-		const id = w.$nodeId;
-		if (id != null) {
-			if (seen.has(id)) return;
-			seen.add(id);
+		// ADR-0017: use $nodeHandle + $childIndex as a composite dedup key.
+		const handle = w.$nodeHandle;
+		const childIdx = w.$childIndex;
+		if (handle != null && childIdx != null) {
+			const key = `${handle}:${childIdx}`;
+			if (seen.has(key)) return;
+			seen.add(key);
 		}
 		visit(w);
 		for (const k of Object.keys(w)) {
@@ -780,7 +806,8 @@ export function walkWrappedTree(
 
 export interface WrappedNodeData {
 	readonly $type: number;
-	readonly $nodeId?: NodeId;
+	readonly $nodeHandle?: number;
+	readonly $childIndex?: number;
 	readonly [k: string]: unknown;
 }
 function isWrappedNodeData(v: unknown): v is WrappedNodeData {
@@ -984,7 +1011,8 @@ interface ReadNodeLike {
 	// hidden/synthetic kinds (e.g. "_suite") that have no parser.c entry.
 	readonly $type?: string | number;
 	readonly $text?: string;
-	readonly $nodeId?: NodeId;
+	readonly $nodeHandle?: number;
+	readonly $childIndex?: number;
 	readonly $fields?: Readonly<Record<string, unknown>>;
 	readonly $children?: readonly unknown[];
 	readonly $named?: boolean;
@@ -1088,13 +1116,13 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	// Drill into the child to materialize its own $fields/$children.
 	let drilled: ReadNodeLike = c;
-	if (c.$nodeId != null && tree) {
+	if (c.$nodeHandle != null && c.$childIndex != null && tree) {
 		try {
 			// Per-handle dispatch: native handles read via napi (tree.read);
 			// wasm handles fall through to the JS walker. Validators stay
 			// backend-agnostic.
 			drilled = (
-				tree.read ? tree.read(c.$nodeId) : readNodeFn(tree, c.$nodeId)
+				tree.read ? tree.read(c.$nodeHandle, c.$childIndex) : readNodeFn(tree, c.$nodeHandle, c.$childIndex)
 			) as ReadNodeLike;
 		} catch {
 			// Tree handle lacked the node (factory-built subtree?) — fall

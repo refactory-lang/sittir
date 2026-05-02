@@ -2,8 +2,8 @@
  * readNode — one-level-deep tree reading, grammar-agnostic.
  *
  * Returns ALL children including anonymous tokens (named: false for operators,
- * delimiters, keywords). Every entry carries `nodeId` for O(1) drill-in via
- * `tree.nodeById()`.
+ * delimiters, keywords). Every entry carries `$nodeHandle` + `$childIndex` for
+ * O(1) drill-in via `tree.nodes[handle].children()[childIndex]` (ADR-0017).
  *
  * Field placement comes from tree-sitter's own `fieldNameForChild(i)` —
  * the grammar-author-declared field names. Anonymous identifier-shaped
@@ -22,8 +22,7 @@
 import type {
 	AnyNodeData,
 	AnyTreeNode,
-	FormatRecord,
-	NodeId
+	FormatRecord
 } from './types.ts';
 
 /**
@@ -34,30 +33,29 @@ import type {
 const DEBUG_TEXT = process.env.SITTIR_DEBUG_TEXT === '1';
 
 /**
- * A handle to the parsed tree, providing node lookup by id.
+ * A handle to the parsed tree, providing node navigation via handle + childIndex.
  * Structurally compatible with ast-grep SgRoot and tree-sitter Tree.
+ *
+ * ADR-0017: replaces nodeById(id) with a nodes[] array. Child entries carry
+ * $nodeHandle (parent index into nodes[]) + $childIndex (position in parent's
+ * child array). O(1) drill-in via nodes[handle].children()[childIndex].
  */
 export interface TreeHandle {
-	/** Look up a node by its tree-owned id (O(1)). */
-	nodeById(id: NodeId): AnyTreeNode;
 	/** The root node of the tree. */
 	rootNode: AnyTreeNode;
 	/** Original source text. Optional — populated when the factory has it. */
 	source?: string;
 	/**
 	 * Per-handle read dispatch. When present, the wrap layer reads
-	 * through this method instead of running `readNode(handle, id)`
+	 * through this method instead of running `readNode(handle, childIndex)`
 	 * directly. Native-engine handles set this to a closure that
 	 * calls `engine.reader.parseAndRead(source)` (root) /
-	 * `engine.reader.readNode(id)` (drill-in) so reads stay inside
-	 * the engine that owns the tree.
+	 * `engine.reader.readNode(handle, childIndex)` (drill-in) so reads stay
+	 * inside the engine that owns the tree.
 	 *
-	 * Why per-handle: tree-sitter `Node::id()` is documented as
-	 * "unique within a given syntax tree" and is a raw-pointer cast,
-	 * so a wasm-tree id cannot address a node in the napi engine's
-	 * tree. The dispatch must live on the handle that owns the tree.
+	 * ADR-0017: signature changed from `(nodeId?)` to `(handle?, childIndex?)`.
 	 */
-	read?(nodeId?: NodeId): AnyNodeData;
+	read?(handle?: number, childIndex?: number): AnyNodeData;
 	/**
 	 * Per-handle render dispatch. When present, the wrap layer renders
 	 * through this method instead of calling a separate renderer. Engine
@@ -65,7 +63,7 @@ export interface TreeHandle {
 	 * so renders stay inside the engine that owns the tree (preserving
 	 * engine-level format config).
 	 */
-	render?(nodeId?: NodeId, options?: { ignoreFormat?: boolean }): string;
+	render?(handle?: number, options?: { ignoreFormat?: boolean }): string;
 	/**
 	 * Format record inferred from the source file by the native Rust reader.
 	 * Absent on trees produced by the JS reader (readNode never sets this).
@@ -80,10 +78,25 @@ export interface TreeHandle {
 	 * throws to surface the misconfiguration immediately.
 	 */
 	kindIdFromName?: (kind: string) => number | undefined;
+	/**
+	 * ADR-0017: per-handle node array. Each entry is a tree-sitter node
+	 * stored at construction time by pushNode(). Child entries reference
+	 * their parent via $nodeHandle (index into this array) + $childIndex
+	 * (position in parent's children()). Lazily created on first pushNode().
+	 */
+	nodes?: AnyTreeNode[];
 }
 
-function toNodeId(id: number): NodeId {
-	return id as NodeId;
+/**
+ * Push a tree-sitter node into the handle's nodes[] array and return its index.
+ * The returned index is stored as `$nodeHandle` on child entries so drill-in
+ * can navigate back to this node and access its children by index.
+ */
+function pushNode(tree: TreeHandle, node: AnyTreeNode): number {
+	const nodes = tree.nodes ?? (tree.nodes = []);
+	const handle = nodes.length;
+	nodes.push(node);
+	return handle;
 }
 
 /**
@@ -115,19 +128,22 @@ function promoteAnonymousKeyword(
  * Read a single tree node one level deep.
  *
  * - Returns ALL children (named + anonymous)
- * - Every child carries `nodeId` for lazy drill-in
+ * - Every child carries `$nodeHandle` + `$childIndex` for lazy drill-in
  * - No recursion — wrap.ts provides lazy getters
  * - Field placement uses tree-sitter's native `fieldNameForChild`
  *
+ * ADR-0017: navigation uses handle + childIndex instead of nodeId.
+ *
  * @param tree - The tree handle for node lookup
- * @param nodeId - If provided, read this node; otherwise read the root
+ * @param handle - If provided with childIndex, navigate via nodes[handle].children()[childIndex]
+ * @param childIndex - Position in parent's child array (requires handle)
  */
-export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
+export function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
 	// Native-handle dispatch: when `tree.read` is present the handle owns a
 	// Rust/napi engine that produces `AnyNodeData` directly (no JS-side tree
 	// walk needed). TS handles do NOT set `tree.read` so this branch is
 	// native-only — no circular recursion risk.
-	if (tree.read) return tree.read(nodeId);
+	if (tree.read) return tree.read(handle, childIndex);
 
 	// Phase D: capture optional kindIdFromName resolver. When absent (e.g. in
 	// unit-test handles with no real grammar), readNode falls back to the string
@@ -136,7 +152,13 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 	// string for hidden/synthetic kinds (e.g. "_suite") and test fixtures.
 	const kindIdFromName = tree.kindIdFromName;
 
-	const node = nodeId != null ? tree.nodeById(nodeId) : tree.rootNode;
+	// ADR-0017: navigate to the target node via handle + childIndex when provided.
+	let node: AnyTreeNode;
+	if (handle != null && childIndex != null && tree.nodes) {
+		node = tree.nodes[handle]!.children()[childIndex]!;
+	} else {
+		node = tree.rootNode;
+	}
 
 	// `Object.create(null)` avoids prototype pollution on field names
 	// that shadow Object.prototype members — `constructor` is the
@@ -168,6 +190,10 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 		return 0;
 	}
 
+	// ADR-0017: push parent node ONCE before iterating children so all child
+	// entries can reference it via $nodeHandle.
+	const parentHandle = pushNode(tree, node);
+
 	const allChildren = node.children();
 	for (let i = 0; i < allChildren.length; i++) {
 		const child = allChildren[i]!;
@@ -177,7 +203,8 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 			$source: 'ts',
 			$text: child.text(),
 			$span: { start: child.range().start.index, end: child.range().end.index },
-			$nodeId: toNodeId(child.id()),
+			$nodeHandle: parentHandle,
+			$childIndex: i,
 			$named: child.isNamed()
 		};
 
@@ -229,7 +256,7 @@ export function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
 		$fields: Object.keys(fields).length > 0 ? fields : undefined,
 		$children: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
-		$nodeId: toNodeId(node.id()),
+		$nodeHandle: parentHandle,
 		$named: node.isNamed()
 	};
 }

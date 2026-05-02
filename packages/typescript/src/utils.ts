@@ -72,7 +72,7 @@ export function toNativeRenderTransport(node: unknown): AnyTransport {
   return projected;
 }
 
-const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeId']);
+const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);
 
 type NativeTransportAlternative = { readonly type: string; readonly text?: string };
 type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
@@ -521,7 +521,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
   const projected: Record<string, unknown> = {};
   const isFactory = value.$source === 'factory';
   for (const key of transportMetadataKeys) {
-    if (isFactory && (key === '$span' || key === '$nodeId')) continue;
+    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
     if (key in value) projected[key] = value[key];
   }
   // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names
@@ -1741,8 +1741,11 @@ function assertOptionalMetadata(node: Record<string, unknown>, path: string): vo
   assertOptionalBoolean(node.$named, `${path}.$named`);
   assertOptionalString(node.$text, `${path}.$text`);
   assertOptionalSpan(node.$span, `${path}.$span`);
-  if (node.$nodeId !== undefined && typeof node.$nodeId !== 'number') {
-    throw new TypeError(`${path}.$nodeId must be a number`);
+  if (node.$nodeHandle !== undefined && typeof node.$nodeHandle !== 'number') {
+    throw new TypeError(`${path}.$nodeHandle must be a number`);
+  }
+  if (node.$childIndex !== undefined && typeof node.$childIndex !== 'number') {
+    throw new TypeError(`${path}.$childIndex must be a number`);
   }
 }
 

@@ -11,7 +11,7 @@
  */
 
 import { readNode, createRenderer } from '@sittir/core';
-import type { AnyNodeData, NodeFieldValue, NodeId } from '@sittir/types';
+import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
@@ -21,6 +21,8 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
+	readNodeAt,
+	adaptNode,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -736,7 +738,9 @@ export async function validateFactoryRoundTrip(
 				// ruleKinds.has() and nodeIdToEffectiveType string-keyed maps.
 				const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 				if (kindStr === undefined) return; // unknown id — skip
-				if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, kindStr);
+				// ADR-0017: use $span.start as stable identity key
+				const span = (w as { $span?: { start: number } }).$span;
+				if (span != null) nodeIdToEffectiveType.set(span.start, kindStr);
 				kinds.add(kindStr);
 			});
 		}
@@ -761,10 +765,10 @@ export async function validateFactoryRoundTrip(
 			// kind is an alias target that the native engine emits under its
 			// underlying rule name (e.g. `with_clause_bare` → `with_clause`),
 			// findNativeNodeId returns null — skip rather than fall back to a
-			// mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
-			if (nativeId === null && handle.read) continue;
-			const rawReadData = readNode(handle, nativeId ?? (node1.id as NodeId));
+			// mismatched WASM handle.
+			const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+			if (nativeCoords === null && handle.read) continue;
+			const rawReadData = readNodeAt(handle, adaptNode(node1), nativeCoords);
 			// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
 			const rawKindName = typeof rawReadData.$type === 'number' && kindNameFromId
 				? kindNameFromId(rawReadData.$type)

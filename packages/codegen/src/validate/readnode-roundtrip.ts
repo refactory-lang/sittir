@@ -29,7 +29,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { readNode } from '@sittir/core';
-import type { AnyNodeData, NodeId } from '@sittir/types';
+import type { AnyNodeData } from '@sittir/types';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
 	loadLanguageForGrammar,
@@ -38,6 +38,8 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
+	readNodeAt,
+	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
 	type TSNode,
@@ -335,15 +337,14 @@ export async function validateReadNodeRoundTrip(
 			// Native engine Rust-heap IDs differ from WASM linear-memory IDs.
 			// Skip alias-target kinds the native engine emits under a different
 			// rule name rather than falling back to a mismatched WASM ID.
-			const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
-			if (nativeId === null && handle.read) {
+			const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+			if (nativeCoords === null && handle.read) {
 				skip++;
 				continue;
 			}
-			const nodeId = nativeId ?? (node.id as NodeId);
 			let data: AnyNodeData;
 			try {
-				data = readNode(handle, nodeId);
+				data = readNodeAt(handle, adaptNode(node), nativeCoords);
 			} catch (e) {
 				issues.push({
 					kind,

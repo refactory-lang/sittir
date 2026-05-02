@@ -10,7 +10,7 @@
 
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData, NodeId } from '@sittir/types';
+import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -22,6 +22,8 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
+	readNodeAt,
+	adaptNode,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -59,26 +61,28 @@ import {
  */
 function _deepReadNode(
 	tree: TreeHandle,
-	nodeId: NodeId | undefined,
+	handle: number | undefined,
+	childIndex: number | undefined,
 	deepReadKinds: ReadonlySet<number>
 ): ReturnType<typeof readNode> {
-	const data = readNode(tree, nodeId);
+	const data = readNode(tree, handle, childIndex);
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
-	// Narrow to NodeData before reading $nodeId / $type.
+	// Narrow to NodeData before reading $nodeHandle / $type.
 	const isNodeData = (v: unknown): v is AnyNodeData =>
 		typeof v === 'object' && v !== null && '$type' in v;
 	const shouldDrill = (
 		entry: unknown
-	): entry is AnyNodeData & { $nodeId: NodeId } =>
+	): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
 		isNodeData(entry) &&
 		entry.$named === true &&
-		typeof entry.$nodeId === 'number' &&
+		typeof entry.$nodeHandle === 'number' &&
+		typeof entry.$childIndex === 'number' &&
 		// $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
 		// deepReadKinds is Set<number> — only numeric entries can be drilled.
 		typeof entry.$type === 'number' && deepReadKinds.has(entry.$type);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
-			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
+			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
 		);
 		(data as { $children?: typeof drilled }).$children = drilled;
 	}
@@ -97,12 +101,12 @@ function _deepReadNode(
 			if (Array.isArray(value)) {
 				newFields[key] = value.map((entry) =>
 					shouldDrill(entry)
-						? _deepReadNode(tree, entry.$nodeId, deepReadKinds)
+						? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds)
 						: entry
 				);
 			} else {
 				newFields[key] = shouldDrill(value)
-					? _deepReadNode(tree, value.$nodeId, deepReadKinds)
+					? _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds)
 					: value;
 			}
 		}
@@ -181,6 +185,18 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
 		const c = node.child(i);
 		if (!c) continue;
 		const hit = findNodeById(c, nodeId);
+		if (hit) return hit;
+	}
+	return null;
+}
+
+/** ADR-0017: find a tree-sitter node by its start byte index (unique per-tree). */
+function findNodeByStartIndex(node: TSNode, startIndex: number): TSNode | null {
+	if (node.startIndex === startIndex) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		const hit = findNodeByStartIndex(c, startIndex);
 		if (hit) return hit;
 	}
 	return null;
@@ -339,7 +355,7 @@ export interface RoundTripResult {
  * @returns A map from tree-sitter node id to the effective (alias-rewritten) type string.
  */
 function discoverAliasSourceKinds(
-	readTreeNodeFn: ((handle: TreeHandle, nodeId?: number) => unknown) | null,
+	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
 	tree: TSTree,
 	kinds: Set<string>,
 	grammar: string,
@@ -348,6 +364,8 @@ function discoverAliasSourceKinds(
 	backend?: 'native' | 'typescript',
 	kindIdFromName?: (kind: string) => number | undefined
 ): Map<number, string> {
+	// ADR-0017: keyed by $span.start (byte offset), which is unique per
+	// node within a tree and available on both NodeData and TSNode (.startIndex).
 	const nodeIdToEffectiveType = new Map<number, string>();
 	if (readTreeNodeFn) {
 		const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
@@ -369,7 +387,11 @@ function discoverAliasSourceKinds(
 			// Phase D: $type is numeric; resolve to string kind name.
 			const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (kindStr === undefined) return; // unknown id — skip
-			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, kindStr);
+			// ADR-0017: use $span.start as stable identity key (unique per node).
+			const span = (w as { $span?: { start: number } }).$span;
+			if (span != null) {
+				nodeIdToEffectiveType.set(span.start, kindStr);
+			}
 			kinds.add(kindStr);
 		});
 	}
@@ -394,9 +416,11 @@ function _resolveNodeForKind(
 	nodeIdToEffectiveType: Map<number, string>,
 	tree: TSTree
 ): TSNode | null {
-	for (const [nid, et] of nodeIdToEffectiveType) {
+	// ADR-0017: map is keyed by $span.start (byte offset); find the node
+	// in the tree by matching startIndex.
+	for (const [startIdx, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
-			const node = findNodeById(tree.rootNode, nid);
+			const node = findNodeByStartIndex(tree.rootNode, startIdx);
 			if (node) return node;
 		}
 	}
@@ -432,9 +456,10 @@ function resolveAllNodesForKind(
 ): TSNode[] {
 	const nodes: TSNode[] = [];
 	const seenIds = new Set<number>();
-	for (const [nid, et] of nodeIdToEffectiveType) {
+	// ADR-0017: map keyed by $span.start; find nodes by startIndex.
+	for (const [startIdx, et] of nodeIdToEffectiveType) {
 		if (et !== kind) continue;
-		const node = findNodeById(tree.rootNode, nid);
+		const node = findNodeByStartIndex(tree.rootNode, startIdx);
 		if (node && !seenIds.has(node.id)) {
 			seenIds.add(node.id);
 			nodes.push(node);
@@ -473,7 +498,7 @@ function resolveAllNodesForKind(
  */
 function applyAliasResolution(
 	rawData: ReturnType<typeof readNode>,
-	nodeId: number,
+	nodeStartIndex: number,
 	nodeIdToEffectiveType: Map<number, string>,
 	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	/** The tree-sitter visible kind name (node.type). Used as targetKind
@@ -487,7 +512,8 @@ function applyAliasResolution(
 	const canonicalKind = typeof rawData.$type === 'number'
 		? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type))
 		: rawData.$type;
-	const effective = nodeIdToEffectiveType.get(nodeId);
+	// ADR-0017: map keyed by $span.start (byte offset).
+	const effective = nodeIdToEffectiveType.get(nodeStartIndex);
 	// Apply alias rewriting only when the effective kind differs from the canonical kind.
 	const data =
 		effective && effective !== canonicalKind
@@ -730,15 +756,15 @@ export async function validateRoundTrip(
 					// validator (factory-roundtrip.ts), which needs the
 					// structural data to call factory functions and
 					// reconstruct the tree from scratch.
-					// Native engine IDs differ from WASM IDs; skip alias-
+					// Native engine handles differ from WASM handles; skip alias-
 					// target kinds the native engine emits under a different
-					// rule name rather than falling back to a mismatched ID.
-					const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
-					if (nativeId === null && handle.read) continue;
-					const rawData = readNode(handle, nativeId ?? (node1.id as NodeId));
+					// rule name rather than falling back to a mismatched handle.
+					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+					if (nativeCoords === null && handle.read) continue;
+					const rawData = readNodeAt(handle, adaptNode(node1), nativeCoords);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
-						node1.id,
+						node1.startIndex,
 						nodeIdToEffectiveType,
 						kindNameFromId,
 						node1.type
