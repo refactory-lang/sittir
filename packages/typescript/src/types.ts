@@ -7820,51 +7820,51 @@ export namespace Kind {
 }
 
 export namespace KwAbstractMarker {
-  export type Transport = TerminalTransport<"_kw_abstract_marker", "abstract">;
+  export type Transport = TerminalTransport<TSKindId.KwAbstractMarker, "abstract">;
 }
 
 export namespace KwAccessorMarker {
-  export type Transport = TerminalTransport<"_kw_accessor_marker", "accessor">;
+  export type Transport = TerminalTransport<TSKindId.Accessor, "accessor">;
 }
 
 export namespace KwAsserts {
-  export type Transport = TerminalTransport<"_kw_asserts", ":">;
+  export type Transport = TerminalTransport<TSKindId.Colon, ":">;
 }
 
 export namespace KwAsyncMarker {
-  export type Transport = TerminalTransport<"_kw_async_marker", "async">;
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
 }
 
 export namespace KwAwaitMarker {
-  export type Transport = TerminalTransport<"_kw_await_marker", "await">;
+  export type Transport = TerminalTransport<TSKindId.Await, "await">;
 }
 
 export namespace KwConstMarker {
-  export type Transport = TerminalTransport<"_kw_const_marker", "const">;
+  export type Transport = TerminalTransport<TSKindId.KwConstMarker, "const">;
 }
 
 export namespace KwDeclareMarker {
-  export type Transport = TerminalTransport<"_kw_declare_marker", "declare">;
+  export type Transport = TerminalTransport<TSKindId.Declare, "declare">;
 }
 
 export namespace KwOptionalMarker {
-  export type Transport = TerminalTransport<"_kw_optional_marker", "?">;
+  export type Transport = TerminalTransport<TSKindId.KwOptionalMarker, "?">;
 }
 
 export namespace KwReadonlyMarker {
-  export type Transport = TerminalTransport<"_kw_readonly_marker", "readonly">;
+  export type Transport = TerminalTransport<TSKindId.Readonly, "readonly">;
 }
 
 export namespace KwStaticMarker {
-  export type Transport = TerminalTransport<"_kw_static_marker", "static">;
+  export type Transport = TerminalTransport<TSKindId.KwStaticMarker, "static">;
 }
 
 export namespace KwTypePredicate {
-  export type Transport = TerminalTransport<"_kw_type_predicate", ":">;
+  export type Transport = TerminalTransport<TSKindId.Colon, ":">;
 }
 
 export namespace KwUsingMarker {
-  export type Transport = TerminalTransport<"_kw_using_marker", "using">;
+  export type Transport = TerminalTransport<TSKindId.KwUsingMarker, "using">;
 }
 
 export namespace LhsExpression {
@@ -8071,7 +8071,7 @@ export namespace ReadonlyMarker {
 }
 
 export namespace ReservedIdentifier {
-  export type Transport = TerminalTransport<"_reserved_identifier", string>;
+  export type Transport = TerminalTransport<number, string>;
 }
 
 export namespace StaticMarker {
@@ -8295,7 +8295,7 @@ export namespace AmbientDeclaration {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly declaration: Declaration.Transport | LiteralTransport<"global", "global"> | StatementBlock.Transport | LiteralTransport<"module", "module"> | Identifier.Transport | Type.Transport | Semicolon.Transport;
+    readonly declaration: Declaration.Transport | LiteralTransport<TSKindId.Global, "global"> | StatementBlock.Transport | LiteralTransport<TSKindId.Module, "module"> | Identifier.Transport | Type.Transport | Semicolon.Transport;
   }
 }
 
@@ -8416,7 +8416,7 @@ export namespace AsExpression {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly expression: Expression.Transport;
-    readonly type_annotation: LiteralTransport<"const", "const"> | Type.Transport;
+    readonly type_annotation: LiteralTransport<TSKindId.Const, "const"> | Type.Transport;
   }
 }
 
@@ -8708,7 +8708,7 @@ export namespace ClassStaticBlock {
 }
 
 export namespace Comment {
-  export type Transport = TerminalTransport<"comment", string>;
+  export type Transport = TerminalTransport<TSKindId.Comment, string>;
 }
 
 export namespace ComputedPropertyName {
@@ -8895,7 +8895,7 @@ export namespace ElseClause {
 }
 
 export namespace EmptyStatement {
-  export type Transport = TerminalTransport<"empty_statement", ";">;
+  export type Transport = TerminalTransport<TSKindId.EmptyStatement, ";">;
 }
 
 export namespace EnumAssignment {
@@ -8938,11 +8938,11 @@ export namespace EnumDeclaration {
 }
 
 export namespace EscapeSequence {
-  export type Transport = TerminalTransport<"escape_sequence", string>;
+  export type Transport = TerminalTransport<TSKindId.EscapeSequence, string>;
 }
 
 export namespace ExistentialType {
-  export type Transport = TerminalTransport<"existential_type", "*">;
+  export type Transport = TerminalTransport<TSKindId.ExistentialType, "*">;
 }
 
 export namespace ExportClause {
@@ -9103,7 +9103,7 @@ export namespace ExtendsTypeClause {
 }
 
 export namespace False {
-  export type Transport = TerminalTransport<"false", "false">;
+  export type Transport = TerminalTransport<TSKindId.False, "false">;
 }
 
 export namespace FieldDefinition {
@@ -9303,15 +9303,15 @@ export namespace GenericType {
 }
 
 export namespace HashBangLine {
-  export type Transport = TerminalTransport<"hash_bang_line", string>;
+  export type Transport = TerminalTransport<TSKindId.HashBangLine, string>;
 }
 
 export namespace HtmlCharacterReference {
-  export type Transport = TerminalTransport<"html_character_reference", string>;
+  export type Transport = TerminalTransport<number, string>;
 }
 
 export namespace Identifier {
-  export type Transport = TerminalTransport<"identifier", string>;
+  export type Transport = TerminalTransport<TSKindId.Identifier, string>;
 }
 
 export namespace IfStatement {
@@ -9341,7 +9341,7 @@ export namespace ImplementsClause {
 }
 
 export namespace Import {
-  export type Transport = TerminalTransport<"import", "import">;
+  export type Transport = TerminalTransport<TSKindId.Import, "import">;
 }
 
 export namespace ImportAlias {
@@ -9514,8 +9514,8 @@ export namespace ImportStatement {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly import_clause?: LiteralTransport<"type", "type"> | LiteralTransport<"typeof", "typeof">;
-    readonly from_clause: ImportClause.Transport | LiteralTransport<"from", "from"> | String.Transport | ImportRequireClause.Transport;
+    readonly import_clause?: LiteralTransport<TSKindId.Type, "type"> | LiteralTransport<TSKindId.Typeof, "typeof">;
+    readonly from_clause: ImportClause.Transport | LiteralTransport<TSKindId.From, "from"> | String.Transport | ImportRequireClause.Transport;
     readonly import_attribute?: ImportAttribute.Transport;
     readonly semicolon: Semicolon.Transport;
   }
@@ -9542,7 +9542,7 @@ export namespace IndexSignatureUFormColon {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly sign?: LiteralTransport<"-", "-"> | LiteralTransport<"+", "+">;
+    readonly sign?: LiteralTransport<TSKindId.Dash, "-"> | LiteralTransport<TSKindId.Plus, "+">;
     readonly type: TypeAnnotation.Transport | OmittingTypeAnnotation.Transport | AddingTypeAnnotation.Transport | OptingTypeAnnotation.Transport;
     readonly $children: readonly [IndexSignatureColon.Transport];
   }
@@ -9557,7 +9557,7 @@ export namespace IndexSignatureUFormMappedTypeClause {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly sign?: LiteralTransport<"-", "-"> | LiteralTransport<"+", "+">;
+    readonly sign?: LiteralTransport<TSKindId.Dash, "-"> | LiteralTransport<TSKindId.Plus, "+">;
     readonly type: TypeAnnotation.Transport | OmittingTypeAnnotation.Transport | AddingTypeAnnotation.Transport | OptingTypeAnnotation.Transport;
     readonly $children: readonly [_IndexSignatureMappedTypeClause.Transport];
   }
@@ -9697,7 +9697,7 @@ export namespace JsxExpression {
 }
 
 export namespace JsxIdentifier {
-  export type Transport = TerminalTransport<"jsx_identifier", string>;
+  export type Transport = TerminalTransport<number, string>;
 }
 
 export namespace JsxNamespaceName {
@@ -9820,7 +9820,7 @@ export namespace MemberExpression {
 }
 
 export namespace MetaProperty {
-  export type Transport = TerminalTransport<"meta_property", string>;
+  export type Transport = TerminalTransport<TSKindId.MetaProperty, string>;
 }
 
 export namespace MethodDefinition {
@@ -9970,11 +9970,11 @@ export namespace NonNullExpression {
 }
 
 export namespace Null {
-  export type Transport = TerminalTransport<"null", "null">;
+  export type Transport = TerminalTransport<TSKindId.Null, "null">;
 }
 
 export namespace Number {
-  export type Transport = TerminalTransport<"number", string>;
+  export type Transport = TerminalTransport<TSKindId.Number, string>;
 }
 
 export namespace Object {
@@ -10023,7 +10023,7 @@ export namespace ObjectType {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly opening: ObjectTypeOpening.Transport;
-    readonly members?: readonly (LiteralTransport<",", ","> | LiteralTransport<";", ";"> | ExportStatement.Transport | PropertySignature.Transport | CallSignature.Transport | ConstructSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | Semicolon.Transport)[];
+    readonly members?: readonly (LiteralTransport<TSKindId.Comma, ","> | LiteralTransport<TSKindId.Semi, ";"> | ExportStatement.Transport | PropertySignature.Transport | CallSignature.Transport | ConstructSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | Semicolon.Transport)[];
     readonly closing: ObjectTypeClosing.Transport;
   }
 }
@@ -10095,7 +10095,7 @@ export namespace OptionalType {
 }
 
 export namespace OverrideModifier {
-  export type Transport = TerminalTransport<"override_modifier", "override">;
+  export type Transport = TerminalTransport<TSKindId.OverrideModifier, "override">;
 }
 
 export namespace Pair {
@@ -10179,11 +10179,11 @@ export namespace ParenthesizedType {
 }
 
 export namespace PredefinedType {
-  export type Transport = TerminalTransport<"predefined_type", string>;
+  export type Transport = TerminalTransport<TSKindId.PredefinedType, string>;
 }
 
 export namespace PrivatePropertyIdentifier {
-  export type Transport = TerminalTransport<"private_property_identifier", string>;
+  export type Transport = TerminalTransport<TSKindId.PrivatePropertyIdentifier, string>;
 }
 
 export namespace Program {
@@ -10260,11 +10260,11 @@ export namespace Regex {
 }
 
 export namespace RegexFlags {
-  export type Transport = TerminalTransport<"regex_flags", string>;
+  export type Transport = TerminalTransport<TSKindId.RegexFlags, string>;
 }
 
 export namespace RegexPattern {
-  export type Transport = TerminalTransport<"regex_pattern", string>;
+  export type Transport = TerminalTransport<TSKindId.RegexPattern, string>;
 }
 
 export namespace RequiredParameter {
@@ -10440,7 +10440,7 @@ export namespace SubscriptExpression {
 }
 
 export namespace Super {
-  export type Transport = TerminalTransport<"super", "super">;
+  export type Transport = TerminalTransport<TSKindId.Super, "super">;
 }
 
 export namespace SwitchBody {
@@ -10556,7 +10556,7 @@ export namespace TernaryExpression {
 }
 
 export namespace This {
-  export type Transport = TerminalTransport<"this", "this">;
+  export type Transport = TerminalTransport<TSKindId.This, "this">;
 }
 
 export namespace ThrowStatement {
@@ -10573,7 +10573,7 @@ export namespace ThrowStatement {
 }
 
 export namespace True {
-  export type Transport = TerminalTransport<"true", "true">;
+  export type Transport = TerminalTransport<TSKindId.True, "true">;
 }
 
 export namespace TryStatement {
@@ -10745,23 +10745,23 @@ export namespace UnaryExpression {
 }
 
 export namespace Undefined {
-  export type Transport = TerminalTransport<"undefined", "undefined">;
+  export type Transport = TerminalTransport<TSKindId.Undefined, "undefined">;
 }
 
 export namespace UnescapedDoubleJsxStringFragment {
-  export type Transport = TerminalTransport<"unescaped_double_jsx_string_fragment", string>;
+  export type Transport = TerminalTransport<number, string>;
 }
 
 export namespace UnescapedDoubleStringFragment {
-  export type Transport = TerminalTransport<"unescaped_double_string_fragment", string>;
+  export type Transport = TerminalTransport<TSKindId.UnescapedDoubleStringFragment, string>;
 }
 
 export namespace UnescapedSingleJsxStringFragment {
-  export type Transport = TerminalTransport<"unescaped_single_jsx_string_fragment", string>;
+  export type Transport = TerminalTransport<number, string>;
 }
 
 export namespace UnescapedSingleStringFragment {
-  export type Transport = TerminalTransport<"unescaped_single_string_fragment", string>;
+  export type Transport = TerminalTransport<TSKindId.UnescapedSingleStringFragment, string>;
 }
 
 export namespace UnionType {
@@ -10873,351 +10873,351 @@ export namespace YieldExpression {
 }
 
 export namespace AutomaticSemicolon {
-  export type Transport = TerminalTransport<"_automatic_semicolon", string>;
+  export type Transport = TerminalTransport<TSKindId.AutomaticSemicolon, string>;
 }
 
 export namespace TemplateChars {
-  export type Transport = TerminalTransport<"_template_chars", string>;
+  export type Transport = TerminalTransport<TSKindId.TemplateChars, string>;
 }
 
 export namespace TernaryQmark {
-  export type Transport = TerminalTransport<"_ternary_qmark", string>;
+  export type Transport = TerminalTransport<TSKindId.TernaryQmark, string>;
 }
 
 export namespace HtmlComment {
-  export type Transport = TerminalTransport<"html_comment", string>;
+  export type Transport = TerminalTransport<TSKindId.HtmlComment, string>;
 }
 
 export namespace Oror {
-  export type Transport = TerminalTransport<"||", string>;
+  export type Transport = TerminalTransport<TSKindId.PipePipe, string>;
 }
 
 export namespace JsxText {
-  export type Transport = TerminalTransport<"jsx_text", string>;
+  export type Transport = TerminalTransport<TSKindId.JsxText, string>;
 }
 
 export namespace FunctionSignatureAutomaticSemicolon {
-  export type Transport = TerminalTransport<"_function_signature_automatic_semicolon", string>;
+  export type Transport = TerminalTransport<TSKindId.FunctionSignatureAutomaticSemicolon, string>;
 }
 
 export namespace ErrorRecovery {
-  export type Transport = TerminalTransport<"__error_recovery", string>;
+  export type Transport = TerminalTransport<TSKindId.ErrorRecovery, string>;
 }
 
 export namespace TokQDot {
-  export type Transport = TerminalTransport<"?.", "?.">;
+  export type Transport = TerminalTransport<TSKindId.QmarkDot, "?.">;
 }
 
 export namespace Comma {
-  export type Transport = TerminalTransport<",", ",">;
+  export type Transport = TerminalTransport<TSKindId.Comma, ",">;
 }
 
 export namespace Export {
-  export type Transport = TerminalTransport<"export", "export">;
+  export type Transport = TerminalTransport<TSKindId.Export, "export">;
 }
 
 export namespace Default {
-  export type Transport = TerminalTransport<"default", "default">;
+  export type Transport = TerminalTransport<TSKindId.Default, "default">;
 }
 
 export namespace Star {
-  export type Transport = TerminalTransport<"*", "*">;
+  export type Transport = TerminalTransport<TSKindId.Star, "*">;
 }
 
 export namespace Eq {
-  export type Transport = TerminalTransport<"=", "=">;
+  export type Transport = TerminalTransport<TSKindId.Eq, "=">;
 }
 
 export namespace As {
-  export type Transport = TerminalTransport<"as", "as">;
+  export type Transport = TerminalTransport<TSKindId.As, "as">;
 }
 
 export namespace Namespace {
-  export type Transport = TerminalTransport<"namespace", "namespace">;
+  export type Transport = TerminalTransport<TSKindId.Namespace, "namespace">;
 }
 
 export namespace Paren {
-  export type Transport = TerminalTransport<"(", "(">;
+  export type Transport = TerminalTransport<TSKindId.Lparen, "(">;
 }
 
 export namespace CloseParen {
-  export type Transport = TerminalTransport<")", ")">;
+  export type Transport = TerminalTransport<TSKindId.Rparen, ")">;
 }
 
 export namespace From {
-  export type Transport = TerminalTransport<"from", "from">;
+  export type Transport = TerminalTransport<TSKindId.From, "from">;
 }
 
 export namespace Colon {
-  export type Transport = TerminalTransport<":", ":">;
+  export type Transport = TerminalTransport<TSKindId.Colon, ":">;
 }
 
 export namespace Lt {
-  export type Transport = TerminalTransport<"<", "<">;
+  export type Transport = TerminalTransport<TSKindId.Lt, "<">;
 }
 
 export namespace TokDq {
-  export type Transport = TerminalTransport<"\"", "\"">;
+  export type Transport = TerminalTransport<TSKindId.Dquote, "\"">;
 }
 
 export namespace TokSq {
-  export type Transport = TerminalTransport<"'", "'">;
+  export type Transport = TerminalTransport<TSKindId.Squote, "'">;
 }
 
 export namespace Abstract {
-  export type Transport = TerminalTransport<"abstract", "abstract">;
+  export type Transport = TerminalTransport<TSKindId.Abstract, "abstract">;
 }
 
 export namespace Accessor {
-  export type Transport = TerminalTransport<"accessor", "accessor">;
+  export type Transport = TerminalTransport<TSKindId.Accessor, "accessor">;
 }
 
 export namespace Async {
-  export type Transport = TerminalTransport<"async", "async">;
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
 }
 
 export namespace Await {
-  export type Transport = TerminalTransport<"await", "await">;
+  export type Transport = TerminalTransport<TSKindId.Await, "await">;
 }
 
 export namespace Const {
-  export type Transport = TerminalTransport<"const", "const">;
+  export type Transport = TerminalTransport<TSKindId.Const, "const">;
 }
 
 export namespace Declare {
-  export type Transport = TerminalTransport<"declare", "declare">;
+  export type Transport = TerminalTransport<TSKindId.Declare, "declare">;
 }
 
 export namespace Question {
-  export type Transport = TerminalTransport<"?", "?">;
+  export type Transport = TerminalTransport<TSKindId.Qmark, "?">;
 }
 
 export namespace Readonly {
-  export type Transport = TerminalTransport<"readonly", "readonly">;
+  export type Transport = TerminalTransport<TSKindId.Readonly, "readonly">;
 }
 
 export namespace Static {
-  export type Transport = TerminalTransport<"static", "static">;
+  export type Transport = TerminalTransport<TSKindId.Static, "static">;
 }
 
 export namespace Using {
-  export type Transport = TerminalTransport<"using", "using">;
+  export type Transport = TerminalTransport<TSKindId.Using, "using">;
 }
 
 export namespace Dot {
-  export type Transport = TerminalTransport<".", ".">;
+  export type Transport = TerminalTransport<TSKindId.Dot, ".">;
 }
 
 export namespace Bracket {
-  export type Transport = TerminalTransport<"[", "[">;
+  export type Transport = TerminalTransport<TSKindId.Lbrack, "[">;
 }
 
 export namespace CloseBracket {
-  export type Transport = TerminalTransport<"]", "]">;
+  export type Transport = TerminalTransport<TSKindId.Rbrack, "]">;
 }
 
 export namespace TokPlusQColon {
-  export type Transport = TerminalTransport<"+?:", "+?:">;
+  export type Transport = TerminalTransport<TSKindId.PlusQmarkColon, "+?:">;
 }
 
 export namespace Global {
-  export type Transport = TerminalTransport<"global", "global">;
+  export type Transport = TerminalTransport<TSKindId.Global, "global">;
 }
 
 export namespace Break {
-  export type Transport = TerminalTransport<"break", "break">;
+  export type Transport = TerminalTransport<TSKindId.Break, "break">;
 }
 
 export namespace Catch {
-  export type Transport = TerminalTransport<"catch", "catch">;
+  export type Transport = TerminalTransport<TSKindId.Catch, "catch">;
 }
 
 export namespace Brace {
-  export type Transport = TerminalTransport<"{", "{">;
+  export type Transport = TerminalTransport<TSKindId.Lbrace, "{">;
 }
 
 export namespace Semi {
-  export type Transport = TerminalTransport<";", ";">;
+  export type Transport = TerminalTransport<TSKindId.Semi, ";">;
 }
 
 export namespace CloseBrace {
-  export type Transport = TerminalTransport<"}", "}">;
+  export type Transport = TerminalTransport<TSKindId.Rbrace, "}">;
 }
 
 export namespace Extends {
-  export type Transport = TerminalTransport<"extends", "extends">;
+  export type Transport = TerminalTransport<TSKindId.Extends, "extends">;
 }
 
 export namespace New {
-  export type Transport = TerminalTransport<"new", "new">;
+  export type Transport = TerminalTransport<TSKindId.New, "new">;
 }
 
 export namespace FatArrow {
-  export type Transport = TerminalTransport<"=>", "=>">;
+  export type Transport = TerminalTransport<TSKindId.EqGt, "=>">;
 }
 
 export namespace Continue {
-  export type Transport = TerminalTransport<"continue", "continue">;
+  export type Transport = TerminalTransport<TSKindId.Continue, "continue">;
 }
 
 export namespace Debugger {
-  export type Transport = TerminalTransport<"debugger", "debugger">;
+  export type Transport = TerminalTransport<TSKindId.Debugger, "debugger">;
 }
 
 export namespace At {
-  export type Transport = TerminalTransport<"@", "@">;
+  export type Transport = TerminalTransport<TSKindId.At, "@">;
 }
 
 export namespace Do {
-  export type Transport = TerminalTransport<"do", "do">;
+  export type Transport = TerminalTransport<TSKindId.Do, "do">;
 }
 
 export namespace While {
-  export type Transport = TerminalTransport<"while", "while">;
+  export type Transport = TerminalTransport<TSKindId.While, "while">;
 }
 
 export namespace Else {
-  export type Transport = TerminalTransport<"else", "else">;
+  export type Transport = TerminalTransport<TSKindId.Else, "else">;
 }
 
 export namespace Enum {
-  export type Transport = TerminalTransport<"enum", "enum">;
+  export type Transport = TerminalTransport<TSKindId.Enum, "enum">;
 }
 
 export namespace Finally {
-  export type Transport = TerminalTransport<"finally", "finally">;
+  export type Transport = TerminalTransport<TSKindId.Finally, "finally">;
 }
 
 export namespace For {
-  export type Transport = TerminalTransport<"for", "for">;
+  export type Transport = TerminalTransport<TSKindId.For, "for">;
 }
 
 export namespace Function {
-  export type Transport = TerminalTransport<"function", "function">;
+  export type Transport = TerminalTransport<TSKindId.Function, "function">;
 }
 
 export namespace If {
-  export type Transport = TerminalTransport<"if", "if">;
+  export type Transport = TerminalTransport<TSKindId.If, "if">;
 }
 
 export namespace Implements {
-  export type Transport = TerminalTransport<"implements", "implements">;
+  export type Transport = TerminalTransport<TSKindId.Implements, "implements">;
 }
 
 export namespace Require {
-  export type Transport = TerminalTransport<"require", "require">;
+  export type Transport = TerminalTransport<TSKindId.Require, "require">;
 }
 
 export namespace Keyof {
-  export type Transport = TerminalTransport<"keyof", "keyof">;
+  export type Transport = TerminalTransport<TSKindId.Keyof, "keyof">;
 }
 
 export namespace Infer {
-  export type Transport = TerminalTransport<"infer", "infer">;
+  export type Transport = TerminalTransport<TSKindId.Infer, "infer">;
 }
 
 export namespace Interface {
-  export type Transport = TerminalTransport<"interface", "interface">;
+  export type Transport = TerminalTransport<TSKindId.Interface, "interface">;
 }
 
 export namespace Amp {
-  export type Transport = TerminalTransport<"&", "&">;
+  export type Transport = TerminalTransport<TSKindId.Amp, "&">;
 }
 
 export namespace TokLtSlash {
-  export type Transport = TerminalTransport<"</", "</">;
+  export type Transport = TerminalTransport<number, "</">;
 }
 
 export namespace Gt {
-  export type Transport = TerminalTransport<">", ">">;
+  export type Transport = TerminalTransport<TSKindId.Gt, ">">;
 }
 
 export namespace TokSlashGt {
-  export type Transport = TerminalTransport<"/>", "/>">;
+  export type Transport = TerminalTransport<number, "/>">;
 }
 
 export namespace In {
-  export type Transport = TerminalTransport<"in", "in">;
+  export type Transport = TerminalTransport<TSKindId.In, "in">;
 }
 
 export namespace Bang {
-  export type Transport = TerminalTransport<"!", "!">;
+  export type Transport = TerminalTransport<TSKindId.Bang, "!">;
 }
 
 export namespace TokMinusQColon {
-  export type Transport = TerminalTransport<"-?:", "-?:">;
+  export type Transport = TerminalTransport<TSKindId.DashQmarkColon, "-?:">;
 }
 
 export namespace TokQColon {
-  export type Transport = TerminalTransport<"?:", "?:">;
+  export type Transport = TerminalTransport<TSKindId.QmarkColon, "?:">;
 }
 
 export namespace Override {
-  export type Transport = TerminalTransport<"override", "override">;
+  export type Transport = TerminalTransport<TSKindId.Override, "override">;
 }
 
 export namespace Slash {
-  export type Transport = TerminalTransport<"/", "/">;
+  export type Transport = TerminalTransport<TSKindId.Slash, "/">;
 }
 
 export namespace Ellipsis {
-  export type Transport = TerminalTransport<"...", "...">;
+  export type Transport = TerminalTransport<TSKindId.DotDotDot, "...">;
 }
 
 export namespace Return {
-  export type Transport = TerminalTransport<"return", "return">;
+  export type Transport = TerminalTransport<TSKindId.Return, "return">;
 }
 
 export namespace Satisfies {
-  export type Transport = TerminalTransport<"satisfies", "satisfies">;
+  export type Transport = TerminalTransport<TSKindId.Satisfies, "satisfies">;
 }
 
 export namespace Case {
-  export type Transport = TerminalTransport<"case", "case">;
+  export type Transport = TerminalTransport<TSKindId.Case, "case">;
 }
 
 export namespace Switch {
-  export type Transport = TerminalTransport<"switch", "switch">;
+  export type Transport = TerminalTransport<TSKindId.Switch, "switch">;
 }
 
 export namespace TokBt {
-  export type Transport = TerminalTransport<"`", "`">;
+  export type Transport = TerminalTransport<TSKindId.Bquote, "`">;
 }
 
 export namespace TokDollarLbr {
-  export type Transport = TerminalTransport<"${", "${">;
+  export type Transport = TerminalTransport<TSKindId.DollarLbrace, "${">;
 }
 
 export namespace Throw {
-  export type Transport = TerminalTransport<"throw", "throw">;
+  export type Transport = TerminalTransport<TSKindId.Throw, "throw">;
 }
 
 export namespace Try {
-  export type Transport = TerminalTransport<"try", "try">;
+  export type Transport = TerminalTransport<TSKindId.Try, "try">;
 }
 
 export namespace Is {
-  export type Transport = TerminalTransport<"is", "is">;
+  export type Transport = TerminalTransport<TSKindId.Is, "is">;
 }
 
 export namespace Typeof {
-  export type Transport = TerminalTransport<"typeof", "typeof">;
+  export type Transport = TerminalTransport<TSKindId.Typeof, "typeof">;
 }
 
 export namespace Pipe {
-  export type Transport = TerminalTransport<"|", "|">;
+  export type Transport = TerminalTransport<TSKindId.Pipe, "|">;
 }
 
 export namespace Var {
-  export type Transport = TerminalTransport<"var", "var">;
+  export type Transport = TerminalTransport<TSKindId.Var, "var">;
 }
 
 export namespace With {
-  export type Transport = TerminalTransport<"with", "with">;
+  export type Transport = TerminalTransport<TSKindId.With, "with">;
 }
 
 export namespace Yield {
-  export type Transport = TerminalTransport<"yield", "yield">;
+  export type Transport = TerminalTransport<TSKindId.Yield, "yield">;
 }
 
 export namespace DestructuringPattern {
@@ -12114,7 +12114,7 @@ export type AnyTransport =
   | Var.Transport
   | With.Transport
   | Yield.Transport
-  | LiteralTransport<"type", "type">
-  | LiteralTransport<"-", "-">
-  | LiteralTransport<"+", "+">
+  | LiteralTransport<TSKindId.Type, "type">
+  | LiteralTransport<TSKindId.Dash, "-">
+  | LiteralTransport<TSKindId.Plus, "+">
 ;

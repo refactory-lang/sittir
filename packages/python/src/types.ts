@@ -4061,7 +4061,7 @@ export namespace ImportList {
 }
 
 export namespace IsNot {
-  export type Transport = TerminalTransport<"_is_not", string>;
+  export type Transport = TerminalTransport<TSKindId.IsNot, string>;
 }
 
 export namespace KeyValuePattern {
@@ -4078,11 +4078,11 @@ export namespace KeyValuePattern {
 }
 
 export namespace KwAsyncMarker {
-  export type Transport = TerminalTransport<"_kw_async_marker", "async">;
+  export type Transport = TerminalTransport<TSKindId.KwAsyncMarker, "async">;
 }
 
 export namespace KwType {
-  export type Transport = TerminalTransport<"_kw_type", "type">;
+  export type Transport = TerminalTransport<TSKindId.KwType, "type">;
 }
 
 export namespace _ListPattern {
@@ -4122,11 +4122,11 @@ export namespace MatchBlockBlock {
 }
 
 export namespace NotEscapeSequence {
-  export type Transport = TerminalTransport<"_not_escape_sequence", "\\">;
+  export type Transport = TerminalTransport<TSKindId.NotEscapeSequence, "\\">;
 }
 
 export namespace NotIn {
-  export type Transport = TerminalTransport<"_not_in", string>;
+  export type Transport = TerminalTransport<TSKindId.NotIn, string>;
 }
 
 export namespace SimplePatternNegative {
@@ -4236,7 +4236,7 @@ export namespace AsPattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly expression: Expression.Transport;
-    readonly alias: TerminalTransport<"as_pattern_target">;
+    readonly alias: TerminalTransport;
   }
 }
 
@@ -4378,7 +4378,7 @@ export namespace BooleanOperator {
 }
 
 export namespace BreakStatement {
-  export type Transport = TerminalTransport<"break_statement", "break">;
+  export type Transport = TerminalTransport<TSKindId.BreakStatement, "break">;
 }
 
 export namespace Call {
@@ -4461,7 +4461,7 @@ export namespace ClassPattern {
 }
 
 export namespace Comment {
-  export type Transport = TerminalTransport<"comment", string>;
+  export type Transport = TerminalTransport<TSKindId.Comment, string>;
 }
 
 export namespace ComparisonOperator {
@@ -4473,7 +4473,7 @@ export namespace ComparisonOperator {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly left: PrimaryExpression.Transport;
-    readonly operators: readonly (LiteralTransport<"<", "<"> | LiteralTransport<"<=", "<="> | LiteralTransport<"==", "=="> | LiteralTransport<"!=", "!="> | LiteralTransport<">=", ">="> | LiteralTransport<">", ">"> | LiteralTransport<"<>", "<>"> | LiteralTransport<"in", "in"> | LiteralTransport<"not in", "not in"> | LiteralTransport<"is", "is"> | LiteralTransport<"is not", "is not">)[];
+    readonly operators: readonly (LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.LtGt, "<>"> | LiteralTransport<TSKindId.In, "in"> | LiteralTransport<number, "not in"> | LiteralTransport<TSKindId.Is, "is"> | LiteralTransport<number, "is not">)[];
   }
 }
 
@@ -4485,7 +4485,7 @@ export namespace ComplexPattern {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly real?: LiteralTransport<"-", "-">;
+    readonly real?: LiteralTransport<TSKindId.Dash, "-">;
     readonly imaginary: Integer.Transport | Float.Transport;
     readonly $children: readonly [Integer.Transport | Float.Transport];
   }
@@ -4531,7 +4531,7 @@ export namespace ConstrainedType {
 }
 
 export namespace ContinueStatement {
-  export type Transport = TerminalTransport<"continue_statement", "continue">;
+  export type Transport = TerminalTransport<TSKindId.ContinueStatement, "continue">;
 }
 
 export namespace DecoratedDefinition {
@@ -4556,7 +4556,7 @@ export namespace Decorator {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly expression: Expression.Transport;
-    readonly newline?: TerminalTransport<string>;
+    readonly newline?: TerminalTransport;
   }
 }
 
@@ -4672,7 +4672,7 @@ export namespace ElifClause {
 }
 
 export namespace Ellipsis2 {
-  export type Transport = TerminalTransport<"ellipsis", "...">;
+  export type Transport = TerminalTransport<TSKindId.Ellipsis2, "...">;
 }
 
 export namespace ElseClause {
@@ -4688,7 +4688,7 @@ export namespace ElseClause {
 }
 
 export namespace EscapeSequence {
-  export type Transport = TerminalTransport<"escape_sequence", string>;
+  export type Transport = TerminalTransport<TSKindId.EscapeSequence, string>;
 }
 
 export namespace ExceptClause {
@@ -4714,7 +4714,7 @@ export namespace ExecStatement {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
     readonly code: String.Transport | Identifier.Transport;
-    readonly in_clause?: readonly (LiteralTransport<"in", "in"> | Expression.Transport)[];
+    readonly in_clause?: readonly (LiteralTransport<TSKindId.In, "in"> | Expression.Transport)[];
   }
 }
 
@@ -4760,7 +4760,7 @@ export namespace ExpressionStatement {
 }
 
 export namespace False {
-  export type Transport = TerminalTransport<"false", "False">;
+  export type Transport = TerminalTransport<TSKindId.False, "False">;
 }
 
 export namespace FinallyClause {
@@ -4776,7 +4776,7 @@ export namespace FinallyClause {
 }
 
 export namespace Float {
-  export type Transport = TerminalTransport<"float", string>;
+  export type Transport = TerminalTransport<TSKindId.Float, string>;
 }
 
 export namespace ForInClause {
@@ -4889,7 +4889,7 @@ export namespace GlobalStatement {
 }
 
 export namespace Identifier {
-  export type Transport = TerminalTransport<"identifier", string>;
+  export type Transport = TerminalTransport<TSKindId.Identifier, string>;
 }
 
 export namespace IfClause {
@@ -4932,7 +4932,7 @@ export namespace ImportFromStatement {
 }
 
 export namespace ImportPrefix {
-  export type Transport = TerminalTransport<"import_prefix", string>;
+  export type Transport = TerminalTransport<TSKindId.ImportPrefix, string>;
 }
 
 export namespace ImportStatement {
@@ -4948,7 +4948,7 @@ export namespace ImportStatement {
 }
 
 export namespace Integer {
-  export type Transport = TerminalTransport<"integer", string>;
+  export type Transport = TerminalTransport<TSKindId.Integer, string>;
 }
 
 export namespace Interpolation {
@@ -4992,7 +4992,7 @@ export namespace KeywordPattern {
 }
 
 export namespace KeywordSeparator {
-  export type Transport = TerminalTransport<"keyword_separator", "*">;
+  export type Transport = TerminalTransport<TSKindId.KeywordSeparator, "*">;
 }
 
 export namespace Lambda {
@@ -5034,7 +5034,7 @@ export namespace LambdaWithinForInClause {
 }
 
 export namespace LineContinuation {
-  export type Transport = TerminalTransport<"line_continuation", string>;
+  export type Transport = TerminalTransport<TSKindId.LineContinuation, string>;
 }
 
 export namespace List {
@@ -5150,7 +5150,7 @@ export namespace NamedExpression {
 }
 
 export namespace None {
-  export type Transport = TerminalTransport<"none", "None">;
+  export type Transport = TerminalTransport<TSKindId.None, "None">;
 }
 
 export namespace NonlocalStatement {
@@ -5227,7 +5227,7 @@ export namespace ParenthesizedListSplat {
 }
 
 export namespace PassStatement {
-  export type Transport = TerminalTransport<"pass_statement", "pass">;
+  export type Transport = TerminalTransport<TSKindId.PassStatement, "pass">;
 }
 
 export namespace PatternList {
@@ -5243,7 +5243,7 @@ export namespace PatternList {
 }
 
 export namespace PositionalSeparator {
-  export type Transport = TerminalTransport<"positional_separator", "/">;
+  export type Transport = TerminalTransport<TSKindId.PositionalSeparator, "/">;
 }
 
 export namespace PrintStatement {
@@ -5383,7 +5383,7 @@ export namespace StringContent {
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeId?: number;
-    readonly $children: readonly (EscapeInterpolation.Transport | EscapeSequence.Transport | TerminalTransport<"_not_escape_sequence", "\\"> | _StringContent.Transport)[];
+    readonly $children: readonly (EscapeInterpolation.Transport | EscapeSequence.Transport | TerminalTransport<TSKindId.Bslash, "\\"> | _StringContent.Transport)[];
   }
 }
 
@@ -5401,7 +5401,7 @@ export namespace Subscript {
 }
 
 export namespace True {
-  export type Transport = TerminalTransport<"true", "True">;
+  export type Transport = TerminalTransport<TSKindId.True, "True">;
 }
 
 export namespace TryStatement {
@@ -5470,7 +5470,7 @@ export namespace TypeAliasStatement {
 }
 
 export namespace TypeConversion {
-  export type Transport = TerminalTransport<"type_conversion", string>;
+  export type Transport = TerminalTransport<TSKindId.TypeConversion, string>;
 }
 
 export namespace TypeParameter {
@@ -5565,7 +5565,7 @@ export namespace WhileStatement {
 }
 
 export namespace WildcardImport {
-  export type Transport = TerminalTransport<"wildcard_import", "*">;
+  export type Transport = TerminalTransport<TSKindId.WildcardImport, "*">;
 }
 
 export namespace WithClauseBare {
@@ -5661,255 +5661,255 @@ export namespace Yield {
 }
 
 export namespace Newline {
-  export type Transport = TerminalTransport<"_newline", string>;
+  export type Transport = TerminalTransport<TSKindId.Newline, string>;
 }
 
 export namespace Indent {
-  export type Transport = TerminalTransport<"_indent", string>;
+  export type Transport = TerminalTransport<TSKindId.Indent, string>;
 }
 
 export namespace Dedent {
-  export type Transport = TerminalTransport<"_dedent", string>;
+  export type Transport = TerminalTransport<TSKindId.Dedent, string>;
 }
 
 export namespace StringStart {
-  export type Transport = TerminalTransport<"string_start", string>;
+  export type Transport = TerminalTransport<TSKindId.StringStart, string>;
 }
 
 export namespace _StringContent {
-  export type Transport = TerminalTransport<"_string_content", string>;
+  export type Transport = TerminalTransport<TSKindId._StringContent, string>;
 }
 
 export namespace EscapeInterpolation {
-  export type Transport = TerminalTransport<"escape_interpolation", string>;
+  export type Transport = TerminalTransport<TSKindId.EscapeInterpolation, string>;
 }
 
 export namespace StringEnd {
-  export type Transport = TerminalTransport<"string_end", string>;
+  export type Transport = TerminalTransport<TSKindId.StringEnd, string>;
 }
 
 export namespace CloseBracket {
-  export type Transport = TerminalTransport<"]", string>;
+  export type Transport = TerminalTransport<TSKindId.Rbrack, string>;
 }
 
 export namespace CloseParen {
-  export type Transport = TerminalTransport<")", string>;
+  export type Transport = TerminalTransport<TSKindId.Rparen, string>;
 }
 
 export namespace CloseBrace {
-  export type Transport = TerminalTransport<"}", string>;
+  export type Transport = TerminalTransport<TSKindId.Rbrace, string>;
 }
 
 export namespace Except {
-  export type Transport = TerminalTransport<"except", string>;
+  export type Transport = TerminalTransport<TSKindId.Except, string>;
 }
 
 export namespace As {
-  export type Transport = TerminalTransport<"as", "as">;
+  export type Transport = TerminalTransport<TSKindId.As, "as">;
 }
 
 export namespace Eq {
-  export type Transport = TerminalTransport<"=", "=">;
+  export type Transport = TerminalTransport<TSKindId.Eq, "=">;
 }
 
 export namespace Colon {
-  export type Transport = TerminalTransport<":", ":">;
+  export type Transport = TerminalTransport<TSKindId.Colon, ":">;
 }
 
 export namespace Async {
-  export type Transport = TerminalTransport<"async", "async">;
+  export type Transport = TerminalTransport<TSKindId.Async, "async">;
 }
 
 export namespace Bracket {
-  export type Transport = TerminalTransport<"[", "[">;
+  export type Transport = TerminalTransport<TSKindId.Lbrack, "[">;
 }
 
 export namespace TokBs {
-  export type Transport = TerminalTransport<"\\", "\\">;
+  export type Transport = TerminalTransport<TSKindId.Bslash, "\\">;
 }
 
 export namespace Minus {
-  export type Transport = TerminalTransport<"-", "-">;
+  export type Transport = TerminalTransport<TSKindId.Dash, "-">;
 }
 
 export namespace Paren {
-  export type Transport = TerminalTransport<"(", "(">;
+  export type Transport = TerminalTransport<TSKindId.Lparen, "(">;
 }
 
 export namespace Comma {
-  export type Transport = TerminalTransport<",", ",">;
+  export type Transport = TerminalTransport<TSKindId.Comma, ",">;
 }
 
 export namespace Assert {
-  export type Transport = TerminalTransport<"assert", "assert">;
+  export type Transport = TerminalTransport<TSKindId.Assert, "assert">;
 }
 
 export namespace Dot {
-  export type Transport = TerminalTransport<".", ".">;
+  export type Transport = TerminalTransport<TSKindId.Dot, ".">;
 }
 
 export namespace Break {
-  export type Transport = TerminalTransport<"break", "break">;
+  export type Transport = TerminalTransport<TSKindId.Break, "break">;
 }
 
 export namespace Case {
-  export type Transport = TerminalTransport<"case", "case">;
+  export type Transport = TerminalTransport<TSKindId.Case, "case">;
 }
 
 export namespace Shr {
-  export type Transport = TerminalTransport<">>", ">>">;
+  export type Transport = TerminalTransport<TSKindId.GtGt, ">>">;
 }
 
 export namespace Class {
-  export type Transport = TerminalTransport<"class", "class">;
+  export type Transport = TerminalTransport<TSKindId.Class, "class">;
 }
 
 export namespace If {
-  export type Transport = TerminalTransport<"if", "if">;
+  export type Transport = TerminalTransport<TSKindId.If, "if">;
 }
 
 export namespace Else {
-  export type Transport = TerminalTransport<"else", "else">;
+  export type Transport = TerminalTransport<TSKindId.Else, "else">;
 }
 
 export namespace Continue {
-  export type Transport = TerminalTransport<"continue", "continue">;
+  export type Transport = TerminalTransport<TSKindId.Continue, "continue">;
 }
 
 export namespace At {
-  export type Transport = TerminalTransport<"@", "@">;
+  export type Transport = TerminalTransport<TSKindId.At, "@">;
 }
 
 export namespace Del {
-  export type Transport = TerminalTransport<"del", "del">;
+  export type Transport = TerminalTransport<TSKindId.Del, "del">;
 }
 
 export namespace Brace {
-  export type Transport = TerminalTransport<"{", "{">;
+  export type Transport = TerminalTransport<TSKindId.Lbrace, "{">;
 }
 
 export namespace Starstar {
-  export type Transport = TerminalTransport<"**", "**">;
+  export type Transport = TerminalTransport<TSKindId.StarStar, "**">;
 }
 
 export namespace Elif {
-  export type Transport = TerminalTransport<"elif", "elif">;
+  export type Transport = TerminalTransport<TSKindId.Elif, "elif">;
 }
 
 export namespace Ellipsis {
-  export type Transport = TerminalTransport<"...", "...">;
+  export type Transport = TerminalTransport<number, "...">;
 }
 
 export namespace Star {
-  export type Transport = TerminalTransport<"*", "*">;
+  export type Transport = TerminalTransport<TSKindId.Star, "*">;
 }
 
 export namespace Exec {
-  export type Transport = TerminalTransport<"exec", "exec">;
+  export type Transport = TerminalTransport<TSKindId.Exec, "exec">;
 }
 
 export namespace In {
-  export type Transport = TerminalTransport<"in", "in">;
+  export type Transport = TerminalTransport<TSKindId.In, "in">;
 }
 
 export namespace False2 {
-  export type Transport = TerminalTransport<"False", "False">;
+  export type Transport = TerminalTransport<number, "False">;
 }
 
 export namespace Finally {
-  export type Transport = TerminalTransport<"finally", "finally">;
+  export type Transport = TerminalTransport<TSKindId.Finally, "finally">;
 }
 
 export namespace For {
-  export type Transport = TerminalTransport<"for", "for">;
+  export type Transport = TerminalTransport<TSKindId.For, "for">;
 }
 
 export namespace Def {
-  export type Transport = TerminalTransport<"def", "def">;
+  export type Transport = TerminalTransport<TSKindId.Def, "def">;
 }
 
 export namespace Arrow {
-  export type Transport = TerminalTransport<"->", "->">;
+  export type Transport = TerminalTransport<TSKindId.DashGt, "->">;
 }
 
 export namespace From {
-  export type Transport = TerminalTransport<"from", "from">;
+  export type Transport = TerminalTransport<TSKindId.From, "from">;
 }
 
 export namespace FutureU {
-  export type Transport = TerminalTransport<"__future__", "__future__">;
+  export type Transport = TerminalTransport<TSKindId.FutureU, "__future__">;
 }
 
 export namespace Import {
-  export type Transport = TerminalTransport<"import", "import">;
+  export type Transport = TerminalTransport<TSKindId.Import, "import">;
 }
 
 export namespace Global {
-  export type Transport = TerminalTransport<"global", "global">;
+  export type Transport = TerminalTransport<TSKindId.Global, "global">;
 }
 
 export namespace Match {
-  export type Transport = TerminalTransport<"match", "match">;
+  export type Transport = TerminalTransport<TSKindId.Match, "match">;
 }
 
 export namespace Coloneq {
-  export type Transport = TerminalTransport<":=", ":=">;
+  export type Transport = TerminalTransport<TSKindId.ColonEq, ":=">;
 }
 
 export namespace None2 {
-  export type Transport = TerminalTransport<"None", "None">;
+  export type Transport = TerminalTransport<number, "None">;
 }
 
 export namespace Nonlocal {
-  export type Transport = TerminalTransport<"nonlocal", "nonlocal">;
+  export type Transport = TerminalTransport<TSKindId.Nonlocal, "nonlocal">;
 }
 
 export namespace Not {
-  export type Transport = TerminalTransport<"not", "not">;
+  export type Transport = TerminalTransport<TSKindId.Not, "not">;
 }
 
 export namespace Pass {
-  export type Transport = TerminalTransport<"pass", "pass">;
+  export type Transport = TerminalTransport<TSKindId.Pass, "pass">;
 }
 
 export namespace Slash {
-  export type Transport = TerminalTransport<"/", "/">;
+  export type Transport = TerminalTransport<TSKindId.Slash, "/">;
 }
 
 export namespace Print {
-  export type Transport = TerminalTransport<"print", "print">;
+  export type Transport = TerminalTransport<TSKindId.Print, "print">;
 }
 
 export namespace Raise {
-  export type Transport = TerminalTransport<"raise", "raise">;
+  export type Transport = TerminalTransport<TSKindId.Raise, "raise">;
 }
 
 export namespace Return {
-  export type Transport = TerminalTransport<"return", "return">;
+  export type Transport = TerminalTransport<TSKindId.Return, "return">;
 }
 
 export namespace Anonymous {
-  export type Transport = TerminalTransport<"_", "_">;
+  export type Transport = TerminalTransport<TSKindId.Anonymous, "_">;
 }
 
 export namespace True2 {
-  export type Transport = TerminalTransport<"True", "True">;
+  export type Transport = TerminalTransport<number, "True">;
 }
 
 export namespace Try {
-  export type Transport = TerminalTransport<"try", "try">;
+  export type Transport = TerminalTransport<TSKindId.Try, "try">;
 }
 
 export namespace Pipe {
-  export type Transport = TerminalTransport<"|", "|">;
+  export type Transport = TerminalTransport<TSKindId.Pipe, "|">;
 }
 
 export namespace While {
-  export type Transport = TerminalTransport<"while", "while">;
+  export type Transport = TerminalTransport<TSKindId.While, "while">;
 }
 
 export namespace With {
-  export type Transport = TerminalTransport<"with", "with">;
+  export type Transport = TerminalTransport<TSKindId.With, "with">;
 }
 
 export namespace CompoundStatement {
@@ -6404,14 +6404,14 @@ export type AnyTransport =
   | Pipe.Transport
   | While.Transport
   | With.Transport
-  | LiteralTransport<"<", "<">
-  | LiteralTransport<"<=", "<=">
-  | LiteralTransport<"==", "==">
-  | LiteralTransport<"!=", "!=">
-  | LiteralTransport<">=", ">=">
-  | LiteralTransport<">", ">">
-  | LiteralTransport<"<>", "<>">
-  | LiteralTransport<"not in", "not in">
-  | LiteralTransport<"is", "is">
-  | LiteralTransport<"is not", "is not">
+  | LiteralTransport<TSKindId.Lt, "<">
+  | LiteralTransport<TSKindId.LtEq, "<=">
+  | LiteralTransport<TSKindId.EqEq, "==">
+  | LiteralTransport<TSKindId.BangEq, "!=">
+  | LiteralTransport<TSKindId.GtEq, ">=">
+  | LiteralTransport<TSKindId.Gt, ">">
+  | LiteralTransport<TSKindId.LtGt, "<>">
+  | LiteralTransport<number, "not in">
+  | LiteralTransport<TSKindId.Is, "is">
+  | LiteralTransport<number, "is not">
 ;

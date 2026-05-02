@@ -291,7 +291,7 @@ describe('native transport emission', () => {
 			'readonly operator: Operator.Transport;'
 		);
 		expect(transportSection).toContain(
-			'readonly semicolon: LiteralTransport<";", ";">;'
+			'readonly semicolon: LiteralTransport<number, ";">;'
 		);
 		expect(transportSection).toContain(
 			'export type TransportFor<K extends SyntaxKind | keyof KindMap> ='
@@ -301,16 +301,16 @@ describe('native transport emission', () => {
 		);
 		expect(transportSection).toContain('export type AnyTransport =');
 		expect(transportSection).toContain('export interface LiteralTransport');
-		expect(transportSection).toContain('  | LiteralTransport<";", ";">');
+		expect(transportSection).toContain('  | LiteralTransport<number, ";">');
 		expect(transportSection).not.toContain('readonly $fields');
 		expect(transportSection).toContain(
-			'export type Transport = TerminalTransport<"identifier", string>;'
+			'export type Transport = TerminalTransport<number, string>;'
 		);
 		expect(transportSection).toContain(
-			'export type Transport = TerminalTransport<"kw_fn", "fn">;'
+			'export type Transport = TerminalTransport<number, "fn">;'
 		);
 		expect(transportSection).toContain(
-			'export type Transport = TerminalTransport<"operator", "+" | "-">;'
+			'export type Transport = TerminalTransport<number, "+" | "-">;'
 		);
 		expect(transportSection).not.toContain('AnyNodeData');
 		expect(transportSection).not.toContain('render(): string');
@@ -610,10 +610,10 @@ describe('native transport emission', () => {
 		).templatesRs.contents;
 
 		expect(types).toContain(
-			'export type Transport = TerminalTransport<"true", "true">;'
+			'export type Transport = TerminalTransport<number, "true">;'
 		);
 		expect(types).toContain('  | True.Transport');
-		expect(types).not.toContain('TerminalTransport<"True", "True">');
+		expect(types).not.toContain('TerminalTransport<number, "True">');
 		// Numeric switch cases in assertNativeRenderTransport require
 		// generatedIdTables; without them neither "true" nor "True" appears.
 		expect(rust).toContain(
@@ -646,12 +646,12 @@ describe('native transport emission', () => {
 
 		expect(types.match(/export namespace Path/g)).toHaveLength(1);
 		expect(types).toContain(
-			'readonly separator: TerminalTransport<"::", "::">;'
+			'readonly separator: TerminalTransport<number, "::">;'
 		);
 		expect(types).toContain('readonly path: Path.Transport;');
 		expect(types).toContain('export namespace Path');
 		expect(types).toContain('export type Transport = Identifier.Transport;');
-		expect(types).toContain('  | LiteralTransport<"::", "::">');
+		expect(types).toContain('  | LiteralTransport<number, "::">');
 		// Numeric switch cases in assertNativeRenderTransport require
 		// generatedIdTables; without them the "::" literal case is not emitted.
 		// The assertLiteralTransport helper function is still defined for use

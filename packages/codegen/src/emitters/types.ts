@@ -699,8 +699,9 @@ function emitTransportDeclarations(
 		lines.push(`  | ${node.typeName}.Transport`);
 	}
 	for (const literal of projection.literals) {
+		const disc = resolveTransportDiscriminant(literal.kind, kindEntries);
 		lines.push(
-			`  | LiteralTransport<${JSON.stringify(literal.kind)}, ${JSON.stringify(literal.text)}>`
+			`  | LiteralTransport<${disc}, ${JSON.stringify(literal.text)}>`
 		);
 	}
 	lines.push(';');
@@ -798,7 +799,8 @@ function emitTransportInterfaceNamespace(
 			const typeExpr = transportFieldTypeExpr(
 				field,
 				nodeMap,
-				transportNodeKinds
+				transportNodeKinds,
+				kindEntries
 			);
 			if (isMultiple(field)) {
 				lines.push(
@@ -813,7 +815,7 @@ function emitTransportInterfaceNamespace(
 	if (children.length > 0) {
 		const childTypes = children
 			.map((child) =>
-				transportChildTypeExpr(child, nodeMap, transportNodeKinds)
+				transportChildTypeExpr(child, nodeMap, transportNodeKinds, kindEntries)
 			)
 			.filter((expr) => expr.length > 0);
 		if (childTypes.length > 0) {
@@ -831,6 +833,49 @@ function emitTransportInterfaceNamespace(
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');
+}
+
+/**
+ * Resolve a literal value (e.g. `"async"`, `";"`, `"+"`) to its
+ * `TSKindId.X` expression. Falls back to `number` when no catalog entry
+ * is found, matching the `TerminalTransport<ID extends number>` constraint.
+ */
+function resolveTransportDiscriminant(
+	value: string,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries) return 'number';
+	const entry = findKindEntry(kindEntries, value);
+	if (entry) return `TSKindId.${entry.member}`;
+	return 'number';
+}
+
+/**
+ * Resolve the discriminant for a terminal node's transport type.
+ *
+ * For keyword nodes, resolves the keyword text to its TSKindId.
+ * For token nodes with known text, resolves that text.
+ * For enum nodes, this path is not normally reached (handled above).
+ * Falls back to `number` for unresolvable cases.
+ */
+function terminalTransportDiscriminant(
+	kind: string,
+	node: TerminalNode,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	// Try resolving the kind name itself first
+	if (kindEntries) {
+		const kindEntry = findKindEntry(kindEntries, kind);
+		if (kindEntry) return `TSKindId.${kindEntry.member}`;
+	}
+	// For keywords/tokens, resolve the text value to its anonymous token TSKindId
+	if (node.modelType === 'keyword') {
+		return resolveTransportDiscriminant(node.text, kindEntries);
+	}
+	if (node.modelType === 'token' && node.text !== undefined) {
+		return resolveTransportDiscriminant(node.text, kindEntries);
+	}
+	return 'number';
 }
 
 /**
@@ -898,9 +943,10 @@ function emitTerminalTransportNamespace(
 	}
 
 	// Default: TerminalTransport with text union
+	const transportDiscriminant = terminalTransportDiscriminant(kind, node, kindEntries);
 	lines.push(`export namespace ${node.typeName} {`);
 	lines.push(
-		`  export type Transport = TerminalTransport<${JSON.stringify(kind)}, ${terminalTransportTextType(node)}>;`
+		`  export type Transport = TerminalTransport<${transportDiscriminant}, ${terminalTransportTextType(node)}>;`
 	);
 	lines.push('}');
 	lines.push('');
@@ -909,12 +955,13 @@ function emitTerminalTransportNamespace(
 function transportFieldTypeExpr(
 	field: AssembledField,
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const components = fieldTypeComponents(field, nodeMap);
-	if (components.length === 0) return 'TerminalTransport<string>';
+	if (components.length === 0) return 'TerminalTransport';
 	const parts = components.map((component) =>
-		transportComponentTypeExpr(component, nodeMap, transportNodeKinds)
+		transportComponentTypeExpr(component, nodeMap, transportNodeKinds, kindEntries)
 	);
 	return [...new Set(parts)].join(' | ');
 }
@@ -922,13 +969,15 @@ function transportFieldTypeExpr(
 function transportChildTypeExpr(
 	child: AssembledChild,
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const parts: string[] = [];
 	for (const value of child.values) {
 		if (isTerminalValue(value)) {
+			const disc = resolveTransportDiscriminant(value.value, kindEntries);
 			parts.push(
-				`LiteralTransport<${JSON.stringify(value.value)}, ${JSON.stringify(value.value)}>`
+				`LiteralTransport<${disc}, ${JSON.stringify(value.value)}>`
 			);
 			continue;
 		}
@@ -936,7 +985,7 @@ function transportChildTypeExpr(
 		const kind = isUnresolvedRef(value.node)
 			? value.node.name
 			: value.node.kind;
-		parts.push(transportTypeForKind(kind, nodeMap, transportNodeKinds));
+		parts.push(transportTypeForKind(kind, nodeMap, transportNodeKinds, kindEntries));
 	}
 	return [...new Set(parts)].join(' | ');
 }
@@ -944,35 +993,40 @@ function transportChildTypeExpr(
 function transportComponentTypeExpr(
 	component: ReturnType<typeof fieldTypeComponents>[number],
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	if (component.kind === 'literal') {
-		return `LiteralTransport<${JSON.stringify(component.value)}, ${JSON.stringify(component.value)}>`;
+		const disc = resolveTransportDiscriminant(component.value, kindEntries);
+		return `LiteralTransport<${disc}, ${JSON.stringify(component.value)}>`;
 	}
 	if (component.kind === 'missing') {
-		return `TerminalTransport<${JSON.stringify(component.rawKind)}>`;
+		return 'TerminalTransport';
 	}
-	return transportTypeForKind(component.rawKind, nodeMap, transportNodeKinds);
+	return transportTypeForKind(component.rawKind, nodeMap, transportNodeKinds, kindEntries);
 }
 
 function transportTypeForKind(
 	kind: string,
 	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>
+	transportNodeKinds: ReadonlySet<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): string {
 	const resolvedKind = resolveTransportReferenceKind(kind, nodeMap);
 	if (resolvedKind !== kind) {
-		return transportTypeForKind(resolvedKind, nodeMap, transportNodeKinds);
+		return transportTypeForKind(resolvedKind, nodeMap, transportNodeKinds, kindEntries);
 	}
 
 	const literal = resolveHiddenKeywordLiteral(kind, nodeMap);
 	if (literal !== undefined) {
-		return `TerminalTransport<${JSON.stringify(kind)}, ${JSON.stringify(literal)}>`;
+		const disc = resolveTransportDiscriminant(literal, kindEntries);
+		return `TerminalTransport<${disc}, ${JSON.stringify(literal)}>`;
 	}
 	const node = nodeMap.nodes.get(kind);
-	if (!node) return `TerminalTransport<${JSON.stringify(kind)}>`;
+	if (!node) return 'TerminalTransport';
 	if (!transportNodeKinds.has(kind) && isTerminalTransportNode(node)) {
-		return `TerminalTransport<${JSON.stringify(kind)}, ${terminalTransportTextType(node)}>`;
+		const disc = terminalTransportDiscriminant(kind, node, kindEntries);
+		return `TerminalTransport<${disc}, ${terminalTransportTextType(node)}>`;
 	}
 	return `${node.typeName}.Transport`;
 }
