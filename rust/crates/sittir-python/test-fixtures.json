@@ -18,7 +18,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -79,7 +79,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -101,7 +101,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -151,7 +151,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -186,7 +186,7 @@
           }
         ],
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -197,7 +197,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -247,7 +247,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -282,7 +282,7 @@
           }
         ],
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -293,7 +293,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -306,7 +306,7 @@
       },
       "$children": [
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -356,7 +356,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -378,7 +378,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -428,7 +428,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -450,7 +450,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -500,7 +500,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -535,7 +535,7 @@
           }
         ],
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -546,7 +546,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -596,7 +596,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -618,7 +618,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -668,7 +668,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -729,7 +729,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -1807,7 +1807,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -1857,7 +1857,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -2192,7 +2192,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -2203,7 +2203,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -2455,7 +2455,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -2505,7 +2505,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -2555,7 +2555,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -2605,7 +2605,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -2616,7 +2616,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -2655,7 +2655,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -2666,7 +2666,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -2716,7 +2716,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -2777,7 +2777,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -2838,7 +2838,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -2899,7 +2899,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 39,
           "$source": "ts",
           "$text": "**",
           "$span": {
@@ -2960,7 +2960,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 57,
           "$source": "ts",
           "$text": "/",
           "$span": {
@@ -3021,7 +3021,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 59,
           "$source": "ts",
           "$text": "//",
           "$span": {
@@ -3071,7 +3071,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -3121,7 +3121,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -3171,7 +3171,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 63,
           "$source": "ts",
           "$text": "~",
           "$span": {
@@ -3232,7 +3232,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -3293,7 +3293,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -3354,7 +3354,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -3415,7 +3415,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -3476,7 +3476,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -3537,7 +3537,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -3598,7 +3598,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 39,
           "$source": "ts",
           "$text": "**",
           "$span": {
@@ -3659,7 +3659,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 39,
           "$source": "ts",
           "$text": "**",
           "$span": {
@@ -3720,7 +3720,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 39,
           "$source": "ts",
           "$text": "**",
           "$span": {
@@ -3770,7 +3770,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -3831,7 +3831,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -3892,7 +3892,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -4003,7 +4003,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -4025,7 +4025,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -4075,7 +4075,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -4136,7 +4136,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -4197,7 +4197,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 49,
           "$source": "ts",
           "$text": "|",
           "$span": {
@@ -4258,7 +4258,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 62,
           "$source": "ts",
           "$text": "<<",
           "$span": {
@@ -4319,7 +4319,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 60,
           "$source": "ts",
           "$text": "&",
           "$span": {
@@ -4380,7 +4380,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 13,
           "$source": "ts",
           "$text": ">>",
           "$span": {
@@ -4441,7 +4441,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 61,
           "$source": "ts",
           "$text": "^",
           "$span": {
@@ -5007,7 +5007,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -5070,7 +5070,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -5092,7 +5092,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -5142,7 +5142,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -5270,7 +5270,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -5281,7 +5281,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -5331,7 +5331,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5392,7 +5392,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5453,7 +5453,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5514,7 +5514,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5575,7 +5575,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5636,7 +5636,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5697,7 +5697,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5758,7 +5758,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5819,7 +5819,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5880,7 +5880,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -5930,7 +5930,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -5941,7 +5941,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -5993,7 +5993,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6004,7 +6004,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6056,7 +6056,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6067,7 +6067,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6119,7 +6119,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6130,7 +6130,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6182,7 +6182,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6193,7 +6193,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6245,7 +6245,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6256,7 +6256,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6308,7 +6308,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6319,7 +6319,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6371,7 +6371,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6382,7 +6382,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6784,7 +6784,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6795,7 +6795,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6847,7 +6847,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -6869,7 +6869,7 @@
           "$named": true
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -6993,7 +6993,7 @@
           "$named": true
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -7054,7 +7054,7 @@
           "$named": false
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -7126,7 +7126,7 @@
           "$named": true
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -7198,7 +7198,7 @@
           "$named": true
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -7309,7 +7309,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 58,
           "$source": "ts",
           "$text": "%",
           "$span": {
@@ -7420,7 +7420,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -7472,7 +7472,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -7483,7 +7483,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -7494,7 +7494,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -7557,7 +7557,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -7568,7 +7568,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -7579,7 +7579,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -7614,7 +7614,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -7664,7 +7664,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -7714,7 +7714,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -7764,7 +7764,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -7775,7 +7775,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -7786,7 +7786,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -7849,7 +7849,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -7860,7 +7860,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -7871,7 +7871,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -8305,7 +8305,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "b",
           "$span": {
@@ -8344,7 +8344,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -8366,7 +8366,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -8468,7 +8468,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -8479,7 +8479,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -8531,7 +8531,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -8542,7 +8542,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -8553,7 +8553,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -8900,7 +8900,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -8950,7 +8950,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -9000,7 +9000,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -9050,7 +9050,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -9100,7 +9100,7 @@
       "$source": "ts",
       "$fields": {
         "operator": {
-          "$type": 0,
+          "$type": 53,
           "$source": "ts",
           "$text": "-",
           "$span": {
@@ -10433,7 +10433,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -12387,7 +12387,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -12448,7 +12448,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -12509,7 +12509,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -13078,7 +13078,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -13860,7 +13860,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -13871,7 +13871,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -13882,7 +13882,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -13917,7 +13917,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -13967,7 +13967,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -13978,7 +13978,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -13989,7 +13989,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14052,7 +14052,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14063,7 +14063,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14115,7 +14115,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14126,7 +14126,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14178,7 +14178,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14189,7 +14189,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14228,7 +14228,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14239,7 +14239,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14291,7 +14291,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14302,7 +14302,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14354,7 +14354,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14365,7 +14365,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14417,7 +14417,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14428,7 +14428,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14480,7 +14480,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -14530,7 +14530,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -14580,7 +14580,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -14591,7 +14591,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -14641,7 +14641,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -14702,7 +14702,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -14763,7 +14763,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14785,7 +14785,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14874,7 +14874,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14896,7 +14896,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -14948,7 +14948,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -14970,7 +14970,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -15033,7 +15033,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -15055,7 +15055,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -15129,7 +15129,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -15151,7 +15151,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -15225,7 +15225,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -15275,7 +15275,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -15286,7 +15286,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15297,7 +15297,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -15360,7 +15360,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -15371,7 +15371,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15382,7 +15382,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -15417,7 +15417,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15467,7 +15467,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -15478,7 +15478,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15489,7 +15489,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -15524,7 +15524,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15585,7 +15585,7 @@
           "$named": false
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -15646,7 +15646,7 @@
           "$named": false
         },
         ":": {
-          "$type": 0,
+          "$type": 23,
           "$source": "ts",
           "$text": ":",
           "$span": {
@@ -15746,7 +15746,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -15757,7 +15757,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -15768,7 +15768,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -15831,7 +15831,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -15842,7 +15842,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -15881,7 +15881,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -15892,7 +15892,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -15944,7 +15944,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -15955,7 +15955,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -15994,7 +15994,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16005,7 +16005,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16057,7 +16057,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16068,7 +16068,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16120,7 +16120,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16131,7 +16131,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16183,7 +16183,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16194,7 +16194,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16257,7 +16257,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -16318,7 +16318,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -16379,7 +16379,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -16401,7 +16401,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -16490,7 +16490,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16512,7 +16512,7 @@
           "$named": true
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16564,7 +16564,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16586,7 +16586,7 @@
           "$named": true
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16649,7 +16649,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16660,7 +16660,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -16671,7 +16671,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16706,7 +16706,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -16728,7 +16728,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -16767,7 +16767,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16778,7 +16778,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16830,7 +16830,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -16880,7 +16880,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16891,7 +16891,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -16930,7 +16930,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -16952,7 +16952,7 @@
           "$named": true
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -17004,7 +17004,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -17026,7 +17026,7 @@
           "$named": true
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -17100,7 +17100,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -17122,7 +17122,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -17172,7 +17172,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -17194,7 +17194,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -17233,7 +17233,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17244,7 +17244,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17283,7 +17283,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17294,7 +17294,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -17305,7 +17305,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17368,7 +17368,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17379,7 +17379,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -17390,7 +17390,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17425,7 +17425,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -17447,7 +17447,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -17486,7 +17486,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17497,7 +17497,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -17508,7 +17508,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17571,7 +17571,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17593,7 +17593,7 @@
           "$named": true
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17645,7 +17645,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17667,7 +17667,7 @@
           "$named": true
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17719,7 +17719,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17741,7 +17741,7 @@
           "$named": true
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17804,7 +17804,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -17826,7 +17826,7 @@
           "$named": true
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -17889,7 +17889,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -17911,7 +17911,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -17961,7 +17961,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -17983,7 +17983,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -18122,7 +18122,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -18133,7 +18133,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -18144,7 +18144,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -18518,7 +18518,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -18579,7 +18579,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -18640,7 +18640,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -18701,7 +18701,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -18751,7 +18751,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -18762,7 +18762,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -18814,7 +18814,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -18825,7 +18825,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -18877,7 +18877,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -18888,7 +18888,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -18899,7 +18899,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -18962,7 +18962,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -18973,7 +18973,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -18984,7 +18984,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -19463,7 +19463,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -19524,7 +19524,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -19574,7 +19574,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -19585,7 +19585,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -19596,7 +19596,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -19831,7 +19831,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -19881,7 +19881,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -19892,7 +19892,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -19944,7 +19944,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -19955,7 +19955,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -19966,7 +19966,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20029,7 +20029,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20040,7 +20040,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20051,7 +20051,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20482,7 +20482,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -20543,7 +20543,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -20593,7 +20593,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20604,7 +20604,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20656,7 +20656,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20667,7 +20667,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20678,7 +20678,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20741,7 +20741,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20752,7 +20752,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20763,7 +20763,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20826,7 +20826,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20837,7 +20837,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20848,7 +20848,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20883,7 +20883,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20933,7 +20933,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -20944,7 +20944,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -20955,7 +20955,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -20990,7 +20990,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -21700,7 +21700,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -21761,7 +21761,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -21811,7 +21811,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -21822,7 +21822,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -21833,7 +21833,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -22301,7 +22301,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -22353,7 +22353,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -22364,7 +22364,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -22375,7 +22375,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -22410,7 +22410,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -22460,7 +22460,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -22471,7 +22471,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -22523,7 +22523,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -22534,7 +22534,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -22747,7 +22747,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -22758,7 +22758,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -22810,7 +22810,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -22821,7 +22821,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -23156,7 +23156,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -23167,7 +23167,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -23178,7 +23178,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -23213,7 +23213,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -23324,7 +23324,7 @@
           "$named": true
         },
         ":=": {
-          "$type": 0,
+          "$type": 15,
           "$source": "ts",
           "$text": ":=",
           "$span": {
@@ -23435,7 +23435,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -23496,7 +23496,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -23868,7 +23868,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -23929,7 +23929,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -23990,7 +23990,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -24040,7 +24040,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -24051,7 +24051,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -24062,7 +24062,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -24432,7 +24432,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -24482,7 +24482,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -24493,7 +24493,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -24504,7 +24504,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -24678,7 +24678,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -24728,7 +24728,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -24739,7 +24739,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -24750,7 +24750,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -25673,7 +25673,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -25734,7 +25734,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -25795,7 +25795,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -25856,7 +25856,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -26716,7 +26716,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -26777,7 +26777,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -26838,7 +26838,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -26899,7 +26899,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -27715,7 +27715,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -27776,7 +27776,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -27798,7 +27798,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -27848,7 +27848,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -27870,7 +27870,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -27920,7 +27920,7 @@
           "$named": true
         },
         "operator": {
-          "$type": 0,
+          "$type": 52,
           "$source": "ts",
           "$text": "+",
           "$span": {
@@ -28020,7 +28020,7 @@
       "$source": "ts",
       "$fields": {
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -28031,7 +28031,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -28042,7 +28042,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -28077,7 +28077,7 @@
           "$named": true
         },
         {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -28149,7 +28149,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "e",
           "$span": {
@@ -28210,7 +28210,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "e",
           "$span": {
@@ -28249,67 +28249,6 @@
       "$source": "ts",
       "$fields": {
         "expression": {
-          "$type": 1,
-          "$source": "ts",
-          "$text": "a",
-          "$span": {
-            "start": 5,
-            "end": 6
-          },
-          "$nodeId": 2859920,
-          "$named": true
-        },
-        "as": {
-          "$type": 10,
-          "$source": "ts",
-          "$text": "as",
-          "$span": {
-            "start": 7,
-            "end": 9
-          },
-          "$nodeId": 2860280,
-          "$named": false
-        },
-        "alias": {
-          "$type": 0,
-          "$source": "ts",
-          "$text": "b",
-          "$span": {
-            "start": 10,
-            "end": 11
-          },
-          "$nodeId": 2860288,
-          "$named": true
-        }
-      },
-      "$span": {
-        "start": 5,
-        "end": 11
-      },
-      "$nodeId": 2860376,
-      "$named": true
-    },
-    "expectedOutput": "a as b"
-  },
-  {
-    "kind": "roundtrip",
-    "grammar": "python",
-    "sourceIn": "a as b",
-    "pattern": "as_pattern",
-    "edits": [],
-    "expectedSourceOut": "a as b",
-    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
-    "wrappedText": "_ = a as b",
-    "wrappedOffset": 4
-  },
-  {
-    "kind": "render",
-    "grammar": "python",
-    "input": {
-      "$type": 185,
-      "$source": "ts",
-      "$fields": {
-        "expression": {
           "$type": 206,
           "$source": "ts",
           "$text": "open('d')",
@@ -28332,7 +28271,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "d",
           "$span": {
@@ -28393,7 +28332,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "e",
           "$span": {
@@ -28434,6 +28373,67 @@
         "expression": {
           "$type": 1,
           "$source": "ts",
+          "$text": "a",
+          "$span": {
+            "start": 5,
+            "end": 6
+          },
+          "$nodeId": 2859920,
+          "$named": true
+        },
+        "as": {
+          "$type": 10,
+          "$source": "ts",
+          "$text": "as",
+          "$span": {
+            "start": 7,
+            "end": 9
+          },
+          "$nodeId": 2860280,
+          "$named": false
+        },
+        "alias": {
+          "$type": 284,
+          "$source": "ts",
+          "$text": "b",
+          "$span": {
+            "start": 10,
+            "end": 11
+          },
+          "$nodeId": 2860288,
+          "$named": true
+        }
+      },
+      "$span": {
+        "start": 5,
+        "end": 11
+      },
+      "$nodeId": 2860376,
+      "$named": true
+    },
+    "expectedOutput": "a as b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a as b",
+    "pattern": "as_pattern",
+    "edits": [],
+    "expectedSourceOut": "a as b",
+    "expectedReparseTree": "(as_pattern expression: (identifier) alias: (as_pattern_target (identifier)))",
+    "wrappedText": "_ = a as b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 185,
+      "$source": "ts",
+      "$fields": {
+        "expression": {
+          "$type": 1,
+          "$source": "ts",
           "$text": "e",
           "$span": {
             "start": 73,
@@ -28454,7 +28454,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "f",
           "$span": {
@@ -28515,7 +28515,7 @@
           "$named": false
         },
         "alias": {
-          "$type": 0,
+          "$type": 284,
           "$source": "ts",
           "$text": "h",
           "$span": {
@@ -29138,7 +29138,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -29188,7 +29188,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -29301,7 +29301,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -29312,7 +29312,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -29323,7 +29323,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -29386,7 +29386,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -29438,7 +29438,7 @@
       "$source": "ts",
       "$fields": {
         "*": {
-          "$type": 0,
+          "$type": 11,
           "$source": "ts",
           "$text": "*",
           "$span": {
@@ -29668,7 +29668,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -29679,7 +29679,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -29731,7 +29731,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -29742,7 +29742,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -29794,7 +29794,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -29805,7 +29805,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
@@ -29918,7 +29918,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -29940,7 +29940,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -29990,7 +29990,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -30025,7 +30025,7 @@
           }
         ],
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -30036,7 +30036,7 @@
           "$named": false
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -30086,7 +30086,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -30147,7 +30147,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -30208,7 +30208,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -30269,7 +30269,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -30330,7 +30330,7 @@
           "$named": true
         },
         ".": {
-          "$type": 0,
+          "$type": 4,
           "$source": "ts",
           "$text": ".",
           "$span": {
@@ -30491,7 +30491,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -30513,7 +30513,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -30563,7 +30563,7 @@
           "$named": true
         },
         "[": {
-          "$type": 0,
+          "$type": 45,
           "$source": "ts",
           "$text": "[",
           "$span": {
@@ -30585,7 +30585,7 @@
           "$named": true
         },
         "]": {
-          "$type": 0,
+          "$type": 46,
           "$source": "ts",
           "$text": "]",
           "$span": {
@@ -31151,7 +31151,7 @@
       "$source": "ts",
       "$fields": {
         "{": {
-          "$type": 0,
+          "$type": 50,
           "$source": "ts",
           "$text": "{",
           "$span": {
@@ -31162,7 +31162,7 @@
           "$named": false
         },
         "}": {
-          "$type": 0,
+          "$type": 51,
           "$source": "ts",
           "$text": "}",
           "$span": {
@@ -32906,7 +32906,7 @@
       "$source": "ts",
       "$fields": {
         "(": {
-          "$type": 0,
+          "$type": 7,
           "$source": "ts",
           "$text": "(",
           "$span": {
@@ -32917,7 +32917,7 @@
           "$named": false
         },
         ",": {
-          "$type": 0,
+          "$type": 9,
           "$source": "ts",
           "$text": ",",
           "$span": {
@@ -32928,7 +32928,7 @@
           "$named": false
         },
         ")": {
-          "$type": 0,
+          "$type": 8,
           "$source": "ts",
           "$text": ")",
           "$span": {
