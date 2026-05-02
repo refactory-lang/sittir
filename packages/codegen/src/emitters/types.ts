@@ -1121,15 +1121,21 @@ function emitKindIdEnumAndLookups(
 
 	lines.push('export function kindIdFromName(kindName: string): TSKindId {');
 	lines.push('  switch (kindName) {');
-	// Strict canonical-key-only resolution: each case matches the catalog key
-	// (e.g. `"as_pattern"`, `"PLUS"`), never a symbolName. SymbolName cases
-	// (e.g. `"+"` for `PLUS`) are intentionally omitted — they produced
-	// shadowing bugs (python `_as_pattern` symbolName `"as_pattern"` shadowed
-	// the real `as_pattern` entry) and the napi dispatch path uses numeric
-	// $type ids, not name strings. If a separate symbolName→id helper is needed
-	// in the future, emit it as `kindIdFromSymbolName` — don't mix into this function.
+	// Catalog-key cases (e.g. `"as_pattern"`, `"plus"`).
 	for (const entry of entries) {
 		lines.push(`    case ${JSON.stringify(entry.kind)}: return TSKindId.${entry.member};`);
+	}
+	// Symbol-value cases: resolve display names (e.g. `"+"` → Plus,
+	// `"is not"` → IsNot) so callers can pass the literal text.
+	// Only emitted when symbolName doesn't collide with an existing
+	// catalog key — prevents the python `_as_pattern` symbolName
+	// `"as_pattern"` shadowing the real `as_pattern` entry.
+	const seenCases = new Set(entries.map((e) => e.kind));
+	for (const entry of entries) {
+		if (!entry.symbolName) continue;
+		if (seenCases.has(entry.symbolName)) continue;
+		seenCases.add(entry.symbolName);
+		lines.push(`    case ${JSON.stringify(entry.symbolName)}: return TSKindId.${entry.member};`);
 	}
 	lines.push(
 		"    default: throw new TypeError(`unknown kind name ${kindName}`);"

@@ -696,13 +696,9 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
   return alternatives.some((candidate) => {
     // Compare numeric vs numeric (kindIdFromName converts candidate string kind);
     // compare string vs string for literal terminals.
-    let typeMatch: boolean;
-    if (typeof vt === "number") {
-      try { typeMatch = vt === kindIdFromName(candidate.type); }
-      catch { typeMatch = false; }
-    } else {
-      typeMatch = vt === candidate.type;
-    }
+    const typeMatch = typeof vt === "number"
+      ? vt === kindIdFromName(candidate.type)
+      : vt === candidate.type;
     if (!typeMatch) return false;
     return candidate.text === undefined || value.$text === candidate.text;
   });
