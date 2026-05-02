@@ -359,9 +359,9 @@ describe('native transport emission', () => {
 			'readonly $children?: readonly [Identifier.Transport];'
 		);
 		// Phase 1/2 typed transport: single-kind children use concrete type
-		// instead of Box<AnyTransport>.
+		// instead of Box<AnyTransport>. Single-child slots use Option<T> not Option<Vec<T>>.
 		expect(rust).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<Vec<IdentifierTransport>>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<IdentifierTransport>,'
 		);
 	});
 
@@ -543,11 +543,15 @@ describe('native transport emission', () => {
 		const structBody = emitted.templatesRs.contents.slice(start, end);
 
 		// Phase 1/2 typed transport: single-kind children use concrete type.
+		// Required single-child slots use bare T — not Vec<T> or Option<T>.
 		expect(structBody).toContain(
-			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<IdentifierTransport>,'
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: IdentifierTransport,'
 		);
 		expect(structBody).not.toContain(
 			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Option<'
+		);
+		expect(structBody).not.toContain(
+			'#[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]\n    pub children: Vec<'
 		);
 	});
 

@@ -1,0 +1,114 @@
+{
+  "commit": "a04f3f0",
+  "timestamp": "2026-05-02T02:35:42.285Z",
+  "results": [
+    {
+      "grammar": "rust",
+      "backend": "js",
+      "iterations": 100,
+      "totalRenders": 12400,
+      "totalMs": 670.264545,
+      "rendersPerSec": 18500,
+      "meanMs": 0.054053592338709676,
+      "minMs": 0.039208,
+      "maxMs": 1.829125,
+      "nodeCount": 124,
+      "memory": {
+        "heapUsedDelta": 3225376,
+        "heapTotalDelta": 786432,
+        "rssDelta": 2588672,
+        "heapPerRender": 260.1109677419355
+      }
+    },
+    {
+      "grammar": "rust",
+      "backend": "native",
+      "iterations": 100,
+      "totalRenders": 12400,
+      "totalMs": 127.655734,
+      "rendersPerSec": 97136,
+      "meanMs": 0.010294817258064515,
+      "minMs": 0.006416,
+      "maxMs": 0.250959,
+      "nodeCount": 124,
+      "memory": {
+        "heapUsedDelta": 7216032,
+        "heapTotalDelta": 524288,
+        "rssDelta": 966656,
+        "heapPerRender": 581.9380645161291
+      }
+    },
+    {
+      "grammar": "typescript",
+      "backend": "js",
+      "iterations": 100,
+      "totalRenders": 10800,
+      "totalMs": 528.719202,
+      "rendersPerSec": 20427,
+      "meanMs": 0.04895548166666667,
+      "minMs": 0.03925,
+      "maxMs": 0.692917,
+      "nodeCount": 108,
+      "memory": {
+        "heapUsedDelta": 6946968,
+        "heapTotalDelta": 0,
+        "rssDelta": 212992,
+        "heapPerRender": 643.2377777777778
+      }
+    },
+    {
+      "grammar": "typescript",
+      "backend": "native",
+      "iterations": 100,
+      "totalRenders": 10800,
+      "totalMs": 114.218009,
+      "rendersPerSec": 94556,
+      "meanMs": 0.010575741574074074,
+      "minMs": 0.006875,
+      "maxMs": 0.241625,
+      "nodeCount": 108,
+      "memory": {
+        "heapUsedDelta": 3531176,
+        "heapTotalDelta": 786432,
+        "rssDelta": 425984,
+        "heapPerRender": 326.96074074074073
+      }
+    },
+    {
+      "grammar": "python",
+      "backend": "js",
+      "iterations": 100,
+      "totalRenders": 11400,
+      "totalMs": 488.886552,
+      "rendersPerSec": 23318,
+      "meanMs": 0.04288478526315789,
+      "minMs": 0.025792,
+      "maxMs": 6.2195,
+      "nodeCount": 114,
+      "memory": {
+        "heapUsedDelta": 1158472,
+        "heapTotalDelta": 0,
+        "rssDelta": -28590080,
+        "heapPerRender": 101.62035087719298
+      }
+    },
+    {
+      "grammar": "python",
+      "backend": "native",
+      "iterations": 100,
+      "totalRenders": 11400,
+      "totalMs": 107.784368,
+      "rendersPerSec": 105767,
+      "meanMs": 0.009454769122807018,
+      "minMs": 0.00575,
+      "maxMs": 0.81825,
+      "nodeCount": 114,
+      "memory": {
+        "heapUsedDelta": 6777240,
+        "heapTotalDelta": 17219584,
+        "rssDelta": 17006592,
+        "heapPerRender": 594.4947368421052
+      }
+    }
+  ]
+}

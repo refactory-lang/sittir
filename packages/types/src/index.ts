@@ -126,11 +126,13 @@ type BitflagEnum<T> = T extends { readonly __bitflag__?: infer E } ? E : never;
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
- * `K` pins the `$type` discriminant; `V` narrows `$text` to a specific
+ * `ID` pins the `$type` discriminant — numeric TSKindId for parser.c-
+ * derived kinds, string literal for evaluate-synthesized enum kinds
+ * that have no parser symbol. `V` narrows `$text` to a specific
  * literal or literal union (defaulting to `string` for open-valued leaves).
  */
-export interface Terminal<K extends string, V extends string = string> {
-	readonly $type: K;
+export interface Terminal<ID extends number | string = number, V extends string = string> {
+	readonly $type: ID;
 	readonly $text: V;
 }
 

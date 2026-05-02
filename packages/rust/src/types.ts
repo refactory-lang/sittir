@@ -3766,41 +3766,41 @@ export type CompoundAssignmentExprOperator = Terminal<"_compound_assignment_expr
 export type _Crate = Terminal<"_crate", "crate">;
 export type GenericTypeWithTurbofishTurbofish = Terminal<"_generic_type_with_turbofish_turbofish", "::">;
 export type ImplItemNegative = Terminal<"_impl_item_negative", "!">;
-export type LineCommentContent = Terminal<"_line_comment_content", string>;
-export type LineCommentRegularDslash = Terminal<"_line_comment_regular_dslash", string>;
+export type LineCommentContent = Terminal<TSKindId.LineCommentContent, string>;
+export type LineCommentRegularDslash = Terminal<TSKindId.LineCommentRegularDslash, string>;
 export type MoveMarker = Terminal<"_move_marker", "move">;
 export type _MutableSpecifier = Terminal<"_mutable_specifier", "mut">;
 export type Operator = Terminal<"_operator", "..">;
 export type PrimitiveType = Terminal<"_primitive_type", "u8" | "i8" | "u16" | "i16" | "u32" | "i32" | "u64" | "i64" | "u128" | "i128" | "isize" | "usize" | "f32" | "f64" | "bool" | "str" | "char">;
 export type RefMarker = Terminal<"_ref_marker", "ref">;
-export type ReferenceExpressionRawConst = Terminal<"_reference_expression_raw_const", string>;
+export type ReferenceExpressionRawConst = Terminal<TSKindId.ReferenceExpressionRawConst, string>;
 export type _Self = Terminal<"_self", "self">;
 export type TokenBindingPatternType = Terminal<"_token_binding_pattern_type", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
 export type UnaryExpressionOperator = Terminal<"_unary_expression_operator", "-" | "*" | "!">;
 export type UnsafeMarker = Terminal<"_unsafe_marker", "unsafe">;
-export type BooleanLiteral = Terminal<"boolean_literal", "true" | "false">;
-export type CharLiteral = Terminal<"char_literal", string>;
-export type Crate = Terminal<"crate", "crate">;
-export type EscapeSequence = Terminal<"escape_sequence", string>;
-export type FragmentSpecifier = Terminal<"fragment_specifier", "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
-export type Identifier = Terminal<"identifier", string>;
-export type IntegerLiteral = Terminal<"integer_literal", string>;
-export type Metavariable = Terminal<"metavariable", string>;
-export type MutableSpecifier = Terminal<"mutable_specifier", "mut">;
-export type Self = Terminal<"self", "self">;
-export type Shebang = Terminal<"shebang", string>;
-export type Super = Terminal<"super", "super">;
-export type UnitExpression = Terminal<"unit_expression", string>;
-export type UnitType = Terminal<"unit_type", string>;
-export type StringContent = Terminal<"string_content", string>;
-export type RawStringLiteralContent = Terminal<"raw_string_literal_content", string>;
-export type FloatLiteral = Terminal<"float_literal", string>;
-export type OuterBlockDocCommentMarker = Terminal<"_outer_block_doc_comment_marker", string>;
-export type InnerBlockDocCommentMarker = Terminal<"_inner_block_doc_comment_marker", string>;
-export type LineDocContent = Terminal<"_line_doc_content", string>;
-export type ErrorSentinel = Terminal<"_error_sentinel", string>;
+export type BooleanLiteral = Terminal<TSKindId.BooleanLiteral, "true" | "false">;
+export type CharLiteral = Terminal<TSKindId.CharLiteral, string>;
+export type Crate = Terminal<TSKindId.Crate, "crate">;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type FragmentSpecifier = Terminal<TSKindId.FragmentSpecifier, "block" | "expr" | "expr_2021" | "ident" | "item" | "lifetime" | "literal" | "meta" | "pat" | "pat_param" | "path" | "stmt" | "tt" | "ty" | "vis">;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type IntegerLiteral = Terminal<TSKindId.IntegerLiteral, string>;
+export type Metavariable = Terminal<TSKindId.Metavariable, string>;
+export type MutableSpecifier = Terminal<TSKindId.MutableSpecifier, "mut">;
+export type Self = Terminal<TSKindId.Self, "self">;
+export type Shebang = Terminal<TSKindId.Shebang, string>;
+export type Super = Terminal<TSKindId.Super, "super">;
+export type UnitExpression = Terminal<TSKindId.UnitExpression, string>;
+export type UnitType = Terminal<TSKindId.UnitType, string>;
+export type StringContent = Terminal<TSKindId.StringContent, string>;
+export type RawStringLiteralContent = Terminal<TSKindId.RawStringLiteralContent, string>;
+export type FloatLiteral = Terminal<TSKindId.FloatLiteral, string>;
+export type OuterBlockDocCommentMarker = Terminal<TSKindId.OuterBlockDocCommentMarker, string>;
+export type InnerBlockDocCommentMarker = Terminal<TSKindId.InnerBlockDocCommentMarker, string>;
+export type LineDocContent = Terminal<TSKindId.LineDocContent, string>;
+export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
 
-export type BlockCommentContent = Terminal<"_block_comment_content", string>;
+export type BlockCommentContent = Terminal<TSKindId._BlockCommentContent, string>;
 
 // Tree types
 export interface ArrayExpressionListTree extends AnyTreeNode { readonly type: "_array_expression_list"; }
@@ -4533,11 +4533,11 @@ export type UseClause =
 export type UseClauseTree = SelfTree | IdentifierTree | MetavariableTree | SuperTree | CrateTree | ScopedIdentifierTree | UseAsClauseTree | UseListTree | ScopedUseListTree | UseWildcardTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<"empty_statement">;
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode { readonly type: "empty_statement"; }
-export type NeverType = Terminal<"never_type">;
+export type NeverType = Terminal<TSKindId.NeverType>;
 export interface NeverTypeTree extends AnyTreeNode { readonly type: "never_type"; }
-export type RemainingFieldPattern = Terminal<"remaining_field_pattern">;
+export type RemainingFieldPattern = Terminal<TSKindId.RemainingFieldPattern>;
 export interface RemainingFieldPatternTree extends AnyTreeNode { readonly type: "remaining_field_pattern"; }
 
 export type RustNode =
@@ -6946,8 +6946,8 @@ export namespace YieldExpression {
 }
 
 // Native render transport types — data-only JS → native boundary
-export interface TerminalTransport<K extends string, V extends string = string> {
-  readonly $type: K;
+export interface TerminalTransport<ID extends number = number, V extends string = string> {
+  readonly $type: ID;
   readonly $source?: 'ts' | 'sg' | 'factory';
   readonly $named?: boolean;
   readonly $text: V;
@@ -6955,7 +6955,7 @@ export interface TerminalTransport<K extends string, V extends string = string> 
   readonly $nodeId?: number;
 }
 
-export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
+export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
 
 export namespace RangeExpressionBinaryOperator {
   export const enum Values {

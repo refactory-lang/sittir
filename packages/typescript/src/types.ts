@@ -3865,39 +3865,39 @@ export type ReadonlyMarker = Terminal<"_readonly_marker", "readonly">;
 export type ReservedIdentifier = Terminal<"_reserved_identifier", string>;
 export type StaticMarker = Terminal<"_static_marker", "static">;
 export type UnaryExpressionOperator = Terminal<"_unary_expression_operator", "!" | "~" | "-" | "+" | "typeof" | "void" | "delete">;
-export type AccessibilityModifier = Terminal<"accessibility_modifier", "public" | "private" | "protected">;
-export type Comment = Terminal<"comment", string>;
-export type EscapeSequence = Terminal<"escape_sequence", string>;
-export type False = Terminal<"false", "false">;
-export type HashBangLine = Terminal<"hash_bang_line", string>;
+export type AccessibilityModifier = Terminal<TSKindId.AccessibilityModifier, "public" | "private" | "protected">;
+export type Comment = Terminal<TSKindId.Comment, string>;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type False = Terminal<TSKindId.False, "false">;
+export type HashBangLine = Terminal<TSKindId.HashBangLine, string>;
 export type HtmlCharacterReference = Terminal<"html_character_reference", string>;
-export type Identifier = Terminal<"identifier", string>;
-export type Import = Terminal<"import", "import">;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type Import = Terminal<TSKindId.Import, "import">;
 export type JsxIdentifier = Terminal<"jsx_identifier", string>;
-export type MetaProperty = Terminal<"meta_property", string>;
-export type Null = Terminal<"null", "null">;
-export type Number = Terminal<"number", string>;
-export type OverrideModifier = Terminal<"override_modifier", "override">;
-export type PredefinedType = Terminal<"predefined_type", string>;
-export type PrivatePropertyIdentifier = Terminal<"private_property_identifier", string>;
-export type RegexFlags = Terminal<"regex_flags", string>;
-export type RegexPattern = Terminal<"regex_pattern", string>;
-export type Super = Terminal<"super", "super">;
-export type This = Terminal<"this", "this">;
-export type True = Terminal<"true", "true">;
-export type Undefined = Terminal<"undefined", "undefined">;
+export type MetaProperty = Terminal<TSKindId.MetaProperty, string>;
+export type Null = Terminal<TSKindId.Null, "null">;
+export type Number = Terminal<TSKindId.Number, string>;
+export type OverrideModifier = Terminal<TSKindId.OverrideModifier, "override">;
+export type PredefinedType = Terminal<TSKindId.PredefinedType, string>;
+export type PrivatePropertyIdentifier = Terminal<TSKindId.PrivatePropertyIdentifier, string>;
+export type RegexFlags = Terminal<TSKindId.RegexFlags, string>;
+export type RegexPattern = Terminal<TSKindId.RegexPattern, string>;
+export type Super = Terminal<TSKindId.Super, "super">;
+export type This = Terminal<TSKindId.This, "this">;
+export type True = Terminal<TSKindId.True, "true">;
+export type Undefined = Terminal<TSKindId.Undefined, "undefined">;
 export type UnescapedDoubleJsxStringFragment = Terminal<"unescaped_double_jsx_string_fragment", string>;
-export type UnescapedDoubleStringFragment = Terminal<"unescaped_double_string_fragment", string>;
+export type UnescapedDoubleStringFragment = Terminal<TSKindId.UnescapedDoubleStringFragment, string>;
 export type UnescapedSingleJsxStringFragment = Terminal<"unescaped_single_jsx_string_fragment", string>;
-export type UnescapedSingleStringFragment = Terminal<"unescaped_single_string_fragment", string>;
-export type AutomaticSemicolon = Terminal<"_automatic_semicolon", string>;
-export type TemplateChars = Terminal<"_template_chars", string>;
-export type TernaryQmark = Terminal<"_ternary_qmark", string>;
-export type HtmlComment = Terminal<"html_comment", string>;
+export type UnescapedSingleStringFragment = Terminal<TSKindId.UnescapedSingleStringFragment, string>;
+export type AutomaticSemicolon = Terminal<TSKindId.AutomaticSemicolon, string>;
+export type TemplateChars = Terminal<TSKindId.TemplateChars, string>;
+export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
+export type HtmlComment = Terminal<TSKindId.HtmlComment, string>;
 export type Oror = Terminal<"||", string>;
-export type JsxText = Terminal<"jsx_text", string>;
-export type FunctionSignatureAutomaticSemicolon = Terminal<"_function_signature_automatic_semicolon", string>;
-export type ErrorRecovery = Terminal<"__error_recovery", string>;
+export type JsxText = Terminal<TSKindId.JsxText, string>;
+export type FunctionSignatureAutomaticSemicolon = Terminal<TSKindId.FunctionSignatureAutomaticSemicolon, string>;
+export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
 
 // Tree types
 export interface _ArrowFunctionUCallSignatureTree extends AnyTreeNode { readonly type: "_arrow_function__call_signature"; }
@@ -4542,9 +4542,9 @@ export type Type =
 export type TypeTree = PrimaryTypeTree | FunctionTypeTree | ReadonlyTypeTree | ConstructorTypeTree | InferTypeTree | TypeQueryMemberExpressionInTypeAnnotationTree | TypeQueryCallExpressionInTypeAnnotationTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type EmptyStatement = Terminal<"empty_statement">;
+export type EmptyStatement = Terminal<TSKindId.EmptyStatement>;
 export interface EmptyStatementTree extends AnyTreeNode { readonly type: "empty_statement"; }
-export type ExistentialType = Terminal<"existential_type">;
+export type ExistentialType = Terminal<TSKindId.ExistentialType>;
 export interface ExistentialTypeTree extends AnyTreeNode { readonly type: "existential_type"; }
 
 export type TypescriptNode =
@@ -7215,8 +7215,8 @@ export namespace YieldExpression {
 }
 
 // Native render transport types — data-only JS → native boundary
-export interface TerminalTransport<K extends string, V extends string = string> {
-  readonly $type: K;
+export interface TerminalTransport<ID extends number = number, V extends string = string> {
+  readonly $type: ID;
   readonly $source?: 'ts' | 'sg' | 'factory';
   readonly $named?: boolean;
   readonly $text: V;
@@ -7224,7 +7224,7 @@ export interface TerminalTransport<K extends string, V extends string = string> 
   readonly $nodeId?: number;
 }
 
-export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
+export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
 
 export namespace ForHeaderOperator {
   export const enum Values {

@@ -2142,35 +2142,35 @@ export type AugmentedAssignmentOperator = Terminal<"_augmented_assignment_operat
 export type BinaryOperatorOperator = Terminal<"_binary_operator_operator", "+">;
 export type BooleanOperatorOperator = Terminal<"_boolean_operator_operator", "and">;
 export type _Identifier = Terminal<"_identifier", "*" | "**">;
-export type IsNot = Terminal<"_is_not", string>;
-export type NotIn = Terminal<"_not_in", string>;
+export type IsNot = Terminal<TSKindId.IsNot, string>;
+export type NotIn = Terminal<TSKindId.NotIn, string>;
 export type TypeAliasStatementType = Terminal<"_type_alias_statement_type", "type">;
 export type UnaryOperatorOperator = Terminal<"_unary_operator_operator", "+" | "-" | "~">;
-export type BreakStatement = Terminal<"break_statement", "break">;
-export type Comment = Terminal<"comment", string>;
-export type ContinueStatement = Terminal<"continue_statement", "continue">;
-export type EscapeSequence = Terminal<"escape_sequence", string>;
-export type False = Terminal<"false", "False">;
-export type Float = Terminal<"float", string>;
-export type Identifier = Terminal<"identifier", string>;
-export type ImportPrefix = Terminal<"import_prefix", string>;
-export type Integer = Terminal<"integer", string>;
-export type LineContinuation = Terminal<"line_continuation", string>;
-export type None = Terminal<"none", "None">;
-export type PassStatement = Terminal<"pass_statement", "pass">;
-export type True = Terminal<"true", "True">;
-export type TypeConversion = Terminal<"type_conversion", string>;
-export type Newline = Terminal<"_newline", string>;
-export type Indent = Terminal<"_indent", string>;
-export type Dedent = Terminal<"_dedent", string>;
-export type StringStart = Terminal<"string_start", string>;
-export type _StringContent = Terminal<"_string_content", string>;
-export type EscapeInterpolation = Terminal<"escape_interpolation", string>;
-export type StringEnd = Terminal<"string_end", string>;
+export type BreakStatement = Terminal<TSKindId.BreakStatement, "break">;
+export type Comment = Terminal<TSKindId.Comment, string>;
+export type ContinueStatement = Terminal<TSKindId.ContinueStatement, "continue">;
+export type EscapeSequence = Terminal<TSKindId.EscapeSequence, string>;
+export type False = Terminal<TSKindId.False, "False">;
+export type Float = Terminal<TSKindId.Float, string>;
+export type Identifier = Terminal<TSKindId.Identifier, string>;
+export type ImportPrefix = Terminal<TSKindId.ImportPrefix, string>;
+export type Integer = Terminal<TSKindId.Integer, string>;
+export type LineContinuation = Terminal<TSKindId.LineContinuation, string>;
+export type None = Terminal<TSKindId.None, "None">;
+export type PassStatement = Terminal<TSKindId.PassStatement, "pass">;
+export type True = Terminal<TSKindId.True, "True">;
+export type TypeConversion = Terminal<TSKindId.TypeConversion, string>;
+export type Newline = Terminal<TSKindId.Newline, string>;
+export type Indent = Terminal<TSKindId.Indent, string>;
+export type Dedent = Terminal<TSKindId.Dedent, string>;
+export type StringStart = Terminal<TSKindId.StringStart, string>;
+export type _StringContent = Terminal<TSKindId._StringContent, string>;
+export type EscapeInterpolation = Terminal<TSKindId.EscapeInterpolation, string>;
+export type StringEnd = Terminal<TSKindId.StringEnd, string>;
 export type CloseBracket = Terminal<"]", string>;
 export type CloseParen = Terminal<")", string>;
 export type CloseBrace = Terminal<"}", string>;
-export type Except = Terminal<"except", string>;
+export type Except = Terminal<TSKindId.Except, string>;
 
 export type AsPatternTarget = Terminal<"as_pattern_target", string>;
 
@@ -2559,13 +2559,13 @@ export type PrimaryExpression =
 export type PrimaryExpressionTree = AwaitTree | BinaryOperatorTree | IdentifierTree | KeywordIdentifierTree | StringTree | ConcatenatedStringTree | IntegerTree | FloatTree | TrueTree | FalseTree | NoneTree | UnaryOperatorTree | AttributeTree | SubscriptTree | CallTree | ListTree | ListComprehensionTree | DictionaryTree | DictionaryComprehensionTree | SetTree | SetComprehensionTree | TupleTree | ParenthesizedExpressionTree | GeneratorExpressionTree | ListSplatPatternTree;
 
 // Token type aliases (only tokens referenced in field/child unions)
-export type Ellipsis2 = Terminal<"ellipsis">;
+export type Ellipsis2 = Terminal<TSKindId.Ellipsis2>;
 export interface Ellipsis2Tree extends AnyTreeNode { readonly type: "ellipsis"; }
-export type KeywordSeparator = Terminal<"keyword_separator">;
+export type KeywordSeparator = Terminal<TSKindId.KeywordSeparator>;
 export interface KeywordSeparatorTree extends AnyTreeNode { readonly type: "keyword_separator"; }
-export type PositionalSeparator = Terminal<"positional_separator">;
+export type PositionalSeparator = Terminal<TSKindId.PositionalSeparator>;
 export interface PositionalSeparatorTree extends AnyTreeNode { readonly type: "positional_separator"; }
-export type WildcardImport = Terminal<"wildcard_import">;
+export type WildcardImport = Terminal<TSKindId.WildcardImport>;
 export interface WildcardImportTree extends AnyTreeNode { readonly type: "wildcard_import"; }
 
 export type PythonNode =
@@ -3937,8 +3937,8 @@ export namespace Yield {
 }
 
 // Native render transport types — data-only JS → native boundary
-export interface TerminalTransport<K extends string, V extends string = string> {
-  readonly $type: K;
+export interface TerminalTransport<ID extends number = number, V extends string = string> {
+  readonly $type: ID;
   readonly $source?: 'ts' | 'sg' | 'factory';
   readonly $named?: boolean;
   readonly $text: V;
@@ -3946,7 +3946,7 @@ export interface TerminalTransport<K extends string, V extends string = string> 
   readonly $nodeId?: number;
 }
 
-export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}
+export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
 
 export namespace _AsPattern {
   export interface Transport {

@@ -276,14 +276,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	emitLeafTerminalAliases(lines, leafKinds, nodeMap, generatedTypes);
+	emitLeafTerminalAliases(lines, leafKinds, nodeMap, generatedTypes, kindEntries);
 
 	// Fallback types for kinds referenced in fields but absent from NodeMap
 	for (const [kind, name] of missingKindTypes) {
 		if (generatedTypes.has(name)) continue;
 		generatedTypes.add(name);
+		const fallbackDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
 		lines.push(
-			`export type ${name} = Terminal<${JSON.stringify(kind)}, string>;`
+			`export type ${name} = Terminal<${fallbackDiscriminant}, string>;`
 		);
 	}
 	if (missingKindTypes.size > 0) lines.push('');
@@ -317,7 +318,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	emitSupertypeUnionDeclarations(lines, supertypes, nodeMap, generatedTypes);
 
 	// 5b. Token stubs (only referenced tokens)
-	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, treeEmitted);
+	collectAndEmitTokenTypeAliases(lines, nodeMap, generatedTypes, treeEmitted, kindEntries);
 
 	// Leftover-reference stubs intentionally omitted: if a typeName is
 	// referenced but never defined, that is a bug in the pipeline (Link
@@ -618,9 +619,9 @@ function emitTransportDeclarations(
 		'// Native render transport types — data-only JS → native boundary'
 	);
 	lines.push(
-		'export interface TerminalTransport<K extends string, V extends string = string> {'
+		'export interface TerminalTransport<ID extends number = number, V extends string = string> {'
 	);
-	lines.push('  readonly $type: K;');
+	lines.push('  readonly $type: ID;');
 	lines.push("  readonly $source?: 'ts' | 'sg' | 'factory';");
 	lines.push('  readonly $named?: boolean;');
 	lines.push('  readonly $text: V;');
@@ -631,7 +632,7 @@ function emitTransportDeclarations(
 	lines.push('}');
 	lines.push('');
 	lines.push(
-		'export interface LiteralTransport<K extends string, V extends string = K> extends TerminalTransport<K, V> {}'
+		'export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}'
 	);
 	lines.push('');
 
@@ -1155,7 +1156,8 @@ function emitLeafTerminalAliases(
 	lines: string[],
 	leafKinds: string[],
 	nodeMap: NodeMap,
-	generatedTypes: Set<string>
+	generatedTypes: Set<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const referenced = referencedKinds(nodeMap);
 	lines.push('// Leaf node types');
@@ -1181,8 +1183,9 @@ function emitLeafTerminalAliases(
 		} else {
 			textType = 'string';
 		}
+		const typeDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
 		lines.push(
-			`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}, ${textType}>;`
+			`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${textType}>;`
 		);
 	}
 	lines.push('');
@@ -1381,7 +1384,8 @@ function collectAndEmitTokenTypeAliases(
 	lines: string[],
 	nodeMap: NodeMap,
 	generatedTypes: Set<string>,
-	treeEmitted: Set<string>
+	treeEmitted: Set<string>,
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	// Reuse the shared referenced-kind walk, then filter to tokens. Previously
 	// this emitter had its own inline walker doing the same traversal as
@@ -1405,8 +1409,9 @@ function collectAndEmitTokenTypeAliases(
 		// references resolve directly to the literal string.
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		generatedTypes.add(node.typeName);
+		const tokenDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
 		lines.push(
-			`export type ${node.typeName} = Terminal<${JSON.stringify(kind)}>;`
+			`export type ${node.typeName} = Terminal<${tokenDiscriminant}>;`
 		);
 		if (!treeEmitted.has(node.typeName)) {
 			treeEmitted.add(node.typeName);
