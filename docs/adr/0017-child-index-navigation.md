@@ -1,86 +1,87 @@
-# ADR 0017 — Child-Index Navigation (Replace $nodeId)
+# ADR 0017 — Node Handle Table + Child-Index Navigation (Replace $nodeId)
 
 **Status**: Proposed
 **Date**: 2026-05-02
-**Related**: specs/022-binding-simplify-assemble/nodeId-index-refactor.md
+**Related**: docs/superpowers/specs/2026-05-02-child-index-navigation-design.md
 
 ## Context
 
 Every NodeData child stub carries `$nodeId` — tree-sitter's internal
-node id — for lazy drill-in. But tree-sitter exposes no
-`tree.nodeForId(id)` API. The current drill-in path must walk the tree
-to find the node, making `$nodeId` an O(n) lookup key masquerading as
-an O(1) handle.
-
-Meanwhile, tree-sitter provides two O(1) child access APIs that we
-already have the inputs for:
-
-- `parent.child(index)` — positional access
-- `parent.childForFieldName(name)` — named field access
-
-At drill-in time we always have the parent node (from the enclosing
-readNode/wrap context) and the child's position. The global id is
-never needed as a navigation key.
+node id (a raw pointer cast to `usize`) — for lazy drill-in. But
+tree-sitter exposes no `nodeForId` API. The current drill-in path must
+walk the tree to find the node, making `$nodeId` an O(n) lookup key
+masquerading as an O(1) handle.
 
 ## Forcing Constraint
 
-tree-sitter has no `nodeForId` API. The id is an internal pointer with
-no public lookup path. Every drill-in today is a tree walk.
+tree-sitter has no `nodeForId` API. The `TSNode.id` is a raw pointer
+into internal storage with no public reconstruction path. Meanwhile,
+`parent.child(i)` is O(1) and a stable public API — but drill-in
+across the napi boundary requires the parent `TSNode`, which the
+client side doesn't hold.
 
 ## Alternatives Considered
 
-- **Global node table (Map/Array indexed by id)** — O(1) lookup but
-  requires populating and holding references to every visited node for
-  the handle's lifetime. Extra allocation proportional to tree size.
-  Rejected: unnecessary when parent-relative navigation is O(1).
-
 - **Byte-range navigation (`descendantForIndex(start, end)`)** —
-  O(log n), standard API, uses `$span` already stored on stubs.
-  Rejected: ambiguous when two nodes share the same span (wrapper +
-  child). Requires post-navigation `$type` disambiguation. Slower than
-  `child(i)`.
+  O(log n), standard API, uses `$span` already on stubs. Rejected:
+  ambiguous when two nodes share the same span (wrapper + only child).
+
+- **Raw pointer storage** — store `TSNode.id` (the `*const Subtree`
+  pointer) and reconstruct the full `TSNode` at drill-in. Rejected:
+  requires reaching into tree-sitter's internal `Subtree` struct to
+  recompute the `context[4]` array. Fragile across versions.
 
 - **Keep `$nodeId` + tree walk** — status quo. Rejected: O(n) per
   drill-in, no public API backing it.
 
 ## Decision
 
-Replace `$nodeId` with `$childIndex: number` on child stubs. Drill-in
-navigates via `parentNode.child(childIndex)`. For named fields, the
-field name is already known from the parent's schema, so
-`parentNode.childForFieldName(name)` is available as a secondary path.
+Two-part navigation: a node handle table for parent lookup, and child
+index for the final hop.
 
-The `id` property from tree-sitter remains available at parse time and
-can be stored for identity/dedup purposes (e.g. cycle detection during
-recursive reads), but it is not used for navigation.
+**Node handle table:** The native engine handle gains a `Vec<TSNode>`,
+initialized empty (zero allocation until first use). When `readNode`
+visits a node, it pushes the `TSNode` (Copy, 40 bytes, no destructor)
+into the vec and stores the index as `$nodeHandle: u32` on the
+`NodeData`. This gives the native side O(1) access to the parent
+`TSNode` when drill-in is requested.
 
-readNode populates `$childIndex` from the loop counter during child
-iteration — zero extra cost.
+**Child-index navigation:** Each child stub carries `$childIndex: u16`
+— its position in the parent's child array. Drill-in:
+`self.nodes[parentHandle].child(childIndex)` → child `TSNode` →
+`readNode`. O(1) lookup + O(1) child access.
+
+The vec is append-only, non-owning. `TSNode` contains raw pointers to
+the tree's internal structures but has no destructor — it does not
+extend the tree's lifetime. When the engine is GC'd, the tree and vec
+drop together.
+
+On the JS/WASM side: `SyntaxNode[]` on the `TreeHandle`, same indexing.
+`parent.child(i)` is available via web-tree-sitter's public API.
+
+**Wire shape:**
+- `$nodeId: u64` → `$nodeHandle: u32` (parent's vec index)
+- New: `$childIndex: u16` (position in parent's children)
 
 ## Principles Applied
 
-- One source, one derivation (DRY) — the child's position in the
-  parent is the single source of navigation identity; `$nodeId` was a
-  second, redundant (and broken) source.
-- Prefer what tree-sitter guarantees — `child(i)` is a stable public
-  API; `nodeForId` doesn't exist.
+- Prefer what tree-sitter guarantees — `child(i)` is stable public API.
+- Same lifetime, no extension — vec is non-owning, lives on the same
+  struct that owns the tree.
+- One source — the child's position in the parent is the navigation
+  identity; no second redundant source.
 
 ## Consequences
 
-- **Enables**: O(1) drill-in on both JS and Rust sides. Removes the
-  tree-walk navigation path entirely.
-- **Costs**: drill-in now requires the parent `SyntaxNode`, not just
-  the tree. Callers that only have a `TreeHandle` + `$nodeId` need
-  refactoring to carry parent context. wrap.ts lazy getters already
-  have parent context (they close over the readNode call site).
-- **Follow-ups**: Remove `nodeById` from `TreeHandle` interface.
-  Update `@sittir/types` `NodeId` type (or remove it). Update native
-  `tree.read(nodeId)` path to accept `(parentId, childIndex)` or
-  equivalent.
+- **Enables**: O(1) drill-in end-to-end. Removes tree-walk navigation.
+- **Costs**: ~40 bytes per visited node in a lazily-grown vec. A 500-node
+  subtree costs 20KB.
+- **Follow-ups**: Remove `NodeId` branded type. Remove `nodeById` from
+  `TreeHandle`. Update wrap emitter (`$nodeHandle`/`$childIndex` instead
+  of `$nodeId`).
 
 ## Verification
 
-If drill-in latency increases after this change, or if any call site
-needs global-id-based navigation that can't be refactored to carry
-parent context, this decision was wrong. Signal: a new `nodeForId`
-requirement appearing in the render or edit path.
+If the vec's memory cost becomes significant (thousands of large trees
+held simultaneously), or if a use case requires node identity across
+re-parses (vec is cleared), this decision needs revisiting.
