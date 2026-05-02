@@ -1231,7 +1231,12 @@ function walkFieldEnums(
 ): void {
 	switch (rule.type) {
 		case 'field': {
-			const members = resolveToEnumMembers(rule.content, rules);
+			// Peel one level of repeat/repeat1 wrapper so that
+			// `field(name, repeat(choice('a','b')))` is treated the same as
+			// `field(name, choice('a','b'))` for occurrence collection purposes.
+			// The repeat wrapper is preserved in the rewrite pass below.
+			const enumContent = peelRepeatWrapper(rule.content);
+			const members = resolveToEnumMembers(enumContent, rules);
 			if (members !== null && members.length > 0) {
 				const memberKey = [...members]
 					.map((m) => m.value)
@@ -1449,20 +1454,17 @@ function rewriteFieldEnums(
 				memberKeyToCanonicalName
 			);
 			if (synthesized !== null) {
-				const { enumKindName, enumRule } = synthesized;
+				const { enumKindName, enumRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
 					newRules.set(enumKindName, enumRule);
 				}
-				// Replace the field's inline content with a SymbolRule.
-				const symRule: SymbolRule = {
-					type: 'symbol',
-					name: enumKindName,
-					hidden: true
-				};
+				// Replace the field's inline content with the replacement content rule.
+				// For bare enum: symbol(enumKindName).
+				// For repeat/repeat1(enum): repeat/repeat1(symbol(enumKindName)).
 				return {
 					type: 'field',
 					name: rule.name,
-					content: symRule,
+					content: replacementContent,
 					source: rule.source,
 					nameFrom: rule.nameFrom,
 					blockBearer: rule.blockBearer
@@ -1498,20 +1500,26 @@ function rewriteFieldEnums(
 /**
  * Try to extract an enum definition from a field's content.
  *
- * Returns `{ enumKindName, enumRule }` when the content resolves to a
- * closed set of string literals, or `null` when it does not qualify.
+ * Returns `{ enumKindName, enumRule, replacementContent }` when the content
+ * resolves to a closed set of string literals, or `null` when it does not
+ * qualify.
  *
  * Qualifying shapes:
  *
  * 1. `EnumRule` (inline `choice('+', '-', ...)` already collapsed) — use
- *    its members directly.
+ *    its members directly. `replacementContent` is `symbol(enumKindName)`.
  *
  * 2. `StringRule` (single literal inline in the field position) — wrap in
- *    a 1-member enum.
+ *    a 1-member enum. `replacementContent` is `symbol(enumKindName)`.
  *
  * 3. `SymbolRule` whose referent in `rules` resolves to a `StringRule` or
  *    `EnumRule` — use that rule's literals. Follows exactly one level of
  *    indirection (symbol → literal | enum).
+ *    `replacementContent` is `symbol(enumKindName)`.
+ *
+ * 4. `repeat(X)` or `repeat1(X)` where `X` resolves to one of the above —
+ *    the repeat wrapper is preserved in `replacementContent`:
+ *    `repeat(symbol(enumKindName))` or `repeat1(symbol(enumKindName))`.
  *
  * The canonical kind name is looked up from `memberKeyToCanonicalName` rather
  * than derived from the parent/field context — ensuring all identical member
@@ -1520,14 +1528,26 @@ function rewriteFieldEnums(
  * @param content - The field's current content rule.
  * @param rules - Full rules map for symbol resolution.
  * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
- * @returns Synthesized kind name + enum rule, or `null`.
+ * @returns Synthesized kind name, enum rule, and the replacement content rule,
+ *   or `null` when the content does not qualify.
  */
 function tryExtractFieldEnum(
 	content: Rule,
 	rules: Record<string, Rule>,
 	memberKeyToCanonicalName: Map<string, string>
-): { enumKindName: string; enumRule: EnumRule } | null {
-	const members = resolveToEnumMembers(content, rules);
+): { enumKindName: string; enumRule: EnumRule; replacementContent: Rule } | null {
+	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
+	// is handled alongside `field(name, enum)`. The wrapper type is remembered
+	// so the rewrite can restore it around the synthesized symbol reference.
+	const repeatWrapperType =
+		content.type === 'repeat' || content.type === 'repeat1'
+			? content.type
+			: null;
+	const innerContent = repeatWrapperType !== null
+		? (content as RepeatRule | Repeat1Rule).content
+		: content;
+
+	const members = resolveToEnumMembers(innerContent, rules);
 	if (members === null || members.length === 0) return null;
 
 	const memberKey = [...members]
@@ -1542,7 +1562,31 @@ function tryExtractFieldEnum(
 		members,
 		source: 'grammar'
 	};
-	return { enumKindName, enumRule };
+
+	const symRule: SymbolRule = { type: 'symbol', name: enumKindName, hidden: true };
+	const replacementContent: Rule =
+		repeatWrapperType === null
+			? symRule
+			: repeatWrapperType === 'repeat'
+				? { ...(content as RepeatRule), content: symRule }
+				: { ...(content as Repeat1Rule), content: symRule };
+
+	return { enumKindName, enumRule, replacementContent };
+}
+
+/**
+ * Peel one level of `repeat` or `repeat1` wrapper from a rule, returning
+ * the inner content. Returns the rule unchanged when it is not a repeat
+ * wrapper. Used by occurrence-collection and field-extraction passes to
+ * treat `field(name, repeat(enum))` the same as `field(name, enum)`.
+ *
+ * @param rule - The rule to inspect.
+ * @returns The inner content when `rule` is a `repeat` or `repeat1`,
+ *   otherwise `rule` itself.
+ */
+function peelRepeatWrapper(rule: Rule): Rule {
+	if (rule.type === 'repeat' || rule.type === 'repeat1') return rule.content;
+	return rule;
 }
 
 /**
