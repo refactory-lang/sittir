@@ -221,15 +221,16 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 		}, 60000);
 
-		it(`deep round-trip (recursive read → render → reparse) is identical`, async () => {
+		it(`deep round-trip (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
 			// Full recursive read — deep-reads ALL named kinds, not just
 			// variant-adopted. Exercises full materialization path.
 			// Native parse + native render + recursive drill-in.
-			// Asserts reparse is structurally identical (not just "kind found").
+			// Floor matches shallow RT — deep must be at least as good.
+			// Asserts structural identity (not just "kind found").
 			const templatesPath = resolveTemplatesPath(grammar);
 			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native', recursive: true });
 
-			expect(result.pass).toBeGreaterThan(0);
+			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
 			expect(result.astMatchPass).toBe(result.pass);
 		}, 120000);
 
