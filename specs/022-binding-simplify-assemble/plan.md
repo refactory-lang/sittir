@@ -100,3 +100,14 @@ packages/{rust,typescript,python}/src/
 ```
 
 **Structure Decision**: Existing workspace structure. No new packages or directories beyond `compiler/bind.ts`.
+
+## Risks
+
+Per the design doc (`docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md`):
+
+| Risk | Mitigation |
+|------|-----------|
+| Confusing CST surface with compiler ontology | Three-axis separation enforced: ontology / naming / CST surface are distinct (data-model.md). Binding classifies by RULE semantics, not by tree-sitter `named`/`anonymous`. |
+| Overloading 022 with ontology work | 021 owns identity/classification. 022 only CONSUMES 021's model — never reclassifies (FR-003). |
+| Partial pipeline migration | FR-012 forbids it. Each phase verified by three RT modes. No half-pushed-down state allowed. |
+| De-hoist breaking consumers | Greppable transforms documented in migration section. Incremental phases — each passes tests. |

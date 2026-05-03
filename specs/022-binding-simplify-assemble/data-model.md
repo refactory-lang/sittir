@@ -123,6 +123,37 @@ Any member unnamed + repeated? → Shape B ($children)
 Exactly one unnamed + not repeated? → Shape C ($child)
 ```
 
+## Three-Axis Separation
+
+Per the design doc (`docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md`),
+three axes are kept separate:
+
+| Axis | What it governs | Source |
+|------|----------------|--------|
+| Sittir ontology | Rule, RuleId, terminal/nonterminal classification | Spec 021 |
+| Parent-edge naming | field names (`field(name, rule)` forces nonterminal) | Grammar overrides |
+| Tree-sitter CST surface | named vs anonymous node visibility | Parser output |
+
+These often correlate but are NOT the same thing. A child can be field-addressable
+and still anonymous on the CST surface. Named alias forces nonterminal even when
+the wrapped content started simpler.
+
+## Rule-Form Mapping
+
+| Rule form | Meaning in Binding/Simplify |
+|-----------|----------------------------|
+| `symbol(...)` | nonterminal constituent |
+| `string(...)` / `pattern(...)` | terminal constituent |
+| `token(...)` | terminal-forming wrapper; result stays terminal |
+| `field(name, rule)` | names the parent edge + forces nonterminal |
+| `seq(...)` | ordered composition → assign `order` to constituents |
+| `choice(...)` | alternative → resolve by frontier result |
+| `optional(rule)` | → set `optional: true` on constituent(s) |
+| `repeat(rule)` / `repeat1(rule)` | → set `repeated: true` on constituent(s) |
+| `alias(rule, $.Name)` | forces nonterminal; surfaces named CST node |
+| `alias(rule, 'lit')` | CST surface only; no ontology change |
+| `prec*` | parse metadata; stripped by Simplify |
+
 ## Relationships
 
 ```

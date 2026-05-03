@@ -1,5 +1,8 @@
 # Research: 022 Binding/Simplify/Assemble + De-hoisted NodeData
 
+**Design origin**: `docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md`
+— defines the 021/022 split, three-axis separation, and rule-form mapping.
+
 ## R1: `#[serde(flatten)]` performance with `HashMap<String, MemberValue>`
 
 **Decision**: Use `#[serde(flatten)]` for named members on Rust `NodeData`.
