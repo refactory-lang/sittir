@@ -55,18 +55,27 @@ not a serialized intermediate.
 |---|---|---|
 | `AssembledBranch` | `AssembledBranch` | Stays — absorbs Container + Multi |
 | `AssembledContainer` | `AssembledBranch` | Same as Branch — unnamed slot has no `edgeName` |
-| `AssembledMulti` | `AssembledBranch` | Same — one array slot |
+| `AssembledMulti` | **Removed** | Repeat is a multiplicity on the slot's values, not a separate type |
 | `AssembledField` | `AssembledNonterminal` | Slot with `edgeName` |
 | `AssembledChild` | `AssembledNonterminal` | Slot without `edgeName` |
 | `AssembledPolymorph` | `AssembledPolymorph` | Stays — choice-of-kinds dispatch |
-| `AssembledLeaf` | `AssembledTerminal` | Pattern-matched text |
-| `AssembledKeyword` | `AssembledTerminal` | Single fixed string |
-| `AssembledToken` | `AssembledTerminal` | Anonymous delimiter |
-| `AssembledEnum` | `AssembledTerminal` | Choice of fixed strings |
+| `AssembledLeaf` | `AssembledPattern` | Renamed — open text, optionally pattern-validated |
+| `AssembledKeyword` | `AssembledKeyword` | Stays — extends `AssembledLeaf` base |
+| `AssembledToken` | `AssembledToken` | Stays — extends `AssembledLeaf` base |
+| `AssembledEnum` | `AssembledEnum` | Stays — extends `AssembledLeaf` base |
 | `AssembledSupertype` | `AssembledSupertype` | Stays — union of subtypes |
 | `AssembledGroup` | Absorbed into `AssembledPolymorph` | Polymorph form = inline property |
 
-**5 types** total: `AssembledBranch`, `AssembledNonterminal` (slot), `AssembledTerminal`, `AssembledPolymorph`, `AssembledSupertype`.
+**Final taxonomy:**
+- `AssembledBranch` — structural kind with nonterminal slots
+- `AssembledNonterminal` — one slot (named or unnamed)
+- `AssembledLeaf` — base for non-branch kinds (no slots)
+  - `AssembledPattern` — open text, optional regex
+  - `AssembledKeyword` — single fixed named string
+  - `AssembledToken` — single fixed anonymous string
+  - `AssembledEnum` — closed set of literals
+- `AssembledPolymorph` — choice-of-kinds dispatch
+- `AssembledSupertype` — union of subtypes
 
 ### AssembledBranch (absorbs Container + Multi)
 
@@ -107,17 +116,55 @@ Runtime mapping:
 
 **Constraint**: at most ONE slot per branch may lack `edgeName`.
 
-### AssembledTerminal
+### AssembledLeaf (base for all non-branch kinds)
 
-Replaces Leaf + Keyword + Token + Enum. Renders as `$text`.
+No slots, no constituents. Renders as `$text`. Shared by all leaf
+subtypes.
 
 ```ts
-interface AssembledTerminal {
+abstract class AssembledLeaf {
   kind: string;
-  terminalType: 'leaf' | 'keyword' | 'token' | 'enum';
-  text?: string;        // fixed text for keyword/token
-  values?: string[];    // enum member literals
-  pattern?: string;     // regex for leaf validation
+  // typeName, irKey, rawFactoryName, userFacing, etc.
+}
+```
+
+#### AssembledPattern (replaces current "AssembledLeaf")
+
+Open-valued text, optionally regex-validated. e.g. `identifier`, `integer_literal`.
+
+```ts
+class AssembledPattern extends AssembledLeaf {
+  pattern?: string;   // undefined = accept anything, present = validate
+}
+```
+
+#### AssembledKeyword (stays)
+
+Single fixed named string. e.g. `"fn"`, `"let"`, `"async"`.
+
+```ts
+class AssembledKeyword extends AssembledLeaf {
+  text: string;       // the one allowed value
+}
+```
+
+#### AssembledToken (stays)
+
+Single fixed anonymous delimiter. e.g. `"{"`, `";"`, `","`.
+
+```ts
+class AssembledToken extends AssembledLeaf {
+  text: string;       // the one allowed value
+}
+```
+
+#### AssembledEnum (stays)
+
+Closed set of string literals. e.g. `"+=" | "-=" | "*="`.
+
+```ts
+class AssembledEnum extends AssembledLeaf {
+  values: string[];   // the allowed members
 }
 ```
 
