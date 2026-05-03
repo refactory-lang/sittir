@@ -47,7 +47,7 @@ NodeData via napi direct property access (per-kind transport structs
 already do this). The generic `NodeData` becomes a thin napi read helper,
 not a serialized intermediate.
 
-## Assembled Model Taxonomy (4 types)
+## Assembled Model Taxonomy [DRAFT — under discussion]
 
 ### Map from current to new
 
