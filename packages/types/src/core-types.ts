@@ -36,10 +36,11 @@ export type NodeFieldValue =
  */
 export type NodeChildValue = AnyNodeData | string | number;
 
-declare const nodeIdBrand: unique symbol;
-
-/** Opaque tree-owned node id used for drill-in APIs. */
-export type NodeId = number & { readonly [nodeIdBrand]: true };
+/**
+ * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
+ * Kept as a simple alias during migration so downstream imports resolve without error.
+ */
+export type NodeId = number;
 
 /**
  * Runtime node shape — grammar-agnostic. Used by @sittir/core functions
@@ -57,8 +58,8 @@ export interface AnyNodeData {
 	 * String for synthesized kinds pending numeric ID assignment.
 	 */
 	$type: number | string;
-	/** Which producer emitted this node. */
-	$source?: 'ts' | 'sg' | 'factory';
+	/** Which producer emitted this node. 0=ts, 1=sg, 2=factory. */
+	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
 	$fields?: { readonly [key: string]: NodeFieldValue };
@@ -83,8 +84,10 @@ export interface AnyNodeData {
 	$text?: string;
 	/** Byte offset span in source. */
 	$span?: { start: number; end: number };
-	/** Tree-sitter node id for O(1) drill-in via tree.nodeById(). */
-	$nodeId?: NodeId;
+	/** Index into engine's node-handle table for O(1) drill-in. */
+	$nodeHandle?: number;
+	/** Position in parent's child array for child(i) access. */
+	$childIndex?: number;
 	/** Whether this is a named (vs anonymous) node in the grammar.
 	 * Optional at the type level because generated kind interfaces
 	 * omit it by convention (factory output always sets it at runtime). */
@@ -320,7 +323,7 @@ export interface ReplaceTarget<T extends string = string> {
  * Structurally compatible with ast-grep SgNode.
  */
 export interface AnyTreeNode extends ReplaceTarget {
-	id(): NodeId;
+	id(): number;
 	field(name: string): AnyTreeNode | null;
 	fieldChildren(name: string): AnyTreeNode[];
 	fieldNameForChild?(index: number): string | null;

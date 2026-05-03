@@ -65,7 +65,7 @@ export function _arrowFunctionUCallSignature(config: ConfigOf<T._ArrowFunctionUC
   };
   return {
     $type: TSKindId._ArrowFunctionUCallSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, _arrowFunctionUCallSignature, 'typeParameters', value, config?.typeParameters); },
@@ -82,7 +82,7 @@ export function _arrowFunctionParameter(config: ConfigOf<T._ArrowFunctionParamet
   };
   return {
     $type: TSKindId._ArrowFunctionParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     parameter(value?: T.ReservedIdentifier) { return _setField(config, _arrowFunctionParameter, 'parameter', value, config?.parameter); },
@@ -99,7 +99,7 @@ export function _callExpressionCall(config: ConfigOf<T.CallExpressionCall>) {
   };
   return {
     $type: TSKindId.CallExpressionCall as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.Expression | T.Import) { return _setField(config, _callExpressionCall, 'function', value, config?.function); },
@@ -118,7 +118,7 @@ export function _callExpressionMember(config: ConfigOf<T.CallExpressionMember>) 
   };
   return {
     $type: TSKindId.CallExpressionMember as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.PrimaryExpression) { return _setField(config, _callExpressionMember, 'function', value, config?.function); },
@@ -136,7 +136,7 @@ export function _callExpressionTemplateCall(config: ConfigOf<T.CallExpressionTem
   };
   return {
     $type: TSKindId.CallExpressionTemplateCall as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.PrimaryExpression | T.NewExpression) { return _setField(config, _callExpressionTemplateCall, 'function', value, config?.function); },
@@ -154,7 +154,7 @@ export function _callSignature(config: ConfigOf<T._CallSignature>) {
   };
   return {
     $type: TSKindId._CallSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, _callSignature, 'typeParameters', value, config?.typeParameters); },
@@ -169,7 +169,7 @@ export function classBodyMember(child: (T.AbstractMethodSignature | T.IndexSigna
   const children = [child];
   return {
     $type: TSKindId.ClassBodyMember as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -184,7 +184,7 @@ export function _classBodyMethod(config: ConfigOf<T.ClassBodyMethod>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ClassBodyMethod as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -202,7 +202,7 @@ export function classBodyMethodSig(child: (T.MethodSignature | T.FunctionSignatu
   const children = [child];
   return {
     $type: TSKindId.ClassBodyMethodSig as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -214,7 +214,7 @@ export function _classHeritageExtendsClause(child: (T.ExtendsClause | T.Implemen
   const children = [child];
   return {
     $type: TSKindId._ClassHeritageExtendsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -226,7 +226,7 @@ export function _classHeritageImplementsClause(child: T.ImplementsClause) {
   const children = [child];
   return {
     $type: TSKindId._ClassHeritageImplementsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -241,7 +241,7 @@ export function _exportStatementDefaultDeclArm(config: ConfigOf<T.ExportStatemen
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatementDefaultDeclArm as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -259,7 +259,7 @@ export function _exportStatementDefaultDeclArmDefaultKw(config: ConfigOf<T.Expor
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     child(value?: T.ExportStatementDefaultDeclArmDefaultKwValue) {
@@ -278,7 +278,7 @@ export function _exportStatementDefaultDeclArmDefaultKwValue(config: ConfigOf<T.
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -296,7 +296,7 @@ export function exportStatementDefaultFromArm(child: (T.ExportStatementDefaultFr
   const children = [child];
   return {
     $type: TSKindId.ExportStatementDefaultFromArm as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -311,7 +311,7 @@ export function exportStatementDefaultFromArmClauseFrom(config: ConfigOf<T.Expor
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -332,7 +332,7 @@ export function exportStatementDefaultFromArmNsFrom(config: ConfigOf<T.ExportSta
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatementDefaultFromArmNsFrom as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -352,7 +352,7 @@ export function exportStatementDefaultFromArmStarFrom(config: ConfigOf<T.ExportS
   };
   return {
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     source(value?: T.String) { return _setField(config, exportStatementDefaultFromArmStarFrom, 'source', value, config?.source); },
@@ -365,7 +365,7 @@ export function _exportStatementEqualsExport(child: (T.Expression | T.Semicolon)
   const children = [child];
   return {
     $type: TSKindId._ExportStatementEqualsExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -377,7 +377,7 @@ export function _exportStatementNamespaceExport(child: (T.Identifier | T.Semicol
   const children = [child];
   return {
     $type: TSKindId._ExportStatementNamespaceExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -392,7 +392,7 @@ export function _exportStatementTypeExport(config: ConfigOf<T._ExportStatementTy
   const children = config.children ?? [];
   return {
     $type: TSKindId._ExportStatementTypeExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -413,7 +413,7 @@ export function _extendsClauseSingle(config: ConfigOf<T.ExtendsClauseSingle>) {
   };
   return {
     $type: TSKindId.ExtendsClauseSingle as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.Expression) { return _setField(config, _extendsClauseSingle, 'value', value, config?.value); },
@@ -431,7 +431,7 @@ export function _forHeader(config: ConfigOf<T.ForHeader>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ForHeader as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -454,7 +454,7 @@ export function _forHeaderLetConstKind(config: ConfigOf<T.ForHeaderLetConstKind>
   const children = config.children ?? [];
   return {
     $type: TSKindId.ForHeaderLetConstKind as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -475,7 +475,7 @@ export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
   };
   return {
     $type: TSKindId.ForHeaderLhs as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.LhsExpression | T.ParenthesizedExpression) { return _setField(config, forHeaderLhs, 'left', value, config?.left); },
@@ -492,7 +492,7 @@ export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ForHeaderVarKind as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -513,7 +513,7 @@ export function _fromClause(config: ConfigOf<T.FromClause>) {
   };
   return {
     $type: TSKindId.FromClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     source(value?: T.String) { return _setField(config, _fromClause, 'source', value, config?.source); },
@@ -526,7 +526,7 @@ export function _importClauseDefaultImport(child: (T.ImportIdentifier | T.Namesp
   const children = [child];
   return {
     $type: TSKindId._ImportClauseDefaultImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -538,7 +538,7 @@ export function _importClauseNamedImports(child: T.NamedImports) {
   const children = [child];
   return {
     $type: TSKindId._ImportClauseNamedImports as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -550,7 +550,7 @@ export function _importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
   return {
     $type: TSKindId._ImportClauseNamespaceImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -565,7 +565,7 @@ export function _importSpecifierAs(config: ConfigOf<T.ImportSpecifierAs>) {
   };
   return {
     $type: TSKindId.ImportSpecifierAs as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.ModuleExportName | T.Identifier) { return _setField(config, _importSpecifierAs, 'name', value, config?.name); },
@@ -581,7 +581,7 @@ export function _importSpecifierName(config: ConfigOf<T._ImportSpecifierName>) {
   };
   return {
     $type: TSKindId._ImportSpecifierName as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.ImportIdentifier) { return _setField(config, _importSpecifierName, 'name', value, config?.name); },
@@ -597,7 +597,7 @@ export function _indexSignatureColon(config: ConfigOf<T.IndexSignatureColon>) {
   };
   return {
     $type: TSKindId.IndexSignatureColon as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.ReservedIdentifier) { return _setField(config, _indexSignatureColon, 'name', value, config?.name); },
@@ -611,7 +611,7 @@ export function _indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const children = [child];
   return {
     $type: TSKindId._IndexSignatureMappedTypeClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -625,7 +625,7 @@ export function _initializer(config: ConfigOf<T.Initializer>) {
   };
   return {
     $type: TSKindId.Initializer as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.Expression) { return _setField(config, _initializer, 'value', value, config?.value); },
@@ -641,7 +641,7 @@ export function _module(config: ConfigOf<T._Module>) {
   };
   return {
     $type: TSKindId._Module as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, _module, 'name', value, config?.name); },
@@ -658,7 +658,7 @@ export function _number(config: ConfigOf<T._Number>) {
   };
   return {
     $type: TSKindId._Number as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     operator(value?: T.NumberOperator) { return _setField(config, _number, 'operator', value, config?.operator); },
@@ -677,7 +677,7 @@ export function _parameterName(config: ConfigOf<T.ParameterName>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ParameterName as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -697,7 +697,7 @@ export function _parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
     $type: TSKindId._ParenthesizedExpressionSequence as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -712,7 +712,7 @@ export function _parenthesizedExpressionTyped(config: ConfigOf<T.ParenthesizedEx
   const children = config.children ?? [];
   return {
     $type: TSKindId.ParenthesizedExpressionTyped as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -733,7 +733,7 @@ export function _publicFieldDefinitionAbstractFirst(config?: ConfigOf<T.PublicFi
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     get abstractMarker() { return fields.abstract_marker; },
@@ -750,7 +750,7 @@ export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicField
   const children = config.children ?? [];
   return {
     $type: TSKindId.PublicFieldDefinitionAccessFirst as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -770,7 +770,7 @@ export function publicFieldDefinitionAccessorOpt(_config?: ConfigOf<T.PublicFiel
   };
   return {
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     get accessorMarker() { return fields.accessor_marker; },
@@ -783,7 +783,7 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
   const children = child != null ? [child] : [];
   return {
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -798,7 +798,7 @@ export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFi
   };
   return {
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     get readonlyMarker() { return fields.readonly_marker; },
@@ -816,7 +816,7 @@ export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicField
   const children = config?.children ?? [];
   return {
     $type: TSKindId.PublicFieldDefinitionStaticMods as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -834,7 +834,7 @@ export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicField
 export function _stringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
   return {
     $type: TSKindId._StringDouble as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -845,7 +845,7 @@ export function _stringDouble(...children: (T.UnescapedDoubleStringFragment | T.
 export function _stringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
   return {
     $type: TSKindId._StringSingle as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -857,7 +857,7 @@ export function typeIdentifier(child: T.Identifier) {
   const children = [child];
   return {
     $type: TSKindId.TypeIdentifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -872,7 +872,7 @@ export function _typeQueryCallExpression(config: ConfigOf<T.TypeQueryCallExpress
   };
   return {
     $type: TSKindId.TypeQueryCallExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) { return _setField(config, _typeQueryCallExpression, 'function', value, config?.function); },
@@ -889,7 +889,7 @@ export function _typeQueryCallExpressionInTypeAnnotation(config: ConfigOf<T.Type
   };
   return {
     $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation) { return _setField(config, _typeQueryCallExpressionInTypeAnnotation, 'function', value, config?.function); },
@@ -906,7 +906,7 @@ export function _typeQueryInstantiationExpression(config: ConfigOf<T.TypeQueryIn
   };
   return {
     $type: TSKindId.TypeQueryInstantiationExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) { return _setField(config, _typeQueryInstantiationExpression, 'function', value, config?.function); },
@@ -923,7 +923,7 @@ export function _typeQueryMemberExpression(config: ConfigOf<T.TypeQueryMemberExp
   };
   return {
     $type: TSKindId.TypeQueryMemberExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) { return _setField(config, _typeQueryMemberExpression, 'object', value, config?.object); },
@@ -940,7 +940,7 @@ export function _typeQueryMemberExpressionInTypeAnnotation(config: ConfigOf<T.Ty
   };
   return {
     $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation) { return _setField(config, _typeQueryMemberExpressionInTypeAnnotation, 'object', value, config?.object); },
@@ -957,7 +957,7 @@ export function _typeQuerySubscriptExpression(config: ConfigOf<T.TypeQuerySubscr
   };
   return {
     $type: TSKindId.TypeQuerySubscriptExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) { return _setField(config, _typeQuerySubscriptExpression, 'object', value, config?.object); },
@@ -974,7 +974,7 @@ export function _updateExpressionPostfix(config: ConfigOf<T.UpdateExpressionPost
   };
   return {
     $type: TSKindId.UpdateExpressionPostfix as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     argument(value?: T.Expression) { return _setField(config, _updateExpressionPostfix, 'argument', value, config?.argument); },
@@ -991,7 +991,7 @@ export function _updateExpressionPrefix(config: ConfigOf<T.UpdateExpressionPrefi
   };
   return {
     $type: TSKindId.UpdateExpressionPrefix as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     operator(value?: T.Operator) { return _setField(config, _updateExpressionPrefix, 'operator', value, config?.operator); },
@@ -1011,7 +1011,7 @@ export function abstractClassDeclaration(config: ConfigOf<T.AbstractClassDeclara
   };
   return {
     $type: TSKindId.AbstractClassDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     decorator(...values: T.Decorator[]) { return _setFields(config, abstractClassDeclaration, 'decorator', values, config?.decorator); },
@@ -1037,7 +1037,7 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
   };
   return {
     $type: TSKindId.AbstractMethodSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     accessibilityModifier(value?: T._AccessibilityModifier | undefined) { return _setField(config, abstractMethodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
@@ -1056,7 +1056,7 @@ export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignatu
 export function accessibilityModifier(text: 'public' | 'private' | 'protected') {
   return {
     $type: TSKindId.AccessibilityModifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1070,7 +1070,7 @@ export function addingTypeAnnotation(config: ConfigOf<T.AddingTypeAnnotation>) {
   };
   return {
     $type: TSKindId.AddingTypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, addingTypeAnnotation, 'type', value, config?.type); },
@@ -1085,7 +1085,7 @@ export function ambientDeclaration(config: ConfigOf<T.AmbientDeclaration>) {
   };
   return {
     $type: TSKindId.AmbientDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     declaration(value?: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) { return _setField(config, ambientDeclaration, 'declaration', value, config?.declaration); },
@@ -1097,7 +1097,7 @@ export function ambientDeclaration(config: ConfigOf<T.AmbientDeclaration>) {
 export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
   return {
     $type: TSKindId.Arguments as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1108,7 +1108,7 @@ export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
 export function array(...children: (T.Expression | T.SpreadElement)[]) {
   return {
     $type: TSKindId.Array as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1119,7 +1119,7 @@ export function array(...children: (T.Expression | T.SpreadElement)[]) {
 export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
   return {
     $type: TSKindId.ArrayPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1133,7 +1133,7 @@ export function arrayType(config: ConfigOf<T.ArrayType>) {
   };
   return {
     $type: TSKindId.ArrayType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, arrayType, 'primaryType', value, config?.primaryType); },
@@ -1148,7 +1148,7 @@ export function arrowFunctionParameter(config: ConfigOf<T.ArrowFunctionParameter
   };
   return {
     $type: TSKindId._ArrowFunctionParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     parameter(value?: T.ReservedIdentifier) { return _setField(config, arrowFunctionParameter, 'parameter', value, config?.parameter); },
@@ -1165,7 +1165,7 @@ export function arrowFunctionUCallSignature(config: ConfigOf<T.ArrowFunctionUCal
   };
   return {
     $type: TSKindId._ArrowFunctionUCallSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, arrowFunctionUCallSignature, 'typeParameters', value, config?.typeParameters); },
@@ -1194,7 +1194,7 @@ export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctio
   const children = [inner] as const;
   return {
     $type: TSKindId.ArrowFunction as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'parameter' as const,
     $fields: fields,
@@ -1224,7 +1224,7 @@ export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFu
   const children = [inner] as const;
   return {
     $type: TSKindId.ArrowFunction as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: '_call_signature' as const,
     $fields: fields,
@@ -1261,7 +1261,7 @@ export function asExpression(config: ConfigOf<T.AsExpression>) {
   };
   return {
     $type: TSKindId.AsExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, asExpression, 'expression', value, config?.expression); },
@@ -1275,7 +1275,7 @@ export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
   const children = [child];
   return {
     $type: TSKindId.Asserts as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1289,7 +1289,7 @@ export function assertsAnnotation(config: ConfigOf<T.AssertsAnnotation>) {
   };
   return {
     $type: TSKindId.AssertsAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asserts(value?: T.AssertsAnnotationAsserts | T.Asserts) { return _setField(config, assertsAnnotation, 'asserts', value, config?.asserts); },
@@ -1306,7 +1306,7 @@ export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
   };
   return {
     $type: TSKindId.AssignmentExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     usingMarker(value?: T.AssignmentExpressionUsingMarker | undefined) { return _setField(config, assignmentExpression, 'usingMarker', value, config?.usingMarker); },
@@ -1324,7 +1324,7 @@ export function assignmentPattern(config: ConfigOf<T.AssignmentPattern>) {
   };
   return {
     $type: TSKindId.AssignmentPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Pattern) { return _setField(config, assignmentPattern, 'left', value, config?.left); },
@@ -1342,7 +1342,7 @@ export function augmentedAssignmentExpression(config: ConfigOf<T.AugmentedAssign
   };
   return {
     $type: TSKindId.AugmentedAssignmentExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) { return _setField(config, augmentedAssignmentExpression, 'left', value, config?.left); },
@@ -1359,7 +1359,7 @@ export function awaitExpression(config: ConfigOf<T.AwaitExpression>) {
   };
   return {
     $type: TSKindId.AwaitExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, awaitExpression, 'expression', value, config?.expression); },
@@ -1376,7 +1376,7 @@ export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
   };
   return {
     $type: TSKindId.BinaryExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Expression | T.PrivatePropertyIdentifier) { return _setField(config, binaryExpression, 'left', value, config?.left); },
@@ -1394,7 +1394,7 @@ export function breakStatement(config: ConfigOf<T.BreakStatement>) {
   };
   return {
     $type: TSKindId.BreakStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _setField(config, breakStatement, 'label', value, config?.label); },
@@ -1420,7 +1420,7 @@ export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUF
   const children = [inner] as const;
   return {
     $type: TSKindId.CallExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'call' as const,
     $children: children,
@@ -1445,7 +1445,7 @@ export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpr
   const children = [inner] as const;
   return {
     $type: TSKindId.CallExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'template_call' as const,
     $children: children,
@@ -1466,7 +1466,7 @@ export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpression
   const children = [inner] as const;
   return {
     $type: TSKindId.CallExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'member' as const,
     $children: children,
@@ -1495,7 +1495,7 @@ export function callSignature(config: ConfigOf<T.CallSignature>) {
   };
   return {
     $type: TSKindId.CallSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, callSignature, 'typeParameters', value, config?.typeParameters); },
@@ -1514,7 +1514,7 @@ export function catchClause(config: ConfigOf<T.CatchClause>) {
   };
   return {
     $type: TSKindId.CatchClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     parameter(value?: T.Identifier | T.DestructuringPattern | undefined) { return _setField(config, catchClause, 'parameter', value, config?.parameter); },
@@ -1535,7 +1535,7 @@ export function class_(config: ConfigOf<T.Class>) {
   };
   return {
     $type: TSKindId.Class as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     decorator(...values: T.Decorator[]) { return _setFields(config, class_, 'decorator', values, config?.decorator); },
@@ -1551,7 +1551,7 @@ export function class_(config: ConfigOf<T.Class>) {
 export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) {
   return {
     $type: TSKindId.ClassBody as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1570,7 +1570,7 @@ export function classDeclaration(config: ConfigOf<T.ClassDeclaration>) {
   };
   return {
     $type: TSKindId.ClassDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     decorator(...values: T.Decorator[]) { return _setFields(config, classDeclaration, 'decorator', values, config?.decorator); },
@@ -1588,7 +1588,7 @@ export function classHeritageExtendsClause(child: (T.ExtendsClause | T.Implement
   const children = [child];
   return {
     $type: TSKindId._ClassHeritageExtendsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1600,7 +1600,7 @@ export function classHeritageImplementsClause(child: T.ImplementsClause) {
   const children = [child];
   return {
     $type: TSKindId._ClassHeritageImplementsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1622,7 +1622,7 @@ export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHe
   const children = [inner] as const;
   return {
     $type: TSKindId.ClassHeritage as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'extends_clause' as const,
     $children: children,
@@ -1635,7 +1635,7 @@ export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.Clas
   const children = [inner] as const;
   return {
     $type: TSKindId.ClassHeritage as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'implements_clause' as const,
     $children: children,
@@ -1651,7 +1651,7 @@ export function classStaticBlock(config: ConfigOf<T.ClassStaticBlock>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ClassStaticBlock as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -1669,7 +1669,7 @@ export function comment(text: string) {
   if (text.length === 0) throw new Error(`comment: text must be non-empty`);
   return {
     $type: TSKindId.Comment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1683,7 +1683,7 @@ export function computedPropertyName(config: ConfigOf<T.ComputedPropertyName>) {
   };
   return {
     $type: TSKindId.ComputedPropertyName as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, computedPropertyName, 'expression', value, config?.expression); },
@@ -1701,7 +1701,7 @@ export function conditionalType(config: ConfigOf<T.ConditionalType>) {
   };
   return {
     $type: TSKindId.ConditionalType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Type) { return _setField(config, conditionalType, 'left', value, config?.left); },
@@ -1719,7 +1719,7 @@ export function constraint(config: ConfigOf<T.Constraint>) {
   };
   return {
     $type: TSKindId.Constraint as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, constraint, 'type', value, config?.type); },
@@ -1737,7 +1737,7 @@ export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
   };
   return {
     $type: TSKindId.ConstructSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     abstractMarker(value?: T.AbstractMarker | undefined) { return _setField(config, constructSignature, 'abstractMarker', value, config?.abstractMarker); },
@@ -1758,7 +1758,7 @@ export function constructorType(config: ConfigOf<T.ConstructorType>) {
   };
   return {
     $type: TSKindId.ConstructorType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     abstractMarker(value?: T.AbstractMarker | undefined) { return _setField(config, constructorType, 'abstractMarker', value, config?.abstractMarker); },
@@ -1777,7 +1777,7 @@ export function continueStatement(config: ConfigOf<T.ContinueStatement>) {
   };
   return {
     $type: TSKindId.ContinueStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     label(value?: T.Identifier | undefined) { return _setField(config, continueStatement, 'label', value, config?.label); },
@@ -1793,7 +1793,7 @@ export function debuggerStatement(config: ConfigOf<T.DebuggerStatement>) {
   };
   return {
     $type: TSKindId.DebuggerStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     semicolon(value?: T.Semicolon) { return _setField(config, debuggerStatement, 'semicolon', value, config?.semicolon); },
@@ -1806,7 +1806,7 @@ export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T
   const children = [child];
   return {
     $type: TSKindId.Decorator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1822,7 +1822,7 @@ export function decoratorCallExpression(config: ConfigOf<T.DecoratorCallExpressi
   };
   return {
     $type: TSKindId.DecoratorCallExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     function(value?: T.Identifier | T.DecoratorMemberExpression) { return _setField(config, decoratorCallExpression, 'function', value, config?.function); },
@@ -1840,7 +1840,7 @@ export function decoratorMemberExpression(config: ConfigOf<T.DecoratorMemberExpr
   };
   return {
     $type: TSKindId.DecoratorMemberExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Identifier | T.DecoratorMemberExpression) { return _setField(config, decoratorMemberExpression, 'object', value, config?.object); },
@@ -1854,7 +1854,7 @@ export function decoratorParenthesizedExpression(child: (T.Identifier | T.Decora
   const children = [child];
   return {
     $type: TSKindId.DecoratorParenthesizedExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1868,7 +1868,7 @@ export function defaultType(config: ConfigOf<T.DefaultType>) {
   };
   return {
     $type: TSKindId.DefaultType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, defaultType, 'type', value, config?.type); },
@@ -1885,7 +1885,7 @@ export function doStatement(config: ConfigOf<T.DoStatement>) {
   };
   return {
     $type: TSKindId.DoStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.Statement) { return _setField(config, doStatement, 'body', value, config?.body); },
@@ -1902,7 +1902,7 @@ export function elseClause(config: ConfigOf<T.ElseClause>) {
   };
   return {
     $type: TSKindId.ElseClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     statement(value?: T.Statement) { return _setField(config, elseClause, 'statement', value, config?.statement); },
@@ -1918,7 +1918,7 @@ export function enumAssignment(config: ConfigOf<T.EnumAssignment>) {
   };
   return {
     $type: TSKindId.EnumAssignment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.PropertyName) { return _setField(config, enumAssignment, 'name', value, config?.name); },
@@ -1932,7 +1932,7 @@ export function enumBody(config: ConfigOf<T.EnumBody>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.EnumBody as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     children(...items: T.EnumAssignment[]) {
@@ -1952,7 +1952,7 @@ export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
   };
   return {
     $type: TSKindId.EnumDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     constMarker(value?: T.ConstMarker | undefined) { return _setField(config, enumDeclaration, 'constMarker', value, config?.constMarker); },
@@ -1967,7 +1967,7 @@ export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return {
     $type: TSKindId.EscapeSequence as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -1978,7 +1978,7 @@ export function escapeSequence(text: string) {
 export function exportClause(...children: T.ExportSpecifier[]) {
   return {
     $type: TSKindId.ExportClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -1994,7 +1994,7 @@ export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
   };
   return {
     $type: TSKindId.ExportSpecifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     exportKind(value?: T.ExportSpecifierExportKind | undefined) { return _setField(config, exportSpecifier, 'exportKind', value, config?.exportKind); },
@@ -2012,7 +2012,7 @@ export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementType
   const children = config.children ?? [];
   return {
     $type: TSKindId._ExportStatementTypeExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2030,7 +2030,7 @@ export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon))
   const children = [child];
   return {
     $type: TSKindId._ExportStatementEqualsExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2042,7 +2042,7 @@ export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolo
   const children = [child];
   return {
     $type: TSKindId._ExportStatementNamespaceExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2067,7 +2067,7 @@ export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatem
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'default' as const,
     $children: children,
@@ -2084,7 +2084,7 @@ export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportSt
   const children = [inner] as const;
   return {
     $type: TSKindId.ExportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'type_export' as const,
     $children: children,
@@ -2101,7 +2101,7 @@ export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.Export
   const children = [inner] as const;
   return {
     $type: TSKindId.ExportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'equals_export' as const,
     $children: children,
@@ -2114,7 +2114,7 @@ export function exportStatementUFormNamespaceExport(config?: Omit<ConfigOf<T.Exp
   const children = [inner] as const;
   return {
     $type: TSKindId.ExportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'namespace_export' as const,
     $children: children,
@@ -2130,7 +2130,7 @@ export function expressionStatement(config: ConfigOf<T.ExpressionStatement>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ExpressionStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2151,7 +2151,7 @@ export function extendsClause(config: ConfigOf<T.ExtendsClause>) {
   };
   return {
     $type: TSKindId.ExtendsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(...values: NonEmptyArray<T.Expression>) { return _setFields(config, extendsClause, 'value', values, config?.value); },
@@ -2167,7 +2167,7 @@ export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
   };
   return {
     $type: TSKindId.ExtendsTypeClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) { return _setFields(config, extendsTypeClause, 'type', values, config?.type); },
@@ -2179,7 +2179,7 @@ export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
 export function false_() {
   return {
     $type: TSKindId.False as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'false' as const,
     ..._leafMethods('false' as const),
@@ -2193,7 +2193,7 @@ export function finallyClause(config: ConfigOf<T.FinallyClause>) {
   };
   return {
     $type: TSKindId.FinallyClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.StatementBlock) { return _setField(config, finallyClause, 'body', value, config?.body); },
@@ -2208,7 +2208,7 @@ export function flowMaybeType(config: ConfigOf<T.FlowMaybeType>) {
   };
   return {
     $type: TSKindId.FlowMaybeType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, flowMaybeType, 'primaryType', value, config?.primaryType); },
@@ -2227,7 +2227,7 @@ export function forInStatement(config: ConfigOf<T.ForInStatement>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ForInStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2253,7 +2253,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
   };
   return {
     $type: TSKindId.ForStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     initializer(value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) { return _setField(config, forStatement, 'initializer', value, config?.initializer); },
@@ -2268,7 +2268,7 @@ export function forStatement(config: ConfigOf<T.ForStatement>) {
 export function formalParameters(...children: T.FormalParameter[]) {
   return {
     $type: TSKindId.FormalParameters as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2288,7 +2288,7 @@ export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.FunctionDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2318,7 +2318,7 @@ export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
   };
   return {
     $type: TSKindId.FunctionExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, functionExpression, 'asyncMarker', value, config?.asyncMarker); },
@@ -2343,7 +2343,7 @@ export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
   };
   return {
     $type: TSKindId.FunctionSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, functionSignature, 'asyncMarker', value, config?.asyncMarker); },
@@ -2365,7 +2365,7 @@ export function functionType(config: ConfigOf<T.FunctionType>) {
   };
   return {
     $type: TSKindId.FunctionType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, functionType, 'typeParameters', value, config?.typeParameters); },
@@ -2387,7 +2387,7 @@ export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
   };
   return {
     $type: TSKindId.GeneratorFunction as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     asyncMarker(value?: T.AsyncMarker | undefined) { return _setField(config, generatorFunction, 'asyncMarker', value, config?.asyncMarker); },
@@ -2413,7 +2413,7 @@ export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctio
   const children = config.children ?? [];
   return {
     $type: TSKindId.GeneratorFunctionDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -2439,7 +2439,7 @@ export function genericType(config: ConfigOf<T.GenericType>) {
   };
   return {
     $type: TSKindId.GenericType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.TypeIdentifier | T.NestedTypeIdentifier) { return _setField(config, genericType, 'name', value, config?.name); },
@@ -2453,7 +2453,7 @@ export function hashBangLine(text: string) {
   if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`); if (!_leafRe_hashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.HashBangLine as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2465,7 +2465,7 @@ export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
   return {
     $type: TSKindId.Identifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -2481,7 +2481,7 @@ export function ifStatement(config: ConfigOf<T.IfStatement>) {
   };
   return {
     $type: TSKindId.IfStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.ParenthesizedExpression) { return _setField(config, ifStatement, 'condition', value, config?.condition); },
@@ -2496,7 +2496,7 @@ export function implementsClause(...children: T.Type[]) {
   _assertNonEmpty(children, 'implements_clause.children');
   return {
     $type: TSKindId.ImplementsClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2507,7 +2507,7 @@ export function implementsClause(...children: T.Type[]) {
 export function import_() {
   return {
     $type: TSKindId.Import as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'import' as const,
     ..._leafMethods('import' as const),
@@ -2523,7 +2523,7 @@ export function importAlias(config: ConfigOf<T.ImportAlias>) {
   };
   return {
     $type: TSKindId.ImportAlias as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier) { return _setField(config, importAlias, 'name', value, config?.name); },
@@ -2540,7 +2540,7 @@ export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
   };
   return {
     $type: TSKindId.ImportAttribute as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.ImportAttributeObject | T.Object) { return _setField(config, importAttribute, 'object', value, config?.object); },
@@ -2553,7 +2553,7 @@ export function importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
   return {
     $type: TSKindId._ImportClauseNamespaceImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2565,7 +2565,7 @@ export function importClauseNamedImports(child: T.NamedImports) {
   const children = [child];
   return {
     $type: TSKindId._ImportClauseNamedImports as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2577,7 +2577,7 @@ export function importClauseDefaultImport(child: (T.ImportIdentifier | T.Namespa
   const children = [child];
   return {
     $type: TSKindId._ImportClauseDefaultImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2601,7 +2601,7 @@ export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.Import
   const children = [inner] as const;
   return {
     $type: TSKindId.ImportClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'namespace_import' as const,
     $children: children,
@@ -2614,7 +2614,7 @@ export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportCla
   const children = [inner] as const;
   return {
     $type: TSKindId.ImportClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'named_imports' as const,
     $children: children,
@@ -2627,7 +2627,7 @@ export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportCl
   const children = [inner] as const;
   return {
     $type: TSKindId.ImportClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'default_import' as const,
     $children: children,
@@ -2643,7 +2643,7 @@ export function importRequireClause(config: ConfigOf<T.ImportRequireClause>) {
   };
   return {
     $type: TSKindId.ImportRequireClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, importRequireClause, 'identifier', value, config?.identifier); },
@@ -2659,7 +2659,7 @@ export function importSpecifierName(config: ConfigOf<T.ImportSpecifierName>) {
   };
   return {
     $type: TSKindId._ImportSpecifierName as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.ImportIdentifier) { return _setField(config, importSpecifierName, 'name', value, config?.name); },
@@ -2685,7 +2685,7 @@ export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifier
   const children = [inner] as const;
   return {
     $type: TSKindId.ImportSpecifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'name' as const,
     $fields: fields,
@@ -2710,7 +2710,7 @@ export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUF
   const children = [inner] as const;
   return {
     $type: TSKindId.ImportSpecifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'as' as const,
     $fields: fields,
@@ -2741,7 +2741,7 @@ export function importStatement(config: ConfigOf<T.ImportStatement>) {
   };
   return {
     $type: TSKindId.ImportStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     importClause(value?: "type" | "typeof" | undefined) { return _setField(config, importStatement, 'importClause', value, config?.importClause); },
@@ -2757,7 +2757,7 @@ export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const children = [child];
   return {
     $type: TSKindId._IndexSignatureMappedTypeClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2783,7 +2783,7 @@ export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureU
   const children = [inner] as const;
   return {
     $type: TSKindId.IndexSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'colon' as const,
     $fields: fields,
@@ -2817,7 +2817,7 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
   const children = [inner] as const;
   return {
     $type: TSKindId.IndexSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'mapped_type_clause' as const,
     $fields: fields,
@@ -2841,7 +2841,7 @@ export function indexTypeQuery(config: ConfigOf<T.IndexTypeQuery>) {
   };
   return {
     $type: TSKindId.IndexTypeQuery as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, indexTypeQuery, 'primaryType', value, config?.primaryType); },
@@ -2857,7 +2857,7 @@ export function inferType(config: ConfigOf<T.InferType>) {
   };
   return {
     $type: TSKindId.InferType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeIdentifier(value?: T.TypeIdentifier) { return _setField(config, inferType, 'typeIdentifier', value, config?.typeIdentifier); },
@@ -2874,7 +2874,7 @@ export function instantiationExpression(config: ConfigOf<T.InstantiationExpressi
   };
   return {
     $type: TSKindId.InstantiationExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, instantiationExpression, 'expression', value, config?.expression); },
@@ -2893,7 +2893,7 @@ export function interfaceDeclaration(config: ConfigOf<T.InterfaceDeclaration>) {
   };
   return {
     $type: TSKindId.InterfaceDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.TypeIdentifier) { return _setField(config, interfaceDeclaration, 'name', value, config?.name); },
@@ -2912,7 +2912,7 @@ export function internalModule(config: ConfigOf<T.InternalModule>) {
   };
   return {
     $type: TSKindId.InternalModule as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, internalModule, 'name', value, config?.name); },
@@ -2929,7 +2929,7 @@ export function intersectionType(config: ConfigOf<T.IntersectionType>) {
   };
   return {
     $type: TSKindId.IntersectionType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Type | undefined) { return _setField(config, intersectionType, 'left', value, config?.left); },
@@ -2946,7 +2946,7 @@ export function labeledStatement(config: ConfigOf<T.LabeledStatement>) {
   };
   return {
     $type: TSKindId.LabeledStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     label(value?: T.StatementIdentifier) { return _setField(config, labeledStatement, 'label', value, config?.label); },
@@ -2964,7 +2964,7 @@ export function lexicalDeclaration(config: ConfigOf<T.LexicalDeclaration>) {
   };
   return {
     $type: TSKindId.LexicalDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     kind(value?: T.Kind) { return _setField(config, lexicalDeclaration, 'kind', value, config?.kind); },
@@ -2979,7 +2979,7 @@ export function literalType(child: (T._Number | T.Number | T.String | T.True | T
   const children = [child];
   return {
     $type: TSKindId.LiteralType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -2994,7 +2994,7 @@ export function lookupType(config: ConfigOf<T.LookupType>) {
   };
   return {
     $type: TSKindId.LookupType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     primaryType(value?: T.PrimaryType) { return _setField(config, lookupType, 'primaryType', value, config?.primaryType); },
@@ -3012,7 +3012,7 @@ export function mappedTypeClause(config: ConfigOf<T.MappedTypeClause>) {
   };
   return {
     $type: TSKindId.MappedTypeClause as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.TypeIdentifier) { return _setField(config, mappedTypeClause, 'name', value, config?.name); },
@@ -3030,7 +3030,7 @@ export function memberExpression(config: ConfigOf<T.MemberExpression>) {
   };
   return {
     $type: TSKindId.MemberExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _setField(config, memberExpression, 'object', value, config?.object); },
@@ -3044,7 +3044,7 @@ export function metaProperty(text: string) {
   if (text.length === 0) throw new Error(`meta_property: text must be non-empty`);
   return {
     $type: TSKindId.MetaProperty as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3069,7 +3069,7 @@ export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
   };
   return {
     $type: TSKindId.MethodDefinition as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     accessibilityModifier(value?: T._AccessibilityModifier | undefined) { return _setField(config, methodDefinition, 'accessibilityModifier', value, config?.accessibilityModifier); },
@@ -3105,7 +3105,7 @@ export function methodSignature(config: ConfigOf<T.MethodSignature>) {
   };
   return {
     $type: TSKindId.MethodSignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     accessibilityModifier(value?: T._AccessibilityModifier | undefined) { return _setField(config, methodSignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
@@ -3131,7 +3131,7 @@ export function module(config: ConfigOf<T.Module>) {
   };
   return {
     $type: TSKindId.Module as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.String | T.Identifier | T.NestedIdentifier) { return _setField(config, module, 'name', value, config?.name); },
@@ -3144,7 +3144,7 @@ export function module(config: ConfigOf<T.Module>) {
 export function namedImports(...children: T.ImportSpecifier[]) {
   return {
     $type: TSKindId.NamedImports as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3156,7 +3156,7 @@ export function namespaceExport(child: T.ModuleExportName) {
   const children = [child];
   return {
     $type: TSKindId.NamespaceExport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3170,7 +3170,7 @@ export function namespaceImport(config: ConfigOf<T.NamespaceImport>) {
   };
   return {
     $type: TSKindId.NamespaceImport as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     identifier(value?: T.Identifier) { return _setField(config, namespaceImport, 'identifier', value, config?.identifier); },
@@ -3186,7 +3186,7 @@ export function nestedIdentifier(config: ConfigOf<T.NestedIdentifier>) {
   };
   return {
     $type: TSKindId.NestedIdentifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Identifier | T.NestedIdentifier) { return _setField(config, nestedIdentifier, 'object', value, config?.object); },
@@ -3203,7 +3203,7 @@ export function nestedTypeIdentifier(config: ConfigOf<T.NestedTypeIdentifier>) {
   };
   return {
     $type: TSKindId.NestedTypeIdentifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     module(value?: T.Identifier | T.NestedIdentifier) { return _setField(config, nestedTypeIdentifier, 'module', value, config?.module); },
@@ -3221,7 +3221,7 @@ export function newExpression(config: ConfigOf<T.NewExpression>) {
   };
   return {
     $type: TSKindId.NewExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     constructor(value?: T.PrimaryExpression) { return _setField(config, newExpression, 'constructor', value, config?.constructor); },
@@ -3238,7 +3238,7 @@ export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
   };
   return {
     $type: TSKindId.NonNullExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, nonNullExpression, 'expression', value, config?.expression); },
@@ -3250,7 +3250,7 @@ export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
 export function null_() {
   return {
     $type: TSKindId.Null as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'null' as const,
     ..._leafMethods('null' as const),
@@ -3262,7 +3262,7 @@ export function number(text: string) {
   if (text.length === 0) throw new Error(`number: text must be non-empty`);
   return {
     $type: TSKindId.Number as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3273,7 +3273,7 @@ export function number(text: string) {
 export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) {
   return {
     $type: TSKindId.Object as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3288,7 +3288,7 @@ export function objectAssignmentPattern(config: ConfigOf<T.ObjectAssignmentPatte
   };
   return {
     $type: TSKindId.ObjectAssignmentPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) { return _setField(config, objectAssignmentPattern, 'left', value, config?.left); },
@@ -3301,7 +3301,7 @@ export function objectAssignmentPattern(config: ConfigOf<T.ObjectAssignmentPatte
 export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) {
   return {
     $type: TSKindId.ObjectPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3317,7 +3317,7 @@ export function objectType(config: ConfigOf<T.ObjectType>) {
   };
   return {
     $type: TSKindId.ObjectType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     opening(value?: T.ObjectTypeOpening) { return _setField(config, objectType, 'opening', value, config?.opening); },
@@ -3336,7 +3336,7 @@ export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
   };
   return {
     $type: TSKindId.ObjectType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     ..._branchMethods,
@@ -3352,7 +3352,7 @@ export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
   };
   return {
     $type: TSKindId.ObjectType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     ..._branchMethods,
@@ -3366,7 +3366,7 @@ export function omittingTypeAnnotation(config: ConfigOf<T.OmittingTypeAnnotation
   };
   return {
     $type: TSKindId.OmittingTypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, omittingTypeAnnotation, 'type', value, config?.type); },
@@ -3381,7 +3381,7 @@ export function optingTypeAnnotation(config: ConfigOf<T.OptingTypeAnnotation>) {
   };
   return {
     $type: TSKindId.OptingTypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, optingTypeAnnotation, 'type', value, config?.type); },
@@ -3401,7 +3401,7 @@ export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.OptionalParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -3426,7 +3426,7 @@ export function optionalTupleParameter(config: ConfigOf<T.OptionalTupleParameter
   };
   return {
     $type: TSKindId.OptionalTupleParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier) { return _setField(config, optionalTupleParameter, 'name', value, config?.name); },
@@ -3442,7 +3442,7 @@ export function optionalType(config: ConfigOf<T.OptionalType>) {
   };
   return {
     $type: TSKindId.OptionalType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, optionalType, 'type', value, config?.type); },
@@ -3454,7 +3454,7 @@ export function optionalType(config: ConfigOf<T.OptionalType>) {
 export function overrideModifier() {
   return {
     $type: TSKindId.OverrideModifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'override' as const,
     ..._leafMethods('override' as const),
@@ -3469,7 +3469,7 @@ export function pair(config: ConfigOf<T.Pair>) {
   };
   return {
     $type: TSKindId.Pair as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     key(value?: T.PropertyName) { return _setField(config, pair, 'key', value, config?.key); },
@@ -3486,7 +3486,7 @@ export function pairPattern(config: ConfigOf<T.PairPattern>) {
   };
   return {
     $type: TSKindId.PairPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     key(value?: T.PropertyName) { return _setField(config, pairPattern, 'key', value, config?.key); },
@@ -3500,7 +3500,7 @@ export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
   return {
     $type: TSKindId._ParenthesizedExpressionSequence as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3522,7 +3522,7 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
   const children = [inner] as const;
   return {
     $type: TSKindId.ParenthesizedExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'typed' as const,
     $children: children,
@@ -3539,7 +3539,7 @@ export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.Pa
   const children = [inner] as const;
   return {
     $type: TSKindId.ParenthesizedExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'sequence' as const,
     $children: children,
@@ -3554,7 +3554,7 @@ export function parenthesizedType(config: ConfigOf<T.ParenthesizedType>) {
   };
   return {
     $type: TSKindId.ParenthesizedType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, parenthesizedType, 'type', value, config?.type); },
@@ -3567,7 +3567,7 @@ export function predefinedType(text: string) {
   if (text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
   return {
     $type: TSKindId.PredefinedType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3579,7 +3579,7 @@ export function privatePropertyIdentifier(text: string) {
   if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
   return {
     $type: TSKindId.PrivatePropertyIdentifier as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3594,7 +3594,7 @@ export function program(config: ConfigOf<T.Program>) {
   };
   return {
     $type: TSKindId.Program as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     hashBangLine(value?: T.HashBangLine | undefined) { return _setField(config, program, 'hashBangLine', value, config?.hashBangLine); },
@@ -3616,7 +3616,7 @@ export function propertySignature(config: ConfigOf<T.PropertySignature>) {
   };
   return {
     $type: TSKindId.PropertySignature as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     accessibilityModifier(value?: T._AccessibilityModifier | undefined) { return _setField(config, propertySignature, 'accessibilityModifier', value, config?.accessibilityModifier); },
@@ -3642,7 +3642,7 @@ export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>)
   const children = config.children ?? [];
   return {
     $type: TSKindId.PublicFieldDefinition as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -3666,7 +3666,7 @@ export function readonlyType(config: ConfigOf<T.ReadonlyType>) {
   };
   return {
     $type: TSKindId.ReadonlyType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, readonlyType, 'type', value, config?.type); },
@@ -3682,7 +3682,7 @@ export function regex(config: ConfigOf<T.Regex>) {
   };
   return {
     $type: TSKindId.Regex as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     pattern(value?: T.RegexPattern) { return _setField(config, regex, 'pattern', value, config?.pattern); },
@@ -3696,7 +3696,7 @@ export function regexFlags(text: string) {
   if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`); if (!_leafRe_regexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.RegexFlags as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3708,7 +3708,7 @@ export function regexPattern(text: string) {
   if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
   return {
     $type: TSKindId.RegexPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -3727,7 +3727,7 @@ export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.RequiredParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -3749,7 +3749,7 @@ export function restPattern(child: T.LhsExpression) {
   const children = [child];
   return {
     $type: TSKindId.RestPattern as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3763,7 +3763,7 @@ export function restType(config: ConfigOf<T.RestType>) {
   };
   return {
     $type: TSKindId.RestType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, restType, 'type', value, config?.type); },
@@ -3779,7 +3779,7 @@ export function returnStatement(config: ConfigOf<T.ReturnStatement>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ReturnStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -3800,7 +3800,7 @@ export function satisfiesExpression(config: ConfigOf<T.SatisfiesExpression>) {
   };
   return {
     $type: TSKindId.SatisfiesExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, satisfiesExpression, 'expression', value, config?.expression); },
@@ -3814,7 +3814,7 @@ export function sequenceExpression(...children: T.Expression[]) {
   _assertNonEmpty(children, 'sequence_expression.children');
   return {
     $type: TSKindId.SequenceExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3828,7 +3828,7 @@ export function spreadElement(config: ConfigOf<T.SpreadElement>) {
   };
   return {
     $type: TSKindId.SpreadElement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression) { return _setField(config, spreadElement, 'expression', value, config?.expression); },
@@ -3844,7 +3844,7 @@ export function statementBlock(config: ConfigOf<T.StatementBlock>) {
   };
   return {
     $type: TSKindId.StatementBlock as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     statements(...values: T.Statement[]) { return _setFields(config, statementBlock, 'statements', values, config?.statements); },
@@ -3857,7 +3857,7 @@ export function statementBlock(config: ConfigOf<T.StatementBlock>) {
 export function stringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
   return {
     $type: TSKindId._StringDouble as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3868,7 +3868,7 @@ export function stringDouble(...children: (T.UnescapedDoubleStringFragment | T.E
 export function stringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
   return {
     $type: TSKindId._StringSingle as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3890,7 +3890,7 @@ export function stringUFormDouble(config?: Omit<ConfigOf<T.StringUFormDouble>, '
   const children = [inner] as const;
   return {
     $type: TSKindId.String as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'double' as const,
     $children: children,
@@ -3903,7 +3903,7 @@ export function stringUFormSingle(config?: Omit<ConfigOf<T.StringUFormSingle>, '
   const children = [inner] as const;
   return {
     $type: TSKindId.String as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'single' as const,
     $children: children,
@@ -3920,7 +3920,7 @@ export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
   };
   return {
     $type: TSKindId.SubscriptExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.Expression | T.PrimaryExpression) { return _setField(config, subscriptExpression, 'object', value, config?.object); },
@@ -3934,7 +3934,7 @@ export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
 export function super_() {
   return {
     $type: TSKindId.Super as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'super' as const,
     ..._leafMethods('super' as const),
@@ -3945,7 +3945,7 @@ export function super_() {
 export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
   return {
     $type: TSKindId.SwitchBody as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -3960,7 +3960,7 @@ export function switchCase(config: ConfigOf<T.SwitchCase>) {
   };
   return {
     $type: TSKindId.SwitchCase as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.Expressions) { return _setField(config, switchCase, 'value', value, config?.value); },
@@ -3976,7 +3976,7 @@ export function switchDefault(config: ConfigOf<T.SwitchDefault>) {
   };
   return {
     $type: TSKindId.SwitchDefault as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(...values: T.Statement[]) { return _setFields(config, switchDefault, 'body', values, config?.body); },
@@ -3992,7 +3992,7 @@ export function switchStatement(config: ConfigOf<T.SwitchStatement>) {
   };
   return {
     $type: TSKindId.SwitchStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     value(value?: T.ParenthesizedExpression) { return _setField(config, switchStatement, 'value', value, config?.value); },
@@ -4005,7 +4005,7 @@ export function switchStatement(config: ConfigOf<T.SwitchStatement>) {
 export function templateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
   return {
     $type: TSKindId.TemplateLiteralType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4016,7 +4016,7 @@ export function templateLiteralType(...children: (T.TemplateChars | T.TemplateTy
 export function templateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
   return {
     $type: TSKindId.TemplateString as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4028,7 +4028,7 @@ export function templateSubstitution(child: T.Expressions) {
   const children = [child];
   return {
     $type: TSKindId.TemplateSubstitution as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4040,7 +4040,7 @@ export function templateType(child: (T.PrimaryType | T.InferType)) {
   const children = [child];
   return {
     $type: TSKindId.TemplateType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4056,7 +4056,7 @@ export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
   };
   return {
     $type: TSKindId.TernaryExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.Expression) { return _setField(config, ternaryExpression, 'condition', value, config?.condition); },
@@ -4070,7 +4070,7 @@ export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
 export function this_() {
   return {
     $type: TSKindId.This as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'this' as const,
     ..._leafMethods('this' as const),
@@ -4085,7 +4085,7 @@ export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
   const children = config.children ?? [];
   return {
     $type: TSKindId.ThrowStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     $children: children,
@@ -4102,7 +4102,7 @@ export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
 export function true_() {
   return {
     $type: TSKindId.True as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'true' as const,
     ..._leafMethods('true' as const),
@@ -4118,7 +4118,7 @@ export function tryStatement(config: ConfigOf<T.TryStatement>) {
   };
   return {
     $type: TSKindId.TryStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     body(value?: T.StatementBlock) { return _setField(config, tryStatement, 'body', value, config?.body); },
@@ -4136,7 +4136,7 @@ export function tupleParameter(config: ConfigOf<T.TupleParameter>) {
   };
   return {
     $type: TSKindId.TupleParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier | T.RestPattern) { return _setField(config, tupleParameter, 'name', value, config?.name); },
@@ -4149,7 +4149,7 @@ export function tupleParameter(config: ConfigOf<T.TupleParameter>) {
 export function tupleType(...children: T.TupleTypeMember[]) {
   return {
     $type: TSKindId.TupleType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4166,7 +4166,7 @@ export function typeAliasDeclaration(config: ConfigOf<T.TypeAliasDeclaration>) {
   };
   return {
     $type: TSKindId.TypeAliasDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.TypeIdentifier) { return _setField(config, typeAliasDeclaration, 'name', value, config?.name); },
@@ -4184,7 +4184,7 @@ export function typeAnnotation(config: ConfigOf<T.TypeAnnotation>) {
   };
   return {
     $type: TSKindId.TypeAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeField(value?: T.Type) { return _setField(config, typeAnnotation, 'type', value, config?.type); },
@@ -4197,7 +4197,7 @@ export function typeArguments(...children: T.Type[]) {
   _assertNonEmpty(children, 'type_arguments.children');
   return {
     $type: TSKindId.TypeArguments as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4212,7 +4212,7 @@ export function typeAssertion(config: ConfigOf<T.TypeAssertion>) {
   };
   return {
     $type: TSKindId.TypeAssertion as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typeArguments(value?: T.TypeArguments) { return _setField(config, typeAssertion, 'typeArguments', value, config?.typeArguments); },
@@ -4231,7 +4231,7 @@ export function typeParameter(config: ConfigOf<T.TypeParameter>) {
   };
   return {
     $type: TSKindId.TypeParameter as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     constMarker(value?: T.ConstMarker | undefined) { return _setField(config, typeParameter, 'constMarker', value, config?.constMarker); },
@@ -4247,7 +4247,7 @@ export function typeParameters(...children: T.TypeParameter[]) {
   _assertNonEmpty(children, 'type_parameters.children');
   return {
     $type: TSKindId.TypeParameters as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4262,7 +4262,7 @@ export function typePredicate(config: ConfigOf<T.TypePredicate>) {
   };
   return {
     $type: TSKindId.TypePredicate as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.PredefinedType | T.This) { return _setField(config, typePredicate, 'name', value, config?.name); },
@@ -4278,7 +4278,7 @@ export function typePredicateAnnotation(config: ConfigOf<T.TypePredicateAnnotati
   };
   return {
     $type: TSKindId.TypePredicateAnnotation as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     typePredicate(value?: T.AssertsAnnotationAsserts | T.TypePredicate) { return _setField(config, typePredicateAnnotation, 'typePredicate', value, config?.typePredicate); },
@@ -4291,7 +4291,7 @@ export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMe
   const children = [child];
   return {
     $type: TSKindId.TypeQuery as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $children: children,
     ..._branchMethods,
@@ -4306,7 +4306,7 @@ export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
   };
   return {
     $type: TSKindId.UnaryExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     operator(value?: T.UnaryExpressionOperator) { return _setField(config, unaryExpression, 'operator', value, config?.operator); },
@@ -4319,7 +4319,7 @@ export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
 export function undefined_() {
   return {
     $type: TSKindId.Undefined as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: 'undefined' as const,
     ..._leafMethods('undefined' as const),
@@ -4331,7 +4331,7 @@ export function unescapedDoubleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.UnescapedDoubleStringFragment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4343,7 +4343,7 @@ export function unescapedSingleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`); if (!_leafRe_unescapedSingleStringFragment.test(text)) throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
   return {
     $type: TSKindId.UnescapedSingleStringFragment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4358,7 +4358,7 @@ export function unionType(config: ConfigOf<T.UnionType>) {
   };
   return {
     $type: TSKindId.UnionType as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     left(value?: T.Type | undefined) { return _setField(config, unionType, 'left', value, config?.left); },
@@ -4382,7 +4382,7 @@ export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpre
   const children = [inner] as const;
   return {
     $type: TSKindId.UpdateExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'postfix' as const,
     $children: children,
@@ -4403,7 +4403,7 @@ export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpres
   const children = [inner] as const;
   return {
     $type: TSKindId.UpdateExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
@@ -4427,7 +4427,7 @@ export function variableDeclaration(config: ConfigOf<T.VariableDeclaration>) {
   };
   return {
     $type: TSKindId.VariableDeclaration as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     declarators(...values: NonEmptyArray<T.VariableDeclarator>) { return _setFields(config, variableDeclaration, 'declarators', values, config?.declarators); },
@@ -4445,7 +4445,7 @@ export function variableDeclarator(config: ConfigOf<T.VariableDeclarator>) {
   };
   return {
     $type: TSKindId.VariableDeclarator as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     name(value?: T.Identifier | T.DestructuringPattern) { return _setField(config, variableDeclarator, 'name', value, config?.name); },
@@ -4463,7 +4463,7 @@ export function whileStatement(config: ConfigOf<T.WhileStatement>) {
   };
   return {
     $type: TSKindId.WhileStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     condition(value?: T.ParenthesizedExpression) { return _setField(config, whileStatement, 'condition', value, config?.condition); },
@@ -4480,7 +4480,7 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
   };
   return {
     $type: TSKindId.WithStatement as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     object(value?: T.ParenthesizedExpression) { return _setField(config, withStatement, 'object', value, config?.object); },
@@ -4496,7 +4496,7 @@ export function yieldExpression(config?: ConfigOf<T.YieldExpression>) {
   };
   return {
     $type: TSKindId.YieldExpression as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $fields: fields,
     expression(value?: T.Expression | undefined) { return _setField(config, yieldExpression, 'expression', value, config?.expression); },
@@ -4509,7 +4509,7 @@ export function automaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
   return {
     $type: TSKindId.AutomaticSemicolon as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4521,7 +4521,7 @@ export function templateChars(text: string) {
   if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
   return {
     $type: TSKindId.TemplateChars as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4533,7 +4533,7 @@ export function ternaryQmark(text: string) {
   if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
   return {
     $type: TSKindId.TernaryQmark as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4545,7 +4545,7 @@ export function htmlComment(text: string) {
   if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
   return {
     $type: TSKindId.HtmlComment as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4557,7 +4557,7 @@ export function oror(text: string) {
   if (text.length === 0) throw new Error(`||: text must be non-empty`);
   return {
     $type: TSKindId.PipePipe as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4569,7 +4569,7 @@ export function jsxText(text: string) {
   if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
   return {
     $type: TSKindId.JsxText as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4581,7 +4581,7 @@ export function functionSignatureAutomaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
   return {
     $type: TSKindId.FunctionSignatureAutomaticSemicolon as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),
@@ -4593,7 +4593,7 @@ export function errorRecovery(text: string) {
   if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
   return {
     $type: TSKindId.ErrorRecovery as number,
-    $source: 'factory' as const,
+    $source: 2 as const,
     $named: true as const,
     $text: text,
     ..._leafMethods(text),

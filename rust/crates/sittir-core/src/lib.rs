@@ -26,3 +26,6 @@ pub use types::KindId;
 // Flat re-export for the streaming render trait — callers reach this as
 // `sittir_core::RenderableTransport`.
 pub use types::RenderableTransport;
+// ADR-0017: ParsedTree is the owned parse result; StoredNode is the
+// node handle enum. ParseResult is the JSON envelope for parse_and_read.
+pub use engine::{panic_msg, ParseResult, ParsedTree, StoredNode};

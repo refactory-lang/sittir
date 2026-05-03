@@ -16,22 +16,6 @@ export interface Edit {
 }
 
 /**
- * Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
- * tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
- *
- * Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
- * `#[napi(string_enum)]` (gated on napi-bindings feature) adds
- * `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
- * The feature gate prevents napi C-symbol leakage into sittir-core
- * test binaries that build without Node.js.
- */
-export declare const enum Source {
-  Ts = 'Ts',
-  Sg = 'Sg',
-  Factory = 'Factory'
-}
-
-/**
  * Byte-range for a `NodeData` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
@@ -49,12 +33,8 @@ export declare class SittirEngine {
   get nativeRenderTransportAbi(): number
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
-  readNode(nodeId: number): string
-  /**
-   * Render a typed transport object (napi-native, numeric `$type`).
-   * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
-   * object — no `serde_json::Value` intermediate.
-   */
+  readNode(handle: number, childIndex: number): string
+  /** Render a typed transport object (napi-native, numeric `$type`). */
   render(transport: AnyTransport): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
@@ -65,7 +45,8 @@ export interface AbstractTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   typeParameters?: TypeParametersTransport
   trait: Box<AnyTransport>
 }
@@ -75,7 +56,8 @@ export interface ArgumentsTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<ArgumentsChildTransport>
 }
 
@@ -84,7 +66,8 @@ export interface ArrayExpressionListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attributes: Array<AttributeItemTransport>
   elements: Array<ExpressionTransport>
   '$children': Array<AttributeItemTransport>
@@ -95,7 +78,8 @@ export interface ArrayExpressionSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attributes: Array<AttributeItemTransport>
   elements: ExpressionTransport
   length: ExpressionTransport
@@ -106,7 +90,8 @@ export interface ArrayExpressionUFormListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ArrayExpressionListTransport
 }
 
@@ -115,7 +100,8 @@ export interface ArrayExpressionUFormSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ArrayExpressionSemiTransport
 }
 
@@ -124,7 +110,8 @@ export interface ArrayTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   element: _TypeTransport
   length?: ExpressionTransport
 }
@@ -134,7 +121,8 @@ export interface AssignmentExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: ExpressionTransport
   right: ExpressionTransport
 }
@@ -144,7 +132,8 @@ export interface AssociatedTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
   bounds?: TraitBoundsTransport
@@ -156,7 +145,8 @@ export interface AsyncBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   moveMarker?: boolean
   block: BlockTransport
 }
@@ -166,7 +156,8 @@ export interface AttributeItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attribute: AttributeTransport
 }
 
@@ -175,7 +166,8 @@ export interface AttributeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': PathTransport
 }
 
@@ -184,7 +176,8 @@ export interface AwaitExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionTransport
 }
 
@@ -193,7 +186,8 @@ export interface BaseFieldInitializerTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionTransport
 }
 
@@ -202,7 +196,8 @@ export interface BinaryExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: ExpressionTransport
   operator: boolean
   right: ExpressionTransport
@@ -213,7 +208,8 @@ export interface BlockCommentTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   doc?: Box<AnyTransport>
 }
 
@@ -222,9 +218,10 @@ export interface BlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
-  '$children': Array<Box<AnyTransport>>
+  '$children': Array<AnyTransport>
 }
 
 export interface BoundedTypeTransport {
@@ -232,7 +229,8 @@ export interface BoundedTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: Box<AnyTransport>
   right: Box<AnyTransport>
 }
@@ -242,7 +240,8 @@ export interface BracketedTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': BracketedTypeChildTransport
 }
 
@@ -251,7 +250,8 @@ export interface BreakExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
   '$children'?: ExpressionTransport
 }
@@ -261,7 +261,8 @@ export interface CallExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   function: ExpressionExceptRangeTransport
   arguments: ArgumentsTransport
 }
@@ -271,7 +272,8 @@ export interface CapturedPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   identifier: IdentifierTransport
   '$children': PatternTransport
 }
@@ -281,7 +283,8 @@ export interface ClosureExpressionBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   returnType?: _TypeTransport
   body: BlockTransport
 }
@@ -291,7 +294,8 @@ export interface ClosureExpressionExprTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: ExpressionTransport
 }
 
@@ -300,7 +304,8 @@ export interface ClosureExpressionExprTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: ExpressionTransport
 }
 
@@ -309,7 +314,8 @@ export interface ClosureExpressionUFormBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   staticMarker?: boolean
   asyncMarker?: boolean
   moveMarker?: boolean
@@ -322,7 +328,8 @@ export interface ClosureExpressionUFormExprTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   staticMarker?: boolean
   asyncMarker?: boolean
   moveMarker?: boolean
@@ -335,7 +342,8 @@ export interface ClosureParametersTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<ClosureParametersChildTransport>
 }
 
@@ -344,7 +352,8 @@ export interface CommentTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': CommentChildTransport
 }
 
@@ -353,7 +362,8 @@ export interface CompoundAssignmentExprTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: ExpressionTransport
   operator: CompoundAssignmentExprOperatorEnum
   right: ExpressionTransport
@@ -364,7 +374,8 @@ export interface ConstBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: BlockTransport
 }
 
@@ -373,7 +384,8 @@ export interface ConstItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: IdentifierTransport
   type: _TypeTransport
@@ -385,7 +397,8 @@ export interface ConstParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: IdentifierTransport
   type: _TypeTransport
   value?: Box<AnyTransport>
@@ -396,7 +409,8 @@ export interface ContinueExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
 }
 
@@ -405,7 +419,8 @@ export interface DeclarationListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DeclarationStatementTransport>
 }
 
@@ -414,7 +429,8 @@ export interface DelimTokenTreeBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -423,7 +439,8 @@ export interface DelimTokenTreeBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -432,7 +449,8 @@ export interface DelimTokenTreeBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -441,7 +459,8 @@ export interface DelimTokenTreeBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -450,7 +469,8 @@ export interface DelimTokenTreeParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -459,7 +479,8 @@ export interface DelimTokenTreeParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<DelimTokensTransport>
 }
 
@@ -468,7 +489,8 @@ export interface DelimTokenTreeUFormBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': DelimTokenTreeBraceTransport
 }
 
@@ -477,7 +499,8 @@ export interface DelimTokenTreeUFormBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': DelimTokenTreeBracketTransport
 }
 
@@ -486,7 +509,8 @@ export interface DelimTokenTreeUFormParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': DelimTokenTreeParenTransport
 }
 
@@ -495,7 +519,8 @@ export interface DynamicTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   trait: Box<AnyTransport>
 }
 
@@ -504,7 +529,8 @@ export interface ElseClauseTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionEndingWithBlockTransport
 }
 
@@ -517,7 +543,8 @@ export interface EnumItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -530,7 +557,8 @@ export interface EnumVariantListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<EnumVariantListChildTransport>
 }
 
@@ -539,7 +567,8 @@ export interface EnumVariantTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: IdentifierTransport
   body?: Box<AnyTransport>
@@ -551,7 +580,8 @@ export interface ExpressionStatementBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionEndingWithBlockTransport
 }
 
@@ -560,7 +590,8 @@ export interface ExpressionStatementBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionEndingWithBlockTransport
 }
 
@@ -569,7 +600,8 @@ export interface ExpressionStatementUFormBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionStatementBlockEndingTransport
 }
 
@@ -578,7 +610,8 @@ export interface ExpressionStatementUFormWithSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionStatementWithSemiTransport
 }
 
@@ -587,7 +620,8 @@ export interface ExpressionStatementWithSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionTransport
 }
 
@@ -596,7 +630,8 @@ export interface ExpressionStatementWithSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionTransport
 }
 
@@ -605,7 +640,8 @@ export interface ExternCrateDeclarationTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   crate: boolean
   name: IdentifierTransport
@@ -617,7 +653,8 @@ export interface ExternModifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   stringLiteral?: StringLiteralTransport
 }
 
@@ -626,7 +663,8 @@ export interface FieldDeclarationListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<FieldDeclarationListChildTransport>
 }
 
@@ -635,7 +673,8 @@ export interface FieldDeclarationTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: FieldIdentifierTransport
   type: _TypeTransport
@@ -646,7 +685,8 @@ export interface FieldExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
   field: Box<AnyTransport>
 }
@@ -656,7 +696,8 @@ export interface FieldIdentifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': IdentifierTransport
 }
 
@@ -665,7 +706,8 @@ export interface FieldInitializerListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<FieldInitializerListChildTransport>
 }
 
@@ -674,7 +716,8 @@ export interface FieldInitializerTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   field: Box<AnyTransport>
   value: ExpressionTransport
   '$children': Array<AttributeItemTransport>
@@ -685,7 +728,8 @@ export interface FieldPatternNamedTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: FieldIdentifierTransport
   pattern: PatternTransport
 }
@@ -695,7 +739,8 @@ export interface FieldPatternShorthandTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: IdentifierTransport
 }
 
@@ -704,7 +749,8 @@ export interface FieldPatternShorthandTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: IdentifierTransport
 }
 
@@ -713,7 +759,8 @@ export interface FieldPatternUFormNamedTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   refMarker?: boolean
   mutableSpecifier?: boolean
   '$children': FieldPatternNamedTransport
@@ -724,7 +771,8 @@ export interface FieldPatternUFormShorthandTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   refMarker?: boolean
   mutableSpecifier?: boolean
   '$children': FieldPatternShorthandTransport
@@ -735,7 +783,8 @@ export interface ForeignModItemBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -744,7 +793,8 @@ export interface ForeignModItemBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -753,7 +803,8 @@ export interface ForeignModItemUFormBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   externModifier: ExternModifierTransport
   '$children': ForeignModItemBodyTransport
@@ -764,7 +815,8 @@ export interface ForeignModItemUFormSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   externModifier: ExternModifierTransport
   '$children': ForeignModItemSemiTransport
@@ -775,7 +827,8 @@ export interface ForExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
   pattern: PatternTransport
   value: ExpressionTransport
@@ -787,7 +840,8 @@ export interface ForLifetimesTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<LifetimeTransport>
 }
 
@@ -796,7 +850,8 @@ export interface FunctionItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   functionModifiers?: FunctionModifiersTransport
   name: PathTransport
@@ -812,7 +867,8 @@ export interface FunctionModifiersTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   modifier: Array<ExternModifierTransport>
 }
 
@@ -821,7 +877,8 @@ export interface FunctionSignatureItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   functionModifiers?: FunctionModifiersTransport
   name: PathTransport
@@ -836,7 +893,8 @@ export interface FunctionTypeFnFormTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: FunctionModifiersTransport
 }
 
@@ -845,7 +903,8 @@ export interface FunctionTypeTraitFormTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   trait: Box<AnyTransport>
 }
 
@@ -854,7 +913,8 @@ export interface FunctionTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   forLifetimes?: ForLifetimesTransport
   parameters: ParametersTransport
   returnType?: _TypeTransport
@@ -866,7 +926,8 @@ export interface GenBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   moveMarker?: boolean
   block: BlockTransport
 }
@@ -876,7 +937,8 @@ export interface GenericFunctionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   function: ExpressionExceptRangeTransport
   typeArguments: TypeArgumentsTransport
 }
@@ -886,7 +948,8 @@ export interface GenericPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   typeArguments: TypeArgumentsTransport
   '$children': PathTransport
 }
@@ -896,7 +959,8 @@ export interface GenericTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: Box<AnyTransport>
   typeArguments: TypeArgumentsTransport
 }
@@ -906,7 +970,8 @@ export interface GenericTypeWithTurbofishTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: Box<AnyTransport>
   turbofish: boolean
   typeArguments: TypeArgumentsTransport
@@ -917,7 +982,8 @@ export interface HigherRankedTraitBoundTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   typeParameters: TypeParametersTransport
   type: _TypeTransport
 }
@@ -927,7 +993,8 @@ export interface IfExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   condition: ConditionTransport
   consequence: BlockTransport
   alternative?: ElseClauseTransport
@@ -938,7 +1005,8 @@ export interface ImplItemBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -947,7 +1015,8 @@ export interface ImplItemBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -956,7 +1025,8 @@ export interface ImplItemUFormBodyTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   unsafeMarker?: boolean
   typeParameters?: TypeParametersTransport
   negative?: boolean
@@ -971,7 +1041,8 @@ export interface ImplItemUFormSemiTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   unsafeMarker?: boolean
   typeParameters?: TypeParametersTransport
   negative?: boolean
@@ -986,7 +1057,8 @@ export interface IndexExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   object: ExpressionTransport
   index: ExpressionTransport
 }
@@ -996,7 +1068,8 @@ export interface InnerAttributeItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attribute: AttributeTransport
 }
 
@@ -1005,7 +1078,8 @@ export interface LabelTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   identifier: IdentifierTransport
 }
 
@@ -1014,7 +1088,8 @@ export interface LastMatchArmTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   pattern: MatchPatternTransport
   value: ExpressionTransport
   '$children': Array<DeclarationStatementTransport>
@@ -1025,7 +1100,8 @@ export interface LetChainTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': LetChainChildTransport
 }
 
@@ -1034,7 +1110,8 @@ export interface LetConditionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   pattern: PatternTransport
   value: ExpressionTransport
 }
@@ -1044,7 +1121,8 @@ export interface LetDeclarationTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   mutableSpecifier?: boolean
   pattern: PatternTransport
   type?: _TypeTransport
@@ -1057,7 +1135,8 @@ export interface LifetimeParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: LifetimeTransport
   bounds?: TraitBoundsTransport
 }
@@ -1067,7 +1146,8 @@ export interface LifetimeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   identifier: IdentifierTransport
 }
 
@@ -1076,7 +1156,8 @@ export interface LineCommentDocTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   doc: LineDocContentTransport
 }
 
@@ -1085,7 +1166,8 @@ export interface LineCommentUFormContentTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': LineCommentContentTransport
 }
 
@@ -1094,7 +1176,8 @@ export interface LineCommentUFormDocTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': LineCommentDocTransport
 }
 
@@ -1103,7 +1186,8 @@ export interface LineCommentUFormRegularDslashTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': LineCommentRegularDslashTransport
 }
 
@@ -1112,7 +1196,8 @@ export interface LoopExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
   body: BlockTransport
 }
@@ -1122,7 +1207,8 @@ export interface MacroDefinitionBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1131,7 +1217,8 @@ export interface MacroDefinitionBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1140,7 +1227,8 @@ export interface MacroDefinitionBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1149,7 +1237,8 @@ export interface MacroDefinitionBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1158,7 +1247,8 @@ export interface MacroDefinitionParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1167,7 +1257,8 @@ export interface MacroDefinitionParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MacroRuleTransport>
 }
 
@@ -1176,7 +1267,8 @@ export interface MacroDefinitionUFormBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: Box<AnyTransport>
   '$children': MacroDefinitionBraceTransport
 }
@@ -1186,7 +1278,8 @@ export interface MacroDefinitionUFormBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: Box<AnyTransport>
   '$children': MacroDefinitionBracketTransport
 }
@@ -1196,7 +1289,8 @@ export interface MacroDefinitionUFormParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: Box<AnyTransport>
   '$children': MacroDefinitionParenTransport
 }
@@ -1206,7 +1300,8 @@ export interface MacroInvocationTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   macro: Box<AnyTransport>
   tokenTree: Box<AnyTransport>
 }
@@ -1216,7 +1311,8 @@ export interface MacroRuleTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: Box<AnyTransport>
   right: Box<AnyTransport>
 }
@@ -1226,7 +1322,8 @@ export interface MatchArmBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionEndingWithBlockTransport
 }
 
@@ -1235,7 +1332,8 @@ export interface MatchArmBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionEndingWithBlockTransport
 }
 
@@ -1244,7 +1342,8 @@ export interface MatchArmUFormBlockEndingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   pattern: MatchPatternTransport
   '$children': Array<MatchArmUFormBlockEndingChildTransport>
 }
@@ -1254,7 +1353,8 @@ export interface MatchArmUFormWithCommaTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   pattern: MatchPatternTransport
   '$children': Array<MatchArmUFormWithCommaChildTransport>
 }
@@ -1264,7 +1364,8 @@ export interface MatchArmWithCommaTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
 }
 
@@ -1273,7 +1374,8 @@ export interface MatchBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: Array<MatchBlockChildTransport>
 }
 
@@ -1282,7 +1384,8 @@ export interface MatchExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
   body: MatchBlockTransport
 }
@@ -1292,7 +1395,8 @@ export interface MatchPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   condition?: ConditionTransport
   '$children': PatternTransport
 }
@@ -1302,7 +1406,8 @@ export interface ModItemInlineTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -1311,7 +1416,8 @@ export interface ModItemInlineTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: DeclarationListTransport
 }
 
@@ -1320,7 +1426,8 @@ export interface ModItemUFormExternalTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: IdentifierTransport
   '$children': ModItemExternalTransport
@@ -1331,7 +1438,8 @@ export interface ModItemUFormInlineTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: IdentifierTransport
   '$children': ModItemInlineTransport
@@ -1342,7 +1450,8 @@ export interface MutPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   mutableSpecifier: boolean
   '$children': PatternTransport
 }
@@ -1352,7 +1461,8 @@ export interface NegativeLiteralTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: Box<AnyTransport>
 }
 
@@ -1361,7 +1471,8 @@ export interface NonSpecialTokenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': NonSpecialTokenChildTransport
 }
 
@@ -1370,7 +1481,8 @@ export interface OrderedFieldDeclarationListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: Array<_TypeTransport>
 }
 
@@ -1379,7 +1491,8 @@ export interface OrPatternBinaryTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: PatternTransport
   right: PatternTransport
 }
@@ -1389,7 +1502,8 @@ export interface OrPatternPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   right: PatternTransport
 }
 
@@ -1398,7 +1512,8 @@ export interface OrPatternUFormBinaryTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': OrPatternBinaryTransport
 }
 
@@ -1407,7 +1522,8 @@ export interface OrPatternUFormPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': OrPatternPrefixTransport
 }
 
@@ -1416,7 +1532,8 @@ export interface ParametersTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<ParametersChildTransport>
 }
 
@@ -1425,7 +1542,8 @@ export interface ParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   mutableSpecifier?: boolean
   pattern: Box<AnyTransport>
   type: _TypeTransport
@@ -1436,7 +1554,8 @@ export interface ParenthesizedExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': ExpressionTransport
 }
 
@@ -1445,7 +1564,8 @@ export interface PointerTypeMutTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': MutableSpecifierTransport
 }
 
@@ -1454,7 +1574,8 @@ export interface PointerTypeMutTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': MutableSpecifierTransport
 }
 
@@ -1463,7 +1584,8 @@ export interface PointerTypeUFormConstTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: _TypeTransport
   '$children': PointerTypeConstTransport
 }
@@ -1473,7 +1595,8 @@ export interface PointerTypeUFormMutTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: _TypeTransport
   '$children': PointerTypeMutTransport
 }
@@ -1483,7 +1606,8 @@ export interface QualifiedTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: _TypeTransport
   alias: _TypeTransport
 }
@@ -1493,7 +1617,8 @@ export interface RangeExpressionBareTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   operator: boolean
 }
 
@@ -1502,7 +1627,8 @@ export interface RangeExpressionBareTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   operator: boolean
 }
 
@@ -1511,7 +1637,8 @@ export interface RangeExpressionBinaryTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   start: ExpressionTransport
   operator: RangeExpressionBinaryOperatorEnum
   end: ExpressionTransport
@@ -1522,7 +1649,8 @@ export interface RangeExpressionPostfixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   start: ExpressionTransport
   operator: boolean
 }
@@ -1532,7 +1660,8 @@ export interface RangeExpressionPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   operator: boolean
   end: ExpressionTransport
 }
@@ -1542,7 +1671,8 @@ export interface RangeExpressionUFormBareTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': RangeExpressionBareTransport
 }
 
@@ -1551,7 +1681,8 @@ export interface RangeExpressionUFormBinaryTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': RangeExpressionBinaryTransport
 }
 
@@ -1560,7 +1691,8 @@ export interface RangeExpressionUFormPostfixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': RangeExpressionPostfixTransport
 }
 
@@ -1569,7 +1701,8 @@ export interface RangeExpressionUFormPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': RangeExpressionPrefixTransport
 }
 
@@ -1578,7 +1711,8 @@ export interface RangePatternLeftWithRightTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   right: Box<AnyTransport>
 }
 
@@ -1587,7 +1721,8 @@ export interface RangePatternPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   right: Box<AnyTransport>
 }
 
@@ -1596,7 +1731,8 @@ export interface RangePatternUFormLeftBareTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: Box<AnyTransport>
   '$children': RangePatternLeftBareTransport
 }
@@ -1606,7 +1742,8 @@ export interface RangePatternUFormLeftWithRightTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: Box<AnyTransport>
   '$children': RangePatternLeftWithRightTransport
 }
@@ -1616,7 +1753,8 @@ export interface RangePatternUFormPrefixTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': RangePatternPrefixTransport
 }
 
@@ -1625,7 +1763,8 @@ export interface RawStringLiteralTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   rawStringLiteralStart?: Box<AnyTransport>
   stringContent: RawStringLiteralContentTransport
   rawStringLiteralEnd?: Box<AnyTransport>
@@ -1636,7 +1775,8 @@ export interface ReferenceExpressionRawMutTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': MutableSpecifierTransport
 }
 
@@ -1645,7 +1785,8 @@ export interface ReferenceExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
   '$children': ReferenceExpressionChildTransport
 }
@@ -1655,7 +1796,8 @@ export interface ReferencePatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   mutableSpecifier?: boolean
   pattern: PatternTransport
 }
@@ -1665,7 +1807,8 @@ export interface ReferenceTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   lifetime?: LifetimeTransport
   mutableSpecifier?: boolean
   type: _TypeTransport
@@ -1676,7 +1819,8 @@ export interface RefPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': PatternTransport
 }
 
@@ -1685,7 +1829,8 @@ export interface RemovedTraitBoundTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': _TypeTransport
 }
 
@@ -1694,7 +1839,8 @@ export interface ReservedIdentifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': IdentifierTransport
 }
 
@@ -1703,7 +1849,8 @@ export interface ReturnExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: ExpressionTransport
 }
 
@@ -1712,7 +1859,8 @@ export interface ScopedIdentifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path?: Box<AnyTransport>
   name: PathTransport
 }
@@ -1722,7 +1870,8 @@ export interface ScopedTypeIdentifierInExpressionPositionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path?: Box<AnyTransport>
   name: TypeIdentifierTransport
 }
@@ -1732,7 +1881,8 @@ export interface ScopedTypeIdentifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path?: Box<AnyTransport>
   name: TypeIdentifierTransport
 }
@@ -1742,7 +1892,8 @@ export interface ScopedUseListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path?: PathTransport
   list: UseListTransport
 }
@@ -1752,7 +1903,8 @@ export interface SelfParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   reference?: Box<AnyTransport>
   lifetime?: LifetimeTransport
   mutableSpecifier?: boolean
@@ -1764,7 +1916,8 @@ export interface ShorthandFieldInitializerTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attributes: Array<AttributeItemTransport>
   identifier: IdentifierTransport
 }
@@ -1774,7 +1927,8 @@ export interface SlicePatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<PatternTransport>
 }
 
@@ -1783,7 +1937,8 @@ export interface SourceFileTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   shebang?: ShebangTransport
   statements: Array<StatementTransport>
 }
@@ -1793,7 +1948,8 @@ export interface StaticItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   mutableSpecifier?: Box<AnyTransport>
   name: IdentifierTransport
@@ -1806,7 +1962,8 @@ export interface StringLiteralTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<StringLiteralChildTransport>
 }
 
@@ -1815,7 +1972,8 @@ export interface StructExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: Box<AnyTransport>
   body: FieldInitializerListTransport
 }
@@ -1825,7 +1983,8 @@ export interface StructItemBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: FieldDeclarationListTransport
   '$children'?: WhereClauseTransport
 }
@@ -1835,7 +1994,8 @@ export interface StructItemTupleTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   body: OrderedFieldDeclarationListTransport
   '$children'?: WhereClauseTransport
 }
@@ -1845,7 +2005,8 @@ export interface StructItemUFormBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -1857,7 +2018,8 @@ export interface StructItemUFormTupleTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -1869,7 +2031,8 @@ export interface StructItemUFormUnitTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -1881,7 +2044,8 @@ export interface StructPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: Box<AnyTransport>
   '$children': Array<StructPatternChildTransport>
 }
@@ -1891,7 +2055,8 @@ export interface TokenBindingPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: MetavariableTransport
   type: TokenBindingPatternTypeEnum
 }
@@ -1901,7 +2066,8 @@ export interface TokenRepetitionPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -1910,7 +2076,8 @@ export interface TokenRepetitionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1919,7 +2086,8 @@ export interface TokenTreeBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1928,7 +2096,8 @@ export interface TokenTreeBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1937,7 +2106,8 @@ export interface TokenTreeBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1946,7 +2116,8 @@ export interface TokenTreeBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1955,7 +2126,8 @@ export interface TokenTreeParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1964,7 +2136,8 @@ export interface TokenTreeParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokensTransport>
 }
 
@@ -1973,7 +2146,8 @@ export interface TokenTreePatternBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -1982,7 +2156,8 @@ export interface TokenTreePatternBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -1991,7 +2166,8 @@ export interface TokenTreePatternBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -2000,7 +2176,8 @@ export interface TokenTreePatternBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -2009,7 +2186,8 @@ export interface TokenTreePatternParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -2018,7 +2196,8 @@ export interface TokenTreePatternParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TokenPatternTransport>
 }
 
@@ -2027,7 +2206,8 @@ export interface TokenTreePatternUFormBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreePatternBraceTransport
 }
 
@@ -2036,7 +2216,8 @@ export interface TokenTreePatternUFormBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreePatternBracketTransport
 }
 
@@ -2045,7 +2226,8 @@ export interface TokenTreePatternUFormParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreePatternParenTransport
 }
 
@@ -2054,7 +2236,8 @@ export interface TokenTreeUFormBraceTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreeBraceTransport
 }
 
@@ -2063,7 +2246,8 @@ export interface TokenTreeUFormBracketTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreeBracketTransport
 }
 
@@ -2072,7 +2256,8 @@ export interface TokenTreeUFormParenTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': TokenTreeParenTransport
 }
 
@@ -2081,7 +2266,8 @@ export interface TraitBoundsTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TraitBoundsChildTransport>
 }
 
@@ -2090,7 +2276,8 @@ export interface TraitItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   unsafeMarker?: boolean
   name: TypeIdentifierTransport
@@ -2105,7 +2292,8 @@ export interface TryBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   block: BlockTransport
 }
 
@@ -2114,7 +2302,8 @@ export interface TryExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
 }
 
@@ -2123,7 +2312,8 @@ export interface TupleExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   attributes: Array<AttributeItemTransport>
   elements?: Array<ExpressionTransport>
 }
@@ -2133,8 +2323,9 @@ export interface TuplePatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
-  '$children': Array<Box<AnyTransport>>
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$children': Array<AnyTransport>
 }
 
 export interface TupleStructPatternTransport {
@@ -2142,7 +2333,8 @@ export interface TupleStructPatternTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   type: Box<AnyTransport>
   '$children': Array<PatternTransport>
 }
@@ -2152,7 +2344,8 @@ export interface TupleTypeTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<_TypeTransport>
 }
 
@@ -2161,7 +2354,8 @@ export interface TypeArgumentsTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TypeArgumentsChildTransport>
 }
 
@@ -2170,7 +2364,8 @@ export interface TypeBindingTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: TypeIdentifierTransport
   typeArguments?: TypeArgumentsTransport
   type: _TypeTransport
@@ -2181,7 +2376,8 @@ export interface TypeCastExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   value: ExpressionTransport
   type: _TypeTransport
 }
@@ -2191,7 +2387,8 @@ export interface TypeIdentifierTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': IdentifierTransport
 }
 
@@ -2200,7 +2397,8 @@ export interface TypeItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -2214,7 +2412,8 @@ export interface TypeParametersTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<TypeParametersChildTransport>
 }
 
@@ -2223,7 +2422,8 @@ export interface TypeParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   name: TypeIdentifierTransport
   bounds?: TraitBoundsTransport
   defaultType?: _TypeTransport
@@ -2234,7 +2434,8 @@ export interface UnaryExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   operator: UnaryExpressionOperatorEnum
   operand: ExpressionTransport
 }
@@ -2244,7 +2445,8 @@ export interface UnionItemTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   name: TypeIdentifierTransport
   typeParameters?: TypeParametersTransport
@@ -2257,7 +2459,8 @@ export interface UnsafeBlockTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   block: BlockTransport
 }
 
@@ -2266,7 +2469,8 @@ export interface UseAsClauseTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path: PathTransport
   alias: IdentifierTransport
 }
@@ -2276,7 +2480,8 @@ export interface UseBoundsTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<UseBoundsChildTransport>
 }
 
@@ -2285,7 +2490,8 @@ export interface UseDeclarationTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   visibilityModifier?: Box<AnyTransport>
   argument: UseClauseTransport
 }
@@ -2295,7 +2501,8 @@ export interface UseListTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<UseClauseTransport>
 }
 
@@ -2304,7 +2511,8 @@ export interface UseWildcardTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   path?: PathTransport
 }
 
@@ -2313,7 +2521,8 @@ export interface VariadicParameterTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   mutableSpecifier?: boolean
   pattern?: PatternTransport
 }
@@ -2323,7 +2532,8 @@ export interface VisibilityModifierCrateTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': CrateTransport
 }
 
@@ -2332,7 +2542,8 @@ export interface VisibilityModifierCrateTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': CrateTransport
 }
 
@@ -2341,7 +2552,8 @@ export interface VisibilityModifierInPathTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   in: boolean
   '$children': PathTransport
 }
@@ -2351,7 +2563,8 @@ export interface VisibilityModifierPubTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   pub: boolean
   '$children'?: VisibilityModifierPubChildTransport
 }
@@ -2361,7 +2574,8 @@ export interface VisibilityModifierUFormCrateTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': VisibilityModifierCrateTransport
 }
 
@@ -2370,7 +2584,8 @@ export interface VisibilityModifierUFormInPathTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': VisibilityModifierInPathTransport
 }
 
@@ -2379,7 +2594,8 @@ export interface VisibilityModifierUFormPubTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': VisibilityModifierPubTransport
 }
 
@@ -2388,7 +2604,8 @@ export interface WhereClauseTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children': Array<WherePredicateTransport>
 }
 
@@ -2397,7 +2614,8 @@ export interface WherePredicateTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   left: Box<AnyTransport>
   bounds: TraitBoundsTransport
 }
@@ -2407,7 +2625,8 @@ export interface WhileExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   label?: LabelTransport
   condition: ConditionTransport
   body: BlockTransport
@@ -2418,6 +2637,7 @@ export interface YieldExpressionTransport {
   '$named'?: boolean
   '$text'?: string
   '$span'?: Span
-  '$nodeId'?: number
+  '$nodeHandle'?: number
+  '$childIndex'?: number
   '$children'?: ExpressionTransport
 }

@@ -3174,7 +3174,8 @@ function renderTransportBridge(
 		'    default_named: bool,',
 		'    text: Option<String>,',
 		'    span: Option<::sittir_core::types::Span>,',
-		'    node_id: Option<u64>,',
+		'    node_handle: Option<u32>,',
+		'    child_index: Option<u16>,',
 		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
 		'    children: Option<Vec<TransportNodeData>>,',
 		') -> TransportNodeData {',
@@ -3186,7 +3187,8 @@ function renderTransportBridge(
 		'        children,',
 		'        text,',
 		'        span,',
-		'        node_id,',
+		'        node_handle,',
+		'        child_index,',
 		'    }',
 		'}',
 		'',
@@ -3229,7 +3231,7 @@ function renderTransportBridge(
 				id !== undefined
 					? `TransportKindId(${id}) /* ${safeKind} */`
 					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
-			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None)),`;
+			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None)),`;
 		}),
 		'    }',
 		'}',
@@ -3384,8 +3386,8 @@ function renderTransportDataToNodeFn(
 	lines.push(`        ${defaultNamed ? 'true' : 'false'},`);
 	lines.push(hasOptionalText ? '        transport.transport_text,' : '        None,');
 	lines.push('        transport.transport_span,');
-	// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
-	lines.push('        transport.transport_node_id.map(|v| v as u64),');
+	lines.push('        transport.transport_node_handle.map(|v| v as u32),');
+	lines.push('        transport.transport_child_index.map(|v| v as u16),');
 	lines.push('        fields,');
 	lines.push('        children,');
 	lines.push('    ))');
@@ -3679,13 +3681,14 @@ function renderTerminalTransportToNodeFn(
 				'        None,',
 				'        None,',
 				'        None,',
+				'        None,',
 				'    ))',
 				'}',
 				''
 			];
 		}
 		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
-		// Metadata fields (source, named, span, node_id) are not available on the
+		// Metadata fields (source, named, span, node_handle, child_index) are not available on the
 		// enum — all default to None. The text is derived from the enum's Display impl.
 		return [
 			`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
@@ -3695,6 +3698,7 @@ function renderTerminalTransportToNodeFn(
 			'        None,',
 			'        true,',
 			'        Some(transport.to_string()),',
+			'        None,',
 			'        None,',
 			'        None,',
 			'        None,',
@@ -3714,8 +3718,8 @@ function renderTerminalTransportToNodeFn(
 		'        true,',
 		'        Some(transport.text),',
 		'        transport.transport_span,',
-		// transport_node_id is Option<f64> on the wire (JS number); NodeData uses u64.
-		'        transport.transport_node_id.map(|v| v as u64),',
+		'        transport.transport_node_handle.map(|v| v as u32),',
+		'        transport.transport_child_index.map(|v| v as u16),',
 		'        None,',
 		'        None,',
 		'    ))',
@@ -3924,7 +3928,8 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`            transport_source: None,`);
 	lines.push(`            transport_named: None,`);
 	lines.push(`            transport_span: None,`);
-	lines.push(`            transport_node_id: None,`);
+	lines.push(`            transport_node_handle: None,`);
+	lines.push(`            transport_child_index: None,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3943,12 +3948,14 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push('        let transport_source = obj.get("$source")?;');
 	lines.push('        let transport_named = obj.get("$named")?;');
 	lines.push('        let transport_span = obj.get("$span")?;');
-	lines.push('        let transport_node_id = obj.get("$nodeId")?;');
+	lines.push('        let transport_node_handle = obj.get("$nodeHandle")?;');
+	lines.push('        let transport_child_index = obj.get("$childIndex")?;');
 	lines.push(`        Ok(Self {`);
 	lines.push(`            transport_source,`);
 	lines.push(`            transport_named,`);
 	lines.push(`            transport_span,`);
-	lines.push(`            transport_node_id,`);
+	lines.push(`            transport_node_handle,`);
+	lines.push(`            transport_child_index,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3988,11 +3995,12 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 	lines.push(
 		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]',
 		'    pub transport_span: Option<::sittir_core::types::Span>,',
-		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
-		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
-		// to u64 in the NodeData bridge (transport_node_data).
-		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]',
-		'    pub transport_node_id: Option<f64>,'
+		// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
+		// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]',
+		'    pub transport_node_handle: Option<f64>,',
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]',
+		'    pub transport_child_index: Option<f64>,'
 	);
 	return lines;
 }
@@ -4011,10 +4019,10 @@ function renderLeafTransportPlainFields(): string[] {
 		'    pub transport_source: Option<::sittir_core::types::Source>,',
 		'    pub transport_named: Option<bool>,',
 		'    pub transport_span: Option<::sittir_core::types::Span>,',
-		// napi-rs 3 does not implement FromNapiValue/ToNapiValue for u64 (BigInt-only).
-		// JS passes $nodeId as a plain number (f64). We use f64 here and convert
-		// to u64 in the NodeData bridge (transport_node_data).
-		'    pub transport_node_id: Option<f64>,',
+		// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
+		// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
+		'    pub transport_node_handle: Option<f64>,',
+		'    pub transport_child_index: Option<f64>,',
 		'    pub text: String,'
 	];
 }

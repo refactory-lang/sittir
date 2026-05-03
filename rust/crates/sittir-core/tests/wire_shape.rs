@@ -1,7 +1,7 @@
 //! Spec 012 T062 — SC-007 shape gate.
 //!
 //! Serializes a complex NodeData and asserts the resulting JSON has
-//! exactly the eight allowed top-level `$`-prefixed keys with no
+//! exactly the nine allowed top-level `$`-prefixed keys with no
 //! additions. Enrichment fields (`$variant`, `$raw`, supertype labels)
 //! live on the TS side and MUST NOT cross the wire boundary —
 //! corollary of FR-005a + Constitution Principle X.
@@ -33,7 +33,8 @@ const ALLOWED_KEYS: &[&str] = &[
     "$children",
     "$text",
     "$span",
-    "$nodeId",
+    "$nodeHandle",
+    "$childIndex",
 ];
 
 /// Build a NodeData where every optional field is populated, so the
@@ -51,7 +52,8 @@ fn complex_node() -> NodeData {
             children: None,
             text: Some("foo".to_string()),
             span: Some(Span { start: 0, end: 3 }),
-            node_id: Some(2),
+            node_handle: None,
+            child_index: Some(0),
         })),
     );
     fields.insert(
@@ -64,7 +66,8 @@ fn complex_node() -> NodeData {
             children: None,
             text: Some("1".to_string()),
             span: Some(Span { start: 5, end: 6 }),
-            node_id: Some(3),
+            node_handle: None,
+            child_index: Some(1),
         }]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
@@ -81,11 +84,13 @@ fn complex_node() -> NodeData {
             children: Some(vec![]),
             text: None,
             span: Some(Span { start: 7, end: 9 }),
-            node_id: Some(4),
+            node_handle: None,
+            child_index: Some(2),
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
-        node_id: Some(1),
+        node_handle: None,
+        child_index: None,
     }
 }
 

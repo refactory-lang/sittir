@@ -5,7 +5,7 @@ import { TSKindId } from '../src/types.ts';
 // Phase D: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
 	$type: TSKindId.Identifier,
-	$source: 'factory',
+	$source: 2,
 	$named: true,
 	$text: 'x'
 } as const;
@@ -86,12 +86,12 @@ describe('boundary', () => {
 
 		const { render } = await import('../src/boundary.ts');
 		// Phase D: $type is numeric on the wire; TSKindId.Identifier = 1
-		// Phase D: $source is capitalized at the transport boundary ('factory' → 'Factory')
+		// $source is numeric: 2 = factory
 		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: TSKindId.Identifier,
-				$source: 'Factory',
+				$source: 2,
 				$named: true,
 				$text: 'x'
 			})
@@ -119,7 +119,7 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
 			$type: TSKindId.Arguments,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;

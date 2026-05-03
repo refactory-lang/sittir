@@ -10,7 +10,7 @@
 
 import { readNode, createRenderer } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
-import type { AnyNodeData, NodeId } from '@sittir/types';
+import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -22,6 +22,8 @@ import {
 	buildReadHandle,
 	findFirst,
 	findNativeNodeId,
+	readNodeAt,
+	adaptNode,
 	collectKinds,
 	buildKindToSupertypes,
 	wrapForReparse,
@@ -59,26 +61,28 @@ import {
  */
 function _deepReadNode(
 	tree: TreeHandle,
-	nodeId: NodeId | undefined,
+	handle: number | undefined,
+	childIndex: number | undefined,
 	deepReadKinds: ReadonlySet<number>
 ): ReturnType<typeof readNode> {
-	const data = readNode(tree, nodeId);
+	const data = readNode(tree, handle, childIndex);
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
-	// Narrow to NodeData before reading $nodeId / $type.
+	// Narrow to NodeData before reading $nodeHandle / $type.
 	const isNodeData = (v: unknown): v is AnyNodeData =>
 		typeof v === 'object' && v !== null && '$type' in v;
 	const shouldDrill = (
 		entry: unknown
-	): entry is AnyNodeData & { $nodeId: NodeId } =>
+	): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
 		isNodeData(entry) &&
 		entry.$named === true &&
-		typeof entry.$nodeId === 'number' &&
+		typeof entry.$nodeHandle === 'number' &&
+		typeof entry.$childIndex === 'number' &&
 		// $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
 		// deepReadKinds is Set<number> — only numeric entries can be drilled.
 		typeof entry.$type === 'number' && deepReadKinds.has(entry.$type);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
-			shouldDrill(c) ? _deepReadNode(tree, c.$nodeId, deepReadKinds) : c
+			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
 		);
 		(data as { $children?: typeof drilled }).$children = drilled;
 	}
@@ -97,12 +101,12 @@ function _deepReadNode(
 			if (Array.isArray(value)) {
 				newFields[key] = value.map((entry) =>
 					shouldDrill(entry)
-						? _deepReadNode(tree, entry.$nodeId, deepReadKinds)
+						? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds)
 						: entry
 				);
 			} else {
 				newFields[key] = shouldDrill(value)
-					? _deepReadNode(tree, value.$nodeId, deepReadKinds)
+					? _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds)
 					: value;
 			}
 		}
@@ -181,6 +185,28 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
 		const c = node.child(i);
 		if (!c) continue;
 		const hit = findNodeById(c, nodeId);
+		if (hit) return hit;
+	}
+	return null;
+}
+
+/**
+ * ADR-0017: find a tree-sitter node by its exact byte span (start + end).
+ * Using both start and end eliminates the collision that arises from
+ * start-only lookup: when a parent node and its first child share the same
+ * startIndex (e.g. `parameter` and its child `identifier` both start at
+ * the same offset), start-only lookup returns the outer parent first in DFS
+ * order, producing the wrong node. Requiring both bounds to match pins to
+ * exactly the intended node.
+ */
+function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSNode | null {
+	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
+	for (let i = 0; i < node.childCount; i++) {
+		const c = node.child(i);
+		if (!c) continue;
+		// Prune: the target span must be contained within this child's range.
+		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
+		const hit = findNodeBySpan(c, startIndex, endIndex);
 		if (hit) return hit;
 	}
 	return null;
@@ -336,10 +362,10 @@ export interface RoundTripResult {
  * @param readTreeNodeFn - The grammar-specific readTreeNode function, or null if unavailable.
  * @param tree - The parsed tree-sitter tree to walk.
  * @param kinds - Mutable set of kind names; alias-source kinds discovered during the walk are added here.
- * @returns A map from tree-sitter node id to the effective (alias-rewritten) type string.
+ * @returns A map from composite span key (`"start:end"`) to the effective (alias-rewritten) type string.
  */
 function discoverAliasSourceKinds(
-	readTreeNodeFn: ((handle: TreeHandle, nodeId?: number) => unknown) | null,
+	readTreeNodeFn: ((handle: TreeHandle, nodeHandle?: number, childIndex?: number) => unknown) | null,
 	tree: TSTree,
 	kinds: Set<string>,
 	grammar: string,
@@ -347,8 +373,16 @@ function discoverAliasSourceKinds(
 	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	backend?: 'native' | 'typescript',
 	kindIdFromName?: (kind: string) => number | undefined
-): Map<number, string> {
-	const nodeIdToEffectiveType = new Map<number, string>();
+): Map<string, string> {
+	// ADR-0017: keyed by "${start}:${end}" composite span key. Using BOTH
+	// start and end byte offsets avoids the collision that arises from a
+	// start-only key: a parent node and its first child share the same
+	// startIndex (e.g. `parameter` at 7..12 and its child `identifier` at
+	// 7..8 both start at 7). A start-only key would map offset 7 to only
+	// ONE kind, causing the wrong node to be returned by lookup. The
+	// composite key is unique per node — no two distinct nodes can occupy
+	// exactly the same byte range.
+	const nodeIdToEffectiveType = new Map<string, string>();
 	if (readTreeNodeFn) {
 		const handle = buildReadHandle(grammar, tree, source, backend, kindIdFromName);
 		const wrappedRoot = readTreeNodeFn(handle) as WrappedNodeData;
@@ -369,7 +403,11 @@ function discoverAliasSourceKinds(
 			// Phase D: $type is numeric; resolve to string kind name.
 			const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 			if (kindStr === undefined) return; // unknown id — skip
-			if (w.$nodeId != null) nodeIdToEffectiveType.set(w.$nodeId, kindStr);
+			// ADR-0017: use "${start}:${end}" composite span as collision-free identity key.
+			const span = (w as { $span?: { start: number; end: number } }).$span;
+			if (span != null) {
+				nodeIdToEffectiveType.set(`${span.start}:${span.end}`, kindStr);
+			}
 			kinds.add(kindStr);
 		});
 	}
@@ -391,12 +429,17 @@ function discoverAliasSourceKinds(
  */
 function _resolveNodeForKind(
 	kind: string,
-	nodeIdToEffectiveType: Map<number, string>,
+	nodeIdToEffectiveType: Map<string, string>,
 	tree: TSTree
 ): TSNode | null {
-	for (const [nid, et] of nodeIdToEffectiveType) {
+	// ADR-0017: map is keyed by "${start}:${end}" composite span; parse and
+	// use findNodeBySpan to locate the exact node (avoids start-only collisions).
+	for (const [spanKey, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
-			const node = findNodeById(tree.rootNode, nid);
+			const colon = spanKey.indexOf(':');
+			const startIdx = parseInt(spanKey.slice(0, colon), 10);
+			const endIdx = parseInt(spanKey.slice(colon + 1), 10);
+			const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
 			if (node) return node;
 		}
 	}
@@ -427,18 +470,39 @@ function _resolveNodeForKind(
  */
 function resolveAllNodesForKind(
 	kind: string,
-	nodeIdToEffectiveType: Map<number, string>,
+	nodeIdToEffectiveType: Map<string, string>,
 	tree: TSTree
 ): TSNode[] {
 	const nodes: TSNode[] = [];
 	const seenIds = new Set<number>();
-	for (const [nid, et] of nodeIdToEffectiveType) {
+	// ADR-0017: map keyed by "${start}:${end}" composite span. Walker-found
+	// entries are only useful for alias-source kinds — kinds where the wrap
+	// layer rewrites $type to a canonical-hidden form (e.g. `_type_identifier`)
+	// that tree-sitter doesn't emit directly. For those kinds the direct-scan
+	// loop below finds nothing (wrong type name), so the walker path is the
+	// only way to locate them.
+	//
+	// For regular visible kinds (e.g. `binary_operator`), a parent node can
+	// share the same (start, end) span as its sole named child (e.g.
+	// `expression_statement` wrapping `binary_operator`). `findNodeBySpan`
+	// returns the outer parent in DFS order, causing the wrong node to be
+	// rendered. Since visible kinds are handled correctly by the direct-scan
+	// loop, skip walker entries where the located node's type mismatches the
+	// target kind AND the target kind is not a canonical-hidden alias-source
+	// (leading `_`).
+	for (const [spanKey, et] of nodeIdToEffectiveType) {
 		if (et !== kind) continue;
-		const node = findNodeById(tree.rootNode, nid);
-		if (node && !seenIds.has(node.id)) {
-			seenIds.add(node.id);
-			nodes.push(node);
-		}
+		const colon = spanKey.indexOf(':');
+		const startIdx = parseInt(spanKey.slice(0, colon), 10);
+		const endIdx = parseInt(spanKey.slice(colon + 1), 10);
+		const node = findNodeBySpan(tree.rootNode, startIdx, endIdx);
+		if (!node || seenIds.has(node.id)) continue;
+		// Skip when the found node's type doesn't match and kind is a visible
+		// (non-alias-source) kind — the direct-scan loop handles these.
+		const isAliasSrcKind = kind.startsWith('_');
+		if (node.type !== kind && !isAliasSrcKind) continue;
+		seenIds.add(node.id);
+		nodes.push(node);
 	}
 	const queue: TSNode[] = [tree.rootNode];
 	while (queue.length > 0) {
@@ -467,14 +531,16 @@ function resolveAllNodesForKind(
  *   (reparse produces the target kind since the alias applies again).
  *
  * @param rawData - The NodeData as returned by readNode (uses tree-sitter's raw $type).
- * @param nodeId - The tree-sitter node id to look up in the effective-type map.
- * @param nodeIdToEffectiveType - Map from node id to alias-rewritten type.
+ * @param nodeStartIndex - The tree-sitter node's startIndex.
+ * @param nodeEndIndex - The tree-sitter node's endIndex (combined with start for collision-free lookup).
+ * @param nodeIdToEffectiveType - Map from composite span key to alias-rewritten type.
  * @returns An object with `data` (possibly $type-overridden), `renderedKind`, and `targetKind`.
  */
 function applyAliasResolution(
 	rawData: ReturnType<typeof readNode>,
-	nodeId: number,
-	nodeIdToEffectiveType: Map<number, string>,
+	nodeStartIndex: number,
+	nodeEndIndex: number,
+	nodeIdToEffectiveType: Map<string, string>,
 	kindNameFromId: ((id: number) => string | undefined) | undefined,
 	/** The tree-sitter visible kind name (node.type). Used as targetKind
 	 * for post-reparse node lookup, since tree-sitter strips leading
@@ -487,7 +553,8 @@ function applyAliasResolution(
 	const canonicalKind = typeof rawData.$type === 'number'
 		? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type))
 		: rawData.$type;
-	const effective = nodeIdToEffectiveType.get(nodeId);
+	// ADR-0017: map keyed by "${start}:${end}" composite span (collision-free).
+	const effective = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
 	// Apply alias rewriting only when the effective kind differs from the canonical kind.
 	const data =
 		effective && effective !== canonicalKind
@@ -609,7 +676,17 @@ export async function validateRoundTrip(
 	const rawEntries = loadRawEntries(grammar);
 	const kindNameFromId = await loadKindNameFromId(grammar);
 	const kindNames = await loadKindNames(grammar);
-	const { render } = createRenderer(templatesPath, { kindNames });
+	const { backend } = options;
+	// When backend is 'native', render through the grammar's boundary.ts
+	// (which dispatches to the native Askama engine). Otherwise use the
+	// JS Nunjucks renderer. Both paths receive the same NodeData shape.
+	let render: (node: AnyNodeData) => string;
+	if (backend === 'native') {
+		const { loadBoundaryRender } = await import('../scripts/collect-baseline.ts');
+		render = await loadBoundaryRender(grammar as 'rust' | 'typescript' | 'python');
+	} else {
+		({ render } = createRenderer(templatesPath, { kindNames }));
+	}
 	// `ruleKinds` was historically derived from config.rules (from the
 	// YAML). For the Jinja path (directory of `.jinja` files), derive
 	// the kind set from the on-disk file listing. Works uniformly for
@@ -657,8 +734,6 @@ export async function validateRoundTrip(
 	let astMatchPass = 0;
 	let skip = 0;
 	let total = 0;
-
-	const { backend } = options;
 
 	for (const entry of entries) {
 		total++;
@@ -730,15 +805,16 @@ export async function validateRoundTrip(
 					// validator (factory-roundtrip.ts), which needs the
 					// structural data to call factory functions and
 					// reconstruct the tree from scratch.
-					// Native engine IDs differ from WASM IDs; skip alias-
+					// Native engine handles differ from WASM handles; skip alias-
 					// target kinds the native engine emits under a different
-					// rule name rather than falling back to a mismatched ID.
-					const nativeId = findNativeNodeId(handle, kind, kindNameFromId);
-					if (nativeId === null && handle.read) continue;
-					const rawData = readNode(handle, nativeId ?? (node1.id as NodeId));
+					// rule name rather than falling back to a mismatched handle.
+					const nativeCoords = findNativeNodeId(handle, kind, kindNameFromId);
+					if (nativeCoords === null && handle.read) continue;
+					const rawData = readNodeAt(handle, adaptNode(node1), nativeCoords);
 					const { data, renderedKind, targetKind } = applyAliasResolution(
 						rawData,
-						node1.id,
+						node1.startIndex,
+						node1.endIndex,
 						nodeIdToEffectiveType,
 						kindNameFromId,
 						node1.type

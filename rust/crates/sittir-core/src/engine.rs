@@ -4,13 +4,19 @@
 //! template hash lookup, and render dispatch. This module owns the generic
 //! parse/read/render/edit state machine so `sittir-{lang}` crates stay
 //! thin and grammar-owned.
+//!
+//! ## ADR-0017 split
+//!
+//! `Engine<G>` is stateless (parser + grammar config). Parsing returns a
+//! `ParsedTree<G>` that owns the tree, source, format, and (in Task 2) a
+//! node vec for O(1) child-index navigation. The split enables the node
+//! vec to coexist with the owned tree using the ast-grep `PinnedNodeData`
+//! pattern for lifetime safety.
 
 use crate::format::{apply_format, extract_format};
 use crate::read_node::read_node;
 use crate::splice::apply_edits as splice_apply_edits;
 use crate::types::{Edit, FormatRecord, NodeData, Source};
-
-const MAX_SAFE_NODE_ID: u64 = 9_007_199_254_740_991;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
@@ -19,23 +25,167 @@ pub trait EngineGrammar: Copy {
     fn render(self, node: &NodeData) -> Result<String, String>;
 }
 
-/// Stateful native engine shared by the grammar-specific N-API wrappers.
+// ─── StoredNode ──────────────────────────────────────────────────────────────
+
+/// Node handle — generic over the tree-sitter backend.
+///
+/// Each entry holds a lifetime-erased tree-sitter `Node`. The safety
+/// invariant is that `StoredNode` values only exist inside a
+/// `ParsedTree` whose `tree` field outlives the `nodes` vec (Rust
+/// struct field drop order: last declared → first dropped).
+pub enum StoredNode {
+    Ts(tree_sitter::Node<'static>),
+    // Sg(ast_grep_core::Node<'static>),  // future
+}
+
+// ─── ParsedTree ──────────────────────────────────────────────────────────────
+
+/// Owned parse result — tree + source + format + node vec.
+///
+/// Created by [`Engine::parse`]. Contains all tree-dependent state.
+/// Grammar crate napi wrappers own the `ParsedTree` directly.
+///
+/// # Field ordering invariant
+///
+/// `nodes` is declared AFTER `tree`. Rust drops struct fields in
+/// declaration order, so `nodes` (which holds lifetime-erased borrows
+/// from `tree`) is dropped first. This is the same safety pattern used
+/// by ast-grep's `PinnedNodeData`.
+pub struct ParsedTree<G: EngineGrammar> {
+    grammar: G,
+    /// The parsed tree-sitter tree. Must outlive `nodes`.
+    tree: tree_sitter::Tree,
+    source: String,
+    format: Option<FormatRecord>,
+    /// Node table for O(1) drill-in. Lazily populated (Task 2).
+    nodes: Vec<StoredNode>,
+}
+
+impl<G: EngineGrammar> ParsedTree<G> {
+    /// Push a tree-sitter node into the node table, returning its handle
+    /// (index). The node must borrow from `self.tree`.
+    ///
+    /// # Safety
+    ///
+    /// The transmute erases the borrow lifetime. This is safe because:
+    /// - The node borrows from `self.tree`.
+    /// - `self.nodes` is dropped before `self.tree` (field declaration order).
+    /// - Same pattern as ast-grep's `PinnedNodeData`.
+    fn push_node(&mut self, node: tree_sitter::Node<'_>) -> u32 {
+        let handle = self.nodes.len() as u32;
+        // SAFETY: node borrows from self.tree which outlives self.nodes
+        // (nodes declared after tree → dropped first per Rust field order).
+        // Same pattern as ast-grep's PinnedNodeData.
+        let static_node: tree_sitter::Node<'static> = unsafe { std::mem::transmute(node) };
+        self.nodes.push(StoredNode::Ts(static_node));
+        handle
+    }
+
+    /// Read the root node of the parsed tree into a `NodeData`.
+    /// Stamps `node_handle` on the returned root and pushes the root
+    /// node into the node table for subsequent child navigation.
+    pub fn read_root(&mut self) -> NodeData {
+        // Read first (borrows tree + source immutably).
+        let mut data = read_node(&self.tree, &self.source, None);
+        // Push root into node table. We inline the push_node logic
+        // here to avoid a self-borrow conflict (root_node() borrows
+        // self.tree, but push_node needs &mut self).
+        let handle = self.nodes.len() as u32;
+        // SAFETY: root_node borrows from self.tree which outlives
+        // self.nodes (nodes declared after tree → dropped first).
+        let root: tree_sitter::Node<'static> =
+            unsafe { std::mem::transmute(self.tree.root_node()) };
+        self.nodes.push(StoredNode::Ts(root));
+        data.node_handle = Some(handle);
+        data
+    }
+
+    /// Read a child node by handle + child_index.
+    ///
+    /// Looks up the parent node from the node table at `handle`, then
+    /// calls `parent.child(child_index)` to get the target node, reads
+    /// it into a `NodeData`, pushes the result into the node table, and
+    /// stamps `node_handle`.
+    pub fn read_child(&mut self, handle: u32, child_index: u16) -> Result<String, String> {
+        let parent_node = match self.nodes.get(handle as usize) {
+            Some(StoredNode::Ts(n)) => *n,
+            None => return Err(format!("handle {handle} not found in node table")),
+        };
+        let child_node = parent_node.child(child_index as u32).ok_or_else(|| {
+            format!(
+                "child_index {child_index} out of bounds for handle {handle} (child_count={})",
+                parent_node.child_count()
+            )
+        })?;
+        let mut data = read_node(&self.tree, &self.source, Some(child_node));
+        let new_handle = self.push_node(child_node);
+        data.node_handle = Some(new_handle);
+        serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
+    }
+
+/// Render a `NodeData` from JSON using the grammar's render dispatch.
+    pub fn render(&self, node_json: String) -> Result<String, String> {
+        let node: NodeData = serde_json::from_str(&node_json).map_err(|e| {
+            let snippet: String = node_json.chars().take(80).collect();
+            format!("parse NodeData JSON failed: {e} (json: {snippet:?})")
+        })?;
+        self.render_node_data(node)
+    }
+
+    /// Render a deserialized `NodeData` with format application.
+    pub fn render_node_data(&self, node: NodeData) -> Result<String, String> {
+        let canonical = self
+            .grammar
+            .render(&node)
+            .map_err(|e| format!("render_dispatch failed: {e}"))?;
+        self.render_canonical_node(&node, canonical)
+    }
+
+    /// Apply format to a pre-rendered canonical string.
+    pub fn render_canonical_node(
+        &self,
+        node: &NodeData,
+        canonical: String,
+    ) -> Result<String, String> {
+        let effective_format =
+            resolve_render_format(node, None, self.format.as_ref());
+        Ok(match effective_format {
+            Some(format) => apply_format(&canonical, format),
+            None => canonical,
+        })
+    }
+
+    /// Access the detected format record (if any).
+    pub fn format(&self) -> Option<&FormatRecord> {
+        self.format.as_ref()
+    }
+
+    /// Access the source string.
+    pub fn source(&self) -> &str {
+        &self.source
+    }
+}
+
+// ─── Engine ──────────────────────────────────────────────────────────────────
+
+/// Stateless native engine — parser + grammar config + engine-level format.
+///
+/// The engine owns the parser (which is mutable for `parse` calls) and an
+/// optional engine-wide format override. Parsing returns a [`ParsedTree`]
+/// that owns all tree-dependent state.
 pub struct Engine<G: EngineGrammar> {
     grammar: G,
     parser: tree_sitter::Parser,
-    source: Option<String>,
-    tree: Option<tree_sitter::Tree>,
     engine_format: Option<FormatRecord>,
-    tree_format: Option<FormatRecord>,
 }
 
 /// Result wrapper for parse-and-read calls.
 #[derive(serde::Serialize)]
-struct ParseResult<'a> {
+pub struct ParseResult<'a> {
     #[serde(rename = "nodeData")]
-    node_data: &'a NodeData,
+    pub node_data: &'a NodeData,
     #[serde(skip_serializing_if = "Option::is_none")]
-    format: Option<FormatRecord>,
+    pub format: Option<FormatRecord>,
 }
 
 impl<G: EngineGrammar> Engine<G> {
@@ -45,10 +195,7 @@ impl<G: EngineGrammar> Engine<G> {
         Ok(Self {
             grammar,
             parser,
-            source: None,
-            tree: None,
             engine_format,
-            tree_format: None,
         })
     }
 
@@ -56,88 +203,38 @@ impl<G: EngineGrammar> Engine<G> {
         self.grammar.template_bundle_hash()
     }
 
-    pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String, String> {
-        Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
-    }
-
-    pub fn parse_and_read(&mut self, source: String) -> Result<String, String> {
+    /// Parse source and return an owned `ParsedTree`.
+    pub fn parse(&mut self, source: String) -> Result<ParsedTree<G>, String> {
         let tree = self.parser.parse(&source, None).ok_or_else(|| {
             let snippet: String = source.chars().take(80).collect();
             format!("parse failed (source: {snippet:?})")
         })?;
-        self.source = Some(source.clone());
-        self.tree = Some(tree.clone());
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            read_node(
-                self.tree.as_ref().unwrap(),
-                self.source.as_ref().unwrap(),
-                None,
-            )
-        }));
-        match result {
-            Ok(data) => {
-                let format =
-                    extract_format(self.source.as_ref().unwrap(), self.tree.as_ref().unwrap());
-                self.tree_format = format.clone();
-                serde_json::to_string(&ParseResult {
-                    node_data: &data,
-                    format,
-                })
-                .map_err(|e| format!("serialize ParseResult failed: {e}"))
-            }
-            Err(panic_payload) => Err(panic_msg(panic_payload, "parse_and_read panicked")),
-        }
+        let format = extract_format(&source, &tree);
+        Ok(ParsedTree {
+            grammar: self.grammar,
+            tree,
+            source,
+            format,
+            nodes: Vec::new(),
+        })
     }
 
-    pub fn read_node(&mut self, node_id: f64) -> Result<String, String> {
-        let id = validate_node_id(node_id)?;
-        let tree = self
-            .tree
-            .as_ref()
-            .ok_or_else(|| "no tree cached — call parseAndRead first".to_string())?;
-        let source = self
-            .source
-            .as_ref()
-            .ok_or_else(|| "no source cached — call parseAndRead first".to_string())?;
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            read_node(tree, source, Some(id))
-        }));
-        match result {
-            Ok(data) => {
-                serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
-            }
-            Err(panic_payload) => Err(panic_msg(
-                panic_payload,
-                &format!("node id {id} not found in current tree"),
-            )),
-        }
+    pub fn find_and_read(&mut self, _source: String, _pattern: String) -> Result<String, String> {
+        Err("find_and_read not yet implemented — ast-grep-core integration pending".to_string())
     }
 
-    pub fn render(&self, node_json: String) -> Result<String, String> {
-        let node: NodeData = serde_json::from_str(&node_json).map_err(|e| {
-            let snippet: String = node_json.chars().take(80).collect();
-            format!("parse NodeData JSON failed: {e} (json: {snippet:?})")
-        })?;
-        self.render_node_data(node)
-    }
-
-    pub fn render_node_data(&self, node: NodeData) -> Result<String, String> {
-        let canonical = self
-            .grammar
-            .render(&node)
-            .map_err(|e| format!("render_dispatch failed: {e}"))?;
-        self.render_canonical_node(&node, canonical)
-    }
-
+    /// Resolve the effective format for rendering, combining engine-level
+    /// override with tree-level format.
     pub fn render_canonical_node(
         &self,
         node: &NodeData,
         canonical: String,
+        tree_format: Option<&FormatRecord>,
     ) -> Result<String, String> {
         let effective_format = resolve_render_format(
-            &node,
+            node,
             self.engine_format.as_ref(),
-            self.tree_format.as_ref(),
+            tree_format,
         );
         Ok(match effective_format {
             Some(format) => apply_format(&canonical, format),
@@ -148,34 +245,6 @@ impl<G: EngineGrammar> Engine<G> {
     pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String, String> {
         splice_apply_edits(&source, edits).map_err(|e| format!("{e}"))
     }
-
-    pub fn dispose(&mut self) {
-        self.source = None;
-        self.tree = None;
-        self.tree_format = None;
-    }
-}
-
-fn validate_node_id(node_id: f64) -> Result<u64, String> {
-    if !node_id.is_finite() {
-        return Err(format!(
-            "invalid node id {node_id}: expected a finite non-negative safe integer"
-        ));
-    }
-    if node_id < 0.0 {
-        return Err(format!(
-            "invalid node id {node_id}: expected a non-negative safe integer"
-        ));
-    }
-    if node_id.fract() != 0.0 {
-        return Err(format!("invalid node id {node_id}: expected an integer"));
-    }
-    if node_id > MAX_SAFE_NODE_ID as f64 {
-        return Err(format!(
-            "invalid node id {node_id}: exceeds Number.MAX_SAFE_INTEGER"
-        ));
-    }
-    Ok(node_id as u64)
 }
 
 fn resolve_render_format<'a>(
@@ -192,7 +261,7 @@ fn resolve_render_format<'a>(
     None
 }
 
-fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
+pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
     if let Some(s) = payload.downcast_ref::<String>() {
         s.clone()
     } else if let Some(s) = payload.downcast_ref::<&str>() {
@@ -255,27 +324,29 @@ mod tests {
             children: None,
             text: Some("x".to_string()),
             span: None,
-            node_id: None,
+            node_handle: None,
+            child_index: None,
         }
     }
 
     #[test]
-    fn render_node_data_preserves_engine_format() {
+    fn render_canonical_node_preserves_engine_format() {
         let engine = Engine::new(TestGrammar, Some(format_record("<<", ">>"))).unwrap();
 
-        let rendered = engine.render_node_data(node(Source::Factory)).unwrap();
+        let rendered = engine
+            .render_canonical_node(&node(Source::Factory), "rendered:1".to_string(), None)
+            .unwrap();
 
-        // KindId(1) Display → "1"; the TestGrammar render fn formats the KindId.
         assert_eq!(rendered, "<<rendered:1>>");
     }
 
     #[test]
     fn render_canonical_node_preserves_tree_format_for_tree_nodes() {
-        let mut engine = Engine::new(TestGrammar, None).unwrap();
-        engine.tree_format = Some(format_record("[", "]"));
+        let engine = Engine::new(TestGrammar, None).unwrap();
+        let tree_fmt = format_record("[", "]");
 
         let rendered = engine
-            .render_canonical_node(&node(Source::Ts), "canonical".to_string())
+            .render_canonical_node(&node(Source::Ts), "canonical".to_string(), Some(&tree_fmt))
             .unwrap();
 
         assert_eq!(rendered, "[canonical]");
@@ -283,13 +354,14 @@ mod tests {
 
     #[test]
     fn render_canonical_node_does_not_apply_tree_format_to_factory_nodes() {
-        let mut engine = Engine::new(TestGrammar, None).unwrap();
-        engine.tree_format = Some(format_record("[", "]"));
+        let engine = Engine::new(TestGrammar, None).unwrap();
+        let tree_fmt = format_record("[", "]");
 
         let rendered = engine
-            .render_canonical_node(&node(Source::Factory), "canonical".to_string())
+            .render_canonical_node(&node(Source::Factory), "canonical".to_string(), Some(&tree_fmt))
             .unwrap();
 
         assert_eq!(rendered, "canonical");
     }
+
 }

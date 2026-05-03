@@ -4000,11 +4000,12 @@ export namespace Yield {
 // Native render transport types — data-only JS → native boundary
 export interface TerminalTransport<ID extends number = number, V extends string = string> {
   readonly $type: ID;
-  readonly $source?: 'ts' | 'sg' | 'factory';
+  readonly $source?: 0 | 1 | 2;
   readonly $named?: boolean;
   readonly $text: V;
   readonly $span?: { readonly start: number; readonly end: number };
-  readonly $nodeId?: number;
+  readonly $nodeHandle?: number;
+  readonly $childIndex?: number;
 }
 
 export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}
@@ -4012,11 +4013,12 @@ export interface LiteralTransport<ID extends number = number, V extends string =
 export namespace _AsPattern {
   export interface Transport {
     readonly $type: TSKindId._AsPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [CasePattern.Transport | Identifier.Transport];
   }
 }
@@ -4024,11 +4026,12 @@ export namespace _AsPattern {
 export namespace AssignmentEq {
   export interface Transport {
     readonly $type: TSKindId.AssignmentEq;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly right: RightHandSide.Transport;
   }
 }
@@ -4036,11 +4039,12 @@ export namespace AssignmentEq {
 export namespace AssignmentType {
   export interface Transport {
     readonly $type: TSKindId.AssignmentType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly type: Type.Transport;
   }
 }
@@ -4048,11 +4052,12 @@ export namespace AssignmentType {
 export namespace AssignmentTyped {
   export interface Transport {
     readonly $type: TSKindId.AssignmentTyped;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly type: Type.Transport;
     readonly right: RightHandSide.Transport;
   }
@@ -4092,11 +4097,12 @@ export namespace BooleanOperatorOperator {
 export namespace ComprehensionClauses {
   export interface Transport {
     readonly $type: TSKindId.ComprehensionClauses;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (ForInClause.Transport | IfClause.Transport)[];
   }
 }
@@ -4112,11 +4118,12 @@ export namespace _Identifier {
 export namespace ImportList {
   export interface Transport {
     readonly $type: TSKindId.ImportList;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
   }
 }
@@ -4128,11 +4135,12 @@ export namespace IsNot {
 export namespace KeyValuePattern {
   export interface Transport {
     readonly $type: TSKindId.KeyValuePattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly key: SimplePattern.Transport;
     readonly value: CasePattern.Transport;
   }
@@ -4149,11 +4157,12 @@ export namespace KwType {
 export namespace _ListPattern {
   export interface Transport {
     readonly $type: TSKindId._ListPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (CasePattern.Transport)[];
   }
 }
@@ -4161,11 +4170,12 @@ export namespace _ListPattern {
 export namespace MatchBlock {
   export interface Transport {
     readonly $type: TSKindId.MatchBlock;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [MatchBlockBlock.Transport];
   }
 }
@@ -4173,11 +4183,12 @@ export namespace MatchBlock {
 export namespace MatchBlockBlock {
   export interface Transport {
     readonly $type: TSKindId.MatchBlockBlock;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly alternative: readonly (CaseClause.Transport)[];
   }
 }
@@ -4193,11 +4204,12 @@ export namespace NotIn {
 export namespace SimplePatternNegative {
   export interface Transport {
     readonly $type: TSKindId.SimplePatternNegative;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Integer.Transport | Float.Transport];
   }
 }
@@ -4205,11 +4217,12 @@ export namespace SimplePatternNegative {
 export namespace SimpleStatements {
   export interface Transport {
     readonly $type: TSKindId.SimpleStatements;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (SimpleStatement.Transport)[];
   }
 }
@@ -4217,11 +4230,12 @@ export namespace SimpleStatements {
 export namespace Suite {
   export interface Transport {
     readonly $type: "_suite";
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [SimpleStatements.Transport | Block.Transport | Newline.Transport];
   }
 }
@@ -4229,11 +4243,12 @@ export namespace Suite {
 export namespace _TuplePattern {
   export interface Transport {
     readonly $type: TSKindId._TuplePattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (CasePattern.Transport)[];
   }
 }
@@ -4254,11 +4269,12 @@ export namespace UnaryOperatorOperator {
 export namespace _WithClauseParen {
   export interface Transport {
     readonly $type: TSKindId._WithClauseParen;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (WithItem.Transport)[];
   }
 }
@@ -4266,11 +4282,12 @@ export namespace _WithClauseParen {
 export namespace AliasedImport {
   export interface Transport {
     readonly $type: TSKindId.AliasedImport;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: DottedName.Transport;
     readonly alias: Identifier.Transport;
   }
@@ -4279,11 +4296,12 @@ export namespace AliasedImport {
 export namespace ArgumentList {
   export interface Transport {
     readonly $type: TSKindId.ArgumentList;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children?: readonly (Expression.Transport | ListSplat.Transport | DictionarySplat.Transport | ParenthesizedListSplat.Transport | KeywordArgument.Transport)[];
   }
 }
@@ -4291,11 +4309,12 @@ export namespace ArgumentList {
 export namespace AsPattern {
   export interface Transport {
     readonly $type: TSKindId.AsPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
     readonly alias: TerminalTransport;
   }
@@ -4304,11 +4323,12 @@ export namespace AsPattern {
 export namespace AssertStatement {
   export interface Transport {
     readonly $type: TSKindId.AssertStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport)[];
   }
 }
@@ -4317,11 +4337,12 @@ export namespace AssignmentUFormEq {
   export interface Transport {
     readonly $type: TSKindId.Assignment;
     readonly $variant: 'eq';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
     readonly $children: readonly [AssignmentEq.Transport];
   }
@@ -4331,11 +4352,12 @@ export namespace AssignmentUFormType {
   export interface Transport {
     readonly $type: TSKindId.Assignment;
     readonly $variant: 'type';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
     readonly $children: readonly [AssignmentType.Transport];
   }
@@ -4345,11 +4367,12 @@ export namespace AssignmentUFormTyped {
   export interface Transport {
     readonly $type: TSKindId.Assignment;
     readonly $variant: 'typed';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
     readonly $children: readonly [AssignmentTyped.Transport];
   }
@@ -4362,11 +4385,12 @@ export namespace Assignment {
 export namespace Attribute {
   export interface Transport {
     readonly $type: TSKindId.Attribute;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly object: PrimaryExpression.Transport;
     readonly attribute: Identifier.Transport;
   }
@@ -4375,11 +4399,12 @@ export namespace Attribute {
 export namespace AugmentedAssignment {
   export interface Transport {
     readonly $type: TSKindId.AugmentedAssignment;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
     readonly operator: AugmentedAssignmentOperator.Transport;
     readonly right: RightHandSide.Transport;
@@ -4389,11 +4414,12 @@ export namespace AugmentedAssignment {
 export namespace Await {
   export interface Transport {
     readonly $type: TSKindId.Await;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly primary_expression: PrimaryExpression.Transport;
   }
 }
@@ -4401,11 +4427,12 @@ export namespace Await {
 export namespace BinaryOperator {
   export interface Transport {
     readonly $type: TSKindId.BinaryOperator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: PrimaryExpression.Transport;
     readonly operator: BinaryOperatorOperator.Transport;
     readonly right: PrimaryExpression.Transport;
@@ -4415,11 +4442,12 @@ export namespace BinaryOperator {
 export namespace Block {
   export interface Transport {
     readonly $type: TSKindId.Block;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Statement.Transport)[];
   }
 }
@@ -4427,11 +4455,12 @@ export namespace Block {
 export namespace BooleanOperator {
   export interface Transport {
     readonly $type: TSKindId.BooleanOperator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: Expression.Transport;
     readonly operator: BooleanOperatorOperator.Transport;
     readonly right: Expression.Transport;
@@ -4445,11 +4474,12 @@ export namespace BreakStatement {
 export namespace Call {
   export interface Transport {
     readonly $type: TSKindId.Call;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly function: PrimaryExpression.Transport;
     readonly arguments: GeneratorExpression.Transport | ArgumentList.Transport;
   }
@@ -4458,11 +4488,12 @@ export namespace Call {
 export namespace CaseClause {
   export interface Transport {
     readonly $type: TSKindId.CaseClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly guard?: IfClause.Transport;
     readonly consequence: Suite.Transport;
     readonly $children: readonly (CasePattern.Transport)[];
@@ -4472,11 +4503,12 @@ export namespace CaseClause {
 export namespace CasePattern {
   export interface Transport {
     readonly $type: TSKindId.CasePattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [_AsPattern.Transport | KeywordPattern.Transport | SimplePattern.Transport];
   }
 }
@@ -4484,11 +4516,12 @@ export namespace CasePattern {
 export namespace Chevron {
   export interface Transport {
     readonly $type: TSKindId.Chevron;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
   }
 }
@@ -4496,11 +4529,12 @@ export namespace Chevron {
 export namespace ClassDefinition {
   export interface Transport {
     readonly $type: TSKindId.ClassDefinition;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameter.Transport;
     readonly superclasses?: ArgumentList.Transport;
@@ -4511,11 +4545,12 @@ export namespace ClassDefinition {
 export namespace ClassPattern {
   export interface Transport {
     readonly $type: TSKindId.ClassPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly dotted_name: DottedName.Transport;
     readonly arguments: readonly (CasePattern.Transport)[];
   }
@@ -4528,11 +4563,12 @@ export namespace Comment {
 export namespace ComparisonOperator {
   export interface Transport {
     readonly $type: TSKindId.ComparisonOperator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: PrimaryExpression.Transport;
     readonly operators: readonly (LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.LtGt, "<>"> | LiteralTransport<TSKindId.In, "in"> | LiteralTransport<number, "not in"> | LiteralTransport<TSKindId.Is, "is"> | LiteralTransport<number, "is not">)[];
   }
@@ -4541,11 +4577,12 @@ export namespace ComparisonOperator {
 export namespace ComplexPattern {
   export interface Transport {
     readonly $type: TSKindId.ComplexPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly real?: LiteralTransport<TSKindId.Dash, "-">;
     readonly imaginary: Integer.Transport | Float.Transport;
     readonly $children: readonly [Integer.Transport | Float.Transport];
@@ -4555,11 +4592,12 @@ export namespace ComplexPattern {
 export namespace ConcatenatedString {
   export interface Transport {
     readonly $type: TSKindId.ConcatenatedString;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (String.Transport)[];
   }
 }
@@ -4567,11 +4605,12 @@ export namespace ConcatenatedString {
 export namespace ConditionalExpression {
   export interface Transport {
     readonly $type: TSKindId.ConditionalExpression;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Expression.Transport;
     readonly condition: Expression.Transport;
     readonly alternative: Expression.Transport;
@@ -4581,11 +4620,12 @@ export namespace ConditionalExpression {
 export namespace ConstrainedType {
   export interface Transport {
     readonly $type: TSKindId.ConstrainedType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly base_type: Type.Transport;
     readonly constraint: Type.Transport;
   }
@@ -4598,11 +4638,12 @@ export namespace ContinueStatement {
 export namespace DecoratedDefinition {
   export interface Transport {
     readonly $type: TSKindId.DecoratedDefinition;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly definition: ClassDefinition.Transport | FunctionDefinition.Transport;
     readonly $children: readonly (Decorator.Transport)[];
   }
@@ -4611,11 +4652,12 @@ export namespace DecoratedDefinition {
 export namespace Decorator {
   export interface Transport {
     readonly $type: TSKindId.Decorator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
     readonly newline?: TerminalTransport;
   }
@@ -4624,11 +4666,12 @@ export namespace Decorator {
 export namespace DefaultParameter {
   export interface Transport {
     readonly $type: TSKindId.DefaultParameter;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: Identifier.Transport | TuplePattern.Transport;
     readonly value: Expression.Transport;
   }
@@ -4637,11 +4680,12 @@ export namespace DefaultParameter {
 export namespace DeleteStatement {
   export interface Transport {
     readonly $type: TSKindId.DeleteStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Expressions.Transport];
   }
 }
@@ -4649,11 +4693,12 @@ export namespace DeleteStatement {
 export namespace DictPattern {
   export interface Transport {
     readonly $type: TSKindId.DictPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (DictPatternKv.Transport)[];
   }
 }
@@ -4661,11 +4706,12 @@ export namespace DictPattern {
 export namespace Dictionary {
   export interface Transport {
     readonly $type: TSKindId.Dictionary;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Pair.Transport | DictionarySplat.Transport)[];
   }
 }
@@ -4673,11 +4719,12 @@ export namespace Dictionary {
 export namespace DictionaryComprehension {
   export interface Transport {
     readonly $type: TSKindId.DictionaryComprehension;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Pair.Transport;
     readonly $children: readonly [ComprehensionClauses.Transport];
   }
@@ -4686,11 +4733,12 @@ export namespace DictionaryComprehension {
 export namespace DictionarySplat {
   export interface Transport {
     readonly $type: TSKindId.DictionarySplat;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
   }
 }
@@ -4698,11 +4746,12 @@ export namespace DictionarySplat {
 export namespace DictionarySplatPattern {
   export interface Transport {
     readonly $type: TSKindId.DictionarySplatPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
   }
 }
@@ -4710,11 +4759,12 @@ export namespace DictionarySplatPattern {
 export namespace DottedName {
   export interface Transport {
     readonly $type: TSKindId.DottedName;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Identifier.Transport)[];
   }
 }
@@ -4722,11 +4772,12 @@ export namespace DottedName {
 export namespace ElifClause {
   export interface Transport {
     readonly $type: TSKindId.ElifClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly condition: Expression.Transport;
     readonly consequence: Suite.Transport;
   }
@@ -4739,11 +4790,12 @@ export namespace Ellipsis2 {
 export namespace ElseClause {
   export interface Transport {
     readonly $type: TSKindId.ElseClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Suite.Transport;
   }
 }
@@ -4755,11 +4807,12 @@ export namespace EscapeSequence {
 export namespace ExceptClause {
   export interface Transport {
     readonly $type: TSKindId.ExceptClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly value?: readonly (Expression.Transport)[];
     readonly alias?: Expression.Transport;
     readonly $children: readonly [Suite.Transport];
@@ -4769,11 +4822,12 @@ export namespace ExceptClause {
 export namespace ExecStatement {
   export interface Transport {
     readonly $type: TSKindId.ExecStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly code: String.Transport | Identifier.Transport;
     readonly in_clause?: readonly (LiteralTransport<TSKindId.In, "in"> | Expression.Transport)[];
   }
@@ -4782,11 +4836,12 @@ export namespace ExecStatement {
 export namespace ExpressionList {
   export interface Transport {
     readonly $type: TSKindId.ExpressionList;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport)[];
   }
 }
@@ -4794,11 +4849,12 @@ export namespace ExpressionList {
 export namespace ExpressionStatementTuple {
   export interface Transport {
     readonly $type: "expression_statement_tuple";
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport)[];
   }
 }
@@ -4807,11 +4863,12 @@ export namespace ExpressionStatementUFormTuple {
   export interface Transport {
     readonly $type: TSKindId.ExpressionStatement;
     readonly $variant: 'tuple';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [ExpressionStatementTuple.Transport];
   }
 }
@@ -4827,11 +4884,12 @@ export namespace False {
 export namespace FinallyClause {
   export interface Transport {
     readonly $type: TSKindId.FinallyClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly block: Suite.Transport;
   }
 }
@@ -4843,11 +4901,12 @@ export namespace Float {
 export namespace ForInClause {
   export interface Transport {
     readonly $type: TSKindId.ForInClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly async_marker?: AsyncMarker.Transport;
     readonly left: LeftHandSide.Transport;
     readonly right: readonly (ExpressionWithinForInClause.Transport)[];
@@ -4857,11 +4916,12 @@ export namespace ForInClause {
 export namespace ForStatement {
   export interface Transport {
     readonly $type: TSKindId.ForStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly async_marker?: AsyncMarker.Transport;
     readonly left: LeftHandSide.Transport;
     readonly right: Expressions.Transport;
@@ -4873,11 +4933,12 @@ export namespace ForStatement {
 export namespace FormatSpecifier {
   export interface Transport {
     readonly $type: TSKindId.FormatSpecifier;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Interpolation.Transport)[];
   }
 }
@@ -4885,11 +4946,12 @@ export namespace FormatSpecifier {
 export namespace FunctionDefinition {
   export interface Transport {
     readonly $type: TSKindId.FunctionDefinition;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly async_marker?: AsyncMarker.Transport;
     readonly name: Identifier.Transport;
     readonly type_parameters?: TypeParameter.Transport;
@@ -4902,11 +4964,12 @@ export namespace FunctionDefinition {
 export namespace FutureImportStatement {
   export interface Transport {
     readonly $type: TSKindId.FutureImportStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
   }
 }
@@ -4914,11 +4977,12 @@ export namespace FutureImportStatement {
 export namespace GeneratorExpression {
   export interface Transport {
     readonly $type: TSKindId.GeneratorExpression;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Expression.Transport;
     readonly $children: readonly [ComprehensionClauses.Transport];
   }
@@ -4927,11 +4991,12 @@ export namespace GeneratorExpression {
 export namespace GenericType {
   export interface Transport {
     readonly $type: TSKindId.GenericType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly identifier: Identifier.Transport;
     readonly type_parameter: TypeParameter.Transport;
   }
@@ -4940,11 +5005,12 @@ export namespace GenericType {
 export namespace GlobalStatement {
   export interface Transport {
     readonly $type: TSKindId.GlobalStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Identifier.Transport)[];
   }
 }
@@ -4956,11 +5022,12 @@ export namespace Identifier {
 export namespace IfClause {
   export interface Transport {
     readonly $type: TSKindId.IfClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
   }
 }
@@ -4968,11 +5035,12 @@ export namespace IfClause {
 export namespace IfStatement {
   export interface Transport {
     readonly $type: TSKindId.IfStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly condition: Expression.Transport;
     readonly consequence: Suite.Transport;
     readonly alternative?: readonly (ElifClause.Transport | ElseClause.Transport)[];
@@ -4982,11 +5050,12 @@ export namespace IfStatement {
 export namespace ImportFromStatement {
   export interface Transport {
     readonly $type: TSKindId.ImportFromStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly module_name: RelativeImport.Transport | DottedName.Transport;
     readonly $children: readonly [WildcardImport.Transport];
   }
@@ -4999,11 +5068,12 @@ export namespace ImportPrefix {
 export namespace ImportStatement {
   export interface Transport {
     readonly $type: TSKindId.ImportStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: readonly (DottedName.Transport | AliasedImport.Transport)[];
   }
 }
@@ -5015,11 +5085,12 @@ export namespace Integer {
 export namespace Interpolation {
   export interface Transport {
     readonly $type: TSKindId.Interpolation;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: FExpression.Transport;
     readonly type_conversion?: TypeConversion.Transport;
     readonly format_specifier?: FormatSpecifier.Transport;
@@ -5029,11 +5100,12 @@ export namespace Interpolation {
 export namespace KeywordArgument {
   export interface Transport {
     readonly $type: TSKindId.KeywordArgument;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: Identifier.Transport | KeywordIdentifier.Transport;
     readonly value: Expression.Transport;
   }
@@ -5042,11 +5114,12 @@ export namespace KeywordArgument {
 export namespace KeywordPattern {
   export interface Transport {
     readonly $type: TSKindId.KeywordPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly identifier: Identifier.Transport;
     readonly simple_pattern: SimplePattern.Transport;
   }
@@ -5059,11 +5132,12 @@ export namespace KeywordSeparator {
 export namespace Lambda {
   export interface Transport {
     readonly $type: TSKindId.Lambda;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly parameters?: LambdaParameters.Transport;
     readonly body: Expression.Transport;
   }
@@ -5072,11 +5146,12 @@ export namespace Lambda {
 export namespace LambdaParameters {
   export interface Transport {
     readonly $type: TSKindId.LambdaParameters;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Parameter.Transport)[];
   }
 }
@@ -5084,11 +5159,12 @@ export namespace LambdaParameters {
 export namespace LambdaWithinForInClause {
   export interface Transport {
     readonly $type: TSKindId.LambdaWithinForInClause;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly parameters?: LambdaParameters.Transport;
     readonly body: ExpressionWithinForInClause.Transport;
   }
@@ -5101,11 +5177,12 @@ export namespace LineContinuation {
 export namespace List {
   export interface Transport {
     readonly $type: TSKindId.List;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
   }
 }
@@ -5113,11 +5190,12 @@ export namespace List {
 export namespace ListComprehension {
   export interface Transport {
     readonly $type: TSKindId.ListComprehension;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Expression.Transport;
     readonly $children: readonly [ComprehensionClauses.Transport];
   }
@@ -5126,11 +5204,12 @@ export namespace ListComprehension {
 export namespace ListPattern {
   export interface Transport {
     readonly $type: TSKindId.ListPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport)[];
   }
 }
@@ -5138,11 +5217,12 @@ export namespace ListPattern {
 export namespace ListSplat {
   export interface Transport {
     readonly $type: TSKindId.ListSplat;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly expression: Expression.Transport;
   }
 }
@@ -5150,11 +5230,12 @@ export namespace ListSplat {
 export namespace ListSplatPattern {
   export interface Transport {
     readonly $type: TSKindId.ListSplatPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
   }
 }
@@ -5162,11 +5243,12 @@ export namespace ListSplatPattern {
 export namespace MatchStatement {
   export interface Transport {
     readonly $type: TSKindId.MatchStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly subject: readonly (Expression.Transport)[];
     readonly body: MatchBlock.Transport;
   }
@@ -5175,11 +5257,12 @@ export namespace MatchStatement {
 export namespace MemberType {
   export interface Transport {
     readonly $type: TSKindId.MemberType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly base_type: Type.Transport;
     readonly identifier: Identifier.Transport;
   }
@@ -5188,11 +5271,12 @@ export namespace MemberType {
 export namespace Module {
   export interface Transport {
     readonly $type: TSKindId.Module;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Statement.Transport)[];
   }
 }
@@ -5200,11 +5284,12 @@ export namespace Module {
 export namespace NamedExpression {
   export interface Transport {
     readonly $type: TSKindId.NamedExpression;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: NamedExpressionLhs.Transport;
     readonly value: Expression.Transport;
   }
@@ -5217,11 +5302,12 @@ export namespace None {
 export namespace NonlocalStatement {
   export interface Transport {
     readonly $type: TSKindId.NonlocalStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Identifier.Transport)[];
   }
 }
@@ -5229,11 +5315,12 @@ export namespace NonlocalStatement {
 export namespace NotOperator {
   export interface Transport {
     readonly $type: TSKindId.NotOperator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly argument: Expression.Transport;
   }
 }
@@ -5241,11 +5328,12 @@ export namespace NotOperator {
 export namespace Pair {
   export interface Transport {
     readonly $type: TSKindId.Pair;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly key: Expression.Transport;
     readonly value: Expression.Transport;
   }
@@ -5254,11 +5342,12 @@ export namespace Pair {
 export namespace Parameters {
   export interface Transport {
     readonly $type: TSKindId.Parameters;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Parameter.Transport)[];
   }
 }
@@ -5266,11 +5355,12 @@ export namespace Parameters {
 export namespace ParenthesizedExpression {
   export interface Transport {
     readonly $type: TSKindId.ParenthesizedExpression;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport | Yield.Transport];
   }
 }
@@ -5278,11 +5368,12 @@ export namespace ParenthesizedExpression {
 export namespace ParenthesizedListSplat {
   export interface Transport {
     readonly $type: TSKindId.ParenthesizedListSplat;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [ParenthesizedListSplat.Transport | ListSplat.Transport];
   }
 }
@@ -5294,11 +5385,12 @@ export namespace PassStatement {
 export namespace PatternList {
   export interface Transport {
     readonly $type: TSKindId.PatternList;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport)[];
   }
 }
@@ -5310,11 +5402,12 @@ export namespace PositionalSeparator {
 export namespace PrintStatement {
   export interface Transport {
     readonly $type: TSKindId.PrintStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly argument: readonly (Expression.Transport)[];
     readonly $children?: readonly [Chevron.Transport];
   }
@@ -5323,11 +5416,12 @@ export namespace PrintStatement {
 export namespace RaiseStatement {
   export interface Transport {
     readonly $type: TSKindId.RaiseStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly cause?: Expression.Transport;
     readonly $children?: readonly [Expressions.Transport];
   }
@@ -5336,11 +5430,12 @@ export namespace RaiseStatement {
 export namespace RelativeImport {
   export interface Transport {
     readonly $type: TSKindId.RelativeImport;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly import_prefix: ImportPrefix.Transport;
     readonly dotted_name?: DottedName.Transport;
   }
@@ -5349,11 +5444,12 @@ export namespace RelativeImport {
 export namespace ReturnStatement {
   export interface Transport {
     readonly $type: TSKindId.ReturnStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children?: readonly [Expressions.Transport];
   }
 }
@@ -5361,11 +5457,12 @@ export namespace ReturnStatement {
 export namespace Set {
   export interface Transport {
     readonly $type: TSKindId.Set;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
   }
 }
@@ -5373,11 +5470,12 @@ export namespace Set {
 export namespace SetComprehension {
   export interface Transport {
     readonly $type: TSKindId.SetComprehension;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Expression.Transport;
     readonly $children: readonly [ComprehensionClauses.Transport];
   }
@@ -5386,11 +5484,12 @@ export namespace SetComprehension {
 export namespace Slice {
   export interface Transport {
     readonly $type: TSKindId.Slice;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly start?: Expression.Transport;
     readonly stop?: Expression.Transport;
     readonly step?: Expression.Transport;
@@ -5400,11 +5499,12 @@ export namespace Slice {
 export namespace SplatPattern {
   export interface Transport {
     readonly $type: TSKindId.SplatPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly identifier: _Identifier.Transport;
     readonly $children: readonly [Identifier.Transport];
   }
@@ -5413,11 +5513,12 @@ export namespace SplatPattern {
 export namespace SplatType {
   export interface Transport {
     readonly $type: TSKindId.SplatType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly identifier: _Identifier.Transport | Identifier.Transport;
   }
 }
@@ -5425,11 +5526,12 @@ export namespace SplatType {
 export namespace String {
   export interface Transport {
     readonly $type: TSKindId.String;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly string_start: StringStart.Transport;
     readonly content: readonly (Interpolation.Transport | StringContent.Transport)[];
     readonly string_end: StringEnd.Transport;
@@ -5439,11 +5541,12 @@ export namespace String {
 export namespace StringContent {
   export interface Transport {
     readonly $type: TSKindId.StringContent;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (EscapeInterpolation.Transport | EscapeSequence.Transport | TerminalTransport<TSKindId.Bslash, "\\"> | _StringContent.Transport)[];
   }
 }
@@ -5451,11 +5554,12 @@ export namespace StringContent {
 export namespace Subscript {
   export interface Transport {
     readonly $type: TSKindId.Subscript;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly value: PrimaryExpression.Transport;
     readonly subscript: readonly (Expression.Transport | Slice.Transport)[];
   }
@@ -5468,11 +5572,12 @@ export namespace True {
 export namespace TryStatement {
   export interface Transport {
     readonly $type: TSKindId.TryStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly body: Suite.Transport;
     readonly except_clauses: readonly (ExceptClause.Transport)[];
     readonly else_clause?: ElseClause.Transport;
@@ -5483,11 +5588,12 @@ export namespace TryStatement {
 export namespace Tuple {
   export interface Transport {
     readonly $type: TSKindId.Tuple;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Expression.Transport | Yield.Transport | ListSplat.Transport | ParenthesizedListSplat.Transport)[];
   }
 }
@@ -5495,11 +5601,12 @@ export namespace Tuple {
 export namespace TuplePattern {
   export interface Transport {
     readonly $type: TSKindId.TuplePattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Pattern.Transport)[];
   }
 }
@@ -5507,11 +5614,12 @@ export namespace TuplePattern {
 export namespace Type {
   export interface Transport {
     readonly $type: TSKindId.Type;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport | SplatType.Transport | GenericType.Transport | UnionType.Transport | ConstrainedType.Transport | MemberType.Transport];
   }
 }
@@ -5519,11 +5627,12 @@ export namespace Type {
 export namespace TypeAliasStatement {
   export interface Transport {
     readonly $type: TSKindId.TypeAliasStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly type: TypeAliasStatementType.Transport;
     readonly left: Type.Transport;
     readonly right: Type.Transport;
@@ -5537,11 +5646,12 @@ export namespace TypeConversion {
 export namespace TypeParameter {
   export interface Transport {
     readonly $type: TSKindId.TypeParameter;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (Type.Transport)[];
   }
 }
@@ -5549,11 +5659,12 @@ export namespace TypeParameter {
 export namespace TypedDefaultParameter {
   export interface Transport {
     readonly $type: TSKindId.TypedDefaultParameter;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly name: Identifier.Transport;
     readonly type: Type.Transport;
     readonly value: Expression.Transport;
@@ -5563,11 +5674,12 @@ export namespace TypedDefaultParameter {
 export namespace TypedParameter {
   export interface Transport {
     readonly $type: TSKindId.TypedParameter;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly type: Type.Transport;
     readonly $children: readonly [Identifier.Transport | ListSplatPattern.Transport | DictionarySplatPattern.Transport];
   }
@@ -5576,11 +5688,12 @@ export namespace TypedParameter {
 export namespace UnaryOperator {
   export interface Transport {
     readonly $type: TSKindId.UnaryOperator;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly operator: UnaryOperatorOperator.Transport;
     readonly argument: PrimaryExpression.Transport;
   }
@@ -5589,11 +5702,12 @@ export namespace UnaryOperator {
 export namespace UnionPattern {
   export interface Transport {
     readonly $type: TSKindId.UnionPattern;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (SimplePattern.Transport)[];
   }
 }
@@ -5601,11 +5715,12 @@ export namespace UnionPattern {
 export namespace UnionType {
   export interface Transport {
     readonly $type: TSKindId.UnionType;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly left: Type.Transport;
     readonly right: Type.Transport;
   }
@@ -5614,11 +5729,12 @@ export namespace UnionType {
 export namespace WhileStatement {
   export interface Transport {
     readonly $type: TSKindId.WhileStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly condition: Expression.Transport;
     readonly body: Suite.Transport;
     readonly alternative?: ElseClause.Transport;
@@ -5632,11 +5748,12 @@ export namespace WildcardImport {
 export namespace WithClauseBare {
   export interface Transport {
     readonly $type: "with_clause_bare";
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (WithItem.Transport)[];
   }
 }
@@ -5644,11 +5761,12 @@ export namespace WithClauseBare {
 export namespace WithClauseParen {
   export interface Transport {
     readonly $type: "with_clause_paren";
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly (WithItem.Transport)[];
   }
 }
@@ -5657,11 +5775,12 @@ export namespace WithClauseUFormBare {
   export interface Transport {
     readonly $type: TSKindId.WithClause;
     readonly $variant: 'bare';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [WithClauseBare.Transport];
   }
 }
@@ -5670,11 +5789,12 @@ export namespace WithClauseUFormParen {
   export interface Transport {
     readonly $type: TSKindId.WithClause;
     readonly $variant: 'paren';
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [_WithClauseParen.Transport];
   }
 }
@@ -5686,11 +5806,12 @@ export namespace WithClause {
 export namespace WithItem {
   export interface Transport {
     readonly $type: TSKindId.WithItem;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly value: Expression.Transport;
   }
 }
@@ -5698,11 +5819,12 @@ export namespace WithItem {
 export namespace WithStatement {
   export interface Transport {
     readonly $type: TSKindId.WithStatement;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly async_marker?: AsyncMarker.Transport;
     readonly with_clause: WithClause.Transport;
     readonly body: Suite.Transport;
@@ -5712,11 +5834,12 @@ export namespace WithStatement {
 export namespace Yield {
   export interface Transport {
     readonly $type: TSKindId.Yield;
-    readonly $source?: 'ts' | 'sg' | 'factory';
+    readonly $source?: 0 | 1 | 2;
     readonly $named?: boolean;
     readonly $text?: string;
     readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeId?: number;
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
     readonly $children: readonly [Expression.Transport | Expressions.Transport];
   }
 }

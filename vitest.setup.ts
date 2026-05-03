@@ -17,10 +17,29 @@
 import { compileParser } from './packages/codegen/src/transpile/compile-parser.ts';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
 export async function setup() {
+	// Rebuild core + grammar package dists so tests never run against
+	// stale compiled output. pnpm build is mtime-aware via tsgo's
+	// incremental mode — no-op when sources haven't changed (~50ms).
+	try {
+		const t0 = Date.now();
+		execFileSync('pnpm', ['-r', 'run', 'build'], {
+			cwd: import.meta.dirname,
+			stdio: 'pipe'
+		});
+		console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
+	} catch (e) {
+		console.error(
+			'[vitest-setup] pnpm -r run build failed:',
+			(e as Error).message?.slice(0, 200)
+		);
+		throw e;
+	}
+
 	for (const grammar of GRAMMARS) {
 		const grammarDir = join(import.meta.dirname, 'packages', grammar);
 		const grammarJs = join(grammarDir, '.sittir', 'grammar.js');

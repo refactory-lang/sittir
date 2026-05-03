@@ -308,7 +308,7 @@ function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
 			"  if (typeof v !== 'number') return v as readonly T[];",
 			'  const out: T[] = [];',
 			'  for (let i = 0; i < kinds.length; i++) {',
-			"    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 'factory' } as unknown as T);",
+			"    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 2 } as unknown as T);",
 			'  }',
 			'  return out;',
 			'}'
@@ -967,7 +967,7 @@ function childElementType(
  *   an `AssembledKeyword`): the field content is a hidden-rule terminal with a
  *   single word-like text value (e.g. `_kw_async`). Stamp a minimal leaf
  *   NodeData object whose shape matches `Terminal<kind, text>`:
- *   `{ $type: '_kw_async', $text: 'async', $source: 'factory', $named: true }`.
+ *   `{ $type: '_kw_async', $text: 'async', $source: 2, $named: true }`.
  *
  * Returns `undefined` when the field is NOT auto-stamp-eligible.
  */
@@ -1197,7 +1197,7 @@ function emitFieldCarryingFactory(
 			: undefined;
 	lines.push('  return {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 'factory' as const,`);
+	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
 	if (hasFields) lines.push('    $fields: fields,');
@@ -1335,7 +1335,7 @@ function emitRefineFormFactory(
 	}
 	lines.push('  return {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 'factory' as const,`);
+	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (hasFields) lines.push('    $fields: fields,');
 	if (hasChildren) lines.push('    $children: children,');
@@ -1580,7 +1580,7 @@ function emitContainerFactory(
 	}
 	lines.push('  return {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 'factory' as const,`);
+	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push('    $children: children,');
 	lines.push(...factorySuffix(node.treeTypeName));
@@ -1646,7 +1646,7 @@ function emitPolymorphFactory(
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 'factory' as const, $named: true as const, ..._branchMethods, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
+		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 2 as const, $named: true as const, ..._branchMethods, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
 	}
 
 	const parts: string[] = [];
@@ -1864,7 +1864,7 @@ function emitHoistedPolymorphFormFactory(
 		// hidden) so consumers always see the canonical hidden form.
 		lines.push('  const inner = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
-		lines.push(`    $source: 'factory' as const,`);
+		lines.push(`    $source: 2 as const,`);
 		lines.push('    $named: true as const,');
 		if (hoist.innerFields.length > 0) {
 			lines.push('    $fields: {');
@@ -1889,7 +1889,7 @@ function emitHoistedPolymorphFormFactory(
 
 	lines.push('  return {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
-	lines.push(`    $source: 'factory' as const,`);
+	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push(`    $variant: '${variantName}' as const,`);
 	if (formFields.length > 0) lines.push('    $fields: fields,');
@@ -2143,7 +2143,7 @@ function emitTextFactory(
 	body.push(
 		'  return {',
 		`    $type: ${typeExpr},`,
-		`    $source: 'factory' as const,`,
+		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
 		`    ..._leafMethods(${textExpr}),`,

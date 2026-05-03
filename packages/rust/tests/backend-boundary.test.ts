@@ -5,7 +5,7 @@ import { TSKindId } from '../src/types.ts';
 // Phase B: $type is a numeric TSKindId (not a string) on the native wire.
 const identifier = {
 	$type: TSKindId.Identifier,
-	$source: 'factory',
+	$source: 2,
 	$named: true,
 	$text: 'x'
 } as const;
@@ -86,12 +86,12 @@ describe('boundary', () => {
 
 		const { render } = await import('../src/boundary.ts');
 		// Phase B: $type is numeric on the wire; TSKindId.Identifier = 1
-		// Phase D: $source is capitalized at the transport boundary ('factory' → 'Factory')
+		// $source is numeric: 2 = factory
 		expect(render(identifier)).toBe(`ok:${TSKindId.Identifier}`);
 		expect(renderSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				$type: TSKindId.Identifier,
-				$source: 'Factory',
+				$source: 2,
 				$named: true,
 				$text: 'x'
 			})
@@ -117,10 +117,10 @@ describe('boundary', () => {
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawSourceFile = {
 			$type: TSKindId.SourceFile,
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$children: [
-				{ $type: TSKindId.EmptyStatement, $source: 'ts', $named: true, $text: ';' }
+				{ $type: TSKindId.EmptyStatement, $source: 0, $named: true, $text: ';' }
 			]
 		} as const;
 
@@ -158,12 +158,12 @@ describe('boundary', () => {
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const rawArrayExpression = {
 			$type: TSKindId.ArrayExpression,
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$children: [
 				{
 					$type: TSKindId.ArrayExpressionList,
-					$source: 'ts',
+					$source: 0,
 					$named: true,
 					$children: [identifier]
 				}
@@ -208,7 +208,7 @@ describe('boundary', () => {
 		const { render } = await import('../src/boundary.ts');
 		const invalidNode = {
 			$type: TSKindId.Arguments,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;

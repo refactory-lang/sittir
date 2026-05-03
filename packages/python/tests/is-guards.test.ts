@@ -60,7 +60,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('per-kind guard accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.FunctionDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -70,7 +70,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('per-kind guard rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'function_definition',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
@@ -80,7 +80,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('per-kind guard rejects mismatched numeric $type', () => {
 		const node = {
 			$type: TSKindId.ClassDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -90,7 +90,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('is.kind() accepts numeric $type from factory output', () => {
 		const node = {
 			$type: TSKindId.FunctionDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -100,7 +100,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('is.kind() rejects string $type (Phase D — string arm removed)', () => {
 		const node = {
 			$type: 'function_definition',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as unknown as { readonly $type: string | number };
@@ -110,7 +110,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('is.kind() rejects mismatched numeric $type', () => {
 		const node = {
 			$type: TSKindId.ClassDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -121,7 +121,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 		// `compoundStatement` is a supertype; `function_definition` is a member.
 		const node = {
 			$type: TSKindId.FunctionDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -131,7 +131,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('supertype guard rejects string $type (Phase D — numeric-only set)', () => {
 		const node = {
 			$type: 'function_definition',
-			$source: 'ts',
+			$source: 0,
 			$named: true,
 			$fields: {}
 		} as const;
@@ -143,7 +143,7 @@ describe('python Phase D: numeric-only $type guards', () => {
 	it('assert.functionDefinition passes on numeric $type from factory', () => {
 		const node = {
 			$type: TSKindId.FunctionDefinition,
-			$source: 'factory',
+			$source: 2,
 			$named: true,
 			$fields: {}
 		} as const;

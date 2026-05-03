@@ -26,7 +26,8 @@ fn sample_leaf() -> NodeData {
         children: None,
         text: Some("foo".to_string()),
         span: Some(Span { start: 42, end: 45 }),
-        node_id: Some(7),
+        node_handle: Some(7),
+        child_index: None,
     }
 }
 
@@ -46,7 +47,8 @@ fn sample_branch() -> NodeData {
         children: Some(vec![sample_leaf()]),
         text: None,
         span: None,
-        node_id: None,
+        node_handle: None,
+        child_index: None,
     }
 }
 
@@ -75,8 +77,12 @@ fn absent_optionals_stay_absent_on_the_wire() {
     assert!(!obj.contains_key("$text"), "absent $text must be elided");
     assert!(!obj.contains_key("$span"), "absent $span must be elided");
     assert!(
-        !obj.contains_key("$nodeId"),
-        "absent $nodeId must be elided"
+        !obj.contains_key("$nodeHandle"),
+        "absent $nodeHandle must be elided"
+    );
+    assert!(
+        !obj.contains_key("$childIndex"),
+        "absent $childIndex must be elided"
     );
     // Required trio still present.
     assert!(obj.contains_key("$type"));
@@ -93,12 +99,12 @@ fn present_optionals_appear_on_the_wire() {
     let span = obj.get("$span").expect("$span");
     assert_eq!(span["start"].as_u64(), Some(42));
     assert_eq!(span["end"].as_u64(), Some(45));
-    assert_eq!(obj.get("$nodeId").and_then(|x| x.as_u64()), Some(7));
+    assert_eq!(obj.get("$nodeHandle").and_then(|x| x.as_u64()), Some(7));
 }
 
 #[test]
 fn no_unexpected_top_level_keys() {
-    // Enumerate the 8 allowed top-level keys per data-model.md §1.
+    // Enumerate the 9 allowed top-level keys per data-model.md §1.
     // Any other top-level `$`-key is a contract violation.
     const ALLOWED: &[&str] = &[
         "$type",
@@ -108,7 +114,8 @@ fn no_unexpected_top_level_keys() {
         "$children",
         "$text",
         "$span",
-        "$nodeId",
+        "$nodeHandle",
+        "$childIndex",
     ];
     let json = serde_json::to_string(&sample_branch()).unwrap();
     let v = wire(&json);
@@ -121,13 +128,10 @@ fn no_unexpected_top_level_keys() {
 }
 
 #[test]
-fn source_enum_serializes_as_lowercase() {
-    assert_eq!(serde_json::to_string(&Source::Ts).unwrap(), "\"ts\"");
-    assert_eq!(serde_json::to_string(&Source::Sg).unwrap(), "\"sg\"");
-    assert_eq!(
-        serde_json::to_string(&Source::Factory).unwrap(),
-        "\"factory\""
-    );
+fn source_enum_serializes_as_numeric() {
+    assert_eq!(serde_json::to_string(&Source::Ts).unwrap(), "0");
+    assert_eq!(serde_json::to_string(&Source::Sg).unwrap(), "1");
+    assert_eq!(serde_json::to_string(&Source::Factory).unwrap(), "2");
 }
 
 #[test]
@@ -177,7 +181,7 @@ fn edit_uses_camelcase_on_the_wire() {
 fn deserialization_accepts_missing_optionals() {
     // Minimal shape — required trio only, everything else defaulted.
     // $type is now a numeric KindId on the wire (Phase B-inverse).
-    let minimal = r#"{"$type":1,"$source":"ts","$named":true}"#;
+    let minimal = r#"{"$type":1,"$source":0,"$named":true}"#;
     let parsed: NodeData = serde_json::from_str(minimal).unwrap();
     assert_eq!(parsed.type_, K_IDENTIFIER);
     assert_eq!(parsed.source, Source::Ts);
@@ -186,5 +190,6 @@ fn deserialization_accepts_missing_optionals() {
     assert!(parsed.children.is_none());
     assert!(parsed.text.is_none());
     assert!(parsed.span.is_none());
-    assert!(parsed.node_id.is_none());
+    assert!(parsed.node_handle.is_none());
+    assert!(parsed.child_index.is_none());
 }

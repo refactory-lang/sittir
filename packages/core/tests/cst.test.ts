@@ -8,12 +8,12 @@ const KIND_IDENTIFIER = 1;
 const KIND_FUNCTION_ITEM = 2;
 const KIND_BLOCK = 3;
 
-const kindNames: Record<number, string> = {
-	[KIND_IDENTIFIER]: 'identifier',
-	[KIND_FUNCTION_ITEM]: 'function_item',
-	[KIND_BLOCK]: 'block'
-};
-const kindNameFromId = (id: number): string | undefined => kindNames[id];
+const kindNamesMap = new Map<number, string>([
+	[KIND_IDENTIFIER, 'identifier'],
+	[KIND_FUNCTION_ITEM, 'function_item'],
+	[KIND_BLOCK, 'block']
+]);
+const kindNameFromId = (id: number): string | undefined => kindNamesMap.get(id);
 
 const config: RulesConfig = {
 	language: 'test',
@@ -24,7 +24,7 @@ const config: RulesConfig = {
 		function_item: 'fn $NAME() $BODY',
 		block: '{ }'
 	},
-	kindNameFromId
+	kindNames: kindNamesMap
 };
 
 const renderer = createRenderer(config);

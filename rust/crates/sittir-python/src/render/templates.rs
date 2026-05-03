@@ -3297,8 +3297,10 @@ pub struct _AsPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _AsPatternChildTransport,
 }
@@ -3324,8 +3326,10 @@ pub struct AssignmentEqTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub right: RightHandSideTransport,
 }
 
@@ -3350,8 +3354,10 @@ pub struct AssignmentTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
 }
@@ -3377,8 +3383,10 @@ pub struct AssignmentTypedTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
     pub right: RightHandSideTransport,
@@ -3503,8 +3511,10 @@ pub struct ComprehensionClausesTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ComprehensionClausesChildTransport>,
 }
@@ -3584,8 +3594,10 @@ pub struct ImportListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Vec<AnyTransport>,
 }
 
@@ -3604,7 +3616,8 @@ pub struct IsNotTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -3628,7 +3641,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -3645,12 +3659,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IsNotTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -3677,8 +3693,10 @@ pub struct KeyValuePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub key: SimplePatternTransport,
     pub value: CasePatternTransport,
 }
@@ -3698,7 +3716,8 @@ pub struct KwAsyncMarkerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -3722,7 +3741,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -3739,12 +3759,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -3765,7 +3787,8 @@ pub struct KwTypeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -3789,7 +3812,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTypeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -3806,12 +3830,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTypeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -3838,8 +3864,10 @@ pub struct _ListPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<CasePatternTransport>,
 }
@@ -3865,8 +3893,10 @@ pub struct MatchBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MatchBlockBlockTransport,
 }
@@ -3892,8 +3922,10 @@ pub struct MatchBlockBlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub alternative: Vec<CaseClauseTransport>,
 }
 
@@ -3912,7 +3944,8 @@ pub struct NotEscapeSequenceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -3936,7 +3969,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -3953,12 +3987,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotEscapeSequenceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -3979,7 +4015,8 @@ pub struct NotInTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -4003,7 +4040,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -4020,12 +4058,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotInTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -4052,8 +4092,10 @@ pub struct SimplePatternNegativeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PrimaryExpressionTransport,
 }
@@ -4079,8 +4121,10 @@ pub struct SimpleStatementsTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<SimpleStatementTransport>,
 }
@@ -4106,8 +4150,10 @@ pub struct SuiteTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: SuiteChildTransport,
 }
@@ -4133,8 +4179,10 @@ pub struct _TuplePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<CasePatternTransport>,
 }
@@ -4218,8 +4266,10 @@ pub struct _WithClauseParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<WithItemTransport>,
 }
@@ -4245,8 +4295,10 @@ pub struct AliasedImportTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: DottedNameTransport,
     pub alias: IdentifierTransport,
 }
@@ -4272,8 +4324,10 @@ pub struct ArgumentListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<ArgumentListChildTransport>>,
 }
@@ -4299,8 +4353,10 @@ pub struct AsPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
     pub alias: Box<AnyTransport>,
 }
@@ -4326,8 +4382,10 @@ pub struct AssertStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExpressionTransport>,
 }
@@ -4397,8 +4455,10 @@ pub struct AssignmentUFormEqTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: AssignmentEqTransport,
@@ -4425,8 +4485,10 @@ pub struct AssignmentUFormTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: AssignmentTypeTransport,
@@ -4453,8 +4515,10 @@ pub struct AssignmentUFormTypedTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: LeftHandSideTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: AssignmentTypedTransport,
@@ -4481,8 +4545,10 @@ pub struct AttributeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub object: PrimaryExpressionTransport,
     pub attribute: IdentifierTransport,
 }
@@ -4508,8 +4574,10 @@ pub struct AugmentedAssignmentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: LeftHandSideTransport,
     pub operator: AugmentedAssignmentOperatorEnum,
     pub right: RightHandSideTransport,
@@ -4536,8 +4604,10 @@ pub struct AwaitTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub primary_expression: PrimaryExpressionTransport,
 }
 
@@ -4562,8 +4632,10 @@ pub struct BinaryOperatorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: PrimaryExpressionTransport,
     pub operator: bool,
     pub right: PrimaryExpressionTransport,
@@ -4590,8 +4662,10 @@ pub struct BlockTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StatementTransport>,
 }
@@ -4617,8 +4691,10 @@ pub struct BooleanOperatorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: ExpressionTransport,
     pub operator: bool,
     pub right: ExpressionTransport,
@@ -4639,7 +4715,8 @@ pub struct BreakStatementTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -4663,7 +4740,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -4680,12 +4758,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakStatementTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -4712,8 +4792,10 @@ pub struct CallTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub function: PrimaryExpressionTransport,
     pub arguments: Box<AnyTransport>,
 }
@@ -4739,8 +4821,10 @@ pub struct CaseClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub guard: Option<IfClauseTransport>,
     pub consequence: SuiteTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -4768,8 +4852,10 @@ pub struct CasePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CasePatternChildTransport,
 }
@@ -4795,8 +4881,10 @@ pub struct ChevronTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
 }
 
@@ -4821,8 +4909,10 @@ pub struct ClassDefinitionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParameterTransport>,
     pub superclasses: Option<ArgumentListTransport>,
@@ -4850,8 +4940,10 @@ pub struct ClassPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub dotted_name: DottedNameTransport,
     pub arguments: Vec<CasePatternTransport>,
 }
@@ -4871,7 +4963,8 @@ pub struct CommentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -4895,7 +4988,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -4912,12 +5006,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -4944,8 +5040,10 @@ pub struct ComparisonOperatorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: PrimaryExpressionTransport,
     pub operators: Vec<AnyTransport>,
 }
@@ -4971,8 +5069,10 @@ pub struct ComplexPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub real: Option<Box<AnyTransport>>,
     pub imaginary: PrimaryExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -5000,8 +5100,10 @@ pub struct ConcatenatedStringTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StringTransport>,
 }
@@ -5027,8 +5129,10 @@ pub struct ConditionalExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
     pub condition: ExpressionTransport,
     pub alternative: ExpressionTransport,
@@ -5055,8 +5159,10 @@ pub struct ConstrainedTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub base_type: TypeTransport,
     pub constraint: TypeTransport,
 }
@@ -5076,7 +5182,8 @@ pub struct ContinueStatementTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5100,7 +5207,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5117,12 +5225,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueStatementTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5149,8 +5259,10 @@ pub struct DecoratedDefinitionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub definition: CompoundStatementTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DecoratorTransport>,
@@ -5177,8 +5289,10 @@ pub struct DecoratorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
     pub newline: Option<Box<AnyTransport>>,
 }
@@ -5204,8 +5318,10 @@ pub struct DefaultParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: PatternTransport,
     pub value: ExpressionTransport,
 }
@@ -5231,8 +5347,10 @@ pub struct DeleteStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionsTransport,
 }
@@ -5258,8 +5376,10 @@ pub struct DictPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DictPatternKvTransport>,
 }
@@ -5285,8 +5405,10 @@ pub struct DictionaryTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DictionaryChildTransport>,
 }
@@ -5312,8 +5434,10 @@ pub struct DictionaryComprehensionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: PairTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ComprehensionClausesTransport,
@@ -5340,8 +5464,10 @@ pub struct DictionarySplatTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
 }
 
@@ -5366,8 +5492,10 @@ pub struct DictionarySplatPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
 }
@@ -5393,8 +5521,10 @@ pub struct DottedNameTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IdentifierTransport>,
 }
@@ -5420,8 +5550,10 @@ pub struct ElifClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub condition: ExpressionTransport,
     pub consequence: SuiteTransport,
 }
@@ -5441,7 +5573,8 @@ pub struct Ellipsis2Transport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5465,7 +5598,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5482,12 +5616,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for Ellipsis2Transport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5514,8 +5650,10 @@ pub struct ElseClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: SuiteTransport,
 }
 
@@ -5534,7 +5672,8 @@ pub struct EscapeSequenceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5558,7 +5697,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5575,12 +5715,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5607,8 +5749,10 @@ pub struct ExceptClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: Option<Vec<ExpressionTransport>>,
     pub alias: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -5636,8 +5780,10 @@ pub struct ExecStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub code: PrimaryExpressionTransport,
     pub in_clause: Option<Vec<ExpressionTransport>>,
 }
@@ -5663,8 +5809,10 @@ pub struct ExpressionListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExpressionTransport>,
 }
@@ -5690,8 +5838,10 @@ pub struct ExpressionStatementTupleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ExpressionTransport>,
 }
@@ -5753,8 +5903,10 @@ pub struct ExpressionStatementUFormTupleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Box<AnyTransport>,
 }
@@ -5774,7 +5926,8 @@ pub struct FalseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5798,7 +5951,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5815,12 +5969,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FalseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5847,8 +6003,10 @@ pub struct FinallyClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub block: SuiteTransport,
 }
 
@@ -5867,7 +6025,8 @@ pub struct FloatTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -5891,7 +6050,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -5908,12 +6068,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -5940,8 +6102,10 @@ pub struct ForInClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub async_marker: Option<bool>,
     pub left: LeftHandSideTransport,
     pub right: Vec<ExpressionWithinForInClauseTransport>,
@@ -5968,8 +6132,10 @@ pub struct ForStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub async_marker: Option<bool>,
     pub left: LeftHandSideTransport,
     pub right: ExpressionsTransport,
@@ -5998,8 +6164,10 @@ pub struct FormatSpecifierTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<InterpolationTransport>,
 }
@@ -6025,8 +6193,10 @@ pub struct FunctionDefinitionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub async_marker: Option<bool>,
     pub name: IdentifierTransport,
     pub type_parameters: Option<TypeParameterTransport>,
@@ -6056,8 +6226,10 @@ pub struct FutureImportStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Vec<AnyTransport>,
 }
 
@@ -6082,8 +6254,10 @@ pub struct GeneratorExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ComprehensionClausesTransport,
@@ -6110,8 +6284,10 @@ pub struct GenericTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: IdentifierTransport,
     pub type_parameter: TypeParameterTransport,
 }
@@ -6137,8 +6313,10 @@ pub struct GlobalStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IdentifierTransport>,
 }
@@ -6158,7 +6336,8 @@ pub struct IdentifierTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6182,7 +6361,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6199,12 +6379,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6231,8 +6413,10 @@ pub struct IfClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
 }
 
@@ -6257,8 +6441,10 @@ pub struct IfStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub condition: ExpressionTransport,
     pub consequence: SuiteTransport,
     pub alternative: Option<Vec<AnyTransport>>,
@@ -6285,8 +6471,10 @@ pub struct ImportFromStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub module_name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: WildcardImportTransport,
@@ -6307,7 +6495,8 @@ pub struct ImportPrefixTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6331,7 +6520,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6348,12 +6538,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportPrefixTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6380,8 +6572,10 @@ pub struct ImportStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: Vec<AnyTransport>,
 }
 
@@ -6400,7 +6594,8 @@ pub struct IntegerTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6424,7 +6619,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6441,12 +6637,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6473,8 +6671,10 @@ pub struct InterpolationTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: FExpressionTransport,
     pub type_conversion: Option<TypeConversionTransport>,
     pub format_specifier: Option<FormatSpecifierTransport>,
@@ -6501,8 +6701,10 @@ pub struct KeywordArgumentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: NamedExpressionLhsTransport,
     pub value: ExpressionTransport,
 }
@@ -6528,8 +6730,10 @@ pub struct KeywordPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: IdentifierTransport,
     pub simple_pattern: SimplePatternTransport,
 }
@@ -6549,7 +6753,8 @@ pub struct KeywordSeparatorTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6573,7 +6778,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6590,12 +6796,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KeywordSeparatorTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6622,8 +6830,10 @@ pub struct LambdaTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub parameters: Option<LambdaParametersTransport>,
     pub body: ExpressionTransport,
 }
@@ -6649,8 +6859,10 @@ pub struct LambdaParametersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParameterTransport>,
 }
@@ -6676,8 +6888,10 @@ pub struct LambdaWithinForInClauseTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub parameters: Option<LambdaParametersTransport>,
     pub body: ExpressionWithinForInClauseTransport,
 }
@@ -6697,7 +6911,8 @@ pub struct LineContinuationTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -6721,7 +6936,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -6738,12 +6954,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineContinuationTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -6770,8 +6988,10 @@ pub struct ListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ListChildTransport>,
 }
@@ -6797,8 +7017,10 @@ pub struct ListComprehensionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ComprehensionClausesTransport,
@@ -6825,8 +7047,10 @@ pub struct ListPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -6852,8 +7076,10 @@ pub struct ListSplatTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub expression: ExpressionTransport,
 }
 
@@ -6878,8 +7104,10 @@ pub struct ListSplatPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
 }
@@ -6905,8 +7133,10 @@ pub struct MatchStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub subject: Vec<ExpressionTransport>,
     pub body: MatchBlockTransport,
 }
@@ -6932,8 +7162,10 @@ pub struct MemberTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub base_type: TypeTransport,
     pub identifier: IdentifierTransport,
 }
@@ -6959,8 +7191,10 @@ pub struct ModuleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StatementTransport>,
 }
@@ -6986,8 +7220,10 @@ pub struct NamedExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: NamedExpressionLhsTransport,
     pub value: ExpressionTransport,
 }
@@ -7007,7 +7243,8 @@ pub struct NoneTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7031,7 +7268,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7048,12 +7286,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NoneTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7080,8 +7320,10 @@ pub struct NonlocalStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<IdentifierTransport>,
 }
@@ -7107,8 +7349,10 @@ pub struct NotOperatorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub argument: ExpressionTransport,
 }
 
@@ -7133,8 +7377,10 @@ pub struct PairTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub key: ExpressionTransport,
     pub value: ExpressionTransport,
 }
@@ -7160,8 +7406,10 @@ pub struct ParametersTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParameterTransport>,
 }
@@ -7187,8 +7435,10 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: FExpressionTransport,
 }
@@ -7214,8 +7464,10 @@ pub struct ParenthesizedListSplatTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ParenthesizedListSplatChildTransport,
 }
@@ -7235,7 +7487,8 @@ pub struct PassStatementTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7259,7 +7512,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7276,12 +7530,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassStatementTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7308,8 +7564,10 @@ pub struct PatternListTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -7329,7 +7587,8 @@ pub struct PositionalSeparatorTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7353,7 +7612,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7370,12 +7630,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PositionalSeparatorTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7402,8 +7664,10 @@ pub struct PrintStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub argument: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ChevronTransport>,
@@ -7430,8 +7694,10 @@ pub struct RaiseStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub cause: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionsTransport>,
@@ -7458,8 +7724,10 @@ pub struct RelativeImportTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub import_prefix: ImportPrefixTransport,
     pub dotted_name: Option<DottedNameTransport>,
 }
@@ -7485,8 +7753,10 @@ pub struct ReturnStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionsTransport>,
 }
@@ -7512,8 +7782,10 @@ pub struct SetTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<SetChildTransport>,
 }
@@ -7539,8 +7811,10 @@ pub struct SetComprehensionTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ComprehensionClausesTransport,
@@ -7567,8 +7841,10 @@ pub struct SliceTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub start: Option<ExpressionTransport>,
     pub stop: Option<ExpressionTransport>,
     pub step: Option<ExpressionTransport>,
@@ -7595,8 +7871,10 @@ pub struct SplatPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: _IdentifierEnum,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
@@ -7623,8 +7901,10 @@ pub struct SplatTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub identifier: Box<AnyTransport>,
 }
 
@@ -7649,8 +7929,10 @@ pub struct StringTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub string_start: StringStartTransport,
     pub content: Vec<AnyTransport>,
     pub string_end: StringEndTransport,
@@ -7677,8 +7959,10 @@ pub struct StringContentTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StringContentChildTransport>,
 }
@@ -7704,8 +7988,10 @@ pub struct SubscriptTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: PrimaryExpressionTransport,
     pub subscript: Vec<AnyTransport>,
 }
@@ -7725,7 +8011,8 @@ pub struct TrueTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7749,7 +8036,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7766,12 +8054,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TrueTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -7798,8 +8088,10 @@ pub struct TryStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub body: SuiteTransport,
     pub except_clauses: Vec<ExceptClauseTransport>,
     pub else_clause: Option<ElseClauseTransport>,
@@ -7827,8 +8119,10 @@ pub struct TupleTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TupleChildTransport>,
 }
@@ -7854,8 +8148,10 @@ pub struct TuplePatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -7881,8 +8177,10 @@ pub struct TypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: TypeChildTransport,
 }
@@ -7908,8 +8206,10 @@ pub struct TypeAliasStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: bool,
     pub left: TypeTransport,
@@ -7931,7 +8231,8 @@ pub struct TypeConversionTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -7955,7 +8256,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -7972,12 +8274,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeConversionTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8004,8 +8308,10 @@ pub struct TypeParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeTransport>,
 }
@@ -8031,8 +8337,10 @@ pub struct TypedDefaultParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
@@ -8060,8 +8368,10 @@ pub struct TypedParameterTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8089,8 +8399,10 @@ pub struct UnaryOperatorTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub operator: UnaryOperatorOperatorEnum,
     pub argument: PrimaryExpressionTransport,
 }
@@ -8116,8 +8428,10 @@ pub struct UnionPatternTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<SimplePatternTransport>,
 }
@@ -8143,8 +8457,10 @@ pub struct UnionTypeTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub left: TypeTransport,
     pub right: TypeTransport,
 }
@@ -8170,8 +8486,10 @@ pub struct WhileStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub condition: ExpressionTransport,
     pub body: SuiteTransport,
     pub alternative: Option<ElseClauseTransport>,
@@ -8192,7 +8510,8 @@ pub struct WildcardImportTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8216,7 +8535,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8233,12 +8553,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardImportTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8265,8 +8587,10 @@ pub struct WithClauseBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<WithItemTransport>,
 }
@@ -8292,8 +8616,10 @@ pub struct WithClauseParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<WithItemTransport>,
 }
@@ -8359,8 +8685,10 @@ pub struct WithClauseUFormBareTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Box<AnyTransport>,
 }
@@ -8386,8 +8714,10 @@ pub struct WithClauseUFormParenTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _WithClauseParenTransport,
 }
@@ -8413,8 +8743,10 @@ pub struct WithItemTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
 }
 
@@ -8439,8 +8771,10 @@ pub struct WithStatementTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     pub async_marker: Option<bool>,
     pub with_clause: Box<AnyTransport>,
     pub body: SuiteTransport,
@@ -8467,8 +8801,10 @@ pub struct YieldTransport {
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
     pub transport_span: Option<::sittir_core::types::Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeId"))]
-    pub transport_node_id: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Box<AnyTransport>,
 }
@@ -8488,7 +8824,8 @@ pub struct NewlineTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8512,7 +8849,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8529,12 +8867,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NewlineTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8555,7 +8895,8 @@ pub struct IndentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8579,7 +8920,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8596,12 +8938,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IndentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8622,7 +8966,8 @@ pub struct DedentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8646,7 +8991,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8663,12 +9009,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DedentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8689,7 +9037,8 @@ pub struct StringStartTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8713,7 +9062,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8730,12 +9080,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringStartTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8756,7 +9108,8 @@ pub struct _StringContentTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8780,7 +9133,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for _StringContentTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8797,12 +9151,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for _StringContentTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8823,7 +9179,8 @@ pub struct EscapeInterpolationTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8847,7 +9204,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8864,12 +9222,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeInterpolationTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8890,7 +9250,8 @@ pub struct StringEndTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8914,7 +9275,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8931,12 +9293,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringEndTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -8957,7 +9321,8 @@ pub struct CloseBracketTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -8981,7 +9346,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -8998,12 +9364,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9024,7 +9392,8 @@ pub struct CloseParenTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9048,7 +9417,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9065,12 +9435,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9091,7 +9463,8 @@ pub struct CloseBraceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9115,7 +9488,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9132,12 +9506,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9158,7 +9534,8 @@ pub struct ExceptTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9182,7 +9559,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9199,12 +9577,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExceptTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9225,7 +9605,8 @@ pub struct AsTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9249,7 +9630,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9266,12 +9648,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9292,7 +9676,8 @@ pub struct EqTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9316,7 +9701,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9333,12 +9719,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9359,7 +9747,8 @@ pub struct ColonTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9383,7 +9772,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9400,12 +9790,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9426,7 +9818,8 @@ pub struct AsyncTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9450,7 +9843,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9467,12 +9861,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9493,7 +9889,8 @@ pub struct BracketTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9517,7 +9914,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9534,12 +9932,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9560,7 +9960,8 @@ pub struct TokBsTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9584,7 +9985,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokBsTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9601,12 +10003,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokBsTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9627,7 +10031,8 @@ pub struct MinusTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9651,7 +10056,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9668,12 +10074,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9694,7 +10102,8 @@ pub struct ParenTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9718,7 +10127,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9735,12 +10145,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9761,7 +10173,8 @@ pub struct CommaTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9785,7 +10198,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9802,12 +10216,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9828,7 +10244,8 @@ pub struct AssertTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9852,7 +10269,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9869,12 +10287,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssertTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9895,7 +10315,8 @@ pub struct DotTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9919,7 +10340,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -9936,12 +10358,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -9962,7 +10386,8 @@ pub struct BreakTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -9986,7 +10411,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10003,12 +10429,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10029,7 +10457,8 @@ pub struct CaseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10053,7 +10482,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10070,12 +10500,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CaseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10096,7 +10528,8 @@ pub struct ShrTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10120,7 +10553,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShrTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10137,12 +10571,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShrTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10163,7 +10599,8 @@ pub struct ClassTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10187,7 +10624,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10204,12 +10642,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClassTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10230,7 +10670,8 @@ pub struct IfTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10254,7 +10695,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10271,12 +10713,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10297,7 +10741,8 @@ pub struct ElseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10321,7 +10766,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10338,12 +10784,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10364,7 +10812,8 @@ pub struct ContinueTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10388,7 +10837,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10405,12 +10855,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10431,7 +10883,8 @@ pub struct AtTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10455,7 +10908,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10472,12 +10926,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10498,7 +10954,8 @@ pub struct DelTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10522,7 +10979,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10539,12 +10997,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DelTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10565,7 +11025,8 @@ pub struct BraceTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10589,7 +11050,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10606,12 +11068,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10632,7 +11096,8 @@ pub struct StarstarTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10656,7 +11121,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarstarTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10673,12 +11139,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarstarTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10699,7 +11167,8 @@ pub struct ElifTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10723,7 +11192,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10740,12 +11210,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElifTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10766,7 +11238,8 @@ pub struct EllipsisTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10790,7 +11263,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10807,12 +11281,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10833,7 +11309,8 @@ pub struct StarTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10857,7 +11334,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10874,12 +11352,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10900,7 +11380,8 @@ pub struct ExecTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10924,7 +11405,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -10941,12 +11423,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExecTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -10967,7 +11451,8 @@ pub struct InTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -10991,7 +11476,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11008,12 +11494,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11034,7 +11522,8 @@ pub struct False2Transport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11058,7 +11547,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for False2Transport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11075,12 +11565,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for False2Transport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11101,7 +11593,8 @@ pub struct FinallyTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11125,7 +11618,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11142,12 +11636,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FinallyTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11168,7 +11664,8 @@ pub struct ForTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11192,7 +11689,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11209,12 +11707,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11235,7 +11735,8 @@ pub struct DefTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11259,7 +11760,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11276,12 +11778,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11302,7 +11806,8 @@ pub struct ArrowTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11326,7 +11831,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11343,12 +11849,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11369,7 +11877,8 @@ pub struct FromTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11393,7 +11902,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11410,12 +11920,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FromTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11436,7 +11948,8 @@ pub struct FutureUTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11460,7 +11973,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11477,12 +11991,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FutureUTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11503,7 +12019,8 @@ pub struct ImportTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11527,7 +12044,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11544,12 +12062,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImportTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11570,7 +12090,8 @@ pub struct GlobalTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11594,7 +12115,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11611,12 +12133,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GlobalTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11637,7 +12161,8 @@ pub struct MatchTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11661,7 +12186,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11678,12 +12204,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11704,7 +12232,8 @@ pub struct ColoneqTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11728,7 +12257,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColoneqTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11745,12 +12275,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColoneqTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11771,7 +12303,8 @@ pub struct None2Transport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11795,7 +12328,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for None2Transport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11812,12 +12346,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for None2Transport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11838,7 +12374,8 @@ pub struct NonlocalTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11862,7 +12399,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11879,12 +12417,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NonlocalTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11905,7 +12445,8 @@ pub struct NotTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11929,7 +12470,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -11946,12 +12488,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NotTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -11972,7 +12516,8 @@ pub struct PassTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -11996,7 +12541,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12013,12 +12559,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PassTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12039,7 +12587,8 @@ pub struct SlashTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12063,7 +12612,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12080,12 +12630,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12106,7 +12658,8 @@ pub struct PrintTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12130,7 +12683,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12147,12 +12701,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PrintTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12173,7 +12729,8 @@ pub struct RaiseTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12197,7 +12754,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12214,12 +12772,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RaiseTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12240,7 +12800,8 @@ pub struct ReturnTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12264,7 +12825,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12281,12 +12843,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12307,7 +12871,8 @@ pub struct AnonymousTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12331,7 +12896,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12348,12 +12914,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12374,7 +12942,8 @@ pub struct True2Transport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12398,7 +12967,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for True2Transport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12415,12 +12985,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for True2Transport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12441,7 +13013,8 @@ pub struct TryTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12465,7 +13038,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12482,12 +13056,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12508,7 +13084,8 @@ pub struct PipeTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12532,7 +13109,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12549,12 +13127,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12575,7 +13155,8 @@ pub struct WhileTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12599,7 +13180,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12616,12 +13198,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -12642,7 +13226,8 @@ pub struct WithTransport {
     pub transport_source: Option<::sittir_core::types::Source>,
     pub transport_named: Option<bool>,
     pub transport_span: Option<::sittir_core::types::Span>,
-    pub transport_node_id: Option<f64>,
+    pub transport_node_handle: Option<f64>,
+    pub transport_child_index: Option<f64>,
     pub text: String,
 }
 
@@ -12666,7 +13251,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
             transport_source: None,
             transport_named: None,
             transport_span: None,
-            transport_node_id: None,
+            transport_node_handle: None,
+            transport_child_index: None,
             text,
         })
     }
@@ -12683,12 +13269,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithTransport {
         let transport_source = obj.get("$source")?;
         let transport_named = obj.get("$named")?;
         let transport_span = obj.get("$span")?;
-        let transport_node_id = obj.get("$nodeId")?;
+        let transport_node_handle = obj.get("$nodeHandle")?;
+        let transport_child_index = obj.get("$childIndex")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
-            transport_node_id,
+            transport_node_handle,
+            transport_child_index,
             text,
         })
     }
@@ -15115,7 +15703,8 @@ fn transport_node_data(
     default_named: bool,
     text: Option<String>,
     span: Option<::sittir_core::types::Span>,
-    node_id: Option<u64>,
+    node_handle: Option<u32>,
+    child_index: Option<u16>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
 ) -> TransportNodeData {
@@ -15127,7 +15716,8 @@ fn transport_node_data(
         children,
         text,
         span,
-        node_id,
+        node_handle,
+        child_index,
     }
 }
 
@@ -15371,16 +15961,16 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Pipe(data) => transport_to_node_pipe(data),
         AnyTransport::While(data) => transport_to_node_while(data),
         AnyTransport::With(data) => transport_to_node_with(data),
-        AnyTransport::Literal0_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None)),
-        AnyTransport::Literal1_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None)),
-        AnyTransport::Literal2_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None)),
-        AnyTransport::Literal3_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None)),
-        AnyTransport::Literal4_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None)),
-        AnyTransport::Literal5_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None)),
-        AnyTransport::Literal6_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None)),
-        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None)),
-        AnyTransport::Literal8_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None)),
-        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None)),
+        AnyTransport::Literal0_3c => Ok(transport_node_data(TransportKindId(65) /* "<" */, None, None, false, Some("<".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal1_3c_3d => Ok(transport_node_data(TransportKindId(66) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal2_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal3_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal4_3e_3d => Ok(transport_node_data(TransportKindId(69) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal5_3e => Ok(transport_node_data(TransportKindId(70) /* ">" */, None, None, false, Some(">".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal6_3c_3e => Ok(transport_node_data(TransportKindId(71) /* "<>" */, None, None, false, Some("<>".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal7_6e_6f_74_20_69_6e => Ok(transport_node_data(TransportKindId(193) /* "not in" */, None, None, false, Some("not in".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal8_69_73 => Ok(transport_node_data(TransportKindId(64) /* "is" */, None, None, false, Some("is".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal9_69_73_20_6e_6f_74 => Ok(transport_node_data(TransportKindId(194) /* "is not" */, None, None, false, Some("is not".to_string()), None, None, None, None, None)),
     }
 }
 
@@ -15395,7 +15985,8 @@ fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15413,7 +16004,8 @@ fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15431,7 +16023,8 @@ fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15450,7 +16043,8 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15463,6 +16057,7 @@ fn transport_to_node_async_marker(transport: bool) -> Result<TransportNodeData, 
         None,
         true,
         Some(if transport { "async".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -15481,6 +16076,7 @@ fn transport_to_node_augmented_assignment_operator(transport: AugmentedAssignmen
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -15491,6 +16087,7 @@ fn transport_to_node_binary_operator_operator(transport: bool) -> Result<Transpo
         None,
         true,
         Some(if transport { "+".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -15509,6 +16106,7 @@ fn transport_to_node_boolean_operator_operator(transport: bool) -> Result<Transp
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -15523,7 +16121,8 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15536,6 +16135,7 @@ fn transport_to_node__identifier(transport: _IdentifierEnum) -> Result<Transport
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -15555,7 +16155,8 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15569,7 +16170,8 @@ fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -15588,7 +16190,8 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15602,7 +16205,8 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -15616,7 +16220,8 @@ fn transport_to_node_kw_type(transport: KwTypeTransport) -> Result<TransportNode
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -15633,7 +16238,8 @@ fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15650,7 +16256,8 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15668,7 +16275,8 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15682,7 +16290,8 @@ fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) 
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -15696,7 +16305,8 @@ fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -15713,7 +16323,8 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15730,7 +16341,8 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15747,7 +16359,8 @@ fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15764,7 +16377,8 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15777,6 +16391,7 @@ fn transport_to_node_type_alias_statement_type(transport: bool) -> Result<Transp
         None,
         true,
         Some(if transport { "type".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -15795,6 +16410,7 @@ fn transport_to_node_unary_operator_operator(transport: UnaryOperatorOperatorEnu
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -15809,7 +16425,8 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15828,7 +16445,8 @@ fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15848,7 +16466,8 @@ fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15867,7 +16486,8 @@ fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15884,7 +16504,8 @@ fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15910,7 +16531,8 @@ fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15928,7 +16550,8 @@ fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15946,7 +16569,8 @@ fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTrans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15965,7 +16589,8 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -15985,7 +16610,8 @@ fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16003,7 +16629,8 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16023,7 +16650,8 @@ fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16040,7 +16668,8 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16060,7 +16689,8 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16074,7 +16704,8 @@ fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16093,7 +16724,8 @@ fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData,
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16114,7 +16746,8 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16131,7 +16764,8 @@ fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16149,7 +16783,8 @@ fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNod
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16174,7 +16809,8 @@ fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16193,7 +16829,8 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16207,7 +16844,8 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16226,7 +16864,8 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16247,7 +16886,8 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16264,7 +16904,8 @@ fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16284,7 +16925,8 @@ fn transport_to_node_conditional_expression(transport: ConditionalExpressionTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16303,7 +16945,8 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16317,7 +16960,8 @@ fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16335,7 +16979,8 @@ fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16356,7 +17001,8 @@ fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16375,7 +17021,8 @@ fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16392,7 +17039,8 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16409,7 +17057,8 @@ fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16426,7 +17075,8 @@ fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<Transp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16444,7 +17094,8 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16462,7 +17113,8 @@ fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16479,7 +17131,8 @@ fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16496,7 +17149,8 @@ fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16515,7 +17169,8 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16529,7 +17184,8 @@ fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<Transpor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16547,7 +17203,8 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16561,7 +17218,8 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16584,7 +17242,8 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16605,7 +17264,8 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16622,7 +17282,8 @@ fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16639,7 +17300,8 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16662,7 +17324,8 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16676,7 +17339,8 @@ fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16694,7 +17358,8 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16708,7 +17373,8 @@ fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16730,7 +17396,8 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16756,7 +17423,8 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16773,7 +17441,8 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16802,7 +17471,8 @@ fn transport_to_node_function_definition(transport: FunctionDefinitionTransport)
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16820,7 +17490,8 @@ fn transport_to_node_future_import_statement(transport: FutureImportStatementTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16838,7 +17509,8 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16857,7 +17529,8 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16874,7 +17547,8 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16888,7 +17562,8 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16906,7 +17581,8 @@ fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16928,7 +17604,8 @@ fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16946,7 +17623,8 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16960,7 +17638,8 @@ fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -16978,7 +17657,8 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -16992,7 +17672,8 @@ fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17016,7 +17697,8 @@ fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17035,7 +17717,8 @@ fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17054,7 +17737,8 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17068,7 +17752,8 @@ fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> 
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17089,7 +17774,8 @@ fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeD
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17106,7 +17792,8 @@ fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17127,7 +17814,8 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17141,7 +17829,8 @@ fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> 
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17158,7 +17847,8 @@ fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData,
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17176,7 +17866,8 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17193,7 +17884,8 @@ fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17211,7 +17903,8 @@ fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17228,7 +17921,8 @@ fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) ->
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17247,7 +17941,8 @@ fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17266,7 +17961,8 @@ fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<Trans
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17283,7 +17979,8 @@ fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeD
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17302,7 +17999,8 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17316,7 +18014,8 @@ fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17333,7 +18032,8 @@ fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17351,7 +18051,8 @@ fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17370,7 +18071,8 @@ fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData,
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17387,7 +18089,8 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17404,7 +18107,8 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17421,7 +18125,8 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17435,7 +18140,8 @@ fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17452,7 +18158,8 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17466,7 +18173,8 @@ fn transport_to_node_positional_separator(transport: PositionalSeparatorTranspor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17487,7 +18195,8 @@ fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17510,7 +18219,8 @@ fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17531,7 +18241,8 @@ fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17551,7 +18262,8 @@ fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Re
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17568,7 +18280,8 @@ fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, :
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17586,7 +18299,8 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17612,7 +18326,8 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17630,7 +18345,8 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17648,7 +18364,8 @@ fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17668,7 +18385,8 @@ fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeD
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17685,7 +18403,8 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17704,7 +18423,8 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17718,7 +18438,8 @@ fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17743,7 +18464,8 @@ fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17760,7 +18482,8 @@ fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17777,7 +18500,8 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17794,7 +18518,8 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17814,7 +18539,8 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17828,7 +18554,8 @@ fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17845,7 +18572,8 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17865,7 +18593,8 @@ fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTra
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17883,7 +18612,8 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17902,7 +18632,8 @@ fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17919,7 +18650,8 @@ fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<T
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17938,7 +18670,8 @@ fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<Transpo
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17960,7 +18693,8 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -17974,7 +18708,8 @@ fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -17991,7 +18726,8 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18008,7 +18744,8 @@ fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> R
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18032,7 +18769,8 @@ fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransp
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18049,7 +18787,8 @@ fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTran
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18067,7 +18806,8 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18089,7 +18829,8 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18106,7 +18847,8 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
         true,
         transport.transport_text,
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
     ))
@@ -18120,7 +18862,8 @@ fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18134,7 +18877,8 @@ fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18148,7 +18892,8 @@ fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18162,7 +18907,8 @@ fn transport_to_node_string_start(transport: StringStartTransport) -> Result<Tra
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18176,7 +18922,8 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18190,7 +18937,8 @@ fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTranspor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18204,7 +18952,8 @@ fn transport_to_node_string_end(transport: StringEndTransport) -> Result<Transpo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18218,7 +18967,8 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18232,7 +18982,8 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18246,7 +18997,8 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18260,7 +19012,8 @@ fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18274,7 +19027,8 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18288,7 +19042,8 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18302,7 +19057,8 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18316,7 +19072,8 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18330,7 +19087,8 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18344,7 +19102,8 @@ fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeDa
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18358,7 +19117,8 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18372,7 +19132,8 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18386,7 +19147,8 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18400,7 +19162,8 @@ fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18414,7 +19177,8 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18428,7 +19192,8 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18442,7 +19207,8 @@ fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18456,7 +19222,8 @@ fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18470,7 +19237,8 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18484,7 +19252,8 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18498,7 +19267,8 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18512,7 +19282,8 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18526,7 +19297,8 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18540,7 +19312,8 @@ fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18554,7 +19327,8 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18568,7 +19342,8 @@ fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18582,7 +19357,8 @@ fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18596,7 +19372,8 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18610,7 +19387,8 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18624,7 +19402,8 @@ fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18638,7 +19417,8 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18652,7 +19432,8 @@ fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18666,7 +19447,8 @@ fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18680,7 +19462,8 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18694,7 +19477,8 @@ fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18708,7 +19492,8 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18722,7 +19507,8 @@ fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18736,7 +19522,8 @@ fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNo
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18750,7 +19537,8 @@ fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18764,7 +19552,8 @@ fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18778,7 +19567,8 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18792,7 +19582,8 @@ fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNod
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18806,7 +19597,8 @@ fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18820,7 +19612,8 @@ fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportN
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18834,7 +19627,8 @@ fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18848,7 +19642,8 @@ fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18862,7 +19657,8 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18876,7 +19672,8 @@ fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18890,7 +19687,8 @@ fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18904,7 +19702,8 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18918,7 +19717,8 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18932,7 +19732,8 @@ fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18946,7 +19747,8 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18960,7 +19762,8 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18974,7 +19777,8 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))
@@ -18988,7 +19792,8 @@ fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData,
         true,
         Some(transport.text),
         transport.transport_span,
-        transport.transport_node_id.map(|v| v as u64),
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
         None,
         None,
     ))

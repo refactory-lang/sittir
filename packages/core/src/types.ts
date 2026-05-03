@@ -25,3 +25,6 @@ export type {
 	Renderable,
 	KindOf
 } from '@sittir/types';
+
+// NOTE: NodeId is kept as a deprecated `number` alias (ADR-0017).
+// New code should use plain `number` for $nodeHandle / $childIndex.

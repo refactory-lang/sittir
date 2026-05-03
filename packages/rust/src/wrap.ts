@@ -5,7 +5,7 @@ import { readNode as readNodeJs } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
 // Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from '@sittir/types';
+import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type {
   AbstractType,
@@ -213,7 +213,7 @@ import type {
 function drillIn(entry: unknown, tree: TreeHandle): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
-  if (e.$nodeId != null) return readTreeNode(tree, e.$nodeId);
+  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);
   return entry;
 }
 function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
@@ -231,8 +231,8 @@ function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {
 function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {
   if (!entry) return undefined;
   const e = entry as _NodeData;
-  if (e.$nodeId == null) return entry;
-  return readTreeNode(tree, e.$nodeId, { from: fromType, to: toType });
+  if (e.$nodeHandle == null || e.$childIndex == null) return entry;
+  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });
 }
 
 export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): WrappedNode<_ClosureExpressionExpr> {
@@ -2291,14 +2291,13 @@ export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {
  * closure that routes through napi; wasm/JS handles leave it
  * absent and fall back to `readNodeJs` (the in-process walker).
  */
-function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
+function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {
   // Per-handle dispatch: native-engine handles carry a `read`
   // closure that routes through napi (engine owns the tree;
-  // tree-sitter Node::id() is per-tree, so the engine that
-  // parsed the tree is the only thing that can dereference
-  // its ids). Wasm/JS handles leave `read` absent and fall
+  // ADR-0017: navigation via handle + childIndex replaces nodeId).
+  // Wasm/JS handles leave `read` absent and fall
   // back to the in-process JS walker.
-  return tree.read ? tree.read(nodeId) : readNodeJs(tree, nodeId);
+  return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);
 }
 
 /**
@@ -2313,10 +2312,11 @@ function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {
  */
 export function readTreeNode(
   tree: TreeHandle,
-  nodeId?: NodeId,
+  handle?: number,
+  childIndex?: number,
   asType?: { from: string; to: string },
 ): unknown {
-  let data = readNode(tree, nodeId);
+  let data = readNode(tree, handle, childIndex);
   // Phase B-inverse: asType comparison must handle both string and numeric $type.
   // When numeric (native path), convert to kind-name first for comparison.
   if (asType) {

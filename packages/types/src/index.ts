@@ -47,6 +47,10 @@ export type {
 	Renderable
 } from './core-types.ts';
 
+// NOTE: NodeId is kept as a deprecated plain `number` alias for backward
+// compatibility during the ADR-0017 migration. New code should use plain
+// `number` for node handles and child indices.
+
 // ---------------------------------------------------------------------------
 // Type utilities
 // ---------------------------------------------------------------------------
@@ -463,7 +467,7 @@ export type FluentSetters<
  */
 export type FluentNode<K extends string, C = unknown> = {
 	readonly $type: K;
-	readonly $source: 'factory';
+	readonly $source: 2;
 	readonly $named: true;
 } & (C extends { children: infer Ch }
 	? { readonly $children: NonNullable<Ch> }
@@ -480,7 +484,7 @@ export type FluentNode<K extends string, C = unknown> = {
  *
  * Transforms the concrete interface to match what factories actually emit:
  * - `$type` discriminant (lifted from T's `$type`)
- * - `$source: 'factory'`
+ * - `$source: 2`
  * - `$named: true`
  * - `$fields` retained with its original shape (raw snake_case keys inside)
  * - `$children` retained when T has it (spec 008 US7 — no singular-to-array
@@ -491,7 +495,7 @@ export type FluentNode<K extends string, C = unknown> = {
  * @example
  * ```ts
  * type FnNode = RuntimeNodeOf<FunctionItem>;
- * // = { $type: 'function_item', $source: 'factory', $named: true,
+ * // = { $type: 'function_item', $source: 2, $named: true,
  * //     $fields: { name: ..., body: ... },
  * //     render(): string, toEdit(...): Edit, replace(target): Edit }
  * ```
@@ -502,7 +506,7 @@ export type RuntimeNodeOf<T> = T extends {
 	? Simplify<
 			{
 				readonly $type: T['$type'];
-				readonly $source: 'factory';
+				readonly $source: 2;
 				readonly $named: true;
 			} & (FieldsOf<T> extends Record<string, never>
 				? {}

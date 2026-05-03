@@ -132,7 +132,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		"import type { TreeHandle } from '@sittir/core';",
 		'// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types',
 		'// instead of re-declaring locally. Single source of truth.',
-		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData, NodeId } from '@sittir/types';",
+		"import type { AnyNodeData as _NodeData, WrappedNode, AnyNodeData } from '@sittir/types';",
 		// When kindEntries is present, import TSKindId for per-kind $type stamping
 		// (Phase A KindID migration: wrap normalizes string $type from core to numeric).
 		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
@@ -149,7 +149,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 					'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
 					'  if (!entry) return undefined;',
 					'  const e = entry as _NodeData;',
-					'  if (e.$nodeId != null) return readTreeNode(tree, e.$nodeId);',
+					'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);',
 					'  return entry;',
 					'}'
 				]
@@ -175,8 +175,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 					'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
 					'  if (!entry) return undefined;',
 					'  const e = entry as _NodeData;',
-					'  if (e.$nodeId == null) return entry;',
-					'  return readTreeNode(tree, e.$nodeId, { from: fromType, to: toType });',
+					'  if (e.$nodeHandle == null || e.$childIndex == null) return entry;',
+					'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });',
 					'}'
 				]
 			: []),
@@ -309,16 +309,15 @@ export function emitWrap(config: EmitWrapConfig): string {
 	);
 	lines.push(' */');
 	lines.push(
-		'function readNode(tree: TreeHandle, nodeId?: NodeId): AnyNodeData {'
+		'function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {'
 	);
 	lines.push('  // Per-handle dispatch: native-engine handles carry a `read`');
 	lines.push('  // closure that routes through napi (engine owns the tree;');
-	lines.push('  // tree-sitter Node::id() is per-tree, so the engine that');
-	lines.push('  // parsed the tree is the only thing that can dereference');
-	lines.push('  // its ids). Wasm/JS handles leave `read` absent and fall');
+	lines.push('  // ADR-0017: navigation via handle + childIndex replaces nodeId).');
+	lines.push('  // Wasm/JS handles leave `read` absent and fall');
 	lines.push('  // back to the in-process JS walker.');
 	lines.push(
-		'  return tree.read ? tree.read(nodeId) : readNodeJs(tree, nodeId);'
+		'  return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);'
 	);
 	lines.push('}');
 	lines.push('');
@@ -340,10 +339,11 @@ export function emitWrap(config: EmitWrapConfig): string {
 	lines.push(' */');
 	lines.push('export function readTreeNode(');
 	lines.push('  tree: TreeHandle,');
-	lines.push('  nodeId?: NodeId,');
+	lines.push('  handle?: number,');
+	lines.push('  childIndex?: number,');
 	lines.push('  asType?: { from: string; to: string },');
 	lines.push('): unknown {');
-	lines.push('  let data = readNode(tree, nodeId);');
+	lines.push('  let data = readNode(tree, handle, childIndex);');
 	lines.push('  // Phase B-inverse: asType comparison must handle both string and numeric $type.');
 	lines.push('  // When numeric (native path), convert to kind-name first for comparison.');
 	if (kindEntries) {

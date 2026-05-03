@@ -11,7 +11,6 @@
 import type {
 	AnyNodeData,
 	Edit,
-	NodeId,
 	FormatRecord,
 	NativeParseResult
 } from './types.ts';
@@ -45,7 +44,7 @@ export interface EngineOptions {
  */
 interface NativeEngineInstance {
 	parseAndRead(source: string): string;
-	readNode(nodeId: NodeId): string;
+	readNode(handle: number, childIndex: number): string;
 	render(node: unknown): string;
 	applyEdits(
 		source: string,
@@ -175,20 +174,17 @@ function getNativeEngine(
 									'rootNode unavailable on native engine handle; use tree.read()'
 								);
 							},
-							nodeById: () => {
-								throw new Error('nodeById unavailable on native engine handle');
-							},
 							source,
-							read: (nodeId) => {
-								if (nodeId === undefined) return parsed.nodeData;
-								const nodeJson = engine.readNode(nodeId);
+							read: (handle, childIndex) => {
+								if (handle === undefined) return parsed.nodeData;
+								const nodeJson = engine.readNode(handle, childIndex ?? 0);
 								return JSON.parse(nodeJson) as AnyNodeData;
 							},
-							render: (nodeId, opts) => {
+							render: (handle, opts) => {
 								const node =
-									nodeId === undefined
+									handle === undefined
 										? parsed.nodeData
-										: (JSON.parse(engine.readNode(nodeId)) as AnyNodeData);
+										: (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
 								return renderNativeNode(node, opts);
 							},
 							format: parsed.format
@@ -196,8 +192,8 @@ function getNativeEngine(
 					};
 				},
 
-				readNode(nodeId: NodeId) {
-					const json = engine.readNode(nodeId);
+				readNode(handle: number, childIndex = 0) {
+					const json = engine.readNode(handle, childIndex);
 					return JSON.parse(json) as AnyNodeData;
 				}
 			}
@@ -255,10 +251,10 @@ export interface SittirEngineReader {
 	parseAndRead(source: string): ParseAndReadResult;
 
 	/**
-	 * Read a specific node by ID (drill-in from a parsed tree).
-	 * The nodeId must belong to the tree owned by this engine.
+	 * Read a specific node by handle + childIndex (drill-in from a parsed tree).
+	 * ADR-0017: replaces readNode(nodeId).
 	 */
-	readNode(nodeId: NodeId): AnyNodeData;
+	readNode(handle: number, childIndex?: number): AnyNodeData;
 }
 
 /**
@@ -388,7 +384,7 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 		if (ignoreFormat) return canonical;
 
 		// Resolve effective format: engine config wins, then tree format (if not detached).
-		const detached = node.$source === 'factory';
+		const detached = node.$source === 2;
 		const effective = resolveEngineFormat(engineFormat, treeFormat, detached);
 
 		// Apply format if resolved.
@@ -420,19 +416,18 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 				// Attach a render method to the tree handle so drill-in nodes can render.
 				const treeWithRender: TreeHandle = {
 					...tree,
-					read: (nodeId?: NodeId) => readNode(tree, nodeId),
-					render: (nodeId?: NodeId, opts?: { ignoreFormat?: boolean }) => {
-						const node = nodeId !== undefined ? readNode(tree, nodeId) : root;
-						return renderNode(node, tree.format, opts?.ignoreFormat);
+					read: (handle?: number, childIndex?: number) => readNode(tree, handle, childIndex),
+					render: (_handle?: number, opts?: { ignoreFormat?: boolean }) => {
+						return renderNode(root, tree.format, opts?.ignoreFormat);
 					}
 				};
 
 				return { root, tree: treeWithRender };
 			},
 
-			readNode(nodeId: NodeId): AnyNodeData {
+			readNode(_handle: number, _childIndex = 0): AnyNodeData {
 				throw new Error(
-					'readNode(id) requires a tree handle from parseAndRead()'
+					'readNode(handle, childIndex) requires a tree handle from parseAndRead()'
 				);
 			}
 		};

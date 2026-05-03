@@ -29,7 +29,7 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 		expect((node.$fields as Record<string, unknown>).type).toBe('type');
 
 		// Provenance tag also present on the factory output
-		expect(node.$source).toBe('factory');
+		expect(node.$source).toBe(2);
 	});
 
 	it('the two accessors do not alias — modifying one must not affect the other', () => {

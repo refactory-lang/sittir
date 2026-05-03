@@ -622,13 +622,14 @@ function emitTransportDeclarations(
 		'export interface TerminalTransport<ID extends number = number, V extends string = string> {'
 	);
 	lines.push('  readonly $type: ID;');
-	lines.push("  readonly $source?: 'ts' | 'sg' | 'factory';");
+	lines.push("  readonly $source?: 0 | 1 | 2;");
 	lines.push('  readonly $named?: boolean;');
 	lines.push('  readonly $text: V;');
 	lines.push(
 		'  readonly $span?: { readonly start: number; readonly end: number };'
 	);
-	lines.push('  readonly $nodeId?: number;');
+	lines.push('  readonly $nodeHandle?: number;');
+	lines.push('  readonly $childIndex?: number;');
 	lines.push('}');
 	lines.push('');
 	lines.push(
@@ -785,13 +786,14 @@ function emitTransportInterfaceNamespace(
 	if (variant !== undefined) {
 		lines.push(`    readonly $variant: '${variant}';`);
 	}
-	lines.push("    readonly $source?: 'ts' | 'sg' | 'factory';");
+	lines.push("    readonly $source?: 0 | 1 | 2;");
 	lines.push('    readonly $named?: boolean;');
 	lines.push('    readonly $text?: string;');
 	lines.push(
 		'    readonly $span?: { readonly start: number; readonly end: number };'
 	);
-	lines.push('    readonly $nodeId?: number;');
+	lines.push('    readonly $nodeHandle?: number;');
+	lines.push('    readonly $childIndex?: number;');
 
 	if (fields.length > 0) {
 		for (const field of fields) {

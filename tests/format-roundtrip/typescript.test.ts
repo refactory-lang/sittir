@@ -17,12 +17,10 @@ import {
 	loadFixtureSource,
 	loadFormatCorpusEntries,
 	parseNativeFixture,
-	parseTsFixture,
 	pickRenderFixture,
 	createTsRenderEngine,
 	renderNativeNodeData,
 	renderTsNodeData,
-	toBoundaryNodeData,
 	tryLoadNativeEngine
 } from './helpers.ts';
 
@@ -109,8 +107,7 @@ describe('US2 — direct render parity (typescript)', () => {
 
 		const source = loadFixtureSource('typescript-4space.ts');
 		const parsed = parseNativeFixture(engine, source);
-		const nodeData = await parseTsFixture('typescript', source);
-		const boundaryNodeData = toBoundaryNodeData(nodeData);
+		const boundaryNodeData = parsed.nodeData;
 		const tsEngine = createTsRenderEngine('typescript', parsed.format);
 		const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
 		const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);
@@ -136,8 +133,7 @@ describe('US3 — native/TS render parity (typescript)', () => {
 
 				const source = loadFixtureSource(entry.fixture);
 				const parsed = parseNativeFixture(engine, source);
-				const nodeData = await parseTsFixture('typescript', source);
-				const boundaryNodeData = toBoundaryNodeData(nodeData);
+				const boundaryNodeData = parsed.nodeData;
 				const tsEngine = createTsRenderEngine('typescript', parsed.format);
 				const nativeRendered = renderNativeNodeData(engine, boundaryNodeData);
 				const tsRendered = renderTsNodeData(tsEngine, boundaryNodeData);

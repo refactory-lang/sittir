@@ -169,7 +169,7 @@ function emitBranchTest(
 			const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
 			const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
 			const dummy = concrete
-				? `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`
+				? `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`
 				: `'test' as any`;
 			typeConfigParts.push(`children: [${dummy}] as any`);
 		}
@@ -184,7 +184,7 @@ function emitBranchTest(
 		const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
 		const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
 		const dummy = concrete
-			? `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`
+			? `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`
 			: `'test' as any`;
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
@@ -195,7 +195,7 @@ function emitBranchTest(
 		renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
 	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 
 	// Render test. Two variants depending on whether the minimal config
@@ -259,7 +259,7 @@ function emitContainerTest(
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${placeholder});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
@@ -318,7 +318,7 @@ function emitPolymorphTest(
 			: `ir.${key}.${form.name}(${configArg})`;
 		lines.push(`    const node = ${callExpr};`);
 		lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-		lines.push(`    expect(node.$source).toBe('factory');`);
+		lines.push(`    expect(node.$source).toBe(2);`);
 		lines.push('  });');
 	}
 	lines.push('});');
@@ -336,7 +336,7 @@ function emitTextTemplateBranchTest(
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}('test');`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push(`  it('render produces non-empty string', () => {`);
 	lines.push(`    const node = ir.${key}('test');`);
@@ -373,7 +373,7 @@ function emitLeafTest(
 	lines.push(`  it('factory produces correct type', () => {`);
 	lines.push(`    const node = ir.${key}(${JSON.stringify(sample)});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push(`    expect(node.$text).toBe(${JSON.stringify(sample)});`);
 	lines.push('  });');
 	lines.push('});');
@@ -439,7 +439,7 @@ function emitKeywordTest(
 	lines.push(`  it('factory produces keyword', () => {`);
 	lines.push(`    const node = ir.${key}();`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push(`    expect(node.$text).toBe(${JSON.stringify(node.text)});`);
 	lines.push('  });');
 	lines.push('});');
@@ -461,7 +461,7 @@ function emitEnumTest(
 	lines.push(`  it('factory accepts valid value', () => {`);
 	lines.push(`    const node = ir.${key}('${first.replace(/'/g, "\\'")}');`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe('factory');`);
+	lines.push(`    expect(node.$source).toBe(2);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
@@ -581,7 +581,7 @@ function resolveInnerContainerNonEmptyChild(
 	if (kinds.length === 0) return null;
 	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
 	const dummyText = dummyTextForKind(concrete, nodeMap);
-	return `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`;
+	return `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`;
 }
 
 function dummyValue(
@@ -617,7 +617,7 @@ function dummyValue(
 			? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries)
 			: kinds[0]!;
 		const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
-		return `{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any`;
+		return `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`;
 	}
 	return "'test' as any";
 }

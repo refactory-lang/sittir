@@ -4,7 +4,7 @@ import type { AnyNodeData, FormatRecord } from '../src/types.ts';
 
 const leaf: AnyNodeData = {
 	$type: 'identifier',
-	$source: 'factory',
+	$source: 2,
 	$named: true,
 	$text: 'hello'
 };

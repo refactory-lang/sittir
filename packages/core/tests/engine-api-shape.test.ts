@@ -73,7 +73,7 @@ describe('Engine API shape', () => {
 
 		const node = {
 			$type: 'identifier',
-			$source: 'factory' as const,
+			$source: 2 as const,
 			$named: true,
 			$text: 'x'
 		};

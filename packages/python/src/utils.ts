@@ -29,7 +29,7 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   return (o['$fields'] !== null && typeof o['$fields'] === 'object')
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
-    || o['$source'] === 'ts' || o['$source'] === 'sg' || o['$source'] === 'factory';
+    || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
 }
 
 /**
@@ -72,7 +72,7 @@ export function toNativeRenderTransport(node: unknown): AnyTransport {
   return projected;
 }
 
-const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeId']);
+const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);
 
 type NativeTransportAlternative = { readonly type: string; readonly text?: string };
 type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
@@ -261,6 +261,151 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
   ],
 };
 
+const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
+  "(",
+  ")",
+  "*",
+  "**",
+  ",",
+  "-",
+  "->",
+  ".",
+  "...",
+  "/",
+  ":",
+  ":=",
+  "=",
+  ">>",
+  "@",
+  "False",
+  "None",
+  "True",
+  "[",
+  "\\",
+  "]",
+  "_",
+  "__future__",
+  "_async_marker",
+  "_augmented_assignment_operator",
+  "_binary_operator_operator",
+  "_boolean_operator_operator",
+  "_dedent",
+  "_identifier",
+  "_indent",
+  "_is_not",
+  "_kw_async_marker",
+  "_kw_type",
+  "_newline",
+  "_not_escape_sequence",
+  "_not_in",
+  "_string_content",
+  "_type_alias_statement_type",
+  "_unary_operator_operator",
+  "as",
+  "assert",
+  "async",
+  "break",
+  "break_statement",
+  "case",
+  "class",
+  "comment",
+  "continue",
+  "continue_statement",
+  "def",
+  "del",
+  "elif",
+  "ellipsis",
+  "else",
+  "escape_interpolation",
+  "escape_sequence",
+  "except",
+  "exec",
+  "false",
+  "finally",
+  "float",
+  "for",
+  "from",
+  "global",
+  "identifier",
+  "if",
+  "import",
+  "import_prefix",
+  "in",
+  "integer",
+  "keyword_separator",
+  "line_continuation",
+  "match",
+  "none",
+  "nonlocal",
+  "not",
+  "pass",
+  "pass_statement",
+  "positional_separator",
+  "print",
+  "raise",
+  "return",
+  "string_end",
+  "string_start",
+  "true",
+  "try",
+  "type_conversion",
+  "while",
+  "wildcard_import",
+  "with",
+  "{",
+  "|",
+  "}",
+]);
+
+const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
+  "aliased_import": new Set(["alias"]),
+  "attribute": new Set(["attribute"]),
+  "augmented_assignment": new Set(["operator"]),
+  "binary_operator": new Set(["operator"]),
+  "boolean_operator": new Set(["operator"]),
+  "class_definition": new Set(["name"]),
+  "comparison_operator": new Set(["operators"]),
+  "complex_pattern": new Set(["imaginary","real"]),
+  "for_in_clause": new Set(["async_marker"]),
+  "for_statement": new Set(["async_marker"]),
+  "function_definition": new Set(["async_marker","name"]),
+  "generic_type": new Set(["identifier"]),
+  "interpolation": new Set(["type_conversion"]),
+  "keyword_pattern": new Set(["identifier"]),
+  "member_type": new Set(["identifier"]),
+  "relative_import": new Set(["import_prefix"]),
+  "splat_pattern": new Set(["identifier"]),
+  "splat_type": new Set(["identifier"]),
+  "string": new Set(["string_end","string_start"]),
+  "type_alias_statement": new Set(["type"]),
+  "typed_default_parameter": new Set(["name"]),
+  "unary_operator": new Set(["operator"]),
+  "with_statement": new Set(["async_marker"]),
+};
+
+function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
+  const fields = nativeTransportTerminalFieldsByKind[kind];
+  if (!fields) return;
+  for (const fieldName of fields) {
+    const value = projected[fieldName];
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
+    } else {
+      projected[fieldName] = collapseIfTerminal(value);
+    }
+  }
+}
+
+function collapseIfTerminal(value: unknown): unknown {
+  if (typeof value === 'string') return value;
+  if (!isRecord(value)) return value;
+  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
+    return value.$text;
+  }
+  return value;
+}
+
 function projectTransportValue(value: unknown, path: string): unknown {
   if (Array.isArray(value)) {
     return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
@@ -291,18 +436,12 @@ function projectTransportValue(value: unknown, path: string): unknown {
   const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};
-  const isFactory = value.$source === 'factory';
+  const isFactory = value.$source === 2;
   for (const key of transportMetadataKeys) {
-    if (isFactory && (key === '$span' || key === '$nodeId')) continue;
+    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
     if (key in value) projected[key] = value[key];
   }
-  // Phase D: napi-rs #[napi(string_enum)] uses PascalCase variant names
-  // ('Ts', 'Sg', 'Factory'), but the TS/serde side uses lowercase ('ts',
-  // 'sg', 'factory'). Capitalize at the transport boundary.
-  if (typeof projected.$source === 'string') {
-    const s = projected.$source;
-    projected.$source = s.charAt(0).toUpperCase() + s.slice(1);
-  }
+  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.
   // Temporarily store string kind for routing; converted to numeric below.
   projected.$type = resolvedKind;
 
@@ -323,6 +462,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
+  collapseTerminalFields(projected, resolvedKind);
 
   projected.$type = kindIdFromName(resolvedKind);
 
@@ -394,6 +534,9 @@ function transportArrayMatches(value: unknown, alternatives: readonly NativeTran
 }
 
 function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
+  if (typeof value === 'string') {
+    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
+  }
   if (!isRecord(value)) return false;
   // $type may be a numeric KindId (projected structured node) or a string
   // (terminal node converted from a literal string via the string fast-path).
@@ -1122,19 +1265,29 @@ function assertOptionalSpan(value: unknown, path: string): void {
 
 function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {
   const source = node.$source;
-  if (source !== undefined && source !== 'ts' && source !== 'sg' && source !== 'factory' &&
-      source !== 'Ts' && source !== 'Sg' && source !== 'Factory') {
-    throw new TypeError(`${path}.$source must be ts, sg, or factory`);
+  if (source !== undefined && source !== 0 && source !== 1 && source !== 2) {
+    throw new TypeError(`${path}.$source must be 0 (ts), 1 (sg), or 2 (factory)`);
   }
   assertOptionalBoolean(node.$named, `${path}.$named`);
   assertOptionalString(node.$text, `${path}.$text`);
   assertOptionalSpan(node.$span, `${path}.$span`);
-  if (node.$nodeId !== undefined && typeof node.$nodeId !== 'number') {
-    throw new TypeError(`${path}.$nodeId must be a number`);
+  if (node.$nodeHandle !== undefined && typeof node.$nodeHandle !== 'number') {
+    throw new TypeError(`${path}.$nodeHandle must be a number`);
+  }
+  if (node.$childIndex !== undefined && typeof node.$childIndex !== 'number') {
+    throw new TypeError(`${path}.$childIndex must be a number`);
   }
 }
 
 function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
+  if (typeof value === 'string') {
+    const textMatch = alternatives.some((candidate) => candidate.text === undefined || candidate.text === value);
+    if (!textMatch) {
+      const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");
+      throw new TypeError(`${path} must be one of: ${allowed}`);
+    }
+    return;
+  }
   if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);
   if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);
   const accepted = alternatives.some((candidate) => {

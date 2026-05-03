@@ -80,16 +80,12 @@ const FLOORS = {
 		// actual.
 		fromPass: 107,
 		fromTotal: 114,
-		// R1 ceilings (2026-04-24): rtPass 68 → 105 via python-specific
-		// reparse wrappers (list_splat, list_splat_pattern) and the
-		// external-boundaries $TEXT fallback for f-string / t-string /
-		// template-string rendering.
-		// Phase D (2026-04-30): floor adjusted 105 → 104. Numeric $type
-		// dispatch resolves one borderline case differently (previously
-		// counted as skip, now counted as fail). Honest baseline.
-		rtPass: 107,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render via
+		// boundary.ts. Native path produces correct output where JS
+		// Nunjucks had spacing bugs. Floors raised to native actuals.
+		rtPass: 114,
 		rtTotal: 115,
-		rtAstMatchPass: 104,
+		rtAstMatchPass: 114,
 		covPass: 103,
 		covTotal: 105
 	},
@@ -104,12 +100,10 @@ const FLOORS = {
 		factoryTotal: 135,
 		fromPass: 130,
 		fromTotal: 148,
-		// RT floors raised: 59→121, astMatch 59→121. kindNames Map
-		// wiring resolved form-kind dispatch; enum synthesis resolved
-		// operator/keyword field rendering.
-		rtPass: 121,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render.
+		rtPass: 124,
 		rtTotal: 136,
-		rtAstMatchPass: 121,
+		rtAstMatchPass: 124,
 		covPass: 161,
 		covTotal: 164
 	},
@@ -119,10 +113,10 @@ const FLOORS = {
 		factoryTotal: 126,
 		fromPass: 127,
 		fromTotal: 137,
-		// RT floors raised: 56→99, astMatch 50→94.
-		rtPass: 99,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render.
+		rtPass: 108,
 		rtTotal: 112,
-		rtAstMatchPass: 94,
+		rtAstMatchPass: 108,
 		covPass: 169,
 		covTotal: 173
 	}
@@ -202,7 +196,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 
 		it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
 			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
 
 			expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
 			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
@@ -216,7 +210,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 			// keyword tokens fail CI. The gap between `rtAstMatchPass`
 			// and `rtPass` is the outstanding fidelity debt.
 			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
 
 			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 		}, 60000);
