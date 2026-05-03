@@ -233,6 +233,14 @@ Naming convention:
 
 Accessors are non-enumerable: `Object.keys(fn)` returns `['$type', '$source', '_name', '_body', ...]` — only metadata + storage. Functions don't pollute iteration or `JSON.stringify`.
 
+**Dual use — cursor and value:**
+- `fn.name` — the function reference IS a cursor/traversal handle
+- `fn.name()` — calling it resolves to the value
+
+This unlocks future lazy traversal: the cursor can carry navigation
+methods (`parent()`, `next()`, `children()`, `kind`) without resolving
+the underlying value until explicitly called.
+
 ### 6. `$with` namespace replaces fluent methods
 
 Per-field fluent getter/setter methods (`fn.name()` / `fn.name(v)`) replaced
