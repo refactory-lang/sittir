@@ -33,7 +33,7 @@
 - [ ] T010 [US1] Implement field-edge naming from `field(name, content)` wrappers in `packages/codegen/src/compiler/bind.ts`
 - [ ] T011 [US1] Implement alias-forced nonterminal classification in `packages/codegen/src/compiler/bind.ts`
 - [ ] T012 [US1] Wire `bindRule` into generate pipeline in `packages/codegen/src/compiler/generate.ts`
-- [ ] T013 [US1] Verify: native RT >=114/124/108, type-check 0 errors
+- [ ] T013 [US1] Verify: native RT (shallow + deep + factory) passes, type-check 0 errors
 
 ## Phase 4: US2 — Simplify (P1)
 
@@ -46,7 +46,7 @@
 - [ ] T017 [US2] Handle `choice(...)`: resolve by frontier result in `packages/codegen/src/compiler/simplify.ts`
 - [ ] T018 [US2] Handle `prec*`: strip as parse metadata in `packages/codegen/src/compiler/simplify.ts`
 - [ ] T019 [US2] Preserve `RuleId` provenance through Simplify in `packages/codegen/src/compiler/simplify.ts`
-- [ ] T020 [US2] Verify: native RT >=114/124/108
+- [ ] T020 [US2] Verify: native RT (shallow + deep + factory) passes
 
 ## Phase 5: US3 — Assemble from Constituents (P2)
 
@@ -57,7 +57,7 @@
 - [ ] T022 [US3] Implement shape classification (A/B/C) at assemble time in `packages/codegen/src/compiler/assemble.ts`
 - [ ] T023 [US3] Store shape and constituent list on `AssembledNode` in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T024 [US3] Emit compatibility `$fields`/`$children` views derived from constituent model in `packages/codegen/src/compiler/assemble.ts`
-- [ ] T025 [US3] Verify: native RT >=114/124/108, factory RT ceilings unchanged, type-check 0 errors. Assert RuleId provenance survives from Binding through Assemble for representative kinds.
+- [ ] T025 [US3] Verify: native RT (shallow + deep + factory) passes, factory RT ceilings unchanged, type-check 0 errors. Assert RuleId provenance survives from Binding through Assemble for representative kinds.
 - [ ] T025a [US3] Verify edge cases: mixed choice frontier, field-wrapped literals, named alias over terminal content, anonymous alias — all produce correct constituent classifications
 
 ## Phase 6: US4 — De-hoist NodeData (P2)
@@ -74,7 +74,7 @@
 - [ ] T032 [US4] Update render: read from top-level keys in `packages/core/src/render.ts`
 - [ ] T033 [US4] Terminal hoisting in factory emitter: store terminal values as strings in `packages/codegen/src/emitters/factories.ts`
 - [ ] T034 [US4] Terminal hoisting in readNode: store terminal children as `$text` strings in `packages/core/src/readNode.ts`
-- [ ] T035 [US4] Regenerate all grammars, verify: native RT >=114/124/108, type-check 0, `$fields` grep = 0
+- [ ] T035 [US4] Regenerate all grammars, verify: native RT (shallow + deep + factory) passes, type-check 0, `$fields` grep = 0
 - [ ] T036 [US4] Verify factory RT ceilings drop toward zero
 
 ## Phase 7: US5 — `$with` Namespace + `$`-Prefixed Methods (P2)
@@ -88,7 +88,7 @@
 - [ ] T040 [US5] Remove per-field fluent method emission and `_setField`/`_setFields` in `packages/codegen/src/emitters/factories.ts`
 - [ ] T041 [US5] Update wrap emitter: `$with` namespace + drillIn getters in `packages/codegen/src/emitters/wrap.ts`
 - [ ] T042 [US5] Attach `withMethods` to wrapped nodes in `packages/codegen/src/emitters/wrap.ts`
-- [ ] T043 [US5] Regenerate and verify: type-check 0, native RT >=114/124/108
+- [ ] T043 [US5] Regenerate and verify: type-check 0, native RT (shallow + deep + factory) passes
 - [ ] T044 [US5] Verify: `wc -l packages/*/src/factories.ts` shows net ~-1500 lines
 
 ## Phase 8: Cleanup

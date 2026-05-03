@@ -346,4 +346,7 @@ pub struct NodeData {
   - **Phase 1** — Compiler-internal: Binding/Simplify/Assemble produces unified constituent model. Emitters project to current shape. No consumer changes.
   - **Phase 2** — De-hoist + `$with`: Remove `$fields`, replace fluent methods with `$with` namespace, `$`-prefix all methods, update wrap emitter. Greppable transforms: `.$fields.` → `.`, `.name()` → `.name`, `.name(v)` → `.$with.name(v)`, `.render()` → `.$render()`.
   - **Phase 3** — Cleanup: Remove `$fields`, `NodeFieldValue`, `NodeChildValue`, `factorySuffix`, per-field fluent methods.
-  - Each stage must pass the native RT validator (python ≥114, rust ≥124, typescript ≥108) and type-check with zero errors.
+  - Each stage must pass ALL THREE native RT modes and type-check with zero errors:
+    - **Shallow RT** (native parse + native render): ≥114/124/108
+    - **Deep RT** (native parse + recursive drill-in + native render): ≥114/124/108, structural identity (astMatch == pass)
+    - **Factory RT**: ceilings must not regress (target: 0)

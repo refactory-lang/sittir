@@ -20,11 +20,29 @@
 ## Running tests
 
 ```bash
-pnpm test                              # full suite
+pnpm test                              # full suite (includes all RT modes)
 pnpm -r run type-check                 # type-check all packages
 cargo test -p sittir-core              # Rust core tests
 cargo build -p sittir-rust             # verify native build
 ```
+
+## RT validation modes
+
+The corpus-validation test exercises three native RT modes:
+
+| Mode | What | Assertion |
+|------|------|-----------|
+| Shallow RT | parse → readNode(shallow) → native render → reparse | pass ≥ floor |
+| Deep RT | parse → readNode(recursive) → native render → reparse | pass ≥ floor AND astMatch == pass |
+| Factory RT | factory(config) → native render → reparse | fail ≤ ceiling |
+
+All three use `backend: 'native'` (napi engine for both parse and render).
+Deep RT asserts **structural identity** — not just "kind found" but full AST equality.
+
+Floors: python ≥114/115, rust ≥124/136, typescript ≥108/112.
+Factory ceilings: rust ≤15, typescript ≤25, python ≤70 (target: 0 after terminal hoisting).
+
+The RT report (`formatRoundTripReport`) shows source vs rendered for each failure.
 
 ## Regenerating grammar packages
 
