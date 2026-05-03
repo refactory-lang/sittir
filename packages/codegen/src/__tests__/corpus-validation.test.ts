@@ -51,6 +51,12 @@ import { validateTemplateCoverage } from '../validate/template-coverage.ts';
  * will lift these floors back up as it eliminates per-template
  * whitespace artifacts. Each cluster commit raises floors back toward
  * the legacy baseline; never below.
+ *
+ * NATIVE RENDER (ADR-0017, 2026-05-03): RT validation uses the native
+ * Askama render path (`backend: 'native'`). Both parse and render go
+ * through the napi engine. This is the authoritative RT surface —
+ * the JS Nunjucks path has known Cluster F spacing bugs that native
+ * handles correctly. NEVER run RT without `backend: 'native'`.
  */
 const FLOORS = {
 	// Python floors adjusted for override-compiled parser (spec 007).
