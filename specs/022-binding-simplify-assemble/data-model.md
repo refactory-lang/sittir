@@ -2,11 +2,10 @@
 
 ## Core Entities
 
-### AnyNodeData (single type, replaces current AnyNodeData)
+### AnyNodeData (runtime surface)
 
-One shape for all nodes. Named members are top-level keys. Unnamed positional
-members go in optional `$children`. No separate Shape A/B/C types — the
-distinction is just "does this kind have unnamed positional members?"
+One frozen shape for all nodes. Named members are top-level keys. At most
+one unnamed slot maps to `$child` (singular) or `$children` (array).
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -20,8 +19,11 @@ distinction is just "does this kind have unnamed positional members?"
 | `$named` | `boolean` | No | Named vs anonymous node |
 | `$trivia` | `NodeTrivia` | No | Leading/trailing comments |
 | `$format` | `FormatRecord` | No | Per-node format override |
-| `$children` | `readonly NodeMemberValue[]` | No | Unnamed positional members (omitted when all members are named) |
-| `[fieldName]` | `NodeMemberValue` | Varies | De-hoisted named members |
+| `$child` | `NodeMemberValue` | No | Single unnamed constituent (mutually exclusive with `$children`) |
+| `$children` | `readonly NodeMemberValue[]` | No | Repeated unnamed constituents (mutually exclusive with `$child`) |
+| `[fieldName]` | `NodeMemberValue` | Varies | De-hoisted named members (from slots with `edgeName`) |
+
+Object is **frozen**. `$with` returns a new frozen node.
 
 ### NodeMemberValue (replaces NodeFieldValue + NodeChildValue)
 
@@ -45,48 +47,108 @@ NodeData via napi direct property access (per-kind transport structs
 already do this). The generic `NodeData` becomes a thin napi read helper,
 not a serialized intermediate.
 
-## Pipeline Entities
+## Assembled Model Taxonomy (4 types)
 
-### BindingResult
+### Map from current to new
 
-Output of the Binding phase. Associates terminals with their owning
-nonterminal constituent.
+| Current (10 types) | New | Rationale |
+|---|---|---|
+| `AssembledBranch` | `AssembledBranch` | Stays — absorbs Container + Multi |
+| `AssembledContainer` | `AssembledBranch` | Same as Branch — unnamed slot has no `edgeName` |
+| `AssembledMulti` | `AssembledBranch` | Same — one array slot |
+| `AssembledField` | `AssembledNonterminal` | Slot with `edgeName` |
+| `AssembledChild` | `AssembledNonterminal` | Slot without `edgeName` |
+| `AssembledPolymorph` | `AssembledPolymorph` | Stays — choice-of-kinds dispatch |
+| `AssembledLeaf` | `AssembledTerminal` | Pattern-matched text |
+| `AssembledKeyword` | `AssembledTerminal` | Single fixed string |
+| `AssembledToken` | `AssembledTerminal` | Anonymous delimiter |
+| `AssembledEnum` | `AssembledTerminal` | Choice of fixed strings |
+| `AssembledSupertype` | `AssembledSupertype` | Stays — union of subtypes |
+| `AssembledGroup` | Absorbed into `AssembledPolymorph` | Polymorph form = inline property |
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `ownerKind` | `string` | Yes | The nonterminal kind that owns these members |
-| `members` | `BoundMember[]` | Yes | Ordered list of bound constituents |
+**5 types** total: `AssembledBranch`, `AssembledNonterminal` (slot), `AssembledTerminal`, `AssembledPolymorph`, `AssembledSupertype`.
 
-### BoundMember
+### AssembledBranch (absorbs Container + Multi)
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `ruleIds` | `RuleId[]` | Yes | Provenance from spec 021 |
-| `terminality` | `'terminal' \| 'nonterminal'` | Yes | Classification |
-| `edgeName` | `string` | No | Field name (from `field()` wrapper) |
+A `seq(...)` rule with ordered nonterminal slots. ONE type for all
+structural kinds.
 
-### AssembledKindSurface
+```ts
+interface AssembledBranch {
+  kind: string;
+  slots: readonly AssembledNonterminal[];
+  // ... existing metadata: typeName, irKey, rawFactoryName, userFacing, etc.
+}
+```
 
-Output of Assemble. Materialized kind with constituent metadata.
-Collapses current `AssembledBranch` / `AssembledContainer` / `AssembledMulti`
-into one type — whether members are named or positional is a member property.
+### AssembledNonterminal (replaces AssembledField + AssembledChild)
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `kind` | `string` | Yes | Kind name |
-| `members` | `AssembledMember[]` | Yes | Ordered constituents with metadata |
-| `hasUnnamedChildren` | `boolean` | Yes | True if any member lacks `edgeName` (→ `$children` on NodeData) |
+One slot in a branch. Collapses Field + Child into one construct — both
+had `values: readonly NodeOrTerminal[]`. The only distinction was `name`
+(present on Field, absent on Child) → now `edgeName`.
 
-### AssembledMember
+```ts
+interface AssembledNonterminal {
+  edgeName?: string;                    // present → named (top-level key on NodeData)
+                                        // absent → the ONE unnamed slot ($child or $children)
+  values: readonly NodeOrTerminal[];    // per-type: { kind, multiplicity }
+}
+```
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `ruleIds` | `RuleId[]` | Yes | Provenance |
-| `terminality` | `'terminal' \| 'nonterminal'` | Yes | Classification |
-| `edgeName` | `string` | No | Field name |
-| `optional` | `boolean` | No | From `optional()` wrapper |
-| `repeated` | `boolean` | No | From `repeat()`/`repeat1()` wrapper |
-| `order` | `number` | Yes | Position in sequence |
+Slot-level derivations (already exist as helpers):
+- `isRequired(slot)` → all values non-optional
+- `isMultiple(slot)` → any value has array/nonEmptyArray multiplicity
+
+Runtime mapping:
+- `slot.edgeName` present + `isMultiple(slot)` → `node.fieldName: T[]`
+- `slot.edgeName` present + `!isMultiple(slot)` → `node.fieldName: T`
+- `slot.edgeName` absent + `isMultiple(slot)` → `node.$children: T[]`
+- `slot.edgeName` absent + `!isMultiple(slot)` → `node.$child: T`
+
+**Constraint**: at most ONE slot per branch may lack `edgeName`.
+
+### AssembledTerminal
+
+Replaces Leaf + Keyword + Token + Enum. Renders as `$text`.
+
+```ts
+interface AssembledTerminal {
+  kind: string;
+  terminalType: 'leaf' | 'keyword' | 'token' | 'enum';
+  text?: string;        // fixed text for keyword/token
+  values?: string[];    // enum member literals
+  pattern?: string;     // regex for leaf validation
+}
+```
+
+### AssembledPolymorph
+
+Stays. Top-level `choice($.kindA, $.kindB, ...)` where each arm is a
+distinct kind. Forms are inline (no separate AssembledGroup class).
+
+### AssembledSupertype
+
+Stays. Grammar `supertypes` declaration — union of subtype kinds.
+
+## NodeOrTerminal (per-value within a slot)
+
+Already exists. Each entry in a slot's `values` array:
+
+```ts
+interface NodeRef {
+  kind: 'node-ref';
+  node: AssembledNode | UnresolvedRef;
+  multiplicity: 'optional' | 'single' | 'array' | 'nonEmptyArray';
+}
+
+interface TerminalValue {
+  kind: 'terminal';
+  value: string;
+  multiplicity: Multiplicity;
+}
+
+type NodeOrTerminal = NodeRef | TerminalValue;
+```
 
 ## State Transitions
 
