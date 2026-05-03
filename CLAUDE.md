@@ -446,6 +446,8 @@ them independently.
 ## Active Technologies
 - TypeScript 6.0.2 (workspace ESM) and Rust 1.88+ + `@sittir/codegen`, `@sittir/core`, `@sittir/types`, Askama 0.15, napi-rs 3, `web-tree-sitter`, grammar-owned native/render modules under `rust/crates/sittir-{lang}/src/render` (020-render-pipeline-optimization)
 - File system only (generated templates, generated native crates, spec artifacts, parity baselines); no runtime persistence (020-render-pipeline-optimization)
+- TypeScript 6.0.2 (ESM), Rust 1.88+ + `@sittir/core`, `@sittir/types`, `@sittir/codegen`, tree-sitter, napi-rs 3, Askama 0.15 (022-binding-simplify-assemble)
+- File system (generated TS/Rust per grammar) (022-binding-simplify-assemble)
 
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
 - File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
