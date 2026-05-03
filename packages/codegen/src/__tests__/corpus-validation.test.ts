@@ -80,14 +80,12 @@ const FLOORS = {
 		// actual.
 		fromPass: 107,
 		fromTotal: 114,
-		// ADR-0017 (2026-05-02): floor lowered 107→41, astMatch 104→33.
-		// The $nodeHandle/$childIndex wire shape change affected the
-		// round-trip path. Render receives stubs with $nodeHandle instead
-		// of fully materialized children. The render path needs updating
-		// to handle the new lazy-drill-in shape — tracked as follow-up.
-		rtPass: 41,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render via
+		// boundary.ts. Native path produces correct output where JS
+		// Nunjucks had spacing bugs. Floors raised to native actuals.
+		rtPass: 114,
 		rtTotal: 115,
-		rtAstMatchPass: 33,
+		rtAstMatchPass: 114,
 		covPass: 103,
 		covTotal: 105
 	},
@@ -102,12 +100,10 @@ const FLOORS = {
 		factoryTotal: 135,
 		fromPass: 130,
 		fromTotal: 148,
-		// ADR-0017 (2026-05-02): floor lowered 121→84, astMatch 121→36.
-		// Same cause as python — $nodeHandle wire shape affects render
-		// drill-in for round-trip. Follow-up task.
-		rtPass: 84,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render.
+		rtPass: 124,
 		rtTotal: 136,
-		rtAstMatchPass: 36,
+		rtAstMatchPass: 124,
 		covPass: 161,
 		covTotal: 164
 	},
@@ -117,11 +113,10 @@ const FLOORS = {
 		factoryTotal: 126,
 		fromPass: 127,
 		fromTotal: 137,
-		// ADR-0017 (2026-05-02): floor lowered 99→68, astMatch 94→42.
-		// Same cause as python/rust — wire shape change.
-		rtPass: 68,
+		// ADR-0017 (2026-05-03): RT now uses native Askama render.
+		rtPass: 108,
 		rtTotal: 112,
-		rtAstMatchPass: 42,
+		rtAstMatchPass: 108,
 		covPass: 169,
 		covTotal: 173
 	}
