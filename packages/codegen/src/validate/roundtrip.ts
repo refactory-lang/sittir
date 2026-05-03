@@ -986,13 +986,21 @@ export function formatRoundTripReport(result: RoundTripResult): string {
 		`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`
 	);
 	if (result.errors.length > 0) {
+		lines.push('');
+		lines.push('    Failures:');
 		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
 		}
 	}
 	if (result.astMismatches.length > 0) {
+		lines.push('');
+		lines.push('    AST mismatches:');
 		for (const e of result.astMismatches.slice(0, 20)) {
 			lines.push(`    ~ ${e.name}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
 		}
 		if (result.astMismatches.length > 20) {
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);
