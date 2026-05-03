@@ -283,6 +283,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('');
 	lines.push('  projectRawChildrenIntoFields(projected, resolvedKind);');
 	lines.push('  inferNativeTransportVariant(projected, resolvedKind);');
+	lines.push('  collapseTerminalFields(projected, resolvedKind);');
 	lines.push('');
 	lines.push('  projected.$type = kindIdFromName(resolvedKind);');
 	lines.push('');
@@ -374,6 +375,10 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push(
 		'function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {'
 	);
+	// Collapsed terminal strings: match against alternatives by text.
+	lines.push("  if (typeof value === 'string') {");
+	lines.push('    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);');
+	lines.push('  }');
 	lines.push('  if (!isRecord(value)) return false;');
 	lines.push('  // $type may be a numeric KindId (projected structured node) or a string');
 	lines.push('  // (terminal node converted from a literal string via the string fast-path).');
@@ -468,6 +473,153 @@ function emitNativeTransportProjectionRules(
 		lines.push('  ],');
 	}
 	lines.push('};');
+	lines.push('');
+
+	// Terminal kinds: leaf/keyword/token/enum model types whose Rust FromNapiValue
+	// expects a plain String (not a structured object). projectTransportValue
+	// collapses these to $text before crossing the napi boundary.
+	const terminalKinds = collectTerminalTransportKinds(nodeMap);
+	lines.push(
+		'const nativeTransportTerminalKinds: ReadonlySet<string> = new Set(['
+	);
+	for (const kind of terminalKinds) {
+		lines.push(`  ${JSON.stringify(kind)},`);
+	}
+	lines.push(']);');
+	lines.push('');
+
+	// Per-kind field collapse table: for each structural kind, which fields
+	// are typed as DIRECT terminal transport (not behind supertype dispatch).
+	// These fields must have their NodeData values collapsed to plain $text
+	// strings before crossing the napi boundary.
+	const collapseFields = collectTerminalCollapseFields(nodeMap);
+	lines.push(
+		'const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {'
+	);
+	for (const [kind, fields] of [...collapseFields.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+		lines.push(`  ${JSON.stringify(kind)}: new Set(${JSON.stringify(fields.sort())}),`);
+	}
+	lines.push('};');
+	lines.push('');
+
+	// collapseTerminalFields: after projection, collapse NodeData objects to
+	// plain $text strings for fields that the Rust side expects as String.
+	lines.push(
+		'function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {'
+	);
+	lines.push('  const fields = nativeTransportTerminalFieldsByKind[kind];');
+	lines.push('  if (!fields) return;');
+	lines.push('  for (const fieldName of fields) {');
+	lines.push('    const value = projected[fieldName];');
+	lines.push('    if (value === undefined) continue;');
+	lines.push('    if (Array.isArray(value)) {');
+	lines.push('      projected[fieldName] = value.map((item) => collapseIfTerminal(item));');
+	lines.push('    } else {');
+	lines.push('      projected[fieldName] = collapseIfTerminal(value);');
+	lines.push('    }');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+	lines.push('function collapseIfTerminal(value: unknown): unknown {');
+	lines.push("  if (typeof value === 'string') return value;");
+	lines.push('  if (!isRecord(value)) return value;');
+	lines.push("  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {");
+	lines.push('    return value.$text;');
+	lines.push('  }');
+	lines.push('  return value;');
+	lines.push('}');
+}
+
+/**
+ * Collect kind names whose Rust transport FromNapiValue expects a plain
+ * String rather than a structured Object. These are leaf/keyword/token/enum
+ * model types in the nodeMap.
+ */
+function collectTerminalTransportKinds(nodeMap: NodeMap): string[] {
+	const kinds: string[] = [];
+	for (const [, node] of nodeMap.nodes) {
+		switch (node.modelType) {
+			case 'leaf':
+			case 'keyword':
+			case 'token':
+			case 'enum':
+				kinds.push(node.kind);
+				break;
+		}
+	}
+	return kinds.sort();
+}
+
+/**
+ * Determine if a field resolves exclusively to terminal kinds on the Rust
+ * transport boundary. Such fields expect a plain String from napi, not a
+ * structured transport object.
+ *
+ * @returns true if every alternative in the field resolves to a terminal
+ * kind (leaf/keyword/token/enum) or an inline literal.
+ */
+function isFieldTerminalOnly(field: AssembledField, nodeMap: NodeMap): boolean {
+	const components = fieldTypeComponents(field, nodeMap);
+	if (components.length === 0) return false;
+	for (const component of components) {
+		if (component.kind === 'literal') continue; // inline literal → terminal
+		if (component.kind === 'missing') return false; // can't verify
+		// kind === 'nodeKind' — check if the resolved node is terminal
+		const node = nodeMap.nodes.get(component.rawKind);
+		if (!node) return false;
+		switch (node.modelType) {
+			case 'leaf':
+			case 'keyword':
+			case 'token':
+			case 'enum':
+				continue;
+			default:
+				return false; // structural or supertype — not terminal-only
+		}
+	}
+	return true;
+}
+
+/**
+ * For each structural kind, collect field names whose values should be
+ * collapsed from NodeData objects to plain $text strings at the transport
+ * boundary. Only fields where ALL alternatives resolve to terminal kinds
+ * qualify — fields behind supertype dispatches must stay as objects.
+ */
+function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> {
+	const result = new Map<string, string[]>();
+	for (const [, node] of nodeMap.nodes) {
+		switch (node.modelType) {
+			case 'branch':
+			case 'container':
+			case 'group':
+				break;
+			case 'polymorph':
+				// For polymorphs, check each form's fields
+				if (node.forms.length > 0) {
+					for (const form of node.forms) {
+						const terminalFields = form.structuralFields
+							.filter((field) => isFieldTerminalOnly(field, nodeMap))
+							.map((field) => field.name);
+						if (terminalFields.length > 0) {
+							// Use the form's kind (which is the parent kind for forms)
+							const existing = result.get(node.kind) ?? [];
+							result.set(node.kind, [...new Set([...existing, ...terminalFields])]);
+						}
+					}
+				}
+				continue;
+			default:
+				continue;
+		}
+		const terminalFields = node.structuralFields
+			.filter((field) => isFieldTerminalOnly(field, nodeMap))
+			.map((field) => field.name);
+		if (terminalFields.length > 0) {
+			result.set(node.kind, terminalFields);
+		}
+	}
+	return result;
 }
 
 interface NativeTransportRawChildRuleEntry {
@@ -794,6 +946,18 @@ function emitNativeTransportAssertions(
 	lines.push(
 		'function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {'
 	);
+	// Terminal kinds are collapsed to plain strings by projectTransportValue.
+	// Accept strings here — they match any alternative whose text matches the value
+	// (or any alternative without a text constraint, since we can't verify the kind
+	// from a bare string).
+	lines.push("  if (typeof value === 'string') {");
+	lines.push('    const textMatch = alternatives.some((candidate) => candidate.text === undefined || candidate.text === value);');
+	lines.push('    if (!textMatch) {');
+	lines.push('      const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");');
+	lines.push('      throw new TypeError(`${path} must be one of: ${allowed}`);');
+	lines.push('    }');
+	lines.push('    return;');
+	lines.push('  }');
 	lines.push(
 		'  if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);'
 	);

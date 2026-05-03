@@ -489,6 +489,253 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
   ],
 };
 
+const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
+  "!",
+  "\"",
+  "${",
+  "&",
+  "'",
+  "(",
+  ")",
+  "*",
+  "+?:",
+  ",",
+  "-?:",
+  ".",
+  "...",
+  "/",
+  "/>",
+  ":",
+  ";",
+  "<",
+  "</",
+  "=",
+  "=>",
+  ">",
+  "?",
+  "?.",
+  "?:",
+  "@",
+  "[",
+  "]",
+  "__error_recovery",
+  "__for_header_operator",
+  "__for_header_var_kind_kind",
+  "__number_operator",
+  "__public_field_definition_access_first_declare_marker",
+  "__public_field_definition_accessor_opt_accessor_marker",
+  "_abstract_marker",
+  "_accessibility_modifier",
+  "_accessor_kind",
+  "_asserts_annotation_asserts",
+  "_assignment_expression_using_marker",
+  "_async_marker",
+  "_augmented_assignment_expression_operator",
+  "_automatic_semicolon",
+  "_binary_expression_operator",
+  "_const_marker",
+  "_export_specifier_export_kind",
+  "_for_in_statement_await_marker",
+  "_for_statement_initializer",
+  "_function_signature_automatic_semicolon",
+  "_import_attribute_object",
+  "_kind",
+  "_kw_abstract_marker",
+  "_kw_accessor_marker",
+  "_kw_asserts",
+  "_kw_async_marker",
+  "_kw_await_marker",
+  "_kw_const_marker",
+  "_kw_declare_marker",
+  "_kw_optional_marker",
+  "_kw_readonly_marker",
+  "_kw_static_marker",
+  "_kw_type_predicate",
+  "_kw_using_marker",
+  "_object_type_closing",
+  "_object_type_opening",
+  "_operator",
+  "_optional_chain",
+  "_optional_marker",
+  "_override_modifier",
+  "_public_field_definition_optionality_marker",
+  "_readonly_marker",
+  "_reserved_identifier",
+  "_static_marker",
+  "_template_chars",
+  "_ternary_qmark",
+  "_unary_expression_operator",
+  "`",
+  "abstract",
+  "accessibility_modifier",
+  "accessor",
+  "as",
+  "async",
+  "await",
+  "break",
+  "case",
+  "catch",
+  "comment",
+  "const",
+  "continue",
+  "debugger",
+  "declare",
+  "default",
+  "do",
+  "else",
+  "empty_statement",
+  "enum",
+  "escape_sequence",
+  "existential_type",
+  "export",
+  "extends",
+  "false",
+  "finally",
+  "for",
+  "from",
+  "function",
+  "global",
+  "hash_bang_line",
+  "html_character_reference",
+  "html_comment",
+  "identifier",
+  "if",
+  "implements",
+  "import",
+  "in",
+  "infer",
+  "interface",
+  "is",
+  "jsx_identifier",
+  "jsx_text",
+  "keyof",
+  "meta_property",
+  "namespace",
+  "new",
+  "null",
+  "number",
+  "optional_chain",
+  "override",
+  "override_modifier",
+  "predefined_type",
+  "private_property_identifier",
+  "readonly",
+  "regex_flags",
+  "regex_pattern",
+  "require",
+  "return",
+  "satisfies",
+  "static",
+  "super",
+  "switch",
+  "this",
+  "throw",
+  "true",
+  "try",
+  "typeof",
+  "undefined",
+  "unescaped_double_jsx_string_fragment",
+  "unescaped_double_string_fragment",
+  "unescaped_single_jsx_string_fragment",
+  "unescaped_single_string_fragment",
+  "using",
+  "var",
+  "while",
+  "with",
+  "yield",
+  "{",
+  "|",
+  "||",
+  "}",
+]);
+
+const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
+  "_arrow_function_parameter": new Set(["parameter"]),
+  "_for_header": new Set(["operator"]),
+  "_for_header_let_const_kind": new Set(["kind"]),
+  "_for_header_var_kind": new Set(["kind"]),
+  "_index_signature_colon": new Set(["name"]),
+  "_number": new Set(["argument","operator"]),
+  "_parameter_name": new Set(["readonly_marker"]),
+  "_public_field_definition_abstract_first": new Set(["abstract_marker","readonly_marker"]),
+  "_public_field_definition_access_first": new Set(["declare_marker"]),
+  "_public_field_definition_accessor_opt": new Set(["accessor_marker"]),
+  "_public_field_definition_readonly_first": new Set(["abstract_marker","readonly_marker"]),
+  "_public_field_definition_static_mods": new Set(["readonly_marker","static_marker"]),
+  "_type_query_member_expression": new Set(["property"]),
+  "_type_query_member_expression_in_type_annotation": new Set(["property"]),
+  "_update_expression_postfix": new Set(["operator"]),
+  "_update_expression_prefix": new Set(["operator"]),
+  "abstract_method_signature": new Set(["accessibility_modifier","accessor_kind","optional_marker","override_modifier"]),
+  "arrow_function": new Set(["async_marker"]),
+  "arrow_function_parameter": new Set(["parameter"]),
+  "assignment_expression": new Set(["using_marker"]),
+  "augmented_assignment_expression": new Set(["operator"]),
+  "binary_expression": new Set(["operator"]),
+  "break_statement": new Set(["label"]),
+  "class_declaration": new Set(["automatic_semicolon"]),
+  "construct_signature": new Set(["abstract_marker"]),
+  "constructor_type": new Set(["abstract_marker"]),
+  "continue_statement": new Set(["label"]),
+  "decorator_member_expression": new Set(["property"]),
+  "enum_declaration": new Set(["const_marker","name"]),
+  "export_specifier": new Set(["export_kind"]),
+  "field_definition": new Set(["static_marker"]),
+  "for_in_statement": new Set(["await_marker","operator"]),
+  "function_declaration": new Set(["async_marker","name"]),
+  "function_expression": new Set(["async_marker","name"]),
+  "function_signature": new Set(["async_marker","name"]),
+  "generator_function": new Set(["async_marker","name"]),
+  "generator_function_declaration": new Set(["async_marker","name"]),
+  "import_alias": new Set(["name"]),
+  "import_require_clause": new Set(["identifier"]),
+  "import_specifier": new Set(["import_kind"]),
+  "import_statement": new Set(["import_clause"]),
+  "index_signature": new Set(["sign"]),
+  "lexical_declaration": new Set(["kind"]),
+  "member_expression": new Set(["property"]),
+  "method_definition": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
+  "method_signature": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
+  "namespace_import": new Set(["identifier"]),
+  "nested_identifier": new Set(["property"]),
+  "object_type": new Set(["closing","opening"]),
+  "optional_parameter": new Set(["readonly_marker"]),
+  "optional_tuple_parameter": new Set(["name"]),
+  "program": new Set(["hash_bang_line"]),
+  "property_signature": new Set(["accessibility_modifier","optional_marker","override_modifier","readonly_marker","static_marker"]),
+  "public_field_definition": new Set(["optionality_marker"]),
+  "regex": new Set(["flags","pattern"]),
+  "required_parameter": new Set(["readonly_marker"]),
+  "statement_block": new Set(["automatic_semicolon"]),
+  "subscript_expression": new Set(["optional_chain"]),
+  "type_parameter": new Set(["const_marker"]),
+  "type_predicate": new Set(["name"]),
+  "unary_expression": new Set(["operator"]),
+};
+
+function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
+  const fields = nativeTransportTerminalFieldsByKind[kind];
+  if (!fields) return;
+  for (const fieldName of fields) {
+    const value = projected[fieldName];
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
+    } else {
+      projected[fieldName] = collapseIfTerminal(value);
+    }
+  }
+}
+
+function collapseIfTerminal(value: unknown): unknown {
+  if (typeof value === 'string') return value;
+  if (!isRecord(value)) return value;
+  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
+    return value.$text;
+  }
+  return value;
+}
+
 function projectTransportValue(value: unknown, path: string): unknown {
   if (Array.isArray(value)) {
     return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
@@ -545,6 +792,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
+  collapseTerminalFields(projected, resolvedKind);
 
   projected.$type = kindIdFromName(resolvedKind);
 
@@ -616,6 +864,9 @@ function transportArrayMatches(value: unknown, alternatives: readonly NativeTran
 }
 
 function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
+  if (typeof value === 'string') {
+    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
+  }
   if (!isRecord(value)) return false;
   // $type may be a numeric KindId (projected structured node) or a string
   // (terminal node converted from a literal string via the string fast-path).
@@ -1743,6 +1994,14 @@ function assertOptionalMetadata(node: Record<string, unknown>, path: string): vo
 }
 
 function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
+  if (typeof value === 'string') {
+    const textMatch = alternatives.some((candidate) => candidate.text === undefined || candidate.text === value);
+    if (!textMatch) {
+      const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");
+      throw new TypeError(`${path} must be one of: ${allowed}`);
+    }
+    return;
+  }
   if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);
   if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);
   const accepted = alternatives.some((candidate) => {

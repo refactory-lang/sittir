@@ -555,6 +555,218 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
   ],
 };
 
+const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
+  "!",
+  "\"",
+  "#",
+  "$",
+  "&",
+  "&&",
+  "'",
+  "(",
+  ")",
+  "*",
+  "*/",
+  "+",
+  ",",
+  "-",
+  "->",
+  ".",
+  "..",
+  "...",
+  "/",
+  "/*",
+  ":",
+  "::",
+  ";",
+  "<",
+  "=",
+  "=>",
+  ">",
+  "?",
+  "@",
+  "[",
+  "]",
+  "_",
+  "__range_expression_binary_operator",
+  "__visibility_modifier_in_path_in",
+  "__visibility_modifier_pub_pub",
+  "_binary_expression_operator",
+  "_closure_expression_async_marker",
+  "_closure_expression_static_marker",
+  "_compound_assignment_expr_operator",
+  "_crate",
+  "_error_sentinel",
+  "_foreign_mod_item_semi",
+  "_generic_type_with_turbofish_turbofish",
+  "_impl_item_negative",
+  "_impl_item_semi",
+  "_inner_block_doc_comment_marker",
+  "_inner_line_doc_comment_marker",
+  "_kw_async_marker",
+  "_kw_in",
+  "_kw_move_marker",
+  "_kw_negative",
+  "_kw_operator",
+  "_kw_pub",
+  "_kw_ref_marker",
+  "_kw_static_marker",
+  "_kw_turbofish",
+  "_kw_unsafe_marker",
+  "_line_comment_content",
+  "_line_comment_regular_dslash",
+  "_line_doc_content",
+  "_mod_item_external",
+  "_move_marker",
+  "_mutable_specifier",
+  "_operator",
+  "_outer_block_doc_comment_marker",
+  "_outer_line_doc_comment_marker",
+  "_pointer_type_const",
+  "_primitive_type",
+  "_range_pattern_left_bare",
+  "_ref_marker",
+  "_reference_expression_raw_const",
+  "_self",
+  "_struct_item_unit",
+  "_token_binding_pattern_type",
+  "_unary_expression_operator",
+  "_unsafe_marker",
+  "_wildcard_pattern",
+  "as",
+  "async",
+  "await",
+  "boolean_literal",
+  "break",
+  "char_literal",
+  "const",
+  "continue",
+  "crate",
+  "default",
+  "dyn",
+  "else",
+  "empty_statement",
+  "enum",
+  "escape_sequence",
+  "extern",
+  "float_literal",
+  "fn",
+  "for",
+  "fragment_specifier",
+  "gen",
+  "identifier",
+  "if",
+  "impl",
+  "in",
+  "integer_literal",
+  "let",
+  "loop",
+  "match",
+  "metavariable",
+  "mod",
+  "move",
+  "mut",
+  "mutable_specifier",
+  "never_type",
+  "pub",
+  "raw",
+  "raw_string_literal_content",
+  "ref",
+  "remaining_field_pattern",
+  "return",
+  "self",
+  "shebang",
+  "static",
+  "string_content",
+  "struct",
+  "super",
+  "trait",
+  "try",
+  "type",
+  "union",
+  "unit_expression",
+  "unit_type",
+  "unsafe",
+  "use",
+  "where",
+  "while",
+  "yield",
+  "{",
+  "|",
+  "}",
+]);
+
+const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
+  "_field_pattern_shorthand": new Set(["name"]),
+  "_line_comment_doc": new Set(["doc"]),
+  "_range_expression_bare": new Set(["operator"]),
+  "_range_expression_binary": new Set(["operator"]),
+  "_range_expression_postfix": new Set(["operator"]),
+  "_range_expression_prefix": new Set(["operator"]),
+  "_visibility_modifier_in_path": new Set(["in"]),
+  "_visibility_modifier_pub": new Set(["pub"]),
+  "async_block": new Set(["move_marker"]),
+  "binary_expression": new Set(["operator"]),
+  "captured_pattern": new Set(["identifier"]),
+  "closure_expression": new Set(["async_marker","move_marker","static_marker"]),
+  "compound_assignment_expr": new Set(["operator"]),
+  "const_item": new Set(["name"]),
+  "const_parameter": new Set(["name"]),
+  "enum_variant": new Set(["name"]),
+  "extern_crate_declaration": new Set(["alias","crate","name"]),
+  "field_pattern": new Set(["mutable_specifier","ref_marker"]),
+  "field_pattern_shorthand": new Set(["name"]),
+  "function_item": new Set(["name"]),
+  "function_signature_item": new Set(["name"]),
+  "gen_block": new Set(["move_marker"]),
+  "generic_type_with_turbofish": new Set(["turbofish"]),
+  "impl_item": new Set(["negative","unsafe_marker"]),
+  "label": new Set(["identifier"]),
+  "let_declaration": new Set(["mutable_specifier"]),
+  "lifetime": new Set(["identifier"]),
+  "mod_item": new Set(["name"]),
+  "mut_pattern": new Set(["mutable_specifier"]),
+  "negative_literal": new Set(["value"]),
+  "parameter": new Set(["mutable_specifier"]),
+  "range_expression_bare": new Set(["operator"]),
+  "raw_string_literal": new Set(["string_content"]),
+  "reference_pattern": new Set(["mutable_specifier"]),
+  "reference_type": new Set(["mutable_specifier"]),
+  "scoped_identifier": new Set(["name"]),
+  "self_parameter": new Set(["mutable_specifier","reference","self"]),
+  "shorthand_field_initializer": new Set(["identifier"]),
+  "source_file": new Set(["shebang"]),
+  "static_item": new Set(["mutable_specifier","name"]),
+  "token_binding_pattern": new Set(["name","type"]),
+  "trait_item": new Set(["unsafe_marker"]),
+  "unary_expression": new Set(["operator"]),
+  "use_as_clause": new Set(["alias"]),
+  "variadic_parameter": new Set(["mutable_specifier"]),
+};
+
+function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
+  const fields = nativeTransportTerminalFieldsByKind[kind];
+  if (!fields) return;
+  for (const fieldName of fields) {
+    const value = projected[fieldName];
+    if (value === undefined) continue;
+    if (Array.isArray(value)) {
+      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
+    } else {
+      projected[fieldName] = collapseIfTerminal(value);
+    }
+  }
+}
+
+function collapseIfTerminal(value: unknown): unknown {
+  if (typeof value === 'string') return value;
+  if (!isRecord(value)) return value;
+  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
+    return value.$text;
+  }
+  return value;
+}
+
 function projectTransportValue(value: unknown, path: string): unknown {
   if (Array.isArray(value)) {
     return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
@@ -611,6 +823,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
+  collapseTerminalFields(projected, resolvedKind);
 
   projected.$type = kindIdFromName(resolvedKind);
 
@@ -682,6 +895,9 @@ function transportArrayMatches(value: unknown, alternatives: readonly NativeTran
 }
 
 function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
+  if (typeof value === 'string') {
+    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
+  }
   if (!isRecord(value)) return false;
   // $type may be a numeric KindId (projected structured node) or a string
   // (terminal node converted from a literal string via the string fast-path).
@@ -1764,6 +1980,14 @@ function assertOptionalMetadata(node: Record<string, unknown>, path: string): vo
 }
 
 function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {
+  if (typeof value === 'string') {
+    const textMatch = alternatives.some((candidate) => candidate.text === undefined || candidate.text === value);
+    if (!textMatch) {
+      const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");
+      throw new TypeError(`${path} must be one of: ${allowed}`);
+    }
+    return;
+  }
   if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);
   if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);
   const accepted = alternatives.some((candidate) => {
