@@ -193,6 +193,9 @@ Again, the architectural rule matters more than the exact spelling:
 - **FR-010**: Assemble MUST preserve `RuleId` provenance from 021 for every normalized constituent it materializes.
 - **FR-011**: Any retained compatibility `fields` / `children` views MUST be derived from the normalized constituent-rule model rather than maintained as a second independent discovery pass.
 - **FR-012**: Binding, Simplify, and Assemble MUST share one coherent constituent-oriented model; partial migration that leaves wrappers half-pushed-down while assembled storage has already changed is not acceptable.
+- **FR-013**: Terminal constituents MUST be stored as plain values (strings) at the slot level in readNode, factory, and wrap output. Nonterminal constituents MUST be stored as `{ $type, $text, $nodeHandle, $childIndex }` stubs with drill-in materialization.
+- **FR-014**: The `toNativeRenderTransport` projection MUST become identity for terminal slots — no runtime conversion from NodeData objects to strings. The source data shape must match the transport shape.
+- **FR-015**: The terminal/nonterminal classification used by emitters (factory, readNode, wrap, transport) MUST be derived from the same constituent model that Binding + Simplify produce — one source, one derivation.
 
 ### Key Entities _(include if feature involves data)_
 
@@ -210,6 +213,8 @@ Again, the architectural rule matters more than the exact spelling:
 - **SC-003**: Mixed `choice` cases can be normalized into one coherent frontier result after Binding + Simplify.
 - **SC-004**: Assemble materializes kinds from normalized constituent rules while preserving `RuleId` provenance and parent-edge naming.
 - **SC-005**: Any compatibility `fields` / `children` views remaining after the first landing are provably derived from the normalized constituent model rather than from separate private walkers.
+- **SC-006**: Native RT pass rates must not regress below current baseline: python ≥114/115, rust ≥124/136, typescript ≥108/112.
+- **SC-007**: Factory round-trip failure ceilings drop to zero across all three grammars (from rust 15, typescript 25, python 70).
 
 ## Out of Scope
 
@@ -217,9 +222,21 @@ Again, the architectural rule matters more than the exact spelling:
 - Replacing `RuleId` with KindID / FieldID or any other tree-sitter-generated metadata.
 - Implementing the eventual enum-backed wire format itself.
 - Changing tree-sitter CST semantics for named vs anonymous nodes.
+- Transport emitter (`render-module.ts`), `from.ts` emitter, and `client-utils.ts` emitter updates — these follow naturally once storage matches transport shape; no spec-level work required.
+- `toNativeRenderTransport` runtime workarounds — eliminated by terminal hoisting at source.
+
+## Clarifications
+
+### Session 2026-05-03
+
+- Q: Is terminal value hoisting (storing leaf values as plain strings at slot level) in scope? → A: Yes — include as FR-013/014/015 (unified storage model, identity projection, single-source classification).
+- Q: Migration strategy — big-bang or incremental? → A: Incremental staged commits, each passing tests. Backward-compat projections allowed temporarily as long as each stage is internally consistent. RT validator (native, 114/124/108) is the safety net.
+- Q: Quantitative success criteria? → A: Factory round-trip ceilings must drop to zero (currently rust 15, ts 25, py 70). Terminal value hoisting eliminates the leaf-NodeData-as-String transport boundary mismatch that causes these failures.
+- Q: Downstream emitter scope? → A: Core pipeline (Binding/Simplify/Assemble) + storage emitters (factory, readNode, wrap) for terminal hoisting. Transport/from/client-utils follow naturally once storage shape is correct — projection becomes identity.
 
 ## Dependencies & Assumptions
 
 - **Depends on** refined 021 for `RuleId`, rule classification, field semantics, alias semantics, and late KindID / FieldID metadata.
 - **Depends on** the five-phase compiler contract from spec 005 remaining intact, with this work expressed as a Binding / Simplify / Assemble rewrite inside that broader pipeline.
 - **Assumes** the current assembled representation can evolve in stages, with compatibility projections allowed temporarily as long as they derive from the normalized constituent model.
+- **Migration**: Incremental staged commits. Each stage must pass the native RT validator (python ≥114, rust ≥124, typescript ≥108) and type-check with zero errors. Backward-compat projections are permitted per stage but must be derived from the new model (FR-011).
