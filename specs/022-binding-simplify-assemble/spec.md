@@ -177,6 +177,86 @@ Again, the architectural rule matters more than the exact spelling:
 
 > Assemble is built from normalized constituent rules, not from surviving wrapper nodes and not from the old `fields` / `children` split as a primary ontology.
 
+### 5. De-hoisted NodeData model
+
+`$fields` is removed. Named members become top-level keys on the NodeData object.
+`$`-prefix separates sittir-owned metadata and methods from grammar field names.
+
+Three exclusive shapes:
+
+- **Shape A (all named)**: Named members as top-level keys. No `$children` or `$child`.
+- **Shape B (`$children`)**: Repeated unnamed members in `$children: readonly NodeMemberValue[]`.
+- **Shape C (`$child`)**: Single unnamed member in `$child: NodeMemberValue`.
+
+```ts
+interface NodeBase {
+    $type: string;
+    $source?: 0 | 1 | 2;
+    $variant?: string;
+    $text?: string;
+    $span?: { start: number; end: number };
+    $nodeHandle?: number;
+    $childIndex?: number;
+    $named?: boolean;
+    $trivia?: NodeTrivia;
+    $format?: FormatRecord;
+    [fieldName: string]: NodeMemberValue | readonly NodeMemberValue[] | undefined;
+}
+
+interface NodeWithChildren extends NodeBase {
+    $children: readonly NodeMemberValue[];
+}
+
+interface NodeWithChild extends NodeBase {
+    $child: NodeMemberValue;
+}
+
+type AnyNodeData = NodeWithChildren | NodeWithChild | NodeBase;
+type NodeMemberValue = AnyNodeData | string | number;
+```
+
+### 6. `$with` namespace replaces fluent methods
+
+Per-field fluent getter/setter methods (`fn.name()` / `fn.name(v)`) replaced
+by a `$with` namespace of immutable updaters. Each `$with.field(v)` returns
+a fresh node via the factory:
+
+```ts
+fn.$with.name(ir.identifier('greet'))
+  .$with.returnType(ir.typeIdentifier('String'))
+  .$with.body(ir.block([newStmt]))
+```
+
+### 7. `$`-prefixed methods
+
+All sittir-owned operations use `$`-prefix: `$render()`, `$toEdit()`,
+`$replace()`, `$trivia()`. Attached by a shared `withMethods` helper
+instead of per-factory inline emission.
+
+### 8. Unified wrap + factory surface
+
+Wrap output has the same `$with` namespace and `$`-prefixed methods as
+factory output. The only difference: wrap getters use `drillIn` for lazy
+expansion of shallow fields. Factory output has raw data.
+
+### 9. Rust NodeData — flatten + MemberValue
+
+```rust
+pub struct NodeData {
+    #[serde(rename = "$type")]
+    pub type_: String,
+    // ... $-prefixed metadata fields ...
+    #[serde(rename = "$children", skip_serializing_if = "Option::is_none")]
+    pub children: Option<Vec<NodeData>>,
+    #[serde(rename = "$child", skip_serializing_if = "Option::is_none")]
+    pub child: Option<Box<NodeData>>,
+    #[serde(flatten)]
+    pub members: HashMap<String, MemberValue>,
+}
+```
+
+`$with` and `$`-prefixed methods are JS-side only. They don't serialize.
+
 ## Requirements _(mandatory)_
 
 ### Functional Requirements
@@ -196,6 +276,14 @@ Again, the architectural rule matters more than the exact spelling:
 - **FR-013**: Terminal constituents MUST be stored as plain values (strings) at the slot level in readNode, factory, and wrap output. Nonterminal constituents MUST be stored as `{ $type, $text, $nodeHandle, $childIndex }` stubs with drill-in materialization.
 - **FR-014**: The `toNativeRenderTransport` projection MUST become identity for terminal slots — no runtime conversion from NodeData objects to strings. The source data shape must match the transport shape.
 - **FR-015**: The terminal/nonterminal classification used by emitters (factory, readNode, wrap, transport) MUST be derived from the same constituent model that Binding + Simplify produce — one source, one derivation.
+- **FR-016**: `$fields` wrapper MUST be removed. Named members MUST be top-level keys on the NodeData object. Grammar field names MUST NOT start with `$`.
+- **FR-017**: `NodeFieldValue` and `NodeChildValue` MUST be unified into `NodeMemberValue = AnyNodeData | string | number`.
+- **FR-018**: `$child` (single unnamed) and `$children` (repeated unnamed) MUST be mutually exclusive. Each kind uses exactly one of Shape A (all named), Shape B (`$children`), or Shape C (`$child`).
+- **FR-019**: Per-field fluent getter/setter methods MUST be replaced by a `$with` namespace of immutable updaters. Each `$with.field(v)` returns a fresh node via the factory.
+- **FR-020**: All sittir-owned methods MUST use `$`-prefix: `$render()`, `$toEdit()`, `$replace()`, `$trivia()`.
+- **FR-021**: A shared `withMethods` helper MUST attach all `$`-prefixed methods. Per-factory inline method emission MUST be removed.
+- **FR-022**: Wrap output MUST expose the same `$with` namespace and `$`-prefixed methods as factory output. Wrap getters MUST use `drillIn` for lazy expansion.
+- **FR-023**: Rust `NodeData` MUST use `#[serde(flatten)]` for named members via `HashMap<String, MemberValue>`. `$with` and `$`-prefixed methods are JS-side only and MUST NOT serialize.
 
 ### Key Entities _(include if feature involves data)_
 
@@ -215,6 +303,9 @@ Again, the architectural rule matters more than the exact spelling:
 - **SC-005**: Any compatibility `fields` / `children` views remaining after the first landing are provably derived from the normalized constituent model rather than from separate private walkers.
 - **SC-006**: Native RT pass rates must not regress below current baseline: python ≥114/115, rust ≥124/136, typescript ≥108/112.
 - **SC-007**: Factory round-trip failure ceilings drop to zero across all three grammars (from rust 15, typescript 25, python 70).
+- **SC-008**: Zero references to `$fields` remain in generated output or core runtime after Phase 3.
+- **SC-009**: Per-field fluent method emission removed — net ~-1,500 lines across generated factories.
+- **SC-010**: `withMethods` shared helper replaces per-factory `factorySuffix` emission (~15 lines × 1 instead of ~6 lines × 280).
 
 ## Out of Scope
 
@@ -233,10 +324,15 @@ Again, the architectural rule matters more than the exact spelling:
 - Q: Migration strategy — big-bang or incremental? → A: Incremental staged commits, each passing tests. Backward-compat projections allowed temporarily as long as each stage is internally consistent. RT validator (native, 114/124/108) is the safety net.
 - Q: Quantitative success criteria? → A: Factory round-trip ceilings must drop to zero (currently rust 15, ts 25, py 70). Terminal value hoisting eliminates the leaf-NodeData-as-String transport boundary mismatch that causes these failures.
 - Q: Downstream emitter scope? → A: Core pipeline (Binding/Simplify/Assemble) + storage emitters (factory, readNode, wrap) for terminal hoisting. Transport/from/client-utils follow naturally once storage shape is correct — projection becomes identity.
+- Amendment: De-hoisted NodeData model — `$fields` removed, named members top-level, `$with` namespace replaces fluent methods, `$`-prefix for all sittir methods, unified factory/wrap surface. FR-016 through FR-023, SC-008 through SC-010 added. Three-phase migration plan.
 
 ## Dependencies & Assumptions
 
 - **Depends on** refined 021 for `RuleId`, rule classification, field semantics, alias semantics, and late KindID / FieldID metadata.
 - **Depends on** the five-phase compiler contract from spec 005 remaining intact, with this work expressed as a Binding / Simplify / Assemble rewrite inside that broader pipeline.
 - **Assumes** the current assembled representation can evolve in stages, with compatibility projections allowed temporarily as long as they derive from the normalized constituent model.
-- **Migration**: Incremental staged commits. Each stage must pass the native RT validator (python ≥114, rust ≥124, typescript ≥108) and type-check with zero errors. Backward-compat projections are permitted per stage but must be derived from the new model (FR-011).
+- **Migration**: Incremental staged commits across three phases:
+  - **Phase 1** — Compiler-internal: Binding/Simplify/Assemble produces unified constituent model. Emitters project to current shape. No consumer changes.
+  - **Phase 2** — De-hoist + `$with`: Remove `$fields`, replace fluent methods with `$with` namespace, `$`-prefix all methods, update wrap emitter. Greppable transforms: `.$fields.` → `.`, `.name()` → `.name`, `.name(v)` → `.$with.name(v)`, `.render()` → `.$render()`.
+  - **Phase 3** — Cleanup: Remove `$fields`, `NodeFieldValue`, `NodeChildValue`, `factorySuffix`, per-field fluent methods.
+  - Each stage must pass the native RT validator (python ≥114, rust ≥124, typescript ≥108) and type-check with zero errors.
