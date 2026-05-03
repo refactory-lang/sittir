@@ -16,22 +16,6 @@ export interface Edit {
 }
 
 /**
- * Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
- * tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
- *
- * Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
- * `#[napi(string_enum)]` (gated on napi-bindings feature) adds
- * `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
- * The feature gate prevents napi C-symbol leakage into sittir-core
- * test binaries that build without Node.js.
- */
-export declare const enum Source {
-  Ts = 'Ts',
-  Sg = 'Sg',
-  Factory = 'Factory'
-}
-
-/**
  * Byte-range for a `NodeData` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
@@ -50,11 +34,7 @@ export declare class SittirEngine {
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(handle: number, childIndex: number): string
-  /**
-   * Render a typed transport object (napi-native, numeric `$type`).
-   * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
-   * object — no `serde_json::Value` intermediate.
-   */
+  /** Render a typed transport object (napi-native, numeric `$type`). */
   render(transport: AnyTransport): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void

@@ -417,9 +417,8 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 				const treeWithRender: TreeHandle = {
 					...tree,
 					read: (handle?: number, childIndex?: number) => readNode(tree, handle, childIndex),
-					render: (handle?: number, opts?: { ignoreFormat?: boolean }) => {
-						const node = handle !== undefined ? readNode(tree, handle, 0) : root;
-						return renderNode(node, tree.format, opts?.ignoreFormat);
+					render: (_handle?: number, opts?: { ignoreFormat?: boolean }) => {
+						return renderNode(root, tree.format, opts?.ignoreFormat);
 					}
 				};
 

@@ -576,5 +576,4 @@ if (!nativeBinding) {
 }
 
 module.exports = nativeBinding
-module.exports.Source = nativeBinding.Source
 module.exports.SittirEngine = nativeBinding.SittirEngine

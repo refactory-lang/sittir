@@ -50,11 +50,7 @@ export declare class SittirEngine {
   findAndRead(source: string, pattern: string): string
   parseAndRead(source: string): string
   readNode(handle: number, childIndex: number): string
-  /**
-   * Render a typed transport object (napi-native, numeric `$type`).
-   * Phase B: `AnyTransport` is decoded by napi-rs directly from the JS
-   * object — no `serde_json::Value` intermediate.
-   */
+  /** Render a typed transport object (napi-native, numeric `$type`). */
   render(transport: AnyTransport): string
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
