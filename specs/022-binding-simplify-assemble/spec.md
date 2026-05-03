@@ -189,23 +189,37 @@ This separation enables:
 - Storage shape can evolve (lazy, memoized) without API change
 
 ```ts
-// Storage: _prefixed (not for direct consumer access)
-// Getters: unprefixed (the consumer API)
-// Metadata: $-prefixed
-// Methods: $-prefixed
+// Storage: _prefixed, enumerable (serializable data)
+// Accessors: unprefixed function calls, non-enumerable
+// Metadata: $-prefixed plain properties
+// Methods: $-prefixed functions
 
 const fn = {
+    // Metadata ($-prefixed, plain properties)
     $type: 42,
     $source: 2,
     $named: true,
-    _name: "main",            // storage
-    _body: { ... },           // storage
-    get name() { return this._name; },   // getter
-    get body() { return this._body; },   // getter
-    $child?: NodeMemberValue,            // single unnamed
-    $children?: NodeMemberValue[],       // repeated unnamed
-    $with: { name, body, ... },
+
+    // Storage (_prefixed, enumerable)
+    _name: "main",
+    _body: { ... },
+    _parameters: { ... },
+
+    // Accessors (function calls, non-enumerable)
+    name() { return this._name; },
+    body() { return this._body; },
+
+    // Unnamed slot
+    $child?: NodeMemberValue,
+    $children?: NodeMemberValue[],
+
+    // Update namespace
+    $with: { name(v), body(v), ... },
+
+    // Methods ($-prefixed)
     $render() { ... },
+    $toEdit(range) { ... },
+    $replace(target) { ... },
 };
 
 type AnyNodeData = NodeBase;
@@ -215,7 +229,9 @@ type NodeMemberValue = AnyNodeData | string | number;
 Naming convention:
 - `$` — sittir metadata + methods (never collides with grammar)
 - `_` — stored field values (never collides — tree-sitter field names are never `_`-prefixed)
-- unprefixed — getter API (what consumers use)
+- unprefixed functions — accessor API (what consumers call)
+
+Accessors are non-enumerable: `Object.keys(fn)` returns `['$type', '$source', '_name', '_body', ...]` — only metadata + storage. Functions don't pollute iteration or `JSON.stringify`.
 
 ### 6. `$with` namespace replaces fluent methods
 
