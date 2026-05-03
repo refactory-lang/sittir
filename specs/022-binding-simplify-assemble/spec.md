@@ -190,7 +190,7 @@ Three exclusive shapes:
 
 ```ts
 interface NodeBase {
-    $type: string;
+    $type: number | string;
     $source?: 0 | 1 | 2;
     $variant?: string;
     $text?: string;
@@ -244,8 +244,19 @@ expansion of shallow fields. Factory output has raw data.
 ```rust
 pub struct NodeData {
     #[serde(rename = "$type")]
-    pub type_: String,
-    // ... $-prefixed metadata fields ...
+    pub type_: KindId,
+    #[serde(rename = "$source", skip_serializing_if = "Option::is_none")]
+    pub source: Option<Source>,
+    #[serde(rename = "$named")]
+    pub named: bool,
+    #[serde(rename = "$text", skip_serializing_if = "Option::is_none")]
+    pub text: Option<String>,
+    #[serde(rename = "$span", skip_serializing_if = "Option::is_none")]
+    pub span: Option<Span>,
+    #[serde(rename = "$nodeHandle", skip_serializing_if = "Option::is_none")]
+    pub node_handle: Option<u32>,
+    #[serde(rename = "$childIndex", skip_serializing_if = "Option::is_none")]
+    pub child_index: Option<u16>,
     #[serde(rename = "$children", skip_serializing_if = "Option::is_none")]
     pub children: Option<Vec<NodeData>>,
     #[serde(rename = "$child", skip_serializing_if = "Option::is_none")]

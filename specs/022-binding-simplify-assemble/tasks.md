@@ -57,7 +57,8 @@
 - [ ] T022 [US3] Implement shape classification (A/B/C) at assemble time in `packages/codegen/src/compiler/assemble.ts`
 - [ ] T023 [US3] Store shape and constituent list on `AssembledNode` in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T024 [US3] Emit compatibility `$fields`/`$children` views derived from constituent model in `packages/codegen/src/compiler/assemble.ts`
-- [ ] T025 [US3] Verify: native RT >=114/124/108, factory RT ceilings unchanged, type-check 0 errors
+- [ ] T025 [US3] Verify: native RT >=114/124/108, factory RT ceilings unchanged, type-check 0 errors. Assert RuleId provenance survives from Binding through Assemble for representative kinds.
+- [ ] T025a [US3] Verify edge cases: mixed choice frontier, field-wrapped literals, named alias over terminal content, anonymous alias — all produce correct constituent classifications
 
 ## Phase 6: US4 — De-hoist NodeData (P2)
 
