@@ -201,7 +201,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 
 		it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
 			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
 
 			expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
 			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
@@ -215,7 +215,7 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 			// keyword tokens fail CI. The gap between `rtAstMatchPass`
 			// and `rtPass` is the outstanding fidelity debt.
 			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
 
 			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 		}, 60000);
