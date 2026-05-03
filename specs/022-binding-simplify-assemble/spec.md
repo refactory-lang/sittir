@@ -179,37 +179,43 @@ Again, the architectural rule matters more than the exact spelling:
 
 ### 5. De-hoisted NodeData model
 
-`$fields` is removed. Named members become top-level keys on the NodeData object.
-`$`-prefix separates sittir-owned metadata and methods from grammar field names.
+`$fields` is removed. Named members stored with `_`-prefix (`_name`, `_body`).
+Getters provide clean unprefixed access (`fn.name`, `fn.body`).
+`$`-prefix for sittir-owned metadata and methods.
 
-No new "shape" classification — the existing `modelType` already captures the
-distinction. The opportunity: collapse `branch` / `container` / `multi` into a
-single assembled type. Whether a kind has named fields vs positional children
-is a property of its MEMBERS (do they have `edgeName`?), not a different class.
+This separation enables:
+- Wrap getters intercept access with `drillIn` without mutating stored values
+- Factory and wrap have identical getter APIs, different backing storage
+- Storage shape can evolve (lazy, memoized) without API change
 
 ```ts
-interface NodeBase {
-    $type: number | string;
-    $source?: 0 | 1 | 2;
-    $variant?: string;
-    $text?: string;
-    $span?: { start: number; end: number };
-    $nodeHandle?: number;
-    $childIndex?: number;
-    $named?: boolean;
-    $trivia?: NodeTrivia;
-    $format?: FormatRecord;
-    $children?: readonly NodeMemberValue[];
-    [fieldName: string]: NodeMemberValue | readonly NodeMemberValue[] | undefined;
-}
+// Storage: _prefixed (not for direct consumer access)
+// Getters: unprefixed (the consumer API)
+// Metadata: $-prefixed
+// Methods: $-prefixed
+
+const fn = {
+    $type: 42,
+    $source: 2,
+    $named: true,
+    _name: "main",            // storage
+    _body: { ... },           // storage
+    get name() { return this._name; },   // getter
+    get body() { return this._body; },   // getter
+    $child?: NodeMemberValue,            // single unnamed
+    $children?: NodeMemberValue[],       // repeated unnamed
+    $with: { name, body, ... },
+    $render() { ... },
+};
 
 type AnyNodeData = NodeBase;
 type NodeMemberValue = AnyNodeData | string | number;
 ```
 
-Named members are top-level keys. Unnamed positional members go in `$children`.
-A kind with ALL named members simply omits `$children`. No separate
-`NodeWithChildren` / `NodeWithChild` types needed — `$children` is optional.
+Naming convention:
+- `$` — sittir metadata + methods (never collides with grammar)
+- `_` — stored field values (never collides — tree-sitter field names are never `_`-prefixed)
+- unprefixed — getter API (what consumers use)
 
 ### 6. `$with` namespace replaces fluent methods
 
