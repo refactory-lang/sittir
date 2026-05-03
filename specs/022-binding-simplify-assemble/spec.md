@@ -182,11 +182,10 @@ Again, the architectural rule matters more than the exact spelling:
 `$fields` is removed. Named members become top-level keys on the NodeData object.
 `$`-prefix separates sittir-owned metadata and methods from grammar field names.
 
-Three exclusive shapes:
-
-- **Shape A (all named)**: Named members as top-level keys. No `$children` or `$child`.
-- **Shape B (`$children`)**: Repeated unnamed members in `$children: readonly NodeMemberValue[]`.
-- **Shape C (`$child`)**: Single unnamed member in `$child: NodeMemberValue`.
+No new "shape" classification — the existing `modelType` already captures the
+distinction. The opportunity: collapse `branch` / `container` / `multi` into a
+single assembled type. Whether a kind has named fields vs positional children
+is a property of its MEMBERS (do they have `edgeName`?), not a different class.
 
 ```ts
 interface NodeBase {
@@ -200,20 +199,17 @@ interface NodeBase {
     $named?: boolean;
     $trivia?: NodeTrivia;
     $format?: FormatRecord;
+    $children?: readonly NodeMemberValue[];
     [fieldName: string]: NodeMemberValue | readonly NodeMemberValue[] | undefined;
 }
 
-interface NodeWithChildren extends NodeBase {
-    $children: readonly NodeMemberValue[];
-}
-
-interface NodeWithChild extends NodeBase {
-    $child: NodeMemberValue;
-}
-
-type AnyNodeData = NodeWithChildren | NodeWithChild | NodeBase;
+type AnyNodeData = NodeBase;
 type NodeMemberValue = AnyNodeData | string | number;
 ```
+
+Named members are top-level keys. Unnamed positional members go in `$children`.
+A kind with ALL named members simply omits `$children`. No separate
+`NodeWithChildren` / `NodeWithChild` types needed — `$children` is optional.
 
 ### 6. `$with` namespace replaces fluent methods
 
@@ -239,34 +235,19 @@ Wrap output has the same `$with` namespace and `$`-prefixed methods as
 factory output. The only difference: wrap getters use `drillIn` for lazy
 expansion of shallow fields. Factory output has raw data.
 
-### 9. Rust NodeData — flatten + MemberValue
+### 9. Rust NodeData — napi direct, no serde
 
-```rust
-pub struct NodeData {
-    #[serde(rename = "$type")]
-    pub type_: KindId,
-    #[serde(rename = "$source", skip_serializing_if = "Option::is_none")]
-    pub source: Option<Source>,
-    #[serde(rename = "$named")]
-    pub named: bool,
-    #[serde(rename = "$text", skip_serializing_if = "Option::is_none")]
-    pub text: Option<String>,
-    #[serde(rename = "$span", skip_serializing_if = "Option::is_none")]
-    pub span: Option<Span>,
-    #[serde(rename = "$nodeHandle", skip_serializing_if = "Option::is_none")]
-    pub node_handle: Option<u32>,
-    #[serde(rename = "$childIndex", skip_serializing_if = "Option::is_none")]
-    pub child_index: Option<u16>,
-    #[serde(rename = "$children", skip_serializing_if = "Option::is_none")]
-    pub children: Option<Vec<NodeData>>,
-    #[serde(rename = "$child", skip_serializing_if = "Option::is_none")]
-    pub child: Option<Box<NodeData>>,
-    #[serde(flatten)]
-    pub members: HashMap<String, MemberValue>,
-}
-```
+Rust NodeData crosses the napi boundary via direct `FromNapiValue` /
+`ToNapiValue` impls — no JSON serialization, no `serde_json::to_string` →
+`JSON.parse` round-trip. Named members are read/written as JS object
+properties directly.
 
-`$with` and `$`-prefixed methods are JS-side only. They don't serialize.
+No `HashMap<String, MemberValue>`. No `#[serde(flatten)]`. The per-kind
+transport structs already do this (each field is a named napi property).
+`NodeData` on the Rust side becomes a thin read helper, not a serialized
+intermediate.
+
+`$with` and `$`-prefixed methods are JS-side only. They don't cross napi.
 
 ## Requirements _(mandatory)_
 
@@ -289,12 +270,12 @@ pub struct NodeData {
 - **FR-015**: The terminal/nonterminal classification used by emitters (factory, readNode, wrap, transport) MUST be derived from the same constituent model that Binding + Simplify produce — one source, one derivation.
 - **FR-016**: `$fields` wrapper MUST be removed. Named members MUST be top-level keys on the NodeData object. Grammar field names MUST NOT start with `$`.
 - **FR-017**: `NodeFieldValue` and `NodeChildValue` MUST be unified into `NodeMemberValue = AnyNodeData | string | number`.
-- **FR-018**: `$child` (single unnamed) and `$children` (repeated unnamed) MUST be mutually exclusive. Each kind uses exactly one of Shape A (all named), Shape B (`$children`), or Shape C (`$child`).
+- **FR-018**: Unnamed positional members use `$children` (optional array). Named members are top-level keys. A kind with all named members simply omits `$children`. No separate shape types.
 - **FR-019**: Per-field fluent getter/setter methods MUST be replaced by a `$with` namespace of immutable updaters. Each `$with.field(v)` returns a fresh node via the factory.
 - **FR-020**: All sittir-owned methods MUST use `$`-prefix: `$render()`, `$toEdit()`, `$replace()`, `$trivia()`.
 - **FR-021**: A shared `withMethods` helper MUST attach all `$`-prefixed methods. Per-factory inline method emission MUST be removed.
 - **FR-022**: Wrap output MUST expose the same `$with` namespace and `$`-prefixed methods as factory output. Wrap getters MUST use `drillIn` for lazy expansion.
-- **FR-023**: Rust `NodeData` MUST use `#[serde(flatten)]` for named members via `HashMap<String, MemberValue>`. `$with` and `$`-prefixed methods are JS-side only and MUST NOT serialize.
+- **FR-023**: Rust `NodeData` MUST cross napi via direct `FromNapiValue`/`ToNapiValue` — no JSON serialization round-trip. Named members are read/written as JS object properties directly. `$with` and `$`-prefixed methods are JS-side only and MUST NOT cross napi.
 
 ### Key Entities _(include if feature involves data)_
 

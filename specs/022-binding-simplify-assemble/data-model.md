@@ -2,9 +2,11 @@
 
 ## Core Entities
 
-### NodeBase (replaces AnyNodeData)
+### AnyNodeData (single type, replaces current AnyNodeData)
 
-The base shape for all nodes. Named members are top-level keys.
+One shape for all nodes. Named members are top-level keys. Unnamed positional
+members go in optional `$children`. No separate Shape A/B/C types — the
+distinction is just "does this kind have unnamed positional members?"
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
@@ -18,23 +20,8 @@ The base shape for all nodes. Named members are top-level keys.
 | `$named` | `boolean` | No | Named vs anonymous node |
 | `$trivia` | `NodeTrivia` | No | Leading/trailing comments |
 | `$format` | `FormatRecord` | No | Per-node format override |
+| `$children` | `readonly NodeMemberValue[]` | No | Unnamed positional members (omitted when all members are named) |
 | `[fieldName]` | `NodeMemberValue` | Varies | De-hoisted named members |
-
-### NodeWithChildren (Shape B)
-
-Extends NodeBase with repeated unnamed children.
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `$children` | `readonly NodeMemberValue[]` | Yes | Unnamed positional members |
-
-### NodeWithChild (Shape C)
-
-Extends NodeBase with a single unnamed child.
-
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `$child` | `NodeMemberValue` | Yes | Single unnamed member |
 
 ### NodeMemberValue (replaces NodeFieldValue + NodeChildValue)
 
@@ -51,16 +38,12 @@ Nonterminal values: `AnyNodeData` (branch/container node or drill-in stub).
 AnyNodeData = NodeBase | NodeWithChildren | NodeWithChild
 ```
 
-### MemberValue (Rust side)
+### Rust side
 
-```rust
-pub enum MemberValue {
-    Node(Box<NodeData>),
-    Text(String),
-    Number(f64),
-    Array(Vec<MemberValue>),
-}
-```
+No `HashMap<String, MemberValue>` or serde flatten. Rust reads/writes
+NodeData via napi direct property access (per-kind transport structs
+already do this). The generic `NodeData` becomes a thin napi read helper,
+not a serialized intermediate.
 
 ## Pipeline Entities
 
@@ -85,12 +68,14 @@ nonterminal constituent.
 ### AssembledKindSurface
 
 Output of Assemble. Materialized kind with constituent metadata.
+Collapses current `AssembledBranch` / `AssembledContainer` / `AssembledMulti`
+into one type — whether members are named or positional is a member property.
 
 | Field | Type | Required | Notes |
 |-------|------|----------|-------|
 | `kind` | `string` | Yes | Kind name |
-| `shape` | `'A' \| 'B' \| 'C'` | Yes | Which NodeData shape this kind uses |
 | `members` | `AssembledMember[]` | Yes | Ordered constituents with metadata |
+| `hasUnnamedChildren` | `boolean` | Yes | True if any member lacks `edgeName` (→ `$children` on NodeData) |
 
 ### AssembledMember
 
@@ -115,13 +100,15 @@ Grammar rules (evaluate output)
   → Emit: generate types, factories ($with), wrap (drillIn), transport
 ```
 
-### Shape classification (at Assemble)
+### $children determination (at Assemble)
 
 ```
-All members have edgeName? → Shape A (all named, no $children/$child)
-Any member unnamed + repeated? → Shape B ($children)
-Exactly one unnamed + not repeated? → Shape C ($child)
+All members have edgeName? → no $children (named fields only)
+Any member lacks edgeName? → $children present (unnamed positional members)
 ```
+
+This replaces the current branch/container/multi split with a single
+assembled type that reads `hasUnnamedChildren` from its member list.
 
 ## Three-Axis Separation
 

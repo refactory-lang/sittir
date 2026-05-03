@@ -13,13 +13,13 @@
 ## Phase 1: Setup
 
 - [ ] T001 Define `BoundMember` and `BindingResult` types in `packages/codegen/src/compiler/types.ts`
-- [ ] T002 Define `AssembledMember` shape classification (`A`/`B`/`C`) on `AssembledNode` in `packages/codegen/src/compiler/node-map.ts`
+- [ ] T002 Collapse `AssembledBranch`/`AssembledContainer`/`AssembledMulti` into single assembled type with `hasUnnamedChildren` in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T003 [P] Define `NodeMemberValue` type alias in `packages/types/src/core-types.ts` (keep `NodeFieldValue`/`NodeChildValue` as deprecated aliases)
-- [ ] T004 [P] Define `MemberValue` enum in `rust/crates/sittir-core/src/types.rs`
+- [ ] T004 [P] Remove serde-based NodeData serialization in `rust/crates/sittir-core/src/types.rs` — napi direct property access only
 
 ## Phase 2: Foundational
 
-- [ ] T005 Add `shape: 'A' | 'B' | 'C'` property to `AssembledNode` base class in `packages/codegen/src/compiler/node-map.ts`
+- [ ] T005 Add `hasUnnamedChildren: boolean` property to unified assembled type in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T006 Add `terminality: 'terminal' | 'nonterminal'` to `AssembledField` and `AssembledChild` in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T007 [P] Add `isTerminalConstituent(node)` predicate to `packages/codegen/src/compiler/node-map.ts`
 
@@ -54,7 +54,7 @@
 **Test**: `function_item` -> Shape A, `block` -> Shape B, `expression_statement` -> Shape C.
 
 - [ ] T021 [US3] Update `packages/codegen/src/compiler/assemble.ts` to consume Simplify output
-- [ ] T022 [US3] Implement shape classification (A/B/C) at assemble time in `packages/codegen/src/compiler/assemble.ts`
+- [ ] T022 [US3] Compute `hasUnnamedChildren` from constituent member list at assemble time in `packages/codegen/src/compiler/assemble.ts`
 - [ ] T023 [US3] Store shape and constituent list on `AssembledNode` in `packages/codegen/src/compiler/node-map.ts`
 - [ ] T024 [US3] Emit compatibility `$fields`/`$children` views derived from constituent model in `packages/codegen/src/compiler/assemble.ts`
 - [ ] T025 [US3] Verify: native RT (shallow + deep + factory) passes, factory RT ceilings unchanged, type-check 0 errors. Assert RuleId provenance survives from Binding through Assemble for representative kinds.
@@ -66,10 +66,10 @@
 **Test**: `$fields` grep returns 0. Factory `fn.name` is direct access. readNode assigns top-level.
 
 - [ ] T026 [US4] Update `AnyNodeData` union in `packages/types/src/core-types.ts` to `NodeBase | NodeWithChildren | NodeWithChild`
-- [ ] T027 [US4] [P] Update types emitter: emit Shape A/B/C interfaces with top-level fields in `packages/codegen/src/emitters/types.ts`
+- [ ] T027 [US4] [P] Update types emitter: emit per-kind interfaces with top-level named fields + optional `$children` in `packages/codegen/src/emitters/types.ts`
 - [ ] T028 [US4] Update factory emitter: assign named members top-level in `packages/codegen/src/emitters/factories.ts`
 - [ ] T029 [US4] [P] Update readNode: assign field values top-level in `packages/core/src/readNode.ts`
-- [ ] T030 [US4] [P] Update Rust `NodeData`: `#[serde(flatten)]` members in `rust/crates/sittir-core/src/types.rs`
+- [ ] T030 [US4] [P] Update Rust `NodeData`: napi direct property read/write for named members in `rust/crates/sittir-core/src/types.rs`
 - [ ] T031 [US4] [P] Update Rust `read_node.rs`: top-level member assignment
 - [ ] T032 [US4] Update render: read from top-level keys in `packages/core/src/render.ts`
 - [ ] T033 [US4] Terminal hoisting in factory emitter: store terminal values as strings in `packages/codegen/src/emitters/factories.ts`
