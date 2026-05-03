@@ -1,29 +1,67 @@
-# Data Model: 022 Binding/Simplify/Assemble + De-hoisted NodeData
+# Data Model: 022 De-hoisted NodeData
 
-## Core Entities
+Source of truth: `docs/adr/0018-dehoist-nodedata-surface.md`
 
-### AnyNodeData (runtime surface)
+## Runtime Surface (what consumers hold)
 
-One frozen shape for all nodes. Named members are top-level keys. At most
-one unnamed slot maps to `$child` (singular) or `$children` (array).
+Frozen object with three namespaces:
 
-| Field | Type | Required | Notes |
-|-------|------|----------|-------|
-| `$type` | `number \| string` | Yes | Numeric TSKindId or string for synthesized kinds |
-| `$source` | `0 \| 1 \| 2` | No | 0=ts, 1=sg, 2=factory |
-| `$variant` | `string` | No | Variant subtype name |
-| `$text` | `string` | No | Source text (always on leaves, debug-only on branches) |
-| `$span` | `{ start, end }` | No | Byte offset span |
-| `$nodeHandle` | `number` | No | Index into engine's node table (ADR-0017) |
-| `$childIndex` | `number` | No | Position in parent's child array (ADR-0017) |
-| `$named` | `boolean` | No | Named vs anonymous node |
-| `$trivia` | `NodeTrivia` | No | Leading/trailing comments |
-| `$format` | `FormatRecord` | No | Per-node format override |
-| `$child` | `NodeMemberValue` | No | Single unnamed constituent (mutually exclusive with `$children`) |
-| `$children` | `readonly NodeMemberValue[]` | No | Repeated unnamed constituents (mutually exclusive with `$child`) |
-| `[fieldName]` | `NodeMemberValue` | Varies | De-hoisted named members (from slots with `edgeName`) |
+### `$`-prefixed — metadata + methods (sittir-owned)
 
-Object is **frozen**. `$with` returns a new frozen node.
+| Key | Type | Enumerable | Notes |
+|-----|------|-----------|-------|
+| `$type` | `number \| string` | Yes | TSKindId or synthesized kind name |
+| `$source` | `0 \| 1 \| 2` | Yes | 0=ts, 1=sg, 2=factory |
+| `$named` | `boolean` | Yes | Named vs anonymous |
+| `$text` | `string` | Yes | Leaf text / debug branch text |
+| `$span` | `{ start, end }` | Yes | Byte offset span |
+| `$nodeHandle` | `number` | Yes | Engine node table index (ADR-0017) |
+| `$childIndex` | `number` | Yes | Position in parent children (ADR-0017) |
+| `$variant` | `string` | Yes | Variant subtype |
+| `$trivia` | `NodeTrivia` | Yes | Leading/trailing comments |
+| `$format` | `FormatRecord` | Yes | Per-node format override |
+| `$child` | `NodeMemberValue` | Yes | Single unnamed constituent |
+| `$children` | `NodeMemberValue[]` | Yes | Repeated unnamed constituents |
+| `$with` | `{ field(v) }` | No | Immutable updaters |
+| `$render()` | `() => string` | No | Render to source |
+| `$toEdit()` | `(...) => Edit` | No | Create edit |
+| `$replace()` | `(target) => Edit` | No | Replace target |
+| `$trivia()` | `(...) => Node` | No | Attach comments |
+
+### `_`-prefixed — storage (private data)
+
+| Key | Type | Enumerable | Notes |
+|-----|------|-----------|-------|
+| `_fieldName` | `NodeMemberValue` | Yes | Stored value for each named slot |
+
+Terminal slots store plain strings. Nonterminal slots store NodeData
+(or drill-in stubs with `$nodeHandle` + `$childIndex`).
+
+### Unprefixed — accessor functions (consumer API)
+
+| Key | Type | Enumerable | Notes |
+|-----|------|-----------|-------|
+| `fieldName` | `() => NodeMemberValue` | **No** | Call = resolve value. Reference = cursor handle. |
+
+`fn.name` = cursor/traversal handle (the function reference).
+`fn.name()` = resolved value (call evaluates).
+
+Future: cursor can grow methods (`parent()`, `next()`, `children()`, `kind`).
+
+### NodeMemberValue
+
+```
+NodeMemberValue = AnyNodeData | string | number
+```
+
+### $child / $children (mutually exclusive)
+
+At most ONE unnamed slot per kind:
+- `$child: NodeMemberValue` — singular arity
+- `$children: NodeMemberValue[]` — array arity
+- Neither present — all members are named
+
+Determined by the slot's values' multiplicity in the assembled model.
 
 ### NodeMemberValue (replaces NodeFieldValue + NodeChildValue)
 
