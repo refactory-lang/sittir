@@ -662,6 +662,9 @@ export interface ValidateRoundTripOptions {
 	/** Backend to use for `buildReadHandle`. When provided, takes
 	 *  precedence over `process.env.SITTIR_BACKEND`. */
 	backend?: 'native' | 'typescript';
+	/** When true, deep-read ALL named kinds (not just variant-adopted).
+	 *  Exercises full recursive materialization before render. */
+	recursive?: boolean;
 }
 
 export async function validateRoundTrip(
@@ -709,13 +712,17 @@ export async function validateRoundTrip(
 		: rawKindIdFromName;
 	// Phase D: $type is numeric; translate string kind names to numeric IDs for
 	// _deepReadNode's Set<number> membership check.
-	const deepReadKinds: ReadonlySet<number> = kindIdFromName
-		? new Set(
-				[...deepReadKindNames]
-					.map((k) => kindIdFromName(k))
-					.filter((id): id is number => id !== undefined)
-		  )
-		: new Set<number>();
+	// When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
+	const { recursive } = options;
+	const deepReadKinds: ReadonlySet<number> = recursive
+		? { has: () => true } as ReadonlySet<number>
+		: kindIdFromName
+			? new Set(
+					[...deepReadKindNames]
+						.map((k) => kindIdFromName(k))
+						.filter((id): id is number => id !== undefined)
+			  )
+			: new Set<number>();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {

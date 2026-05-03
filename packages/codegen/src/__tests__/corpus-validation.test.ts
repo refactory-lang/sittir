@@ -221,6 +221,17 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 		}, 60000);
 
+		it(`deep round-trip (recursive read → render → reparse)`, async () => {
+			// Full recursive read — deep-reads ALL named kinds, not just
+			// variant-adopted. Exercises full materialization path.
+			// Native parse + native render + recursive drill-in.
+			const templatesPath = resolveTemplatesPath(grammar);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native', recursive: true });
+
+			// Report deep RT numbers — floor enforcement added once baseline stabilizes.
+			expect(result.pass).toBeGreaterThan(0);
+		}, 120000);
+
 		it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
 			const templatesPath = resolveTemplatesPath(grammar);
 			const result = validateTemplateCoverage(grammar, templatesPath);
