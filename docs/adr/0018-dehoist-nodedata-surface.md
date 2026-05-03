@@ -73,22 +73,24 @@ const fn = {
 5. **napi direct** — Rust crosses the boundary via `FromNapiValue`/`ToNapiValue` reading/writing JS object properties directly. No serde JSON round-trip.
 6. **`$child` XOR `$children`** — at most one unnamed slot per kind. `$child` for singular arity, `$children` for array arity. Determined by the slot's values' multiplicity.
 
-### Assembled model (taxonomy DRAFT)
+### Assembled model (taxonomy — finalized 2026-05-03)
 
-Agreed direction but not finalized:
 - `AssembledBranch` absorbs Container + Multi (one structural type)
-- `AssembledNonterminal` replaces Field + Child (one slot type, `edgeName?` distinguishes)
-- `AssembledLeaf` base for non-branch kinds (Pattern/Keyword/Token/Enum)
-- Polymorph + Supertype stay
-
-Final taxonomy deferred — needs more thought on whether Multi truly
-goes away and exact Polymorph boundary.
+- `AssembledNonterminal` replaces Field + Child (one slot type, `edgeName?`
+  distinguishes named vs unnamed; `values[]` carries multiplicity)
+- `AssembledLeaf` base for non-branch kinds with subtypes:
+  - `AssembledPattern` (open text, optional regex)
+  - `AssembledKeyword` (single fixed named string)
+  - `AssembledToken` (single fixed anonymous string)
+  - `AssembledEnum` (closed set of literals)
+- `AssembledPolymorph` (absorbs `AssembledGroup` as inline form property)
+- `AssembledSupertype` stays
 
 ### Migration strategy
 
 - **Incremental** — each commit passes native RT (≥114/124/108) + type-check (0 errors)
-- **Surface-first** — implement the runtime surface change first, then refactor internals (Binding/Simplify/Assemble) to target it
-- **Greppable transforms** for consumers: `.$fields.` → `._`, `.name()` getter stays, `.name(v)` setter → `.$with.name(v)`, `.render()` → `.$render()`
+- **Taxonomy-first** (revised 2026-05-03) — the assembled model collapse lands BEFORE the surface change so emitters consume the final model from day one (no transient adapter layer). Phase order: (1) Taxonomy rename, (2) Surface, (3) Transport, (4) Internal pipeline rewrite (Binding/Simplify produce the new taxonomy from scratch).
+- **Greppable transforms** for consumers: `.$fields.<name>` → `.<name>()`, `.name(v)` setter → `.$with.name(v)`, `.render()` → `.$render()`
 
 ## Alternatives Considered
 

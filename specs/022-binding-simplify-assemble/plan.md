@@ -1,49 +1,65 @@
-# Implementation Plan: Binding, Simplify, Assemble + De-hoisted NodeData
+# Implementation Plan: De-hoisted NodeData Surface
 
 **Branch**: `022-binding-simplify-assemble` | **Date**: 2026-05-03 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/022-binding-simplify-assemble/spec.md`
+**Source of truth**: `docs/adr/0018-dehoist-nodedata-surface.md`
 
 ## Summary
 
-Re-architect the codegen compiler pipeline into three clear phases
-(Binding → Simplify → Assemble) that produce a constituent-oriented
-model. Then apply that model to the consumer surface: remove `$fields`,
-de-hoist named members to top-level, replace fluent methods with `$with`
-namespace, `$`-prefix all sittir methods, and unify factory/wrap
-surfaces. Terminal values stored as plain strings; nonterminal values
-stored as NodeData stubs with drill-in.
+Replace the `$fields`-wrapped NodeData with a flat surface that uses `_`-prefixed
+storage, non-enumerable function-call accessors with cursor/value duality, frozen
+objects, a `$with` namespace for immutable updates, and `$`-prefixed methods.
+Cross the napi boundary via direct property access. Land in four phases:
+**taxonomy** (collapse AssembledField/Child/Multi into AssembledNonterminal,
+AssembledLeaf base), **surface** (consumer-visible NodeData reshape), **transport**
+(napi direct), **internals** (Binding/Simplify pipeline rewrite producing the new
+taxonomy from scratch).
 
 ## Technical Context
 
-**Language/Version**: TypeScript 6.0.2 (ESM), Rust 1.88+
-**Primary Dependencies**: `@sittir/core`, `@sittir/types`, `@sittir/codegen`, tree-sitter, napi-rs 3, Askama 0.15
-**Storage**: File system (generated TS/Rust per grammar)
-**Testing**: Vitest (TS), cargo test (Rust), native RT validator (Askama), factory round-trip
-**Target Platform**: Node.js (ESM), Rust (napi + wasm)
-**Project Type**: Code generation library / compiler pipeline
-**Performance Goals**: Native RT ≥114/124/108 (python/rust/typescript). Factory RT failures → 0.
-**Constraints**: Zero runtime dependencies in generated packages. Incremental migration — each commit passes tests.
-**Scale/Scope**: 3 grammars (rust/typescript/python), ~15K lines generated per grammar, ~2700 lines in render-module emitter.
+**Language/Version**: TypeScript 6.0.2 (workspace ESM, `.ts` extensions in imports), Rust 1.88+
+**Primary Dependencies**: `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace); `napi-rs` 3, `web-tree-sitter` 0.26.7, `askama` 0.15
+**Storage**: File system — generated TS/Rust per grammar package; no runtime persistence
+**Testing**: Vitest (TS), `cargo test` (Rust); native corpus RT (3 modes: shallow, deep, factory)
+**Target Platform**: Node.js 20+ for TS surface; native Rust addon via napi for parse + render
+**Project Type**: Compiler / library — codegen pipeline + per-grammar emitted runtime
+**Performance Goals**: Native render path with zero JSON serialization in the call path; door-to-door render not regressed vs current native baseline
+**Constraints**: Each commit MUST pass native RT (python ≥114, rust ≥124, typescript ≥108) AND `pnpm -r run type-check` with zero errors AND `cargo build -p sittir-{rust,typescript,python}` clean
+**Scale/Scope**: 3 grammars (rust, typescript, python), ~280 generated factory files, ~1,500 lines of fluent-method emission to remove per grammar
 
 ## Constitution Check
 
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 | Principle | Status | Notes |
-|-----------|--------|-------|
-| I. Grammar Alignment | ✅ Pass | `$child`/`$children` align with tree-sitter conventions. Named members use raw grammar field names. |
-| II. Fewer Abstractions | ✅ Pass | Removes `$fields` wrapper, `NodeFieldValue`/`NodeChildValue` split, per-field fluent methods. Net -1500 lines. |
-| III. Generated vs Hand-Written | ✅ Pass | Changes are in emitters (codegen) and core runtime. Generated output regenerated, never hand-edited. |
-| IV. Test-First | ✅ Pass | Each phase validated by native RT (≥114/124/108) + factory RT (→0). |
-| V. Library-First | ✅ Pass | `$with` is the consumer API. No CLI/formatting concerns. |
-| VI. Deterministic Output | ✅ Pass | Same grammar → same output. No new sources of nondeterminism. |
-| VII. Grammar-Agnostic Pipeline | ✅ Pass | Binding/Simplify/Assemble are grammar-agnostic. Terminal classification derives from the rule tree. |
-| VIII. Non-lossy Transformations | ✅ Pass | Constituent model preserves all rule-tree information. `RuleId` provenance carried forward. |
-| IX. Core is Rust-port surface | ✅ Pass | `withMethods` is JS-side generated code, not core. `readNode` changes are minimal. Rust `NodeData` uses `#[serde(flatten)]`. |
-| X. Don't hand-roll types | ✅ Pass | `NodeMemberValue` unifies existing types, doesn't create new abstractions. |
-| XI. DRY | ✅ Pass | Central goal: one constituent model → one derivation for all emitters. Eliminates the `$fields`/`$children` dual-ontology. |
+|---|---|---|
+| I. Grammar Alignment | ✓ | Surface keeps `kind`, `field`, `named`, `anonymous`. The `$`/`_` namespacing is sittir-internal; consumer-facing names align with tree-sitter terms. |
+| II. Fewer Abstractions | ✓ | Removes per-field fluent-method emission (~1,500 lines/grammar). Removes `$fields` wrapper. Unifies `NodeFieldValue`/`NodeChildValue` into `NodeMemberValue`. Net: fewer types and indirection. |
+| III. Generated vs Hand-Written | ✓ | All node-shape changes flow through emitters (`factories.ts`, `wrap.ts`, `client-utils.ts`, `types.ts`). Generated headers preserved. Hand-written `@sittir/core` stays minimal. |
+| IV. Test-First | ✓ | Native RT (shallow + deep + factory) is the gate. Each phase commit must pass. New behavior (`Object.isFrozen`, accessor non-enumerability, `$with` chain) gets explicit tests in `packages/codegen/src/__tests__/`. |
+| V. Library-First | ✓ | No CLI / formatting / linting changes. `Edit` boundary unchanged. `RenderContext` unchanged. |
+| VI. Deterministic Output | ✓ | Codegen remains deterministic. Frozen-at-construction does not introduce ordering nondeterminism (Object.freeze is a single-step operation). |
+| VII. Grammar-Agnostic Pipeline | ✓ | Surface change is grammar-agnostic — applies identically to rust/typescript/python. No language-specific conditionals introduced. |
+| VIII. Non-lossy Transformations | ✓ | All field information preserved through new shape. Storage moves from `$fields.name` to `_name`; same data, different key. Fluent setters become `$with.name(v)`; same operation, different surface. |
+| IX. @sittir/core surface | ✓ | Core gains: `withMethods` helper, `$with` factory plumbing, drill-in materialization. All have clean Rust analogues (Rust side already has node table + child-index handles per ADR-0017). |
+| X. Don't hand-roll types | ✓ | `AnyNodeData`, `NodeMemberValue` defined once in `@sittir/types`, imported everywhere. No per-grammar redeclaration. |
+| XI. DRY — One Source, One Derivation | ✓ | Unified factory/wrap surface = one source for node shape. `withMethods` shared helper = one derivation of method emission. Terminal/nonterminal classification flows from one assembled model to all emitters. |
 
-No violations. No Complexity Tracking needed.
+**Result**: PASS — no violations. No entries in Complexity Tracking required.
+
+### Post-Phase-1 design re-check (2026-05-03)
+
+After taxonomy-first phase reordering and contracts/ generation, all
+principles still hold:
+
+| Principle | Re-check |
+|---|---|
+| II. Fewer Abstractions | ✓ Strengthened — taxonomy collapse removes 4 types (`AssembledField`, `AssembledChild`, `AssembledMulti`, `AssembledGroup`) before emitter changes touch them. |
+| III. Generated vs Hand-Written | ✓ Phase 1 success criterion is byte-identical generated output — proves the rename is non-lossy. |
+| VIII. Non-lossy | ✓ Phase 1 byte-identity gate is the strongest possible non-lossy assertion. |
+| XI. DRY | ✓ Strengthened — taxonomy-first means emitters consume one model instead of straddling two through Phases 1-2. |
+
+No new violations introduced. Complexity Tracking remains empty.
 
 ## Project Structure
 
@@ -51,63 +67,124 @@ No violations. No Complexity Tracking needed.
 
 ```text
 specs/022-binding-simplify-assemble/
-├── spec.md              # Feature specification (amended)
 ├── plan.md              # This file
-├── research.md          # Phase 0 output
-├── data-model.md        # Phase 1 output
-├── rt-failure-inventory.md  # RT numbers + failure analysis
-├── rt-failure-details.md    # Per-kind failure breakdown
-└── rt-failure-details-adr017.md  # ADR-0017 branch details
+├── research.md          # Phase 0 — design decisions traced to ADR-0018
+├── data-model.md        # Phase 1 — runtime surface + assembled model (DRAFT taxonomy)
+├── quickstart.md        # Phase 1 — onboarding for new contributors
+├── contracts/           # Phase 1 — public API contracts (NodeData shape, factory signature, $with namespace)
+├── tasks.md             # Phase 2 — surface-first task order (created by /speckit.tasks)
+└── checklists/
+    └── requirements.md  # Spec quality checklist
 ```
 
 ### Source Code (repository root)
 
 ```text
-packages/types/src/
-├── core-types.ts        # AnyNodeData, NodeMemberValue, NodeBase, NodeWithChildren, NodeWithChild
-└── index.ts             # Re-exports
-
+# Hand-written runtime layer (Rust-port surface — keep minimal per Principle IX)
 packages/core/src/
-├── readNode.ts          # Top-level field assignment (de-hoist)
-├── render.ts            # Top-level field reading (de-hoist)
-└── engine.ts            # $source numeric, readNode dispatch
+├── engine.ts                # ParsedTree + render entry (ADR-0017 landed)
+├── readNode.ts              # TreeHandle navigation; produces wrap NodeData
+├── render.ts                # Template-driven render
+├── nodeData.ts              # NEW: withMethods + freeze + $with factory plumbing
+└── types.ts                 # Re-exports from @sittir/types
 
+# Pure type definitions (zero runtime)
+packages/types/src/
+├── core-types.ts            # NodeBase + AnyNodeData union (will gain frozen brand)
+├── node-member-value.ts     # NEW: unified NodeMemberValue type
+└── tree.ts                  # AnyTreeNode, TreeNodeOf<T> (unchanged)
+
+# Codegen pipeline (TS-only — produces per-grammar packages)
 packages/codegen/src/
 ├── compiler/
-│   ├── bind.ts          # NEW: Binding phase
-│   ├── simplify.ts      # MODIFY: Simplify phase (constituent model)
-│   ├── assemble.ts      # MODIFY: Assemble from constituents
-│   ├── node-map.ts      # MODIFY: AssembledNode — constituent-based
-│   └── types.ts         # MODIFY: BindingResult, constituent types
+│   ├── binding.ts           # NEW (Phase 4): terminal-to-nonterminal binding
+│   ├── simplify.ts          # NEW (Phase 4): wrapper push-down
+│   ├── assemble.ts          # MODIFIED (Phase 1 rename, Phase 4 rewrite): emit AssembledNonterminal/Pattern/Keyword/Token/Enum
+│   ├── node-map.ts          # MODIFIED (Phase 1): collapse Field+Child+Multi into Nonterminal; AssembledLeaf base
+│   └── template-walker.ts   # MODIFIED (Phase 1): read new assembled types when producing Jinja-renderable structures
 ├── emitters/
-│   ├── types.ts         # MODIFY: Shape A/B/C interfaces, $with types
-│   ├── factories.ts     # MODIFY: De-hoist, $with namespace, withMethods
-│   ├── wrap.ts          # MODIFY: drillIn getters + $with
-│   ├── client-utils.ts  # MODIFY: Transport projection (identity for terminals)
-│   └── render-module.ts # MODIFY: Rust transport — flatten + MemberValue
-└── validate/
-    └── roundtrip.ts     # Native render path (already done)
+│   ├── factories.ts         # MODIFIED (Phase 2): emit _-storage + accessors + $with + freeze
+│   ├── wrap.ts              # MODIFIED (Phase 2): emit accessors with drillIn + $with
+│   ├── types.ts             # MODIFIED (Phase 2): drop $fields from interfaces
+│   ├── templates.ts         # MODIFIED (Phase 1): read new assembled types when emitting per-rule .jinja files
+│   ├── client-utils.ts      # MODIFIED (Phase 3): identity projection for terminals
+│   └── render-module.ts     # MODIFIED (Phase 3): napi direct property access
+├── scripts/
+│   └── probe-kind.ts        # diagnostic — used during migration
+└── __tests__/
+    ├── corpus-validation.test.ts  # RT gate (3 modes — already enforced)
+    ├── nodedata-shape.test.ts     # NEW: Object.isFrozen, key enumeration, $with chain
+    └── napi-direct.test.ts        # NEW (Phase 2): assert no JSON in render path
 
-rust/crates/sittir-core/src/
-├── types.rs             # NodeData flatten + MemberValue enum
-└── read_node.rs         # Top-level field assignment
-
+# Generated per-grammar packages (output of codegen — never hand-edited)
 packages/{rust,typescript,python}/src/
-├── types.ts             # Regenerated: Shape A/B/C interfaces
-├── factories.ts         # Regenerated: $with + withMethods
-├── wrap.ts              # Regenerated: drillIn + $with
-└── utils.ts             # Regenerated: transport projection
+├── factories.ts             # _-storage + accessor + $with (Phase 1 reshapes)
+├── wrap.ts                  # accessor with drillIn (Phase 1 reshapes)
+├── types.ts                 # drop $fields wrapper (Phase 1 reshapes)
+├── from.ts                  # unchanged — calls factory; surface change transparent
+├── ir.ts                    # unchanged — calls factory
+├── consts.ts                # unchanged
+└── index.ts                 # unchanged
+
+# Native (Rust) per-grammar crates
+rust/crates/sittir-{rust,typescript,python}-napi/src/
+└── lib.rs                   # MODIFIED (Phase 2): napi direct read of _-prefixed properties
+rust/crates/sittir-core/src/
+├── engine.rs                # ParsedTree + node table (ADR-0017 landed)
+├── types.rs                 # NodeData — Phase 2 napi-direct read/write
+└── render.rs                # Askama-based render entry
 ```
 
-**Structure Decision**: Existing workspace structure. No new packages or directories beyond `compiler/bind.ts`.
+**Structure Decision**: This is a **monorepo with codegen + generated outputs**. The
+codegen pipeline (`packages/codegen/`) is the source of truth for generated files
+under `packages/{rust,typescript,python}/`. Hand-written runtime lives in
+`packages/core/`, `packages/types/`, and `rust/crates/sittir-core/`. Native render
+lives in per-grammar napi crates. The phase ordering in `Source Code` annotations
+above mirrors the spec's surface-first → transport → internals progression.
 
-## Risks
+## Phase Ordering
 
-Per the design doc (`docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md`):
+Taxonomy lands first so emitters consume the new model from day one (no transient
+adapter layer). Pipeline rewrite (Binding/Simplify) is the last phase — it produces
+the new taxonomy from scratch instead of reaching it through current Assemble.
 
-| Risk | Mitigation |
-|------|-----------|
-| Confusing CST surface with compiler ontology | Three-axis separation enforced: ontology / naming / CST surface are distinct (data-model.md). Binding classifies by RULE semantics, not by tree-sitter `named`/`anonymous`. |
-| Overloading 022 with ontology work | 021 owns identity/classification. 022 only CONSUMES 021's model — never reclassifies (FR-003). |
-| Partial pipeline migration | FR-012 forbids it. Each phase verified by three RT modes. No half-pushed-down state allowed. |
-| De-hoist breaking consumers | Greppable transforms documented in migration section. Incremental phases — each passes tests. |
+**Phase 1 — Taxonomy rename (no behavior change)**
+- Collapse `AssembledField` + `AssembledChild` into `AssembledNonterminal`
+  (`edgeName?` distinguishes named vs unnamed; `values[]` carries multiplicity).
+- Remove `AssembledMulti` — multiplicity lives on slot `values`.
+- Introduce `AssembledLeaf` base class.
+- Rename `AssembledLeaf` (current open-text type) → `AssembledPattern`.
+- Keep `AssembledKeyword`, `AssembledToken`, `AssembledEnum` (extend `AssembledLeaf`).
+- Absorb `AssembledGroup` into `AssembledPolymorph`.
+- Update all readers (emitters, validators, walkers) to consume new types.
+- **Gate**: pure rename — RT must be byte-identical to before.
+
+**Phase 2 — Surface (consumer-visible NodeData reshape)**
+- De-hoist `$fields` to `_`-prefixed storage on factory output.
+- Add non-enumerable accessor functions (call returns value).
+- Freeze nodes at construction.
+- Replace per-field fluent methods with `$with` namespace.
+- Unify wrap and factory output (same accessor + `$with` API; wrap accessors do drill-in).
+- Move all sittir methods to `$`-prefix; introduce `withMethods` shared helper.
+- Drop `$fields` from generated `types.ts`.
+- **Gate**: native RT floors hold; new shape tests pass (Object.isFrozen, key enumeration, `$with` chain).
+
+**Phase 3 — Transport (cross-boundary efficiency)**
+- napi direct: read `_`-prefixed properties as JS object properties (no JSON round-trip).
+- Identity projection: terminal slot values stored as plain strings match transport shape.
+- Verify no JSON serialization remains in native render call path.
+- **Gate**: native RT floors hold; factory ceilings drop toward zero; napi-direct test passes.
+
+**Phase 4 — Internals (pipeline rewrite)**
+- Binding: attach terminals to nonterminal constituents.
+- Simplify: push wrapper behavior down onto constituents.
+- Assemble: materialize kinds from normalized constituents; drop compatibility shims from earlier phases.
+- **Gate**: native RT floors hold; factory ceilings at zero; no compatibility shims remain.
+
+Each phase MUST pass native RT (python ≥114, rust ≥124, typescript ≥108) AND
+type-check with zero errors AND `cargo build -p sittir-{rust,typescript,python}`
+clean before proceeding to the next.
+
+## Complexity Tracking
+
+> No constitution violations. Section intentionally empty.
