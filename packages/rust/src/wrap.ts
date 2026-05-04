@@ -12,17 +12,13 @@ import { TSKindId } from './types.js';
 import { render, toEdit } from './boundary.ts';
 import * as _factories from './factories.js';
 
-// ADR-0018 Phase 2: reads a raw field value from incoming data — handles both
-// the old $fields wrapper (from readNode in @sittir/core) and the new _<name>
-// de-hoisted storage (from factory or prior wrap output).
+// ADR-0018 Phase 3a: reads a raw field value from incoming data.
+// readNode emits `_<name>` top-level keys directly; factory output does the same.
+// Both sources are unified — no legacy wrapper prefix needed.
 function readRawField(data: AnyNodeData, rawName: string): unknown {
   // as unknown as: AnyNodeData lacks an index signature in TS6 — bridge through unknown.
   const rec = data as unknown as Record<string, unknown>;
-  const dehoisted = rec['_' + rawName];
-  if (dehoisted !== undefined) return dehoisted;
-  const fields = rec['$fields'] as Record<string, unknown> | null | undefined;
-  if (fields && typeof fields === 'object') return fields[rawName];
-  return undefined;
+  return rec['_' + rawName];
 }
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -62,7 +58,6 @@ export function wrap_ClosureExpressionExpr(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId._ClosureExpressionExpr as number,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -78,7 +73,6 @@ export function wrap_DelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId._DelimTokenTreeBrace as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_delimTokenTreeBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -89,7 +83,6 @@ export function wrap_DelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId._DelimTokenTreeBracket as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_delimTokenTreeBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -100,7 +93,6 @@ export function wrap_DelimTokenTreeParen(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId._DelimTokenTreeParen as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_delimTokenTreeParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -111,7 +103,6 @@ export function wrap_ExpressionStatementBlockEnding(data: _NodeData, tree: TreeH
     $type: TSKindId._ExpressionStatementBlockEnding as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_expressionStatementBlockEnding']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -122,7 +113,6 @@ export function wrap_ExpressionStatementWithSemi(data: _NodeData, tree: TreeHand
     $type: TSKindId._ExpressionStatementWithSemi as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_expressionStatementWithSemi']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -133,7 +123,6 @@ export function wrapFieldIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.FieldIdentifier as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['fieldIdentifier']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -144,7 +133,6 @@ export function wrap_FieldPatternShorthand(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId._FieldPatternShorthand as number,
     _name: readRawField(data, 'name'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillAs((this as Record<string,unknown>)['_name'], tree, "shorthand_field_identifier", "identifier"); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get name() { return (_node as any)['name']?.(); },
@@ -160,7 +148,6 @@ export function wrap_ForeignModItemBody(data: _NodeData, tree: TreeHandle): AnyN
     $type: TSKindId._ForeignModItemBody as number,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -176,7 +163,6 @@ export function wrapFunctionTypeFnForm(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.FunctionTypeFnForm as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['functionTypeFnForm']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -187,7 +173,6 @@ export function wrapFunctionTypeTraitForm(data: _NodeData, tree: TreeHandle): An
     $type: TSKindId.FunctionTypeTraitForm as number,
     _trait: readRawField(data, 'trait'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'trait', { value: function() { return drillIn((this as Record<string,unknown>)['_trait'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get trait() { return (_node as any)['trait']?.(); },
@@ -203,7 +188,6 @@ export function wrap_ImplItemBody(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId._ImplItemBody as number,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -219,7 +203,6 @@ export function wrapLetChain(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.LetChain as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['letChain']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -230,7 +213,6 @@ export function wrap_MacroDefinitionBrace(data: _NodeData, tree: TreeHandle): An
     $type: TSKindId._MacroDefinitionBrace as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_macroDefinitionBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -241,7 +223,6 @@ export function wrap_MacroDefinitionBracket(data: _NodeData, tree: TreeHandle): 
     $type: TSKindId._MacroDefinitionBracket as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_macroDefinitionBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -252,7 +233,6 @@ export function wrap_MacroDefinitionParen(data: _NodeData, tree: TreeHandle): An
     $type: TSKindId._MacroDefinitionParen as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_macroDefinitionParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -263,7 +243,6 @@ export function wrap_MatchArmBlockEnding(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId._MatchArmBlockEnding as number,
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get value() { return (_node as any)['value']?.(); },
@@ -279,7 +258,6 @@ export function wrap_ModItemInline(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId._ModItemInline as number,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -295,7 +273,6 @@ export function wrap_PointerTypeMut(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId._PointerTypeMut as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_pointerTypeMut']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -306,7 +283,6 @@ export function wrap_RangeExpressionBare(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId._RangeExpressionBare as number,
     _operator: readRawField(data, 'operator'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'operator', { value: function() { return drillIn((this as Record<string,unknown>)['_operator'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get operator() { return (_node as any)['operator']?.(); },
@@ -322,7 +298,6 @@ export function wrapReferenceExpressionRawMut(data: _NodeData, tree: TreeHandle)
     $type: TSKindId.ReferenceExpressionRawMut as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['referenceExpressionRawMut']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -333,7 +308,6 @@ export function wrap_TokenTreeBrace(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId._TokenTreeBrace as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreeBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -344,7 +318,6 @@ export function wrap_TokenTreeBracket(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId._TokenTreeBracket as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreeBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -355,7 +328,6 @@ export function wrap_TokenTreeParen(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId._TokenTreeParen as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreeParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -366,7 +338,6 @@ export function wrap_TokenTreePatternBrace(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId._TokenTreePatternBrace as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreePatternBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -377,7 +348,6 @@ export function wrap_TokenTreePatternBracket(data: _NodeData, tree: TreeHandle):
     $type: TSKindId._TokenTreePatternBracket as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreePatternBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -388,7 +358,6 @@ export function wrap_TokenTreePatternParen(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId._TokenTreePatternParen as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_tokenTreePatternParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -399,7 +368,6 @@ export function wrapTypeIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TypeIdentifier as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeIdentifier']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -410,7 +378,6 @@ export function wrap_VisibilityModifierCrate(data: _NodeData, tree: TreeHandle):
     $type: TSKindId._VisibilityModifierCrate as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_visibilityModifierCrate']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -422,7 +389,6 @@ export function wrapAbstractType(data: _NodeData, tree: TreeHandle): AnyNodeData
     _type_parameters: readRawField(data, 'type_parameters'),
     _trait: readRawField(data, 'trait'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'trait', { value: function() { return drillIn((this as Record<string,unknown>)['_trait'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -440,7 +406,6 @@ export function wrapArguments(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Arguments as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['arguments_']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -451,7 +416,6 @@ export function wrapArrayExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.ArrayExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -467,7 +431,6 @@ export function wrapArrayType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _element: readRawField(data, 'element'),
     _length: readRawField(data, 'length'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'element', { value: function() { return drillIn((this as Record<string,unknown>)['_element'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'length', { value: function() { return drillIn((this as Record<string,unknown>)['_length'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -486,7 +449,6 @@ export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): Any
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'right', { value: function() { return drillIn((this as Record<string,unknown>)['_right'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -507,7 +469,6 @@ export function wrapAssociatedType(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _bounds: readRawField(data, 'bounds'),
     _where_clause: readRawField(data, 'where_clause'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'bounds', { value: function() { return drillIn((this as Record<string,unknown>)['_bounds'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -530,7 +491,6 @@ export function wrapAsyncBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _move_marker: readRawField(data, 'move_marker'),
     _block: readRawField(data, 'block'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'moveMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_move_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'block', { value: function() { return drillIn((this as Record<string,unknown>)['_block'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -548,7 +508,6 @@ export function wrapAttribute(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Attribute as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -563,7 +522,6 @@ export function wrapAttributeItem(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.AttributeItem as number,
     _attribute: readRawField(data, 'attribute'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'attribute', { value: function() { return drillIn((this as Record<string,unknown>)['_attribute'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get attribute() { return (_node as any)['attribute']?.(); },
@@ -579,7 +537,6 @@ export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.AwaitExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['awaitExpression']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -590,7 +547,6 @@ export function wrapBaseFieldInitializer(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.BaseFieldInitializer as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['baseFieldInitializer']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -603,7 +559,6 @@ export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle): AnyNode
     _operator: readRawField(data, 'operator'),
     _right: readRawField(data, 'right'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'operator', { value: function() { return drillIn((this as Record<string,unknown>)['_operator'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'right', { value: function() { return drillIn((this as Record<string,unknown>)['_right'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -624,7 +579,6 @@ export function wrapBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _label: readRawField(data, 'label'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get label() { return (_node as any)['label']?.(); },
@@ -642,7 +596,6 @@ export function wrapBlockComment(data: _NodeData, tree: TreeHandle): AnyNodeData
     _doc: readRawField(data, 'doc'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'doc', { value: function() { return drillAs((this as Record<string,unknown>)['_doc'], tree, "doc_comment", "_block_comment_content"); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get doc() { return (_node as any)['doc']?.(); },
@@ -660,7 +613,6 @@ export function wrapBoundedType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'right', { value: function() { return drillIn((this as Record<string,unknown>)['_right'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -678,7 +630,6 @@ export function wrapBracketedType(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.BracketedType as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['bracketedType']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -690,7 +641,6 @@ export function wrapBreakExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _label: readRawField(data, 'label'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get label() { return (_node as any)['label']?.(); },
@@ -708,7 +658,6 @@ export function wrapCallExpression(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _function: readRawField(data, 'function'),
     _arguments: readRawField(data, 'arguments'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'function', { value: function() { return drillIn((this as Record<string,unknown>)['_function'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'arguments', { value: function() { return drillIn((this as Record<string,unknown>)['_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -727,7 +676,6 @@ export function wrapCapturedPattern(data: _NodeData, tree: TreeHandle): AnyNodeD
     _identifier: readRawField(data, 'identifier'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'identifier', { value: function() { return drillIn((this as Record<string,unknown>)['_identifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get identifier() { return (_node as any)['identifier']?.(); },
@@ -743,7 +691,6 @@ export function wrapClosureExpressionExpr(data: _NodeData, tree: TreeHandle): An
     ...data,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -763,7 +710,6 @@ export function wrapClosureExpression(data: _NodeData, tree: TreeHandle): AnyNod
     _parameters: readRawField(data, 'parameters'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'staticMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_static_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'asyncMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_async_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'moveMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_move_marker'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -786,7 +732,6 @@ export function wrapClosureParameters(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.ClosureParameters as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['closureParameters']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -799,7 +744,6 @@ export function wrapCompoundAssignmentExpr(data: _NodeData, tree: TreeHandle): A
     _operator: readRawField(data, 'operator'),
     _right: readRawField(data, 'right'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'operator', { value: function() { return drillIn((this as Record<string,unknown>)['_operator'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'right', { value: function() { return drillIn((this as Record<string,unknown>)['_right'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -819,7 +763,6 @@ export function wrapConstBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.ConstBlock as number,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -838,7 +781,6 @@ export function wrapConstItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _type: readRawField(data, 'type'),
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -862,7 +804,6 @@ export function wrapConstParameter(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _type: readRawField(data, 'type'),
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -882,7 +823,6 @@ export function wrapContinueExpression(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.ContinueExpression as number,
     _label: readRawField(data, 'label'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get label() { return (_node as any)['label']?.(); },
@@ -898,7 +838,6 @@ export function wrapDeclarationList(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.DeclarationList as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['declarationList']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -908,7 +847,6 @@ export function wrapDelimTokenTreeParen(data: _NodeData, tree: TreeHandle): AnyN
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['delimTokenTreeParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -918,7 +856,6 @@ export function wrapDelimTokenTreeBracket(data: _NodeData, tree: TreeHandle): An
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['delimTokenTreeBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -928,7 +865,6 @@ export function wrapDelimTokenTreeBrace(data: _NodeData, tree: TreeHandle): AnyN
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['delimTokenTreeBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -939,7 +875,6 @@ export function wrapDelimTokenTree(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.DelimTokenTree as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -954,7 +889,6 @@ export function wrapDynamicType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.DynamicType as number,
     _trait: readRawField(data, 'trait'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'trait', { value: function() { return drillIn((this as Record<string,unknown>)['_trait'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get trait() { return (_node as any)['trait']?.(); },
@@ -970,7 +904,6 @@ export function wrapElseClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.ElseClause as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['elseClause']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -985,7 +918,6 @@ export function wrapEnumItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _where_clause: readRawField(data, 'where_clause'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1012,7 +944,6 @@ export function wrapEnumVariant(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _body: readRawField(data, 'body'),
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1034,7 +965,6 @@ export function wrapEnumVariantList(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.EnumVariantList as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['enumVariantList']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1044,7 +974,6 @@ export function wrapExpressionStatementWithSemi(data: _NodeData, tree: TreeHandl
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['expressionStatementWithSemi']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1054,7 +983,6 @@ export function wrapExpressionStatementBlockEnding(data: _NodeData, tree: TreeHa
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['expressionStatementBlockEnding']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1065,7 +993,6 @@ export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): AnyN
     $type: TSKindId.ExpressionStatement as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -1083,7 +1010,6 @@ export function wrapExternCrateDeclaration(data: _NodeData, tree: TreeHandle): A
     _name: readRawField(data, 'name'),
     _alias: readRawField(data, 'alias'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'crate', { value: function() { return drillIn((this as Record<string,unknown>)['_crate'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1105,7 +1031,6 @@ export function wrapExternModifier(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.ExternModifier as number,
     _string_literal: readRawField(data, 'string_literal'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'stringLiteral', { value: function() { return drillIn((this as Record<string,unknown>)['_string_literal'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get stringLiteral() { return (_node as any)['stringLiteral']?.(); },
@@ -1123,7 +1048,6 @@ export function wrapFieldDeclaration(data: _NodeData, tree: TreeHandle): AnyNode
     _name: readRawField(data, 'name'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1143,7 +1067,6 @@ export function wrapFieldDeclarationList(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.FieldDeclarationList as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['fieldDeclarationList']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1155,7 +1078,6 @@ export function wrapFieldExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _value: readRawField(data, 'value'),
     _field: readRawField(data, 'field'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'field', { value: function() { return drillIn((this as Record<string,unknown>)['_field'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1175,7 +1097,6 @@ export function wrapFieldInitializer(data: _NodeData, tree: TreeHandle): AnyNode
     _value: readRawField(data, 'value'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'field', { value: function() { return drillIn((this as Record<string,unknown>)['_field'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1194,7 +1115,6 @@ export function wrapFieldInitializerList(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.FieldInitializerList as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['fieldInitializerList']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1204,7 +1124,6 @@ export function wrapFieldPatternShorthand(data: _NodeData, tree: TreeHandle): An
     ...data,
     _name: readRawField(data, 'name'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillAs((this as Record<string,unknown>)['_name'], tree, "shorthand_field_identifier", "identifier"); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get name() { return (_node as any)['name']?.(); },
@@ -1222,7 +1141,6 @@ export function wrapFieldPattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'refMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_ref_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1244,7 +1162,6 @@ export function wrapForExpression(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _value: readRawField(data, 'value'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1266,7 +1183,6 @@ export function wrapForLifetimes(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.ForLifetimes as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['forLifetimes']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1276,7 +1192,6 @@ export function wrapForeignModItemBody(data: _NodeData, tree: TreeHandle): AnyNo
     ...data,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -1294,7 +1209,6 @@ export function wrapForeignModItem(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _extern_modifier: readRawField(data, 'extern_modifier'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'externModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_extern_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1320,7 +1234,6 @@ export function wrapFunctionItem(data: _NodeData, tree: TreeHandle): AnyNodeData
     _where_clause: readRawField(data, 'where_clause'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'functionModifiers', { value: function() { return drillIn((this as Record<string,unknown>)['_function_modifiers'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1350,7 +1263,6 @@ export function wrapFunctionModifiers(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.FunctionModifiers as number,
     _modifier: readRawField(data, 'modifier'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'modifier', { value: function() { return drillInAll((this as Record<string,unknown>)['_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get modifier() { return (_node as any)['modifier']?.(); },
@@ -1372,7 +1284,6 @@ export function wrapFunctionSignatureItem(data: _NodeData, tree: TreeHandle): An
     _return_type: readRawField(data, 'return_type'),
     _where_clause: readRawField(data, 'where_clause'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'functionModifiers', { value: function() { return drillIn((this as Record<string,unknown>)['_function_modifiers'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1403,7 +1314,6 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): AnyNodeData
     _return_type: readRawField(data, 'return_type'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'forLifetimes', { value: function() { return drillIn((this as Record<string,unknown>)['_for_lifetimes'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'parameters', { value: function() { return drillIn((this as Record<string,unknown>)['_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'returnType', { value: function() { return drillIn((this as Record<string,unknown>)['_return_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1425,7 +1335,6 @@ export function wrapGenBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _move_marker: readRawField(data, 'move_marker'),
     _block: readRawField(data, 'block'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'moveMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_move_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'block', { value: function() { return drillIn((this as Record<string,unknown>)['_block'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1444,7 +1353,6 @@ export function wrapGenericFunction(data: _NodeData, tree: TreeHandle): AnyNodeD
     _function: readRawField(data, 'function'),
     _type_arguments: readRawField(data, 'type_arguments'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'function', { value: function() { return drillIn((this as Record<string,unknown>)['_function'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeArguments', { value: function() { return drillIn((this as Record<string,unknown>)['_type_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1463,7 +1371,6 @@ export function wrapGenericPattern(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _type_arguments: readRawField(data, 'type_arguments'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeArguments', { value: function() { return drillIn((this as Record<string,unknown>)['_type_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get typeArguments() { return (_node as any)['typeArguments']?.(); },
@@ -1481,7 +1388,6 @@ export function wrapGenericType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _type: readRawField(data, 'type'),
     _type_arguments: readRawField(data, 'type_arguments'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeArguments', { value: function() { return drillIn((this as Record<string,unknown>)['_type_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1501,7 +1407,6 @@ export function wrapGenericTypeWithTurbofish(data: _NodeData, tree: TreeHandle):
     _turbofish: readRawField(data, 'turbofish'),
     _type_arguments: readRawField(data, 'type_arguments'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'turbofish', { value: function() { return drillIn((this as Record<string,unknown>)['_turbofish'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeArguments', { value: function() { return drillIn((this as Record<string,unknown>)['_type_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1522,7 +1427,6 @@ export function wrapHigherRankedTraitBound(data: _NodeData, tree: TreeHandle): A
     _type_parameters: readRawField(data, 'type_parameters'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1542,7 +1446,6 @@ export function wrapIfExpression(data: _NodeData, tree: TreeHandle): AnyNodeData
     _consequence: readRawField(data, 'consequence'),
     _alternative: readRawField(data, 'alternative'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'condition', { value: function() { return drillIn((this as Record<string,unknown>)['_condition'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'consequence', { value: function() { return drillIn((this as Record<string,unknown>)['_consequence'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'alternative', { value: function() { return drillIn((this as Record<string,unknown>)['_alternative'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1561,7 +1464,6 @@ export function wrapImplItemBody(data: _NodeData, tree: TreeHandle): AnyNodeData
     ...data,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -1583,7 +1485,6 @@ export function wrapImplItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _where_clause: readRawField(data, 'where_clause'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'unsafeMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_unsafe_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'negative', { value: function() { return drillIn((this as Record<string,unknown>)['_negative'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1611,7 +1512,6 @@ export function wrapIndexExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _object: readRawField(data, 'object'),
     _index: readRawField(data, 'index'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'object', { value: function() { return drillIn((this as Record<string,unknown>)['_object'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'index', { value: function() { return drillIn((this as Record<string,unknown>)['_index'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1629,7 +1529,6 @@ export function wrapInnerAttributeItem(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.InnerAttributeItem as number,
     _attribute: readRawField(data, 'attribute'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'attribute', { value: function() { return drillIn((this as Record<string,unknown>)['_attribute'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get attribute() { return (_node as any)['attribute']?.(); },
@@ -1645,7 +1544,6 @@ export function wrapLabel(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Label as number,
     _identifier: readRawField(data, 'identifier'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'identifier', { value: function() { return drillIn((this as Record<string,unknown>)['_identifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get identifier() { return (_node as any)['identifier']?.(); },
@@ -1663,7 +1561,6 @@ export function wrapLastMatchArm(data: _NodeData, tree: TreeHandle): AnyNodeData
     _value: readRawField(data, 'value'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1683,7 +1580,6 @@ export function wrapLetCondition(data: _NodeData, tree: TreeHandle): AnyNodeData
     _pattern: readRawField(data, 'pattern'),
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1705,7 +1601,6 @@ export function wrapLetDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _value: readRawField(data, 'value'),
     _alternative: readRawField(data, 'alternative'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -1729,7 +1624,6 @@ export function wrapLifetime(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Lifetime as number,
     _identifier: readRawField(data, 'identifier'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'identifier', { value: function() { return drillIn((this as Record<string,unknown>)['_identifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get identifier() { return (_node as any)['identifier']?.(); },
@@ -1746,7 +1640,6 @@ export function wrapLifetimeParameter(data: _NodeData, tree: TreeHandle): AnyNod
     _name: readRawField(data, 'name'),
     _bounds: readRawField(data, 'bounds'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'bounds', { value: function() { return drillIn((this as Record<string,unknown>)['_bounds'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1764,7 +1657,6 @@ export function wrapLineComment(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.LineComment as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -1780,7 +1672,6 @@ export function wrapLoopExpression(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _label: readRawField(data, 'label'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1797,7 +1688,6 @@ export function wrapMacroDefinitionParen(data: _NodeData, tree: TreeHandle): Any
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['macroDefinitionParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1807,7 +1697,6 @@ export function wrapMacroDefinitionBracket(data: _NodeData, tree: TreeHandle): A
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['macroDefinitionBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1817,7 +1706,6 @@ export function wrapMacroDefinitionBrace(data: _NodeData, tree: TreeHandle): Any
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['macroDefinitionBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1829,7 +1717,6 @@ export function wrapMacroDefinition(data: _NodeData, tree: TreeHandle): AnyNodeD
     _name: readRawField(data, 'name'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get name() { return (_node as any)['name']?.(); },
@@ -1847,7 +1734,6 @@ export function wrapMacroInvocation(data: _NodeData, tree: TreeHandle): AnyNodeD
     _macro: readRawField(data, 'macro'),
     _token_tree: readRawField(data, 'token_tree'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'macro', { value: function() { return drillIn((this as Record<string,unknown>)['_macro'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'tokenTree', { value: function() { return drillAs((this as Record<string,unknown>)['_token_tree'], tree, "token_tree", "delim_token_tree"); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1866,7 +1752,6 @@ export function wrapMacroRule(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'right', { value: function() { return drillIn((this as Record<string,unknown>)['_right'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1883,7 +1768,6 @@ export function wrapMatchArmBlockEnding(data: _NodeData, tree: TreeHandle): AnyN
     ...data,
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get value() { return (_node as any)['value']?.(); },
@@ -1900,7 +1784,6 @@ export function wrapMatchArm(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _pattern: readRawField(data, 'pattern'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get pattern() { return (_node as any)['pattern']?.(); },
@@ -1917,7 +1800,6 @@ export function wrapMatchBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.MatchBlock as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['matchBlock']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -1929,7 +1811,6 @@ export function wrapMatchExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _value: readRawField(data, 'value'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -1948,7 +1829,6 @@ export function wrapMatchPattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     _condition: readRawField(data, 'condition'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'condition', { value: function() { return drillIn((this as Record<string,unknown>)['_condition'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get condition() { return (_node as any)['condition']?.(); },
@@ -1964,7 +1844,6 @@ export function wrapModItemInline(data: _NodeData, tree: TreeHandle): AnyNodeDat
     ...data,
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get body() { return (_node as any)['body']?.(); },
@@ -1982,7 +1861,6 @@ export function wrapModItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _name: readRawField(data, 'name'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2002,7 +1880,6 @@ export function wrapMutPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get mutableSpecifier() { return (_node as any)['mutableSpecifier']?.(); },
@@ -2019,7 +1896,6 @@ export function wrapNegativeLiteral(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.NegativeLiteral as number,
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get value() { return (_node as any)['value']?.(); },
@@ -2035,7 +1911,6 @@ export function wrapOrPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.OrPattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -2051,7 +1926,6 @@ export function wrapOrderedFieldDeclarationList(data: _NodeData, tree: TreeHandl
     _type: readRawField(data, 'type'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillInAll((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get type() { return (_node as any)['typeField']?.(); },
@@ -2070,7 +1944,6 @@ export function wrapParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _pattern: readRawField(data, 'pattern'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2090,7 +1963,6 @@ export function wrapParameters(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Parameters as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['parameters']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2101,7 +1973,6 @@ export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): 
     $type: TSKindId.ParenthesizedExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['parenthesizedExpression']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2111,7 +1982,6 @@ export function wrapPointerTypeMut(data: _NodeData, tree: TreeHandle): AnyNodeDa
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['pointerTypeMut']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2123,7 +1993,6 @@ export function wrapPointerType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _type: readRawField(data, 'type'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get type() { return (_node as any)['typeField']?.(); },
@@ -2141,7 +2010,6 @@ export function wrapQualifiedType(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _type: readRawField(data, 'type'),
     _alias: readRawField(data, 'alias'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'alias', { value: function() { return drillIn((this as Record<string,unknown>)['_alias'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2158,7 +2026,6 @@ export function wrapRangeExpressionBare(data: _NodeData, tree: TreeHandle): AnyN
     ...data,
     _operator: readRawField(data, 'operator'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'operator', { value: function() { return drillIn((this as Record<string,unknown>)['_operator'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get operator() { return (_node as any)['operator']?.(); },
@@ -2174,7 +2041,6 @@ export function wrapRangeExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.RangeExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -2190,7 +2056,6 @@ export function wrapRangePattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     _left: readRawField(data, 'left'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillIn((this as Record<string,unknown>)['_left'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get left() { return (_node as any)['left']?.(); },
@@ -2209,7 +2074,6 @@ export function wrapRawStringLiteral(data: _NodeData, tree: TreeHandle): AnyNode
     _string_content: readRawField(data, 'string_content'),
     _raw_string_literal_end: readRawField(data, 'raw_string_literal_end'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'rawStringLiteralStart', { value: function() { return drillIn((this as Record<string,unknown>)['_raw_string_literal_start'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'stringContent', { value: function() { return drillAs((this as Record<string,unknown>)['_string_content'], tree, "string_content", "raw_string_literal_content"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'rawStringLiteralEnd', { value: function() { return drillIn((this as Record<string,unknown>)['_raw_string_literal_end'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2229,7 +2093,6 @@ export function wrapRefPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.RefPattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['refPattern']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2241,7 +2104,6 @@ export function wrapReferenceExpression(data: _NodeData, tree: TreeHandle): AnyN
     _value: readRawField(data, 'value'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get value() { return (_node as any)['value']?.(); },
@@ -2259,7 +2121,6 @@ export function wrapReferencePattern(data: _NodeData, tree: TreeHandle): AnyNode
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     _pattern: readRawField(data, 'pattern'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2279,7 +2140,6 @@ export function wrapReferenceType(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'lifetime', { value: function() { return drillIn((this as Record<string,unknown>)['_lifetime'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2299,7 +2159,6 @@ export function wrapRemovedTraitBound(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.RemovedTraitBound as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['removedTraitBound']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2310,7 +2169,6 @@ export function wrapReturnExpression(data: _NodeData, tree: TreeHandle): AnyNode
     $type: TSKindId.ReturnExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['returnExpression']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2322,7 +2180,6 @@ export function wrapScopedIdentifier(data: _NodeData, tree: TreeHandle): AnyNode
     _path: readRawField(data, 'path'),
     _name: readRawField(data, 'name'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillAs((this as Record<string,unknown>)['_path'], tree, "generic_type", "generic_type_with_turbofish"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2341,7 +2198,6 @@ export function wrapScopedTypeIdentifier(data: _NodeData, tree: TreeHandle): Any
     _path: readRawField(data, 'path'),
     _name: readRawField(data, 'name'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillAs((this as Record<string,unknown>)['_path'], tree, "generic_type", "generic_type_with_turbofish"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2360,7 +2216,6 @@ export function wrapScopedTypeIdentifierInExpressionPosition(data: _NodeData, tr
     _path: readRawField(data, 'path'),
     _name: readRawField(data, 'name'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillAs((this as Record<string,unknown>)['_path'], tree, "generic_type", "generic_type_with_turbofish"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2379,7 +2234,6 @@ export function wrapScopedUseList(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _path: readRawField(data, 'path'),
     _list: readRawField(data, 'list'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillIn((this as Record<string,unknown>)['_path'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'list', { value: function() { return drillIn((this as Record<string,unknown>)['_list'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2400,7 +2254,6 @@ export function wrapSelfParameter(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     _self: readRawField(data, 'self'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'reference', { value: function() { return drillIn((this as Record<string,unknown>)['_reference'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'lifetime', { value: function() { return drillIn((this as Record<string,unknown>)['_lifetime'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2423,7 +2276,6 @@ export function wrapShorthandFieldInitializer(data: _NodeData, tree: TreeHandle)
     _attributes: readRawField(data, 'attributes'),
     _identifier: readRawField(data, 'identifier'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'attributes', { value: function() { return drillInAll((this as Record<string,unknown>)['_attributes'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'identifier', { value: function() { return drillIn((this as Record<string,unknown>)['_identifier'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2441,7 +2293,6 @@ export function wrapSlicePattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.SlicePattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['slicePattern']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2453,7 +2304,6 @@ export function wrapSourceFile(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _shebang: readRawField(data, 'shebang'),
     _statements: readRawField(data, 'statements'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'shebang', { value: function() { return drillIn((this as Record<string,unknown>)['_shebang'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'statements', { value: function() { return drillInAll((this as Record<string,unknown>)['_statements'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2475,7 +2325,6 @@ export function wrapStaticItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _type: readRawField(data, 'type'),
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2499,7 +2348,6 @@ export function wrapStringLiteral(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.StringLiteral as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['stringLiteral']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2511,7 +2359,6 @@ export function wrapStructExpression(data: _NodeData, tree: TreeHandle): AnyNode
     _name: readRawField(data, 'name'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillAs((this as Record<string,unknown>)['_name'], tree, "scoped_type_identifier", "scoped_type_identifier_in_expression_position"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2532,7 +2379,6 @@ export function wrapStructItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _type_parameters: readRawField(data, 'type_parameters'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2554,7 +2400,6 @@ export function wrapStructPattern(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _type: readRawField(data, 'type'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get type() { return (_node as any)['typeField']?.(); },
@@ -2572,7 +2417,6 @@ export function wrapTokenBindingPattern(data: _NodeData, tree: TreeHandle): AnyN
     _name: readRawField(data, 'name'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2590,7 +2434,6 @@ export function wrapTokenRepetition(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.TokenRepetition as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenRepetition']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2601,7 +2444,6 @@ export function wrapTokenRepetitionPattern(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId.TokenRepetitionPattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenRepetitionPattern']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2611,7 +2453,6 @@ export function wrapTokenTreeParen(data: _NodeData, tree: TreeHandle): AnyNodeDa
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreeParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2621,7 +2462,6 @@ export function wrapTokenTreeBracket(data: _NodeData, tree: TreeHandle): AnyNode
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreeBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2631,7 +2471,6 @@ export function wrapTokenTreeBrace(data: _NodeData, tree: TreeHandle): AnyNodeDa
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreeBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2642,7 +2481,6 @@ export function wrapTokenTree(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.TokenTree as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -2656,7 +2494,6 @@ export function wrapTokenTreePatternParen(data: _NodeData, tree: TreeHandle): An
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreePatternParen']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2666,7 +2503,6 @@ export function wrapTokenTreePatternBracket(data: _NodeData, tree: TreeHandle): 
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreePatternBracket']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2676,7 +2512,6 @@ export function wrapTokenTreePatternBrace(data: _NodeData, tree: TreeHandle): An
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tokenTreePatternBrace']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2687,7 +2522,6 @@ export function wrapTokenTreePattern(data: _NodeData, tree: TreeHandle): AnyNode
     $type: TSKindId.TokenTreePattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -2702,7 +2536,6 @@ export function wrapTraitBounds(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.TraitBounds as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['traitBounds']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2719,7 +2552,6 @@ export function wrapTraitItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _where_clause: readRawField(data, 'where_clause'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'unsafeMarker', { value: function() { return drillIn((this as Record<string,unknown>)['_unsafe_marker'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2747,7 +2579,6 @@ export function wrapTryBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.TryBlock as number,
     _block: readRawField(data, 'block'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'block', { value: function() { return drillIn((this as Record<string,unknown>)['_block'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get block() { return (_node as any)['block']?.(); },
@@ -2763,7 +2594,6 @@ export function wrapTryExpression(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.TryExpression as number,
     _value: readRawField(data, 'value'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get value() { return (_node as any)['value']?.(); },
@@ -2780,7 +2610,6 @@ export function wrapTupleExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _attributes: readRawField(data, 'attributes'),
     _elements: readRawField(data, 'elements'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'attributes', { value: function() { return drillInAll((this as Record<string,unknown>)['_attributes'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'elements', { value: function() { return drillInAll((this as Record<string,unknown>)['_elements'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2798,7 +2627,6 @@ export function wrapTuplePattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.TuplePattern as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tuplePattern']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2810,7 +2638,6 @@ export function wrapTupleStructPattern(data: _NodeData, tree: TreeHandle): AnyNo
     _type: readRawField(data, 'type'),
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'typeField', { value: function() { return drillAs((this as Record<string,unknown>)['_type'], tree, "generic_type", "generic_type_with_turbofish"); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get type() { return (_node as any)['typeField']?.(); },
@@ -2827,7 +2654,6 @@ export function wrapTupleType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.TupleType as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tupleType']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2838,7 +2664,6 @@ export function wrapTypeArguments(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.TypeArguments as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeArguments']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2851,7 +2676,6 @@ export function wrapTypeBinding(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _type_arguments: readRawField(data, 'type_arguments'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeArguments', { value: function() { return drillIn((this as Record<string,unknown>)['_type_arguments'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2872,7 +2696,6 @@ export function wrapTypeCastExpression(data: _NodeData, tree: TreeHandle): AnyNo
     _value: readRawField(data, 'value'),
     _type: readRawField(data, 'type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'value', { value: function() { return drillIn((this as Record<string,unknown>)['_value'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeField', { value: function() { return drillIn((this as Record<string,unknown>)['_type'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2895,7 +2718,6 @@ export function wrapTypeItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _type: readRawField(data, 'type'),
     _trailing_where_clause: readRawField(data, 'trailing_where_clause'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2923,7 +2745,6 @@ export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _bounds: readRawField(data, 'bounds'),
     _default_type: readRawField(data, 'default_type'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'bounds', { value: function() { return drillIn((this as Record<string,unknown>)['_bounds'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'defaultType', { value: function() { return drillIn((this as Record<string,unknown>)['_default_type'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -2943,7 +2764,6 @@ export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TypeParameters as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeParameters']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -2955,7 +2775,6 @@ export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _operator: readRawField(data, 'operator'),
     _operand: readRawField(data, 'operand'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'operator', { value: function() { return drillIn((this as Record<string,unknown>)['_operator'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'operand', { value: function() { return drillIn((this as Record<string,unknown>)['_operand'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -2977,7 +2796,6 @@ export function wrapUnionItem(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _where_clause: readRawField(data, 'where_clause'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'name', { value: function() { return drillIn((this as Record<string,unknown>)['_name'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'typeParameters', { value: function() { return drillIn((this as Record<string,unknown>)['_type_parameters'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -3001,7 +2819,6 @@ export function wrapUnsafeBlock(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.UnsafeBlock as number,
     _block: readRawField(data, 'block'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'block', { value: function() { return drillIn((this as Record<string,unknown>)['_block'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get block() { return (_node as any)['block']?.(); },
@@ -3018,7 +2835,6 @@ export function wrapUseAsClause(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _path: readRawField(data, 'path'),
     _alias: readRawField(data, 'alias'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillIn((this as Record<string,unknown>)['_path'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'alias', { value: function() { return drillIn((this as Record<string,unknown>)['_alias'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -3036,7 +2852,6 @@ export function wrapUseBounds(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.UseBounds as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['useBounds']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -3048,7 +2863,6 @@ export function wrapUseDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _visibility_modifier: readRawField(data, 'visibility_modifier'),
     _argument: readRawField(data, 'argument'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'visibilityModifier', { value: function() { return drillIn((this as Record<string,unknown>)['_visibility_modifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'argument', { value: function() { return drillIn((this as Record<string,unknown>)['_argument'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -3066,7 +2880,6 @@ export function wrapUseList(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.UseList as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['useList']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -3077,7 +2890,6 @@ export function wrapUseWildcard(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.UseWildcard as number,
     _path: readRawField(data, 'path'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'path', { value: function() { return drillIn((this as Record<string,unknown>)['_path'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
     get path() { return (_node as any)['path']?.(); },
@@ -3094,7 +2906,6 @@ export function wrapVariadicParameter(data: _NodeData, tree: TreeHandle): AnyNod
     _mutable_specifier: readRawField(data, 'mutable_specifier'),
     _pattern: readRawField(data, 'pattern'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'mutableSpecifier', { value: function() { return drillIn((this as Record<string,unknown>)['_mutable_specifier'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'pattern', { value: function() { return drillIn((this as Record<string,unknown>)['_pattern'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -3111,7 +2922,6 @@ export function wrapVisibilityModifierCrate(data: _NodeData, tree: TreeHandle): 
     ...data,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['visibilityModifierCrate']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -3122,7 +2932,6 @@ export function wrapVisibilityModifier(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.VisibilityModifier as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   const _wrapConfig = {
     get children() { const ch = (_node as Record<string,unknown>)['$children']; return Array.isArray(ch) ? (ch as unknown[]).map(c => drillIn(c, tree)) : []; },
   };
@@ -3137,7 +2946,6 @@ export function wrapWhereClause(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.WhereClause as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['whereClause']!(...vs) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }
@@ -3149,7 +2957,6 @@ export function wrapWherePredicate(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _left: readRawField(data, 'left'),
     _bounds: readRawField(data, 'bounds'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'left', { value: function() { return drillAs((this as Record<string,unknown>)['_left'], tree, "primitive_type", "_primitive_type"); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'bounds', { value: function() { return drillIn((this as Record<string,unknown>)['_bounds'], tree); }, enumerable: false, writable: false, configurable: false });
   const _wrapConfig = {
@@ -3169,7 +2976,6 @@ export function wrapWhileExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _condition: readRawField(data, 'condition'),
     _body: readRawField(data, 'body'),
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, 'label', { value: function() { return drillIn((this as Record<string,unknown>)['_label'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'condition', { value: function() { return drillIn((this as Record<string,unknown>)['_condition'], tree); }, enumerable: false, writable: false, configurable: false });
   Object.defineProperty(_node, 'body', { value: function() { return drillIn((this as Record<string,unknown>)['_body'], tree); }, enumerable: false, writable: false, configurable: false });
@@ -3189,7 +2995,6 @@ export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.YieldExpression as number,
     $children: (data as unknown as Record<string,unknown>)['$children'],
   };
-  delete _node['$fields'];
   Object.defineProperty(_node, '$with', { value: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['yieldExpression']!(v) }, enumerable: false, writable: false, configurable: false });
   return freezeNodeData(withMethods(_node, { render, toEdit }));
 }

@@ -105,9 +105,11 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 		// Provenance tag — readNode output must carry $source: 0 (ts)
 		// so `.from()` can dispatch by equality rather than structural probing.
 		expect(data.$source).toBe(0);
-		expect(data.$fields?.type).toBeDefined();
-		// $fields.type is the NAMED RHS, not an array and not the anon.
-		const t = data.$fields!.type as {
+		// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys directly.
+		const rec = data as unknown as Record<string, unknown>;
+		expect(rec['_type']).toBeDefined();
+		// _type is the NAMED RHS, not an array and not the anon.
+		const t = rec['_type'] as {
 			$type: number;
 			$text: string;
 			$named: boolean;
@@ -133,7 +135,9 @@ describe('readNode — fname / anonymous-keyword collision', () => {
 			{ type: 'integer', text: '3', named: true, fieldName: 'argument', id: 6 }
 		]);
 		const data = readNode(handle);
-		const args = data.$fields?.argument;
+		// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys directly.
+		const rec = data as unknown as Record<string, unknown>;
+		const args = rec['_argument'];
 		expect(Array.isArray(args)).toBe(true);
 		const arr = args as Array<{ $text: string }>;
 		expect(arr).toHaveLength(3);

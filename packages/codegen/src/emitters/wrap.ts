@@ -1,8 +1,8 @@
 /**
- * Emits wrap.ts — ADR-0018 Phase 2 de-hoisted lazy view layer over readNode output.
+ * Emits wrap.ts — ADR-0018 Phase 3a de-hoisted lazy view layer over readNode output.
  *
  * Mirrors the factory emitter (factories.ts) one-for-one:
- *   - `_<name>` storage keys (enumerable, serializable stubs from data.$fields)
+ *   - `_<name>` storage keys (enumerable, serializable stubs from readNode de-hoisted output)
  *   - Non-enumerable accessor functions `name()` that perform lazy drill-in
  *   - `$with` namespace (non-enumerable) that calls the factory for updates
  *   - `withMethods` attaches `$render`/`$toEdit`/`$replace`/`$trivia`
@@ -145,8 +145,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 		"import * as _factories from './factories.js';",
 		'',
 		'// ADR-0018 Phase 3a: reads a raw field value from incoming data.',
-		'// readNode now emits `_<name>` top-level keys directly (no $fields wrapper).',
-		'// Factory output also uses `_<name>` storage (Phase 2). Both sources are unified.',
+		'// readNode emits `_<name>` top-level keys directly; factory output does the same.',
+		'// Both sources are unified — no legacy wrapper prefix needed.',
 		'function readRawField(data: AnyNodeData, rawName: string): unknown {',
 		'  // as unknown as: AnyNodeData lacks an index signature in TS6 — bridge through unknown.',
 		'  const rec = data as unknown as Record<string, unknown>;',
@@ -585,8 +585,6 @@ function emitFieldCarryingWrap(
 		lines.push('    $children: (data as unknown as Record<string,unknown>)[\'$children\'],');
 	}
 	lines.push('  };');
-	// Strip legacy $fields from the spread — not part of de-hoisted surface.
-	lines.push("  delete _node['$fields'];");
 
 	// Non-enumerable accessor functions: `name()` returns drilled value via `this._name`.
 	for (const f of fields) {
