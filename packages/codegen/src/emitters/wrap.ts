@@ -24,7 +24,8 @@ import type {
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
-	isNonEmpty
+	isNonEmpty,
+	isRequired
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import {
@@ -151,17 +152,17 @@ export function emitWrap(config: EmitWrapConfig): string {
 		'//         → drillIn / drillAs → readTreeNode (recurse)',
 		...(usesDrillIn
 			? [
-					'function drillIn(entry: unknown, tree: TreeHandle): unknown {',
-					'  if (!entry) return undefined;',
-					'  const e = entry as _NodeData;',
-					'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex);',
+					'function drillIn<T>(entry: T, tree: TreeHandle): T {',
+					'  if (!entry) return undefined as unknown as T;',
+					'  const e = entry as unknown as _NodeData;',
+					'  if (e.$nodeHandle != null && e.$childIndex != null) return readTreeNode(tree, e.$nodeHandle, e.$childIndex) as unknown as T;',
 					'  return entry;',
 					'}'
 				]
 			: []),
 		...(usesDrillInAll
 			? [
-					'function drillInAll(entries: unknown, tree: TreeHandle): unknown[] {',
+					'function drillInAll<T>(entries: readonly T[] | undefined, tree: TreeHandle): T[] {',
 					'  if (!entries) return [];',
 					'  const arr = Array.isArray(entries) ? entries : [entries];',
 					'  return arr.map(e => drillIn(e, tree));',
@@ -177,20 +178,20 @@ export function emitWrap(config: EmitWrapConfig): string {
 					"// fires when the child's actual $type matches `fromType`; mixed-",
 					'// union fields (e.g. Path | BracketedType | GenericTypeWithTurbofish)',
 					'// pass through unchanged when the child arrived as a non-alias kind.',
-					'function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: string): unknown {',
-					'  if (!entry) return undefined;',
+					'function drillAs<T>(entry: unknown, tree: TreeHandle, fromType: string, toType: string): T {',
+					'  if (!entry) return undefined as unknown as T;',
 					'  const e = entry as _NodeData;',
-					'  if (e.$nodeHandle == null || e.$childIndex == null) return entry;',
-					'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });',
+					'  if (e.$nodeHandle == null || e.$childIndex == null) return entry as unknown as T;',
+					'  return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType }) as unknown as T;',
 					'}'
 				]
 			: []),
 		...(usesDrillAsAll
 			? [
-					'function drillAsAll(entries: unknown, tree: TreeHandle, fromType: string, toType: string): unknown[] {',
+					'function drillAsAll<T>(entries: unknown, tree: TreeHandle, fromType: string, toType: string): T[] {',
 					'  if (!entries) return [];',
 					'  const arr = Array.isArray(entries) ? entries : [entries];',
-					'  return arr.map(e => drillAs(e, tree, fromType, toType));',
+					'  return arr.map(e => drillAs<T>(e, tree, fromType, toType));',
 					'}'
 				]
 			: []),
@@ -498,33 +499,43 @@ interface WrapNode {
  * Returns the raw-field read expression AND the inline accessor body.
  *
  * @param f - The assembled nonterminal field descriptor.
+ * @param nodeMap - The assembled node map, needed to derive the per-field
+ *   element type for generic type arguments on drill helpers.
  * @returns An object with `storeExpr` (storage init from `data` via
  *   `readRawField` — bridges the `AnyNodeData` type which doesn't
  *   declare per-kind `_<name>` properties) and `accessorBody` (reads
  *   `this._<name>` directly — the literal declares the property so
  *   TS resolves it from the inferred literal type).
  */
-function resolveFieldDrillExprs(f: AssembledNonterminal): {
+function resolveFieldDrillExprs(f: AssembledNonterminal, nodeMap: NodeMap): {
 	storeExpr: string;
 	accessorBody: string;
 } {
+	const elemType = fieldElementType(f, nodeMap);
 	const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
 	if (aliasEntries.length > 0) {
 		const [fromType, toType] = aliasEntries[0]!;
-		const helper = isMultiple(f) ? 'drillAsAll' : 'drillAs';
+		if (isMultiple(f)) {
+			return {
+				storeExpr: `data._${f.name}`,
+				accessorBody: `return drillAsAll<${elemType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
+			};
+		}
+		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return ${helper}(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
+			accessorBody: `return drillAs<${returnType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
 		};
 	} else if (isMultiple(f)) {
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillInAll(this._${f.name}, tree)`,
+			accessorBody: `return drillInAll<${elemType}>(this._${f.name}, tree)`,
 		};
 	} else {
+		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillIn(this._${f.name}, tree)`,
+			accessorBody: `return drillIn<${returnType}>(this._${f.name}, tree)`,
 		};
 	}
 }
@@ -577,7 +588,7 @@ function emitFieldCarryingWrap(
 	}
 	// Named fields -> `_<name>` storage (enumerable).
 	for (const f of fields) {
-		const { storeExpr } = resolveFieldDrillExprs(f);
+		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap);
 		lines.push(`    _${f.name}: ${storeExpr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
@@ -592,7 +603,7 @@ function emitFieldCarryingWrap(
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
 		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const { accessorBody } = resolveFieldDrillExprs(f);
+		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap);
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
 
