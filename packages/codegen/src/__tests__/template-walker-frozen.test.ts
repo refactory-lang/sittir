@@ -37,6 +37,7 @@ import {
 	loadKindIdFromName,
 	loadKindNames,
 	treeHandle,
+	adaptNode,
 	findFirst
 } from '../validate/common.ts';
 
@@ -105,7 +106,23 @@ async function parseAndRender(
 
 	const kindIdFromName = await loadKindIdFromName(grammar);
 	const handle = treeHandle(tree, source, kindIdFromName ?? undefined);
-	const nodeData = readTreeNodeFn(handle, target.id) as AnyNodeData;
+
+	// ADR-0017: readTreeNode(handle, handle?, childIndex?) navigates via
+	// nodes[handle].children()[childIndex]. Passing only `target.id` (a
+	// tree-sitter node id, not a handle index) as the second arg falls
+	// through to the rootNode fallback and reads the wrong node. Correct
+	// approach: temporarily swap handle.rootNode to the adapted target node
+	// so readTreeNode(handle) reads from the desired subtree root.
+	const adapted = adaptNode(target);
+	const handleMut = handle as { rootNode: typeof adapted };
+	const prev = handleMut.rootNode;
+	handleMut.rootNode = adapted;
+	let nodeData: AnyNodeData;
+	try {
+		nodeData = readTreeNodeFn(handle) as AnyNodeData;
+	} finally {
+		handleMut.rootNode = prev;
+	}
 
 	const renderer = await rendererFor(grammar);
 	const rendered = renderer.render(nodeData);
@@ -170,8 +187,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'single statement block keeps inner spacing',
 		source: 'fn main() { let x = 1; }',
 		target: '{ let x = 1; }',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output is empty rather than `{ let x = 1; }`.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'rust',
@@ -179,8 +195,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal fn renders without stray spaces',
 		source: 'fn main() {}',
 		target: 'fn main() {}',
-		mode: 'todo',
-		why: 'visibility_modifier + function_modifiers are optional; absent slots leave leading double-space and stray spaces around return_type / where_clause / type_parameters. All separators must move INSIDE conditionals.'
+		mode: 'fail',
+		why: 'Walker emits "fn main () {}" — stray space before `()` because type_parameters slot is absent but its separator is unconditional. Separators around optional slots must move INSIDE conditionals.'
 	},
 	{
 		grammar: 'rust',
@@ -188,8 +204,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'fn with params + return type + body',
 		source: 'fn add(x: i32, y: i32) -> i32 { x + y }',
 		target: 'fn add(x: i32, y: i32) -> i32 { x + y }',
-		mode: 'todo',
-		why: 'Even with all optionals present, the walker emits double-spaces (e.g. "fn add  (...)") because of unconditional literal spaces between optional-but-empty type_parameters and the next slot.'
+		mode: 'fail',
+		why: 'Walker emits "fn add (x: i32, y: i32) ->i32 { x + y }" — stray space before `(`, missing space after `->`. Unconditional separators around optional type_parameters and return_type slots.'
 	},
 	{
 		grammar: 'rust',
@@ -215,8 +231,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'simple type alias renders without stray spaces',
 		source: 'type Foo = i32;',
 		target: 'type Foo = i32;',
-		mode: 'todo',
-		why: 'Template prefixes a `{% if visibility_modifier | isPresent %}{{ visibility_modifier }}{% endif %}` which leaves a leading space when visibility absent. Also missing space around = and stray space before ;.'
+		mode: 'fail',
+		why: 'Walker emits "type Foo=i32;" — missing spaces around `=` and before `;`. Separators are outside conditionals and literal tokens lack surrounding whitespace.'
 	},
 	{
 		grammar: 'rust',
@@ -224,8 +240,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'pub type with generic params',
 		source: 'pub type Foo<T> = Vec<T>;',
 		target: 'pub type Foo<T> = Vec<T>;',
-		mode: 'todo',
-		why: 'Walker emits "pub type Foo <T> =Vec<T> ;" — stray space before <T>, missing space around =, stray space before ;.'
+		mode: 'fail',
+		why: 'Walker emits "pub type Foo <T>=Vec<T>;" — stray space before <T>, missing spaces around `=`. Separator placement issues on optional type_parameters slot.'
 	},
 	{
 		grammar: 'rust',
@@ -233,8 +249,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal trait without bounds renders cleanly',
 		source: 'trait Foo {}',
 		target: 'trait Foo {}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name node to $type: 0 (id=0 sentinel). Rendering fails rather than producing "trait Foo {}".'
+		mode: 'pass'
 	},
 	{
 		grammar: 'rust',
@@ -242,8 +257,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if without else renders without trailing space',
 		source: 'fn main() { if x { 1 } }',
 		target: 'if x { 1 }',
-		mode: 'todo',
-		why: 'Resolved by kindNames Map wiring — numeric dispatch now resolves form kinds correctly.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'rust',
@@ -251,8 +265,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'if with else still renders correctly',
 		source: 'fn main() { if x { 1 } else { 2 } }',
 		target: 'if x { 1 } else { 2 }',
-		mode: 'todo',
-		why: 'Resolved by kindNames Map wiring.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'rust',
@@ -260,8 +273,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'while without label renders without leading space',
 		source: 'fn main() { while x {} }',
 		target: 'while x {}',
-		mode: 'todo',
-		why: 'Resolved by kindNames Map wiring.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'rust',
@@ -269,8 +281,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'plain closure without modifiers renders without leading spaces',
 		source: 'fn main() { let f = || 1; }',
 		target: '|| 1',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: `closure_expression_expr` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). Rendering fails with unknown kind error.'
+		mode: 'pass'
 	},
 
 	// -------------------------------------------------------------------
@@ -282,8 +293,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal class renders cleanly',
 		source: 'class Foo {}',
 		target: 'class Foo {}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name to $type: 0 (id=0 sentinel). Rendering fails rather than producing "class Foo {}".'
+		mode: 'pass'
 	},
 	{
 		grammar: 'typescript',
@@ -291,8 +301,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'class with extends heritage',
 		source: 'class Foo extends Bar {}',
 		target: 'class Foo extends Bar {}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: same as the minimal-class case — `type_identifier` resolves to $type: 0 sentinel, rendering fails.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'typescript',
@@ -300,8 +309,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'simple type alias renders without stray space',
 		source: 'type Foo = string;',
 		target: 'type Foo = string;',
-		mode: 'todo',
-		why: 'Template emits `=` directly with no surrounding spaces and `{{ semicolon }}` with leading space — produces "type Foo =string ;".'
+		mode: 'fail',
+		why: 'Walker emits "type Foo=string ;" — missing spaces around `=`, stray space before `;`. Separators around `=` and before semicolon must be inside conditionals or attached to adjacent tokens.'
 	},
 	{
 		grammar: 'typescript',
@@ -318,8 +327,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'single-statement block keeps inner spacing',
 		source: 'function f() { let x = 1; }',
 		target: '{ let x = 1; }',
-		mode: 'fail',
-		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output is empty rather than `{ let x = 1; }`.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'typescript',
@@ -327,8 +335,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'minimal interface renders without stray spaces',
 		source: 'interface Foo {}',
 		target: 'interface Foo {}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: `type_identifier` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve the name to $type: 0 (id=0 sentinel). Rendering fails rather than producing "interface Foo {}".'
+		mode: 'pass'
 	},
 	{
 		grammar: 'typescript',
@@ -336,8 +343,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'interface with extends',
 		source: 'interface Foo extends Bar {}',
 		target: 'interface Foo extends Bar {}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: same as the minimal-interface case — `type_identifier` resolves to $type: 0 sentinel, rendering fails.'
+		mode: 'pass'
 	},
 	{
 		grammar: 'typescript',
@@ -354,8 +360,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'expression statement attaches semicolon',
 		source: 'x;',
 		target: 'x;',
-		mode: 'todo',
-		why: 'Template `{{ children | join(" ") }} {{ semicolon }}` puts a literal space between children and the semicolon, producing "x ;".'
+		mode: 'fail',
+		why: 'Walker emits "x ;" — literal space between expression and semicolon. The space separator before `{{ semicolon }}` must be removed or made conditional on semicolon presence.'
 	},
 
 	// -------------------------------------------------------------------
@@ -367,8 +373,7 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'empty dictionary renders as {} with no inner spacing',
 		source: '{}',
 		target: '{}',
-		mode: 'todo',
-		why: 'forms-out-of-nodeMap: anonymous token `{` has no numeric TSKindId — kindIdFromName throws for it, causing readTreeNode to resolve it to $type: 0 (id=0 sentinel). The rendered output fails rather than producing "{}".'
+		mode: 'pass'
 	},
 	{
 		grammar: 'python',
@@ -376,8 +381,8 @@ const FROZEN_CASES: FrozenCase[] = [
 		name: 'two-entry dictionary renders with separator + spaces',
 		source: '{"a": 1, "b": 2}',
 		target: '{"a": 1, "b": 2}',
-		mode: 'todo',
-		why: 'Walker emits `{ "a": 1,"b": 2 }` — joinWithTrailing(",") drops the space after the separator AND adds stray spaces around the braces. Target has no inner-brace whitespace and the canonical ", " separator.'
+		mode: 'fail',
+		why: 'Walker emits \'{ "a": 1,"b": 2 }\' — inner-brace whitespace added by `{ {{ pairs | join(", ") }} }` template, joinBy drops the space after the separator between entries. Target has no inner-brace whitespace and "a": 1, "b": 2 with proper separator spacing.'
 	}
 ];
 
