@@ -2149,24 +2149,6 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
 }
 
 /**
- * Cluster F step 4 (016): convenience wrapper around
- * `wrapOptionalFieldPlaceholders` for callers that already have an
- * `AssembledNonterminal` array. Used by `AssembledPolymorph.renderTemplate`
- * to gate per-form `$NAME` placeholders BEFORE the variant chain is
- * assembled — once the variant `{% if variant == X %}` blocks form, my
- * `computeGuardedRanges` would treat all interior placeholders as
- * already-guarded and the wrapper would no-op.
- */
-function _wrapFormOptionalPlaceholders(
-	template: string,
-	fields: readonly AssembledNonterminal[]
-): string {
-	const optionalFields = deriveOptionalFieldNames(fields);
-	if (optionalFields.size === 0) return template;
-	return wrapOptionalFieldPlaceholders(template, optionalFields);
-}
-
-/**
  * Cluster F step 3 (016): collect raw field names whose `isRequired`
  * derivation is false, for the walker's optional-field detection.
  *

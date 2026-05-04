@@ -1821,27 +1821,18 @@ function emitSingleChildBuffer(
  * Emit the Rust boilerplate that converts a list-shaped transport slot into a
  * `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
  *
- * For **concrete / supertype** slots: emits `Renderable::Transport(t as &dyn
- * RenderableTransport)` directly — zero intermediate String allocation. Every
- * concrete transport struct and supertype enum implements `RenderableTransport`,
- * so the unsized coercion is always valid.
- *
- * For **heterogeneous** slots (`Box<AnyTransport>`): emits
- * `Renderable::Transport(t.as_ref())` directly — same zero-allocation path,
- * using `Box::as_ref()` to obtain `&dyn RenderableTransport`.
+ * Concrete, supertype, and heterogeneous slots all share one path:
+ * `Renderable::Transport(t as &dyn RenderableTransport)` — every concrete
+ * transport struct, supertype enum, and `AnyTransport` implements
+ * `RenderableTransport`, so the unsized coercion is always valid and
+ * the per-classification branch isn't needed.
  *
  * @param ident - Rust identifier base (e.g. `"children"`, `"parameters"`).
  * @param required - When `true`, the slot is a required Vec; when `false`
  *   it is `Option<Vec<...>>` and needs `as_deref()`.
- * @param cls - slot classification from `classifySlot`; controls element
- *   type and the coercion expression. Defaults to `heterogeneous`.
  * @returns Lines to splice into the parent function body.
  */
-function emitListSlotBuffer(
-	ident: string,
-	required: boolean,
-	cls: SlotClass = { tag: 'heterogeneous' }
-): string[] {
+function emitListSlotBuffer(ident: string, required: boolean): string[] {
 	const lines: string[] = [];
 	const C = '::sittir_core::filters::';
 
@@ -1913,7 +1904,7 @@ function buildTypedTemplateBody(
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
 			if (struct.childrenMultiple) {
-				lines.push(...emitListSlotBuffer('children', struct.childrenRequired, childrenCls));
+				lines.push(...emitListSlotBuffer('children', struct.childrenRequired));
 			} else {
 				lines.push(...emitSingleChildBuffer('children', struct.childrenRequired, childrenCls));
 			}
@@ -1929,14 +1920,7 @@ function buildTypedTemplateBody(
 		if (!f.hasTransportField) continue;
 		const rIdent = rustFieldIdent(f.name);
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-			const kinds = fieldKindsByName.get(f.name) ?? [];
-			const rawCls = classify(kinds);
-			// Fields never use per-slot child enums — heterogeneous field slots always
-			// emit Vec<AnyTransport>. Set useBox=true so emitListSlotBuffer can distinguish
-			// this path if needed (currently both paths emit the same `t as &dyn RT` coercion).
-			const cls: SlotClass =
-				rawCls.tag === 'heterogeneous' ? { tag: 'heterogeneous', useBox: true } : rawCls;
-			lines.push(...emitListSlotBuffer(rIdent, f.required, cls));
+			lines.push(...emitListSlotBuffer(rIdent, f.required));
 		}
 	}
 
