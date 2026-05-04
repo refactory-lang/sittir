@@ -99,6 +99,32 @@ collection, userFacing), use `allSlotsOf`.
   rewrites of the original design docs. Read this first; consult the
   others only for design rationale.
 
+## Generated-output hygiene pivot (1d.xiv)
+
+Phase 1d.xiv introduced 7 hygiene rules (captured in CLAUDE.md
+"Generated-output hygiene") that override several spec requirements.
+The spec has been updated to reflect these; the prior wording is
+superseded. Key changes:
+
+| Original spec | Hygiene rule | Outcome |
+|---|---|---|
+| FR-009: `$with` non-enumerable | Rule 1: no `Object.defineProperty` | `$with` is an enumerable inline property |
+| FR-012: `$`-methods non-enumerable | Rule 1 | `$`-methods attached via `Object.assign` (enumerable) |
+| FR-011: `withMethods` in `@sittir/core` | Rule 3: shared boilerplate in per-grammar `utils.ts` | `withMethods<T>` emitted to each grammar's `utils.ts` |
+| SC-004: `Object.keys` only `$`/`_` keys | Rule 1 consequence | Getter methods + `$with` also in `Object.keys` |
+| Implicit: `Record<string, unknown>` casts | Rule 2: no `Record<string, unknown>` in generated output | Single bridge in `readRawField` in `utils.ts` |
+| Implicit: `..._sharedMethods` spread | Rule 6: no spread of shared-methods const | `withMethods<T>` generic via `Object.assign` instead |
+
+Factory shape A (1d.xiv):
+- Storage hoisted to local `const _<name> = ...;`
+- Property shorthand `_<name>,` in the literal
+- Pure getter `name() { return _<name>; }` (closure-based)
+- `$with: { name: (value) => factory({...config, name: value}) }`
+- `withMethods<T>(literal)` wraps the four `$`-methods
+- No `freezeNodeData` (deferred optimization)
+- `$type: TSKindId.X as const` (narrowed to specific enum member)
+- Leaf-typed fields hoist `.$text`: `config.operator.$text`
+
 ## How to read the original design docs
 
 - `spec.md` / `plan.md` — design goals and phase decomposition. Sound

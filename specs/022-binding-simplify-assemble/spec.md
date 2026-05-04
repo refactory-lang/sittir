@@ -271,14 +271,14 @@ Phase 4 (architectural — alongside Binding/Simplify rewrite):
 
 - **FR-007**: Per-field fluent getter/setter methods MUST be replaced by a `$with` namespace of immutable updaters.
 - **FR-008**: Each `$with.field(v)` MUST return a NEW frozen node via the factory with the specified field updated.
-- **FR-009**: `$with` MUST be non-enumerable on the node object.
+- **FR-009**: `$with` MUST be an inline property on the node object (enumerable). Non-enumerability is NOT required — `JSON.stringify` drops function-valued keys regardless, and `Object.defineProperty` is banned per hygiene rule 1.
 - **FR-009a**: `$with` MUST include updaters for unnamed slots when present: `$with.$child(value)` for singular unnamed slots and `$with.$children(values)` for array unnamed slots. The `$`-prefix on the updater name mirrors the `$`-prefix on the storage key (`$child`/`$children`), keeping the namespace coherent. (See research R6 for rationale.)
 
 **`$`-prefixed methods**
 
 - **FR-010**: All sittir-owned methods MUST use `$`-prefix: `$render()`, `$toEdit()`, `$replace()`, `$trivia()`.
-- **FR-011**: A shared `withMethods` helper MUST attach all `$`-prefixed methods instead of per-factory inline emission.
-- **FR-012**: `$`-prefixed methods MUST be non-enumerable.
+- **FR-011**: A shared `withMethods<T>` helper in per-grammar `utils.ts` MUST attach all `$`-prefixed methods via `Object.assign`, preserving the caller's literal type `T` through the generic return type. The helper MUST NOT live in `@sittir/core` (hygiene rule 3: shared boilerplate in per-grammar utils.ts, not core).
+- **FR-012**: `$`-prefixed methods are enumerable (attached via `Object.assign` inside `withMethods<T>`). Non-enumerability is NOT required — `JSON.stringify` drops function-valued keys regardless, and `Object.defineProperty` is banned per hygiene rule 1.
 
 **Unified surface**
 
@@ -318,9 +318,9 @@ Phase 4 (architectural — alongside Binding/Simplify rewrite):
 - **SC-T01**: After Phase 1 commit, `git diff` of regenerated `packages/{rust,typescript,python}/src/` produces zero changed lines (taxonomy rename is byte-identical). _Operationalizes FR-T06._
 - **SC-T02**: Zero references to `AssembledField`, `AssembledChild`, `AssembledMulti`, `AssembledGroup` remain after Phase 1 (grep returns empty across `packages/codegen/src/`).
 - **SC-001**: Zero references to `$fields` remain in generated output or core runtime.
-- **SC-002**: Per-field fluent method emission removed — net ~-1,500 lines across generated factories per grammar.
-- **SC-003**: `withMethods` shared helper replaces per-factory inline method emission.
-- **SC-004**: `Object.keys(node)` returns only `$`-metadata keys and `_`-storage keys for any node.
+- **SC-002**: Per-field fluent setter emission removed. Pure getter methods (closure-based, read local `_<name>` const) remain. Setters live exclusively in `$with`. Net reduction smaller than originally projected (~-500 lines vs -1,500) because getters are retained as useful read-access API.
+- **SC-003**: `withMethods<T>` generic helper in per-grammar `utils.ts` replaces per-factory inline method emission. Uses `Object.assign` (not `defineProperty`). Generic `<T>` preserves per-kind literal type through the boundary.
+- **SC-004**: `Object.keys(node)` returns `$`-metadata keys, `_`-storage keys, getter method names, `$with`, and `$`-prefixed method names. Getter methods and `$with` are enumerable because `Object.defineProperty` is banned (hygiene rule 1). This is acceptable — `JSON.stringify` is the serialization boundary (drops functions), not `Object.keys`.
 - **SC-005**: Native RT pass rates do not regress below baseline: python >= 114, rust >= 124, typescript >= 108.
 - **SC-006**: Factory round-trip failure ceilings drop to zero (from rust 15, typescript 25, python 70).
 - **SC-007**: `JSON.stringify(anyNode)` produces a clean serialization with no function artifacts.
