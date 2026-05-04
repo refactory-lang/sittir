@@ -23,6 +23,7 @@ import {
 	adaptNode,
 	collectKinds,
 	emitValidatorMetrics,
+	nodeToConfig,
 	type TSTree
 } from './common.ts';
 
@@ -192,6 +193,9 @@ export async function validateFrom(
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
 	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let factoryFields: Record<string, readonly string[]> = {};
+	let fieldAliasMap: Record<string, Record<string, string>> = {};
+	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	try {
 		const fromModule = await import(
@@ -206,8 +210,8 @@ export async function validateFrom(
 			new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname
 		);
 		factoryMap = factoryModule._factoryMap ?? {};
-		// Validator-only metadata (shapes, field-alias, factoryFields)
-		// moved to factory-map.json5. See emitters/factory-map.ts.
+		// Validator-only metadata (shapes, field-alias, factoryFields,
+		// polymorphVariants) lives in factory-map.json5.
 		try {
 			const mapPath = `../../../${grammar}/factory-map.json5`;
 			const { readFileSync } = await import('node:fs');
@@ -216,7 +220,11 @@ export async function validateFrom(
 				'utf-8'
 			);
 			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
-			factoryShapes = JSON.parse(jsonOnly).factoryShapes ?? {};
+			const mapData = JSON.parse(jsonOnly);
+			factoryShapes = mapData.factoryShapes ?? {};
+			factoryFields = mapData.factoryFields ?? {};
+			fieldAliasMap = mapData.fieldAliasMap ?? {};
+			polymorphVariants = mapData.polymorphVariants ?? {};
 		} catch {
 			/* factory-map.json5 unavailable */
 		}
@@ -297,17 +305,17 @@ export async function validateFrom(
 					const shape = factoryShapes[kind] ?? 'config';
 					const factory = factoryMap[kind]!;
 					if (shape === 'config') {
-						const camelFields = readData.$fields
-							? Object.fromEntries(
-									Object.entries(readData.$fields).map(([k, v]) => [
-										k.replace(/_([a-z])/g, (_, c) => c.toUpperCase()),
-										v
-									])
-								)
-							: undefined;
-						const config = readData.$children
-							? { ...camelFields, children: readData.$children }
-							: (camelFields ?? {});
+						// ADR-0018: readNode emits `_<name>` top-level keys, not
+						// `$fields`. Use `nodeToConfig` which handles both shapes
+						// and recursively resolves children through factories.
+						const config = nodeToConfig(readData, {
+							factoryMap: factoryMap as Record<string, (...args: unknown[]) => unknown>,
+							factoryShapes,
+							factoryFields,
+							fieldAliasMap,
+							polymorphVariants: polymorphVariants as any,
+							kindNameFromId
+						});
 						factoryResult = factory(config) as AnyNodeData;
 					} else if (shape === 'text') {
 						// readData.$text is absent on branch nodes (gated by
