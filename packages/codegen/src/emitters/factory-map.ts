@@ -17,6 +17,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts';
+import { allSlotsOf } from '../compiler/node-map.ts';
 import type {
 	PolymorphVariantDescriptor,
 	PolymorphVariantMap
@@ -66,15 +67,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (
-			node.modelType !== 'branch' &&
-			node.modelType !== 'polymorph' &&
-			node.modelType !== 'group'
-		)
-			continue;
-		const fields =
-			node.modelType === 'polymorph' ? node.allFormFields : node.fields;
-		for (const f of fields) {
+		for (const f of allSlotsOf(node)) {
 			if (!f.aliasSources) continue;
 			const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s);
 			if (pairs.length === 0) continue;
@@ -201,16 +194,10 @@ function shapeOf(
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
-	// Field-site alias sources (ADR-0006) — fields declared as
-	// `alias($.source, $.target)` in some other rule's field slot.
+	// Slot-level alias sources (ADR-0006) — slots declared as
+	// `alias($.source, $.target)` in some other rule's value position.
 	for (const [, n] of nodeMap.nodes) {
-		const fs =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
-					: [];
-		for (const f of fs) {
+		for (const f of allSlotsOf(n)) {
 			if (!f.aliasSources) continue;
 			for (const source of Object.values(f.aliasSources)) out.add(source);
 		}

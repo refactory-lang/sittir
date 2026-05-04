@@ -25,7 +25,8 @@ import {
 import {
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 import {
 	resolveEffectiveLiteral,
@@ -173,15 +174,9 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  *   imported but no emitted body references it — dropped.
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
-	return [...nodeMap.nodes.values()].some((n) => {
-		const fs: readonly AssembledNonterminal[] =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? Object.values(n.slots)
-					: [];
-		return fs.some((f) => isNonEmpty(f));
-	});
+	return [...nodeMap.nodes.values()].some((n) =>
+		allSlotsOf(n).some((f) => isNonEmpty(f))
+	);
 }
 
 /**
@@ -274,13 +269,7 @@ function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
 function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
 	let bitflag = false;
 	for (const [, node] of nodeMap.nodes) {
-		const fields: readonly AssembledNonterminal[] =
-			node.modelType === 'polymorph'
-				? node.allFormFields
-				: node.modelType === 'branch' || node.modelType === 'group'
-					? Object.values(node.slots)
-					: [];
-		for (const f of fields) {
+		for (const f of allSlotsOf(node)) {
 			if (keywordPresenceKind(f, nodeMap) === 'bitflag') bitflag = true;
 		}
 	}
@@ -440,16 +429,10 @@ function buildLeafReConsts(
 import { collectAliasSourceKinds as collectAliasSourceKindsShared } from './shared.ts';
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = collectAliasSourceKindsShared(nodeMap);
-	// Also include field-level aliasSources (the legacy channel —
+	// Also include slot-level aliasSources (the legacy channel —
 	// some paths populate this without a hidden-ref value slot).
 	for (const [, n] of nodeMap.nodes) {
-		const fs: readonly AssembledNonterminal[] =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? Object.values(n.slots)
-					: [];
-		for (const f of fs) {
+		for (const f of allSlotsOf(n)) {
 			if (!f.aliasSources) continue;
 			for (const source of Object.values(f.aliasSources))
 				out.add(source as string);

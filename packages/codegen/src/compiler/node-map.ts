@@ -2933,6 +2933,32 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		return out;
 	}
 
+	/**
+	 * Dedup'd union of every slot across forms — the "all slots" sibling
+	 * to {@link structuralFields}. Includes both named-grammar-field
+	 * slots (`source !== 'inferred'`) and inferred positional slots
+	 * (`source === 'inferred'`). First-occurrence wins per slot name.
+	 *
+	 * Used by graph-traversal walks that don't care about the
+	 * field/child distinction — kind reachability, alias-source
+	 * collection, userFacing classification, etc. The fields-only and
+	 * children-only views remain available via {@link structuralFields}
+	 * + filtering when the TS-emission shape differs by slot kind.
+	 */
+	get structuralSlots(): readonly AssembledNonterminal[] {
+		const seen = new Set<string>();
+		const out: AssembledNonterminal[] = [];
+		for (const form of this.#forms) {
+			for (const s of Object.values(form.slots)) {
+				if (!seen.has(s.name)) {
+					seen.add(s.name);
+					out.push(s);
+				}
+			}
+		}
+		return out;
+	}
+
 	renderTemplate(
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
@@ -3641,6 +3667,53 @@ export function allFormChildrenOf(
 		return node.forms.flatMap((form) => form.children);
 	if (node.modelType === 'branch' || node.modelType === 'group')
 		return node.children;
+	return [];
+}
+
+/**
+ * Every slot reachable from a node — Branch/Group return all entries
+ * of their own `.slots`; Polymorph returns every form's slots
+ * concatenated (raw cross-form flatten, duplicates preserved); non-
+ * structural kinds return `[]`.
+ *
+ * The "all slots" sibling of {@link allFormFieldsOf} — covers both
+ * field-shaped slots (`source !== 'inferred'`) and inferred positional
+ * children. Use this when the consumer doesn't care about the
+ * field/child distinction (graph traversal, kind reachability,
+ * alias-source collection, userFacing classification). When TS-
+ * emission shape differs by slot kind (factories, types, render
+ * templates), keep {@link structuralFieldsOf} / {@link structuralChildrenOf}
+ * for the typed-emission split.
+ */
+export function allSlotsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph')
+		return node.forms.flatMap((form) => Object.values(form.slots));
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return Object.values(node.slots);
+	return [];
+}
+
+/**
+ * Dedup'd union of every slot across forms — the "all slots" sibling
+ * of {@link structuralFieldsOf}. Polymorph returns
+ * `node.structuralSlots` (first-occurrence per name across forms,
+ * fields and children both); Branch/Group return all entries of their
+ * own `.slots`; non-structural kinds return `[]`.
+ *
+ * Use this when consumers want the dedup'd view regardless of slot
+ * kind. For most polymorph-aware walks the raw {@link allSlotsOf}
+ * suffices; pick the structural variant only when name-uniqueness
+ * matters to the consumer (e.g. set-collecting where dupes inflate
+ * count without changing meaning).
+ */
+export function allStructuralSlotsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.structuralSlots;
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return Object.values(node.slots);
 	return [];
 }
 

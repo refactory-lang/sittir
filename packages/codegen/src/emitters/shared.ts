@@ -20,7 +20,8 @@ import {
 	isUnresolvedRef,
 	isRequired,
 	isMultiple,
-	isNonEmpty
+	isNonEmpty,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 
 // Re-export derived helpers so emitters can import from one place.
@@ -55,13 +56,7 @@ export { isRequired, isMultiple, isNonEmpty };
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
-		const allSlots: readonly AssembledNonterminal[] =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? Object.values(n.slots)
-					: [];
-		for (const slot of allSlots) {
+		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;

@@ -47,7 +47,8 @@ import {
 	isMultiple,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	allSlotsOf
 } from './node-map.ts';
 import {
 	simplifyRule,
@@ -801,13 +802,7 @@ function resolveHiddenRuleContent(
 function markUserFacing(nodes: Map<string, AssembledNode>): void {
 	const aliasSourceKinds = new Set<string>();
 	for (const [, n] of nodes) {
-		const allSlots: readonly AssembledNonterminal[] =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? Object.values(n.slots)
-					: [];
-		for (const slot of allSlots) {
+		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
