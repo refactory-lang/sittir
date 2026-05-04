@@ -30,8 +30,9 @@ describe('typescript is / isTree / isNode composition', () => {
 		expect(
 			isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })
 		).toBe(true);
+		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
 		expect(
-			isNode({ $type: TSKindId.ClassDeclaration, $fields: {} } as { readonly $type: number })
+			isNode({ $type: TSKindId.ClassDeclaration, _name: {} } as { readonly $type: number })
 		).toBe(true);
 		expect(
 			isNode({ $type: TSKindId.FunctionDeclaration })
@@ -43,7 +44,8 @@ describe('typescript is / isTree / isNode composition', () => {
 			$type: TSKindId.ClassDeclaration,
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
-		const withoutRange = { $type: TSKindId.ClassDeclaration, $fields: {} };
+		// ADR-0018 Phase 2: $fields removed from interface; use simple object without range().
+		const withoutRange = { $type: TSKindId.ClassDeclaration };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});

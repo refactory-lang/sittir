@@ -1,21 +1,22 @@
 /**
  * Regression: python's `type_alias_statement` has a field literally named
  * `type`. Pre-US7 this collided with the NodeData kind discriminant.
- * Post-US7 the discriminant is `$type` and the field stays `type` inside
- * `$fields` — this test pins the shape so a future regression can't silently
- * collapse them.
+ * Post-US7 the discriminant is `$type` and the field is stored under `_type`
+ * (ADR-0018 de-hoisted storage) — this test pins the shape so a future
+ * regression can't silently collapse them.
  *
  * Post ADR-0010: `type` is an auto-stamp field (always the literal "type"),
- * so it is omitted from Config and stamped directly by the factory. The
- * key assertion — that `$type` (kind) and `$fields.type` (field) are
- * distinct — still holds; the factory fills `$fields.type` automatically.
+ * so it is omitted from Config and stamped directly by the factory via `_type`.
+ * Post ADR-0018: fields are stored directly as `_<name>` keys on the node
+ * (de-hoisted), not under `$fields`. The accessor is `typeField()` to avoid
+ * the reserved-word collision.
  */
 
 import { describe, it, expect } from 'vitest';
 import { ir, TSKindId } from '../src/index.ts';
 
 describe('python type_alias_statement collision (spec 008 US7)', () => {
-	it('$type holds the kind discriminant, $fields.type holds the `type` keyword field', () => {
+	it('$type holds the kind discriminant, _type holds the `type` keyword field (ADR-0018)', () => {
 		const node = ir.typeAlias({
 			left: { $type: 'type', $text: 'Foo' } as any,
 			right: { $type: 'type', $text: 'u64' } as any
@@ -25,14 +26,17 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 		expect(node.$type).toBe(TSKindId.TypeAliasStatement);
 
 		// `type` keyword field — auto-stamped by the factory (ADR-0010)
-		expect(node.$fields).toBeDefined();
-		expect((node.$fields as Record<string, unknown>).type).toBe('type');
+		// ADR-0018: stored under `_type`, not `$fields.type`
+		expect((node as unknown as Record<string, unknown>)['_type']).toBe('type');
+
+		// The de-hoisted storage key differs from the kind discriminant
+		expect(node.$type).not.toBe('type');
 
 		// Provenance tag also present on the factory output
 		expect(node.$source).toBe(2);
 	});
 
-	it('the two accessors do not alias — modifying one must not affect the other', () => {
+	it('the two instances have distinct _left/_right content, shared _type stamp', () => {
 		const a = ir.typeAlias({
 			left: { $type: 'type', $text: 'A' } as any,
 			right: { $type: 'type', $text: 'B' } as any
@@ -42,14 +46,14 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 			right: { $type: 'type', $text: 'Y' } as any
 		});
 
-		// Both instances share kind but have distinct field content.
+		// Both instances share kind and the auto-stamp `type` literal
 		expect(a.$type).toBe(b.$type);
-		expect((a.$fields as Record<string, unknown>).type).toBe(
-			(b.$fields as Record<string, unknown>).type
+		expect((a as unknown as Record<string, unknown>)['_type']).toBe(
+			(b as unknown as Record<string, unknown>)['_type']
 		);
-		// Left/right distinguish — sanity check the `type` field isn't a global.
-		const aLeft = (a.$fields as { left?: { $text?: string } }).left?.$text;
-		const bLeft = (b.$fields as { left?: { $text?: string } }).left?.$text;
+		// Left/right distinguish — sanity check the `_type` field isn't a global.
+		const aLeft = ((a as unknown as Record<string, unknown>)['_left'] as { $text?: string })?.$text;
+		const bLeft = ((b as unknown as Record<string, unknown>)['_left'] as { $text?: string })?.$text;
 		expect(aLeft).not.toBe(bLeft);
 	});
 });

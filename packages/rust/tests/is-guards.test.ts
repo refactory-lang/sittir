@@ -16,7 +16,8 @@ import type { FunctionItem } from '../src/index.ts';
 
 describe('is / isTree / isNode guard composition', () => {
 	it('is.functionItem narrows the $type discriminant to numeric TSKindId', () => {
-		const v = { $type: TSKindId.FunctionItem, $fields: {} as FunctionItem['$fields'] } as FunctionItem;
+		// ADR-0018 Phase 2: no $fields on the interface; use minimal typed object.
+		const v = { $type: TSKindId.FunctionItem } as unknown as FunctionItem;
 		if (!is.functionItem(v)) {
 			throw new Error('is.functionItem should have returned true');
 		}
@@ -39,10 +40,12 @@ describe('is / isTree / isNode guard composition', () => {
 		expect(
 			isNode({ $type: TSKindId.Identifier, $text: 'foo' } as { readonly $type: number })
 		).toBe(true);
+		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
+		// Use a _<name> key to signal a branch node shape.
 		expect(
-			isNode({ $type: TSKindId.Block, $fields: {} } as { readonly $type: number })
+			isNode({ $type: TSKindId.Block, _name: 'x' } as { readonly $type: number })
 		).toBe(true);
-		// Loose bag without $fields or $text — looks like a config object.
+		// Loose bag without _<name> keys or $text — looks like a config object.
 		expect(
 			isNode({ $type: TSKindId.FunctionItem })
 		).toBe(false);
@@ -53,15 +56,16 @@ describe('is / isTree / isNode guard composition', () => {
 			$type: TSKindId.FunctionItem,
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
-		const withoutRange = { $type: TSKindId.FunctionItem, $fields: {} };
+		// ADR-0018 Phase 2: $fields removed from interface; any object without range() passes false.
+		const withoutRange = { $type: TSKindId.FunctionItem };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});
 
 	it('kind × shape composition narrows to NamespaceMap projection', () => {
+		// ADR-0018 Phase 2: no $fields on the interface; use _name key for isNode shape.
 		const v: FunctionItem = {
 			$type: TSKindId.FunctionItem,
-			$fields: {} as FunctionItem['$fields']
 		} as unknown as FunctionItem;
 		if (is.functionItem(v) && isNode(v)) {
 			// Runtime path executes — structural narrowing via isNode verified.

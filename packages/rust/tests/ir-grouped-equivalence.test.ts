@@ -8,6 +8,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { ir, expression, pattern } from '@sittir/rust';
+import { TSKindId } from '../src/types.ts';
 
 describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
@@ -23,16 +24,14 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 	});
 
 	it('produces structurally identical output via flat vs grouped', () => {
-		const flat = ir.binary({
-			left: { $type: 'integer_literal', $text: '1' },
-			operator: '&&',
-			right: { $type: 'integer_literal', $text: '2' }
-		});
-		const grouped = ir.expression.binary({
-			left: { $type: 'integer_literal', $text: '1' },
-			operator: '&&',
-			right: { $type: 'integer_literal', $text: '2' }
-		});
+		// ADR-0018 Phase 2: $type must be numeric TSKindId (string $type removed in Phase D).
+		// binary_expression's `operator` is an AutoStamp field (excluded from Config —
+		// factory derives it from the grammar). Pass only user-supplied fields: left + right.
+		type BinaryConfig = Parameters<typeof ir.binary>[0];
+		const leaf = { $type: TSKindId.IntegerLiteral, $text: '1' } as unknown as BinaryConfig['left'];
+		const leaf2 = { $type: TSKindId.IntegerLiteral, $text: '2' } as unknown as BinaryConfig['right'];
+		const flat = ir.binary({ left: leaf, right: leaf2 });
+		const grouped = ir.expression.binary({ left: leaf, right: leaf2 });
 		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));
 	});
 

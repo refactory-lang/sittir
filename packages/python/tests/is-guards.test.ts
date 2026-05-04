@@ -27,8 +27,9 @@ describe('python is / isTree / isNode composition', () => {
 		expect(
 			isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })
 		).toBe(true);
+		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
 		expect(
-			isNode({ $type: TSKindId.IfStatement, $fields: {} } as { readonly $type: number })
+			isNode({ $type: TSKindId.IfStatement, _body: {} } as { readonly $type: number })
 		).toBe(true);
 		expect(
 			isNode({ $type: TSKindId.FunctionDefinition })
@@ -40,7 +41,8 @@ describe('python is / isTree / isNode composition', () => {
 			$type: 1,
 			range: () => ({ start: { index: 0 }, end: { index: 1 } })
 		};
-		const withoutRange = { $type: TSKindId.IfStatement, $fields: {} };
+		// ADR-0018 Phase 2: $fields removed from interface; use simple object without range().
+		const withoutRange = { $type: TSKindId.IfStatement };
 		expect(isTree(withRange)).toBe(true);
 		expect(isTree(withoutRange)).toBe(false);
 	});
