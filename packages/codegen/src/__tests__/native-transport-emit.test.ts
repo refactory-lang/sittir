@@ -369,17 +369,20 @@ describe('native transport emission', () => {
 		expect(contents).toContain(
 			'export function toNativeRenderTransport(node: unknown): AnyTransport'
 		);
-		expect(contents).toContain('const fields = value.$fields;');
+		// ADR-0018 Phase 2: $fields removed from utils; _<name> storage keys iterated via Object.entries.
+		expect(contents).toContain("const projKey = key.startsWith('_') ? key.slice(1) : key;");
 		expect(contents).toContain('projectRawChildrenIntoFields(projected, resolvedKind);');
 		expect(contents).toContain('inferNativeTransportVariant(projected, resolvedKind);');
 		expect(contents).toContain('const nativeTransportAliasTargetToSource');
 		expect(contents).toContain('const nativeTransportRawChildFieldRules');
 		expect(contents).toContain('const nativeTransportVariantRules');
+		// ADR-0018 Phase 2: _<name> keys are stripped to bare names before projection.
 		expect(contents).toContain(
-			'projected[key] = projectTransportValue(child, `${path}.${key}`);'
+			'projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);'
 		);
 		expect(contents).toContain('if (typeof child === "function") continue;');
-		expect(contents).toContain('if (key in projected) continue;');
+		// ADR-0018 Phase 2: guard uses projKey (bare name after _ strip), not raw key.
+		expect(contents).toContain('if (projKey in projected) continue;');
 		expect(contents).toContain(
 			'assertNativeRenderTransport(node: unknown): asserts node is AnyTransport'
 		);

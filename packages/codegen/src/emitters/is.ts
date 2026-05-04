@@ -514,12 +514,11 @@ export function emitIs(config: EmitIsConfig): string {
 		'export function isNode(v: { readonly $type: string | number }): boolean {'
 	);
 	lines.push('    const o = v as Record<string, unknown>;');
-	// ADR-0018 Phase 2: factory nodes use `_<name>` storage keys instead of `$fields`.
-	// Check for the legacy `$fields` path OR any `_*` top-level key (new shape).
-	// `typeof null === 'object'` — explicitly exclude null before accepting
-	// the object-shape (matches the stricter isNodeData guard in from.ts).
+	// ADR-0018 Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
+	// surface). Any top-level `_*` key indicates a branch node with named fields.
+	// Leaf nodes have `$text` instead.
 	lines.push(
-		`    const hasFields = (o['$fields'] !== undefined && o['$fields'] !== null && typeof o['$fields'] === 'object') || Object.keys(o).some((k) => k.startsWith('_'));`
+		`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`
 	);
 	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);
 	lines.push('}');

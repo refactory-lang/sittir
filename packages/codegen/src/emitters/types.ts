@@ -1604,8 +1604,12 @@ function emitInterface(
 	// `$type` is the single source of truth for both producer paths.
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
 
+	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
+	// function types at the top level instead of the old `$fields: { name: T }`
+	// nested wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys
+	// and strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
 	if (fields.length > 0) {
-		lines.push('  readonly $fields: {');
+		// Storage keys: `readonly _name?: T` (enumerable, serializable)
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
@@ -1621,16 +1625,30 @@ function emitInterface(
 			if (isMultiple(f)) {
 				emitFieldArrayDeclaration(
 					lines,
-					f.name,
+					`_${f.name}`,
 					opt,
 					wrappedType,
 					isNonEmpty(f)
 				);
 			} else {
-				lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
 			}
 		}
-		lines.push('  };');
+		// Accessor function types: `name(): T` (non-enumerable at runtime —
+		// declared here for type-safety so consumers can call node.name()).
+		for (const f of fields) {
+			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const opt = isRequired(f) ? '' : '?';
+			if (isMultiple(f)) {
+				// Multiple accessor returns the array type (same as storage type).
+				const arrType = isNonEmpty(f) ? `NonEmptyArray<${wrappedType}>` : `readonly (${wrappedType})[]`;
+				lines.push(`  ${propName}(): ${arrType};`);
+			} else {
+				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+			}
+		}
 	}
 
 	if (children && children.length > 0) {
@@ -1691,10 +1709,12 @@ function emitFieldArrayDeclaration(
 	typeExpr: string,
 	nonEmpty: boolean | undefined
 ): void {
+	// ADR-0018 Phase 2: indentation at interface body level (2 spaces) since
+	// fields are now declared directly on the interface, not inside $fields: {}.
 	if (nonEmpty) {
-		lines.push(`    readonly ${name}${opt}: NonEmptyArray<${typeExpr}>;`);
+		lines.push(`  readonly ${name}${opt}: NonEmptyArray<${typeExpr}>;`);
 	} else {
-		lines.push(`    readonly ${name}${opt}: readonly (${typeExpr})[];`);
+		lines.push(`  readonly ${name}${opt}: readonly (${typeExpr})[];`);
 	}
 }
 
@@ -1777,26 +1797,32 @@ function emitFormInterface(
 	// `if (expr.$variant === 'binary') { … }` without structural probing.
 	lines.push(`  readonly $variant: '${form.name}';`);
 
+	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
+	// function types at the top level instead of `$fields: { name: T }`.
 	if (form.fields.length > 0) {
-		lines.push('  readonly $fields: {');
+		// Storage keys: `readonly _name?: T`
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
-			const wrappedType = wrapFieldTypeForBrand(
-				f,
-				node.kind,
-				nodeMap,
-				typeExpr
-			);
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
 			if (isMultiple(f)) {
-				lines.push(
-					`    readonly ${f.name}${opt}: readonly (${wrappedType})[];`
-				);
+				lines.push(`  readonly _${f.name}${opt}: readonly (${wrappedType})[];`);
 			} else {
-				lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
 			}
 		}
-		lines.push('  };');
+		// Accessor function types: `name(): T`
+		for (const f of form.fields) {
+			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const opt = isRequired(f) ? '' : '?';
+			if (isMultiple(f)) {
+				lines.push(`  ${propName}(): readonly (${wrappedType})[];`);
+			} else {
+				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+			}
+		}
 	}
 
 	emitFormChildrenSlot(lines, form, nodeMap, lookupUnion);

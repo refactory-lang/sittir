@@ -875,7 +875,9 @@ function emitRepeatedContainerFrom(
 	if (!hasNumericDiscriminant) {
 		return [
 			`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
-			`  return ${factory}(...(input as readonly ${elementType}[]));`,
+			// as unknown as Parameters<>: elementType may include separator literals (e.g. ",")
+			// from $children that factory doesn't accept directly. Route through unknown.
+			`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
 			'}'
 		].join('\n');
 	}
@@ -883,9 +885,12 @@ function emitRepeatedContainerFrom(
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
-		`    return ${factory}(...((data.$children ?? []) as readonly ${elementType}[]));`,
+		// as unknown as Parameters<>: data.$children is NodeChildValue[] (includes
+		// string|number + separator literals); factory accepts only semantic nodes.
+		`    return ${factory}(...((data.$children ?? []) as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,
-		`  return ${factory}(...(input as readonly ${elementType}[]));`,
+		// as unknown as Parameters<>: input may include separator literals.
+		`  return ${factory}(...(input as unknown as Parameters<typeof ${factory}>));`,
 		'}'
 	].join('\n');
 }
