@@ -2568,6 +2568,40 @@ function escapeJinjaBraceCollisions(s: string): string {
 	return prev;
 }
 
+/**
+ * Build the frozen slot Record for an AssembledBranch (or any kind that
+ * uses the slot-Record surface). Walks `deriveSlots(rule)` once and
+ * keys each slot by its name. Insertion order = declared rule order.
+ *
+ * Spec 022 Phase 1d.v: this is the constructor-time helper for every
+ * class that exposes the unified `slots` surface. The locked design's
+ * eager validation (collision throw, >1 unnamed slot throw, mixed-arity
+ * warn, key remap to 'child'/'children' for inferred slots) is NOT
+ * enforced here yet — see the JSDoc on `AssembledBranch.slots` for the
+ * rationale. When the grammar-override migration lands ("Owner A"), this
+ * helper picks up the strict checks and the remap.
+ *
+ * @param kind - Owning kind name. Reserved for future error/warn messages.
+ * @param rule - Simplified rule to walk for slots.
+ */
+function buildSlotsRecord(
+	_kind: string,
+	rule: Rule
+): Readonly<Record<string, AssembledNonterminal>> {
+	const out: Record<string, AssembledNonterminal> = {};
+	for (const slot of deriveSlots(rule)) {
+		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
+		// keys and at most one unnamed slot per branch is permitted. Empirical
+		// check (rust grammar) confirms multiple kinds today have >1 unnamed
+		// positional slot (e.g. rust's `block` has 2). Enforcement requires
+		// grammar overrides to explicitly name those positions first ("Owner A"
+		// migration). Until then: keep the kind-derived name as the Record
+		// key, no collision throw, no >1-unnamed throw.
+		out[slot.name] = slot;
+	}
+	return Object.freeze(out);
+}
+
 export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 	readonly modelType = 'branch' as const;
 	// rule narrowed to SeqRule | ChoiceRule — branches classify from
@@ -2594,6 +2628,28 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 	 */
 	readonly variantChildKinds: readonly string[];
 
+	/**
+	 * The unified slot Record — every constituent of this branch keyed
+	 * by its grammar field name (for `field()`-derived slots) or its
+	 * kind-derived positional name (for inferred slots). Insertion order
+	 * matches the order produced by `deriveSlots`. Frozen at construction.
+	 *
+	 * Phase 1d.v (spec 022) introduced this as the canonical slot surface;
+	 * the per-class `fields` / `children` getters below are temporary
+	 * compatibility views that consumers will migrate off in Phase 1d.viii.
+	 *
+	 * Two pieces of the locked design are NOT yet enforced here:
+	 *   - Key remap to `'child'` / `'children'` for `source === 'inferred'`
+	 *     slots is deferred until grammar overrides explicitly name every
+	 *     unnamed positional position (Owner A migration). Today, inferred
+	 *     slots keep their kind-derived name to preserve byte-identity.
+	 *   - Eager validation (collision throw, >1 unnamed throw, mixed-arity
+	 *     warn) is deferred to the same future sub-phase. With kind-derived
+	 *     keys retained, collisions don't naturally occur in the current
+	 *     grammars.
+	 */
+	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
+
 	// Cached derivations — lazy, computed on first access
 	#fields?: AssembledField[];
 	#children?: AssembledChild[];
@@ -2611,6 +2667,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
+		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
 	/** Direct access to the rule's ordered members (seq or choice). */
