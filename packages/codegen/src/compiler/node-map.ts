@@ -1646,58 +1646,53 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	}
 }
 
+/**
+ * Bare slot description — what `deriveChildren` and friends produce.
+ * Holds the slot's name, derived camelCase property name, and per-value
+ * content with multiplicities.
+ *
+ * Refined into `AssembledNonterminal` (below) when the slot originated
+ * from a grammar `field(...)` wrapper; that refinement adds the
+ * factory-side parameter name, separator flags, alias provenance, and
+ * source provenance.
+ *
+ * Phase 1d migration note: this interface stays for the duration of
+ * Phase 1d.ii — Phase 1d.iv will replace the `deriveChildren` /
+ * `deriveFields` walkers with a single `deriveSlots` that produces
+ * `AssembledNonterminal` instances directly with full metadata
+ * (paramName='child'/'children' for unnamed positions). Once that lands,
+ * `AssembledChild` becomes truly unused and is removed.
+ */
 export interface AssembledChild {
 	readonly name: string;
 	readonly propertyName: string;
-	/**
-	 * Unified per-value content. Each entry carries its own `multiplicity`
-	 * so that mixed-cardinality choices (e.g. `choice(optional($.foo),
-	 * repeat($.bar))`) are represented faithfully.
-	 *
-	 * Use the derived helpers (`isRequired`, `isMultiple`, `isNonEmpty`)
-	 * to compute slot-level booleans rather than reading flags directly.
-	 */
 	readonly values: readonly NodeOrTerminal[];
 }
 
-export interface AssembledField extends AssembledChild {
+/**
+ * Field-shaped slot — a constituent that originated from a grammar
+ * `field(name, content)` wrapper. Carries the factory-side parameter
+ * name plus separator/alias/source provenance.
+ *
+ * Renamed from `AssembledField` in spec 022 Phase 1d.ii. The previous
+ * `AssembledField` name remains as a deprecated type alias for the
+ * duration of the consumer migration (Phase 1d.viii); after that lands,
+ * the alias is removed.
+ *
+ * `hasTrailing` / `hasLeading` will move to per-value in Phase 1d.iii;
+ * once there, this interface drops those properties and consumers read
+ * them from `slot.values[i].trailing` instead.
+ */
+export interface AssembledNonterminal extends AssembledChild {
 	readonly paramName: string;
-	/**
-	 * True when the repeat that backs this field carries a `trailing`
-	 * separator flag AND the field's multiplicity is array or
-	 * nonEmptyArray (i.e. `values` contains at least one entry with
-	 * `multiplicity === 'array' | 'nonEmptyArray'`).
-	 *
-	 * Derived once in `deriveFieldsRaw` from the SAME simplifiedRule
-	 * that the template walker walks, replacing the old ad-hoc
-	 * `findFieldsWithRepeatFlag` calls at each renderTemplate site.
-	 */
 	readonly hasTrailing: boolean;
-	/**
-	 * True when the repeat that backs this field carries a `leading`
-	 * separator flag AND the field's multiplicity is array or
-	 * nonEmptyArray. See {@link hasTrailing}.
-	 */
 	readonly hasLeading: boolean;
-	/**
-	 * Alias provenance per content type. When a content element was
-	 * declared at the call site via `alias($.source, $.target)` —
-	 * tree-sitter erases `source` at parse time, so the runtime $type
-	 * is `target` even though the body follows `source`'s shape — we
-	 * preserve that pairing so the wrap emitter can emit a drillAs()
-	 * call that rewrites $type back to source at drill-in.
-	 *
-	 * Keyed by the runtime target kind-name; value is the declared
-	 * source kind-name the codegen wants to present as the canonical
-	 * `$type`. Multiple entries when the same target maps from several
-	 * sources is theoretical — keep as a map for extensibility.
-	 *
-	 * Absent / empty when the field has no aliased content (the
-	 * common case). See ADR-0006.
-	 */
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 }
+
+/** @deprecated Use AssembledNonterminal — alias retained during Phase 1d migration. */
+export type AssembledField = AssembledNonterminal;
 
 /**
  * Derive the slot's referenced kind names from its `values[]`.

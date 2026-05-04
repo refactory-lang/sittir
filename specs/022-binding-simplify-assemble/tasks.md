@@ -123,7 +123,7 @@ responsibilities (RepeatRule support; separator semantics now live on per-value)
 
 #### 1d.ii — Rename AssembledField → AssembledNonterminal; delete AssembledChild
 
-- [ ] T022 [US0] In `packages/codegen/src/compiler/node-map.ts`: delete the `AssembledChild` interface (lines 1664-1676) entirely. Move all its fields onto `AssembledField`. Remove the `extends AssembledChild` from `AssembledField`. Drop `hasTrailing` and `hasLeading` from the interface (will move to per-value). Drop `projection: KindProjection` from the interface (eliminated in 1d.i). Rename `AssembledField` → `AssembledNonterminal`. Net interface:
+- [x] T022 [US0] PARTIAL: AssembledField renamed to AssembledNonterminal (extends AssembledChild). AssembledChild deletion deferred to 1d.iv when deriveSlots replaces deriveChildren. AssembledField kept as @deprecated alias for incremental migration. Original task description follows: In `packages/codegen/src/compiler/node-map.ts`: delete the `AssembledChild` interface (lines 1664-1676) entirely. Move all its fields onto `AssembledField`. Remove the `extends AssembledChild` from `AssembledField`. Drop `hasTrailing` and `hasLeading` from the interface (will move to per-value). Drop `projection: KindProjection` from the interface (eliminated in 1d.i). Rename `AssembledField` → `AssembledNonterminal`. Net interface:
   ```ts
   export interface AssembledNonterminal {
     readonly name: string;
