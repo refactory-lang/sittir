@@ -625,7 +625,11 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 	auditKindsByShape.clear();
 }
 
-export function deriveFields(rule: Rule): AssembledField[] {
+/**
+ * Internal — fields-side walk. The exported derivation surface is
+ * `deriveSlots` (Phase 1d.iv); this helper is its fields-portion.
+ */
+function _deriveFieldsInternal(rule: Rule): AssembledField[] {
 	auditDerivationShape(rule, 'fields');
 	return mergeFieldsByName(deriveFieldsRaw(rule, 'single'));
 }
@@ -856,7 +860,11 @@ function fieldContentMultiplicity(
  *     either resolved to aliased symbols or promoted to polymorph
  *     forms. Retained as canonicalization-gap signals.
  */
-export function deriveChildren(rule: Rule): AssembledChild[] {
+/**
+ * Internal — children-side walk. The exported derivation surface is
+ * `deriveSlots` (Phase 1d.iv); this helper is its children-portion.
+ */
+function _deriveChildrenInternal(rule: Rule): AssembledChild[] {
 	auditDerivationShape(rule, 'children');
 	const members: readonly Rule[] = rule.type === 'seq' ? rule.members : [rule];
 
@@ -974,10 +982,24 @@ function promoteChildToNonterminal(
  * follow-up to Phase 1d.iv proper.
  */
 export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
-	const fields = deriveFields(rule);
-	const children = deriveChildren(rule);
+	const fields = _deriveFieldsInternal(rule);
+	const children = _deriveChildrenInternal(rule);
 	const promoted = children.map(promoteChildToNonterminal);
 	return [...fields, ...promoted];
+}
+
+// Convenience selectors over deriveSlots — used by class getters and
+// internal callers that need the fields-only or children-only view.
+// External callers should prefer deriveSlots directly and filter at the
+// call site (slot.source !== 'inferred' for fields, === 'inferred' for
+// kind-derived positional children).
+
+function _slotsAsFields(rule: Rule): AssembledField[] {
+	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
+}
+
+function _slotsAsChildren(rule: Rule): AssembledChild[] {
+	return deriveSlots(rule).filter((s) => s.source === 'inferred');
 }
 
 /**
@@ -2600,7 +2622,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		if (this.#fields) return this.#fields;
 		setAuditKindContext(this.kind);
 		try {
-			return (this.#fields = deriveFields(this.simplifiedRule));
+			return (this.#fields = _slotsAsFields(this.simplifiedRule));
 		} finally {
 			setAuditKindContext(undefined);
 		}
@@ -2615,7 +2637,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		if (this.#children) return this.#children;
 		setAuditKindContext(this.kind);
 		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
+			return (this.#children = _slotsAsChildren(this.simplifiedRule));
 		} finally {
 			setAuditKindContext(undefined);
 		}
@@ -2976,7 +2998,7 @@ export class AssembledContainer extends AssembledNodeBase<
 		if (this.#children) return this.#children;
 		setAuditKindContext(this.kind);
 		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
+			return (this.#children = _slotsAsChildren(this.simplifiedRule));
 		} finally {
 			setAuditKindContext(undefined);
 		}
@@ -3622,7 +3644,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		if (this.#fields) return this.#fields;
 		setAuditKindContext(this.kind);
 		try {
-			return (this.#fields = deriveFields(this.simplifiedRule));
+			return (this.#fields = _slotsAsFields(this.simplifiedRule));
 		} finally {
 			setAuditKindContext(undefined);
 		}
@@ -3643,7 +3665,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		if (this.#children) return this.#children;
 		setAuditKindContext(this.kind);
 		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
+			return (this.#children = _slotsAsChildren(this.simplifiedRule));
 		} finally {
 			setAuditKindContext(undefined);
 		}

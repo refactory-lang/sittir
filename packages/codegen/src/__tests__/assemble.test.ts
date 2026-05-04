@@ -9,7 +9,14 @@ import {
 import { simplifyRules } from '../compiler/simplify.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
-import { deriveFields, isRequired, isMultiple } from '../compiler/node-map.ts';
+import { deriveSlots, isRequired, isMultiple } from '../compiler/node-map.ts';
+
+// Helper — fields-equivalent view over deriveSlots: every slot that came
+// from a grammar `field(name, ...)` wrapper (excludes kind-derived
+// positional children, which carry source='inferred').
+function deriveFields(rule: Parameters<typeof deriveSlots>[0]) {
+	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
+}
 
 function makeOptimized(
 	rules: Record<string, Rule>,
