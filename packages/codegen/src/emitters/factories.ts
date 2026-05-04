@@ -107,21 +107,23 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	}
 	const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 	const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-	// `AnyNodeData` and `Edit` are always needed by the common factory
-	// suffix (render / toEdit / replace — see `factorySuffix`).
-	// `ByteRange` + `FluentNode` are the other ubiquitous imports.
-	const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'FluentNode'];
+	// `AnyNodeData` is needed for method signatures. `FluentNode` is used
+	// in FluentKindMap. `ByteRange`/`Edit` no longer needed in generated
+	// factories (methods come from `withMethods` in @sittir/core).
+	const utilImports = ['AnyNodeData', 'FluentNode'];
 	if (usesConfigOf) utilImports.push('ConfigOf');
 	if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 	lines.push(
 		`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`
 	);
 	// Spec 012 boundary shim — `render` / `toEdit` dispatch through
-	// `getActiveBackend()` so factory-method `node.render()` /
-	// `node.toEdit()` honor the active backend (native napi vs TS
+	// `getActiveBackend()` so factory-method `node.$render()` /
+	// `node.$toEdit()` honor the active backend (native napi vs TS
 	// Nunjucks). Was: `import { createRenderer } from '@sittir/core'`
 	// + lazily-bound renderer pinned to the package's `templates/`.
 	lines.push("import { render, toEdit } from './boundary.ts';");
+	// ADR-0018 Phase 2 NodeData surface helpers.
+	lines.push("import { withMethods, freezeNodeData, buildWithNamespace } from '@sittir/core';");
 	lines.push('');
 	lines.push(...emitFluentSetterHelpers());
 	lines.push(...emitNonEmptyAssertHelper());
@@ -206,65 +208,14 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 }
 
 /**
- * Emit the `_setField` and `_setFields` fluent setter helper function source lines,
- * plus the `_branchMethods` shared branch-methods constant and the `_leafMethods` helper.
+ * ADR-0018 Phase 2: the old `_setField`, `_setFields`, `_branchMethods`, and
+ * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
+ * `buildWithNamespace` runtime helpers from `@sittir/core`. Nothing to emit here.
  *
- * @returns Array of source lines for all shared helpers (without trailing blank line).
- * @remarks
- *   Shared by every factory's per-field getter/setter methods so the generated
- *   bodies are one function call instead of a hand-inlined ternary.
- *
- *   - `_setField` — singular-valued fields. Setter branch calls the factory
- *     with the new field; getter branch returns the current value.
- *   - `_setFields` — repeated-valued fields. Setter is rest-params —
- *     empty array → return current, otherwise rebuild with the new array.
- *   - `_branchMethods` — shared `render` + `toEdit` methods spread into every branch factory.
- *     Only `replace` varies per factory (the target tree type).
- *   - `_leafMethods` — shared `render` + `toEdit` for leaf/keyword/enum factories
- *     where the output is a fixed text value.
- *
- *   The generics are intentionally loose: `T[K] | R` is the narrowest useful
- *   return type (a field value OR a rebuilt fluent node). Call sites cast at
- *   the method boundary via their explicit parameter / return annotations so
- *   consumer IntelliSense still sees the concrete per-field shape.
+ * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
  */
 function emitFluentSetterHelpers(): string[] {
-	return [
-		'function _setField<T, R, K extends keyof T>(',
-		'  cfg: T | undefined,',
-		'  fn: (c: T) => R,',
-		'  key: K,',
-		'  v: T[K] | undefined,',
-		'  cur: T[K] | undefined,',
-		'): T[K] | R | undefined {',
-		'  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
-		'}',
-		'function _setFields<T, R, K extends keyof T>(',
-		'  cfg: T | undefined,',
-		'  fn: (c: T) => R,',
-		'  key: K,',
-		'  v: readonly unknown[],',
-		'  cur: T[K] | undefined,',
-		'): T[K] | R | undefined {',
-		'  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
-		'}',
-		'const _branchMethods = {',
-		'  render(this: AnyNodeData): string { return render(this); },',
-		'  toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {',
-		'    if (typeof startOrRange === \'number\') return toEdit(this, startOrRange, endPos!);',
-		'    return toEdit(this, startOrRange);',
-		'  },',
-		'};',
-		'function _leafMethods(text: string) {',
-		'  return {',
-		'    render: () => text,',
-		'    toEdit: (s: number | ByteRange, e?: number): Edit =>',
-		'      typeof s === \'number\'',
-		'        ? { startPos: s, endPos: e!, insertedText: text }',
-		'        : { startPos: s.start.index, endPos: s.end.index, insertedText: text },',
-		'  };',
-		'}',
-	];
+	return [];
 }
 
 /**
@@ -1148,26 +1099,6 @@ function emitFieldCarryingFactory(
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
 
-	if (hasFields) {
-		lines.push('  const fields = {');
-		for (const f of fields) {
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				// Auto-stamp: field has a single fixed literal value — stamp it
-				// directly without reading from config. The field is omitted from
-				// Config so the caller cannot (and need not) supply it.
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-			if (kwExpr !== undefined) {
-				lines.push(`    ${f.name}: ${kwExpr},`);
-				continue;
-			}
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
 	// `childrenUserConfigurable` is false when every required child
 	// auto-stamps AND there are no optional children. In that case
 	// the Config (post-ConfigOf) has no `children` slot — ConfigOf
@@ -1187,6 +1118,8 @@ function emitFieldCarryingFactory(
 		requiredChildren.every((c) => isAutoStampSlot(c, nodeMap));
 	const childrenUserConfigurable =
 		hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
+
+	// Build children local variable (unchanged from pre-ADR-0018).
 	if (hasChildren) {
 		// Stamp expressions use child-context (NodeData wrapper) so
 		// the resulting `$children` array matches the parent's
@@ -1212,41 +1145,55 @@ function emitFieldCarryingFactory(
 		node.modelType == 'group'
 			? resolvePolymorphFormVariantName(node)
 			: undefined;
-	lines.push('  return {');
+
+	// ADR-0018 Phase 2: build a mutable `_node` with `_<name>` storage slots,
+	// then attach non-enumerable accessors + `$with` + methods, then freeze.
+	lines.push('  const _node: Record<string,unknown> = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
-	if (hasFields) lines.push('    $fields: fields,');
-	if (hasChildren) lines.push('    $children: children,');
-
-	lines.push(...emitFluentFieldMethods(fn, fields, nodeMap));
-
-	if (childrenUserConfigurable) {
-		const childElem = childElementType({ children }, nodeMap);
-		if (childrenMultiple) {
-			// Unified fluent `children()` — no-arg getter, varargs setter.
-			// `$`-prefix on NodeData metadata (`$children`) freed the bare
-			// `children` identifier on the factory surface, matching the
-			// existing `value()` / `values()` fluent pattern for fields.
-			const childrenNonEmpty = children.some((c) => isNonEmpty(c));
-			lines.push(`    children(...items: ${childElem}[]) {`);
-			lines.push('      if (items.length === 0) return children;');
-			if (childrenNonEmpty) {
-				lines.push(`      _assertNonEmpty(items, '${node.kind}.children');`);
-			}
-			lines.push(`      return ${fn}({ ...config, children: items });`);
-			lines.push('    },');
-		} else {
-			lines.push(`    child(value?: ${childElem}) {`);
-			lines.push('      if (value === undefined) return children[0];');
-			lines.push(`      return ${fn}({ ...config, children: [value] });`);
-			lines.push('    },');
+	// Named fields → `_<name>` storage keys (enumerable).
+	for (const f of fields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			// Auto-stamp: field has a single fixed literal value — stamp it
+			// directly without reading from config. The field is omitted from
+			// Config so the caller cannot (and need not) supply it.
+			lines.push(`    _${f.name}: ${stamp},`);
+			continue;
 		}
+		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		if (kwExpr !== undefined) {
+			lines.push(`    _${f.name}: ${kwExpr},`);
+			continue;
+		}
+		lines.push(`    _${f.name}: config${opt}.${f.propertyName},`);
 	}
-
-	lines.push(...factorySuffix(node.treeTypeName));
+	// `$children` stays enumerable (unnamed slot).
+	if (hasChildren) lines.push('    $children: children,');
 	lines.push('  };');
+
+	// Collect slot key pairs for buildWithNamespace and accessor pairs.
+	// Named fields: storageKey = '_name', configKey = 'name' (camelCase).
+	const slotKeyPairs: [string, string][] = fields.map((f) => [
+		`_${f.name}`,
+		f.propertyName
+	]);
+	// Children slot: storageKey = '$children', configKey = 'children'.
+	if (childrenUserConfigurable) {
+		slotKeyPairs.push(['$children', 'children']);
+	}
+	// Named accessor pairs: [rawName, propName].
+	// Exclude auto-stamp fields from accessors? No — getters for auto-stamp
+	// are still useful (caller can read the stamped value). Include all fields.
+	const accessorPairs: [string, string][] = fields.map((f) => {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		return [f.name, propName];
+	});
+
+	const configForWith = opt === '?' ? `(config ?? {})` : `config`;
+	lines.push(...emitWithMethodsAndFreeze('_node', configForWith, fn, slotKeyPairs, accessorPairs));
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1324,39 +1271,42 @@ function emitRefineFormFactory(
 	lines.push(
 		`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`
 	);
-	if (hasFields) {
-		lines.push('  const fields = {');
-		for (const f of fields) {
-			const narrowedLit = narrowed.get(f.name);
-			if (narrowedLit !== undefined) {
-				lines.push(`    ${f.name}: ${JSON.stringify(narrowedLit)} as const,`);
-				continue;
-			}
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-			if (kwExpr !== undefined) {
-				lines.push(`    ${f.name}: ${kwExpr},`);
-				continue;
-			}
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
 	if (hasChildren) {
 		lines.push(`  const children = config${opt}.children ?? [];`);
 	}
-	lines.push('  return {');
+	// ADR-0018 Phase 2: `_<name>` storage + non-enumerable accessors + $with + freeze.
+	lines.push('  const _node: Record<string,unknown> = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	if (hasFields) lines.push('    $fields: fields,');
+	for (const f of fields) {
+		const narrowedLit = narrowed.get(f.name);
+		if (narrowedLit !== undefined) {
+			lines.push(`    _${f.name}: ${JSON.stringify(narrowedLit)} as const,`);
+			continue;
+		}
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`    _${f.name}: ${stamp},`);
+			continue;
+		}
+		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		if (kwExpr !== undefined) {
+			lines.push(`    _${f.name}: ${kwExpr},`);
+			continue;
+		}
+		lines.push(`    _${f.name}: config${opt}.${f.propertyName},`);
+	}
 	if (hasChildren) lines.push('    $children: children,');
-	lines.push(...factorySuffix(node.treeTypeName));
 	lines.push('  };');
+	const refineSlotKeyPairs: [string, string][] = fields.map((f) => [`_${f.name}`, f.propertyName]);
+	if (hasChildren) refineSlotKeyPairs.push(['$children', 'children']);
+	const refineAccessorPairs: [string, string][] = fields.map((f) => {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		return [f.name, propName];
+	});
+	const refineConfigForWith = opt === '?' ? `(config ?? {})` : `config`;
+	lines.push(...emitWithMethodsAndFreeze('_node', refineConfigForWith, formFn, refineSlotKeyPairs, refineAccessorPairs));
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1594,13 +1544,25 @@ function emitContainerFactory(
 				: `  const children = child != null ? [child] : [];`
 		);
 	}
-	lines.push('  return {');
+	// ADR-0018 Phase 2: mutable _node + $with (children updater) + withMethods + freeze.
+	lines.push('  const _node: Record<string,unknown> = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push('    $children: children,');
-	lines.push(...factorySuffix(node.treeTypeName));
 	lines.push('  };');
+	// Container $with: unnamed slot updater. Multiple → `$children`; single → `$child`.
+	// Both call the factory directly (no config object).
+	if (anyMultiple) {
+		lines.push(
+			`  Object.defineProperty(_node, '$with', { value: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) }, enumerable: false, writable: false, configurable: false });`
+		);
+	} else {
+		lines.push(
+			`  Object.defineProperty(_node, '$with', { value: { $child: (v: ${elementType}) => ${fn}(v) }, enumerable: false, writable: false, configurable: false });`
+		);
+	}
+	lines.push(`  return freezeNodeData(withMethods(_node, { render, toEdit }));`);
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1661,8 +1623,15 @@ function emitPolymorphFactory(
 
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
+		// ADR-0018: use withMethods + freezeNodeData pattern.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 2 as const, $named: true as const, ..._branchMethods, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
+		return [
+			`export function ${fn}(_config?: unknown) {`,
+			`  const _node: Record<string,unknown> = { $type: ${typeExpr}, $source: 2 as const, $named: true as const };`,
+			`  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });`,
+			`  return freezeNodeData(withMethods(_node, { render, toEdit }));`,
+			`}`,
+		].join('\n');
 	}
 
 	const parts: string[] = [];
@@ -1731,14 +1700,15 @@ function buildHoistedRebuildExpr(
 		if (patchSource === 'form' && f.propertyName === patchKey) continue;
 		parts.push(`${f.propertyName}: config.${f.propertyName}`);
 	}
-	// Inner-level fields come from the materialized inner node's `$fields`
-	// map (snake_case). Skip the patched key if this setter is patching an
-	// inner-level field. Also skip auto-stamped fields — they are excluded
-	// from ConfigOf<T> so passing them in the rebuild config is a type error.
+	// Inner-level fields come from the materialized inner node's `_<name>`
+	// storage (ADR-0018 Phase 2). Skip the patched key if this setter is
+	// patching an inner-level field. Also skip auto-stamped fields — they
+	// are excluded from ConfigOf<T> so passing them in the rebuild config
+	// is a type error.
 	for (const f of innerFields) {
 		if (patchSource === 'inner' && f.propertyName === patchKey) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		parts.push(`${f.propertyName}: inner.$fields.${f.name}`);
+		parts.push(`${f.propertyName}: (inner as unknown as Record<string,unknown>)['_${f.name}']`);
 	}
 	// Patched key appended last so its value is authoritative in the
 	// emitted object literal (shadows any earlier identical key).
@@ -1791,22 +1761,6 @@ function emitHoistedPolymorphFormFactory(
 
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
-
-	if (formFields.length > 0) {
-		lines.push('  const fields = {');
-		for (const f of formFields) {
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			// Match the optional-config marker — when `config?:` was used
-			// (no required field anywhere), reads need optional chaining
-			// so TS doesn't complain about `config` possibly being undefined.
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
 
 	// Inner child construction. Three paths:
 	//
@@ -1884,66 +1838,93 @@ function emitHoistedPolymorphFormFactory(
 		// kind. Templates, interfaces, factories all key on the same
 		// hidden name; wrap canonicalizes parser output (visible →
 		// hidden) so consumers always see the canonical hidden form.
-		lines.push('  const inner = {');
+		// ADR-0018 Phase 2: use `_<name>` storage + withMethods + freezeNodeData.
+		lines.push('  const _inner: Record<string,unknown> = {');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
 		lines.push(`    $source: 2 as const,`);
 		lines.push('    $named: true as const,');
-		if (hoist.innerFields.length > 0) {
-			lines.push('    $fields: {');
-			for (const f of hoist.innerFields) {
-				const stamp = autoStampExpression(f, nodeMap);
-				if (stamp !== undefined) {
-					lines.push(`      ${f.name}: ${stamp},`);
-					continue;
-				}
-				const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-				if (kwExpr !== undefined) {
-					lines.push(`      ${f.name}: ${kwExpr},`);
-					continue;
-				}
-				lines.push(`      ${f.name}: config${opt}.${f.propertyName},`);
+		for (const f of hoist.innerFields) {
+			const stamp = autoStampExpression(f, nodeMap);
+			if (stamp !== undefined) {
+				lines.push(`    _${f.name}: ${stamp},`);
+				continue;
 			}
-			lines.push('    },');
+			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+			if (kwExpr !== undefined) {
+				lines.push(`    _${f.name}: ${kwExpr},`);
+				continue;
+			}
+			lines.push(`    _${f.name}: config${opt}.${f.propertyName},`);
 		}
 		lines.push('  };');
+		// Inner node needs withMethods + freeze too (may be rendered independently).
+		lines.push(`  const inner = freezeNodeData(withMethods(_inner, { render, toEdit }));`);
 	}
 	lines.push(`  const children = [inner] as const;`);
 
-	lines.push('  return {');
+	// ADR-0018 Phase 2: form-level fields go directly as `_<name>` storage on _node.
+	lines.push('  const _node: Record<string,unknown> = {');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push(`    $variant: '${variantName}' as const,`);
-	if (formFields.length > 0) lines.push('    $fields: fields,');
-	lines.push('    $children: children,');
-
 	for (const f of formFields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`    _${f.name}: ${stamp},`);
+			continue;
+		}
+		// Match the optional-config marker — when `config?:` was used
+		// (no required field anywhere), reads need optional chaining.
+		lines.push(`    _${f.name}: config${opt}.${f.propertyName},`);
+	}
+	lines.push('    $children: children,');
+	lines.push('  };');
+
+	// Non-enumerable accessor functions for form-level fields.
+	for (const f of formFields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
 		lines.push(
-			...emitHoistedSetter(f, {
-				fn,
-				formFields,
-				innerFields: hoist.innerFields,
-				nodeMap,
-				getterExpr: `fields.${f.name}`,
-				patchSource: 'form'
-			})
+			`  Object.defineProperty(_node, '${propName}', { value: function() { return (this as Record<string,unknown>)['_${f.name}']; }, enumerable: false, writable: false, configurable: false });`
 		);
+	}
+	// Non-enumerable accessor functions for inner-level fields (close over `inner`).
+	for (const f of hoist.innerFields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(
+			`  Object.defineProperty(_node, '${propName}', { value: function() { return (inner as unknown as Record<string,unknown>)['_${f.name}']; }, enumerable: false, writable: false, configurable: false });`
+		);
+	}
+
+	// $with: updater namespace for hoisted form. Build a custom $with that
+	// handles both form-level and inner-level field updates via rebuild expr.
+	// Each entry calls fn(rebuildConfig) which returns a new frozen node.
+	const withEntries: string[] = [];
+	for (const f of formFields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) continue; // auto-stamp: no setter
+		const fMultiple = isMultiple(f);
+		const param = fMultiple ? '...values: unknown[]' : 'value: unknown';
+		const rebuild = buildHoistedRebuildExpr(formFields, hoist.innerFields, f.propertyName, fMultiple ? 'values' : 'value', 'form', nodeMap);
+		withEntries.push(`    ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`);
 	}
 	for (const f of hoist.innerFields) {
-		lines.push(
-			...emitHoistedSetter(f, {
-				fn,
-				formFields,
-				innerFields: hoist.innerFields,
-				nodeMap,
-				getterExpr: `inner.$fields.${f.name}`,
-				patchSource: 'inner'
-			})
-		);
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) continue; // auto-stamp: no setter
+		const fMultiple = isMultiple(f);
+		const param = fMultiple ? '...values: unknown[]' : 'value: unknown';
+		const rebuild = buildHoistedRebuildExpr(formFields, hoist.innerFields, f.propertyName, fMultiple ? 'values' : 'value', 'inner', nodeMap);
+		withEntries.push(`    ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`);
 	}
-
-	lines.push(...factorySuffix(form.treeTypeName));
-	lines.push('  };');
+	if (withEntries.length > 0) {
+		lines.push(`  const _with = {`);
+		lines.push(...withEntries);
+		lines.push(`  };`);
+		lines.push(`  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });`);
+	} else {
+		lines.push(`  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });`);
+	}
+	lines.push(`  return freezeNodeData(withMethods(_node, { render, toEdit }));`);
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -2158,17 +2139,18 @@ function emitTextFactory(
 	// string literal for kinds not yet in kindEntries (TSGrammar-only or no
 	// parser.c available).
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
+	// ADR-0018 Phase 2: leaf/keyword/enum factories use withMethods + freezeNodeData.
+	// No `_<name>` storage — text nodes have only `$text`. No `$with` (no updatable slots).
 	const body: string[] = [`export function ${fn}${sig} {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
-		'  return {',
+		'  const _node: Record<string,unknown> = {',
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		`    ..._leafMethods(${textExpr}),`,
-		`    replace: (t: T.${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
 		'  };',
+		`  return freezeNodeData(withMethods(_node, { render, toEdit }));`,
 		'}'
 	);
 	return body.join('\n');
@@ -2253,17 +2235,64 @@ function stripUselessEscapes(pattern: string): string {
 }
 
 /**
- * Common suffix every user-addressable factory returns — render(),
- * toEdit(...), replace(target).
+ * ADR-0018 Phase 2: `$render`, `$toEdit`, `$replace`, `$trivia` are now
+ * attached by `withMethods(node, { render, toEdit })` from `@sittir/core`
+ * after the mutable node object is constructed and `$with` is attached.
+ * `factorySuffix` no longer emits into the return-object literal; callers
+ * that used it are updated to call `emitWithMethodsAndFreeze` instead.
+ *
+ * @deprecated Replaced by `emitWithMethodsAndFreeze` in every factory body.
  */
-function factorySuffix(treeTypeName: string): string[] {
-	// `_branchMethods` carries the shared `render` + `toEdit` methods (typed via
-	// `this: AnyNodeData` to short-circuit TS assignability expansion).
-	// Only `replace` is per-factory (varies by tree type).
-	return [
-		`    ..._branchMethods,`,
-		`    replace(this: AnyNodeData, target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this, r); },`
-	];
+function factorySuffix(_treeTypeName: string): string[] {
+	return [];
+}
+
+/**
+ * Emit the closing lines of a branch/container factory body:
+ *   - Attach per-field non-enumerable accessor functions to `_node`.
+ *   - Attach `$with` namespace via `buildWithNamespace`.
+ *   - Attach `$render`/`$toEdit`/`$replace`/`$trivia` via `withMethods`.
+ *   - Return `freezeNodeData(_node)`.
+ *
+ * @param nodeVar - The local variable name for the mutable node (always `'_node'`).
+ * @param configExpr - The config expression passed to `buildWithNamespace`.
+ * @param factoryName - The factory function name (for `buildWithNamespace` second arg).
+ * @param slotKeyPairs - `[storageKey, configKey]` pairs for `buildWithNamespace`.
+ *   Named fields: `['_name', 'name']`. Children: `['$children', 'children']`.
+ * @param accessorPairs - `[rawName, propName]` pairs for named accessor functions.
+ *   `rawName` is the snake_case field name (storage key minus `_` prefix);
+ *   `propName` is the camelCase property name (may differ for reserved words like `type`).
+ * @returns Array of source lines.
+ */
+function emitWithMethodsAndFreeze(
+	nodeVar: string,
+	configExpr: string,
+	factoryName: string,
+	slotKeyPairs: readonly [string, string][],
+	accessorPairs: readonly [rawName: string, propName: string][]
+): string[] {
+	const lines: string[] = [];
+	// Named accessors: `fn.fieldName()` returns `this._fieldName`.
+	for (const [rawName, propName] of accessorPairs) {
+		lines.push(
+			`  Object.defineProperty(${nodeVar}, '${propName}', { value: function() { return (this as Record<string,unknown>)['_${rawName}']; }, enumerable: false, writable: false, configurable: false });`
+		);
+	}
+	if (slotKeyPairs.length > 0) {
+		const pairsStr = slotKeyPairs
+			.map(([s, c]) => `['${s}', '${c}']`)
+			.join(', ');
+		lines.push(
+			`  const _with = buildWithNamespace(${configExpr} as Record<string,unknown>, ${factoryName} as (c: Record<string,unknown>) => AnyNodeData, [${pairsStr}] as const);`
+		);
+		lines.push(
+			`  Object.defineProperty(${nodeVar}, '$with', { value: _with, enumerable: false, writable: false, configurable: false });`
+		);
+	}
+	lines.push(
+		`  return freezeNodeData(withMethods(${nodeVar}, { render, toEdit }));`
+	);
+	return lines;
 }
 
 // ---------------------------------------------------------------------------

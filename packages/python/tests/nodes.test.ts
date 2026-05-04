@@ -11,7 +11,7 @@ describe('aliased_import', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.aliasedImport({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, alias: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -31,7 +31,7 @@ describe('as_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.asPattern({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, alias: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -69,7 +69,7 @@ describe('attribute', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.attribute({ object: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, attribute: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -81,7 +81,7 @@ describe('augmented_assignment', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.augmentedAssignment({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operator: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -93,7 +93,7 @@ describe('await', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.await_({ primaryExpression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -105,7 +105,7 @@ describe('binary_operator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.binaryOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -125,7 +125,7 @@ describe('boolean_operator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.booleanOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -146,7 +146,7 @@ describe('call', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.call({ function: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, arguments: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -158,7 +158,7 @@ describe('case_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.caseClause({ consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -178,7 +178,7 @@ describe('chevron', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.chevron({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -190,7 +190,7 @@ describe('class_definition', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.classDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -202,7 +202,7 @@ describe('class_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.classPattern({ dottedName: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, arguments: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -223,7 +223,7 @@ describe('comparison_operator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -235,7 +235,7 @@ describe('complex_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.complexPattern({ imaginary: { $type: 'integer', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'integer', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -255,7 +255,7 @@ describe('conditional_expression', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.conditional({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, alternative: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -267,7 +267,7 @@ describe('constrained_type', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.constrainedType({ baseType: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, constraint: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -288,7 +288,7 @@ describe('decorated_definition', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.decorated({ definition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -300,7 +300,7 @@ describe('decorator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.decorator({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -312,7 +312,7 @@ describe('default_parameter', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.defaultParameter({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -348,7 +348,7 @@ describe('dictionary_comprehension', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.dictionaryComprehension({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -360,7 +360,7 @@ describe('dictionary_splat', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.dictionarySplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -388,7 +388,7 @@ describe('elif_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.elifClause({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -400,7 +400,7 @@ describe('else_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.elseClause({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -421,7 +421,7 @@ describe('except_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.exceptClause({ children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -433,7 +433,7 @@ describe('exec_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.exec({ code: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -478,7 +478,7 @@ describe('finally_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.finallyClause({ block: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -499,7 +499,7 @@ describe('for_in_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.forInClause({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -511,7 +511,7 @@ describe('for_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.forStatement({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -531,7 +531,7 @@ describe('function_definition', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, parameters: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -543,7 +543,7 @@ describe('future_import_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.futureImport({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -555,7 +555,7 @@ describe('generator_expression', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.generator({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -567,7 +567,7 @@ describe('generic_type', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.genericType({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, typeParameter: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -596,7 +596,7 @@ describe('if_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.ifClause({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -608,7 +608,7 @@ describe('if_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.ifStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -620,7 +620,7 @@ describe('import_from_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.importFrom({ moduleName: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'wildcard_import', $text: '*', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -641,7 +641,7 @@ describe('import_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.importStatement({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -662,7 +662,7 @@ describe('interpolation', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.interpolation({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -674,7 +674,7 @@ describe('keyword_argument', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.keywordArgument({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -686,7 +686,7 @@ describe('keyword_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.keywordPattern({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, simplePattern: { $type: 'true', $text: 'True', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -698,7 +698,7 @@ describe('lambda', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.lambda({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -718,7 +718,7 @@ describe('lambda_within_for_in_clause', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.lambdaWithinForInClause({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -747,7 +747,7 @@ describe('list_comprehension', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.listComprehension({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -767,7 +767,7 @@ describe('list_splat', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.listSplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -787,7 +787,7 @@ describe('match_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.match({ subject: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -799,7 +799,7 @@ describe('member_type', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.memberType({ baseType: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -819,7 +819,7 @@ describe('named_expression', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.named({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -848,7 +848,7 @@ describe('not_operator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.notOperator({ argument: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -860,7 +860,7 @@ describe('pair', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.pair({ key: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -913,7 +913,7 @@ describe('print_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.print({ argument: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -925,7 +925,7 @@ describe('raise_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.raise({ children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -937,7 +937,7 @@ describe('relative_import', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.relativeImport({ importPrefix: { $type: 'import_prefix', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -965,7 +965,7 @@ describe('set_comprehension', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.setComprehension({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -977,7 +977,7 @@ describe('slice', () => {
   });
   it('render does not throw on minimal config', () => {
     const node = ir.slice({});
-    expect(() => node.render()).not.toThrow();
+    expect(() => node.$render!()).not.toThrow();
   });
 });
 
@@ -989,7 +989,7 @@ describe('splat_pattern', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.splatPattern({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1001,7 +1001,7 @@ describe('splat_type', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.splatType({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1013,7 +1013,7 @@ describe('string', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.string('test');
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1033,7 +1033,7 @@ describe('subscript', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.subscript({ value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, subscript: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1054,7 +1054,7 @@ describe('try_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.tryStatement({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, exceptClauses: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1090,7 +1090,7 @@ describe('type_alias_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.typeAlias({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1110,7 +1110,7 @@ describe('typed_default_parameter', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.typedDefaultParameter({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, type: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1122,7 +1122,7 @@ describe('typed_parameter', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.typedParameter({ type: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1134,7 +1134,7 @@ describe('unary_operator', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.unaryOperator({ operator: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, argument: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1154,7 +1154,7 @@ describe('union_type', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.unionType({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1166,7 +1166,7 @@ describe('while_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.whileStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1207,7 +1207,7 @@ describe('with_item', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.withItem({ value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -1219,7 +1219,7 @@ describe('with_statement', () => {
   });
   it('render produces non-empty string', () => {
     const node = ir.withStatement({ withClause: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
-    expect(node.render().length).toBeGreaterThan(0);
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

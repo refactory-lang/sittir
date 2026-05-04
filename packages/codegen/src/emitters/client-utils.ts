@@ -88,8 +88,16 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push('  const o = v as Record<string, unknown>;');
 	lines.push("  if (typeof o['$type'] !== 'number') return false;");
+	// ADR-0018 Phase 2: factory nodes use `_<name>` storage keys instead of `$fields`.
+	// Check for the legacy `$fields` path OR any `_*` key (new factory/wrap shape).
 	lines.push(
-		"  return (o['$fields'] !== null && typeof o['$fields'] === 'object')"
+		"  const hasLegacyFields = o['$fields'] !== null && typeof o['$fields'] === 'object';"
+	);
+	lines.push(
+		"  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));"
+	);
+	lines.push(
+		"  return hasLegacyFields || hasDehoistedFields"
 	);
 	lines.push("    || typeof o['$text'] === 'string'");
 	lines.push("    || Array.isArray(o['$children'])");
@@ -261,6 +269,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  // Temporarily store string kind for routing; converted to numeric below.');
 	lines.push('  projected.$type = resolvedKind;');
 	lines.push('');
+	// Legacy shape: $fields wrapper (readNode / wrap path).
 	lines.push('  const fields = value.$fields;');
 	lines.push('  if (isRecord(fields)) {');
 	lines.push('    for (const [key, child] of Object.entries(fields)) {');
@@ -276,8 +285,12 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 		"    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;"
 	);
 	lines.push('    if (typeof child === "function") continue;');
-	lines.push('    if (key in projected) continue;');
-	lines.push('    projected[key] = projectTransportValue(child, `${path}.${key}`);');
+	// ADR-0018 Phase 2: factory nodes store fields under `_<name>` keys.
+	// Strip the leading `_` when projecting to native transport so the
+	// transport receives the plain snake_case name (same as $fields path above).
+	lines.push("    const projKey = key.startsWith('_') ? key.slice(1) : key;");
+	lines.push('    if (projKey in projected) continue;');
+	lines.push('    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);');
 	lines.push('  }');
 	lines.push('');
 	lines.push('  projectRawChildrenIntoFields(projected, resolvedKind);');

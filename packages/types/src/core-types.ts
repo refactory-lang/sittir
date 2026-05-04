@@ -109,6 +109,21 @@ export interface AnyNodeData {
 	 *  (ctx.format) for this specific node. Never set by inference — inferred format
 	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
 	$format?: FormatRecord;
+
+	// -------------------------------------------------------------------------
+	// ADR-0018 non-enumerable methods — present on factory/wrap output only.
+	// These are attached via Object.defineProperty(enumerable: false) at
+	// factory construction time; absent on readNode / native JSON transport.
+	// -------------------------------------------------------------------------
+
+	/** Render this node to source text. Non-enumerable on factory/wrap output. */
+	$render?: () => string;
+	/** Create an Edit replacing a byte range with this node's rendered text. */
+	$toEdit?: (startOrRange: number | ByteRange, endPos?: number) => Edit;
+	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
+	$replace?: (target: { range(): ByteRange }) => Edit;
+	/** Return a new frozen node with per-field trivia updates applied. */
+	$trivia?: (...args: unknown[]) => AnyNodeData;
 }
 
 // ---------------------------------------------------------------------------

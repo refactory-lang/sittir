@@ -26,7 +26,9 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'number') return false;
-  return (o['$fields'] !== null && typeof o['$fields'] === 'object')
+  const hasLegacyFields = o['$fields'] !== null && typeof o['$fields'] === 'object';
+  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));
+  return hasLegacyFields || hasDehoistedFields
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
     || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
@@ -456,8 +458,9 @@ function projectTransportValue(value: unknown, path: string): unknown {
     if (transportMetadataKeys.has(key) || key === "$fields") continue;
     if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
     if (typeof child === "function") continue;
-    if (key in projected) continue;
-    projected[key] = projectTransportValue(child, `${path}.${key}`);
+    const projKey = key.startsWith('_') ? key.slice(1) : key;
+    if (projKey in projected) continue;
+    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);
   }
 
   projectRawChildrenIntoFields(projected, resolvedKind);

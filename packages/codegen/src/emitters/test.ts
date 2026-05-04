@@ -231,12 +231,12 @@ function emitBranchTest(
 	if (hasRenderContent) {
 		lines.push(`  it('render produces non-empty string', () => {`);
 		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
-		lines.push(`    expect(node.render().length).toBeGreaterThan(0);`);
+		lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 		lines.push('  });');
 	} else {
 		lines.push(`  it('render does not throw on minimal config', () => {`);
 		lines.push(`    const node = ir.${key}(${renderConfigArg});`);
-		lines.push(`    expect(() => node.render()).not.toThrow();`);
+		lines.push(`    expect(() => node.$render!()).not.toThrow();`);
 		lines.push('  });');
 	}
 
@@ -360,7 +360,7 @@ function emitTextTemplateBranchTest(
 	lines.push('  });');
 	lines.push(`  it('render produces non-empty string', () => {`);
 	lines.push(`    const node = ir.${key}('test');`);
-	lines.push(`    expect(node.render().length).toBeGreaterThan(0);`);
+	lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
 	lines.push('  });');
 	lines.push('});');
 	lines.push('');
