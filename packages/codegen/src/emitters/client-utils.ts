@@ -107,19 +107,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	// now use inline-object-literal method shorthand + spread `_sharedMethods`.
 
 	lines.push('/**');
-	lines.push(' * Read raw `_<rawName>` storage from any NodeData.');
-	lines.push(' *');
-	lines.push(' * The single index-signature bridge for generated readers. Used by');
-	lines.push(' * per-field accessor methods in factories.ts (`name(this: object) {');
-	lines.push(' *   return readRawField(this, "name");');
-	lines.push(' * }`) and by drill-in helpers in wrap.ts.');
-	lines.push(' */');
-	lines.push('export function readRawField<T>(data: T, rawName: string): unknown {');
-	lines.push('  return (data as Record<string, unknown>)[`_${rawName}`];');
-	lines.push('}');
-	lines.push('');
-
-	lines.push('/**');
 	lines.push(' * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)');
 	lines.push(' * that every factory-produced NodeData carries. Spread into each factory');
 	lines.push(' * literal via `..._sharedMethods` — no post-construction `defineProperty`');

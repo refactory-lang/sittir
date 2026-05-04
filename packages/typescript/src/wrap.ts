@@ -8,7 +8,7 @@ import type { TreeHandle } from '@sittir/core';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type * as T from './types.js';
-import { withMethods, readRawField } from './utils.js';
+import { withMethods } from './utils.js';
 import * as _factories from './factories.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -46,9 +46,9 @@ export function wrap_ArrowFunctionUCallSignature(data: T._ArrowFunctionUCallSign
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionUCallSignature as const,
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     typeParameters() { return drillIn(this._type_parameters, tree); },
     parameters() { return drillIn(this._parameters, tree); },
@@ -66,7 +66,7 @@ export function wrap_ArrowFunctionParameter(data: T._ArrowFunctionParameter, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionParameter as const,
-    _parameter: readRawField(data, 'parameter'),
+    _parameter: data._parameter,
 
     parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
@@ -135,7 +135,7 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatem
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
-    _source: readRawField(data, 'source'),
+    _source: data._source,
     $children: data.$children,
 
     source() { return drillIn(this._source, tree); },
@@ -151,7 +151,7 @@ export function wrapExportStatementDefaultFromArmNsFrom(data: T.ExportStatementD
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
-    _source: readRawField(data, 'source'),
+    _source: data._source,
     $children: data.$children,
 
     source() { return drillIn(this._source, tree); },
@@ -167,7 +167,7 @@ export function wrapExportStatementDefaultFromArmStarFrom(data: T.ExportStatemen
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
-    _source: readRawField(data, 'source'),
+    _source: data._source,
 
     source() { return drillIn(this._source, tree); },
     $with: {
@@ -203,7 +203,7 @@ export function wrap_ExportStatementTypeExport(data: T._ExportStatementTypeExpor
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementTypeExport as const,
-    _source: readRawField(data, 'source'),
+    _source: data._source,
     $children: data.$children,
 
     source() { return drillIn(this._source, tree); },
@@ -219,7 +219,7 @@ export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderLhs as const,
-    _left: readRawField(data, 'left'),
+    _left: data._left,
 
     left() { return drillIn(this._left, tree); },
     $with: {
@@ -266,7 +266,7 @@ export function wrap_ImportSpecifierName(data: T._ImportSpecifierName, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportSpecifierName as const,
-    _name: readRawField(data, 'name'),
+    _name: data._name,
 
     name() { return drillIn(this._name, tree); },
     $with: {
@@ -302,7 +302,7 @@ export function wrapPublicFieldDefinitionAccessorOpt(data: T.PublicFieldDefiniti
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
-    _accessor_marker: readRawField(data, 'accessor_marker'),
+    _accessor_marker: data._accessor_marker,
 
     accessorMarker() { return drillIn(this._accessor_marker, tree); },
     $with: {
@@ -360,11 +360,11 @@ export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, t
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractClassDeclaration as const,
-    _decorator: readRawField(data, 'decorator'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _class_heritage: readRawField(data, 'class_heritage'),
-    _body: readRawField(data, 'body'),
+    _decorator: data._decorator,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _class_heritage: data._class_heritage,
+    _body: data._body,
 
     decorator() { return drillInAll(this._decorator, tree); },
     name() { return drillIn(this._name, tree); },
@@ -386,14 +386,14 @@ export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractMethodSignature as const,
-    _accessibility_modifier: readRawField(data, 'accessibility_modifier'),
-    _override_modifier: readRawField(data, 'override_modifier'),
-    _accessor_kind: readRawField(data, 'accessor_kind'),
-    _name: readRawField(data, 'name'),
-    _optional_marker: readRawField(data, 'optional_marker'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _accessibility_modifier: data._accessibility_modifier,
+    _override_modifier: data._override_modifier,
+    _accessor_kind: data._accessor_kind,
+    _name: data._name,
+    _optional_marker: data._optional_marker,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
     overrideModifier() { return drillIn(this._override_modifier, tree); },
@@ -421,7 +421,7 @@ export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AddingTypeAnnotation as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -435,7 +435,7 @@ export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.AmbientDeclaration as const,
-    _declaration: readRawField(data, 'declaration'),
+    _declaration: data._declaration,
 
     declaration() { return drillAs(this._declaration, tree, "property_identifier", "identifier"); },
     $with: {
@@ -482,7 +482,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayType as const,
-    _primary_type: readRawField(data, 'primary_type'),
+    _primary_type: data._primary_type,
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
@@ -495,7 +495,7 @@ export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
 export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _parameter: readRawField(data, 'parameter'),
+    _parameter: data._parameter,
 
     parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
@@ -508,9 +508,9 @@ export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree:
 export function wrapArrowFunctionUCallSignature(data: T.ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     typeParameters() { return drillIn(this._type_parameters, tree); },
     parameters() { return drillIn(this._parameters, tree); },
@@ -528,8 +528,8 @@ export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrowFunction as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _body: readRawField(data, 'body'),
+    _async_marker: data._async_marker,
+    _body: data._body,
     $children: data.$children,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
@@ -547,8 +547,8 @@ export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AsExpression as const,
-    _expression: readRawField(data, 'expression'),
-    _type_annotation: readRawField(data, 'type_annotation'),
+    _expression: data._expression,
+    _type_annotation: data._type_annotation,
 
     expression() { return drillIn(this._expression, tree); },
     typeAnnotation() { return drillIn(this._type_annotation, tree); },
@@ -575,7 +575,7 @@ export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssertsAnnotation as const,
-    _asserts: readRawField(data, 'asserts'),
+    _asserts: data._asserts,
 
     asserts() { return drillIn(this._asserts, tree); },
     $with: {
@@ -589,9 +589,9 @@ export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentExpression as const,
-    _using_marker: readRawField(data, 'using_marker'),
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
+    _using_marker: data._using_marker,
+    _left: data._left,
+    _right: data._right,
 
     usingMarker() { return drillIn(this._using_marker, tree); },
     left() { return drillIn(this._left, tree); },
@@ -609,8 +609,8 @@ export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentPattern as const,
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _right: data._right,
 
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
@@ -626,9 +626,9 @@ export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExp
   const _node = withMethods({
     ...data,
     $type: TSKindId.AugmentedAssignmentExpression as const,
-    _left: readRawField(data, 'left'),
-    _operator: readRawField(data, 'operator'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _operator: data._operator,
+    _right: data._right,
 
     left() { return drillAs(this._left, tree, "identifier", "_reserved_identifier"); },
     operator() { return drillIn(this._operator, tree); },
@@ -646,7 +646,7 @@ export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AwaitExpression as const,
-    _expression: readRawField(data, 'expression'),
+    _expression: data._expression,
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
@@ -660,9 +660,9 @@ export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.BinaryExpression as const,
-    _left: readRawField(data, 'left'),
-    _operator: readRawField(data, 'operator'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _operator: data._operator,
+    _right: data._right,
 
     left() { return drillIn(this._left, tree); },
     operator() { return drillIn(this._operator, tree); },
@@ -680,8 +680,8 @@ export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.BreakStatement as const,
-    _label: readRawField(data, 'label'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _label: data._label,
+    _semicolon: data._semicolon,
 
     label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -710,9 +710,9 @@ export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallSignature as const,
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     typeParameters() { return drillIn(this._type_parameters, tree); },
     parameters() { return drillIn(this._parameters, tree); },
@@ -730,9 +730,9 @@ export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CatchClause as const,
-    _parameter: readRawField(data, 'parameter'),
-    _type: readRawField(data, 'type'),
-    _body: readRawField(data, 'body'),
+    _parameter: data._parameter,
+    _type: data._type,
+    _body: data._body,
 
     parameter() { return drillIn(this._parameter, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -750,11 +750,11 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Class as const,
-    _decorator: readRawField(data, 'decorator'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _class_heritage: readRawField(data, 'class_heritage'),
-    _body: readRawField(data, 'body'),
+    _decorator: data._decorator,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _class_heritage: data._class_heritage,
+    _body: data._body,
 
     decorator() { return drillInAll(this._decorator, tree); },
     name() { return drillIn(this._name, tree); },
@@ -787,12 +787,12 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassDeclaration as const,
-    _decorator: readRawField(data, 'decorator'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _class_heritage: readRawField(data, 'class_heritage'),
-    _body: readRawField(data, 'body'),
-    _automatic_semicolon: readRawField(data, 'automatic_semicolon'),
+    _decorator: data._decorator,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _class_heritage: data._class_heritage,
+    _body: data._body,
+    _automatic_semicolon: data._automatic_semicolon,
 
     decorator() { return drillInAll(this._decorator, tree); },
     name() { return drillIn(this._name, tree); },
@@ -849,7 +849,7 @@ export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassStaticBlock as const,
-    _body: readRawField(data, 'body'),
+    _body: data._body,
     $children: data.$children,
 
     body() { return drillIn(this._body, tree); },
@@ -865,7 +865,7 @@ export function wrapComputedPropertyName(data: T.ComputedPropertyName, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComputedPropertyName as const,
-    _expression: readRawField(data, 'expression'),
+    _expression: data._expression,
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
@@ -879,10 +879,10 @@ export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConditionalType as const,
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
-    _consequence: readRawField(data, 'consequence'),
-    _alternative: readRawField(data, 'alternative'),
+    _left: data._left,
+    _right: data._right,
+    _consequence: data._consequence,
+    _alternative: data._alternative,
 
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
@@ -902,7 +902,7 @@ export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Constraint as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -916,10 +916,10 @@ export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructSignature as const,
-    _abstract_marker: readRawField(data, 'abstract_marker'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _type: readRawField(data, 'type'),
+    _abstract_marker: data._abstract_marker,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _type: data._type,
 
     abstractMarker() { return drillIn(this._abstract_marker, tree); },
     typeParameters() { return drillIn(this._type_parameters, tree); },
@@ -939,10 +939,10 @@ export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructorType as const,
-    _abstract_marker: readRawField(data, 'abstract_marker'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _type: readRawField(data, 'type'),
+    _abstract_marker: data._abstract_marker,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _type: data._type,
 
     abstractMarker() { return drillIn(this._abstract_marker, tree); },
     typeParameters() { return drillIn(this._type_parameters, tree); },
@@ -962,8 +962,8 @@ export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ContinueStatement as const,
-    _label: readRawField(data, 'label'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _label: data._label,
+    _semicolon: data._semicolon,
 
     label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -979,7 +979,7 @@ export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.DebuggerStatement as const,
-    _semicolon: readRawField(data, 'semicolon'),
+    _semicolon: data._semicolon,
 
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
@@ -1004,9 +1004,9 @@ export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorCallExpression as const,
-    _function: readRawField(data, 'function'),
-    _type_arguments: readRawField(data, 'type_arguments'),
-    _arguments: readRawField(data, 'arguments'),
+    _function: data._function,
+    _type_arguments: data._type_arguments,
+    _arguments: data._arguments,
 
     function() { return drillAs(this._function, tree, "member_expression", "decorator_member_expression"); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
@@ -1024,8 +1024,8 @@ export function wrapDecoratorMemberExpression(data: T.DecoratorMemberExpression,
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorMemberExpression as const,
-    _object: readRawField(data, 'object'),
-    _property: readRawField(data, 'property'),
+    _object: data._object,
+    _property: data._property,
 
     object() { return drillAs(this._object, tree, "member_expression", "decorator_member_expression"); },
     property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
@@ -1052,7 +1052,7 @@ export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DefaultType as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -1066,9 +1066,9 @@ export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DoStatement as const,
-    _body: readRawField(data, 'body'),
-    _condition: readRawField(data, 'condition'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _body: data._body,
+    _condition: data._condition,
+    _semicolon: data._semicolon,
 
     body() { return drillIn(this._body, tree); },
     condition() { return drillIn(this._condition, tree); },
@@ -1086,7 +1086,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ElseClause as const,
-    _statement: readRawField(data, 'statement'),
+    _statement: data._statement,
 
     statement() { return drillIn(this._statement, tree); },
     $with: {
@@ -1100,8 +1100,8 @@ export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumAssignment as const,
-    _name: readRawField(data, 'name'),
-    _value: readRawField(data, 'value'),
+    _name: data._name,
+    _value: data._value,
 
     name() { return drillIn(this._name, tree); },
     value() { return drillIn(this._value, tree); },
@@ -1130,9 +1130,9 @@ export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumDeclaration as const,
-    _const_marker: readRawField(data, 'const_marker'),
-    _name: readRawField(data, 'name'),
-    _body: readRawField(data, 'body'),
+    _const_marker: data._const_marker,
+    _name: data._name,
+    _body: data._body,
 
     constMarker() { return drillIn(this._const_marker, tree); },
     name() { return drillIn(this._name, tree); },
@@ -1161,9 +1161,9 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportSpecifier as const,
-    _export_kind: readRawField(data, 'export_kind'),
-    _name: readRawField(data, 'name'),
-    _alias: readRawField(data, 'alias'),
+    _export_kind: data._export_kind,
+    _name: data._name,
+    _alias: data._alias,
 
     exportKind() { return drillIn(this._export_kind, tree); },
     name() { return drillIn(this._name, tree); },
@@ -1180,7 +1180,7 @@ export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
 export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _source: readRawField(data, 'source'),
+    _source: data._source,
     $children: data.$children,
 
     source() { return drillIn(this._source, tree); },
@@ -1229,7 +1229,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionStatement as const,
-    _semicolon: readRawField(data, 'semicolon'),
+    _semicolon: data._semicolon,
     $children: data.$children,
 
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -1245,8 +1245,8 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsClause as const,
-    _value: readRawField(data, 'value'),
-    _type_arguments: readRawField(data, 'type_arguments'),
+    _value: data._value,
+    _type_arguments: data._type_arguments,
 
     value() { return drillInAll(this._value, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
@@ -1262,7 +1262,7 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsTypeClause as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillInAll(this._type, tree); },
     $with: {
@@ -1276,7 +1276,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FinallyClause as const,
-    _body: readRawField(data, 'body'),
+    _body: data._body,
 
     body() { return drillIn(this._body, tree); },
     $with: {
@@ -1290,7 +1290,7 @@ export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FlowMaybeType as const,
-    _primary_type: readRawField(data, 'primary_type'),
+    _primary_type: data._primary_type,
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
@@ -1304,10 +1304,10 @@ export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForInStatement as const,
-    _await_marker: readRawField(data, 'await_marker'),
-    _operator: readRawField(data, 'operator'),
-    _right: readRawField(data, 'right'),
-    _body: readRawField(data, 'body'),
+    _await_marker: data._await_marker,
+    _operator: data._operator,
+    _right: data._right,
+    _body: data._body,
     $children: data.$children,
 
     awaitMarker() { return drillIn(this._await_marker, tree); },
@@ -1329,10 +1329,10 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForStatement as const,
-    _initializer: readRawField(data, 'initializer'),
-    _condition: readRawField(data, 'condition'),
-    _increment: readRawField(data, 'increment'),
-    _body: readRawField(data, 'body'),
+    _initializer: data._initializer,
+    _condition: data._condition,
+    _increment: data._increment,
+    _body: data._body,
 
     initializer() { return drillIn(this._initializer, tree); },
     condition() { return drillIn(this._condition, tree); },
@@ -1363,12 +1363,12 @@ export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionDeclaration as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _body: readRawField(data, 'body'),
+    _async_marker: data._async_marker,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _body: data._body,
     $children: data.$children,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
@@ -1394,12 +1394,12 @@ export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionExpression as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _body: readRawField(data, 'body'),
+    _async_marker: data._async_marker,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _body: data._body,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
     name() { return drillIn(this._name, tree); },
@@ -1423,12 +1423,12 @@ export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionSignature as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _async_marker: data._async_marker,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _semicolon: data._semicolon,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
     name() { return drillIn(this._name, tree); },
@@ -1452,9 +1452,9 @@ export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionType as const,
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     typeParameters() { return drillIn(this._type_parameters, tree); },
     parameters() { return drillIn(this._parameters, tree); },
@@ -1472,12 +1472,12 @@ export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunction as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _body: readRawField(data, 'body'),
+    _async_marker: data._async_marker,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _body: data._body,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
     name() { return drillIn(this._name, tree); },
@@ -1501,12 +1501,12 @@ export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclar
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunctionDeclaration as const,
-    _async_marker: readRawField(data, 'async_marker'),
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _body: readRawField(data, 'body'),
+    _async_marker: data._async_marker,
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _body: data._body,
     $children: data.$children,
 
     asyncMarker() { return drillIn(this._async_marker, tree); },
@@ -1532,8 +1532,8 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GenericType as const,
-    _name: readRawField(data, 'name'),
-    _type_arguments: readRawField(data, 'type_arguments'),
+    _name: data._name,
+    _type_arguments: data._type_arguments,
 
     name() { return drillIn(this._name, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
@@ -1549,9 +1549,9 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IfStatement as const,
-    _condition: readRawField(data, 'condition'),
-    _consequence: readRawField(data, 'consequence'),
-    _alternative: readRawField(data, 'alternative'),
+    _condition: data._condition,
+    _consequence: data._consequence,
+    _alternative: data._alternative,
 
     condition() { return drillIn(this._condition, tree); },
     consequence() { return drillIn(this._consequence, tree); },
@@ -1580,9 +1580,9 @@ export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAlias as const,
-    _name: readRawField(data, 'name'),
-    _value: readRawField(data, 'value'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _name: data._name,
+    _value: data._value,
+    _semicolon: data._semicolon,
 
     name() { return drillIn(this._name, tree); },
     value() { return drillIn(this._value, tree); },
@@ -1600,7 +1600,7 @@ export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAttribute as const,
-    _object: readRawField(data, 'object'),
+    _object: data._object,
 
     object() { return drillIn(this._object, tree); },
     $with: {
@@ -1657,8 +1657,8 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportRequireClause as const,
-    _identifier: readRawField(data, 'identifier'),
-    _source: readRawField(data, 'source'),
+    _identifier: data._identifier,
+    _source: data._source,
 
     identifier() { return drillIn(this._identifier, tree); },
     source() { return drillIn(this._source, tree); },
@@ -1673,7 +1673,7 @@ export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeH
 export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
-    _name: readRawField(data, 'name'),
+    _name: data._name,
 
     name() { return drillIn(this._name, tree); },
     $with: {
@@ -1687,7 +1687,7 @@ export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportSpecifier as const,
-    _import_kind: readRawField(data, 'import_kind'),
+    _import_kind: data._import_kind,
     $children: data.$children,
 
     importKind() { return drillIn(this._import_kind, tree); },
@@ -1703,10 +1703,10 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportStatement as const,
-    _import_clause: readRawField(data, 'import_clause'),
-    _from_clause: readRawField(data, 'from_clause'),
-    _import_attribute: readRawField(data, 'import_attribute'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _import_clause: data._import_clause,
+    _from_clause: data._from_clause,
+    _import_attribute: data._import_attribute,
+    _semicolon: data._semicolon,
 
     importClause() { return drillIn(this._import_clause, tree); },
     fromClause() { return drillIn(this._from_clause, tree); },
@@ -1736,8 +1736,8 @@ export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexSignature as const,
-    _sign: readRawField(data, 'sign'),
-    _type: readRawField(data, 'type'),
+    _sign: data._sign,
+    _type: data._type,
     $children: data.$children,
 
     sign() { return drillIn(this._sign, tree); },
@@ -1755,7 +1755,7 @@ export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexTypeQuery as const,
-    _primary_type: readRawField(data, 'primary_type'),
+    _primary_type: data._primary_type,
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
@@ -1769,8 +1769,8 @@ export function wrapInferType(data: T.InferType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InferType as const,
-    _type_identifier: readRawField(data, 'type_identifier'),
-    _type: readRawField(data, 'type'),
+    _type_identifier: data._type_identifier,
+    _type: data._type,
 
     typeIdentifier() { return drillIn(this._type_identifier, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -1786,8 +1786,8 @@ export function wrapInstantiationExpression(data: T.InstantiationExpression, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.InstantiationExpression as const,
-    _expression: readRawField(data, 'expression'),
-    _type_arguments: readRawField(data, 'type_arguments'),
+    _expression: data._expression,
+    _type_arguments: data._type_arguments,
 
     expression() { return drillIn(this._expression, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
@@ -1803,10 +1803,10 @@ export function wrapInterfaceDeclaration(data: T.InterfaceDeclaration, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.InterfaceDeclaration as const,
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _extends_type_clause: readRawField(data, 'extends_type_clause'),
-    _body: readRawField(data, 'body'),
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _extends_type_clause: data._extends_type_clause,
+    _body: data._body,
 
     name() { return drillIn(this._name, tree); },
     typeParameters() { return drillIn(this._type_parameters, tree); },
@@ -1826,8 +1826,8 @@ export function wrapInternalModule(data: T.InternalModule, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InternalModule as const,
-    _name: readRawField(data, 'name'),
-    _body: readRawField(data, 'body'),
+    _name: data._name,
+    _body: data._body,
 
     name() { return drillIn(this._name, tree); },
     body() { return drillIn(this._body, tree); },
@@ -1843,8 +1843,8 @@ export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.IntersectionType as const,
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _right: data._right,
 
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
@@ -1860,8 +1860,8 @@ export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.LabeledStatement as const,
-    _label: readRawField(data, 'label'),
-    _body: readRawField(data, 'body'),
+    _label: data._label,
+    _body: data._body,
 
     label() { return drillAs(this._label, tree, "statement_identifier", "_statement_identifier"); },
     body() { return drillIn(this._body, tree); },
@@ -1877,9 +1877,9 @@ export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.LexicalDeclaration as const,
-    _kind: readRawField(data, 'kind'),
-    _declarators: readRawField(data, 'declarators'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _kind: data._kind,
+    _declarators: data._declarators,
+    _semicolon: data._semicolon,
 
     kind() { return drillIn(this._kind, tree); },
     declarators() { return drillInAll(this._declarators, tree); },
@@ -1908,8 +1908,8 @@ export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LookupType as const,
-    _primary_type: readRawField(data, 'primary_type'),
-    _index_type: readRawField(data, 'index_type'),
+    _primary_type: data._primary_type,
+    _index_type: data._index_type,
 
     primaryType() { return drillIn(this._primary_type, tree); },
     indexType() { return drillIn(this._index_type, tree); },
@@ -1925,9 +1925,9 @@ export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MappedTypeClause as const,
-    _name: readRawField(data, 'name'),
-    _type: readRawField(data, 'type'),
-    _alias: readRawField(data, 'alias'),
+    _name: data._name,
+    _type: data._type,
+    _alias: data._alias,
 
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -1945,8 +1945,8 @@ export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MemberExpression as const,
-    _object: readRawField(data, 'object'),
-    _property: readRawField(data, 'property'),
+    _object: data._object,
+    _property: data._property,
     $children: data.$children,
 
     object() { return drillIn(this._object, tree); },
@@ -1964,18 +1964,18 @@ export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodDefinition as const,
-    _accessibility_modifier: readRawField(data, 'accessibility_modifier'),
-    _static_marker: readRawField(data, 'static_marker'),
-    _override_modifier: readRawField(data, 'override_modifier'),
-    _readonly_marker: readRawField(data, 'readonly_marker'),
-    _async_marker: readRawField(data, 'async_marker'),
-    _accessor_kind: readRawField(data, 'accessor_kind'),
-    _name: readRawField(data, 'name'),
-    _optional_marker: readRawField(data, 'optional_marker'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
-    _body: readRawField(data, 'body'),
+    _accessibility_modifier: data._accessibility_modifier,
+    _static_marker: data._static_marker,
+    _override_modifier: data._override_modifier,
+    _readonly_marker: data._readonly_marker,
+    _async_marker: data._async_marker,
+    _accessor_kind: data._accessor_kind,
+    _name: data._name,
+    _optional_marker: data._optional_marker,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
+    _body: data._body,
 
     accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
     staticMarker() { return drillIn(this._static_marker, tree); },
@@ -2011,17 +2011,17 @@ export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodSignature as const,
-    _accessibility_modifier: readRawField(data, 'accessibility_modifier'),
-    _static_marker: readRawField(data, 'static_marker'),
-    _override_modifier: readRawField(data, 'override_modifier'),
-    _readonly_marker: readRawField(data, 'readonly_marker'),
-    _async_marker: readRawField(data, 'async_marker'),
-    _accessor_kind: readRawField(data, 'accessor_kind'),
-    _name: readRawField(data, 'name'),
-    _optional_marker: readRawField(data, 'optional_marker'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _parameters: readRawField(data, 'parameters'),
-    _return_type: readRawField(data, 'return_type'),
+    _accessibility_modifier: data._accessibility_modifier,
+    _static_marker: data._static_marker,
+    _override_modifier: data._override_modifier,
+    _readonly_marker: data._readonly_marker,
+    _async_marker: data._async_marker,
+    _accessor_kind: data._accessor_kind,
+    _name: data._name,
+    _optional_marker: data._optional_marker,
+    _type_parameters: data._type_parameters,
+    _parameters: data._parameters,
+    _return_type: data._return_type,
 
     accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
     staticMarker() { return drillIn(this._static_marker, tree); },
@@ -2055,8 +2055,8 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Module as const,
-    _name: readRawField(data, 'name'),
-    _body: readRawField(data, 'body'),
+    _name: data._name,
+    _body: data._body,
 
     name() { return drillIn(this._name, tree); },
     body() { return drillIn(this._body, tree); },
@@ -2094,7 +2094,7 @@ export function wrapNamespaceImport(data: T.NamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamespaceImport as const,
-    _identifier: readRawField(data, 'identifier'),
+    _identifier: data._identifier,
 
     identifier() { return drillIn(this._identifier, tree); },
     $with: {
@@ -2108,8 +2108,8 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedIdentifier as const,
-    _object: readRawField(data, 'object'),
-    _property: readRawField(data, 'property'),
+    _object: data._object,
+    _property: data._property,
 
     object() { return drillAs(this._object, tree, "member_expression", "nested_identifier"); },
     property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
@@ -2125,8 +2125,8 @@ export function wrapNestedTypeIdentifier(data: T.NestedTypeIdentifier, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedTypeIdentifier as const,
-    _module: readRawField(data, 'module'),
-    _name: readRawField(data, 'name'),
+    _module: data._module,
+    _name: data._name,
 
     module() { return drillIn(this._module, tree); },
     name() { return drillIn(this._name, tree); },
@@ -2142,9 +2142,9 @@ export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NewExpression as const,
-    _constructor: readRawField(data, 'constructor'),
-    _type_arguments: readRawField(data, 'type_arguments'),
-    _arguments: readRawField(data, 'arguments'),
+    _constructor: data._constructor,
+    _type_arguments: data._type_arguments,
+    _arguments: data._arguments,
 
     constructor() { return drillIn(this._constructor, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
@@ -2162,7 +2162,7 @@ export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.NonNullExpression as const,
-    _expression: readRawField(data, 'expression'),
+    _expression: data._expression,
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
@@ -2187,8 +2187,8 @@ export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectAssignmentPattern as const,
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _right: data._right,
 
     left() { return drillAs(this._left, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
     right() { return drillIn(this._right, tree); },
@@ -2215,9 +2215,9 @@ export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectType as const,
-    _opening: readRawField(data, 'opening'),
-    _members: readRawField(data, 'members'),
-    _closing: readRawField(data, 'closing'),
+    _opening: data._opening,
+    _members: data._members,
+    _closing: data._closing,
 
     opening() { return drillIn(this._opening, tree); },
     members() { return drillInAll(this._members, tree); },
@@ -2235,7 +2235,7 @@ export function wrapOmittingTypeAnnotation(data: T.OmittingTypeAnnotation, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.OmittingTypeAnnotation as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2249,7 +2249,7 @@ export function wrapOptingTypeAnnotation(data: T.OptingTypeAnnotation, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptingTypeAnnotation as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2263,11 +2263,11 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalParameter as const,
-    _decorator: readRawField(data, 'decorator'),
-    _readonly_marker: readRawField(data, 'readonly_marker'),
-    _pattern: readRawField(data, 'pattern'),
-    _type: readRawField(data, 'type'),
-    _value: readRawField(data, 'value'),
+    _decorator: data._decorator,
+    _readonly_marker: data._readonly_marker,
+    _pattern: data._pattern,
+    _type: data._type,
+    _value: data._value,
     $children: data.$children,
 
     decorator() { return drillInAll(this._decorator, tree); },
@@ -2291,8 +2291,8 @@ export function wrapOptionalTupleParameter(data: T.OptionalTupleParameter, tree:
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalTupleParameter as const,
-    _name: readRawField(data, 'name'),
-    _type: readRawField(data, 'type'),
+    _name: data._name,
+    _type: data._type,
 
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -2308,7 +2308,7 @@ export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalType as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2322,8 +2322,8 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Pair as const,
-    _key: readRawField(data, 'key'),
-    _value: readRawField(data, 'value'),
+    _key: data._key,
+    _value: data._value,
 
     key() { return drillIn(this._key, tree); },
     value() { return drillIn(this._value, tree); },
@@ -2339,8 +2339,8 @@ export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PairPattern as const,
-    _key: readRawField(data, 'key'),
-    _value: readRawField(data, 'value'),
+    _key: data._key,
+    _value: data._value,
 
     key() { return drillIn(this._key, tree); },
     value() { return drillIn(this._value, tree); },
@@ -2379,7 +2379,7 @@ export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedType as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2393,8 +2393,8 @@ export function wrapProgram(data: T.Program, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Program as const,
-    _hash_bang_line: readRawField(data, 'hash_bang_line'),
-    _statements: readRawField(data, 'statements'),
+    _hash_bang_line: data._hash_bang_line,
+    _statements: data._statements,
 
     hashBangLine() { return drillIn(this._hash_bang_line, tree); },
     statements() { return drillInAll(this._statements, tree); },
@@ -2410,13 +2410,13 @@ export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.PropertySignature as const,
-    _accessibility_modifier: readRawField(data, 'accessibility_modifier'),
-    _static_marker: readRawField(data, 'static_marker'),
-    _override_modifier: readRawField(data, 'override_modifier'),
-    _readonly_marker: readRawField(data, 'readonly_marker'),
-    _name: readRawField(data, 'name'),
-    _optional_marker: readRawField(data, 'optional_marker'),
-    _type: readRawField(data, 'type'),
+    _accessibility_modifier: data._accessibility_modifier,
+    _static_marker: data._static_marker,
+    _override_modifier: data._override_modifier,
+    _readonly_marker: data._readonly_marker,
+    _name: data._name,
+    _optional_marker: data._optional_marker,
+    _type: data._type,
 
     accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
     staticMarker() { return drillIn(this._static_marker, tree); },
@@ -2442,11 +2442,11 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinition as const,
-    _decorator: readRawField(data, 'decorator'),
-    _name: readRawField(data, 'name'),
-    _optionality_marker: readRawField(data, 'optionality_marker'),
-    _type: readRawField(data, 'type'),
-    _value: readRawField(data, 'value'),
+    _decorator: data._decorator,
+    _name: data._name,
+    _optionality_marker: data._optionality_marker,
+    _type: data._type,
+    _value: data._value,
     $children: data.$children,
 
     decorator() { return drillInAll(this._decorator, tree); },
@@ -2470,7 +2470,7 @@ export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReadonlyType as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2484,8 +2484,8 @@ export function wrapRegex(data: T.Regex, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Regex as const,
-    _pattern: readRawField(data, 'pattern'),
-    _flags: readRawField(data, 'flags'),
+    _pattern: data._pattern,
+    _flags: data._flags,
 
     pattern() { return drillIn(this._pattern, tree); },
     flags() { return drillIn(this._flags, tree); },
@@ -2501,11 +2501,11 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.RequiredParameter as const,
-    _decorator: readRawField(data, 'decorator'),
-    _readonly_marker: readRawField(data, 'readonly_marker'),
-    _pattern: readRawField(data, 'pattern'),
-    _type: readRawField(data, 'type'),
-    _value: readRawField(data, 'value'),
+    _decorator: data._decorator,
+    _readonly_marker: data._readonly_marker,
+    _pattern: data._pattern,
+    _type: data._type,
+    _value: data._value,
     $children: data.$children,
 
     decorator() { return drillInAll(this._decorator, tree); },
@@ -2540,7 +2540,7 @@ export function wrapRestType(data: T.RestType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RestType as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2554,7 +2554,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReturnStatement as const,
-    _semicolon: readRawField(data, 'semicolon'),
+    _semicolon: data._semicolon,
     $children: data.$children,
 
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -2570,8 +2570,8 @@ export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.SatisfiesExpression as const,
-    _expression: readRawField(data, 'expression'),
-    _type_annotation: readRawField(data, 'type_annotation'),
+    _expression: data._expression,
+    _type_annotation: data._type_annotation,
 
     expression() { return drillIn(this._expression, tree); },
     typeAnnotation() { return drillIn(this._type_annotation, tree); },
@@ -2598,7 +2598,7 @@ export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SpreadElement as const,
-    _expression: readRawField(data, 'expression'),
+    _expression: data._expression,
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
@@ -2612,8 +2612,8 @@ export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.StatementBlock as const,
-    _statements: readRawField(data, 'statements'),
-    _automatic_semicolon: readRawField(data, 'automatic_semicolon'),
+    _statements: data._statements,
+    _automatic_semicolon: data._automatic_semicolon,
 
     statements() { return drillInAll(this._statements, tree); },
     automaticSemicolon() { return drillIn(this._automatic_semicolon, tree); },
@@ -2662,9 +2662,9 @@ export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.SubscriptExpression as const,
-    _object: readRawField(data, 'object'),
-    _optional_chain: readRawField(data, 'optional_chain'),
-    _index: readRawField(data, 'index'),
+    _object: data._object,
+    _optional_chain: data._optional_chain,
+    _index: data._index,
 
     object() { return drillIn(this._object, tree); },
     optionalChain() { return drillIn(this._optional_chain, tree); },
@@ -2693,8 +2693,8 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchCase as const,
-    _value: readRawField(data, 'value'),
-    _body: readRawField(data, 'body'),
+    _value: data._value,
+    _body: data._body,
 
     value() { return drillIn(this._value, tree); },
     body() { return drillInAll(this._body, tree); },
@@ -2710,7 +2710,7 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchDefault as const,
-    _body: readRawField(data, 'body'),
+    _body: data._body,
 
     body() { return drillInAll(this._body, tree); },
     $with: {
@@ -2724,8 +2724,8 @@ export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchStatement as const,
-    _value: readRawField(data, 'value'),
-    _body: readRawField(data, 'body'),
+    _value: data._value,
+    _body: data._body,
 
     value() { return drillIn(this._value, tree); },
     body() { return drillIn(this._body, tree); },
@@ -2785,9 +2785,9 @@ export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandl
   const _node = withMethods({
     ...data,
     $type: TSKindId.TernaryExpression as const,
-    _condition: readRawField(data, 'condition'),
-    _consequence: readRawField(data, 'consequence'),
-    _alternative: readRawField(data, 'alternative'),
+    _condition: data._condition,
+    _consequence: data._consequence,
+    _alternative: data._alternative,
 
     condition() { return drillIn(this._condition, tree); },
     consequence() { return drillIn(this._consequence, tree); },
@@ -2805,7 +2805,7 @@ export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ThrowStatement as const,
-    _semicolon: readRawField(data, 'semicolon'),
+    _semicolon: data._semicolon,
     $children: data.$children,
 
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -2821,9 +2821,9 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TryStatement as const,
-    _body: readRawField(data, 'body'),
-    _handler: readRawField(data, 'handler'),
-    _finalizer: readRawField(data, 'finalizer'),
+    _body: data._body,
+    _handler: data._handler,
+    _finalizer: data._finalizer,
 
     body() { return drillIn(this._body, tree); },
     handler() { return drillIn(this._handler, tree); },
@@ -2841,8 +2841,8 @@ export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleParameter as const,
-    _name: readRawField(data, 'name'),
-    _type: readRawField(data, 'type'),
+    _name: data._name,
+    _type: data._type,
 
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -2869,10 +2869,10 @@ export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAliasDeclaration as const,
-    _name: readRawField(data, 'name'),
-    _type_parameters: readRawField(data, 'type_parameters'),
-    _value: readRawField(data, 'value'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _name: data._name,
+    _type_parameters: data._type_parameters,
+    _value: data._value,
+    _semicolon: data._semicolon,
 
     name() { return drillIn(this._name, tree); },
     typeParameters() { return drillIn(this._type_parameters, tree); },
@@ -2892,7 +2892,7 @@ export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAnnotation as const,
-    _type: readRawField(data, 'type'),
+    _type: data._type,
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
@@ -2917,8 +2917,8 @@ export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAssertion as const,
-    _type_arguments: readRawField(data, 'type_arguments'),
-    _expression: readRawField(data, 'expression'),
+    _type_arguments: data._type_arguments,
+    _expression: data._expression,
 
     typeArguments() { return drillIn(this._type_arguments, tree); },
     expression() { return drillIn(this._expression, tree); },
@@ -2934,10 +2934,10 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameter as const,
-    _const_marker: readRawField(data, 'const_marker'),
-    _name: readRawField(data, 'name'),
-    _constraint: readRawField(data, 'constraint'),
-    _value: readRawField(data, 'value'),
+    _const_marker: data._const_marker,
+    _name: data._name,
+    _constraint: data._constraint,
+    _value: data._value,
 
     constMarker() { return drillIn(this._const_marker, tree); },
     name() { return drillIn(this._name, tree); },
@@ -2968,8 +2968,8 @@ export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicate as const,
-    _name: readRawField(data, 'name'),
-    _type: readRawField(data, 'type'),
+    _name: data._name,
+    _type: data._type,
 
     name() { return drillAs(this._name, tree, "identifier", "predefined_type"); },
     typeField() { return drillIn(this._type, tree); },
@@ -2985,7 +2985,7 @@ export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicateAnnotation as const,
-    _type_predicate: readRawField(data, 'type_predicate'),
+    _type_predicate: data._type_predicate,
 
     typePredicate() { return drillIn(this._type_predicate, tree); },
     $with: {
@@ -3010,8 +3010,8 @@ export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnaryExpression as const,
-    _operator: readRawField(data, 'operator'),
-    _argument: readRawField(data, 'argument'),
+    _operator: data._operator,
+    _argument: data._argument,
 
     operator() { return drillIn(this._operator, tree); },
     argument() { return drillIn(this._argument, tree); },
@@ -3027,8 +3027,8 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnionType as const,
-    _left: readRawField(data, 'left'),
-    _right: readRawField(data, 'right'),
+    _left: data._left,
+    _right: data._right,
 
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
@@ -3057,8 +3057,8 @@ export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeH
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclaration as const,
-    _declarators: readRawField(data, 'declarators'),
-    _semicolon: readRawField(data, 'semicolon'),
+    _declarators: data._declarators,
+    _semicolon: data._semicolon,
 
     declarators() { return drillInAll(this._declarators, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
@@ -3074,9 +3074,9 @@ export function wrapVariableDeclarator(data: T.VariableDeclarator, tree: TreeHan
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclarator as const,
-    _name: readRawField(data, 'name'),
-    _type: readRawField(data, 'type'),
-    _value: readRawField(data, 'value'),
+    _name: data._name,
+    _type: data._type,
+    _value: data._value,
 
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
@@ -3094,8 +3094,8 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WhileStatement as const,
-    _condition: readRawField(data, 'condition'),
-    _body: readRawField(data, 'body'),
+    _condition: data._condition,
+    _body: data._body,
 
     condition() { return drillIn(this._condition, tree); },
     body() { return drillIn(this._body, tree); },
@@ -3111,8 +3111,8 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WithStatement as const,
-    _object: readRawField(data, 'object'),
-    _body: readRawField(data, 'body'),
+    _object: data._object,
+    _body: data._body,
 
     object() { return drillIn(this._object, tree); },
     body() { return drillIn(this._body, tree); },
@@ -3128,7 +3128,7 @@ export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.YieldExpression as const,
-    _expression: readRawField(data, 'expression'),
+    _expression: data._expression,
 
     expression() { return drillIn(this._expression, tree); },
     $with: {

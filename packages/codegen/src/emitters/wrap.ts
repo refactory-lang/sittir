@@ -139,7 +139,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 		"import type * as T from './types.js';",
 		...(typeImportLine ? [typeImportLine] : []),
-		"import { withMethods, readRawField } from './utils.js';",
+		"import { withMethods } from './utils.js';",
 		// wrap $with calls the corresponding factory to produce factory-output nodes.
 		"import * as _factories from './factories.js';",
 		'',
@@ -513,17 +513,17 @@ function resolveFieldDrillExprs(f: AssembledNonterminal): {
 		const [fromType, toType] = aliasEntries[0]!;
 		const helper = isMultiple(f) ? 'drillAsAll' : 'drillAs';
 		return {
-			storeExpr: `readRawField(data, '${f.name}')`,
+			storeExpr: `data._${f.name}`,
 			accessorBody: `return ${helper}(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
 		};
 	} else if (isMultiple(f)) {
 		return {
-			storeExpr: `readRawField(data, '${f.name}')`,
+			storeExpr: `data._${f.name}`,
 			accessorBody: `return drillInAll(this._${f.name}, tree)`,
 		};
 	} else {
 		return {
-			storeExpr: `readRawField(data, '${f.name}')`,
+			storeExpr: `data._${f.name}`,
 			accessorBody: `return drillIn(this._${f.name}, tree)`,
 		};
 	}

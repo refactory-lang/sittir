@@ -46,18 +46,6 @@ export function buildWithNamespace<C extends object, R extends AnyNodeData>(
 }
 
 /**
- * Read raw `_<rawName>` storage from any NodeData.
- *
- * The single index-signature bridge for generated readers. Used by
- * per-field accessor methods in factories.ts (`name(this: object) {
- *   return readRawField(this, "name");
- * }`) and by drill-in helpers in wrap.ts.
- */
-export function readRawField<T>(data: T, rawName: string): unknown {
-  return (data as Record<string, unknown>)[`_${rawName}`];
-}
-
-/**
  * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)
  * that every factory-produced NodeData carries. Spread into each factory
  * literal via `..._sharedMethods` — no post-construction `defineProperty`
