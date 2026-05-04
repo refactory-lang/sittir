@@ -1628,8 +1628,8 @@ function emitPolymorphFactory(
 			parts.push(
 				emitFieldCarryingFactory(
 					form,
-					Object.values(form.slots).filter((s) => s.source !== 'inferred'),
-					Object.values(form.slots).filter((s) => s.source === 'inferred'),
+					form.fields,
+					form.children,
 					nodeMap,
 					true,
 					kindEntries
@@ -1723,7 +1723,7 @@ function emitHoistedPolymorphFormFactory(
 	const configType = `Omit<ConfigOf<T.${form.typeName}>, '$variant'>`;
 	const variantName = form.name;
 	const parentKind = form.parentKind ?? form.kind;
-	const formFields = Object.values(form.slots).filter((s) => s.source !== 'inferred');
+	const formFields = form.fields;
 
 	// Required if ANY form-level OR inner-level required field is present
 	// (modulo auto-stamp / literal-resolved — those don't participate in the
