@@ -178,7 +178,35 @@ function countUnfieldedNamedChildren(node: TSNode): number {
 }
 
 /**
- * Count how many NodeData `$fields` entries represent children promoted into
+ * Extract named-slot field names from a NodeData object.
+ *
+ * ADR-0018 Phase 3a: readNode emits named slots as `_<name>` top-level keys
+ * (de-hoisted storage). The legacy `$fields` wrapper is no longer emitted.
+ * This helper reads both shapes for backward compatibility with test fixtures
+ * that still use `$fields`.
+ *
+ * @param data - The NodeData to inspect.
+ * @returns An iterable of `[fieldName, value]` pairs for all named slots.
+ */
+function* iterNamedSlots(data: AnyNodeData): Iterable<[string, unknown]> {
+	const rec = data as unknown as Record<string, unknown>;
+	// ADR-0018 Phase 3a: de-hoisted `_<name>` keys.
+	for (const key of Object.keys(rec)) {
+		if (key.startsWith('_')) {
+			yield [key.slice(1), rec[key]];
+		}
+	}
+	// Legacy `$fields` wrapper — tolerated for backward compatibility with old fixtures.
+	const legacyFields = rec['$fields'] as Record<string, unknown> | null | undefined;
+	if (legacyFields && typeof legacyFields === 'object') {
+		for (const [fname, value] of Object.entries(legacyFields)) {
+			yield [fname, value];
+		}
+	}
+}
+
+/**
+ * Count how many NodeData named-slot entries represent children promoted into
  * override fields rather than arriving via tree-sitter's own field routing.
  *
  * @remarks
@@ -186,7 +214,7 @@ function countUnfieldedNamedChildren(node: TSNode): number {
  * as `array.length` promoted children. Only entries that are NOT in the live
  * tree-sitter field set AND ARE in the override field set are counted.
  *
- * @param data - The NodeData whose `$fields` to inspect.
+ * @param data - The NodeData whose named slots to inspect.
  * @param liveFieldNames - Field names that tree-sitter itself assigned (excluded from counting).
  * @param overrideFields - Field names introduced by override routing (included in counting).
  * @returns The total count of children routed into override fields.
@@ -197,7 +225,7 @@ function countPromotedOverrideChildren(
 	overrideFields: Set<string>
 ): number {
 	let count = 0;
-	for (const [fname, value] of Object.entries(data.$fields ?? {})) {
+	for (const [fname, value] of iterNamedSlots(data)) {
 		if (liveFieldNames.has(fname)) continue; // tree-sitter field, not override
 		if (!overrideFields.has(fname)) continue; // neither override nor live
 		if (Array.isArray(value)) count += value.length;
@@ -242,7 +270,9 @@ function checkNodeData(
 	}
 
 	const liveFieldNames = collectLiveFieldNames(node);
-	const dataFields = new Set(Object.keys(data.$fields ?? {}));
+	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys.
+	// iterNamedSlots handles both de-hoisted (_<name>) and legacy ($fields) shapes.
+	const dataFields = new Set([...iterNamedSlots(data)].map(([fname]) => fname));
 
 	for (const fname of liveFieldNames) {
 		if (!dataFields.has(fname)) {
