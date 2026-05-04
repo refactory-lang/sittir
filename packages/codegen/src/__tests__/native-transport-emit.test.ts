@@ -363,7 +363,7 @@ describe('native transport emission', () => {
 		);
 	});
 
-	it('emits grammar-local native render transport validators', () => {
+	it('emits grammar-local native render transport projection', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain(
@@ -383,72 +383,16 @@ describe('native transport emission', () => {
 		expect(contents).toContain('if (typeof child === "function") continue;');
 		// ADR-0018 Phase 2: guard uses projKey (bare name after _ strip), not raw key.
 		expect(contents).toContain('if (projKey in projected) continue;');
-		expect(contents).toContain(
-			'assertNativeRenderTransport(node: unknown): asserts node is AnyTransport'
-		);
-		// Per-kind assert functions are emitted even without generatedIdTables.
-		// The switch cases in assertNativeRenderTransport use numeric KindIds
-		// (require generatedIdTables); without them only the default branch exists.
-		// The per-kind validator functions are still defined (used when a call
-		// site has a numeric case via generatedIdTables).
-		expect(contents).toContain('function assertCallExpressionTransport(');
-		expect(contents).toContain(
-			'assertTransportValue(node["callee"], `${path}.callee`, [{"type":"identifier"},{"type":"call_expression"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["keyword"], `${path}.keyword`, [{"type":"kw_fn","text":"fn"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["operator"], `${path}.operator`, [{"type":"operator","text":"+"},{"type":"operator","text":"-"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":";","text":";"}] as const);'
-		);
+		// Transport assertions removed — no assertNativeRenderTransport or per-kind validators.
+		expect(contents).not.toContain('assertNativeRenderTransport');
+		expect(contents).not.toContain('function assertCallExpressionTransport(');
+		expect(contents).not.toContain('assertDataOnlyObject');
 		expect(contents).not.toContain('node.$fields');
-		expect(contents).toContain(
-			'assertTextIn(node.$text, `${path}.$text`, ["fn"] as const);'
-		);
-		expect(contents).toContain(
-			'assertTextIn(node.$text, `${path}.$text`, ["+","-"] as const);'
-		);
 		expect(contents).toContain(
 			"key === 'render' || key === 'toEdit' || key === 'replace'"
 		);
-		expect(contents).toContain("key === '$format'");
-		expect(contents).toContain(
-			'$format is not supported by the native render boundary; pass format separately'
-		);
 		expect(contents).not.toContain('native-boundary');
 		expect(contents).not.toContain('assertNativeNodeData');
-	});
-
-	it('emits polymorph transport validators that dispatch on the form variant', () => {
-		const contents = emitClientUtils({ nodeMap: makePolymorphNodeMap() });
-
-		// Numeric switch cases in assertNativeRenderTransport require generatedIdTables;
-		// without them the switch only has a default branch. The per-form dispatch
-		// still lives inside the per-kind assert function via switch(node.$variant).
-		expect(contents).toContain('switch (node.$variant)');
-		expect(contents).toContain('case "left_form":');
-		expect(contents).toContain(
-			'assertExpressionUFormLeftTransport(node, path);'
-		);
-		expect(contents).toContain(
-			'assertTransportVariant(node, path, "left_form");'
-		);
-		expect(contents).toContain(
-			'if (node["left"] === undefined) throw new TypeError(`${path}.left` + \' is required\');'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"}] as const);'
-		);
-		expect(contents).toContain('case "right_form":');
-		expect(contents).toContain(
-			'assertExpressionUFormRightTransport(node, path);'
-		);
-		expect(contents).toContain(
-			'if (node["right"] === undefined) throw new TypeError(`${path}.right` + \' is required\');'
-		);
 	});
 
 	it('emits transport-oriented Rust render support', () => {
@@ -598,7 +542,6 @@ describe('native transport emission', () => {
 	it('uses one transport projection for colliding type names', () => {
 		const nodeMap = makeTypeNameCollisionNodeMap();
 		const types = emitTypes({ grammar: 'python', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 		const rust = emitRenderModule(
 			'python',
 			[
@@ -615,8 +558,6 @@ describe('native transport emission', () => {
 		);
 		expect(types).toContain('  | True.Transport');
 		expect(types).not.toContain('TerminalTransport<number, "True">');
-		// Numeric switch cases in assertNativeRenderTransport require
-		// generatedIdTables; without them neither "true" nor "True" appears.
 		expect(rust).toContain(
 			'#[serde(rename = "true")]\n    True(TrueTransport),'
 		);
@@ -628,22 +569,16 @@ describe('native transport emission', () => {
 	it('resolves hidden source multis to visible transport nodes', () => {
 		const nodeMap = makeHiddenSourceVisibleTransportNodeMap();
 		const types = emitTypes({ grammar: 'python', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 
 		expect(types).toContain(
 			'readonly $children: readonly [ChildList.Transport];'
 		);
 		expect(types).not.toContain('_ChildList.Transport');
-		expect(utils).toContain(
-			'assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"child_list"}] as const);'
-		);
-		expect(utils).not.toContain('{"type":"_child_list"}');
 	});
 
 	it('inlines fixed terminals whose type names collide with supertypes', () => {
 		const nodeMap = makeSupertypeTerminalCollisionNodeMap();
 		const types = emitTypes({ grammar: 'rust', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 
 		expect(types.match(/export namespace Path/g)).toHaveLength(1);
 		expect(types).toContain(
@@ -653,9 +588,5 @@ describe('native transport emission', () => {
 		expect(types).toContain('export namespace Path');
 		expect(types).toContain('export type Transport = Identifier.Transport;');
 		expect(types).toContain('  | LiteralTransport<number, "::">');
-		// Numeric switch cases in assertNativeRenderTransport require
-		// generatedIdTables; without them the "::" literal case is not emitted.
-		// The assertLiteralTransport helper function is still defined for use
-		// when generatedIdTables are provided.
 	});
 });

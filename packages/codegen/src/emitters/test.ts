@@ -512,10 +512,9 @@ function emitEnumTest(
  * Resolve a slot kind to a safe leaf stub kind for test dummy nodes.
  *
  * @remarks
- * Transport validators recurse into child stubs via `assertNativeRenderTransport`.
- * Branch stubs (e.g. `unary_expression`) must satisfy all required fields/children
- * or the recursive validator throws. Only leaf/keyword/enum/token kinds accept a
- * plain `{ $type, $text, $source }` stub without further structure.
+ * The native transport layer expects branch stubs to satisfy all required
+ * fields/children. Only leaf/keyword/enum/token kinds accept a plain
+ * `{ $type, $text, $source }` stub without further structure.
  *
  * Priority (BFS over supertype subtypes):
  * 1. A leaf/keyword/enum/token that has a parser symbol — safe as `$text`-only stub.
