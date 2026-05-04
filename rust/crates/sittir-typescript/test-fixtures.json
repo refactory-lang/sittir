@@ -28855,6 +28855,70 @@
     "kind": "render",
     "grammar": "typescript",
     "input": {
+      "$type": 384,
+      "$source": 0,
+      "$children": [
+        {
+          "$type": 169,
+          "$source": 0,
+          "$text": "{ UserType }",
+          "$span": {
+            "start": 12,
+            "end": 24
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "$span": {
+        "start": 0,
+        "end": 24
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_export": {
+        "$type": 130,
+        "$source": 0,
+        "$text": "export",
+        "$span": {
+          "start": 0,
+          "end": 6
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_type": {
+        "$type": 307,
+        "$source": 0,
+        "$text": "type",
+        "$span": {
+          "start": 7,
+          "end": 11
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      }
+    },
+    "expectedOutput": "export type { UserType }"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "export type { UserType }",
+    "pattern": "export_statement",
+    "edits": [],
+    "expectedSourceOut": "export type { UserType }",
+    "expectedReparseTree": "(export_statement_type_export (export_clause (export_specifier name: (identifier))))",
+    "wrappedText": "export type { UserType }",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "input": {
       "$type": 247,
       "$source": 0,
       "$children": [

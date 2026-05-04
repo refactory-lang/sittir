@@ -80,6 +80,9 @@ type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonl
 type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
+  "assignment_eq": "_assignment_eq",
+  "assignment_type": "_assignment_type",
+  "assignment_typed": "_assignment_typed",
   "async_marker": "_async_marker",
   "augmented_assignment_operator": "_augmented_assignment_operator",
   "binary_operator_operator": "_binary_operator_operator",

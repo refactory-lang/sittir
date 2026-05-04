@@ -13400,15 +13400,25 @@ fn render__as_pattern_transport(node: &_AsPatternTransport) -> Result<String, ::
 }
 
 fn render_assignment_eq_transport(node: &AssignmentEqTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = AssignmentEqTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_assignment_type_transport(node: &AssignmentTypeTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = AssignmentTypeTemplate {
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_assignment_typed_transport(node: &AssignmentTypedTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = AssignmentTypedTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_async_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -13562,11 +13572,18 @@ fn render_unary_operator_operator_transport(t: &UnaryOperatorOperatorEnum) -> Re
 }
 
 fn render__with_clause_paren_transport(node: &_WithClauseParenTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_with_item_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _WithClauseParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: ",",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_aliased_import_transport(node: &AliasedImportTransport) -> Result<String, ::askama::Error> {
@@ -19897,6 +19914,25 @@ pub struct _AsPatternTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_assignment_eq.jinja", escape = "none")]
+pub struct AssignmentEqTemplate<'a> {
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_assignment_type.jinja", escape = "none")]
+pub struct AssignmentTypeTemplate<'a> {
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_assignment_typed.jinja", escape = "none")]
+pub struct AssignmentTypedTemplate<'a> {
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_comprehension_clauses.jinja", escape = "none")]
 pub struct ComprehensionClausesTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
@@ -19929,6 +19965,12 @@ pub struct SimpleStatementsTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_suite.jinja", escape = "none")]
 pub struct SuiteTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_with_clause_paren.jinja", escape = "none")]
+pub struct _WithClauseParenTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
@@ -20709,6 +20751,7 @@ impl ResolvedField {
 
 fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
+        245 => ",", // "_with_clause_paren"
         169 => ",", // "dict_pattern"
         218 => ",", // "dictionary"
         162 => ".", // "dotted_name"
@@ -21036,6 +21079,35 @@ fn render_hidden_as_pattern(node: &NodeData) -> Result<String, ::askama::Error> 
     template.render()
 }
 
+fn render_hidden_assignment_eq(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["right"])?;
+    let field_0 = resolve_field(node, "right", true)?;
+    let template = AssignmentEqTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_assignment_type(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["type"])?;
+    let field_0 = resolve_field(node, "type", true)?;
+    let template = AssignmentTypeTemplate {
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_assignment_typed(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["right", "type"])?;
+    let field_0 = resolve_field(node, "right", true)?;
+    let field_1 = resolve_field(node, "type", true)?;
+    let template = AssignmentTypedTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+    };
+    template.render()
+}
+
 fn render_hidden_comprehension_clauses(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -21106,6 +21178,20 @@ fn render_hidden_suite(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = SuiteTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_with_clause_paren(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _WithClauseParenTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
@@ -22641,11 +22727,15 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
     }
     match node.type_.0 {
         165 | 185 => render_hidden_as_pattern(node), // "_as_pattern" | "as_pattern"
+        240 => render_hidden_assignment_eq(node), // "_assignment_eq" | "assignment_eq"
+        241 => render_hidden_assignment_type(node), // "_assignment_type" | "assignment_type"
+        242 => render_hidden_assignment_typed(node), // "_assignment_typed" | "assignment_typed"
         224 => render_hidden_comprehension_clauses(node), // "_comprehension_clauses"
         246 => render_hidden_match_block_block(node), // "_match_block_block" | "match_block_block"
         135 => render_hidden_match_block(node), // "_match_block"
         248 => render_hidden_simple_pattern_negative(node), // "_simple_pattern_negative" | "simple_pattern_negative"
         110 => render_hidden_simple_statements(node), // "_simple_statements"
+        245 => render_hidden_with_clause_paren(node), // "_with_clause_paren" | "with_clause_paren"
         117 => render_aliased_import(node), // "aliased_import"
         157 => render_argument_list(node), // "argument_list"
         185 => render_as_pattern(node), // "as_pattern"

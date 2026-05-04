@@ -22165,15 +22165,53 @@ fn render_visibility_modifier_pub_pub_transport(t: &bool) -> Result<String, ::as
 }
 
 fn render_array_expression_list_transport(node: &ArrayExpressionListTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_attribute_item_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let elements_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.elements.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = ArrayExpressionListTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        elements: ::sittir_core::filters::ListNonterminalView {
+            items: elements_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_array_expression_semi_transport(node: &ArrayExpressionSemiTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = ArrayExpressionSemiTemplate {
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.elements as &dyn ::sittir_core::types::RenderableTransport)),
+        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.length as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_binary_expression_operator_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22185,11 +22223,21 @@ fn render_closure_expression_async_marker_transport(t: &bool) -> Result<String, 
 }
 
 fn render_closure_expression_block_transport(node: &ClosureExpressionBlockTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = ClosureExpressionBlockTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+        return_type: match &node.return_type {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
+    };
+    template.render()
 }
 
 fn render__closure_expression_expr_transport(node: &_ClosureExpressionExprTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _ClosureExpressionExprTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_closure_expression_static_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22205,35 +22253,74 @@ fn render__crate_transport(t: &bool) -> Result<String, ::askama::Error> {
 }
 
 fn render__delim_token_tree_brace_transport(node: &_DelimTokenTreeBraceTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_delim_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _DelimTokenTreeBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__delim_token_tree_bracket_transport(node: &_DelimTokenTreeBracketTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_delim_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _DelimTokenTreeBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__delim_token_tree_paren_transport(node: &_DelimTokenTreeParenTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_delim_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _DelimTokenTreeParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__expression_statement_block_ending_transport(node: &_ExpressionStatementBlockEndingTransport) -> Result<String, ::askama::Error> {
-    render_expression_ending_with_block_transport(&node.children)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let template = _ExpressionStatementBlockEndingTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__expression_statement_with_semi_transport(node: &_ExpressionStatementWithSemiTransport) -> Result<String, ::askama::Error> {
-    render_expression_transport(&node.children)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let template = _ExpressionStatementWithSemiTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<String, ::askama::Error> {
@@ -22250,15 +22337,25 @@ fn render_field_identifier_transport(node: &FieldIdentifierTransport) -> Result<
 }
 
 fn render_field_pattern_named_transport(node: &FieldPatternNamedTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = FieldPatternNamedTemplate {
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.pattern as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render__field_pattern_shorthand_transport(node: &_FieldPatternShorthandTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _FieldPatternShorthandTemplate {
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render__foreign_mod_item_body_transport(node: &_ForeignModItemBodyTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _ForeignModItemBodyTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_foreign_mod_item_semi_transport(t: &ForeignModItemSemiTransport) -> Result<String, ::askama::Error> {
@@ -22290,7 +22387,10 @@ fn render_generic_type_with_turbofish_turbofish_transport(t: &bool) -> Result<St
 }
 
 fn render__impl_item_body_transport(node: &_ImplItemBodyTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _ImplItemBodyTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_impl_item_negative_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22363,7 +22463,12 @@ fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Res
 }
 
 fn render_line_comment_doc_transport(node: &LineCommentDocTransport) -> Result<String, ::askama::Error> {
-    node.children.render_to_string()
+    let template = LineCommentDocTemplate {
+        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.doc as &dyn ::sittir_core::types::RenderableTransport)),
+        inner: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        outer: ::sittir_core::filters::OptionalNonterminalView::Missing,
+    };
+    template.render()
 }
 
 fn render_line_comment_regular_dslash_transport(t: &LineCommentRegularDslashTransport) -> Result<String, ::askama::Error> {
@@ -22371,41 +22476,65 @@ fn render_line_comment_regular_dslash_transport(t: &LineCommentRegularDslashTran
 }
 
 fn render__macro_definition_brace_transport(node: &_MacroDefinitionBraceTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    if let Some(children) = &node.children {
-        for child in children.iter() {
-            out.push_str(&render_macro_rule_transport(child)?);
-        }
-    }
-    Ok(out)
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _MacroDefinitionBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__macro_definition_bracket_transport(node: &_MacroDefinitionBracketTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    if let Some(children) = &node.children {
-        for child in children.iter() {
-            out.push_str(&render_macro_rule_transport(child)?);
-        }
-    }
-    Ok(out)
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _MacroDefinitionBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__macro_definition_paren_transport(node: &_MacroDefinitionParenTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    if let Some(children) = &node.children {
-        for child in children.iter() {
-            out.push_str(&render_macro_rule_transport(child)?);
-        }
-    }
-    Ok(out)
+    let children_owned = node.children.as_deref().unwrap_or(&[]);
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = children_owned.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _MacroDefinitionParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__match_arm_block_ending_transport(node: &_MatchArmBlockEndingTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _MatchArmBlockEndingTemplate {
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_match_arm_with_comma_transport(node: &MatchArmWithCommaTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = MatchArmWithCommaTemplate {
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<String, ::askama::Error> {
@@ -22413,7 +22542,10 @@ fn render_mod_item_external_transport(t: &ModItemExternalTransport) -> Result<St
 }
 
 fn render__mod_item_inline_transport(node: &_ModItemInlineTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _ModItemInlineTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_move_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22437,11 +22569,18 @@ fn render_operator_transport(t: &bool) -> Result<String, ::askama::Error> {
 }
 
 fn render_or_pattern_binary_transport(node: &OrPatternBinaryTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = OrPatternBinaryTemplate {
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_or_pattern_prefix_transport(node: &OrPatternPrefixTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = OrPatternPrefixTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_outer_line_doc_comment_marker_transport(t: &OuterLineDocCommentMarkerTransport) -> Result<String, ::askama::Error> {
@@ -22453,7 +22592,16 @@ fn render_pointer_type_const_transport(t: &PointerTypeConstTransport) -> Result<
 }
 
 fn render__pointer_type_mut_transport(node: &_PointerTypeMutTransport) -> Result<String, ::askama::Error> {
-    render_mutable_specifier_transport(&node.children)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let template = _PointerTypeMutTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_primitive_type_transport(t: &PrimitiveTypeEnum) -> Result<String, ::askama::Error> {
@@ -22461,19 +22609,41 @@ fn render_primitive_type_transport(t: &PrimitiveTypeEnum) -> Result<String, ::as
 }
 
 fn render__range_expression_bare_transport(node: &_RangeExpressionBareTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = _RangeExpressionBareTemplate {
+        operator: ::sittir_core::filters::SingleNonterminalView(
+            if node.operator { ::sittir_core::filters::Renderable::Text("..") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
+    };
+    template.render()
 }
 
 fn render_range_expression_binary_transport(node: &RangeExpressionBinaryTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = RangeExpressionBinaryTemplate {
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.end as &dyn ::sittir_core::types::RenderableTransport)),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator as &dyn ::sittir_core::types::RenderableTransport)),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.start as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_range_expression_postfix_transport(node: &RangeExpressionPostfixTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = RangeExpressionPostfixTemplate {
+        operator: ::sittir_core::filters::SingleNonterminalView(
+            if node.operator { ::sittir_core::filters::Renderable::Text("..") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.start as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_range_expression_prefix_transport(node: &RangeExpressionPrefixTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = RangeExpressionPrefixTemplate {
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.end as &dyn ::sittir_core::types::RenderableTransport)),
+        operator: ::sittir_core::filters::SingleNonterminalView(
+            if node.operator { ::sittir_core::filters::Renderable::Text("..") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
+    };
+    template.render()
 }
 
 fn render_range_pattern_left_bare_transport(t: &RangePatternLeftBareTransport) -> Result<String, ::askama::Error> {
@@ -22481,11 +22651,17 @@ fn render_range_pattern_left_bare_transport(t: &RangePatternLeftBareTransport) -
 }
 
 fn render_range_pattern_left_with_right_transport(node: &RangePatternLeftWithRightTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = RangePatternLeftWithRightTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.right.as_ref())),
+    };
+    template.render()
 }
 
 fn render_range_pattern_prefix_transport(node: &RangePatternPrefixTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    let template = RangePatternPrefixTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.right.as_ref())),
+    };
+    template.render()
 }
 
 fn render_ref_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22527,19 +22703,31 @@ fn render__self_transport(t: &bool) -> Result<String, ::askama::Error> {
 }
 
 fn render_struct_item_brace_transport(node: &StructItemBraceTransport) -> Result<String, ::askama::Error> {
-    if let Some(child) = &node.children {
-        render_where_clause_transport(child)
-    } else {
-        Ok(String::new())
-    }
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c as &dyn ::sittir_core::types::RenderableTransport)).collect();
+    let template = StructItemBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_struct_item_tuple_transport(node: &StructItemTupleTransport) -> Result<String, ::askama::Error> {
-    if let Some(child) = &node.children {
-        render_where_clause_transport(child)
-    } else {
-        Ok(String::new())
-    }
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c as &dyn ::sittir_core::types::RenderableTransport)).collect();
+    let template = StructItemTupleTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body as &dyn ::sittir_core::types::RenderableTransport)),
+    };
+    template.render()
 }
 
 fn render_struct_item_unit_transport(t: &StructItemUnitTransport) -> Result<String, ::askama::Error> {
@@ -22551,51 +22739,93 @@ fn render_token_binding_pattern_type_transport(t: &TokenBindingPatternTypeEnum) 
 }
 
 fn render__token_tree_brace_transport(node: &_TokenTreeBraceTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreeBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__token_tree_bracket_transport(node: &_TokenTreeBracketTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreeBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__token_tree_paren_transport(node: &_TokenTreeParenTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_tokens_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreeParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__token_tree_pattern_brace_transport(node: &_TokenTreePatternBraceTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_token_pattern_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreePatternBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__token_tree_pattern_bracket_transport(node: &_TokenTreePatternBracketTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_token_pattern_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreePatternBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render__token_tree_pattern_paren_transport(node: &_TokenTreePatternParenTransport) -> Result<String, ::askama::Error> {
-    let mut out = String::new();
-    for child in node.children.iter() {
-        out.push_str(&render_token_pattern_transport(child)?);
-    }
-    Ok(out)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
+    let template = _TokenTreePatternParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_type_identifier_transport(node: &TypeIdentifierTransport) -> Result<String, ::askama::Error> {
@@ -22620,7 +22850,16 @@ fn render_unsafe_marker_transport(t: &bool) -> Result<String, ::askama::Error> {
 }
 
 fn render__visibility_modifier_crate_transport(node: &_VisibilityModifierCrateTransport) -> Result<String, ::askama::Error> {
-    render_crate_transport(&node.children)
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let template = _VisibilityModifierCrateTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+    };
+    template.render()
 }
 
 fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathTransport) -> Result<String, ::askama::Error> {
@@ -22640,11 +22879,19 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
 }
 
 fn render_visibility_modifier_pub_transport(node: &VisibilityModifierPubTransport) -> Result<String, ::askama::Error> {
-    if let Some(child) = &node.children {
-        child.render_to_string()
-    } else {
-        Ok(String::new())
-    }
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c as &dyn ::sittir_core::types::RenderableTransport)).collect();
+    let template = VisibilityModifierPubTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        r#pub: ::sittir_core::filters::SingleNonterminalView(
+            if node.r#pub { ::sittir_core::filters::Renderable::Text("pub") } else { ::sittir_core::filters::Renderable::Text("") }
+        ),
+    };
+    template.render()
 }
 
 fn render_wildcard_pattern_transport(t: &WildcardPatternTransport) -> Result<String, ::askama::Error> {
@@ -34144,9 +34391,87 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_array_expression_list.jinja", escape = "none")]
+pub struct ArrayExpressionListTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub elements: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_array_expression_semi.jinja", escape = "none")]
+pub struct ArrayExpressionSemiTemplate<'a> {
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub elements: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub length: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_closure_expression_block.jinja", escape = "none")]
+pub struct ClosureExpressionBlockTemplate<'a> {
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_closure_expression_expr.jinja", escape = "none")]
+pub struct _ClosureExpressionExprTemplate<'a> {
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_brace.jinja", escape = "none")]
+pub struct _DelimTokenTreeBraceTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_bracket.jinja", escape = "none")]
+pub struct _DelimTokenTreeBracketTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_delim_token_tree_paren.jinja", escape = "none")]
+pub struct _DelimTokenTreeParenTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_expression_statement_block_ending.jinja", escape = "none")]
+pub struct _ExpressionStatementBlockEndingTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_expression_statement_with_semi.jinja", escape = "none")]
+pub struct _ExpressionStatementWithSemiTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_field_identifier.jinja", escape = "none")]
 pub struct FieldIdentifierTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_field_pattern_named.jinja", escape = "none")]
+pub struct FieldPatternNamedTemplate<'a> {
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_field_pattern_shorthand.jinja", escape = "none")]
+pub struct _FieldPatternShorthandTemplate<'a> {
+    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_foreign_mod_item_body.jinja", escape = "none")]
+pub struct _ForeignModItemBodyTemplate<'a> {
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -34162,9 +34487,118 @@ pub struct FunctionTypeTraitFormTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_impl_item_body.jinja", escape = "none")]
+pub struct _ImplItemBodyTemplate<'a> {
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_let_chain.jinja", escape = "none")]
 pub struct LetChainTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_line_comment_doc.jinja", escape = "none")]
+pub struct LineCommentDocTemplate<'a> {
+    pub doc: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub inner: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub outer: ::sittir_core::filters::OptionalNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_macro_definition_brace.jinja", escape = "none")]
+pub struct _MacroDefinitionBraceTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_macro_definition_bracket.jinja", escape = "none")]
+pub struct _MacroDefinitionBracketTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_macro_definition_paren.jinja", escape = "none")]
+pub struct _MacroDefinitionParenTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_match_arm_block_ending.jinja", escape = "none")]
+pub struct _MatchArmBlockEndingTemplate<'a> {
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_match_arm_with_comma.jinja", escape = "none")]
+pub struct MatchArmWithCommaTemplate<'a> {
+    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_mod_item_inline.jinja", escape = "none")]
+pub struct _ModItemInlineTemplate<'a> {
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_or_pattern_binary.jinja", escape = "none")]
+pub struct OrPatternBinaryTemplate<'a> {
+    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_or_pattern_prefix.jinja", escape = "none")]
+pub struct OrPatternPrefixTemplate<'a> {
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_pointer_type_mut.jinja", escape = "none")]
+pub struct _PointerTypeMutTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_bare.jinja", escape = "none")]
+pub struct _RangeExpressionBareTemplate<'a> {
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_binary.jinja", escape = "none")]
+pub struct RangeExpressionBinaryTemplate<'a> {
+    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_postfix.jinja", escape = "none")]
+pub struct RangeExpressionPostfixTemplate<'a> {
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub start: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_expression_prefix.jinja", escape = "none")]
+pub struct RangeExpressionPrefixTemplate<'a> {
+    pub end: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_pattern_left_with_right.jinja", escape = "none")]
+pub struct RangePatternLeftWithRightTemplate<'a> {
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_range_pattern_prefix.jinja", escape = "none")]
+pub struct RangePatternPrefixTemplate<'a> {
+    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -34180,8 +34614,64 @@ pub struct ReservedIdentifierTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
+#[template(path = "_struct_item_brace.jinja", escape = "none")]
+pub struct StructItemBraceTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_struct_item_tuple.jinja", escape = "none")]
+pub struct StructItemTupleTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_brace.jinja", escape = "none")]
+pub struct _TokenTreeBraceTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_bracket.jinja", escape = "none")]
+pub struct _TokenTreeBracketTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_paren.jinja", escape = "none")]
+pub struct _TokenTreeParenTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_brace.jinja", escape = "none")]
+pub struct _TokenTreePatternBraceTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_bracket.jinja", escape = "none")]
+pub struct _TokenTreePatternBracketTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_token_tree_pattern_paren.jinja", escape = "none")]
+pub struct _TokenTreePatternParenTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
 #[template(path = "_type_identifier.jinja", escape = "none")]
 pub struct TypeIdentifierTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_crate.jinja", escape = "none")]
+pub struct _VisibilityModifierCrateTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
@@ -34190,6 +34680,13 @@ pub struct TypeIdentifierTemplate<'a> {
 pub struct VisibilityModifierInPathTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#in: ::sittir_core::filters::SingleNonterminalView<'a>,
+}
+
+#[derive(::askama::Template)]
+#[template(path = "_visibility_modifier_pub.jinja", escape = "none")]
+pub struct VisibilityModifierPubTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub r#pub: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35762,6 +36259,148 @@ fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
     ))
 }
 
+fn render_hidden_array_expression_list(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["attributes", "elements"])?;
+    let field_0 = resolve_field(node, "attributes", true)?;
+    let field_1 = resolve_field(node, "elements", true)?;
+    let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
+    let field_1_renderables = field_1.renderable_items();
+    let template = ArrayExpressionListTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
+        },
+        elements: ::sittir_core::filters::ListNonterminalView {
+            items: field_1_renderables.as_slice(),
+            separator: field_1.separator,
+            leading: field_1.leading_sep,
+            trailing: field_1.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_array_expression_semi(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["attributes", "elements", "length"])?;
+    let field_0 = resolve_field(node, "attributes", true)?;
+    let field_1 = resolve_field(node, "elements", true)?;
+    let field_2 = resolve_field(node, "length", true)?;
+    let field_0_renderables = field_0.renderable_items();
+    let template = ArrayExpressionSemiTemplate {
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
+        },
+        elements: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        length: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_closure_expression_block(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body", "return_type"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let field_1 = resolve_field(node, "return_type", false)?;
+    let template = ClosureExpressionBlockTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        return_type: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_closure_expression_expr(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let template = _ClosureExpressionExprTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_delim_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _DelimTokenTreeBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_delim_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _DelimTokenTreeBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_delim_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _DelimTokenTreeParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_expression_statement_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _ExpressionStatementBlockEndingTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_expression_statement_with_semi(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _ExpressionStatementWithSemiTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
 fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -35772,6 +36411,35 @@ fn render_hidden_field_identifier(node: &NodeData) -> Result<String, ::askama::E
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
+    };
+    template.render()
+}
+
+fn render_hidden_field_pattern_named(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["name", "pattern"])?;
+    let field_0 = resolve_field(node, "name", true)?;
+    let field_1 = resolve_field(node, "pattern", true)?;
+    let template = FieldPatternNamedTemplate {
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_field_pattern_shorthand(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["name"])?;
+    let field_0 = resolve_field(node, "name", true)?;
+    let template = _FieldPatternShorthandTemplate {
+        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_foreign_mod_item_body(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let template = _ForeignModItemBodyTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -35799,6 +36467,15 @@ fn render_hidden_function_type_trait_form(node: &NodeData) -> Result<String, ::a
     template.render()
 }
 
+fn render_hidden_impl_item_body(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let template = _ImplItemBodyTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
 fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
@@ -35809,6 +36486,190 @@ fn render_hidden_let_chain(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
+    };
+    template.render()
+}
+
+fn render_hidden_line_comment_doc(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["doc", "inner", "outer"])?;
+    let field_0 = resolve_field(node, "doc", true)?;
+    let field_1 = resolve_field(node, "inner", false)?;
+    let field_2 = resolve_field(node, "outer", false)?;
+    let template = LineCommentDocTemplate {
+        doc: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        inner: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        outer: match field_2.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_macro_definition_brace(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _MacroDefinitionBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_macro_definition_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _MacroDefinitionBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_macro_definition_paren(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _MacroDefinitionParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_match_arm_block_ending(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["value"])?;
+    let field_0 = resolve_field(node, "value", true)?;
+    let template = _MatchArmBlockEndingTemplate {
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_match_arm_with_comma(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["value"])?;
+    let field_0 = resolve_field(node, "value", true)?;
+    let template = MatchArmWithCommaTemplate {
+        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_mod_item_inline(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let template = _ModItemInlineTemplate {
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_or_pattern_binary(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["left", "right"])?;
+    let field_0 = resolve_field(node, "left", true)?;
+    let field_1 = resolve_field(node, "right", true)?;
+    let template = OrPatternBinaryTemplate {
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_or_pattern_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["right"])?;
+    let field_0 = resolve_field(node, "right", true)?;
+    let template = OrPatternPrefixTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_pointer_type_mut(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _PointerTypeMutTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_range_expression_bare(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["operator"])?;
+    let field_0 = resolve_field(node, "operator", true)?;
+    let template = _RangeExpressionBareTemplate {
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_range_expression_binary(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["end", "operator", "start"])?;
+    let field_0 = resolve_field(node, "end", true)?;
+    let field_1 = resolve_field(node, "operator", true)?;
+    let field_2 = resolve_field(node, "start", true)?;
+    let template = RangeExpressionBinaryTemplate {
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_range_expression_postfix(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["operator", "start"])?;
+    let field_0 = resolve_field(node, "operator", true)?;
+    let field_1 = resolve_field(node, "start", true)?;
+    let template = RangeExpressionPostfixTemplate {
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_range_expression_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["end", "operator"])?;
+    let field_0 = resolve_field(node, "end", true)?;
+    let field_1 = resolve_field(node, "operator", true)?;
+    let template = RangeExpressionPrefixTemplate {
+        end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_range_pattern_left_with_right(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["right"])?;
+    let field_0 = resolve_field(node, "right", true)?;
+    let template = RangePatternLeftWithRightTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_range_pattern_prefix(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["right"])?;
+    let field_0 = resolve_field(node, "right", true)?;
+    let template = RangePatternPrefixTemplate {
+        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -35841,10 +36702,140 @@ fn render_hidden_reserved_identifier(node: &NodeData) -> Result<String, ::askama
     template.render()
 }
 
+fn render_hidden_struct_item_brace(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
+    let template = StructItemBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_struct_item_tuple(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["body"])?;
+    let field_0 = resolve_field(node, "body", true)?;
+    let children_renderables = children.renderable_items();
+    let template = StructItemTupleTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_brace(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreeBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreeBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_paren(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreeParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_pattern_brace(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreePatternBraceTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_pattern_bracket(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreePatternBracketTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_token_tree_pattern_paren(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _TokenTreePatternParenTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
 fn render_hidden_type_identifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeIdentifierTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+    };
+    template.render()
+}
+
+fn render_hidden_visibility_modifier_crate(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &[])?;
+    let children_renderables = children.renderable_items();
+    let template = _VisibilityModifierCrateTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
@@ -35867,6 +36858,22 @@ fn render_hidden_visibility_modifier_in_path(node: &NodeData) -> Result<String, 
             trailing: children.trailing_sep,
         },
         r#in: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+    };
+    template.render()
+}
+
+fn render_hidden_visibility_modifier_pub(node: &NodeData) -> Result<String, ::askama::Error> {
+    let children = resolve_children(node, &["pub"])?;
+    let field_0 = resolve_field(node, "pub", true)?;
+    let children_renderables = children.renderable_items();
+    let template = VisibilityModifierPubTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
+        r#pub: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -38420,13 +39427,52 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         }
     }
     match node.type_.0 {
+        322 => render_hidden_array_expression_list(node), // "_array_expression_list" | "array_expression_list"
+        321 => render_hidden_array_expression_semi(node), // "_array_expression_semi" | "array_expression_semi"
+        323 => render_hidden_closure_expression_block(node), // "_closure_expression_block" | "closure_expression_block"
+        324 => render_hidden_closure_expression_expr(node), // "_closure_expression_expr" | "closure_expression_expr"
+        381 => render_hidden_delim_token_tree_brace(node), // "_delim_token_tree_brace" | "delim_token_tree_brace"
+        380 => render_hidden_delim_token_tree_bracket(node), // "_delim_token_tree_bracket" | "delim_token_tree_bracket"
+        379 => render_hidden_delim_token_tree_paren(node), // "_delim_token_tree_paren" | "delim_token_tree_paren"
+        366 => render_hidden_expression_statement_block_ending(node), // "_expression_statement_block_ending" | "expression_statement_block_ending"
+        365 => render_hidden_expression_statement_with_semi(node), // "_expression_statement_with_semi" | "expression_statement_with_semi"
         414 => render_hidden_field_identifier(node), // "_field_identifier" | "field_identifier"
+        326 => render_hidden_field_pattern_named(node), // "_field_pattern_named" | "field_pattern_named"
+        325 => render_hidden_field_pattern_shorthand(node), // "_field_pattern_shorthand" | "field_pattern_shorthand"
+        368 => render_hidden_foreign_mod_item_body(node), // "_foreign_mod_item_body" | "foreign_mod_item_body"
         328 => render_hidden_function_type_fn_form(node), // "_function_type_fn_form" | "function_type_fn_form"
         327 => render_hidden_function_type_trait_form(node), // "_function_type_trait_form" | "function_type_trait_form"
+        329 => render_hidden_impl_item_body(node), // "_impl_item_body" | "impl_item_body"
         269 => render_hidden_let_chain(node), // "_let_chain"
+        372 => render_hidden_line_comment_doc(node), // "_line_comment_doc" | "line_comment_doc"
+        333 => render_hidden_macro_definition_brace(node), // "_macro_definition_brace" | "macro_definition_brace"
+        332 => render_hidden_macro_definition_bracket(node), // "_macro_definition_bracket" | "macro_definition_bracket"
+        331 => render_hidden_macro_definition_paren(node), // "_macro_definition_paren" | "macro_definition_paren"
+        370 => render_hidden_match_arm_block_ending(node), // "_match_arm_block_ending" | "match_arm_block_ending"
+        369 => render_hidden_match_arm_with_comma(node), // "_match_arm_with_comma" | "match_arm_with_comma"
+        335 => render_hidden_mod_item_inline(node), // "_mod_item_inline" | "mod_item_inline"
+        336 => render_hidden_or_pattern_binary(node), // "_or_pattern_binary" | "or_pattern_binary"
+        337 => render_hidden_or_pattern_prefix(node), // "_or_pattern_prefix" | "or_pattern_prefix"
+        359 => render_hidden_pointer_type_mut(node), // "_pointer_type_mut" | "pointer_type_mut"
+        341 => render_hidden_range_expression_bare(node), // "_range_expression_bare" | "range_expression_bare"
+        338 => render_hidden_range_expression_binary(node), // "_range_expression_binary" | "range_expression_binary"
+        339 => render_hidden_range_expression_postfix(node), // "_range_expression_postfix" | "range_expression_postfix"
+        340 => render_hidden_range_expression_prefix(node), // "_range_expression_prefix" | "range_expression_prefix"
+        343 => render_hidden_range_pattern_left_with_right(node), // "_range_pattern_left_with_right" | "range_pattern_left_with_right"
+        342 => render_hidden_range_pattern_prefix(node), // "_range_pattern_prefix" | "range_pattern_prefix"
         362 => render_hidden_reference_expression_raw_mut(node), // "_reference_expression_raw_mut" | "reference_expression_raw_mut"
+        345 => render_hidden_struct_item_brace(node), // "_struct_item_brace" | "struct_item_brace"
+        346 => render_hidden_struct_item_tuple(node), // "_struct_item_tuple" | "struct_item_tuple"
+        378 => render_hidden_token_tree_brace(node), // "_token_tree_brace" | "token_tree_brace"
+        377 => render_hidden_token_tree_bracket(node), // "_token_tree_bracket" | "token_tree_bracket"
+        376 => render_hidden_token_tree_paren(node), // "_token_tree_paren" | "token_tree_paren"
+        375 => render_hidden_token_tree_pattern_brace(node), // "_token_tree_pattern_brace" | "token_tree_pattern_brace"
+        374 => render_hidden_token_tree_pattern_bracket(node), // "_token_tree_pattern_bracket" | "token_tree_pattern_bracket"
+        373 => render_hidden_token_tree_pattern_paren(node), // "_token_tree_pattern_paren" | "token_tree_pattern_paren"
         417 => render_hidden_type_identifier(node), // "_type_identifier" | "type_identifier"
+        348 => render_hidden_visibility_modifier_crate(node), // "_visibility_modifier_crate" | "visibility_modifier_crate"
         350 => render_hidden_visibility_modifier_in_path(node), // "_visibility_modifier_in_path" | "visibility_modifier_in_path"
+        349 => render_hidden_visibility_modifier_pub(node), // "_visibility_modifier_pub" | "visibility_modifier_pub"
         235 => render_abstract_type(node), // "abstract_type"
         257 => render_arguments(node), // "arguments"
         258 => render_array_expression(node), // "array_expression"

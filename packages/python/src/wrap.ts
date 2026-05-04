@@ -1889,6 +1889,9 @@ const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown>
 };
 
 const _aliasTargetToSource: Record<string, string> = {
+  'assignment_eq': '_assignment_eq',
+  'assignment_type': '_assignment_type',
+  'assignment_typed': '_assignment_typed',
   'async_marker': '_async_marker',
   'augmented_assignment_operator': '_augmented_assignment_operator',
   'binary_operator_operator': '_binary_operator_operator',
