@@ -745,17 +745,67 @@ function deriveFieldsRaw(
 		case 'seq':
 			return rule.members.flatMap((m) => deriveFieldsRaw(m, outerMultiplicity));
 		case 'optional':
+			// `optional(repeat1(X, sep))` is the canonical lift of
+			// `optional(commaSep1(X))` — e.g. python `parameters: seq('(',
+			// optional(_parameters), ')')` where `_parameters` inlines to
+			// `repeat1($.parameter, ',')`. Empty `()` is valid input, so
+			// the slot is array-multiplicity (zero-or-more), NOT
+			// nonEmptyArray. Recursing through repeat1 with the default
+			// rule would clobber it back to nonEmptyArray, producing a
+			// slot the factory refuses to construct empty. Mirrors
+			// `collectChildFromMember` and `deriveValuesForRule`.
+			if (rule.content.type === 'repeat1') {
+				return deriveFieldsRaw(rule.content.content, 'array');
+			}
 			return deriveFieldsRaw(rule.content, 'optional');
 		case 'repeat':
 			return deriveFieldsRaw(rule.content, 'array');
 		case 'repeat1':
 			return deriveFieldsRaw(rule.content, 'nonEmptyArray');
-		case 'choice':
-			// Canonical choices are union-shaped (all arms token-like /
-			// symbol-like / aliased variants). They contribute children,
-			// not fields — any fields they would contribute ride on the
-			// concrete node kind each arm resolves to.
-			return [];
+		case 'choice': {
+			// Choice at a position contributes ONE slot whose `values`
+			// array is the union of all arms (Phase 1d.iv unification:
+			// the field walker handles every position, so a positional
+			// choice no longer explodes into N separate slots like the
+			// old children walker did — see `dupe-unnamed-children-report.md`
+			// pattern-3 for the empirical evidence). Slot name takes the
+			// first node-ref arm's kind name for naming-continuity with
+			// the historical first-arm-named child entry; final remap to
+			// 'children' / 'child' keys lives in `buildSlotsRecord`
+			// per FR-T05 once the override migration enables strict
+			// enforcement.
+			const values = dedupeValues(
+				deriveValuesForRule(rule, outerMultiplicity)
+			);
+			if (values.length === 0) return [];
+			const firstRef = values.find((v) => v.kind === 'node-ref') as
+				| NodeRef
+				| undefined;
+			const isMultiSlot = values.some(
+				(v) =>
+					v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
+			);
+			const baseName = firstRef
+				? ((firstRef.node as UnresolvedRef).name ?? '').replace(
+						/^_+/,
+						''
+				  ) || (isMultiSlot ? 'children' : 'child')
+				: isMultiSlot
+					? 'children'
+					: 'child';
+			const propertyName = snakeToCamel(baseName);
+			return [
+				{
+					name: baseName,
+					propertyName,
+					paramName: safeParamName(propertyName),
+					values,
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
 		case 'clause':
 			return deriveFieldsRaw(rule.content, 'optional');
 		case 'variant':
@@ -765,20 +815,68 @@ function deriveFieldsRaw(
 			// choice arms; unwrap and continue so their inner fields
 			// still surface.
 			return deriveFieldsRaw(rule.content, outerMultiplicity);
-		case 'symbol':
+		case 'symbol': {
+			// Top-level positional symbol — port of the children walker's
+			// symbol case (Phase 1d.iv unification). Drops the hidden-rule
+			// leading underscore (`_expression` → `expression`); resolves
+			// `aliasedFrom` so only source kinds appear in the values list.
+			const refName = rule.aliasedFrom ?? rule.name;
+			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
+			const propertyName = snakeToCamel(cleanName);
+			return [
+				{
+					name: cleanName,
+					propertyName,
+					paramName: safeParamName(propertyName),
+					values: [
+						{
+							kind: 'node-ref',
+							node: { kind: 'unresolved-ref', name: refName },
+							multiplicity: outerMultiplicity
+						}
+					],
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
+		case 'supertype': {
+			// Top-level positional supertype reference — port of the
+			// children walker's supertype case (Phase 1d.iv unification).
+			// Each subtype is a valid concrete kind the slot can hold;
+			// they share the slot, named after the supertype.
+			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
+			const propertyName = snakeToCamel(cleanName);
+			return [
+				{
+					name: cleanName,
+					propertyName,
+					paramName: safeParamName(propertyName),
+					values: rule.subtypes.map((name) => ({
+						kind: 'node-ref' as const,
+						node: { kind: 'unresolved-ref' as const, name },
+						multiplicity: outerMultiplicity
+					})),
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
 		case 'string':
 		case 'pattern':
 		case 'terminal':
 		case 'token':
 		case 'enum':
-		case 'supertype':
 		case 'indent':
 		case 'dedent':
 		case 'newline':
-			// Leaves / references — no fields to extract. Explicit
-			// cases keep the switch exhaustive so a new Rule type
-			// added later surfaces here as a compile error instead
-			// of silently returning no fields.
+			// Leaves / token-literals at the top level — render as text,
+			// contribute no addressable slots. Explicit cases keep the
+			// switch exhaustive (Constitution XI corollary: every
+			// discriminated-union switch ends in either a complete
+			// per-variant arm or assertNever).
 			return [];
 		case 'alias':
 		case 'group':
@@ -860,96 +958,6 @@ function fieldContentMultiplicity(
  *     either resolved to aliased symbols or promoted to polymorph
  *     forms. Retained as canonicalization-gap signals.
  */
-/**
- * Internal — children-side walk. The exported derivation surface is
- * `deriveSlots` (Phase 1d.iv); this helper is its children-portion.
- */
-function _deriveChildrenInternal(rule: Rule): AssembledChild[] {
-	auditDerivationShape(rule, 'children');
-	const members: readonly Rule[] = rule.type === 'seq' ? rule.members : [rule];
-
-	// Sibling-duplicate symbol/supertype refs with the same target
-	// (rust or_pattern: `seq(_pattern, _pattern)`) represent the
-	// multi-children shape; force 'array' multiplicity on those
-	// positions so downstream merge keeps the array semantics.
-	const targetCounts = new Map<string, number>();
-	for (const m of members) {
-		const t = memberTarget(m);
-		if (t !== null) targetCounts.set(t, (targetCounts.get(t) ?? 0) + 1);
-	}
-
-	const raw: AssembledChild[] = [];
-	for (const m of members) {
-		const t = memberTarget(m);
-		const mult: Multiplicity =
-			t !== null && (targetCounts.get(t) ?? 0) > 1 ? 'array' : 'single';
-		collectChildFromMember(m, raw, mult);
-	}
-
-	// Deduplicate by child name. Sources of duplicates:
-	//   - Choice arms referencing the same symbol kind (rare but
-	//     legal — e.g. an override-wrapped supertype whose resolution
-	//     includes the same concrete name twice).
-	//   - Top-level duplicated targets picked up by the array-
-	//     multiplicity detection above — each position emits its own
-	//     child entry; merging folds them into one multi-valued slot.
-	//   - Container kinds: a nested `repeat(seq(a, b))` shape emits
-	//     per-member entries which then merge by name into array-
-	//     multiplicity slots.
-	// Single-source fast path avoids the map allocation.
-	if (raw.length <= 1) return raw;
-	const byName = new Map<string, AssembledChild>();
-	for (const c of raw) {
-		const existing = byName.get(c.name);
-		if (!existing) {
-			byName.set(c.name, c);
-			continue;
-		}
-		byName.set(c.name, {
-			...existing,
-			values: dedupeValues([...existing.values, ...c.values])
-		});
-	}
-	return Array.from(byName.values());
-}
-
-// ---------------------------------------------------------------------------
-// Unified slot derivation (spec 022 Phase 1d.iv)
-// ---------------------------------------------------------------------------
-
-/**
- * Promote an `AssembledChild` (no source / paramName / hasTrailing /
- * hasLeading) to a fully-populated `AssembledNonterminal`. Used by
- * `deriveSlots` to give kind-derived positional slots the same shape as
- * grammar-`field()`-derived slots so consumers can iterate one unified
- * type.
- *
- * `paramName` defaults to the camelCase `propertyName` (matching what
- * `safeParamName(propertyName)` would produce for a field with the same
- * name). `source = 'inferred'` marks the slot as kind-derived rather
- * than explicitly named via grammar `field(...)` — Phase 1d.v will use
- * this discriminant when building `AssembledBranch.slots` Record to
- * remap inferred slots to `'child'` / `'children'` keys per the locked
- * design.
- *
- * `hasTrailing` / `hasLeading` default to `false` because positional
- * children today have no surrounding `field()` wrapper that would carry
- * the repeat flag. (Phase 1d.iii moved these to per-value where they
- * actually belong; the slot-level flags remain for migration compat.)
- */
-function promoteChildToNonterminal(
-	child: AssembledChild
-): AssembledNonterminal {
-	return {
-		name: child.name,
-		propertyName: child.propertyName,
-		paramName: safeParamName(child.propertyName),
-		values: child.values,
-		hasTrailing: false,
-		hasLeading: false,
-		source: 'inferred'
-	};
-}
 
 /**
  * Single-walk slot derivation — returns every slot on a kind in declared
@@ -982,10 +990,10 @@ function promoteChildToNonterminal(
  * follow-up to Phase 1d.iv proper.
  */
 export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
-	const fields = _deriveFieldsInternal(rule);
-	const children = _deriveChildrenInternal(rule);
-	const promoted = children.map(promoteChildToNonterminal);
-	return [...fields, ...promoted];
+	// Phase 1d.iv (extended in this turn): the field walker handles
+	// positional symbol/supertype/choice content too, so it produces
+	// every slot — no separate children walker needed.
+	return _deriveFieldsInternal(rule);
 }
 
 // Convenience selectors over deriveSlots — used by class getters and
@@ -1000,169 +1008,6 @@ function _slotsAsFields(rule: Rule): AssembledField[] {
 
 function _slotsAsChildren(rule: Rule): AssembledChild[] {
 	return deriveSlots(rule).filter((s) => s.source === 'inferred');
-}
-
-/**
- * Extract the child-target kind name from a top-level seq member, peeling
- * through structural wrappers that don't themselves reference a kind.
- * Returns null when the member is a literal, field, or non-reference
- * structure (choice — which can contain multiple targets and is
- * disambiguated by the caller).
- */
-function memberTarget(rule: Rule): string | null {
-	switch (rule.type) {
-		case 'symbol':
-		case 'supertype':
-			return rule.name;
-		case 'optional':
-		case 'variant':
-		case 'clause':
-		case 'group':
-			return memberTarget(rule.content);
-		default:
-			return null;
-	}
-}
-
-/**
- * Walk one rule position and append AssembledChild entries for every
- * child reference it contributes at `multiplicity`. Called both for
- * top-level seq members and recursively for structural wrappers.
- */
-function collectChildFromMember(
-	rule: Rule,
-	out: AssembledChild[],
-	multiplicity: Multiplicity
-): void {
-	switch (rule.type) {
-		case 'symbol':
-			// Child-slot name drops the hidden-rule leading underscore
-			// (`_expression` → `expression`); the ref target resolves
-			// through `aliasedFrom` when the symbol came from an alias
-			// (only source kinds exist in rules post-synthesis-removal).
-			{
-				const refName = rule.aliasedFrom ?? rule.name;
-				const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-				out.push({
-					name: cleanName,
-					propertyName: snakeToCamel(cleanName),
-					values: [
-						{
-							kind: 'node-ref',
-							node: { kind: 'unresolved-ref', name: refName },
-							multiplicity
-						}
-					]
-				});
-			}
-			break;
-		case 'supertype':
-			{
-				const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-				out.push({
-					name: cleanName,
-					propertyName: snakeToCamel(cleanName),
-					values: rule.subtypes.map((name) => ({
-						kind: 'node-ref' as const,
-						node: { kind: 'unresolved-ref' as const, name },
-						multiplicity
-					}))
-				});
-			}
-			break;
-		case 'optional':
-			// `optional(repeat1(X, sep))` (the canonical lift of
-			// `optional(commaSep1(X))`, e.g. python's
-			// `parameters: seq('(', optional(_parameters), ')')`
-			// where `_parameters` inlines to `repeat1($.parameter, ',')`)
-			// surfaces ZERO-or-more occurrences at the parent slot — the
-			// empty case (`()`) is valid input. Recursing with multiplicity
-			// 'optional' would let the inner `repeat1` case clobber it
-			// back to 'nonEmptyArray', producing a slot the factory
-			// refuses to construct empty (`_assertNonEmpty` throws on
-			// `parameters()`). Downgrade the inner repeat1 to 'array'
-			// here so the outer-optional semantics survive merging.
-			// Mirrors `fieldContentMultiplicity`'s
-			// `optional(repeat1) → array` rule for field-level slots.
-			if (rule.content.type === 'repeat1') {
-				collectChildFromMember(rule.content.content, out, 'array');
-			} else {
-				collectChildFromMember(rule.content, out, 'optional');
-			}
-			break;
-		case 'repeat':
-			collectChildFromMember(rule.content, out, 'array');
-			break;
-		case 'repeat1':
-			collectChildFromMember(rule.content, out, 'nonEmptyArray');
-			break;
-		case 'choice':
-			// Canonical choice: union of symbol-like arms. Each arm
-			// contributes one child value at the enclosing multiplicity.
-			for (const m of rule.members)
-				collectChildFromMember(m, out, multiplicity);
-			break;
-		case 'seq':
-			// Nested seqs reach here from three patterns that the
-			// current canonical form permits:
-			//   - `clause(seq(string, field))` — optional punctuation-
-			//     prefixed field groupings (rust extern_crate_declaration's
-			//     `as alias_name` clause, python `except ... as ...`).
-			//   - `repeat(seq(...))` — container kinds whose elements
-			//     are multi-kind (rust enum_variant_list's
-			//     attribute_item+enum_variant pairs).
-			//   - `optional(seq(...))` — analogous to clause.
-			// A STRICTER canonical form would lift the inner seq into
-			// its own hidden rule so the outer position sees a single
-			// symbol ref — eliminating positional ambiguity at the
-			// container/wrapper level. Until simplify is extended to
-			// hoist these, walk each member at the enclosing
-			// multiplicity so every reference still surfaces as a
-			// child.
-			for (const m of rule.members)
-				collectChildFromMember(m, out, multiplicity);
-			break;
-		case 'field':
-			// Fields are handled by deriveFields, not children.
-			break;
-		case 'string':
-		case 'pattern':
-		case 'terminal':
-		case 'token':
-		case 'enum':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-			// Terminal / token-literal rules — render as text, contribute
-			// no addressable children.
-			break;
-		case 'variant':
-			// Variant wrappers survive in a handful of rust polymorph
-			// arms that weren't adopted via variant(). Unwrap-and-
-			// recurse preserves the child references they contain.
-			collectChildFromMember(rule.content, out, multiplicity);
-			break;
-		case 'clause':
-			// `clause` wraps an optional anon-token / punctuation
-			// position (e.g. `?` / `!` on rust `impl_item` / `match_arm`).
-			// Its content is structurally optional, so descend with
-			// 'optional' multiplicity.
-			collectChildFromMember(rule.content, out, 'optional');
-			break;
-		case 'alias':
-		case 'group':
-		case 'polymorph':
-			// Canonicalization-gap signals. `alias` should resolve to a
-			// `symbol` with `aliasedFrom`; `group` gets stripped by
-			// simplify; `polymorph` classifies into its own assembled
-			// node type via assemble's dispatch. Reaching any of them
-			// here means an upstream pass missed the shape.
-			throw new Error(
-				`deriveChildren: unexpected '${rule.type}' in canonical input — ` +
-					`simplify should have stripped / classified it before derivation. ` +
-					`currentAuditKind=${currentAuditKind ?? '(none)'}`
-			);
-	}
 }
 
 /**
