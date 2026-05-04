@@ -56,14 +56,21 @@ import {
  * @param tree - TreeHandle for node lookup.
  * @param nodeId - If provided, read the node at this id; otherwise read
  *   the root.
- * @param deepReadKinds - Set of `$type` values that should be deep-read
- *   when encountered as named children.
+ * @param deepReadKinds - Membership test for `$type` values that should
+ *   be deep-read when encountered as named children. Only `.has(id)` is
+ *   used, so the parameter is structurally typed to that single method
+ *   — this lets callers pass either a real `Set<number>` or an
+ *   "always-true" stub for the recursive-mode case (read every kind
+ *   deeply) without the ceremony of constructing a full Set covering
+ *   every numeric kind id.
  */
+type KindMembership = { has(value: number): boolean };
+
 function _deepReadNode(
 	tree: TreeHandle,
 	handle: number | undefined,
 	childIndex: number | undefined,
-	deepReadKinds: ReadonlySet<number>
+	deepReadKinds: KindMembership
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, handle, childIndex);
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
@@ -714,8 +721,8 @@ export async function validateRoundTrip(
 	// _deepReadNode's Set<number> membership check.
 	// When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
 	const { recursive } = options;
-	const deepReadKinds: ReadonlySet<number> = recursive
-		? { has: () => true } as ReadonlySet<number>
+	const deepReadKinds: KindMembership = recursive
+		? { has: (_id: number): boolean => true }
 		: kindIdFromName
 			? new Set(
 					[...deepReadKindNames]
