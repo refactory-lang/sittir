@@ -2370,17 +2370,30 @@ function buildSlotsRecord(
 	// curation (promote inferred slots to named fields) before emitters
 	// can use storageName for storage emission.
 	if (!process.env.SITTIR_QUIET) {
-		const byStorageName = new Map<string, string[]>();
+		const byStorageName = new Map<string, AssembledNonterminal[]>();
 		for (const slot of Object.values(out)) {
 			const list = byStorageName.get(slot.storageName) ?? [];
-			list.push(slot.name);
+			list.push(slot);
 			byStorageName.set(slot.storageName, list);
 		}
-		for (const [storageName, names] of byStorageName) {
-			if (names.length > 1) {
+		for (const [storageName, slots] of byStorageName) {
+			if (slots.length > 1) {
+				const details = slots.map((s) => {
+					const kinds = s.values.map((v) =>
+						v.kind === 'terminal'
+							? `"${v.value}"`
+							: isUnresolvedRef(v.node)
+								? v.node.name
+								: (v.node as AssembledNode).kind
+					);
+					const mult = s.values.length > 0
+						? s.values[0]!.multiplicity
+						: 'single';
+					return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+				});
 				process.stderr.write(
-					`[assemble] storageName collision: kind '${kind}' has ${names.length} slots ` +
-						`with storageName '${storageName}': ${names.map((n) => `'${n}'`).join(', ')}\n`
+					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
+						`with storageName '${storageName}':\n${details.join('\n')}\n`
 				);
 			}
 		}
