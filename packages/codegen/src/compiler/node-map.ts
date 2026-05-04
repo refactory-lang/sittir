@@ -905,6 +905,81 @@ export function deriveChildren(rule: Rule): AssembledChild[] {
 	return Array.from(byName.values());
 }
 
+// ---------------------------------------------------------------------------
+// Unified slot derivation (spec 022 Phase 1d.iv)
+// ---------------------------------------------------------------------------
+
+/**
+ * Promote an `AssembledChild` (no source / paramName / hasTrailing /
+ * hasLeading) to a fully-populated `AssembledNonterminal`. Used by
+ * `deriveSlots` to give kind-derived positional slots the same shape as
+ * grammar-`field()`-derived slots so consumers can iterate one unified
+ * type.
+ *
+ * `paramName` defaults to the camelCase `propertyName` (matching what
+ * `safeParamName(propertyName)` would produce for a field with the same
+ * name). `source = 'inferred'` marks the slot as kind-derived rather
+ * than explicitly named via grammar `field(...)` — Phase 1d.v will use
+ * this discriminant when building `AssembledBranch.slots` Record to
+ * remap inferred slots to `'child'` / `'children'` keys per the locked
+ * design.
+ *
+ * `hasTrailing` / `hasLeading` default to `false` because positional
+ * children today have no surrounding `field()` wrapper that would carry
+ * the repeat flag. (Phase 1d.iii moved these to per-value where they
+ * actually belong; the slot-level flags remain for migration compat.)
+ */
+function promoteChildToNonterminal(
+	child: AssembledChild
+): AssembledNonterminal {
+	return {
+		name: child.name,
+		propertyName: child.propertyName,
+		paramName: safeParamName(child.propertyName),
+		values: child.values,
+		hasTrailing: false,
+		hasLeading: false,
+		source: 'inferred'
+	};
+}
+
+/**
+ * Single-walk slot derivation — returns every slot on a kind in declared
+ * rule order. Replaces the prior `deriveFields` + `deriveChildren` split
+ * (Constitution XI DRY: one source, one derivation). Internally it still
+ * delegates to those walkers for the actual rule traversal — they're
+ * factored to walk identical input — but produces a single unified
+ * `AssembledNonterminal[]` view for consumers that need declared order
+ * with full per-slot metadata.
+ *
+ * Spec 022 Phase 1d.iv adds this as the canonical entry point. The
+ * legacy walkers (`deriveFields`, `deriveChildren`, `deriveFieldsRaw`)
+ * remain as thin compatibility shims for the duration of the consumer
+ * migration (Phase 1d.viii); after callers migrate, those walkers are
+ * deleted and `deriveSlots` becomes the only top-level derivation.
+ *
+ * Slot ordering: fields appear at their declared position in the rule;
+ * children-promoted slots appear at their declared position. Today the
+ * legacy walkers don't preserve cross-fields-and-children ordering
+ * because they walk the same input twice and concatenate; THIS function
+ * concatenates fields-first then children-second to match historical
+ * behavior for byte-identity. Phase 1d.v's slot Record naturally
+ * preserves declared order via insertion order in the Record.
+ *
+ * @remarks
+ * Today the slot ordering is fields-first / children-second because
+ * downstream consumers (factory emitter, types emitter) rely on that
+ * ordering. A future cleanup could rewrite the walk to preserve true
+ * declared-order with one unified pass over the rule tree — that's a
+ * follow-up to Phase 1d.iv proper.
+ */
+export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
+	const fields = deriveFields(rule);
+	const children = deriveChildren(rule);
+	const promoted = children.map(promoteChildToNonterminal);
+	return [...fields, ...promoted];
+}
+
 /**
  * Extract the child-target kind name from a top-level seq member, peeling
  * through structural wrappers that don't themselves reference a kind.
