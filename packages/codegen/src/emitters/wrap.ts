@@ -23,9 +23,10 @@ import type {
 } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
-	isMultiple
+	isMultiple,
+	isNonEmpty
 } from './shared.ts';
-import { fieldElementType, childElementType } from './factories.ts';
+import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import {
 	collectKindEntries,
 	kindIdMemberName,
@@ -132,7 +133,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		"import type { TreeHandle } from '@sittir/core';",
 		'// Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types',
 		'// instead of re-declaring locally. Single source of truth.',
-		"import type { AnyNodeData as _NodeData, AnyNodeData } from '@sittir/types';",
+		"import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';",
 		// When kindEntries is present, import TSKindId for per-kind $type stamping
 		// (Phase A KindID migration: wrap normalizes string $type from core to numeric).
 		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
@@ -551,7 +552,7 @@ function emitFieldCarryingWrap(
 ): string {
 	const fn = `wrap${node.typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(data: _NodeData, tree: TreeHandle): AnyNodeData {`);
+	lines.push(`export function ${fn}(data: T.${node.typeName}, tree: TreeHandle) {`);
 
 	// Shape A: inline object literal wrapped by withMethods<T>. No
 	// Object.defineProperty, no freezeNodeData, no Record<string,unknown> cast.
@@ -631,14 +632,16 @@ function emitInlineWithProperty(
 
 	if (node.isContainerShape) {
 		const childElem = childElementType({ children }, nodeMap);
+		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const anyMultiple = children.some((c) => isMultiple(c));
 		if (anyMultiple) {
+			const restType = childrenSetterRestType(children, childElem, childRest);
 			lines.push(
-				`    $with: { $children: (...vs: ${childElem}[]) => ${wrapFn}({ ...data, $children: vs } as _NodeData, tree) },`
+				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ...data, $children: vs }, tree) },`
 			);
 		} else {
 			lines.push(
-				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ...data, $children: [v] } as _NodeData, tree) },`
+				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ...data, $children: [v] }, tree) },`
 			);
 		}
 		return;
@@ -657,14 +660,26 @@ function emitInlineWithProperty(
 	for (const f of fields) {
 		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
 		const elemType = fieldElementType(f, nodeMap);
-		lines.push(
-			`      ${method}: (v: ${elemType}) => ${wrapFn}({ ...data, _${f.name}: v } as _NodeData, tree),`
-		);
+		if (isMultiple(f)) {
+			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+			const restType = isNonEmpty(f)
+				? `NonEmptyArray<${elemType}>`
+				: `${elemForArray}[]`;
+			lines.push(
+				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ...data, _${f.name}: v }, tree),`
+			);
+		} else {
+			lines.push(
+				`      ${method}: (v: ${elemType}) => ${wrapFn}({ ...data, _${f.name}: v }, tree),`
+			);
+		}
 	}
 	if (children.length > 0) {
 		const childElem = childElementType({ children }, nodeMap);
+		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
+		const restType = childrenSetterRestType(children, childElem, childRest);
 		lines.push(
-			`      children: (...items: ${childElem}[]) => ${wrapFn}({ ...data, $children: items } as _NodeData, tree),`
+			`      children: (...items: ${restType}) => ${wrapFn}({ ...data, $children: items }, tree),`
 		);
 	}
 	lines.push('    },');

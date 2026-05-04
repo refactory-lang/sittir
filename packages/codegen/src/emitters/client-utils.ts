@@ -114,7 +114,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push(' *   return readRawField(this, "name");');
 	lines.push(' * }`) and by drill-in helpers in wrap.ts.');
 	lines.push(' */');
-	lines.push('export function readRawField(data: object, rawName: string): unknown {');
+	lines.push('export function readRawField<T>(data: T, rawName: string): unknown {');
 	lines.push('  return (data as Record<string, unknown>)[`_${rawName}`];');
 	lines.push('}');
 	lines.push('');

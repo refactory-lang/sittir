@@ -1338,7 +1338,7 @@ function emitFieldCarryingFactory(
  * the right one means `factory({ ...config, children: items })` type-checks
  * without a runtime narrowing helper.
  */
-function childrenSetterRestType(
+export function childrenSetterRestType(
 	children: readonly AssembledNonterminal[],
 	childElem: string,
 	childRest: string
