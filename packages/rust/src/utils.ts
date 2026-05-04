@@ -96,34 +96,6 @@ export function withMethods<T extends object>(
 }
 
 /**
- * Setter helper for single-valued fields. Calls the factory with the
- * patched config when `v` is supplied; otherwise returns the current value.
- */
-export function _setField<T, R, K extends keyof T>(
-  cfg: T | undefined,
-  fn: (c: T) => R,
-  key: K,
-  v: T[K] | undefined,
-  cur: T[K] | undefined,
-): T[K] | R | undefined {
-  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;
-}
-
-/**
- * Setter helper for repeated-valued fields. Rebuilds with the new array
- * when `v.length > 0`; returns the current value when called with no args.
- */
-export function _setFields<T, R, K extends keyof T>(
-  cfg: T | undefined,
-  fn: (c: T) => R,
-  key: K,
-  v: readonly unknown[],
-  cur: T[K] | undefined,
-): T[K] | R | undefined {
-  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;
-}
-
-/**
  * Type guard: returns true if `v` is a NodeData.
  *
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
