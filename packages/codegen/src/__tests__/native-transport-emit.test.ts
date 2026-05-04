@@ -6,7 +6,7 @@ import {
 	AssembledEnum,
 	AssembledGroup,
 	AssembledKeyword,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledMulti,
 	AssembledPolymorph,
 	AssembledSupertype
@@ -79,7 +79,7 @@ function makeMinimalNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	nodes.set(
 		'kw_fn',
@@ -121,7 +121,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -143,7 +143,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -195,7 +195,7 @@ function makePolymorphNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(
 		nodes,
@@ -234,7 +234,7 @@ function makeHiddenSourceVisibleTransportNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -264,7 +264,7 @@ function makeSupertypeTerminalCollisionNodeMap(): NodeMap {
 	nodes.set('::', new AssembledKeyword('::', { type: 'string', value: '::' }));
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	nodes.set('_path', new AssembledSupertype('_path', pathRule, ['identifier']));
 	return nodeMapWith(nodes);

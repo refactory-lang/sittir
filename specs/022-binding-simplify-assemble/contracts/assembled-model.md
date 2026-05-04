@@ -6,7 +6,7 @@ emitters. Phase 1 collapses the current 10 types into the set below.
 ## Type hierarchy
 
 ```
-AssembledKind  (sum type)
+AssembledNode  (sum type)
 ├── AssembledBranch       — structural kind with nonterminal slots
 ├── AssembledLeaf  (base) — non-branch kinds (no slots)
 │   ├── AssembledPattern  — open text, optional regex
@@ -48,7 +48,7 @@ type NodeOrTerminal = NodeRef | TerminalValue;
 
 interface NodeRef {
   readonly kind: 'node-ref';
-  readonly node: AssembledKind | UnresolvedRef;
+  readonly node: AssembledNode | UnresolvedRef;
   readonly multiplicity: 'optional' | 'single' | 'array' | 'nonEmptyArray';
 }
 
@@ -145,7 +145,7 @@ interface AssembledPolymorph {
 
 interface PolymorphForm {
   readonly variant: string;
-  readonly target: AssembledKind | UnresolvedRef;
+  readonly target: AssembledNode | UnresolvedRef;
 }
 ```
 
@@ -157,7 +157,7 @@ Absorbs `AssembledGroup` — group form becomes an inline `forms[i]` entry.
 interface AssembledSupertype {
   readonly kind: 'supertype';
   readonly name: string;
-  readonly subtypes: readonly (AssembledKind | UnresolvedRef)[];
+  readonly subtypes: readonly (AssembledNode | UnresolvedRef)[];
 }
 ```
 
@@ -165,7 +165,7 @@ Unchanged from current `AssembledSupertype`.
 
 ## Discriminated-union exhaustiveness
 
-Every `switch` over `AssembledKind` MUST end in `assertNever(x)` per
+Every `switch` over `AssembledNode` MUST end in `assertNever(x)` per
 Constitution XI. Phase 1 verifies this in CI by grepping for `assertNever`
 on every union switch.
 

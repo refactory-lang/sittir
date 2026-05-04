@@ -5,7 +5,7 @@ import {
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledField } from '../compiler/node-map.ts';
-import { AssembledKeyword, AssembledLeaf } from '../compiler/node-map.ts';
+import { AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -73,8 +73,8 @@ function makeKeyword(kind: string, text: string): AssembledKeyword {
 	return new AssembledKeyword(kind, { type: 'string', value: text });
 }
 
-function makeLeaf(kind: string): AssembledLeaf {
-	return new AssembledLeaf(kind, { type: 'pattern', value: '' });
+function makeLeaf(kind: string): AssembledPattern {
+	return new AssembledPattern(kind, { type: 'pattern', value: '' });
 }
 
 // ---------------------------------------------------------------------------

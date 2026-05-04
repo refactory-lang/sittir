@@ -228,14 +228,28 @@ compatibility shim.
 
 ### Functional Requirements
 
-**Taxonomy (Phase 1 — pure rename)**
+**Taxonomy — pure-rename sub-phases (Phase 1) and architectural sub-phases (Phase 4)**
 
-- **FR-T01**: `AssembledField`, `AssembledChild`, `AssembledMulti` MUST be collapsed into a single `AssembledNonterminal` type. `edgeName?` distinguishes named (present) from unnamed (absent). `values[]` carries multiplicity.
-- **FR-T02**: `AssembledLeaf` MUST become a base class for `AssembledPattern` (open text, optional regex), `AssembledKeyword` (single fixed named string), `AssembledToken` (single fixed anonymous string), `AssembledEnum` (closed set of literals). The current open-text type currently called `AssembledLeaf` becomes `AssembledPattern`.
-- **FR-T03**: `AssembledGroup` MUST be absorbed into `AssembledPolymorph` (group form becomes an inline property of polymorph).
-- **FR-T04**: `AssembledBranch` MUST absorb `AssembledContainer` and `AssembledMulti` semantics — one structural type for all kinds with nonterminal slots.
-- **FR-T05**: At most ONE `AssembledNonterminal` per branch may lack `edgeName` (the unnamed slot constraint).
-- **FR-T06**: After Phase 1, generated output (factories, types, wrap, transport) MUST be byte-identical to before. Phase 1 is pure refactor.
+Code survey (2026-05-03) showed that taxonomy work splits naturally into two
+classes:
+- **Renames** (Phase 1): touch type/class names, keep runtime behavior and
+  emitted output byte-identical. Safe, fast, gateable on `git diff` empty.
+- **Architectural changes** (Phase 4, alongside pipeline rewrite): change which
+  classes the assembler instantiates; require Binding/Simplify to produce the
+  new model. NOT byte-identical — they change emitted output by definition,
+  so they ride with the pipeline rewrite that produces the new model from
+  scratch.
+
+Phase 1 (renames + Branch/Container merge — primary taxonomy goal):
+- **FR-T01a**: `AssembledChild` and `AssembledField` slot interfaces MUST be retained as a refinement hierarchy. An `isField(slot: AssembledChild): slot is AssembledField` type guard MUST be added to provide canonical narrowing where named-slot metadata (`name`, `paramName`) is needed. The existing `extends` relationship is preserved.
+- **FR-T02**: The current open-text class named `AssembledLeaf` MUST be renamed to `AssembledPattern`. A new abstract `AssembledLeaf` base class MUST be introduced. `AssembledPattern`, `AssembledKeyword`, `AssembledToken`, `AssembledEnum` MUST extend the new `AssembledLeaf` base instead of `AssembledNodeBase` directly. `modelType` string values MUST remain unchanged (`'leaf'`, `'keyword'`, `'token'`, `'enum'`) to preserve byte-identity.
+- **FR-T04**: `AssembledContainer` MUST be eliminated. `AssembledBranch` MUST absorb its responsibilities — one structural type for all kinds with nonterminal slots, regardless of whether they have named fields. Emitters that previously discriminated on `modelType === 'container'` vs `modelType === 'branch'` MUST switch to discriminating on slot shape (`node.fields.length === 0` for the "container-shaped" case). This is **partition-equivalent**: every kind emits the same artifacts as before; only the internal classification mechanism changes.
+- **FR-T06**: After Phase 1 commits, the regenerated grammar packages MUST diff cleanly against pre-Phase-1 output. (Sub-phases 1a/1b/1c are byte-identical renames; sub-phase 1d is partition-equivalent — the merged AssembledBranch produces the same emitted output as the previous Branch+Container pair, verified by `git diff` empty.)
+
+Phase 4 (architectural — alongside Binding/Simplify rewrite):
+- **FR-T01b**: `AssembledMulti` MUST be removed. The new pipeline (Binding + Simplify) MUST NOT instantiate it — repeat structure becomes multiplicity on slot `values[]` at referrers.
+- **FR-T03**: `AssembledGroup` MUST be absorbed into `AssembledPolymorph` (group form becomes an inline `forms[]` entry). Standalone hidden seqs (currently `AssembledGroup` with no `parentKind`) MUST become `AssembledBranch` instances.
+- **FR-T05**: At most ONE unnamed slot per `AssembledBranch` (the unnamed-slot constraint). Enforced at codegen time after the pipeline rewrite produces the new model.
 
 **Surface (de-hoist + accessors + freeze)**
 

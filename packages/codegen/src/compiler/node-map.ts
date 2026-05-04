@@ -3184,7 +3184,38 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	}
 }
 
-export class AssembledLeaf extends AssembledNodeBase<
+/**
+ * Abstract base for non-branch ("leaf") kinds — those that have no
+ * constituent slots and render as `$text`. Concrete subtypes:
+ *
+ *   - `AssembledPattern` — open text, optionally regex-validated
+ *     (e.g. `identifier`, `integer_literal`)
+ *   - `AssembledKeyword` — single fixed named string (e.g. `"fn"`)
+ *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
+ *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
+ *
+ * The base intentionally has no `modelType` — each concrete subclass
+ * keeps its own discriminant string (`'leaf'` for Pattern, `'keyword'`,
+ * `'token'`, `'enum'`) so byte-identity of generated output is preserved
+ * during the spec 022 Phase 1 taxonomy refactor (FR-T02).
+ *
+ * Introduced in spec 022 Phase 1a alongside the rename of the previous
+ * open-text `AssembledLeaf` class to `AssembledPattern`.
+ */
+export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNodeBase<R> {}
+
+/**
+ * Open-text non-branch kind whose surface form is matched by a regex
+ * (PatternRule) or produced by an external scanner (TerminalRule).
+ * Examples: `identifier`, `integer_literal`, `string_content`.
+ *
+ * Renamed from the original `AssembledLeaf` class in spec 022 Phase 1b
+ * (FR-T02). The `modelType` discriminant remains `'leaf'` to preserve
+ * byte-identity in emitted output — only the TypeScript class identifier
+ * changed. The new `AssembledLeaf` is now an abstract base (above);
+ * `AssembledPattern` is one of its four concrete subclasses.
+ */
+export class AssembledPattern extends AssembledLeaf<
 	PatternRule | TerminalRule
 > {
 	readonly modelType = 'leaf' as const;
@@ -3205,7 +3236,7 @@ export class AssembledLeaf extends AssembledNodeBase<
 	}
 }
 
-export class AssembledKeyword extends AssembledNodeBase<StringRule> {
+export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'keyword' as const;
 
 	constructor(
@@ -3242,7 +3273,7 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
+export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	readonly modelType = 'token' as const;
 
 	constructor(kind: string, rule: StringRule | TokenRule) {
@@ -3293,7 +3324,7 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledNodeBase<EnumRule> {
+export class AssembledEnum extends AssembledLeaf<EnumRule> {
 	readonly modelType = 'enum' as const;
 
 	constructor(
@@ -3606,7 +3637,7 @@ export type AssembledNode =
 	| AssembledBranch
 	| AssembledContainer
 	| AssembledPolymorph
-	| AssembledLeaf
+	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken
 	| AssembledEnum

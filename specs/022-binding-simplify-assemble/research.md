@@ -105,9 +105,11 @@ members). The assembler classifies each kind into exactly one shape at codegen
 time — runtime detection is forbidden (DRY: the fact is statically known).
 
 **Edge case**: Kinds with BOTH named fields AND unnamed members (e.g., `block`
-with `label` field plus statements as `$children`) are valid. They have named
-fields as top-level keys (`_label`) AND `$children` for the unnamed slot. They
-are NOT a separate shape — Shape B (`$children`) covers them.
+with `label` field plus statements as unnamed children) are valid. They have
+named fields as top-level keys (`_label`) AND `$children` for the unnamed slot.
+The assembled-model `AssembledBranch.slots` Record represents this naturally:
+the named fields keyed by their grammar names plus a `'children'` entry keyed
+literally `'children'` for the unnamed positional content.
 
 **Alternatives considered**:
 - **Runtime shape detection (`'$children' in node`)** — rejected: re-derives a

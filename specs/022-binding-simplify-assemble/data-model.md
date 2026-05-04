@@ -292,9 +292,53 @@ the wrapped content started simpler.
 
 ## Relationships
 
+Reflects the locked design (2026-05-03 brainstorm; see Phase 1d in `tasks.md`):
+
 ```
-AssembledKindSurface 1──* AssembledMember
-AssembledMember *──* RuleId (provenance)
-AssembledMember ──> terminality classification
-AssembledKindSurface ──> shape (A/B/C) ──> NodeData interface variant
+AssembledNode  (sum type — Branch | Pattern | Keyword | Token | Enum | Polymorph | Supertype)
+    │
+    ├── AssembledBranch
+    │       slots: Readonly<Record<string, AssembledNonterminal>>
+    │       (frozen, eagerly validated at construction:
+    │         - duplicate keys → throw
+    │         - >1 unnamed slot ('child' / 'children') → throw
+    │         - mixed-arity values within a slot → warn)
+    │
+    └── AssembledLeaf  (abstract base)
+            └── AssembledPattern   (open text, optional regex)
+            └── AssembledKeyword   (single fixed named string)
+            └── AssembledToken     (single fixed anonymous string)
+            └── AssembledEnum      (closed set of literals)
+
+AssembledBranch.slots[key]  →  AssembledNonterminal
+    key:  grammar field name  OR  'child' / 'children' for truly-unnamed positional content
+    insertion order:  declared rule order
+
+AssembledNonterminal.values: readonly NodeOrTerminal[]
+    Each value carries its own multiplicity, separator, trailing, leading.
+    Per-value metadata replaces the prior per-slot hasTrailing / hasLeading flags.
+
+NodeOrTerminal:
+    NodeRef       { node: AssembledNode | UnresolvedRef, multiplicity, separator?, trailing?, leading? }
+    TerminalValue { value: string,                       multiplicity, separator?, trailing?, leading? }
+
+Helpers:
+    kindsOf(slot)  →  derives the kind set from slot.values (replaces deleted KindProjection)
+    deriveSlots(rule) →  single walk producing slots in declared order
+                          (replaces deleted deriveFields / deriveChildren / deriveFieldsRaw /
+                           findFieldsWithRepeatFlag / findRepeatSeparator / findRepeatFlag)
 ```
+
+**Eliminated in Phase 1d** (do not appear above): `AssembledChild` interface,
+`AssembledContainer` class, `AssembledField` (renamed to `AssembledNonterminal`),
+`KindProjection`, `ProjectionContext`, `NodeMap.projections`, `AssembledNodeBase.structuralFields`,
+`AssembledNodeBase.structuralChildren`.
+
+**Eliminated in Phase 4** (alongside Binding/Simplify rewrite): `AssembledMulti`
+(folded into per-value multiplicity), `AssembledGroup` (absorbed into
+`AssembledPolymorph.forms[]` and `AssembledBranch` for standalone hidden seqs).
+
+**Branch / Container distinction** is gone: `AssembledBranch` carries every
+kind that has constituent slots, regardless of whether they are named fields,
+unnamed positional content, or both. The discriminator `hasNamedSlots(branch)`
+exists for the few emitter sites that need to gate on field-bearing behavior.

@@ -148,16 +148,15 @@ Taxonomy lands first so emitters consume the new model from day one (no transien
 adapter layer). Pipeline rewrite (Binding/Simplify) is the last phase — it produces
 the new taxonomy from scratch instead of reaching it through current Assemble.
 
-**Phase 1 — Taxonomy rename (no behavior change)**
-- Collapse `AssembledField` + `AssembledChild` into `AssembledNonterminal`
-  (`edgeName?` distinguishes named vs unnamed; `values[]` carries multiplicity).
-- Remove `AssembledMulti` — multiplicity lives on slot `values`.
-- Introduce `AssembledLeaf` base class.
-- Rename `AssembledLeaf` (current open-text type) → `AssembledPattern`.
-- Keep `AssembledKeyword`, `AssembledToken`, `AssembledEnum` (extend `AssembledLeaf`).
-- Absorb `AssembledGroup` into `AssembledPolymorph`.
-- Update all readers (emitters, validators, walkers) to consume new types.
-- **Gate**: pure rename — RT must be byte-identical to before.
+**Phase 1 — Taxonomy renames + Branch/Container merge (primary taxonomy goal)**
+- (Phase 1a) Introduce abstract `AssembledLeaf` base class.
+- (Phase 1b) Rename current open-text class `AssembledLeaf` → `AssembledPattern`. Make `Pattern`/`Keyword`/`Token`/`Enum` extend the new `AssembledLeaf` base. **Keep `modelType` strings unchanged** for byte-identity.
+- (Phase 1c) Add `isField(slot: AssembledChild): slot is AssembledField` type guard. Keep both interfaces — `AssembledField extends AssembledChild` is the canonical refinement story.
+- (Phase 1d) **Eliminate AssembledContainer** — fold its responsibilities (RepeatRule support, `separator` getter) into AssembledBranch. Audit the 10 emitter sites that discriminate on `modelType === 'branch' | 'container'` and switch them to discriminate on slot shape (`fields.length === 0`).
+- Update all readers (emitters, validators, walkers) for the renamed identifiers.
+- **Gate**: 1a/1b/1c byte-identical; 1d partition-equivalent (same kinds emit same artifacts; the internal classification mechanism changes from modelType strings to slot-shape predicates). `git diff` of regenerated grammar packages must be empty for the whole phase.
+
+**Multi removal and Group absorption are deferred to Phase 4** — they change which classes the assembler instantiates and require the new Binding+Simplify pipeline to naturally not produce them.
 
 **Phase 2 — Surface (consumer-visible NodeData reshape)**
 - De-hoist `$fields` to `_`-prefixed storage on factory output.
@@ -175,11 +174,16 @@ the new taxonomy from scratch instead of reaching it through current Assemble.
 - Verify no JSON serialization remains in native render call path.
 - **Gate**: native RT floors hold; factory ceilings drop toward zero; napi-direct test passes.
 
-**Phase 4 — Internals (pipeline rewrite)**
+**Phase 4 — Internals (pipeline rewrite + architectural taxonomy changes)**
 - Binding: attach terminals to nonterminal constituents.
 - Simplify: push wrapper behavior down onto constituents.
-- Assemble: materialize kinds from normalized constituents; drop compatibility shims from earlier phases.
-- **Gate**: native RT floors hold; factory ceilings at zero; no compatibility shims remain.
+- Assemble: materialize kinds from normalized constituents.
+- **Architectural taxonomy** (deferred from Phase 1):
+  - Eliminate `AssembledMulti` — repeats become slot-value multiplicity.
+  - Absorb `AssembledGroup` into `AssembledPolymorph` (forms inline) and `AssembledBranch` (standalone hidden seqs).
+  - Enforce at-most-one-unnamed-slot constraint at codegen time.
+- Drop compatibility shims from earlier phases.
+- **Gate**: native RT floors hold; factory ceilings at zero; no compatibility shims remain; old taxonomy classes (`AssembledMulti`, `AssembledGroup`) removed from `node-map.ts`. (`AssembledContainer` was already eliminated in Phase 1d.)
 
 Each phase MUST pass native RT (python ≥114, rust ≥124, typescript ≥108) AND
 type-check with zero errors AND `cargo build -p sittir-{rust,typescript,python}`

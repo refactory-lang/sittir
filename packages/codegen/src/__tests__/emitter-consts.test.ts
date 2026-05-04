@@ -3,7 +3,7 @@ import { emitConsts } from '../emitters/consts.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledBranch,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum
@@ -48,7 +48,7 @@ describe('emitConsts', () => {
 					typeName: 'Identifier',
 					factoryName: 'identifier',
 					modelType: 'leaf'
-				} as unknown as AssembledLeaf
+				} as unknown as AssembledPattern
 			],
 			[
 				'true',

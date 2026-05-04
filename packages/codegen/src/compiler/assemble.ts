@@ -36,7 +36,7 @@ import {
 	AssembledBranch,
 	AssembledContainer,
 	AssembledPolymorph,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
@@ -168,7 +168,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 			case 'leaf': {
 				nodes.set(
 					kind,
-					new AssembledLeaf(kind, rule as PatternRule | TerminalRule)
+					new AssembledPattern(kind, rule as PatternRule | TerminalRule)
 				);
 				break;
 			}

@@ -56,7 +56,7 @@ import type {
 	AssembledNode,
 	AssembledField,
 	AssembledChild,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken
 } from '../compiler/node-map.ts';
@@ -99,7 +99,7 @@ type StructuralNode =
 	| AssembledPolymorph
 	| AssembledGroup;
 type TerminalNode =
-	| AssembledLeaf
+	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken
 	| AssembledEnum;
