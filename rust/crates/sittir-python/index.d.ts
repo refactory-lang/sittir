@@ -16,22 +16,6 @@ export interface Edit {
 }
 
 /**
- * Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter
- * tree; `Sg` = ast-grep path; `Factory` = constructed on the TS side.
- *
- * Serialized as `"ts"` / `"sg"` / `"factory"` (rename_all = lowercase).
- * `#[napi(string_enum)]` (gated on napi-bindings feature) adds
- * `FromNapiValue` / `ToNapiValue` via napi-rs string enum mapping.
- * The feature gate prevents napi C-symbol leakage into sittir-core
- * test binaries that build without Node.js.
- */
-export declare const enum Source {
-  Ts = 'Ts',
-  Sg = 'Sg',
-  Factory = 'Factory'
-}
-
-/**
  * Byte-range for a `NodeData` within its source string. `start`/`end`
  * are UTF-8 byte offsets (ast-grep / tree-sitter convention).
  * `#[napi(object)]` (gated on napi-bindings feature) adds
@@ -315,6 +299,7 @@ export interface ComparisonOperatorTransport {
   '$childIndex'?: number
   left: PrimaryExpressionTransport
   operators: Array<AnyTransport>
+  '$children': Array<PrimaryExpressionTransport>
 }
 
 export interface ComplexPatternTransport {
@@ -687,7 +672,7 @@ export interface ImportFromStatementTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   moduleName: Box<AnyTransport>
-  '$children': WildcardImportTransport
+  '$children': Array<ImportFromStatementChildTransport>
 }
 
 export interface ImportListTransport {
@@ -1085,8 +1070,7 @@ export interface SplatPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  identifier: _IdentifierEnum
-  '$children': IdentifierTransport
+  identifier: Box<AnyTransport>
 }
 
 export interface SplatTypeTransport {
@@ -1363,5 +1347,5 @@ export interface YieldTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Box<AnyTransport>
+  '$children'?: Box<AnyTransport>
 }

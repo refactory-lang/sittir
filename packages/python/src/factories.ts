@@ -652,13 +652,20 @@ export function comparisonOperator(config: ConfigOf<T.ComparisonOperator>) {
     left: config.left,
     operators: _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false),
   };
+  const children = config.children ?? [];
   return {
     $type: TSKindId.ComparisonOperator as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     left(value?: T.PrimaryExpression) { return _setField(config, comparisonOperator, 'left', value, config?.left); },
     operators(...values: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">) { return _setFields(config, comparisonOperator, 'operators', values, config?.operators); },
+    children(...items: T.PrimaryExpression[]) {
+      if (items.length === 0) return children;
+      _assertNonEmpty(items, 'comparison_operator.children');
+      return comparisonOperator({ ...config, children: items });
+    },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.ComparisonOperatorTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
@@ -1249,12 +1256,19 @@ export function importFromStatement(config: ConfigOf<T.ImportFromStatement>) {
   const fields = {
     module_name: config.moduleName,
   };
+  const children = config.children ?? [];
   return {
     $type: TSKindId.ImportFromStatement as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     moduleName(value?: T.RelativeImport | T.DottedName) { return _setField(config, importFromStatement, 'moduleName', value, config?.moduleName); },
+    children(...items: (T.WildcardImport | T.DottedName | T.AliasedImport)[]) {
+      if (items.length === 0) return children;
+      _assertNonEmpty(items, 'import_from_statement.children');
+      return importFromStatement({ ...config, children: items });
+    },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.ImportFromStatementTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
@@ -1782,18 +1796,12 @@ export function splatPattern(config: ConfigOf<T.SplatPattern>) {
   const fields = {
     identifier: config.identifier,
   };
-  const children = config.children ?? [];
   return {
     $type: TSKindId.SplatPattern as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
-    $children: children,
-    identifier(value?: T._Identifier) { return _setField(config, splatPattern, 'identifier', value, config?.identifier); },
-    child(value?: T.Identifier) {
-      if (value === undefined) return children[0];
-      return splatPattern({ ...config, children: [value] });
-    },
+    identifier(value?: T._Identifier | T.Identifier | "_") { return _setField(config, splatPattern, 'identifier', value, config?.identifier); },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.SplatPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
@@ -2159,8 +2167,8 @@ export function withStatement(config: ConfigOf<T.WithStatement>) {
   };
 }
 
-export function yield_(child: (T.Expression | T.Expressions)) {
-  const children = [child];
+export function yield_(child?: (T.Expression | T.Expressions)) {
+  const children = child != null ? [child] : [];
   return {
     $type: TSKindId.Yield as number,
     $source: 2 as const,

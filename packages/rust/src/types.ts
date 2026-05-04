@@ -2239,6 +2239,7 @@ export interface LineCommentDoc {
   readonly $fields: {
     readonly doc: LineDocContent;
   };
+  readonly $children: readonly ["/" | "!"];
 }
 
 export interface _MacroDefinitionBrace {
@@ -2279,7 +2280,7 @@ export interface _ModItemInline {
 
 export interface NonSpecialToken {
   readonly $type: "_non_special_token";
-  readonly $children: readonly [Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType];
+  readonly $children: NonEmptyArray<Literal | Identifier | MutableSpecifier | Self | Super | Crate | PrimitiveType | "+" | "-" | "*" | "/" | "%" | "^" | "!" | "&" | "|" | "&&" | "||" | "<<" | ">>" | "+=" | "-=" | "*=" | "/=" | "%=" | "^=" | "&=" | "|=" | "<<=" | ">>=" | "=" | "==" | "!=" | ">" | "<" | ">=" | "<=" | "@" | "_" | "." | ".." | "..." | "..=" | "," | ";" | ":" | "::" | "->" | "=>" | "#" | "?" | "'" | "as" | "async" | "await" | "break" | "const" | "continue" | "default" | "enum" | "fn" | "for" | "gen" | "if" | "impl" | "let" | "loop" | "match" | "mod" | "pub" | "return" | "static" | "struct" | "trait" | "type" | "union" | "unsafe" | "use" | "where" | "while">;
 }
 
 export interface OrPatternBinary {
@@ -2492,7 +2493,7 @@ export interface AsyncBlock {
 
 export interface Attribute {
   readonly $type: TSKindId.Attribute;
-  readonly $children: readonly [Path];
+  readonly $children: readonly [Path | Expression | DelimTokenTree];
 }
 
 export interface AttributeItem {
@@ -2534,6 +2535,7 @@ export interface BlockComment {
   readonly $fields: {
     readonly doc?: BlockCommentContent;
   };
+  readonly $children: readonly [OuterBlockDocCommentMarker | InnerBlockDocCommentMarker];
 }
 
 export interface BoundedType {
@@ -3275,6 +3277,7 @@ export interface OrderedFieldDeclarationList {
   readonly $fields: {
     readonly type: readonly (_Type)[];
   };
+  readonly $children: readonly (AttributeItem | VisibilityModifier)[];
 }
 
 export interface Parameter {
@@ -3288,7 +3291,7 @@ export interface Parameter {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | _Type)[];
+  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | "_" | _Type)[];
 }
 
 export interface ParenthesizedExpression {
@@ -7424,6 +7427,7 @@ export namespace LineCommentDoc {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly doc: LineDocContent.Transport;
+    readonly $children: readonly [TerminalTransport<TSKindId.Slash, "/"> | TerminalTransport<TSKindId.Bang, "!">];
   }
 }
 
@@ -7530,7 +7534,7 @@ export namespace NonSpecialToken {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Literal.Transport | Identifier.Transport | MutableSpecifier.Transport | Self.Transport | Super.Transport | Crate.Transport | PrimitiveType.Transport];
+    readonly $children: readonly (Literal.Transport | Identifier.Transport | MutableSpecifier.Transport | Self.Transport | Super.Transport | Crate.Transport | PrimitiveType.Transport | LiteralTransport<TSKindId.Plus, "+"> | LiteralTransport<TSKindId.Dash, "-"> | LiteralTransport<TSKindId.Star, "*"> | LiteralTransport<TSKindId.Slash, "/"> | LiteralTransport<TSKindId.Percent, "%"> | LiteralTransport<TSKindId.Caret, "^"> | LiteralTransport<TSKindId.Bang, "!"> | LiteralTransport<TSKindId.Amp, "&"> | LiteralTransport<TSKindId.Pipe, "|"> | LiteralTransport<TSKindId.AmpAmp, "&&"> | LiteralTransport<TSKindId.PipePipe, "||"> | LiteralTransport<TSKindId.LtLt, "<<"> | LiteralTransport<TSKindId.GtGt, ">>"> | LiteralTransport<TSKindId.PlusEq, "+="> | LiteralTransport<TSKindId.DashEq, "-="> | LiteralTransport<TSKindId.StarEq, "*="> | LiteralTransport<TSKindId.SlashEq, "/="> | LiteralTransport<TSKindId.PercentEq, "%="> | LiteralTransport<TSKindId.CaretEq, "^="> | LiteralTransport<TSKindId.AmpEq, "&="> | LiteralTransport<TSKindId.PipeEq, "|="> | LiteralTransport<TSKindId.LtLtEq, "<<="> | LiteralTransport<TSKindId.GtGtEq, ">>="> | LiteralTransport<TSKindId.Eq, "="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.At, "@"> | LiteralTransport<TSKindId.Anonymous, "_"> | LiteralTransport<TSKindId.Dot, "."> | LiteralTransport<TSKindId.DotDot, ".."> | LiteralTransport<TSKindId.DotDotDot, "..."> | LiteralTransport<TSKindId.DotDotEq, "..="> | LiteralTransport<TSKindId.Comma, ","> | LiteralTransport<TSKindId.Semi, ";"> | LiteralTransport<TSKindId.Colon, ":"> | LiteralTransport<TSKindId.ColonColon, "::"> | LiteralTransport<TSKindId.DashGt, "->"> | LiteralTransport<TSKindId.EqGt, "=>"> | LiteralTransport<TSKindId.Pound, "#"> | LiteralTransport<TSKindId.Qmark, "?"> | LiteralTransport<TSKindId.Squote, "'"> | LiteralTransport<TSKindId.As, "as"> | LiteralTransport<TSKindId.Async, "async"> | LiteralTransport<TSKindId.Await, "await"> | LiteralTransport<TSKindId.Break, "break"> | LiteralTransport<TSKindId.Const, "const"> | LiteralTransport<TSKindId.Continue, "continue"> | LiteralTransport<TSKindId.Default, "default"> | LiteralTransport<TSKindId.Enum, "enum"> | LiteralTransport<TSKindId.Fn, "fn"> | LiteralTransport<TSKindId.For, "for"> | LiteralTransport<TSKindId.Gen, "gen"> | LiteralTransport<TSKindId.If, "if"> | LiteralTransport<TSKindId.Impl, "impl"> | LiteralTransport<TSKindId.Let, "let"> | LiteralTransport<TSKindId.Loop, "loop"> | LiteralTransport<TSKindId.Match, "match"> | LiteralTransport<TSKindId.Mod, "mod"> | LiteralTransport<TSKindId.Pub, "pub"> | LiteralTransport<TSKindId.Return, "return"> | LiteralTransport<TSKindId.Static, "static"> | LiteralTransport<TSKindId.Struct, "struct"> | LiteralTransport<TSKindId.Trait, "trait"> | LiteralTransport<TSKindId.Type, "type"> | LiteralTransport<TSKindId.Union, "union"> | LiteralTransport<TSKindId.Unsafe, "unsafe"> | LiteralTransport<TSKindId.Use, "use"> | LiteralTransport<TSKindId.Where, "where"> | LiteralTransport<TSKindId.While, "while">)[];
   }
 }
 
@@ -8061,7 +8065,7 @@ export namespace Attribute {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Path.Transport];
+    readonly $children: readonly [Path.Transport | Expression.Transport | DelimTokenTree.Transport];
   }
 }
 
@@ -8143,6 +8147,7 @@ export namespace BlockComment {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly doc?: TerminalTransport;
+    readonly $children?: readonly [OuterBlockDocCommentMarker.Transport | InnerBlockDocCommentMarker.Transport];
   }
 }
 
@@ -9605,6 +9610,7 @@ export namespace OrderedFieldDeclarationList {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly type: readonly (Type.Transport)[];
+    readonly $children: readonly (AttributeItem.Transport | VisibilityModifier.Transport)[];
   }
 }
 
@@ -9632,7 +9638,7 @@ export namespace Parameters {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | Parameter.Transport | SelfParameter.Transport | VariadicParameter.Transport | Type.Transport)[];
+    readonly $children: readonly (AttributeItem.Transport | Parameter.Transport | SelfParameter.Transport | VariadicParameter.Transport | LiteralTransport<TSKindId.Anonymous, "_"> | Type.Transport)[];
   }
 }
 
@@ -9869,7 +9875,7 @@ export namespace ReferenceExpression {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly value: Expression.Transport;
-    readonly $children: readonly [ReferenceExpressionRawConst.Transport | ReferenceExpressionRawMut.Transport | MutableSpecifier.Transport];
+    readonly $children?: readonly [ReferenceExpressionRawConst.Transport | ReferenceExpressionRawMut.Transport | MutableSpecifier.Transport];
   }
 }
 
@@ -11907,4 +11913,25 @@ export type AnyTransport =
   | Star.Transport
   | Ellipsis.Transport
   | Yield.Transport
+  | LiteralTransport<TSKindId.Percent, "%">
+  | LiteralTransport<TSKindId.Caret, "^">
+  | LiteralTransport<TSKindId.PipePipe, "||">
+  | LiteralTransport<TSKindId.LtLt, "<<">
+  | LiteralTransport<TSKindId.GtGt, ">>">
+  | LiteralTransport<TSKindId.PlusEq, "+=">
+  | LiteralTransport<TSKindId.DashEq, "-=">
+  | LiteralTransport<TSKindId.StarEq, "*=">
+  | LiteralTransport<TSKindId.SlashEq, "/=">
+  | LiteralTransport<TSKindId.PercentEq, "%=">
+  | LiteralTransport<TSKindId.CaretEq, "^=">
+  | LiteralTransport<TSKindId.AmpEq, "&=">
+  | LiteralTransport<TSKindId.PipeEq, "|=">
+  | LiteralTransport<TSKindId.LtLtEq, "<<=">
+  | LiteralTransport<TSKindId.GtGtEq, ">>=">
+  | LiteralTransport<TSKindId.EqEq, "==">
+  | LiteralTransport<TSKindId.BangEq, "!=">
+  | LiteralTransport<TSKindId.GtEq, ">=">
+  | LiteralTransport<TSKindId.LtEq, "<=">
+  | LiteralTransport<TSKindId.DotDotEq, "..=">
+  | LiteralTransport<TSKindId.ColonColon, "::">
 ;

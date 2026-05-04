@@ -154,9 +154,9 @@ describe('block_comment', () => {
     expect(node.$type).toBe(TSKindId.BlockComment);
     expect(node.$source).toBe(2);
   });
-  it('render does not throw on minimal config', () => {
-    const node = ir.blockComment({});
-    expect(() => node.render()).not.toThrow();
+  it('render produces non-empty string', () => {
+    const node = ir.blockComment({ children: [{ $type: '_outer_block_doc_comment_marker', $text: 'test', $source: 2, $named: true } as any] as any });
+    expect(node.render().length).toBeGreaterThan(0);
   });
 });
 
@@ -1135,12 +1135,12 @@ describe('or_pattern', () => {
 
 describe('ordered_field_declaration_list', () => {
   it('factory produces correct type', () => {
-    const node = ir.orderedFieldDeclarationList({ type: [{ $type: 'metavariable', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.orderedFieldDeclarationList({ type: [{ $type: 'metavariable', $text: 'test', $source: 'factory', $named: true } as any], children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.$type).toBe(TSKindId.OrderedFieldDeclarationList);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.orderedFieldDeclarationList({ type: [{ $type: 'metavariable', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.orderedFieldDeclarationList({ type: [{ $type: 'metavariable', $text: 'test', $source: 'factory', $named: true } as any], children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });
@@ -1281,7 +1281,7 @@ describe('ref_pattern', () => {
 
 describe('reference_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.reference({ value: { $type: 'char_literal', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: '_reference_expression_raw_const', $text: 'test', $source: 2, $named: true } as any] as any });
+    const node = ir.reference({ value: { $type: 'char_literal', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ReferenceExpression);
     expect(node.$source).toBe(2);
   });

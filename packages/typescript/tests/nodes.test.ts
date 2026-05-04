@@ -1134,12 +1134,12 @@ describe('mapped_type_clause', () => {
 
 describe('member_expression', () => {
   it('factory produces correct type', () => {
-    const node = ir.member({ object: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.member({ object: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.$type).toBe(TSKindId.MemberExpression);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.member({ object: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.member({ object: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, property: { $type: 'private_property_identifier', $text: 'test', $source: 2, $named: true } as any, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.render().length).toBeGreaterThan(0);
   });
 });

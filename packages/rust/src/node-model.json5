@@ -1578,31 +1578,13 @@
               "multiplicity": "single",
               "name": "_let_chain",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "let_condition",
-          "propertyName": "letCondition",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "let_condition",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1658,7 +1640,29 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "outer_line_doc_comment_marker",
+          "propertyName": "outerLineDocCommentMarker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_outer_line_doc_comment_marker",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_inner_line_doc_comment_marker",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "_line_comment_regular_dslash",
@@ -1971,104 +1975,415 @@
           "name": "literal",
           "propertyName": "literal",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_literal",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "self",
-          "propertyName": "self",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "self",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "super",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "crate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "primitive_type",
-          "propertyName": "primitiveType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_primitive_type",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "%"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "!"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "||"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "+="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "-="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "*="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "/="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "%="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "^="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "|="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">>="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "@"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "_"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ".."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "..."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "..="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ","
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ";"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ":"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "::"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "->"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "=>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "#"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "?"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "'"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "as"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "break"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "continue"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "default"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "enum"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "fn"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "for"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "gen"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "if"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "impl"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "loop"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "mod"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "pub"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "return"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "struct"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "trait"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "union"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "unsafe"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "use"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "where"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "while"
             }
           ]
         }
@@ -3311,46 +3626,19 @@
               "multiplicity": "optional",
               "name": "self",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "super",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "crate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "visibility_modifier_in_path",
-          "propertyName": "visibilityModifierInPath",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -3897,6 +4185,27 @@
               "unresolved": true
             }
           ]
+        },
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "delim_token_tree",
+              "unresolved": true
+            }
+          ]
         }
       ]
     },
@@ -4174,7 +4483,29 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "outer_block_doc_comment_marker",
+          "propertyName": "outerBlockDocCommentMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_outer_block_doc_comment_marker",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_inner_block_doc_comment_marker",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "boolean_literal",
@@ -4293,16 +4624,7 @@
               "multiplicity": "single",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "qualified_type",
-          "propertyName": "qualifiedType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -4801,16 +5123,7 @@
               "multiplicity": "array",
               "name": "_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parameter",
-          "propertyName": "parameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -4842,16 +5155,7 @@
               "multiplicity": "single",
               "name": "line_comment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "block_comment",
-          "propertyName": "blockComment",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5559,16 +5863,7 @@
               "multiplicity": "single",
               "name": "block",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_expression",
-          "propertyName": "ifExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -6434,31 +6729,13 @@
               "multiplicity": "array",
               "name": "shorthand_field_initializer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "field_initializer",
-          "propertyName": "fieldInitializer",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "field_initializer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "base_field_initializer",
-          "propertyName": "baseFieldInitializer",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -7572,16 +7849,7 @@
               "multiplicity": "single",
               "name": "_function_type_trait_form",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_type_fn_form",
-          "propertyName": "functionTypeFnForm",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7775,16 +8043,7 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "scoped_identifier",
-          "propertyName": "scopedIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -8738,16 +8997,7 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "inner_attribute_item",
-          "propertyName": "innerAttributeItem",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -9685,16 +9935,7 @@
                   "multiplicity": "array",
                   "name": "attribute_item",
                   "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "inner_attribute_item",
-              "propertyName": "innerAttributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
+                },
                 {
                   "kind": "node-ref",
                   "multiplicity": "array",
@@ -9765,16 +10006,7 @@
                   "multiplicity": "array",
                   "name": "attribute_item",
                   "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "inner_attribute_item",
-              "propertyName": "innerAttributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
+                },
                 {
                   "kind": "node-ref",
                   "multiplicity": "array",
@@ -10421,7 +10653,38 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItem",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "parameter",
@@ -10545,46 +10808,24 @@
               "multiplicity": "array",
               "name": "parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "self_parameter",
-          "propertyName": "selfParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "self_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "variadic_parameter",
-          "propertyName": "variadicParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "variadic_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type",
-          "propertyName": "type",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "_"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -11300,7 +11541,7 @@
         {
           "name": "reference_expression_raw_const",
           "propertyName": "referenceExpressionRawConst",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
@@ -11309,31 +11550,13 @@
               "multiplicity": "single",
               "name": "_reference_expression_raw_const",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "reference_expression_raw_mut",
-          "propertyName": "referenceExpressionRawMut",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reference_expression_raw_mut",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -12270,16 +12493,7 @@
               "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string_content",
-          "propertyName": "stringContent",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -12731,16 +12945,7 @@
               "multiplicity": "array",
               "name": "field_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "remaining_field_pattern",
-          "propertyName": "remainingFieldPattern",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -13239,31 +13444,13 @@
               "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime",
-          "propertyName": "lifetime",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "higher_ranked_trait_bound",
-          "propertyName": "higherRankedTraitBound",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -13614,16 +13801,7 @@
               "multiplicity": "array",
               "name": "_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "closure_expression",
-          "propertyName": "closureExpression",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -13758,61 +13936,25 @@
               "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_binding",
-          "propertyName": "typeBinding",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "type_binding",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime",
-          "propertyName": "lifetime",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "literal",
-          "propertyName": "literal",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_literal",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "block",
-          "propertyName": "block",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -14240,46 +14382,19 @@
               "multiplicity": "nonEmptyArray",
               "name": "metavariable",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_parameter",
-          "propertyName": "typeParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "type_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime_parameter",
-          "propertyName": "lifetimeParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "const_parameter",
-          "propertyName": "constParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -14631,16 +14746,7 @@
               "multiplicity": "array",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_identifier",
-          "propertyName": "typeIdentifier",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",

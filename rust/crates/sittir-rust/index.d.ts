@@ -168,7 +168,7 @@ export interface AttributeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': PathTransport
+  '$children': Box<AnyTransport>
 }
 
 export interface AwaitExpressionTransport {
@@ -211,6 +211,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   doc?: Box<AnyTransport>
+  '$children'?: BlockCommentChildTransport
 }
 
 export interface BlockTransport {
@@ -1159,6 +1160,7 @@ export interface LineCommentDocTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   doc: LineDocContentTransport
+  '$children': LineCommentDocChildTransport
 }
 
 export interface LineCommentUFormContentTransport {
@@ -1473,7 +1475,7 @@ export interface NonSpecialTokenTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': NonSpecialTokenChildTransport
+  '$children': Array<NonSpecialTokenChildTransport>
 }
 
 export interface OrderedFieldDeclarationListTransport {
@@ -1484,6 +1486,7 @@ export interface OrderedFieldDeclarationListTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   type: Array<_TypeTransport>
+  '$children': Array<OrderedFieldDeclarationListChildTransport>
 }
 
 export interface OrPatternBinaryTransport {
@@ -1788,7 +1791,7 @@ export interface ReferenceExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   value: ExpressionTransport
-  '$children': ReferenceExpressionChildTransport
+  '$children'?: ReferenceExpressionChildTransport
 }
 
 export interface ReferencePatternTransport {

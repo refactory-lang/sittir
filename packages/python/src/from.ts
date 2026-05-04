@@ -517,9 +517,12 @@ export function commentFrom(input: string | T.Comment) {
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose): ReturnType<typeof F.comparisonOperator> | T.ComparisonOperator {
   if (isNodeData(input)) return input;
+  const _ne_children: readonly (T.PrimaryExpression)[] = _resolveMany(input.children, _K1, _K2);
+  _assertNonEmpty(_ne_children, 'comparison_operator.children');
   return F.comparisonOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
     operators: _resolveBitflag(input.operators),
+    children: _ne_children,
   });
 }
 
@@ -822,9 +825,11 @@ export function ifStatementFrom(input: T.IfStatement.Loose): ReturnType<typeof F
 
 export function importFromStatementFrom(input: T.ImportFromStatement.Loose): ReturnType<typeof F.importFromStatement> | T.ImportFromStatement {
   if (isNodeData(input)) return input;
+  const _ne_children: readonly (T.WildcardImport | T.DottedName | T.AliasedImport)[] = _resolveMany(input.children, _K0, _K8);
+  _assertNonEmpty(_ne_children, 'import_from_statement.children');
   return F.importFromStatement({
     moduleName: _resolveOne<T.RelativeImport | T.DottedName>(input.moduleName, _K0, _K10),
-    children: _resolveOne(input.children, _K0, _K0),
+    children: _ne_children,
   });
 }
 
@@ -1103,8 +1108,7 @@ export function sliceFrom(input?: T.Slice.Loose): ReturnType<typeof F.slice> | T
 export function splatPatternFrom(input: T.SplatPattern.Loose): ReturnType<typeof F.splatPattern> | T.SplatPattern {
   if (isNodeData(input)) return input;
   return F.splatPattern({
-    identifier: _resolveOneLeaf<T._Identifier>(input.identifier, "_identifier"),
-    children: _resolveOneLeaf(input.children, "identifier"),
+    identifier: _resolveOne<T._Identifier | T.Identifier | "_">(input.identifier, _K14, _K0),
   });
 }
 

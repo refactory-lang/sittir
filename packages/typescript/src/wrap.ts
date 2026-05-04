@@ -1372,7 +1372,7 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): Wrapped
     $type: TSKindId.MemberExpression as number,
     get object() { return drillIn(data.$fields?.['object'], tree); },
     get property() { return drillAs(data.$fields?.['property'], tree, "property_identifier", "identifier"); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<MemberExpression>;
 }
 

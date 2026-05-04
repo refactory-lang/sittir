@@ -1033,46 +1033,19 @@
               "multiplicity": "single",
               "name": "abstract_method_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "index_signature",
-          "propertyName": "indexSignature",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "index_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "method_signature",
-          "propertyName": "methodSignature",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "method_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition",
-          "propertyName": "publicFieldDefinition",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1093,6 +1066,11 @@
               "multiplicity": "single",
               "name": "_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             }
           ]
         }
@@ -1199,6 +1177,11 @@
               "multiplicity": "single",
               "name": "_function_signature_automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             }
           ]
         }
@@ -1351,12 +1334,18 @@
       ],
       "children": [
         {
-          "name": "export_statement_default_decl_arm_default_kw",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKw",
+          "name": "declaration",
+          "propertyName": "declaration",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1378,12 +1367,18 @@
       "fields": [],
       "children": [
         {
-          "name": "export_statement_default_decl_arm_default_kw_value",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKwValue",
+          "name": "declaration",
+          "propertyName": "declaration",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1465,46 +1460,19 @@
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_star_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_statement_default_from_arm_ns_from",
-          "propertyName": "exportStatementDefaultFromArmNsFrom",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_ns_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_statement_default_from_arm_clause_from",
-          "propertyName": "exportStatementDefaultFromArmClauseFrom",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_clause_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_clause",
-          "propertyName": "exportClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1947,31 +1915,13 @@
               "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -2323,16 +2273,7 @@
               "multiplicity": "optional",
               "name": "namespace_import",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "named_imports",
-          "propertyName": "namedImports",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -2829,8 +2770,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_jsx_string_fragment",
+          "propertyName": "unescapedDoubleJsxStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2844,22 +2785,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "unescaped_single_jsx_string_fragment",
+              "name": "html_character_reference",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "html_character_reference",
-          "propertyName": "htmlCharacterReference",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "html_character_reference",
+              "name": "unescaped_single_jsx_string_fragment",
               "unresolved": true
             }
           ]
@@ -3027,31 +2959,13 @@
               "multiplicity": "single",
               "name": "member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript_expression",
-          "propertyName": "subscriptExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3063,31 +2977,13 @@
               "multiplicity": "single",
               "name": "_reserved_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "destructuring_pattern",
-          "propertyName": "destructuringPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_destructuring_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "non_null_expression",
-          "propertyName": "nonNullExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3940,8 +3836,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_string_fragment",
+          "propertyName": "unescapedDoubleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3951,16 +3847,7 @@
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -3980,8 +3867,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_single_string_fragment",
+          "propertyName": "unescapedSingleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3991,16 +3878,7 @@
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5232,16 +5110,7 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5273,16 +5142,7 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5314,16 +5174,7 @@
               "multiplicity": "array",
               "name": "pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "assignment_pattern",
-          "propertyName": "assignmentPattern",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5775,31 +5626,13 @@
               "multiplicity": "single",
               "name": "type_predicate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -6766,51 +6599,29 @@
               "multiplicity": "array",
               "name": "_class_body_method",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_body_method_sig",
-          "propertyName": "classBodyMethodSig",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_class_body_method_sig",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_static_block",
-          "propertyName": "classStaticBlock",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "class_static_block",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_body_member",
-          "propertyName": "classBodyMember",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_class_body_member",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": ";"
             }
           ]
         }
@@ -7705,46 +7516,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7935,31 +7719,13 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -8235,12 +8001,18 @@
       "fields": [],
       "children": [
         {
-          "name": "enum_assignment",
-          "propertyName": "enumAssignment",
+          "name": "property_name",
+          "propertyName": "propertyName",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_property_name",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -9237,31 +9009,13 @@
               "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -10898,16 +10652,7 @@
               "multiplicity": "optional",
               "name": "namespace_import",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "named_imports",
-          "propertyName": "namedImports",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -12121,31 +11866,13 @@
               "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "sequence_expression",
-          "propertyName": "sequenceExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "sequence_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -12177,12 +11904,12 @@
           "name": "jsx_identifier",
           "propertyName": "jsxIdentifier",
           "required": true,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "single",
               "name": "_jsx_identifier",
               "unresolved": true
             }
@@ -12565,21 +12292,6 @@
       "hidden": false,
       "children": [
         {
-          "name": "unary_expression",
-          "propertyName": "unaryExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_number",
-              "unresolved": true
-            }
-          ]
-        },
-        {
           "name": "number",
           "propertyName": "number",
           "required": true,
@@ -12589,78 +12301,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "_number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "number",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string",
-          "propertyName": "string",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "string",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "true",
-          "propertyName": "true",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "true",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "false",
-          "propertyName": "false",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "false",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "null",
-          "propertyName": "null",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "null",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "undefined",
-          "propertyName": "undefined",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -12887,7 +12560,28 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "."
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_optional_chain",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "meta_property",
@@ -13942,65 +13636,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pair",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "spread_element",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "spread_element",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "method_definition",
-          "propertyName": "methodDefinition",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "method_definition",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "method_definition",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "shorthand_property_identifier",
-          "propertyName": "shorthandPropertyIdentifier",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_shorthand_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "pair",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "spread_element",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "method_definition",
               "unresolved": true
             },
             {
@@ -14103,65 +13770,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pair_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "rest_pattern",
-          "propertyName": "restPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "rest_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "rest_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "object_assignment_pattern",
-          "propertyName": "objectAssignmentPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "object_assignment_pattern",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "object_assignment_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "shorthand_property_identifier_pattern",
-          "propertyName": "shorthandPropertyIdentifierPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_shorthand_property_identifier_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "pair_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "rest_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "object_assignment_pattern",
               "unresolved": true
             },
             {
@@ -15345,16 +14985,7 @@
               "multiplicity": "optional",
               "name": "_public_field_definition_declare_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_access_first",
-          "propertyName": "publicFieldDefinitionAccessFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -15375,46 +15006,19 @@
               "multiplicity": "optional",
               "name": "_public_field_definition_static_mods",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_abstract_first",
-          "propertyName": "publicFieldDefinitionAbstractFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_abstract_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_readonly_first",
-          "propertyName": "publicFieldDefinitionReadonlyFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_readonly_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_accessor_opt",
-          "propertyName": "publicFieldDefinitionAccessorOpt",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -16136,8 +15740,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_string_fragment",
+          "propertyName": "unescapedDoubleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16147,16 +15751,7 @@
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16176,8 +15771,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_single_string_fragment",
+          "propertyName": "unescapedSingleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16187,16 +15782,7 @@
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16335,16 +15921,7 @@
               "multiplicity": "array",
               "name": "switch_case",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "switch_default",
-          "propertyName": "switchDefault",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16512,8 +16089,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "template_chars",
+          "propertyName": "templateChars",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16523,16 +16100,7 @@
               "multiplicity": "array",
               "name": "_template_chars",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "template_type",
-          "propertyName": "templateType",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16552,8 +16120,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "template_chars",
+          "propertyName": "templateChars",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16563,31 +16131,13 @@
               "multiplicity": "array",
               "name": "_template_chars",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "template_substitution",
-          "propertyName": "templateSubstitution",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16643,16 +16193,7 @@
               "multiplicity": "single",
               "name": "primary_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "infer_type",
-          "propertyName": "inferType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -17494,8 +17035,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "subscript_expression",
-          "propertyName": "subscriptExpression",
+          "name": "type_query_subscript_expression",
+          "propertyName": "typeQuerySubscriptExpression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17505,76 +17046,31 @@
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "instantiation_expression",
-          "propertyName": "instantiationExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_instantiation_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",

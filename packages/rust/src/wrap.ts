@@ -601,7 +601,7 @@ export function wrapBlockComment(data: _NodeData, tree: TreeHandle): WrappedNode
     ...data,
     $type: TSKindId.BlockComment as number,
     get doc() { return drillAs(data.$fields?.['doc'], tree, "doc_comment", "_block_comment_content"); },
-    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
+    get child() { return drillIn(data.$children?.[0], tree); },
   } as unknown as WrappedNode<BlockComment>;
 }
 
@@ -2229,12 +2229,14 @@ const _aliasTargetToSource: Record<string, string> = {
   'function_type_trait_form': '_function_type_trait_form',
   'generic_type_with_turbofish_turbofish': '_generic_type_with_turbofish_turbofish',
   'impl_item_negative': '_impl_item_negative',
+  'inner_block_doc_comment_marker': '_inner_block_doc_comment_marker',
   'let_chain': '_let_chain',
   'line_doc_content': '_line_doc_content',
   'literal': '_literal',
   'literal_pattern': '_literal_pattern',
   'move_marker': '_move_marker',
   'operator': '_operator',
+  'outer_block_doc_comment_marker': '_outer_block_doc_comment_marker',
   'path': '_path',
   'pattern': '_pattern',
   'primitive_type': '_primitive_type',

@@ -696,7 +696,7 @@ export function wrapImportFromStatement(data: _NodeData, tree: TreeHandle): Wrap
     ...data,
     $type: TSKindId.ImportFromStatement as number,
     get moduleName() { return drillIn(data.$fields?.['module_name'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<ImportFromStatement>;
 }
 
@@ -976,7 +976,7 @@ export function wrapSplatPattern(data: _NodeData, tree: TreeHandle): WrappedNode
     ...data,
     $type: TSKindId.SplatPattern as number,
     get identifier() { return drillIn(data.$fields?.['identifier'], tree); },
-    get child() { return drillIn(data.$children?.[0], tree); },
+    get children() { return (data.$children ?? []).map(c => drillIn(c, tree)); },
   } as unknown as WrappedNode<SplatPattern>;
 }
 

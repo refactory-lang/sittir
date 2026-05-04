@@ -436,6 +436,27 @@ pub enum AnyTransport {
     Star(StarTransport),
     Ellipsis(EllipsisTransport),
     Yield(YieldTransport),
+    Literal0_25,
+    Literal1_5e,
+    Literal2_7c_7c,
+    Literal3_3c_3c,
+    Literal4_3e_3e,
+    Literal5_2b_3d,
+    Literal6_2d_3d,
+    Literal7_2a_3d,
+    Literal8_2f_3d,
+    Literal9_25_3d,
+    Literal10_5e_3d,
+    Literal11_26_3d,
+    Literal12_7c_3d,
+    Literal13_3c_3c_3d,
+    Literal14_3e_3e_3d,
+    Literal15_3d_3d,
+    Literal16_21_3d,
+    Literal17_3e_3d,
+    Literal18_3c_3d,
+    Literal19_2e_2e_3d,
+    Literal20_3a_3a,
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -1743,6 +1764,48 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             122 => Ok(AnyTransport::Yield(
                 YieldTransport::from_napi_value(env, napi_val)?
             )),
+            // literal kind: % → "%"
+            47 => Ok(AnyTransport::Literal0_25),
+            // literal kind: ^ → "^"
+            48 => Ok(AnyTransport::Literal1_5e),
+            // literal kind: || → "||"
+            53 => Ok(AnyTransport::Literal2_7c_7c),
+            // literal kind: << → "<<"
+            54 => Ok(AnyTransport::Literal3_3c_3c),
+            // literal kind: >> → ">>"
+            55 => Ok(AnyTransport::Literal4_3e_3e),
+            // literal kind: += → "+="
+            56 => Ok(AnyTransport::Literal5_2b_3d),
+            // literal kind: -= → "-="
+            57 => Ok(AnyTransport::Literal6_2d_3d),
+            // literal kind: *= → "*="
+            58 => Ok(AnyTransport::Literal7_2a_3d),
+            // literal kind: /= → "/="
+            59 => Ok(AnyTransport::Literal8_2f_3d),
+            // literal kind: %= → "%="
+            60 => Ok(AnyTransport::Literal9_25_3d),
+            // literal kind: ^= → "^="
+            61 => Ok(AnyTransport::Literal10_5e_3d),
+            // literal kind: &= → "&="
+            62 => Ok(AnyTransport::Literal11_26_3d),
+            // literal kind: |= → "|="
+            63 => Ok(AnyTransport::Literal12_7c_3d),
+            // literal kind: <<= → "<<="
+            64 => Ok(AnyTransport::Literal13_3c_3c_3d),
+            // literal kind: >>= → ">>="
+            65 => Ok(AnyTransport::Literal14_3e_3e_3d),
+            // literal kind: == → "=="
+            67 => Ok(AnyTransport::Literal15_3d_3d),
+            // literal kind: != → "!="
+            68 => Ok(AnyTransport::Literal16_21_3d),
+            // literal kind: >= → ">="
+            71 => Ok(AnyTransport::Literal17_3e_3d),
+            // literal kind: <= → "<="
+            72 => Ok(AnyTransport::Literal18_3c_3d),
+            // literal kind: ..= → "..="
+            78 => Ok(AnyTransport::Literal19_2e_2e_3d),
+            // literal kind: :: → "::"
+            80 => Ok(AnyTransport::Literal20_3a_3a),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {other} in AnyTransport"
             ))),
@@ -3877,6 +3940,65 @@ impl ::sittir_core::types::RenderableTransport for LetChainChildTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum LineCommentDocChildTransport {
+    OuterLineDocCommentMarker(OuterLineDocCommentMarkerTransport),
+    InnerLineDocCommentMarker(InnerLineDocCommentMarkerTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for LineCommentDocChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in LineCommentDocChildTransport"))?;
+        match kind_id {
+            317 => Ok(Self::OuterLineDocCommentMarker(
+                OuterLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            316 => Ok(Self::InnerLineDocCommentMarker(
+                InnerLineDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in LineCommentDocChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for LineCommentDocChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("LineCommentDocChildTransport is receive-only"))
+    }
+}
+
+fn line_comment_doc_child_transport_to_any(t: LineCommentDocChildTransport) -> AnyTransport {
+    match t {
+        LineCommentDocChildTransport::OuterLineDocCommentMarker(inner) => AnyTransport::OuterLineDocCommentMarker(inner),
+        LineCommentDocChildTransport::InnerLineDocCommentMarker(inner) => AnyTransport::InnerLineDocCommentMarker(inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for LineCommentDocChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            LineCommentDocChildTransport::OuterLineDocCommentMarker(inner) => render_outer_line_doc_comment_marker_transport(inner)?,
+            LineCommentDocChildTransport::InnerLineDocCommentMarker(inner) => render_inner_line_doc_comment_marker_transport(inner)?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum NonSpecialTokenChildTransport {
     Identifier(IdentifierTransport),
     MutableSpecifier(MutableSpecifierTransport),
@@ -4075,6 +4197,65 @@ impl ::sittir_core::types::RenderableTransport for ArgumentsChildTransport {
     ) -> Result<(), ::askama::Error> {
         let s = match self {
             ArgumentsChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum BlockCommentChildTransport {
+    OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
+    InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for BlockCommentChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in BlockCommentChildTransport"))?;
+        match kind_id {
+            152 => Ok(Self::OuterBlockDocCommentMarker(
+                OuterBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            153 => Ok(Self::InnerBlockDocCommentMarker(
+                InnerBlockDocCommentMarkerTransport::from_napi_value(env, napi_val)?
+            )),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in BlockCommentChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for BlockCommentChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("BlockCommentChildTransport is receive-only"))
+    }
+}
+
+fn block_comment_child_transport_to_any(t: BlockCommentChildTransport) -> AnyTransport {
+    match t {
+        BlockCommentChildTransport::OuterBlockDocCommentMarker(inner) => AnyTransport::OuterBlockDocCommentMarker(inner),
+        BlockCommentChildTransport::InnerBlockDocCommentMarker(inner) => AnyTransport::InnerBlockDocCommentMarker(inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for BlockCommentChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            BlockCommentChildTransport::OuterBlockDocCommentMarker(inner) => render_outer_block_doc_comment_marker_transport(inner)?,
+            BlockCommentChildTransport::InnerBlockDocCommentMarker(inner) => render_inner_block_doc_comment_marker_transport(inner)?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -4659,6 +4840,59 @@ impl ::sittir_core::types::RenderableTransport for MatchBlockChildTransport {
     ) -> Result<(), ::askama::Error> {
         let s = match self {
             MatchBlockChildTransport::LastMatchArm(inner) => render_last_match_arm_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum OrderedFieldDeclarationListChildTransport {
+    AttributeItem(Box<AttributeItemTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for OrderedFieldDeclarationListChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in OrderedFieldDeclarationListChildTransport"))?;
+        match kind_id {
+            170 => Ok(Self::AttributeItem(Box::new(
+                AttributeItemTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in OrderedFieldDeclarationListChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for OrderedFieldDeclarationListChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("OrderedFieldDeclarationListChildTransport is receive-only"))
+    }
+}
+
+fn ordered_field_declaration_list_child_transport_to_any(t: OrderedFieldDeclarationListChildTransport) -> AnyTransport {
+    match t {
+        OrderedFieldDeclarationListChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for OrderedFieldDeclarationListChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            OrderedFieldDeclarationListChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -6825,6 +7059,8 @@ pub struct LineCommentDocTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     pub doc: LineDocContentTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: LineCommentDocChildTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for LineCommentDocTransport {
@@ -7166,7 +7402,7 @@ pub struct NonSpecialTokenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: NonSpecialTokenChildTransport,
+    pub children: Vec<NonSpecialTokenChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for NonSpecialTokenTransport {
@@ -8844,7 +9080,7 @@ pub struct AttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: PathTransport,
+    pub children: Box<AnyTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for AttributeTransport {
@@ -9019,6 +9255,8 @@ pub struct BlockCommentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     pub doc: Option<Box<AnyTransport>>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: Option<BlockCommentChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for BlockCommentTransport {
@@ -13074,6 +13312,8 @@ pub struct OrderedFieldDeclarationListTransport {
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Vec<_TypeTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: Vec<OrderedFieldDeclarationListChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for OrderedFieldDeclarationListTransport {
@@ -13737,7 +13977,7 @@ pub struct ReferenceExpressionTransport {
     pub transport_child_index: Option<f64>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ReferenceExpressionChildTransport,
+    pub children: Option<ReferenceExpressionChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for ReferenceExpressionTransport {
@@ -22123,7 +22363,7 @@ fn render_line_comment_content_transport(t: &LineCommentContentTransport) -> Res
 }
 
 fn render_line_comment_doc_transport(node: &LineCommentDocTransport) -> Result<String, ::askama::Error> {
-    Ok(node.transport_text.as_deref().unwrap_or_default().to_owned())
+    node.children.render_to_string()
 }
 
 fn render_line_comment_regular_dslash_transport(t: &LineCommentRegularDslashTransport) -> Result<String, ::askama::Error> {
@@ -22185,7 +22425,11 @@ fn render__mutable_specifier_transport(t: &bool) -> Result<String, ::askama::Err
 }
 
 fn render_non_special_token_transport(node: &NonSpecialTokenTransport) -> Result<String, ::askama::Error> {
-    node.children.render_to_string()
+    let mut out = String::new();
+    for child in node.children.iter() {
+        out.push_str(&child.render_to_string()?);
+    }
+    Ok(out)
 }
 
 fn render_operator_transport(t: &bool) -> Result<String, ::askama::Error> {
@@ -22516,7 +22760,7 @@ fn render_async_block_transport(node: &AsyncBlockTransport) -> Result<String, ::
 }
 
 fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
     let template = AttributeTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -24049,7 +24293,9 @@ fn render_or_pattern_uform_prefix_transport(node: &OrPatternUFormPrefixTransport
 }
 
 fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclarationListTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let r#type_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.r#type.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
@@ -24307,7 +24553,7 @@ fn render_ref_pattern_transport(node: &RefPatternTransport) -> Result<String, ::
 }
 
 fn render_reference_expression_transport(node: &ReferenceExpressionTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c as &dyn ::sittir_core::types::RenderableTransport)).collect();
     let template = ReferenceExpressionTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -26329,6 +26575,27 @@ impl ::sittir_core::types::RenderableTransport for AnyTransport {
             AnyTransport::Star(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
             AnyTransport::Ellipsis(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
             AnyTransport::Yield(t) => dest.write_str(&t.text).map_err(::askama::Error::from),
+            AnyTransport::Literal0_25 => dest.write_str("%").map_err(::askama::Error::from),
+            AnyTransport::Literal1_5e => dest.write_str("^").map_err(::askama::Error::from),
+            AnyTransport::Literal2_7c_7c => dest.write_str("||").map_err(::askama::Error::from),
+            AnyTransport::Literal3_3c_3c => dest.write_str("<<").map_err(::askama::Error::from),
+            AnyTransport::Literal4_3e_3e => dest.write_str(">>").map_err(::askama::Error::from),
+            AnyTransport::Literal5_2b_3d => dest.write_str("+=").map_err(::askama::Error::from),
+            AnyTransport::Literal6_2d_3d => dest.write_str("-=").map_err(::askama::Error::from),
+            AnyTransport::Literal7_2a_3d => dest.write_str("*=").map_err(::askama::Error::from),
+            AnyTransport::Literal8_2f_3d => dest.write_str("/=").map_err(::askama::Error::from),
+            AnyTransport::Literal9_25_3d => dest.write_str("%=").map_err(::askama::Error::from),
+            AnyTransport::Literal10_5e_3d => dest.write_str("^=").map_err(::askama::Error::from),
+            AnyTransport::Literal11_26_3d => dest.write_str("&=").map_err(::askama::Error::from),
+            AnyTransport::Literal12_7c_3d => dest.write_str("|=").map_err(::askama::Error::from),
+            AnyTransport::Literal13_3c_3c_3d => dest.write_str("<<=").map_err(::askama::Error::from),
+            AnyTransport::Literal14_3e_3e_3d => dest.write_str(">>=").map_err(::askama::Error::from),
+            AnyTransport::Literal15_3d_3d => dest.write_str("==").map_err(::askama::Error::from),
+            AnyTransport::Literal16_21_3d => dest.write_str("!=").map_err(::askama::Error::from),
+            AnyTransport::Literal17_3e_3d => dest.write_str(">=").map_err(::askama::Error::from),
+            AnyTransport::Literal18_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
+            AnyTransport::Literal19_2e_2e_3d => dest.write_str("..=").map_err(::askama::Error::from),
+            AnyTransport::Literal20_3a_3a => dest.write_str("::").map_err(::askama::Error::from),
         }
     }
 }
@@ -26737,6 +27004,27 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
         AnyTransport::Yield(data) => transport_to_node_yield(data),
+        AnyTransport::Literal0_25 => Ok(transport_node_data(TransportKindId(47) /* "%" */, None, None, false, Some("%".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal1_5e => Ok(transport_node_data(TransportKindId(48) /* "^" */, None, None, false, Some("^".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal2_7c_7c => Ok(transport_node_data(TransportKindId(53) /* "||" */, None, None, false, Some("||".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal3_3c_3c => Ok(transport_node_data(TransportKindId(54) /* "<<" */, None, None, false, Some("<<".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal4_3e_3e => Ok(transport_node_data(TransportKindId(55) /* ">>" */, None, None, false, Some(">>".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal5_2b_3d => Ok(transport_node_data(TransportKindId(56) /* "+=" */, None, None, false, Some("+=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal6_2d_3d => Ok(transport_node_data(TransportKindId(57) /* "-=" */, None, None, false, Some("-=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal7_2a_3d => Ok(transport_node_data(TransportKindId(58) /* "*=" */, None, None, false, Some("*=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal8_2f_3d => Ok(transport_node_data(TransportKindId(59) /* "/=" */, None, None, false, Some("/=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal9_25_3d => Ok(transport_node_data(TransportKindId(60) /* "%=" */, None, None, false, Some("%=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal10_5e_3d => Ok(transport_node_data(TransportKindId(61) /* "^=" */, None, None, false, Some("^=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal11_26_3d => Ok(transport_node_data(TransportKindId(62) /* "&=" */, None, None, false, Some("&=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal12_7c_3d => Ok(transport_node_data(TransportKindId(63) /* "|=" */, None, None, false, Some("|=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal13_3c_3c_3d => Ok(transport_node_data(TransportKindId(64) /* "<<=" */, None, None, false, Some("<<=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal14_3e_3e_3d => Ok(transport_node_data(TransportKindId(65) /* ">>=" */, None, None, false, Some(">>=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal15_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal16_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal17_3e_3d => Ok(transport_node_data(TransportKindId(71) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal18_3c_3d => Ok(transport_node_data(TransportKindId(72) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal19_2e_2e_3d => Ok(transport_node_data(TransportKindId(78) /* "..=" */, None, None, false, Some("..=".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal20_3a_3a => Ok(transport_node_data(TransportKindId(80) /* "::" */, None, None, false, Some("::".to_string()), None, None, None, None, None)),
     }
 }
 
@@ -27429,7 +27717,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
     let mut fields = TransportHashMap::new();
     fields.insert("doc".to_string(), transport_field_value(AnyTransport::LineDocContent(transport.doc))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(vec![line_comment_doc_child_transport_to_any(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(372) /* "_line_comment_doc" */,
         transport.transport_source,
@@ -27627,7 +27915,7 @@ fn transport_to_node__mutable_specifier(transport: bool) -> Result<TransportNode
 fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![non_special_token_child_transport_to_any(transport.children)])?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| non_special_token_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(0) /* "_non_special_token" — no parser symbol */,
         transport.transport_source,
@@ -28455,7 +28743,7 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
 fn transport_to_node_attribute(transport: AttributeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![path_transport_to_any(transport.children)])?);
+    let children = Some(transport_children(vec![*transport.children])?);
     Ok(transport_node_data(
         TransportKindId(172) /* "attribute" */,
         transport.transport_source,
@@ -28573,7 +28861,10 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
         fields.insert("doc".to_string(), transport_field_value(*value)?);
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![block_comment_child_transport_to_any(c)])?),
+        None => None,
+    };
     Ok(transport_node_data(
         TransportKindId(318) /* "block_comment" */,
         transport.transport_source,
@@ -30796,7 +31087,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
     let mut fields = TransportHashMap::new();
     fields.insert("type".to_string(), transport_field_values(transport.r#type.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(transport.children.into_iter().map(|v| ordered_field_declaration_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(183) /* "ordered_field_declaration_list" */,
         transport.transport_source,
@@ -31164,7 +31455,10 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
     let mut fields = TransportHashMap::new();
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![reference_expression_child_transport_to_any(transport.children)])?);
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![reference_expression_child_transport_to_any(c)])?),
+        None => None,
+    };
     Ok(transport_node_data(
         TransportKindId(249) /* "reference_expression" */,
         transport.transport_source,

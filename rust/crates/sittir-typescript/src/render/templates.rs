@@ -3630,6 +3630,112 @@ impl ::sittir_core::types::RenderableTransport for _ClassHeritageExtendsClauseCh
 }
 
 #[derive(Debug, Clone)]
+pub enum ExportStatementDefaultDeclArmChildTransport {
+    ExportStatementDefaultDeclArmDefaultKw(Box<ExportStatementDefaultDeclArmDefaultKwTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclArmChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclArmChildTransport"))?;
+        match kind_id {
+            355 => Ok(Self::ExportStatementDefaultDeclArmDefaultKw(Box::new(
+                ExportStatementDefaultDeclArmDefaultKwTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementDefaultDeclArmChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclArmChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExportStatementDefaultDeclArmChildTransport is receive-only"))
+    }
+}
+
+fn export_statement_default_decl_arm_child_transport_to_any(t: ExportStatementDefaultDeclArmChildTransport) -> AnyTransport {
+    match t {
+        ExportStatementDefaultDeclArmChildTransport::ExportStatementDefaultDeclArmDefaultKw(inner) => AnyTransport::ExportStatementDefaultDeclArmDefaultKw(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            ExportStatementDefaultDeclArmChildTransport::ExportStatementDefaultDeclArmDefaultKw(inner) => render_export_statement_default_decl_arm_default_kw_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum ExportStatementDefaultDeclArmDefaultKwChildTransport {
+    ExportStatementDefaultDeclArmDefaultKwValue(Box<ExportStatementDefaultDeclArmDefaultKwValueTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ExportStatementDefaultDeclArmDefaultKwChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ExportStatementDefaultDeclArmDefaultKwChildTransport"))?;
+        match kind_id {
+            370 => Ok(Self::ExportStatementDefaultDeclArmDefaultKwValue(Box::new(
+                ExportStatementDefaultDeclArmDefaultKwValueTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ExportStatementDefaultDeclArmDefaultKwChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ExportStatementDefaultDeclArmDefaultKwChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ExportStatementDefaultDeclArmDefaultKwChildTransport is receive-only"))
+    }
+}
+
+fn export_statement_default_decl_arm_default_kw_child_transport_to_any(t: ExportStatementDefaultDeclArmDefaultKwChildTransport) -> AnyTransport {
+    match t {
+        ExportStatementDefaultDeclArmDefaultKwChildTransport::ExportStatementDefaultDeclArmDefaultKwValue(inner) => AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmDefaultKwChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            ExportStatementDefaultDeclArmDefaultKwChildTransport::ExportStatementDefaultDeclArmDefaultKwValue(inner) => render_export_statement_default_decl_arm_default_kw_value_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ExportStatementDefaultFromArmChildTransport {
     ExportStatementDefaultFromArmStarFrom(Box<ExportStatementDefaultFromArmStarFromTransport>),
     ExportStatementDefaultFromArmNsFrom(Box<ExportStatementDefaultFromArmNsFromTransport>),
@@ -3933,8 +4039,8 @@ impl ::sittir_core::types::RenderableTransport for _ImportClauseDefaultImportChi
 #[derive(Debug, Clone)]
 pub enum JsxStringChildTransport {
     UnescapedDoubleJsxStringFragment(UnescapedDoubleJsxStringFragmentTransport),
-    UnescapedSingleJsxStringFragment(UnescapedSingleJsxStringFragmentTransport),
     HtmlCharacterReference(HtmlCharacterReferenceTransport),
+    UnescapedSingleJsxStringFragment(UnescapedSingleJsxStringFragmentTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -3967,8 +4073,8 @@ impl ::napi::bindgen_prelude::ToNapiValue for JsxStringChildTransport {
 fn jsx_string_child_transport_to_any(t: JsxStringChildTransport) -> AnyTransport {
     match t {
         JsxStringChildTransport::UnescapedDoubleJsxStringFragment(inner) => AnyTransport::UnescapedDoubleJsxStringFragment(inner),
-        JsxStringChildTransport::UnescapedSingleJsxStringFragment(inner) => AnyTransport::UnescapedSingleJsxStringFragment(inner),
         JsxStringChildTransport::HtmlCharacterReference(inner) => AnyTransport::HtmlCharacterReference(inner),
+        JsxStringChildTransport::UnescapedSingleJsxStringFragment(inner) => AnyTransport::UnescapedSingleJsxStringFragment(inner),
     }
 }
 
@@ -3979,8 +4085,8 @@ impl ::sittir_core::types::RenderableTransport for JsxStringChildTransport {
     ) -> Result<(), ::askama::Error> {
         let s = match self {
             JsxStringChildTransport::UnescapedDoubleJsxStringFragment(inner) => render_unescaped_double_jsx_string_fragment_transport(inner)?,
-            JsxStringChildTransport::UnescapedSingleJsxStringFragment(inner) => render_unescaped_single_jsx_string_fragment_transport(inner)?,
             JsxStringChildTransport::HtmlCharacterReference(inner) => render_html_character_reference_transport(inner)?,
+            JsxStringChildTransport::UnescapedSingleJsxStringFragment(inner) => render_unescaped_single_jsx_string_fragment_transport(inner)?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -4716,6 +4822,59 @@ impl ::sittir_core::types::RenderableTransport for DecoratorParenthesizedExpress
             DecoratorParenthesizedExpressionChildTransport::Identifier(inner) => render_identifier_transport(inner)?,
             DecoratorParenthesizedExpressionChildTransport::DecoratorMemberExpression(inner) => render_decorator_member_expression_transport(inner.as_ref())?,
             DecoratorParenthesizedExpressionChildTransport::DecoratorCallExpression(inner) => render_decorator_call_expression_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum EnumBodyChildTransport {
+    EnumAssignment(Box<EnumAssignmentTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for EnumBodyChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in EnumBodyChildTransport"))?;
+        match kind_id {
+            292 => Ok(Self::EnumAssignment(Box::new(
+                EnumAssignmentTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in EnumBodyChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for EnumBodyChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("EnumBodyChildTransport is receive-only"))
+    }
+}
+
+fn enum_body_child_transport_to_any(t: EnumBodyChildTransport) -> AnyTransport {
+    match t {
+        EnumBodyChildTransport::EnumAssignment(inner) => AnyTransport::EnumAssignment(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for EnumBodyChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            EnumBodyChildTransport::EnumAssignment(inner) => render_enum_assignment_transport(inner.as_ref())?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -6533,7 +6692,7 @@ pub struct ExportStatementDefaultDeclArmTransport {
     pub transport_child_index: Option<f64>,
     pub decorator: Vec<DecoratorTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExportStatementDefaultDeclArmDefaultKwTransport,
+    pub children: ExportStatementDefaultDeclArmChildTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmTransport {
@@ -6562,7 +6721,7 @@ pub struct ExportStatementDefaultDeclArmDefaultKwTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: ExportStatementDefaultDeclArmDefaultKwValueTransport,
+    pub children: ExportStatementDefaultDeclArmDefaultKwChildTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for ExportStatementDefaultDeclArmDefaultKwTransport {
@@ -11063,7 +11222,7 @@ pub struct EnumBodyTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<EnumAssignmentTransport>,
+    pub children: Vec<EnumBodyChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumBodyTransport {
@@ -13446,7 +13605,7 @@ pub struct JsxNamespaceNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<_JsxIdentifierTransport>,
+    pub children: _JsxIdentifierTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for JsxNamespaceNameTransport {
@@ -13684,6 +13843,8 @@ pub struct MemberExpressionTransport {
     pub transport_child_index: Option<f64>,
     pub object: Box<AnyTransport>,
     pub property: PropertyNameTransport,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: bool,
 }
 
 impl ::sittir_core::types::RenderableTransport for MemberExpressionTransport {
@@ -25572,9 +25733,7 @@ fn render_jsx_identifier_transport(t: &JsxIdentifierTransport) -> Result<String,
 }
 
 fn render_jsx_namespace_name_transport(node: &JsxNamespaceNameTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
-        .collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
     let template = JsxNamespaceNameTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -28698,7 +28857,7 @@ fn transport_to_node_export_statement_default_decl_arm(transport: ExportStatemen
     let mut fields = TransportHashMap::new();
     fields.insert("decorator".to_string(), transport_field_values(transport.decorator.into_iter().map(|v| AnyTransport::Decorator(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ExportStatementDefaultDeclArmDefaultKw(transport.children)])?);
+    let children = Some(transport_children(vec![export_statement_default_decl_arm_child_transport_to_any(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(354) /* "_export_statement_default_decl_arm" */,
         transport.transport_source,
@@ -28716,7 +28875,7 @@ fn transport_to_node_export_statement_default_decl_arm(transport: ExportStatemen
 fn transport_to_node_export_statement_default_decl_arm_default_kw(transport: ExportStatementDefaultDeclArmDefaultKwTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::ExportStatementDefaultDeclArmDefaultKwValue(transport.children)])?);
+    let children = Some(transport_children(vec![export_statement_default_decl_arm_default_kw_child_transport_to_any(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(355) /* "_export_statement_default_decl_arm_default_kw" */,
         transport.transport_source,
@@ -31182,7 +31341,7 @@ fn transport_to_node_enum_assignment(transport: EnumAssignmentTransport) -> Resu
 fn transport_to_node_enum_body(transport: EnumBodyTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::EnumAssignment(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| enum_body_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(291) /* "enum_body" */,
         transport.transport_source,
@@ -32508,7 +32667,7 @@ fn transport_to_node_jsx_identifier(transport: JsxIdentifierTransport) -> Result
 fn transport_to_node_jsx_namespace_name(transport: JsxNamespaceNameTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| _jsx_identifier_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![_jsx_identifier_transport_to_any(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(0) /* "jsx_namespace_name" — no parser symbol */,
         transport.transport_source,
@@ -32680,7 +32839,7 @@ fn transport_to_node_member_expression(transport: MemberExpressionTransport) -> 
     fields.insert("object".to_string(), transport_field_value(*transport.object)?);
     fields.insert("property".to_string(), transport_field_value(property_name_transport_to_any(transport.property))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(vec![AnyTransport::OptionalChain(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(234) /* "member_expression" */,
         transport.transport_source,

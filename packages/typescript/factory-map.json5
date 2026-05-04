@@ -754,10 +754,6 @@
       "type",
       "alias"
     ],
-    "member_expression": [
-      "object",
-      "property"
-    ],
     "method_definition": [
       "accessibility_modifier",
       "static_marker",

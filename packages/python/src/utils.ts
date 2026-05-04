@@ -128,8 +128,8 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
     ],
   },
   "comparison_operator": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
+    childrenRequired: true,
+    childAlternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const,
     fields: [
       { name: "operators", multiple: true, required: true, alternatives: [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const },
     ],
@@ -1788,6 +1788,13 @@ function assertComparisonOperatorTransport(node: Record<string, unknown>, path: 
   if (node["left"] !== undefined) assertTransportValue(node["left"], `${path}.left`, [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const);
   if (node["operators"] === undefined) throw new TypeError(`${path}.operators` + ' is required');
   if (node["operators"] !== undefined) assertTransportArray(node["operators"], `${path}.operators`, [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const);
+    }
+  }
 }
 
 function assertComplexPatternTransport(node: Record<string, unknown>, path: string): void {
@@ -2012,7 +2019,7 @@ function assertExpressionListTransport(node: Record<string, unknown>, path: stri
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":",","text":","}] as const);
     }
   }
 }
@@ -2197,7 +2204,7 @@ function assertImportFromStatementTransport(node: Record<string, unknown>, path:
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"wildcard_import","text":"*"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"wildcard_import","text":"*"},{"type":"dotted_name"},{"type":"aliased_import"}] as const);
     }
   }
 }
@@ -2467,7 +2474,7 @@ function assertPatternListTransport(node: Record<string, unknown>, path: string)
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":",","text":","}] as const);
     }
   }
 }
@@ -2560,14 +2567,7 @@ function assertSplatPatternTransport(node: Record<string, unknown>, path: string
   assertTransportKind(node, path, "splat_pattern");
   assertOptionalMetadata(node, path);
   if (node["identifier"] === undefined) throw new TypeError(`${path}.identifier` + ' is required');
-  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_identifier","text":"*"},{"type":"_identifier","text":"**"}] as const);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
-  if (node.$children !== undefined) {
-    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
-    for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"}] as const);
-    }
-  }
+  if (node["identifier"] !== undefined) assertTransportValue(node["identifier"], `${path}.identifier`, [{"type":"_identifier","text":"*"},{"type":"_identifier","text":"**"},{"type":"identifier"},{"type":"_","text":"_"}] as const);
 }
 
 function assertSplatTypeTransport(node: Record<string, unknown>, path: string): void {
@@ -2846,11 +2846,10 @@ function assertWithStatementTransport(node: Record<string, unknown>, path: strin
 function assertYieldTransport(node: Record<string, unknown>, path: string): void {
   assertTransportKind(node, path, "yield");
   assertOptionalMetadata(node, path);
-  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"from","text":"from"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const);
     }
   }
 }

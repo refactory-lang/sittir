@@ -1442,7 +1442,7 @@ export interface AliasedImport {
 
 export interface ArgumentList {
   readonly $type: TSKindId.ArgumentList;
-  readonly $children: readonly (Expression | Expression | ListSplat | ListSplat | DictionarySplat | DictionarySplat | ParenthesizedListSplat | ParenthesizedListSplat | KeywordArgument | KeywordArgument)[];
+  readonly $children: readonly (Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument | Expression | ListSplat | DictionarySplat | ParenthesizedListSplat | KeywordArgument)[];
 }
 
 export interface AsPattern {
@@ -1586,6 +1586,7 @@ export interface ComparisonOperator {
     readonly left: PrimaryExpression;
     readonly operators: NonEmptyArray<Bitflag<Operators, "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">>;
   };
+  readonly $children: NonEmptyArray<PrimaryExpression>;
 }
 
 export interface ComplexPattern {
@@ -1717,7 +1718,7 @@ export interface ExecStatement {
 
 export interface ExpressionList {
   readonly $type: TSKindId.ExpressionList;
-  readonly $children: NonEmptyArray<Expression | Expression>;
+  readonly $children: NonEmptyArray<Expression | "," | Expression>;
 }
 
 export interface ExpressionStatementTuple {
@@ -1824,7 +1825,7 @@ export interface ImportFromStatement {
   readonly $fields: {
     readonly module_name: RelativeImport | DottedName;
   };
-  readonly $children: readonly [WildcardImport];
+  readonly $children: NonEmptyArray<WildcardImport | DottedName | AliasedImport>;
 }
 
 export interface ImportStatement {
@@ -1976,7 +1977,7 @@ export interface ParenthesizedListSplat {
 
 export interface PatternList {
   readonly $type: TSKindId.PatternList;
-  readonly $children: NonEmptyArray<Pattern | Pattern>;
+  readonly $children: NonEmptyArray<Pattern | "," | Pattern>;
 }
 
 export interface PrintStatement {
@@ -2033,9 +2034,8 @@ export interface Slice {
 export interface SplatPattern {
   readonly $type: TSKindId.SplatPattern;
   readonly $fields: {
-    readonly identifier: _Identifier;
+    readonly identifier: _Identifier | Identifier | "_";
   };
-  readonly $children: readonly [Identifier];
 }
 
 export interface SplatType {
@@ -2193,7 +2193,7 @@ export interface WithStatement {
 
 export interface Yield {
   readonly $type: TSKindId.Yield;
-  readonly $children: readonly [Expression | Expressions];
+  readonly $children: readonly ["from" | Expression | Expressions];
 }
 
 
@@ -4571,6 +4571,7 @@ export namespace ComparisonOperator {
     readonly $childIndex?: number;
     readonly left: PrimaryExpression.Transport;
     readonly operators: readonly (LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.LtGt, "<>"> | LiteralTransport<TSKindId.In, "in"> | LiteralTransport<number, "not in"> | LiteralTransport<TSKindId.Is, "is"> | LiteralTransport<number, "is not">)[];
+    readonly $children: readonly (PrimaryExpression.Transport)[];
   }
 }
 
@@ -4842,7 +4843,7 @@ export namespace ExpressionList {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (Expression.Transport)[];
+    readonly $children: readonly (Expression.Transport | LiteralTransport<TSKindId.Comma, ",">)[];
   }
 }
 
@@ -5057,7 +5058,7 @@ export namespace ImportFromStatement {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly module_name: RelativeImport.Transport | DottedName.Transport;
-    readonly $children: readonly [WildcardImport.Transport];
+    readonly $children: readonly (WildcardImport.Transport | DottedName.Transport | AliasedImport.Transport)[];
   }
 }
 
@@ -5391,7 +5392,7 @@ export namespace PatternList {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (Pattern.Transport)[];
+    readonly $children: readonly (Pattern.Transport | LiteralTransport<TSKindId.Comma, ",">)[];
   }
 }
 
@@ -5505,8 +5506,7 @@ export namespace SplatPattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly identifier: _Identifier.Transport;
-    readonly $children: readonly [Identifier.Transport];
+    readonly identifier: _Identifier.Transport | Identifier.Transport | LiteralTransport<TSKindId.Anonymous, "_">;
   }
 }
 
@@ -5840,7 +5840,7 @@ export namespace Yield {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Expression.Transport | Expressions.Transport];
+    readonly $children?: readonly [LiteralTransport<TSKindId.From, "from"> | Expression.Transport | Expressions.Transport];
   }
 }
 

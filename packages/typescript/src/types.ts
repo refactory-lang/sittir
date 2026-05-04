@@ -2133,7 +2133,7 @@ export interface _CallSignature {
 
 export interface ClassBodyMember {
   readonly $type: TSKindId.ClassBodyMember;
-  readonly $children: readonly [AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon];
+  readonly $children: readonly [AbstractMethodSignature | IndexSignature | MethodSignature | PublicFieldDefinition | Semicolon | ","];
 }
 
 export interface ClassBodyMethod {
@@ -2146,7 +2146,7 @@ export interface ClassBodyMethod {
 
 export interface ClassBodyMethodSig {
   readonly $type: TSKindId.ClassBodyMethodSig;
-  readonly $children: readonly [MethodSignature | FunctionSignatureAutomaticSemicolon];
+  readonly $children: readonly [MethodSignature | FunctionSignatureAutomaticSemicolon | ","];
 }
 
 export interface _ClassHeritageExtendsClause {
@@ -2164,12 +2164,12 @@ export interface ExportStatementDefaultDeclArm {
   readonly $fields: {
     readonly decorator: readonly (Decorator)[];
   };
-  readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKw];
+  readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKw];
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKw {
   readonly $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw;
-  readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKwValue];
+  readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKwValue];
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValue {
@@ -2336,7 +2336,7 @@ export interface JsxStartOpeningElement {
 
 export interface JsxString {
   readonly $type: "_jsx_string";
-  readonly $children: readonly (UnescapedDoubleJsxStringFragment | UnescapedSingleJsxStringFragment | HtmlCharacterReference)[];
+  readonly $children: readonly (UnescapedDoubleJsxStringFragment | HtmlCharacterReference | UnescapedSingleJsxStringFragment)[];
 }
 
 export interface LhsExpression {
@@ -2725,7 +2725,7 @@ export interface Class {
 
 export interface ClassBody {
   readonly $type: TSKindId.ClassBody;
-  readonly $children: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember)[];
+  readonly $children: readonly (ClassBodyMethod | ClassBodyMethodSig | ClassStaticBlock | ClassBodyMember | ";")[];
 }
 
 export interface ClassDeclaration {
@@ -2890,7 +2890,7 @@ export interface EnumAssignment {
 
 export interface EnumBody {
   readonly $type: TSKindId.EnumBody;
-  readonly $children: readonly (EnumAssignment)[];
+  readonly $children: readonly (PropertyName | EnumAssignment)[];
 }
 
 export interface EnumDeclaration {
@@ -3322,7 +3322,7 @@ export interface JsxExpression {
 
 export interface JsxNamespaceName {
   readonly $type: "jsx_namespace_name";
-  readonly $children: readonly (_JsxIdentifier)[];
+  readonly $children: readonly [_JsxIdentifier];
 }
 
 export interface JsxOpeningElement {
@@ -3388,6 +3388,7 @@ export interface MemberExpression {
     readonly object: Expression | PrimaryExpression | Import;
     readonly property: PrivatePropertyIdentifier | Identifier;
   };
+  readonly $children: readonly ["." | OptionalChain];
 }
 
 export interface MethodDefinition {
@@ -3484,7 +3485,7 @@ export interface NonNullExpression {
 
 export interface Object {
   readonly $type: TSKindId.Object;
-  readonly $children: readonly (Pair | Pair | SpreadElement | SpreadElement | MethodDefinition | MethodDefinition | ShorthandPropertyIdentifier | ShorthandPropertyIdentifier)[];
+  readonly $children: readonly (Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier | Pair | SpreadElement | MethodDefinition | ShorthandPropertyIdentifier)[];
 }
 
 export interface ObjectAssignmentPattern {
@@ -3497,7 +3498,7 @@ export interface ObjectAssignmentPattern {
 
 export interface ObjectPattern {
   readonly $type: TSKindId.ObjectPattern;
-  readonly $children: readonly (PairPattern | PairPattern | RestPattern | RestPattern | ObjectAssignmentPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern | ShorthandPropertyIdentifierPattern)[];
+  readonly $children: readonly (PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern | PairPattern | RestPattern | ObjectAssignmentPattern | ShorthandPropertyIdentifierPattern)[];
 }
 
 export interface ObjectType {
@@ -7529,7 +7530,7 @@ export namespace ClassBodyMember {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [AbstractMethodSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | PublicFieldDefinition.Transport | Semicolon.Transport];
+    readonly $children: readonly [AbstractMethodSignature.Transport | IndexSignature.Transport | MethodSignature.Transport | PublicFieldDefinition.Transport | Semicolon.Transport | LiteralTransport<TSKindId.Comma, ",">];
   }
 }
 
@@ -7556,7 +7557,7 @@ export namespace ClassBodyMethodSig {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [MethodSignature.Transport | FunctionSignatureAutomaticSemicolon.Transport];
+    readonly $children: readonly [MethodSignature.Transport | FunctionSignatureAutomaticSemicolon.Transport | LiteralTransport<TSKindId.Comma, ",">];
   }
 }
 
@@ -7608,7 +7609,7 @@ export namespace ExportStatementDefaultDeclArm {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly decorator: readonly (Decorator.Transport)[];
-    readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKw.Transport];
+    readonly $children: readonly [Declaration.Transport | ExportStatementDefaultDeclArmDefaultKw.Transport];
   }
 }
 
@@ -7621,7 +7622,7 @@ export namespace ExportStatementDefaultDeclArmDefaultKw {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [ExportStatementDefaultDeclArmDefaultKwValue.Transport];
+    readonly $children: readonly [Declaration.Transport | ExportStatementDefaultDeclArmDefaultKwValue.Transport];
   }
 }
 
@@ -7964,7 +7965,7 @@ export namespace JsxString {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (UnescapedDoubleJsxStringFragment.Transport | UnescapedSingleJsxStringFragment.Transport | HtmlCharacterReference.Transport)[];
+    readonly $children: readonly (UnescapedDoubleJsxStringFragment.Transport | HtmlCharacterReference.Transport | UnescapedSingleJsxStringFragment.Transport)[];
   }
 }
 
@@ -8827,7 +8828,7 @@ export namespace ClassBody {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (ClassBodyMethod.Transport | ClassBodyMethodSig.Transport | ClassStaticBlock.Transport | ClassBodyMember.Transport)[];
+    readonly $children: readonly (ClassBodyMethod.Transport | ClassBodyMethodSig.Transport | ClassStaticBlock.Transport | ClassBodyMember.Transport | LiteralTransport<TSKindId.Semi, ";">)[];
   }
 }
 
@@ -9149,7 +9150,7 @@ export namespace EnumBody {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (EnumAssignment.Transport)[];
+    readonly $children: readonly (PropertyName.Transport | EnumAssignment.Transport)[];
   }
 }
 
@@ -9993,7 +9994,7 @@ export namespace JsxNamespaceName {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (JsxIdentifier.Transport)[];
+    readonly $children: readonly [JsxIdentifier.Transport];
   }
 }
 
@@ -10109,6 +10110,7 @@ export namespace MemberExpression {
     readonly $childIndex?: number;
     readonly object: Expression.Transport | PrimaryExpression.Transport | Import.Transport;
     readonly property: PrivatePropertyIdentifier.Transport | Identifier.Transport;
+    readonly $children: readonly [LiteralTransport<TSKindId.Dot, "."> | OptionalChain.Transport];
   }
 }
 

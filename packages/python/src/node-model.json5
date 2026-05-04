@@ -559,16 +559,7 @@
               "multiplicity": "array",
               "name": "for_in_clause",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -1013,16 +1004,7 @@
               "multiplicity": "single",
               "name": "integer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "float",
-          "propertyName": "float",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1119,8 +1101,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "block",
-          "propertyName": "block",
+          "name": "simple_statements",
+          "propertyName": "simpleStatements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1317,40 +1299,10 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "list_splat",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat",
-          "propertyName": "dictionarySplat",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -1359,44 +1311,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dictionary_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "parenthesized_list_splat",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "parenthesized_list_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_argument",
-          "propertyName": "keywordArgument",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "keyword_argument",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "list_splat",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "dictionary_splat",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "parenthesized_list_splat",
               "unresolved": true
             },
             {
@@ -2232,31 +2178,13 @@
               "multiplicity": "single",
               "name": "_as_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_pattern",
-          "propertyName": "keywordPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "simple_pattern",
-          "propertyName": "simplePattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -2581,7 +2509,23 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "primary_expression",
+          "propertyName": "primaryExpression",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "primary_expression",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "complex_pattern",
@@ -2655,16 +2599,7 @@
               "multiplicity": "single",
               "name": "integer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "float",
-          "propertyName": "float",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3124,16 +3059,7 @@
               "multiplicity": "array",
               "name": "pair",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat",
-          "propertyName": "dictionarySplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -3249,46 +3175,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_identifier",
-          "propertyName": "keywordIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript",
-          "propertyName": "subscript",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attribute",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3667,6 +3566,11 @@
               "unresolved": true
             },
             {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
+            },
+            {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "expression",
@@ -4031,8 +3935,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "format_expression",
-          "propertyName": "formatExpression",
+          "name": "interpolation",
+          "propertyName": "interpolation",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -4583,13 +4487,25 @@
           "name": "wildcard_import",
           "propertyName": "wildcardImport",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "wildcard_import",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dotted_name",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "aliased_import",
               "unresolved": true
             }
           ]
@@ -5052,46 +4968,19 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5231,46 +5120,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_identifier",
-          "propertyName": "keywordIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript",
-          "propertyName": "subscript",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attribute",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5700,16 +5562,7 @@
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5729,8 +5582,8 @@
       "hidden": false,
       "children": [
         {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
+          "name": "parenthesized_list_splat",
+          "propertyName": "parenthesizedListSplat",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5740,16 +5593,7 @@
               "multiplicity": "single",
               "name": "parenthesized_list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5817,6 +5661,11 @@
               "multiplicity": "single",
               "name": "pattern",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             },
             {
               "kind": "node-ref",
@@ -6111,46 +5960,19 @@
               "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -6313,34 +6135,30 @@
               "multiplicity": "single",
               "name": "_identifier",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_identifier"
+              "_identifier",
+              "identifier"
             ]
           }
         }
       ],
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "splat_type",
@@ -6490,46 +6308,19 @@
               "multiplicity": "nonEmptyArray",
               "name": "escape_interpolation",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "not_escape_sequence",
-          "propertyName": "notEscapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_not_escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string_content",
-          "propertyName": "stringContent",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -6764,46 +6555,19 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -6859,76 +6623,31 @@
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "splat_type",
-          "propertyName": "splatType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "splat_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "generic_type",
-          "propertyName": "genericType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "union_type",
-          "propertyName": "unionType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "union_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "constrained_type",
-          "propertyName": "constrainedType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "constrained_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_type",
-          "propertyName": "memberType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7179,31 +6898,13 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat_pattern",
-          "propertyName": "listSplatPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "list_splat_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat_pattern",
-          "propertyName": "dictionarySplatPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7714,25 +7415,21 @@
         {
           "name": "expression",
           "propertyName": "expression",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "from"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",

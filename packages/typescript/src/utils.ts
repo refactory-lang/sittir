@@ -165,7 +165,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "_export_statement_default_decl_arm": {
     childrenRequired: true,
-    childAlternatives: [{"type":"_export_statement_default_decl_arm_default_kw"}] as const,
+    childAlternatives: [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
@@ -2171,7 +2171,7 @@ function assertClassBodyMemberTransport(node: Record<string, unknown>, path: str
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"abstract_method_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"public_field_definition"},{"type":"_automatic_semicolon"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"abstract_method_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"public_field_definition"},{"type":"_automatic_semicolon"},{"type":",","text":","}] as const);
     }
   }
 }
@@ -2197,7 +2197,7 @@ function assertClassBodyMethodSigTransport(node: Record<string, unknown>, path: 
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"method_signature"},{"type":"_function_signature_automatic_semicolon"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"method_signature"},{"type":"_function_signature_automatic_semicolon"},{"type":",","text":","}] as const);
     }
   }
 }
@@ -2247,7 +2247,7 @@ function assertExportStatementDefaultDeclArmTransport(node: Record<string, unkno
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_decl_arm_default_kw"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw"}] as const);
     }
   }
 }
@@ -2259,7 +2259,7 @@ function assertExportStatementDefaultDeclArmDefaultKwTransport(node: Record<stri
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_export_statement_default_decl_arm_default_kw_value"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw_value"}] as const);
     }
   }
 }
@@ -2544,7 +2544,7 @@ function assertJsxStringTransport(node: Record<string, unknown>, path: string): 
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"unescaped_double_jsx_string_fragment"},{"type":"unescaped_single_jsx_string_fragment"},{"type":"html_character_reference"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"unescaped_double_jsx_string_fragment"},{"type":"html_character_reference"},{"type":"unescaped_single_jsx_string_fragment"}] as const);
     }
   }
 }
@@ -3260,7 +3260,7 @@ function assertClassBodyTransport(node: Record<string, unknown>, path: string): 
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_class_body_method"},{"type":"_class_body_method_sig"},{"type":"class_static_block"},{"type":"_class_body_member"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"_class_body_method"},{"type":"_class_body_method_sig"},{"type":"class_static_block"},{"type":"_class_body_member"},{"type":";","text":";"}] as const);
     }
   }
 }
@@ -3514,7 +3514,7 @@ function assertEnumBodyTransport(node: Record<string, unknown>, path: string): v
   if (node.$children !== undefined) {
     if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
     for (let i = 0; i < node.$children.length; i++) {
-      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"enum_assignment"}] as const);
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"},{"type":"enum_assignment"}] as const);
     }
   }
 }
@@ -4340,6 +4340,13 @@ function assertMemberExpressionTransport(node: Record<string, unknown>, path: st
   if (node["object"] !== undefined) assertTransportValue(node["object"], `${path}.object`, [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"import","text":"import"}] as const);
   if (node["property"] === undefined) throw new TypeError(`${path}.property` + ' is required');
   if (node["property"] !== undefined) assertTransportValue(node["property"], `${path}.property`, [{"type":"private_property_identifier"},{"type":"identifier"}] as const);
+  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);
+  if (node.$children !== undefined) {
+    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);
+    for (let i = 0; i < node.$children.length; i++) {
+      assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":".","text":"."},{"type":"_optional_chain","text":"?."}] as const);
+    }
+  }
 }
 
 function assertMetaPropertyTransport(node: Record<string, unknown>, path: string): void {

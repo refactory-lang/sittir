@@ -212,6 +212,8 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
+    "_outer_block_doc_comment_marker": "text",
+    "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
     "fn": "text",
     "async": "text",
@@ -323,9 +325,6 @@
       "left",
       "operator",
       "right"
-    ],
-    "block_comment": [
-      "doc"
     ],
     "bounded_type": [
       "left",
@@ -509,9 +508,6 @@
     ],
     "negative_literal": [
       "value"
-    ],
-    "ordered_field_declaration_list": [
-      "type"
     ],
     "parameter": [
       "mutable_specifier",

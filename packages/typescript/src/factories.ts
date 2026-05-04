@@ -246,7 +246,7 @@ export function _exportStatementDefaultDeclArm(config: ConfigOf<T.ExportStatemen
     $fields: fields,
     $children: children,
     decorator(...values: T.Decorator[]) { return _setFields(config, _exportStatementDefaultDeclArm, 'decorator', values, config?.decorator); },
-    child(value?: T.ExportStatementDefaultDeclArmDefaultKw) {
+    child(value?: (T.Declaration | T.ExportStatementDefaultDeclArmDefaultKw)) {
       if (value === undefined) return children[0];
       return _exportStatementDefaultDeclArm({ ...config, children: [value] });
     },
@@ -262,7 +262,7 @@ export function _exportStatementDefaultDeclArmDefaultKw(config: ConfigOf<T.Expor
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    child(value?: T.ExportStatementDefaultDeclArmDefaultKwValue) {
+    child(value?: (T.Declaration | T.ExportStatementDefaultDeclArmDefaultKwValue)) {
       if (value === undefined) return children[0];
       return _exportStatementDefaultDeclArmDefaultKw({ ...config, children: [value] });
     },
@@ -1935,7 +1935,7 @@ export function enumBody(config: ConfigOf<T.EnumBody>) {
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    children(...items: T.EnumAssignment[]) {
+    children(...items: (T.PropertyName | T.EnumAssignment)[]) {
       if (items.length === 0) return children;
       return enumBody({ ...config, children: items });
     },
@@ -3028,13 +3028,19 @@ export function memberExpression(config: ConfigOf<T.MemberExpression>) {
     object: config.object,
     property: config.property,
   };
+  const children = config.children ?? [];
   return {
     $type: TSKindId.MemberExpression as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     object(value?: T.Expression | T.PrimaryExpression | T.Import) { return _setField(config, memberExpression, 'object', value, config?.object); },
     property(value?: T.PrivatePropertyIdentifier | T.Identifier) { return _setField(config, memberExpression, 'property', value, config?.property); },
+    child(value?: T.OptionalChain) {
+      if (value === undefined) return children[0];
+      return memberExpression({ ...config, children: [value] });
+    },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.MemberExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
   };

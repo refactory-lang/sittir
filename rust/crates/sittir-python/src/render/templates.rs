@@ -2884,6 +2884,71 @@ impl ::sittir_core::types::RenderableTransport for DictionaryChildTransport {
 }
 
 #[derive(Debug, Clone)]
+pub enum ImportFromStatementChildTransport {
+    WildcardImport(WildcardImportTransport),
+    DottedName(Box<DottedNameTransport>),
+    AliasedImport(Box<AliasedImportTransport>),
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for ImportFromStatementChildTransport {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let kind_id: u16 = obj.get("$type")?
+            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ImportFromStatementChildTransport"))?;
+        match kind_id {
+            118 => Ok(Self::WildcardImport(
+                WildcardImportTransport::from_napi_value(env, napi_val)?
+            )),
+            162 => Ok(Self::DottedName(Box::new(
+                DottedNameTransport::from_napi_value(env, napi_val)?
+            ))),
+            117 => Ok(Self::AliasedImport(Box::new(
+                AliasedImportTransport::from_napi_value(env, napi_val)?
+            ))),
+            other => Err(::napi::Error::from_reason(format!(
+                "unknown kind id {{other}} in ImportFromStatementChildTransport",
+            ))),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for ImportFromStatementChildTransport {
+    unsafe fn to_napi_value(
+        _env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        Err(::napi::Error::from_reason("ImportFromStatementChildTransport is receive-only"))
+    }
+}
+
+fn import_from_statement_child_transport_to_any(t: ImportFromStatementChildTransport) -> AnyTransport {
+    match t {
+        ImportFromStatementChildTransport::WildcardImport(inner) => AnyTransport::WildcardImport(inner),
+        ImportFromStatementChildTransport::DottedName(inner) => AnyTransport::DottedName(*inner),
+        ImportFromStatementChildTransport::AliasedImport(inner) => AnyTransport::AliasedImport(*inner),
+    }
+}
+
+impl ::sittir_core::types::RenderableTransport for ImportFromStatementChildTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        let s = match self {
+            ImportFromStatementChildTransport::WildcardImport(inner) => render_wildcard_import_transport(inner)?,
+            ImportFromStatementChildTransport::DottedName(inner) => render_dotted_name_transport(inner.as_ref())?,
+            ImportFromStatementChildTransport::AliasedImport(inner) => render_aliased_import_transport(inner.as_ref())?,
+        };
+        dest.write_str(&s).map_err(::askama::Error::from)
+    }
+}
+
+#[derive(Debug, Clone)]
 pub enum ListChildTransport {
     Yield(Box<YieldTransport>),
     ListSplat(Box<ListSplatTransport>),
@@ -5046,6 +5111,8 @@ pub struct ComparisonOperatorTransport {
     pub transport_child_index: Option<f64>,
     pub left: PrimaryExpressionTransport,
     pub operators: Vec<AnyTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: Vec<PrimaryExpressionTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for ComparisonOperatorTransport {
@@ -6477,7 +6544,7 @@ pub struct ImportFromStatementTransport {
     pub transport_child_index: Option<f64>,
     pub module_name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: WildcardImportTransport,
+    pub children: Vec<ImportFromStatementChildTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for ImportFromStatementTransport {
@@ -7875,9 +7942,7 @@ pub struct SplatPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    pub identifier: _IdentifierEnum,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: IdentifierTransport,
+    pub identifier: Box<AnyTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for SplatPatternTransport {
@@ -8806,7 +8871,7 @@ pub struct YieldTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Box<AnyTransport>,
+    pub children: Option<Box<AnyTransport>>,
 }
 
 impl ::sittir_core::types::RenderableTransport for YieldTransport {
@@ -13751,7 +13816,9 @@ fn render_comment_transport(t: &CommentTransport) -> Result<String, ::askama::Er
 }
 
 fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let operators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.operators.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
@@ -14241,7 +14308,9 @@ fn render_if_statement_transport(node: &IfStatementTransport) -> Result<String, 
 }
 
 fn render_import_from_statement_transport(node: &ImportFromStatementTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let template = ImportFromStatementTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -14679,7 +14748,7 @@ fn render_slice_transport(node: &SliceTransport) -> Result<String, ::askama::Err
 }
 
 fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let template = SplatPatternTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -14687,7 +14756,7 @@ fn render_splat_pattern_transport(node: &SplatPatternTransport) -> Result<String
             leading: false,
             trailing: false,
         },
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier as &dyn ::sittir_core::types::RenderableTransport)),
+        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
     };
     template.render()
 }
@@ -14991,7 +15060,7 @@ fn render_with_statement_transport(node: &WithStatementTransport) -> Result<Stri
 }
 
 fn render_yield_transport(node: &YieldTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c.as_ref())).collect();
     let template = YieldTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
@@ -16856,7 +16925,7 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
     fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(transport.left))?);
     fields.insert("operators".to_string(), transport_field_values(transport.operators)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(195) /* "comparison_operator" */,
         transport.transport_source,
@@ -17615,7 +17684,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
     let mut fields = TransportHashMap::new();
     fields.insert("module_name".to_string(), transport_field_value(*transport.module_name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::WildcardImport(transport.children)])?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| import_from_statement_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(115) /* "import_from_statement" */,
         transport.transport_source,
@@ -18335,9 +18404,9 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
 
 fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
-    fields.insert("identifier".to_string(), transport_field_value(AnyTransport::_Identifier(transport.identifier))?);
+    fields.insert("identifier".to_string(), transport_field_value(*transport.identifier)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::Identifier(transport.children)])?);
+    let children = None;
     Ok(transport_node_data(
         TransportKindId(172) /* "splat_pattern" */,
         transport.transport_source,
@@ -18839,7 +18908,10 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
 fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![*transport.children])?);
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![*c])?),
+        None => None,
+    };
     Ok(transport_node_data(
         TransportKindId(202) /* "yield" */,
         transport.transport_source,

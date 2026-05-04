@@ -1329,6 +1329,7 @@ export function memberExpressionFrom(input: T.MemberExpression.Loose): ReturnTyp
   return F.memberExpression({
     object: _resolveOne<T.Expression | T.PrimaryExpression | T.Import>(input.object, _K15, _K34),
     property: _resolveOne<T.PrivatePropertyIdentifier | T.Identifier>(input.property, _K35, _K2),
+    children: _resolveOneLeaf(input.children, "_optional_chain"),
   });
 }
 

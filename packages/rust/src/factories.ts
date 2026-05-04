@@ -908,7 +908,7 @@ export function attribute(config: ConfigOf<T.Attribute>) {
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    child(value?: T.Path) {
+    child(value?: (T.Path | T.Expression | T.DelimTokenTree)) {
       if (value === undefined) return children[0];
       return attribute({ ...config, children: [value] });
     },
@@ -1000,12 +1000,18 @@ export function blockComment(config?: ConfigOf<T.BlockComment>) {
   const fields = {
     doc: config?.doc,
   };
+  const children = config?.children ?? [];
   return {
     $type: TSKindId.BlockComment as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     doc(value?: T.BlockCommentContent | undefined) { return _setField(config, blockComment, 'doc', value, config?.doc); },
+    child(value?: (T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker)) {
+      if (value === undefined) return children[0];
+      return blockComment({ ...config, children: [value] });
+    },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.BlockCommentTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
@@ -2921,12 +2927,18 @@ export function orderedFieldDeclarationList(config: ConfigOf<T.OrderedFieldDecla
   const fields = {
     type: config.type,
   };
+  const children = config.children ?? [];
   return {
     $type: TSKindId.OrderedFieldDeclarationList as number,
     $source: 2 as const,
     $named: true as const,
     $fields: fields,
+    $children: children,
     typeField(...values: T._Type[]) { return _setFields(config, orderedFieldDeclarationList, 'type', values, config?.type); },
+    children(...items: (T.AttributeItem | T.VisibilityModifier)[]) {
+      if (items.length === 0) return children;
+      return orderedFieldDeclarationList({ ...config, children: items });
+    },
     ..._branchMethods,
     replace(this: AnyNodeData, target: T.OrderedFieldDeclarationListTree): Edit { const r = target.range(); return toEdit(this, r); },
   };
@@ -3647,7 +3659,7 @@ export function structPattern(config: ConfigOf<T.StructPattern>) {
     $fields: fields,
     $children: children,
     typeField(value?: T.TypeIdentifier | T.ScopedTypeIdentifier) { return _setField(config, structPattern, 'type', value, config?.type); },
-    children(...items: T.FieldPattern[]) {
+    children(...items: (T.FieldPattern | T.RemainingFieldPattern)[]) {
       if (items.length === 0) return children;
       return structPattern({ ...config, children: items });
     },

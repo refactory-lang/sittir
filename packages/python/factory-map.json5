@@ -234,10 +234,6 @@
       "dotted_name",
       "arguments"
     ],
-    "comparison_operator": [
-      "left",
-      "operators"
-    ],
     "conditional_expression": [
       "body",
       "condition",
@@ -361,6 +357,9 @@
       "start",
       "stop",
       "step"
+    ],
+    "splat_pattern": [
+      "identifier"
     ],
     "splat_type": [
       "identifier"
