@@ -82,21 +82,38 @@ export interface UnresolvedRef {
  * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
  * before that pass (or for unresolvable dead-kind references) it holds
  * an `UnresolvedRef`.
+ *
+ * Per-value `separator` / `trailing` / `leading` (introduced in spec 022
+ * Phase 1d.iii) replace the prior per-slot `AssembledNonterminal.hasTrailing`
+ * / `hasLeading` flags. Only meaningful when this value's `multiplicity`
+ * is `'array'` or `'nonEmptyArray'`. Populated by the unified `deriveSlots`
+ * walk (Phase 1d.iv) — undefined on values from non-repeat positions or
+ * for the duration of the migration where the populating walk hasn't
+ * been wired yet.
  */
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
 	readonly multiplicity: Multiplicity;
+	readonly separator?: string;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
 }
 
 /**
  * A slot-content entry that is an inline string literal (e.g. `'const'`,
  * `'pub'`, an enum member). The `value` is the exact grammar string.
+ *
+ * See {@link NodeRef} for the per-value `separator` / `trailing` / `leading`
+ * semantics introduced in Phase 1d.iii.
  */
 export interface TerminalValue {
 	readonly kind: 'terminal';
 	readonly value: string;
 	readonly multiplicity: Multiplicity;
+	readonly separator?: string;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
 }
 
 /**
