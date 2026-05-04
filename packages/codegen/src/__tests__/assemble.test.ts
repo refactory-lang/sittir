@@ -94,12 +94,16 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('function_item', rule)).toBe('branch');
 	});
 
-	it('classifies visible repeat as container', () => {
+	it('classifies visible repeat as branch (container-shape)', () => {
+		// Phase 1d.vii (spec 022): the prior `'container'` modelType was
+		// folded into `'branch'`. Container-shape kinds (no `field()` on
+		// the rule) are still `AssembledBranch` instances; the per-emitter
+		// discriminator is now `AssembledBranch.isContainerShape`.
 		const rule: Rule = {
 			type: 'repeat',
 			content: { type: 'symbol', name: 'item' }
 		};
-		expect(classifyNode('items', rule)).toBe('container');
+		expect(classifyNode('items', rule)).toBe('branch');
 	});
 
 	it('classifies a PolymorphRule as polymorph', () => {

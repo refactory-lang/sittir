@@ -591,7 +591,6 @@ function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> 
 	for (const [, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'group':
 				break;
 			case 'polymorph':
@@ -1044,7 +1043,6 @@ function emitPerKindTransportValidator(
 	lines.push('  assertOptionalMetadata(node, path);');
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group':
 		case 'polymorph':
 			emitStructuralValidatorBody(lines, node, nodeMap);

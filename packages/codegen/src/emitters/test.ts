@@ -101,17 +101,33 @@ export function emitTests(config: EmitTestsConfig): string {
 		// generated factory signature is `fn(text: string)`, not a Config
 		// object. A node-model branch model with an all-external-token
 		// content structure is the trigger — invoke it with a string.
-		if (node.modelType === 'branch' && node.isTextTemplate(nodeMap.externals)) {
+		// Phase 1d.vii (spec 022): only true (field-carrying) branches
+		// hit the text-template short-circuit. The former-container
+		// shape (now `branch` with `isContainerShape === true`) keeps
+		// its rest-param test surface via `emitContainerTest` below,
+		// even when its content happens to look like a text-template —
+		// that preserves byte-identity with the pre-merge `'container'`
+		// arm.
+		if (
+			node.modelType === 'branch' &&
+			!node.isContainerShape &&
+			node.isTextTemplate(nodeMap.externals)
+		) {
 			emitTextTemplateBranchTest(lines, kind, key, kindEntries, nodeMap);
 			continue;
 		}
 
 		switch (node.modelType) {
 			case 'branch':
-				emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
-				break;
-			case 'container':
-				emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
+				// Phase 1d.vii (spec 022): the former `'container'` modelType
+				// is now `'branch'` with `isContainerShape === true`.
+				// Container-shape branches still need the rest-param test
+				// scaffolding.
+				if (node.isContainerShape) {
+					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
+				} else {
+					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
+				}
 				break;
 			case 'polymorph':
 				emitPolymorphTest(lines, node, kind, key, nodeMap, kindEntries);
@@ -236,19 +252,23 @@ function emitContainerTest(
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): void {
-	if (node.modelType !== 'container') return;
+	// Phase 1d.vii (spec 022): the former `'container'` modelType is now
+	// `'branch'` with `isContainerShape === true`. The caller already
+	// gates on that, but check defensively.
+	if (node.modelType !== 'branch' || !node.isContainerShape) return;
 
-	// Container factories take positional args: singular-child
-	// containers require one `child?` and repeated containers take
+	// Container-shape branch factories take positional args: singular-
+	// child containers require one `child?` and repeated containers take
 	// `...children` rest args. We need a placeholder element when:
 	//   - the singular child is required, OR
 	//   - any multi children slot is `nonEmpty` (repeat1-sourced)
 	//     — the factory's `_assertNonEmpty` helper throws on empty
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
-	const first = node.children[0];
+	const children = node.children ?? [];
+	const first = children[0];
 	const requiredSingular = first && !isMultiple(first) && isRequired(first);
-	const anyNonEmpty = node.children.some((c) => isNonEmpty(c));
+	const anyNonEmpty = children.some((c) => isNonEmpty(c));
 	const firstKindName = first ? slotKindNames(first)[0] : undefined;
 	const placeholder =
 		(requiredSingular || anyNonEmpty) && firstKindName
@@ -570,9 +590,12 @@ function resolveInnerContainerNonEmptyChild(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string | null {
-	// Only container-shaped inners go through this path — others surface
-	// their data via fields.
-	if (innerNode.modelType !== 'container') return null;
+	// Only container-shape branches go through this path — others surface
+	// their data via fields. Phase 1d.vii (spec 022) merged the former
+	// `AssembledContainer` into `AssembledBranch`; the discriminant is
+	// `modelType === 'branch' && isContainerShape === true`.
+	if (innerNode.modelType !== 'branch' || !innerNode.isContainerShape)
+		return null;
 	const childSlots = innerNode.children;
 	if (!childSlots || childSlots.length === 0) return null;
 	const firstRequired = childSlots.find((c) => isRequired(c) && isNonEmpty(c));

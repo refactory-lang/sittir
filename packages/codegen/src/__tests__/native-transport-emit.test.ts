@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledEnum,
 	AssembledGroup,
 	AssembledKeyword,
@@ -229,7 +228,7 @@ function makeHiddenSourceVisibleTransportNodeMap(): NodeMap {
 	nodes.set('_child_list', new AssembledMulti('_child_list', listRule));
 	nodes.set(
 		'child_list',
-		new AssembledContainer('child_list', listRule, listRule)
+		new AssembledBranch('child_list', listRule, listRule)
 	);
 	nodes.set(
 		'identifier',

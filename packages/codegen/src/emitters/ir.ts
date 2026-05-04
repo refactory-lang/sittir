@@ -125,11 +125,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (!isValidIdent(memberKey) || usedMemberKeys.has(memberKey)) continue;
 			usedMemberKeys.add(memberKey);
 
-			if (
-				sub.modelType === 'branch' ||
-				sub.modelType === 'container' ||
-				sub.modelType === 'polymorph'
-			) {
+			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
 				if (!sub.fromFunctionName) continue;
 				memberEntries.push(`  ${memberKey}: ${bundleExpr(sub)},`);
 			} else if (
@@ -168,11 +164,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_')) continue;
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
-		if (
-			node.modelType !== 'branch' &&
-			node.modelType !== 'container' &&
-			node.modelType !== 'polymorph'
-		)
+		if (node.modelType !== 'branch' && node.modelType !== 'polymorph')
 			continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.

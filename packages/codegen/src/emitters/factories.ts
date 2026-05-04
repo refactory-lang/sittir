@@ -683,12 +683,16 @@ function buildFactoryMapEntries(
 		// entry either. Lockstep with emitPerNodeFactories.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent =
-			node.modelType === 'branch' ||
-			node.modelType === 'container' ||
-			node.modelType === 'polymorph';
+			node.modelType === 'branch' || node.modelType === 'polymorph';
+		// Container-shape branches (Phase 1d.vii: former `AssembledContainer`)
+		// — no `field()` declarations on the rule; their factory takes a
+		// `children` rest-param and the validator dispatches on
+		// `shape === 'children'`. See `AssembledBranch.isContainerShape`.
+		const isContainerShape =
+			node.modelType === 'branch' && node.isContainerShape;
 		let shape: 'config' | 'children' | 'text';
 		if (node.isTextTemplate(nodeMap.externals)) shape = 'text';
-		else if (node.modelType === 'container') shape = 'children';
+		else if (isContainerShape) shape = 'children';
 		else if (
 			node.modelType === 'leaf' ||
 			node.modelType === 'keyword' ||
@@ -787,6 +791,24 @@ function renderFactoryForNode(
 	}
 	switch (node.modelType) {
 		case 'branch':
+			// Phase 1d.vii (spec 022): the former `AssembledContainer`
+			// shape (no `field()` on the rule) is now an `AssembledBranch`
+			// with `isContainerShape === true`. Route to
+			// `emitContainerFactory` so the rest-param signature and
+			// `$children` shape are preserved byte-identically.
+			if (node.isContainerShape) {
+				return emitContainerFactory(
+					{
+						kind: node.kind,
+						typeName: node.typeName,
+						treeTypeName: node.treeTypeName,
+						rawFactoryName: node.rawFactoryName,
+						children: node.children ?? []
+					},
+					nodeMap,
+					kindEntries
+				);
+			}
 			return emitFieldCarryingFactory(
 				node,
 				node.fields,
@@ -804,8 +826,6 @@ function renderFactoryForNode(
 				false,
 				kindEntries
 			);
-		case 'container':
-			return emitContainerFactory(node, nodeMap, kindEntries);
 		case 'polymorph':
 			return emitPolymorphFactory(node, nodeMap, kindEntries);
 		case 'leaf': {
@@ -1816,8 +1836,15 @@ function emitHoistedPolymorphFormFactory(
 	//     inner kind is a hidden field-carrying group without
 	//     retrofitting factory emission onto every hidden group.
 	//     Example: python's `_assignment_eq`.
+	// Phase 1d.vii (spec 022): the former `AssembledContainer` shape is
+	// now an `AssembledBranch`. Distinguish via the structural
+	// `isContainerShape` getter (no `field()` on the rule). The
+	// `hoist.innerFields.length === 0` clause keeps the prior behavior
+	// for hoisted forms whose inner has empty derived fields too.
 	const innerIsContainer =
-		hoist.innerNode.modelType === 'container' && hoist.innerFields.length === 0;
+		hoist.innerNode.modelType === 'branch' &&
+		hoist.innerNode.isContainerShape &&
+		hoist.innerFields.length === 0;
 	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
 		const container = hoist.innerNode as unknown as {
 			children: readonly AssembledChild[];

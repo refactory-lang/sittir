@@ -204,11 +204,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear in a parsed tree; no wrap entry is needed.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		if (
-			node.modelType === 'branch' ||
-			node.modelType === 'container' ||
-			node.modelType === 'polymorph'
-		) {
+		if (node.modelType === 'branch' || node.modelType === 'polymorph') {
 			lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d, t),`);
 		} else if (
 			node.modelType === 'leaf' ||
@@ -383,11 +379,7 @@ function collectTypeImports(nodeMap: NodeMap): Set<string> {
 	const typeImports = new Set<string>();
 	for (const [, node] of nodeMap.nodes) {
 		if (!node.rawFactoryName) continue;
-		if (
-			node.modelType !== 'branch' &&
-			node.modelType !== 'container' &&
-			node.modelType !== 'polymorph'
-		)
+		if (node.modelType !== 'branch' && node.modelType !== 'polymorph')
 			continue;
 		if (!isValidIdent(node.typeName)) continue;
 		typeImports.add(node.typeName);
@@ -408,9 +400,17 @@ function renderWrapForNode(
 
 	switch (node.modelType) {
 		case 'branch':
-			return emitFieldCarryingWrap(node, node.fields, node.children ?? [], kindEntries, nodeMap);
-		case 'container':
-			return emitFieldCarryingWrap(node, [], node.children, kindEntries, nodeMap);
+			// Phase 1d.vii (spec 022): the former `'container'` modelType is
+			// now `'branch'` with `fields.length === 0`. Both shapes share the
+			// same wrap entry — fields is `[]` for the container case which
+			// `emitFieldCarryingWrap` already handles.
+			return emitFieldCarryingWrap(
+				node,
+				node.fields,
+				node.children ?? [],
+				kindEntries,
+				nodeMap
+			);
 		case 'polymorph': {
 			const { fields, children } =
 				mergePolymorphFormsIntoFieldsAndChildren(node);

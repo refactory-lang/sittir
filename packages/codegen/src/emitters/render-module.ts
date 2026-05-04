@@ -27,7 +27,7 @@ import type {
 	UnresolvedRef
 } from '../compiler/node-map.ts';
 import {
-	AssembledContainer,
+	AssembledBranch,
 	AssembledEnum,
 	AssembledPolymorph,
 	isMultiple,
@@ -1035,14 +1035,17 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	const variants = new Map<string, Map<string, string>>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
-		// Separator / list-container — only meaningful on containers and
-		// branches that expose a repeat separator. `AssembledContainer`
-		// surfaces one directly; branches/polymorphs don't in general.
-		if (node instanceof AssembledContainer) {
+		// Separator / list-container — only meaningful on container-shape
+		// branches (no `field()` on the rule, repeat-derived) that expose
+		// a repeat separator. Phase 1d.vii (spec 022) merged
+		// `AssembledContainer` into `AssembledBranch`; the discriminant
+		// is `isContainerShape === true` plus a non-empty `separator`.
+		if (node instanceof AssembledBranch && node.isContainerShape) {
 			const sep = node.separator;
 			if (sep !== undefined) separators.set(kind, sep);
-			// Every container with children is a list-container.
-			if (node.children.length > 0) listContainers.add(kind);
+			// Every container-shape branch with children is a list-container.
+			const childCount = node.children?.length ?? 0;
+			if (childCount > 0) listContainers.add(kind);
 		}
 		// Variant-branching polymorphs — `variantChildKinds` holds the
 		// ordered list of alias-target kinds. Map each child kind to the
@@ -1440,7 +1443,6 @@ function renderTypedKindFn(
 
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group': {
 			const struct = structsByKind.get(node.kind);
 			if (struct === undefined) {
@@ -3299,7 +3301,6 @@ function renderTransportToNodeFns(
 
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group':
 			return renderTransportDataToNodeFn(
 				rustTransportToNodeFnName(node.typeName),
@@ -3837,7 +3838,6 @@ function renderTransportDataStruct(
 	lines.push(`pub struct ${structName} {`);
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group':
 		case 'polymorph':
 			lines.push(...renderTransportMetadataFields(true));

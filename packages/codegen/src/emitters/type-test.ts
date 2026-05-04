@@ -114,7 +114,6 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 				structuralKinds.push({
 					kind,
 					typeName: node.typeName,

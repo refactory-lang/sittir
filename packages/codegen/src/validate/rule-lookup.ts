@@ -74,7 +74,6 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group':
 		case 'polymorph':
 			return 'template';

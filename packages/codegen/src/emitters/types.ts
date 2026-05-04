@@ -62,7 +62,6 @@ import type {
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledPolymorph,
 	AssembledGroup,
 	AssembledEnum,
@@ -93,11 +92,7 @@ import {
 	resolveTransportReferenceKind
 } from './transport-projection.ts';
 
-type StructuralNode =
-	| AssembledBranch
-	| AssembledContainer
-	| AssembledPolymorph
-	| AssembledGroup;
+type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
 type TerminalNode =
 	| AssembledPattern
 	| AssembledKeyword
@@ -535,7 +530,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 				structNodes.push(node);
 				break;
@@ -640,7 +634,6 @@ function emitTransportDeclarations(
 	for (const node of projection.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 			case 'group':
 				emitStructuralTransportNamespace(

@@ -96,11 +96,13 @@ interface SerializedBranch extends SerializedNodeBase {
 	modelType: 'branch';
 	fields: SerializedField[];
 	children: SerializedSlot[];
-}
-
-interface SerializedContainer extends SerializedNodeBase {
-	modelType: 'container';
-	children: SerializedSlot[];
+	/**
+	 * Repeat-list separator surfaced when the assembled rule was a
+	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
+	 * Field-carrying branches don't surface this — the repeat separator
+	 * is reachable via the per-value metadata on the relevant
+	 * `AssembledNonterminal` slot.
+	 */
 	separator?: string;
 }
 
@@ -156,7 +158,6 @@ interface SerializedMulti extends SerializedNodeBase {
 
 type SerializedNode =
 	| SerializedBranch
-	| SerializedContainer
 	| SerializedGroupNode
 	| SerializedPolymorph
 	| SerializedLeaf
@@ -221,20 +222,23 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		stampExpression: node.stampExpression
 	};
 	switch (node.modelType) {
-		case 'branch':
-			return {
+		case 'branch': {
+			// Phase 1d.vii (spec 022): `AssembledBranch` absorbed the
+			// former `AssembledContainer`. Container-shape branches
+			// (no fields) used to serialize as `modelType: 'container'`
+			// with a `separator` field; that variant is gone, but the
+			// runtime separator data still lives on `AssembledBranch.separator`
+			// for branches whose simplified rule is a `repeat` / `repeat1`.
+			// Surface it on the unified branch payload only when present.
+			const out: SerializedBranch = {
 				...base,
 				modelType: 'branch',
 				fields: node.fields.map(serializeField),
 				children: (node.children ?? []).map(serializeChild)
 			};
-		case 'container':
-			return {
-				...base,
-				modelType: 'container',
-				children: node.children.map(serializeChild),
-				separator: node.separator
-			};
+			if (node.separator !== undefined) out.separator = node.separator;
+			return out;
+		}
 		case 'group':
 			return {
 				...base,

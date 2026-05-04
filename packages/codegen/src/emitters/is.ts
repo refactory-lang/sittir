@@ -151,7 +151,6 @@ export function emitIs(config: EmitIsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph': {
 				const numericId = kindIdByKind.get(kind);
 				// TSGrammar-only skip: when kindEntries is available and this kind
@@ -183,9 +182,9 @@ export function emitIs(config: EmitIsConfig): string {
 			case 'multi':
 			case 'supertype':
 				// Per-kind guards exist only for structural kinds (branch /
-				// container / polymorph). Leaves / keywords / enums use shape
-				// guards (isNode / isTree) instead; tokens, groups, multi,
-				// and supertypes have no per-kind guard surface. Supertypes
+				// polymorph). Leaves / keywords / enums use shape guards
+				// (isNode / isTree) instead; tokens, groups, multi, and
+				// supertypes have no per-kind guard surface. Supertypes
 				// get their own guards in a separate pass below.
 				break;
 			default:

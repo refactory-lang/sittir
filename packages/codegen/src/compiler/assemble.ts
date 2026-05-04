@@ -33,7 +33,6 @@ import type {
 } from './node-map.ts';
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledPolymorph,
 	AssembledPattern,
 	AssembledKeyword,
@@ -107,19 +106,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 					kind,
 					new AssembledBranch(
 						kind,
-						inlinedRule as SeqRule | ChoiceRule,
-						simplifiedRule,
-						variantChildKinds ? { variantChildKinds } : undefined
-					)
-				);
-				break;
-			}
-			case 'container': {
-				nodes.set(
-					kind,
-					new AssembledContainer(
-						kind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+						inlinedRule as
+							| SeqRule
+							| ChoiceRule
+							| RepeatRule
+							| Repeat1Rule,
 						simplifiedRule,
 						variantChildKinds ? { variantChildKinds } : undefined
 					)
@@ -387,16 +378,11 @@ function buildVisibleVariantChildGroups(
 				groups.push(
 					new AssembledBranch(
 						visibleKind,
-						inlinedRule as SeqRule | ChoiceRule,
-						simplifiedRule
-					)
-				);
-				break;
-			case 'container':
-				groups.push(
-					new AssembledContainer(
-						visibleKind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+						inlinedRule as
+							| SeqRule
+							| ChoiceRule
+							| RepeatRule
+							| Repeat1Rule,
 						simplifiedRule
 					)
 				);
@@ -557,9 +543,6 @@ function getSlotsForParameterless(
 			return { fields: node.fields, children: node.children ?? [] };
 		case 'group':
 			return { fields: node.fields, children: node.children ?? [] };
-		case 'container':
-			// Containers have children but no fields
-			return { fields: [], children: node.children };
 		default:
 			return undefined;
 	}
@@ -832,9 +815,7 @@ function markUserFacing(nodes: Map<string, AssembledNode>): void {
 					? n.fields
 					: [];
 		const childSlots =
-			n.modelType === 'branch' ||
-			n.modelType === 'container' ||
-			n.modelType === 'group'
+			n.modelType === 'branch' || n.modelType === 'group'
 				? (n.children ?? [])
 				: [];
 		for (const slot of [...fieldSlots, ...childSlots]) {
@@ -1351,20 +1332,26 @@ function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
 }
 
 /**
- * Classify a rule as `branch` or `container` based on presence of fields or children,
+ * Classify a rule as `branch` based on presence of fields or children,
  * or return `null` when neither applies.
  *
+ * Phase 1d.vii (spec 022) collapsed the prior `'container'` model into
+ * `'branch'`: nodes that carry only unnamed children (no `field()` on
+ * the rule) are still `AssembledBranch` instances, distinguishable at
+ * the call site via `AssembledBranch.isContainerShape`. The single
+ * classification arm reflects that there is one runtime class for
+ * both shapes.
+ *
  * @param rule - The rule to inspect.
- * @returns `'branch'` if the rule has any named field, `'container'` if it has any
- *   unnamed child, or `null` when the rule contains neither.
+ * @returns `'branch'` if the rule has any named field or unnamed child,
+ *   or `null` when neither applies.
  * @remarks
- *   Only existence checks are performed — not full extraction. The class getters
- *   (`AssembledBranch.fields`, `AssembledContainer.children`) do the full walk
- *   later, once.
+ *   Only existence checks are performed — not full extraction. The class
+ *   getters (`AssembledBranch.fields`, `AssembledBranch.children`) do
+ *   the full walk later, once.
  */
 function classifyBranchOrContainer(rule: Rule): ModelType | null {
-	if (hasAnyField(rule)) return 'branch';
-	if (hasAnyChild(rule)) return 'container';
+	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';
 	return null;
 }
 

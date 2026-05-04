@@ -369,6 +369,25 @@ function renderFromForNode(
 	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
 	switch (node.modelType) {
 		case 'branch':
+			// Phase 1d.vii (spec 022): the former `AssembledContainer`
+			// shape (no `field()` on the rule) is now an `AssembledBranch`
+			// with `isContainerShape === true`. Dispatch on that BEFORE
+			// the text-template short-circuit so the original behavior is
+			// preserved byte-identically — containers always emit a
+			// rest-param `from()` regardless of any text-template flag.
+			if (node.isContainerShape) {
+				return emitContainerFrom(
+					{
+						kind: node.kind,
+						typeName: node.typeName,
+						rawFactoryName: node.rawFactoryName,
+						fromFunctionName: node.fromFunctionName,
+						children: node.children ?? []
+					},
+					kindEntries,
+					nodeMap
+				);
+			}
 			// Text-template branches (e.g. rust raw_string_literal) emit a
 			// factory of shape `(text: string)` per factory-map.json5, not a
 			// Config object. Route them through the string-like from() so
@@ -381,8 +400,6 @@ function renderFromForNode(
 				});
 			}
 			return emitBranchFrom(node, nodeMap, intern);
-		case 'container':
-			return emitContainerFrom(node, kindEntries, nodeMap);
 		case 'polymorph':
 			return emitPolymorphFrom(node, nodeMap, intern);
 		case 'leaf':
@@ -1390,7 +1407,6 @@ function classifyKindsForResolver(
 				break;
 			case 'supertype':
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 			case 'group':
 				branchKinds.push(t);

@@ -1593,8 +1593,8 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 * for nodes that don't need a template (leaves/keywords/enums/tokens
 	 * render via `.text` directly; supertypes dispatch through their
 	 * concrete subtype). Structural subclasses (AssembledBranch,
-	 * AssembledContainer, AssembledGroup, AssembledPolymorph) override
-	 * this to walk their rule tree and produce the right shape.
+	 * AssembledGroup, AssembledPolymorph) override this to walk their
+	 * rule tree and produce the right shape.
 	 */
 	renderTemplate(
 		_rules?: Record<string, Rule>,
@@ -2448,11 +2448,17 @@ function buildSlotsRecord(
 	return Object.freeze(out);
 }
 
-export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
+export class AssembledBranch extends AssembledNodeBase<
+	SeqRule | ChoiceRule | RepeatRule | Repeat1Rule
+> {
 	readonly modelType = 'branch' as const;
-	// rule narrowed to SeqRule | ChoiceRule — branches classify from
-	// compositional rules that carry fields / ordered children; the
-	// classifier routes only these two shapes here.
+	// rule narrowed to SeqRule | ChoiceRule | RepeatRule | Repeat1Rule —
+	// branches classify from compositional rules that carry fields and/or
+	// ordered children. Phase 1d.vii (spec 022) absorbed the prior
+	// `AssembledContainer` class — repeat / repeat1 shapes (no `field()`
+	// on the rule) now route here too. Use the `isContainerShape` getter
+	// below to discriminate when emitter behavior must differ between
+	// the two shapes.
 	/**
 	 * Rule with anonymous tokens / structural wrappers stripped.
 	 * Computed once by assemble() via `simplifyRule(init.rule)` and
@@ -2502,7 +2508,7 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 
 	constructor(
 		kind: string,
-		rule: SeqRule | ChoiceRule,
+		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 		simplifiedRule: Rule,
 		opts?: {
 			factoryName?: string;
@@ -2516,9 +2522,47 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
-	/** Direct access to the rule's ordered members (seq or choice). */
+	/**
+	 * Direct access to the rule's ordered members (seq or choice).
+	 * Returns an empty array for repeat / repeat1 — those shapes don't
+	 * carry an ordered member tuple (the `content` is a single repeated
+	 * rule, surfaced via `children`).
+	 */
 	get members(): readonly Rule[] {
-		return this.rule.members;
+		const r = this.rule;
+		return r.type === 'seq' || r.type === 'choice' ? r.members : [];
+	}
+
+	/**
+	 * Repeat-list separator (when the simplified rule is a `repeat` or
+	 * `repeat1` carrying a separator captured by Evaluate). Branches
+	 * derived from non-repeat shapes return `undefined`. Absorbed from
+	 * the former `AssembledContainer.separator` getter in Phase 1d.vii.
+	 */
+	get separator(): string | undefined {
+		const r = this.simplifiedRule;
+		if (r.type === 'repeat' || r.type === 'repeat1') {
+			return r.separator;
+		}
+		return undefined;
+	}
+
+	/**
+	 * `true` when this branch was the former `AssembledContainer` shape
+	 * — i.e., its raw rule contained no `field()` declaration. The
+	 * derivation matches the pre-Phase 1d.vii `classifyBranchOrContainer`
+	 * predicate exactly so emitters that previously branched on
+	 * `modelType === 'container'` keep byte-identical output. Note that
+	 * this is *not* the same as `fields.length === 0`: a branch can
+	 * declare `field()` slots that the simplified rule strips out (e.g.
+	 * field references whose visible target was inlined away),
+	 * leaving `fields` empty while the rule still carries field markers.
+	 * Those kinds were `'branch'` originally and stay on the
+	 * field-carrying factory path; only kinds with zero `field()` in the
+	 * raw rule trigger the rest-param container factory shape.
+	 */
+	get isContainerShape(): boolean {
+		return !hasAnyField(this.rule);
 	}
 
 	get fields(): AssembledField[] {
@@ -2569,7 +2613,19 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		// Template walking stays on the RAW rule — templates need the
 		// anonymous delimiters ('(', '{', ';', etc.) to surface as
 		// template text. Only derivations use simplifiedRule.
-		const optionalFields = deriveOptionalFieldNames(this.fields);
+		//
+		// Phase 1d.vii (spec 022): branches that absorbed the former
+		// `AssembledContainer` shape (children-only, no fields) skip the
+		// optional-field plumbing — `optionalFields` is empty by
+		// construction so the meta + walker call collapses cleanly. The
+		// `optionalChildren` flag (former-container path) flips on when
+		// `childrenMayBeEmpty` so flanking-space absorption fires for
+		// empty-body factory inputs.
+		const fields = this.fields;
+		const hasFields = fields.length > 0;
+		const optionalFields = hasFields
+			? deriveOptionalFieldNames(fields)
+			: undefined;
 		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
@@ -2589,26 +2645,40 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		// into this one chokepoint.
 		const withClauses = inlineJinjaClauses(template, clauses);
 		const meta: JinjaTranslateMeta = {};
-		const sep = findRepeatSeparator(this.simplifiedRule);
+		// Container-shape branches surface a separator on `repeat` /
+		// `repeat1` directly; field-carrying branches discover one via
+		// the simplified-rule walk. Prefer the direct getter when
+		// non-empty.
+		const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule);
 		if (sep) meta.joinBy = sep;
 		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
 			meta.joinByTrailing = true;
 		if (findRepeatFlag(this.simplifiedRule, 'leading'))
 			meta.joinByLeading = true;
-		const trailingFields = new Set(
-			this.fields.filter((f) => f.hasTrailing).map((f) => f.name)
-		);
-		const leadingFields = new Set(
-			this.fields.filter((f) => f.hasLeading).map((f) => f.name)
-		);
-		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
-		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		if (hasFields) {
+			const trailingFields = new Set(
+				fields.filter((f) => f.hasTrailing).map((f) => f.name)
+			);
+			const leadingFields = new Set(
+				fields.filter((f) => f.hasLeading).map((f) => f.name)
+			);
+			if (trailingFields.size > 0) meta.trailingFields = trailingFields;
+			if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		}
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
+		if (optionalFields && optionalFields.size > 0)
+			meta.optionalFields = optionalFields;
+		// Container-shape branches: empty children may collapse a flanking
+		// space pair into stray whitespace at render time. Set the meta
+		// flag so `translateToJinja` absorbs the spaces into an isPresent
+		// conditional. (T049 / 016 — moved verbatim from the former
+		// `AssembledContainer.renderTemplate`.)
+		if (!hasFields && childrenMayBeEmpty(this.simplifiedRule))
+			meta.optionalChildren = true;
 		return {
 			template: translateToJinja(withClauses, meta),
 			surface: buildRenderSurface({
-				fields: this.fields,
+				fields,
 				slots,
 				optionalFields,
 				usesChildren
@@ -2866,110 +2936,6 @@ function hasExternalBoundaries(
 		isExternalTerminalMember(first, externals) &&
 		isExternalTerminalMember(last, externals)
 	);
-}
-
-export class AssembledContainer extends AssembledNodeBase<
-	SeqRule | ChoiceRule | RepeatRule | Repeat1Rule
-> {
-	readonly modelType = 'container' as const;
-	// rule narrowed — containers hold ordered or repeated unnamed
-	// children (no fields). Classifier routes seq/choice/repeat/repeat1
-	// shapes here when the rule has children but no fields.
-	/** See `AssembledBranch.simplifiedRule`. */
-	readonly simplifiedRule: Rule;
-	/** See `AssembledBranch.variantChildKinds`. */
-	readonly variantChildKinds: readonly string[];
-
-	#children?: AssembledChild[];
-
-	constructor(
-		kind: string,
-		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-		simplifiedRule: Rule,
-		opts?: {
-			factoryName?: string;
-			irKey?: string;
-			variantChildKinds?: readonly string[];
-		}
-	) {
-		super(kind, rule, opts);
-		this.simplifiedRule = simplifiedRule;
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
-	}
-
-	get children(): AssembledChild[] {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = _slotsAsChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
-	}
-
-	/** Container interface surface = own children (no fields). */
-	override get structuralChildren(): readonly AssembledChild[] {
-		return this.children;
-	}
-
-	get separator(): string | undefined {
-		// Separator is captured on the repeat / repeat1 rule by Evaluate.
-		// Read from the simplified rule — if an anonymous-delimiter seq
-		// wrapped the repeat in the raw form, it's gone now and the
-		// repeat is at the root.
-		const r = this.simplifiedRule;
-		if (r.type === 'repeat' || r.type === 'repeat1') {
-			return r.separator;
-		}
-		return undefined;
-	}
-
-	renderTemplate(
-		rules?: Record<string, Rule>,
-		wordMatcher?: RegExp,
-		externals?: ReadonlySet<string>
-	): RenderTemplateEntry {
-		const textShape = this.textTemplate(externals);
-		if (textShape) return textShape;
-		// Template walking stays on RAW rule (needs literals); derivations
-		// and separator discovery use simplifiedRule. Containers carry no
-		// fields (children-only), so the optional-field set is empty.
-		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
-			this.rule,
-			false,
-			rules,
-			wordMatcher
-		);
-		if (!template) {
-			throw new Error(
-				`AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
-					`Rule has no visible content — should have been classified as leaf/token.`
-			);
-		}
-		const withClauses = inlineJinjaClauses(template, clauses);
-		const meta: JinjaTranslateMeta = {};
-		const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule);
-		if (sep) meta.joinBy = sep;
-		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
-			meta.joinByTrailing = true;
-		if (findRepeatFlag(this.simplifiedRule, 'leading'))
-			meta.joinByLeading = true;
-		// Containers have no fields — trailingFields/leadingFields are always
-		// empty; omit the findFieldsWithRepeatFlag calls (DRY: derived once on
-		// AssembledField.hasTrailing/hasLeading; containers have no AssembledField).
-		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		// T049 (016): flag when children may be zero so translateToJinja can
-		// absorb flanking spaces into an isPresent conditional — prevents
-		// stray `{  }` when an empty-body factory node renders via this template.
-		if (childrenMayBeEmpty(this.simplifiedRule)) meta.optionalChildren = true;
-		return {
-			template: translateToJinja(withClauses, meta),
-			surface: buildRenderSurface({
-				slots,
-				usesChildren
-			})
-		};
-	}
 }
 
 export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
@@ -3663,7 +3629,6 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 
 export type AssembledNode =
 	| AssembledBranch
-	| AssembledContainer
 	| AssembledPolymorph
 	| AssembledPattern
 	| AssembledKeyword

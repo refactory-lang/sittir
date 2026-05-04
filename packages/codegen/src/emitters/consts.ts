@@ -28,7 +28,7 @@ export interface EmitConstsConfig {
 export function emitConsts(config: EmitConstsConfig): string {
 	const { nodeMap, generatedIdTables } = config;
 
-	const nodeKinds: string[] = []; // branch + container + polymorph
+	const nodeKinds: string[] = []; // branch + polymorph
 	const leafKinds: string[] = []; // leaf + keyword + enum
 	const keywords: string[] = []; // keyword model type (alphabetic tokens)
 	const operators: string[] = []; // token model type (non-alphabetic)
@@ -37,7 +37,6 @@ export function emitConsts(config: EmitConstsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 				nodeKinds.push(kind);
 				break;

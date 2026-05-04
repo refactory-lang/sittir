@@ -66,7 +66,6 @@ function isConcreteTransportNode(
 ): boolean {
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'polymorph':
 		case 'leaf':
 		case 'keyword':

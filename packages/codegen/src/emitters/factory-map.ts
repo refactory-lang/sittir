@@ -102,17 +102,15 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		// Variant-adopted branches / containers — kinds that went
-		// through Link's push-down (see link.ts
-		// `pushAmbientScaffoldIntoVariantChildren`) classify as
-		// branch/container but still carry the variant-child kinds on
+		// Variant-adopted branches — kinds that went through Link's
+		// push-down (see link.ts `pushAmbientScaffoldIntoVariantChildren`)
+		// classify as branch but still carry the variant-child kinds on
 		// `variantChildKinds`. Emit them into polymorphVariants so
 		// `.from()`-dispatch and the validator's deep-read path both
 		// know which kinds participate in variant() adoption.
-		if (
-			(node.modelType === 'branch' || node.modelType === 'container') &&
-			node.variantChildKinds.length > 0
-		) {
+		// Phase 1d.vii (spec 022): the former `'container'` modelType
+		// folded into `'branch'`; the discriminant collapses too.
+		if (node.modelType === 'branch' && node.variantChildKinds.length > 0) {
 			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 			const childKind: Record<string, string> = {};
 			for (const visibleName of node.variantChildKinds) {
@@ -186,9 +184,13 @@ function shapeOf(
 		case 'enum':
 		case 'keyword':
 			return 'text';
-		case 'container':
-			return 'children';
 		case 'branch':
+			// Phase 1d.vii (spec 022): the former `'container'` modelType
+			// (no `field()` on the rule) is now an `AssembledBranch` with
+			// `isContainerShape === true`. Preserve the `'children'`
+			// factory shape for that case so downstream validators
+			// dispatch the same way.
+			return node.isContainerShape ? 'children' : 'config';
 		case 'polymorph':
 		case 'group':
 			return 'config';

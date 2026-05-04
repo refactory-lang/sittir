@@ -15,7 +15,6 @@ import {
 	AssembledToken,
 	AssembledEnum,
 	AssembledBranch,
-	AssembledContainer,
 	AssembledGroup,
 	isNodeRef,
 	isTerminalValue,
@@ -64,9 +63,7 @@ export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 					? n.fields
 					: [];
 		const childSlots =
-			n.modelType === 'branch' ||
-			n.modelType === 'container' ||
-			n.modelType === 'group'
+			n.modelType === 'branch' || n.modelType === 'group'
 				? (n.children ?? [])
 				: [];
 		for (const slot of [...fieldSlots, ...childSlots]) {
@@ -113,10 +110,6 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 				for (const f of node.fields)
 					for (const t of slotKindNames(f)) referenced.add(t);
 				for (const c of node.children ?? [])
-					for (const t of slotKindNames(c)) referenced.add(t);
-				break;
-			case 'container':
-				for (const c of node.children)
 					for (const t of slotKindNames(c)) referenced.add(t);
 				break;
 			case 'polymorph':
@@ -570,7 +563,7 @@ export interface HoistedForm {
  * - That slot is required AND not multiple.
  * - That slot's `values` resolve to exactly one kind (no choice / union).
  * - The inner kind resolves to a field-carrying node (AssembledBranch,
- *   AssembledContainer, or AssembledGroup) whose `fields.length > 0`.
+ *   or AssembledGroup) whose `fields.length > 0`.
  * - The inner node has a `rawFactoryName` (we need a factory call to
  *   reconstruct the child).
  * - Form-level and inner-level field names must not collide (same property
@@ -605,22 +598,21 @@ export function resolveHoistedForm(
 	const inner = nodeMap.nodes.get(innerKind);
 	if (!inner) return undefined;
 
+	// Phase 1d.vii (spec 022): `AssembledBranch` now covers both the
+	// former branch (has fields) and former container (children-only)
+	// shapes. The hoisted-path emitter still distinguishes them via the
+	// inner-fields count below.
 	const isFieldCarrier =
-		inner instanceof AssembledBranch ||
-		inner instanceof AssembledContainer ||
-		inner instanceof AssembledGroup;
+		inner instanceof AssembledBranch || inner instanceof AssembledGroup;
 	if (!isFieldCarrier) return undefined;
 
-	// Inner fields (Branch / Group with fields). Containers have no
-	// fields — their Config surface is `{ children?: [...] }` which
-	// is picked up via ChildSlotsOf hoisting. `innerFields` is empty
+	// Inner fields (Branch / Group with fields). Container-shape branches
+	// have no fields — their Config surface is `{ children?: [...] }`
+	// which is picked up via ChildSlotsOf hoisting. `innerFields` is empty
 	// in that case; the hoisted-path emitter detects it and emits a
 	// `config.children`-based inner construction call instead of a
 	// Config-forwarding one.
-	const innerFields =
-		inner instanceof AssembledBranch || inner instanceof AssembledGroup
-			? (inner.fields ?? [])
-			: [];
+	const innerFields = inner.fields ?? [];
 
 	// Collision check: a property name on the form AND the inner child
 	// would produce an ambiguous hoisted Config surface. Bail out —
