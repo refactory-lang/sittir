@@ -2725,7 +2725,9 @@ export interface EnumVariant {
 
 export interface EnumVariantList {
   readonly $type: TSKindId.EnumVariantList;
-  readonly $children: readonly (AttributeItem | EnumVariant)[];
+  readonly _enum_variant: readonly (EnumVariant)[];
+  enumVariant(): readonly (EnumVariant)[];
+  readonly $children: readonly (AttributeItem)[];
 }
 
 export interface ExpressionStatementWithSemi {
@@ -2781,7 +2783,9 @@ export interface FieldDeclaration {
 
 export interface FieldDeclarationList {
   readonly $type: TSKindId.FieldDeclarationList;
-  readonly $children: readonly (AttributeItem | FieldDeclaration)[];
+  readonly _field_declaration: readonly (FieldDeclaration)[];
+  fieldDeclaration(): readonly (FieldDeclaration)[];
+  readonly $children: readonly (AttributeItem)[];
 }
 
 export interface FieldExpression {
@@ -3277,9 +3281,11 @@ export interface OrPatternUFormPrefix {
 export type OrPattern = OrPatternUFormBinary | OrPatternUFormPrefix;
 export interface OrderedFieldDeclarationList {
   readonly $type: TSKindId.OrderedFieldDeclarationList;
+  readonly _visibility_modifier?: VisibilityModifier;
   readonly _type: readonly (_Type)[];
+  visibilityModifier(): VisibilityModifier | undefined;
   typeField(): readonly (_Type)[];
-  readonly $children: readonly (AttributeItem | VisibilityModifier)[];
+  readonly $children: readonly (AttributeItem)[];
 }
 
 export interface Parameter {
@@ -3294,7 +3300,9 @@ export interface Parameter {
 
 export interface Parameters {
   readonly $type: TSKindId.Parameters;
-  readonly $children: readonly (AttributeItem | Parameter | SelfParameter | VariadicParameter | "_" | _Type)[];
+  readonly _attribute_item?: AttributeItem;
+  attributeItem(): AttributeItem | undefined;
+  readonly $children: readonly (Parameter | SelfParameter | VariadicParameter | "_" | _Type)[];
 }
 
 export interface ParenthesizedExpression {
@@ -3717,7 +3725,9 @@ export interface TupleType {
 
 export interface TypeArguments {
   readonly $type: TSKindId.TypeArguments;
-  readonly $children: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block | TraitBounds>;
+  readonly _trait_bounds?: TraitBounds;
+  traitBounds(): TraitBounds | undefined;
+  readonly $children: NonEmptyArray<_Type | TypeBinding | Lifetime | Literal | Block>;
 }
 
 export interface TypeBinding {
@@ -8573,7 +8583,8 @@ export namespace EnumVariantList {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | EnumVariant.Transport)[];
+    readonly enum_variant: readonly (EnumVariant.Transport)[];
+    readonly $children: readonly (AttributeItem.Transport)[];
   }
 }
 
@@ -8692,7 +8703,8 @@ export namespace FieldDeclarationList {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | FieldDeclaration.Transport)[];
+    readonly field_declaration: readonly (FieldDeclaration.Transport)[];
+    readonly $children: readonly (AttributeItem.Transport)[];
   }
 }
 
@@ -9625,8 +9637,9 @@ export namespace OrderedFieldDeclarationList {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
+    readonly visibility_modifier?: VisibilityModifier.Transport;
     readonly type: readonly (Type.Transport)[];
-    readonly $children: readonly (AttributeItem.Transport | VisibilityModifier.Transport)[];
+    readonly $children: readonly (AttributeItem.Transport)[];
   }
 }
 
@@ -9654,7 +9667,8 @@ export namespace Parameters {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | Parameter.Transport | SelfParameter.Transport | VariadicParameter.Transport | LiteralTransport<TSKindId.Anonymous, "_"> | Type.Transport)[];
+    readonly attribute_item?: AttributeItem.Transport;
+    readonly $children: readonly (Parameter.Transport | SelfParameter.Transport | VariadicParameter.Transport | LiteralTransport<TSKindId.Anonymous, "_"> | Type.Transport)[];
   }
 }
 
@@ -10523,7 +10537,8 @@ export namespace TypeArguments {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (Type.Transport | TypeBinding.Transport | Lifetime.Transport | Literal.Transport | Block.Transport | TraitBounds.Transport)[];
+    readonly trait_bounds?: TraitBounds.Transport;
+    readonly $children: readonly (Type.Transport | TypeBinding.Transport | Lifetime.Transport | Literal.Transport | Block.Transport)[];
   }
 }
 

@@ -217,12 +217,12 @@ describe('comment', () => {
 
 describe('comparison_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
+    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, primaryExpression: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$type).toBe(TSKindId.ComparisonOperator);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
+    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, primaryExpression: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

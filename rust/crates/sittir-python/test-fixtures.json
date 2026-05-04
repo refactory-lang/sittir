@@ -1279,6 +1279,130 @@
     "kind": "render",
     "grammar": "python",
     "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 130,
+        "end": 145
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 237,
+        "$source": 0,
+        "$text": "await a(b)",
+        "$span": {
+          "start": 130,
+          "end": 140
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 67,
+        "$source": 0,
+        "$text": "==",
+        "$span": {
+          "start": 141,
+          "end": 143
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 144,
+          "end": 145
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "await a(b) == c"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "await a(b) == c",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "await a(b) == c",
+    "expectedReparseTree": "(comparison_operator left: (await primary_expression: (call function: (identifier) arguments: (argument_list (identifier)))) primary_expression: (identifier))",
+    "wrappedText": "_ = await a(b) == c",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 92,
+        "end": 121
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "region",
+        "$span": {
+          "start": 92,
+          "end": 98
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 30,
+        "$source": 0,
+        "$text": "in",
+        "$span": {
+          "start": 99,
+          "end": 101
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 237,
+        "$source": 0,
+        "$text": "await all_regions()",
+        "$span": {
+          "start": 102,
+          "end": 121
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "region in await all_regions()"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "region in await all_regions()",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "region in await all_regions()",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (await primary_expression: (call function: (identifier) arguments: (argument_list))))",
+    "wrappedText": "_ = region in await all_regions()",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
       "$type": 206,
       "$source": 0,
       "$span": {
@@ -4935,6 +5059,614 @@
     "expectedSourceOut": "not b",
     "expectedReparseTree": "(not_operator argument: (identifier))",
     "wrappedText": "_ = not b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 46,
+        "end": 56
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 46,
+          "end": 47
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 193,
+        "$source": 0,
+        "$text": "not in",
+        "$span": {
+          "start": 48,
+          "end": 54
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 55,
+          "end": 56
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a not in b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a not in b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a not in b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = a not in b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 57,
+        "end": 67
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 57,
+          "end": 58
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 194,
+        "$source": 0,
+        "$text": "is not",
+        "$span": {
+          "start": 59,
+          "end": 65
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 66,
+          "end": 67
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a is not b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is not b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a is not b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = a is not b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 86,
+        "end": 92
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 86,
+          "end": 87
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 71,
+        "$source": 0,
+        "$text": "<>",
+        "$span": {
+          "start": 88,
+          "end": 90
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 91,
+          "end": 92
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a <> b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a <> b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a <> b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = a <> b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 39,
+        "end": 45
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 39,
+          "end": 40
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 67,
+        "$source": 0,
+        "$text": "==",
+        "$span": {
+          "start": 41,
+          "end": 43
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "d",
+        "$span": {
+          "start": 44,
+          "end": 45
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "c == d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c == d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c == d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = c == d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 68,
+        "end": 74
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 68,
+          "end": 69
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 64,
+        "$source": 0,
+        "$text": "is",
+        "$span": {
+          "start": 70,
+          "end": 72
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 73,
+          "end": 74
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a is b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a is b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = a is b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 79,
+        "end": 85
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 79,
+          "end": 80
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 68,
+        "$source": 0,
+        "$text": "!=",
+        "$span": {
+          "start": 81,
+          "end": 83
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "d",
+        "$span": {
+          "start": 84,
+          "end": 85
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "c != d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "c != d",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "c != d",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = c != d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 195,
+      "$source": 0,
+      "$span": {
+        "start": 29,
+        "end": 35
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "a",
+        "$span": {
+          "start": 29,
+          "end": 30
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operators": {
+        "$type": 67,
+        "$source": 0,
+        "$text": "==",
+        "$span": {
+          "start": 31,
+          "end": 33
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_primary_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "b",
+        "$span": {
+          "start": 34,
+          "end": 35
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a == b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a == b",
+    "pattern": "comparison_operator",
+    "edits": [],
+    "expectedSourceOut": "a == b",
+    "expectedReparseTree": "(comparison_operator left: (identifier) primary_expression: (identifier))",
+    "wrappedText": "_ = a == b",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 190,
+      "$source": 0,
+      "$span": {
+        "start": 25,
+        "end": 45
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 189,
+        "$source": 0,
+        "$text": "not a == b",
+        "$span": {
+          "start": 25,
+          "end": 35
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operator": {
+        "$type": 56,
+        "$source": 0,
+        "$text": "or",
+        "$span": {
+          "start": 36,
+          "end": 38
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 195,
+        "$source": 0,
+        "$text": "c == d",
+        "$span": {
+          "start": 39,
+          "end": 45
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "not a == b or c == d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not a == b or c == d",
+    "pattern": "boolean_operator",
+    "edits": [],
+    "expectedSourceOut": "not a == b or c == d",
+    "expectedReparseTree": "(boolean_operator left: (not_operator argument: (comparison_operator left: (identifier) primary_expression: (identifier))) right: (comparison_operator left: (identifier) primary_expression: (identifier)))",
+    "wrappedText": "_ = not a == b or c == d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 190,
+      "$source": 0,
+      "$span": {
+        "start": 68,
+        "end": 85
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_left": {
+        "$type": 195,
+        "$source": 0,
+        "$text": "a is b",
+        "$span": {
+          "start": 68,
+          "end": 74
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_operator": {
+        "$type": 55,
+        "$source": 0,
+        "$text": "and",
+        "$span": {
+          "start": 75,
+          "end": 78
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": false
+      },
+      "_right": {
+        "$type": 195,
+        "$source": 0,
+        "$text": "c != d",
+        "$span": {
+          "start": 79,
+          "end": 85
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "a is b and c != d"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "a is b and c != d",
+    "pattern": "boolean_operator",
+    "edits": [],
+    "expectedSourceOut": "a is b and c != d",
+    "expectedReparseTree": "(boolean_operator left: (comparison_operator left: (identifier) primary_expression: (identifier)) right: (comparison_operator left: (identifier) primary_expression: (identifier)))",
+    "wrappedText": "_ = a is b and c != d",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 189,
+      "$source": 0,
+      "$span": {
+        "start": 25,
+        "end": 35
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_not": {
+        "$type": 54,
+        "$source": 0,
+        "$text": "not",
+        "$span": {
+          "start": 25,
+          "end": 28
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": false
+      },
+      "_argument": {
+        "$type": 195,
+        "$source": 0,
+        "$text": "a == b",
+        "$span": {
+          "start": 29,
+          "end": 35
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "not a == b"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "not a == b",
+    "pattern": "not_operator",
+    "edits": [],
+    "expectedSourceOut": "not a == b",
+    "expectedReparseTree": "(not_operator argument: (comparison_operator left: (identifier) primary_expression: (identifier)))",
+    "wrappedText": "_ = not a == b",
     "wrappedOffset": 4
   },
   {
@@ -18753,7 +19485,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"get\",obj]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case [\"get\",obj]: pass",
     "wrappedOffset": 16
   },
@@ -18841,7 +19573,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"go\",direction]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case [\"go\",direction]: pass",
     "wrappedOffset": 16
   },
@@ -19839,7 +20571,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"go\",direction]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case [\"go\",direction]: pass",
     "wrappedOffset": 16
   },
@@ -20653,7 +21385,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"get\",obj]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case [\"get\",obj]: pass",
     "wrappedOffset": 16
   },
@@ -20765,7 +21497,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"pick\",\"up\",obj]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case [\"pick\",\"up\",obj]: pass",
     "wrappedOffset": 16
   },
@@ -20877,7 +21609,7 @@
     "pattern": "list_pattern",
     "edits": [],
     "expectedSourceOut": "[\"pick\",obj,\"up\"]",
-    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name (identifier))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
+    "expectedReparseTree": "(list_pattern (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))) (case_pattern (dotted_name identifier: (identifier))) (case_pattern (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
     "wrappedText": "match _:\n  case [\"pick\",obj,\"up\"]: pass",
     "wrappedOffset": 16
   },
@@ -24013,7 +24745,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },
@@ -24463,7 +25195,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },
@@ -24713,7 +25445,7 @@
     "pattern": "tuple_pattern",
     "edits": [],
     "expectedSourceOut": "(x,y)",
-    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name (identifier))) (case_pattern (dotted_name (identifier))))",
+    "expectedReparseTree": "(tuple_pattern (case_pattern (dotted_name identifier: (identifier))) (case_pattern (dotted_name identifier: (identifier))))",
     "wrappedText": "match _:\n  case (x,y): pass",
     "wrappedOffset": 16
   },

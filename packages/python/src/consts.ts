@@ -1123,6 +1123,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'comparison_operator': [
     { name: 'left', required: true, multiple: false },
     { name: 'operators', required: true, multiple: true },
+    { name: 'primaryExpression', required: true, multiple: true },
   ],
   'complex_pattern': [
     { name: 'real', required: false, multiple: false },

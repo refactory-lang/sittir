@@ -4421,124 +4421,6 @@ impl ::sittir_core::types::RenderableTransport for CommentChildTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum EnumVariantListChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-    EnumVariant(Box<EnumVariantTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for EnumVariantListChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in EnumVariantListChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            180 => Ok(Self::EnumVariant(Box::new(
-                EnumVariantTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in EnumVariantListChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for EnumVariantListChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("EnumVariantListChildTransport is receive-only"))
-    }
-}
-
-fn enum_variant_list_child_transport_to_any(t: EnumVariantListChildTransport) -> AnyTransport {
-    match t {
-        EnumVariantListChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        EnumVariantListChildTransport::EnumVariant(inner) => AnyTransport::EnumVariant(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for EnumVariantListChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            EnumVariantListChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-            EnumVariantListChildTransport::EnumVariant(inner) => render_enum_variant_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum FieldDeclarationListChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-    FieldDeclaration(Box<FieldDeclarationTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for FieldDeclarationListChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in FieldDeclarationListChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            182 => Ok(Self::FieldDeclaration(Box::new(
-                FieldDeclarationTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in FieldDeclarationListChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for FieldDeclarationListChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("FieldDeclarationListChildTransport is receive-only"))
-    }
-}
-
-fn field_declaration_list_child_transport_to_any(t: FieldDeclarationListChildTransport) -> AnyTransport {
-    match t {
-        FieldDeclarationListChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        FieldDeclarationListChildTransport::FieldDeclaration(inner) => AnyTransport::FieldDeclaration(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for FieldDeclarationListChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            FieldDeclarationListChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-            FieldDeclarationListChildTransport::FieldDeclaration(inner) => render_field_declaration_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum FieldInitializerListChildTransport {
     ShorthandFieldInitializer(Box<ShorthandFieldInitializerTransport>),
     FieldInitializer(Box<FieldInitializerTransport>),
@@ -4846,61 +4728,7 @@ impl ::sittir_core::types::RenderableTransport for MatchBlockChildTransport {
 }
 
 #[derive(Debug, Clone)]
-pub enum OrderedFieldDeclarationListChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for OrderedFieldDeclarationListChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in OrderedFieldDeclarationListChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in OrderedFieldDeclarationListChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for OrderedFieldDeclarationListChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("OrderedFieldDeclarationListChildTransport is receive-only"))
-    }
-}
-
-fn ordered_field_declaration_list_child_transport_to_any(t: OrderedFieldDeclarationListChildTransport) -> AnyTransport {
-    match t {
-        OrderedFieldDeclarationListChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for OrderedFieldDeclarationListChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            OrderedFieldDeclarationListChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum ParametersChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
     Parameter(Box<ParameterTransport>),
     SelfParameter(Box<SelfParameterTransport>),
     VariadicParameter(Box<VariadicParameterTransport>),
@@ -4916,9 +4744,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParametersChildTransport {
         let kind_id: u16 = obj.get("$type")?
             .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ParametersChildTransport"))?;
         match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
             213 => Ok(Self::Parameter(Box::new(
                 ParameterTransport::from_napi_value(env, napi_val)?
             ))),
@@ -4947,7 +4772,6 @@ impl ::napi::bindgen_prelude::ToNapiValue for ParametersChildTransport {
 
 fn parameters_child_transport_to_any(t: ParametersChildTransport) -> AnyTransport {
     match t {
-        ParametersChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
         ParametersChildTransport::Parameter(inner) => AnyTransport::Parameter(*inner),
         ParametersChildTransport::SelfParameter(inner) => AnyTransport::SelfParameter(*inner),
         ParametersChildTransport::VariadicParameter(inner) => AnyTransport::VariadicParameter(*inner),
@@ -4960,7 +4784,6 @@ impl ::sittir_core::types::RenderableTransport for ParametersChildTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         let s = match self {
-            ParametersChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
             ParametersChildTransport::Parameter(inner) => render_parameter_transport(inner.as_ref())?,
             ParametersChildTransport::SelfParameter(inner) => render_self_parameter_transport(inner.as_ref())?,
             ParametersChildTransport::VariadicParameter(inner) => render_variadic_parameter_transport(inner.as_ref())?,
@@ -5210,7 +5033,6 @@ pub enum TypeArgumentsChildTransport {
     TypeBinding(Box<TypeBindingTransport>),
     Lifetime(Box<LifetimeTransport>),
     Block(Box<BlockTransport>),
-    TraitBounds(Box<TraitBoundsTransport>),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -5231,9 +5053,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeArgumentsChildTransport {
             ))),
             293 => Ok(Self::Block(Box::new(
                 BlockTransport::from_napi_value(env, napi_val)?
-            ))),
-            196 => Ok(Self::TraitBounds(Box::new(
-                TraitBoundsTransport::from_napi_value(env, napi_val)?
             ))),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {{other}} in TypeArgumentsChildTransport",
@@ -5257,7 +5076,6 @@ fn type_arguments_child_transport_to_any(t: TypeArgumentsChildTransport) -> AnyT
         TypeArgumentsChildTransport::TypeBinding(inner) => AnyTransport::TypeBinding(*inner),
         TypeArgumentsChildTransport::Lifetime(inner) => AnyTransport::Lifetime(*inner),
         TypeArgumentsChildTransport::Block(inner) => AnyTransport::Block(*inner),
-        TypeArgumentsChildTransport::TraitBounds(inner) => AnyTransport::TraitBounds(*inner),
     }
 }
 
@@ -5270,7 +5088,6 @@ impl ::sittir_core::types::RenderableTransport for TypeArgumentsChildTransport {
             TypeArgumentsChildTransport::TypeBinding(inner) => render_type_binding_transport(inner.as_ref())?,
             TypeArgumentsChildTransport::Lifetime(inner) => render_lifetime_transport(inner.as_ref())?,
             TypeArgumentsChildTransport::Block(inner) => render_block_transport(inner.as_ref())?,
-            TypeArgumentsChildTransport::TraitBounds(inner) => render_trait_bounds_transport(inner.as_ref())?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -10407,8 +10224,9 @@ pub struct EnumVariantListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub enum_variant: Vec<EnumVariantTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<EnumVariantListChildTransport>,
+    pub children: Vec<AttributeItemTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for EnumVariantListTransport {
@@ -10754,8 +10572,9 @@ pub struct FieldDeclarationListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub field_declaration: Vec<FieldDeclarationTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<FieldDeclarationListChildTransport>,
+    pub children: Vec<AttributeItemTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for FieldDeclarationListTransport {
@@ -13310,10 +13129,11 @@ pub struct OrderedFieldDeclarationListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Vec<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<OrderedFieldDeclarationListChildTransport>,
+    pub children: Vec<AttributeItemTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for OrderedFieldDeclarationListTransport {
@@ -13372,6 +13192,7 @@ pub struct ParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub attribute_item: Option<AttributeItemTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParametersChildTransport>,
 }
@@ -15665,6 +15486,7 @@ pub struct TypeArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub trait_bounds: Option<TraitBoundsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeArgumentsChildTransport>,
 }
@@ -23497,10 +23319,19 @@ fn render_enum_variant_list_transport(node: &EnumVariantListTransport) -> Result
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
+    let enum_variant_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.enum_variant.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let template = EnumVariantListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: ",",
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        enum_variant: ::sittir_core::filters::ListNonterminalView {
+            items: enum_variant_buf.as_slice(),
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -23615,10 +23446,19 @@ fn render_field_declaration_list_transport(node: &FieldDeclarationListTransport)
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
+    let field_declaration_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.field_declaration.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let template = FieldDeclarationListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: ",",
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        field_declaration: ::sittir_core::filters::ListNonterminalView {
+            items: field_declaration_buf.as_slice(),
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -24559,6 +24399,10 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
             leading: false,
             trailing: false,
         },
+        visibility_modifier: match &node.visibility_modifier {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
     };
     template.render()
 }
@@ -24582,9 +24426,13 @@ fn render_parameters_transport(node: &ParametersTransport) -> Result<String, ::a
     let template = ParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
+        },
+        attribute_item: match &node.attribute_item {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -25487,9 +25335,13 @@ fn render_type_arguments_transport(node: &TypeArgumentsTransport) -> Result<Stri
     let template = TypeArgumentsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: ",",
+            separator: "",
             leading: false,
             trailing: false,
+        },
+        trait_bounds: match &node.trait_bounds {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
     };
     template.render()
@@ -29745,8 +29597,9 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
 
 fn transport_to_node_enum_variant_list(transport: EnumVariantListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("enum_variant".to_string(), transport_field_values(transport.enum_variant.into_iter().map(|v| AnyTransport::EnumVariant(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| enum_variant_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(179) /* "enum_variant_list" */,
         transport.transport_source,
@@ -29927,8 +29780,9 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
 
 fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("field_declaration".to_string(), transport_field_values(transport.field_declaration.into_iter().map(|v| AnyTransport::FieldDeclaration(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| field_declaration_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(181) /* "field_declaration_list" */,
         transport.transport_source,
@@ -31332,9 +31186,12 @@ fn transport_to_node_or_pattern_uform_prefix(transport: OrPatternUFormPrefixTran
 
 fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDeclarationListTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.visibility_modifier {
+        fields.insert("visibility_modifier".to_string(), transport_field_value(*value)?);
+    }
     fields.insert("type".to_string(), transport_field_values(transport.r#type.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| ordered_field_declaration_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(183) /* "ordered_field_declaration_list" */,
         transport.transport_source,
@@ -31374,6 +31231,9 @@ fn transport_to_node_parameter(transport: ParameterTransport) -> Result<Transpor
 
 fn transport_to_node_parameters(transport: ParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.attribute_item {
+        fields.insert("attribute_item".to_string(), transport_field_value(AnyTransport::AttributeItem(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| parameters_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
@@ -32669,6 +32529,9 @@ fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<Transpo
 
 fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    if let Some(value) = transport.trait_bounds {
+        fields.insert("trait_bounds".to_string(), transport_field_value(AnyTransport::TraitBounds(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| type_arguments_child_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
@@ -34943,6 +34806,7 @@ pub struct EnumItemTemplate<'a> {
 #[template(path = "enum_variant_list.jinja", escape = "none")]
 pub struct EnumVariantListTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub enum_variant: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -34991,6 +34855,7 @@ pub struct ExternModifierTemplate<'a> {
 #[template(path = "field_declaration_list.jinja", escape = "none")]
 pub struct FieldDeclarationListTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub field_declaration: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35356,6 +35221,7 @@ pub struct OrPatternTemplate<'a> {
 pub struct OrderedFieldDeclarationListTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub r#type: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub visibility_modifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35370,6 +35236,7 @@ pub struct ParameterTemplate<'a> {
 #[template(path = "parameters.jinja", escape = "none")]
 pub struct ParametersTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attribute_item: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35687,6 +35554,7 @@ pub struct TupleTypeTemplate<'a> {
 #[template(path = "type_arguments.jinja", escape = "none")]
 pub struct TypeArgumentsTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub trait_bounds: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35902,15 +35770,11 @@ fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
         257 => ",", // "arguments"
         282 => ",", // "closure_parameters"
-        179 => ",", // "enum_variant_list"
-        181 => ",", // "field_declaration_list"
         263 => ",", // "field_initializer_list"
-        210 => ",", // "parameters"
         297 => ",", // "slice_pattern"
         196 => "+", // "trait_bounds"
         296 => ",", // "tuple_pattern"
         223 => ",", // "tuple_type"
-        230 => ",", // "type_arguments"
         199 => ",", // "type_parameters"
         207 => ",", // "use_list"
         _ => "",
@@ -37435,14 +37299,22 @@ fn render_enum_item(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_enum_variant_list(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
+    let children = resolve_children(node, &["enum_variant"])?;
+    let field_0 = resolve_field(node, "enum_variant", true)?;
     let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = EnumVariantListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
+        },
+        enum_variant: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()
@@ -37548,14 +37420,22 @@ fn render_extern_modifier(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_field_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
+    let children = resolve_children(node, &["field_declaration"])?;
+    let field_0 = resolve_field(node, "field_declaration", true)?;
     let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = FieldDeclarationListTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
+        },
+        field_declaration: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()
@@ -38343,8 +38223,9 @@ fn render_or_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_ordered_field_declaration_list(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["type"])?;
+    let children = resolve_children(node, &["type", "visibility_modifier"])?;
     let field_0 = resolve_field(node, "type", true)?;
+    let field_1 = resolve_field(node, "visibility_modifier", false)?;
     let children_renderables = children.renderable_items();
     let field_0_renderables = field_0.renderable_items();
     let template = OrderedFieldDeclarationListTemplate {
@@ -38359,6 +38240,10 @@ fn render_ordered_field_declaration_list(node: &NodeData) -> Result<String, ::as
             separator: field_0.separator,
             leading: field_0.leading_sep,
             trailing: field_0.trailing_sep,
+        },
+        visibility_modifier: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -38381,7 +38266,8 @@ fn render_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
+    let children = resolve_children(node, &["attribute_item"])?;
+    let field_0 = resolve_field(node, "attribute_item", false)?;
     let children_renderables = children.renderable_items();
     let template = ParametersTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -38389,6 +38275,10 @@ fn render_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
+        },
+        attribute_item: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
     };
     template.render()
@@ -39104,7 +38994,8 @@ fn render_tuple_type(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_type_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
+    let children = resolve_children(node, &["trait_bounds"])?;
+    let field_0 = resolve_field(node, "trait_bounds", false)?;
     let children_renderables = children.renderable_items();
     let template = TypeArgumentsTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -39112,6 +39003,10 @@ fn render_type_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
+        },
+        trait_bounds: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
     };
     template.render()

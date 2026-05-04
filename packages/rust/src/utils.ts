@@ -236,6 +236,20 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
       { name: "attributes", multiple: true, required: true, alternatives: [{"type":"attribute_item"}] as const },
     ],
   },
+  "enum_variant_list": {
+    childrenRequired: true,
+    childAlternatives: [{"type":"attribute_item"}] as const,
+    fields: [
+      { name: "enum_variant", multiple: true, required: true, alternatives: [{"type":"enum_variant"}] as const },
+    ],
+  },
+  "field_declaration_list": {
+    childrenRequired: true,
+    childAlternatives: [{"type":"attribute_item"}] as const,
+    fields: [
+      { name: "field_declaration", multiple: true, required: true, alternatives: [{"type":"field_declaration"}] as const },
+    ],
+  },
   "function_modifiers": {
     childrenRequired: false,
     childAlternatives: [] as const,
@@ -245,7 +259,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "ordered_field_declaration_list": {
     childrenRequired: true,
-    childAlternatives: [{"type":"attribute_item"},{"type":"visibility_modifier"}] as const,
+    childAlternatives: [{"type":"attribute_item"}] as const,
     fields: [
       { name: "type", multiple: true, required: true, alternatives: [{"type":"type","text":"type"}] as const },
     ],

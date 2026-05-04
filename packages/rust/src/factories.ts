@@ -1442,14 +1442,21 @@ export function enumVariant(config: T.EnumVariant.Config) {
   });
 }
 
-export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
+export function enumVariantList(config: T.EnumVariantList.Config) {
+  const children = config.children ?? [];
+  const _enum_variant = config.enumVariant;
   return withMethods({
     $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
+    _enum_variant,
     $children: children,
+    enumVariant() { return _enum_variant; },
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.EnumVariant)[]) => enumVariantList(...vs) },
+    $with: {
+      enumVariant: (...values: T.EnumVariant[]) => enumVariantList({ ...config, enumVariant: values }),
+      children: (...items: T.AttributeItem[]) => enumVariantList({ ...config, children: items }),
+    },
   });
 }
 
@@ -1582,14 +1589,21 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   });
 }
 
-export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
+export function fieldDeclarationList(config: T.FieldDeclarationList.Config) {
+  const children = config.children ?? [];
+  const _field_declaration = config.fieldDeclaration;
   return withMethods({
     $type: TSKindId.FieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
+    _field_declaration,
     $children: children,
+    fieldDeclaration() { return _field_declaration; },
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.FieldDeclaration)[]) => fieldDeclarationList(...vs) },
+    $with: {
+      fieldDeclaration: (...values: T.FieldDeclaration[]) => fieldDeclarationList({ ...config, fieldDeclaration: values }),
+      children: (...items: T.AttributeItem[]) => fieldDeclarationList({ ...config, children: items }),
+    },
   });
 }
 
@@ -2817,18 +2831,22 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
 
 export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
   const children = config.children ?? [];
+  const _visibility_modifier = config.visibilityModifier;
   const _type = config.type;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
+    _visibility_modifier,
     _type,
     $children: children,
+    visibilityModifier() { return _visibility_modifier; },
     typeField() { return _type; },
     children() { return children; },
     $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: value }),
       typeField: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
-      children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ...config, children: items }),
+      children: (...items: T.AttributeItem[]) => orderedFieldDeclarationList({ ...config, children: items }),
     },
   });
 }
@@ -2855,14 +2873,21 @@ export function parameter(config: T.Parameter.Config) {
   });
 }
 
-export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
+export function parameters(config: T.Parameters.Config) {
+  const children = config.children ?? [];
+  const _attribute_item = config.attributeItem;
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
+    _attribute_item,
     $children: children,
+    attributeItem() { return _attribute_item; },
     children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) => parameters(...vs) },
+    $with: {
+      attributeItem: (value?: T.AttributeItem) => parameters({ ...config, attributeItem: value }),
+      children: (...items: ((T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => parameters({ ...config, children: items }),
+    },
   });
 }
 
@@ -3879,15 +3904,21 @@ export function tupleType(...children: T._Type[]) {
   });
 }
 
-export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
-  _assertNonEmpty(children, 'type_arguments.children');
+export function typeArguments(config: T.TypeArguments.Config) {
+  const children = config.children ?? [];
+  const _trait_bounds = config.traitBounds;
   return withMethods({
     $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
+    _trait_bounds,
     $children: children,
+    traitBounds() { return _trait_bounds; },
     children() { return children; },
-    $with: { $children: (...vs: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) => typeArguments(...vs) },
+    $with: {
+      traitBounds: (value?: T.TraitBounds) => typeArguments({ ...config, traitBounds: value }),
+      children: (...items: NonEmptyArray<(T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)>) => typeArguments({ ...config, children: items }),
+    },
   });
 }
 

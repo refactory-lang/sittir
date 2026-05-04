@@ -560,7 +560,8 @@ export interface EnumVariantListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<EnumVariantListChildTransport>
+  enumVariant: Array<EnumVariantTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface EnumVariantTransport {
@@ -666,7 +667,8 @@ export interface FieldDeclarationListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<FieldDeclarationListChildTransport>
+  fieldDeclaration: Array<FieldDeclarationTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface FieldDeclarationTransport {
@@ -1485,8 +1487,9 @@ export interface OrderedFieldDeclarationListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  visibilityModifier?: Box<AnyTransport>
   type: Array<_TypeTransport>
-  '$children': Array<OrderedFieldDeclarationListChildTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface OrPatternBinaryTransport {
@@ -1537,6 +1540,7 @@ export interface ParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributeItem?: AttributeItemTransport
   '$children': Array<ParametersChildTransport>
 }
 
@@ -2359,6 +2363,7 @@ export interface TypeArgumentsTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  traitBounds?: TraitBoundsTransport
   '$children': Array<TypeArgumentsChildTransport>
 }
 

@@ -1653,6 +1653,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'value', required: false, multiple: false },
   ],
   'enum_variant_list': [
+    { name: 'enumVariant', required: true, multiple: true },
   ],
   'expression_statement': [
   ],
@@ -1675,6 +1676,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'field_declaration_list': [
+    { name: 'fieldDeclaration', required: true, multiple: true },
   ],
   'field_expression': [
     { name: 'value', required: true, multiple: false },
@@ -1861,6 +1863,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'or_pattern': [
   ],
   'ordered_field_declaration_list': [
+    { name: 'visibilityModifier', required: false, multiple: false },
     { name: 'type', required: true, multiple: true },
   ],
   'parameter': [
@@ -1869,6 +1872,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'parameters': [
+    { name: 'attributeItem', required: false, multiple: false },
   ],
   'parenthesized_expression': [
   ],
@@ -2018,6 +2022,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'tuple_type': [
   ],
   'type_arguments': [
+    { name: 'traitBounds', required: false, multiple: false },
   ],
   'type_binding': [
     { name: 'name', required: true, multiple: false },

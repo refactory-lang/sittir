@@ -630,12 +630,150 @@ function applySymbolToField(
 		const fieldNode = makeField(cursor, fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
-	if (!changed) return rule;
-	let result: Rule = { ...cursor, members: newMembers } as Rule;
+	// Second pass: descend into repeat/repeat1 members whose content is a
+	// seq. Promotes bare symbols inside the inner seq to field() wrappers.
+	// Pattern: seq("(", repeat(seq($.attr, $.content)), ")")
+	// → the repeat member's inner seq gets its bare symbols field-wrapped.
+	const finalMembers = promoteInsideRepeatMembers(
+		ruleName, newMembers, supertypeNames, existing
+	);
+	if (finalMembers === newMembers && !changed) return rule;
+	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
 		result = { ...precStack[i]!, content: result } as Rule;
 	}
 	return result;
+}
+
+/**
+ * @internal — iterate outer-seq members and descend into any that are
+ * `repeat(seq(...))` / `repeat1(seq(...))` (possibly prec-wrapped).
+ * Applies the same field-promotion logic to bare symbols in the inner
+ * seq. Returns the original array unchanged when no promotions fire.
+ *
+ * @param ruleName       - the parent rule name (for diagnostics)
+ * @param members        - the outer seq's (possibly already-enriched) members
+ * @param supertypeNames - declared supertype names for `_prefix` handling
+ * @param existing       - mutable set of field names already claimed on
+ *                         the parent seq (checked to prevent collisions)
+ * @returns the same `members` array if nothing changed, or a new array
+ *   with rebuilt repeat members
+ */
+function promoteInsideRepeatMembers(
+	ruleName: string,
+	members: Rule[],
+	supertypeNames: ReadonlySet<string>,
+	existing: Set<string>
+): Rule[] {
+	let anyRepeatChanged = false;
+	const result = members.map((m) => {
+		const rebuilt = tryPromoteInRepeatMember(
+			ruleName, m, supertypeNames, existing
+		);
+		if (rebuilt === null) return m;
+		anyRepeatChanged = true;
+		return rebuilt;
+	});
+	// Propagate the mutation flag back to the caller — if the second pass
+	// promoted anything, the caller must rebuild even if the first pass
+	// did not change anything.
+	if (!anyRepeatChanged) return members;
+	return result;
+}
+
+/**
+ * @internal — given a single outer-seq member, check whether it is a
+ * `repeat`/`repeat1` (possibly prec-wrapped) whose content is a `seq`.
+ * If so, apply field-promotion to the inner seq's bare symbols.
+ *
+ * @returns the rebuilt member if any promotions fired, or `null` if
+ *   the member was left unchanged.
+ */
+function tryPromoteInRepeatMember(
+	ruleName: string,
+	member: Rule,
+	supertypeNames: ReadonlySet<string>,
+	existing: Set<string>
+): Rule | null {
+	// Peel prec wrappers on the member itself.
+	let cursor: Rule = member;
+	const memberPrecStack: Rule[] = [];
+	while (isPrecWrapper(cursor as { type: string })) {
+		memberPrecStack.push(cursor);
+		cursor = (cursor as unknown as { content: Rule }).content;
+	}
+	if (!isRepeatType(cursor.type)) return null;
+
+	// Peel prec wrappers on the repeat's content.
+	let inner = (cursor as unknown as { content: Rule }).content;
+	const innerPrecStack: Rule[] = [];
+	while (isPrecWrapper(inner as { type: string })) {
+		innerPrecStack.push(inner);
+		inner = (inner as unknown as { content: Rule }).content;
+	}
+	if (!isSeqType(inner.type)) return null;
+
+	const innerMembers = (inner as unknown as { members: Rule[] }).members;
+	const innerTargets = innerMembers.map(detectSymbolTarget);
+
+	// Count symbols within the inner seq for uniqueness check.
+	const innerKindCounts = new Map<string, number>();
+	for (const t of innerTargets) {
+		if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+	}
+	// Also count symbols in further-nested repeats inside the inner seq.
+	const nestedRepeatCounts = new Map<string, number>();
+	for (const im of innerMembers) {
+		countSymbolsInRepeat(im, nestedRepeatCounts);
+	}
+
+	// Collect field names already claimed inside the inner seq.
+	const innerExisting = collectFieldNamesRuntime(inner);
+
+	let innerChanged = false;
+	const newInnerMembers = innerMembers.map((im, i) => {
+		const t = innerTargets[i];
+		if (!t) return im;
+		let fieldName = t.name;
+		if (t.name.startsWith('_')) {
+			if (!supertypeNames.has(t.name)) return im;
+			fieldName = t.name.slice(1);
+		}
+		if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
+		if (innerExisting.has(fieldName)) return im;
+		// Disqualify if the same symbol appears inside a nested repeat.
+		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+		// Disqualify if the parent seq already claimed this field name
+		// (a bare symbol at the outer level was promoted in pass 1).
+		if (existing.has(fieldName)) {
+			reportSkip(
+				'symbol-to-field',
+				ruleName,
+				`field '${fieldName}' already exists (outer seq)`
+			);
+			return im;
+		}
+		innerExisting.add(fieldName);
+		// Do NOT add to `existing` — fields inside a repeat are scoped to
+		// the repeat body, not the outer seq. But we checked `existing`
+		// above to prevent collisions with outer-level fields.
+		innerChanged = true;
+		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		return t.wrap(fieldNode);
+	});
+
+	if (!innerChanged) return null;
+
+	// Rebuild: inner seq → inner prec stack → repeat → member prec stack.
+	let rebuilt: Rule = { ...inner, members: newInnerMembers } as Rule;
+	for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+		rebuilt = { ...innerPrecStack[i]!, content: rebuilt } as Rule;
+	}
+	rebuilt = { ...cursor, content: rebuilt } as Rule;
+	for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+		rebuilt = { ...memberPrecStack[i]!, content: rebuilt } as Rule;
+	}
+	return rebuilt;
 }
 
 /**

@@ -248,6 +248,11 @@
       "dotted_name",
       "arguments"
     ],
+    "comparison_operator": [
+      "left",
+      "operators",
+      "primary_expression"
+    ],
     "conditional_expression": [
       "body",
       "condition",

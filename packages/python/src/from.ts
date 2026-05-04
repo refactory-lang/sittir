@@ -517,12 +517,12 @@ export function commentFrom(input: string | T.Comment) {
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose | T.ComparisonOperator): ReturnType<typeof F.comparisonOperator> | T.ComparisonOperator {
   if (isNodeData(input)) return input;
-  const _ne_children: readonly (T.PrimaryExpression)[] = _resolveMany(input.children, _K1, _K2);
-  _assertNonEmpty(_ne_children, 'comparison_operator.children');
+  const _ne_primaryExpression = _resolveMany<T.PrimaryExpression>(input.primaryExpression, _K1, _K2);
+  _assertNonEmpty(_ne_primaryExpression, 'comparison_operator.primaryExpression');
   return F.comparisonOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
     operators: _resolveBitflag(input.operators),
-    children: _ne_children,
+    primaryExpression: _ne_primaryExpression,
   });
 }
 

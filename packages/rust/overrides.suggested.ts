@@ -14,7 +14,7 @@
 // ---------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------
-// Field inferences:  9  (0 applied, 9 held)
+// Field inferences:  8  (0 applied, 8 held)
 // Rule promotions:   99  (91 applied, 8 held)
 // Repeated shapes:   4  (advisory — suggested supertypes/groups)
 
@@ -91,9 +91,6 @@ export const suggestedTransforms = {
 
   // tuple_struct_pattern: 1 inferred field(s)
   // [held] tuple_struct_pattern field 'pattern' on $._pattern — 100% agreement, 6 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
-
-  // type_arguments: 1 inferred field(s)
-  // [held] type_arguments field 'bounds' on $.trait_bounds — 100% agreement, 5 parents. Parent rule is not a top-level SEQ so transform() can't target a position; inference is applied inside Link's applyInferredFields pass (tree rewrite) rather than via overrides.ts.
 
   // [held] polymorph — 1 choice position(s), 2 arm(s) total
   yield_expression: {
@@ -296,7 +293,6 @@ export const inferredFields: readonly InferredField[] = [
   { kind: "slice_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
   { kind: "tuple_struct_pattern", fieldName: "pattern", targetSymbol: "_pattern", confidence: "high", agreement: 1.000, sampleSize: 6, applied: false },
-  { kind: "type_arguments", fieldName: "bounds", targetSymbol: "trait_bounds", confidence: "high", agreement: 1.000, sampleSize: 5, applied: false },
 ];
 
 export interface RepeatedShape {

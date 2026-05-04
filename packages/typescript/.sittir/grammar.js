@@ -1494,12 +1494,96 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     const fieldNode = makeField(cursor, fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
-  if (!changed) return rule;
-  let result = { ...cursor, members: newMembers };
+  const finalMembers = promoteInsideRepeatMembers(
+    ruleName,
+    newMembers,
+    supertypeNames,
+    existing
+  );
+  if (finalMembers === newMembers && !changed) return rule;
+  let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
     result = { ...precStack[i], content: result };
   }
   return result;
+}
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing) {
+  let anyRepeatChanged = false;
+  const result = members.map((m) => {
+    const rebuilt = tryPromoteInRepeatMember(
+      ruleName,
+      m,
+      supertypeNames,
+      existing
+    );
+    if (rebuilt === null) return m;
+    anyRepeatChanged = true;
+    return rebuilt;
+  });
+  if (!anyRepeatChanged) return members;
+  return result;
+}
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing) {
+  let cursor = member;
+  const memberPrecStack = [];
+  while (isPrecWrapper(cursor)) {
+    memberPrecStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isRepeatType(cursor.type)) return null;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return null;
+  const innerMembers = inner.members;
+  const innerTargets = innerMembers.map(detectSymbolTarget);
+  const innerKindCounts = /* @__PURE__ */ new Map();
+  for (const t of innerTargets) {
+    if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const im of innerMembers) {
+    countSymbolsInRepeat(im, nestedRepeatCounts);
+  }
+  const innerExisting = collectFieldNamesRuntime(inner);
+  let innerChanged = false;
+  const newInnerMembers = innerMembers.map((im, i) => {
+    const t = innerTargets[i];
+    if (!t) return im;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return im;
+      fieldName = t.name.slice(1);
+    }
+    if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
+    if (innerExisting.has(fieldName)) return im;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists (outer seq)`
+      );
+      return im;
+    }
+    innerExisting.add(fieldName);
+    innerChanged = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!innerChanged) return null;
+  let rebuilt = { ...inner, members: newInnerMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+  }
+  rebuilt = { ...cursor, content: rebuilt };
+  for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+  }
+  return rebuilt;
 }
 function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
   if (!isRepeatType(cursor.type)) return rule;

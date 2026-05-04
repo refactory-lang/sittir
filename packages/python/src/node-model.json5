@@ -2520,12 +2520,11 @@
             "typeName": "",
             "kinds": []
           }
-        }
-      ],
-      "children": [
+        },
         {
           "name": "primary_expression",
           "propertyName": "primaryExpression",
+          "paramName": "primaryExpression",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2536,9 +2535,17 @@
               "name": "primary_expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression"
+            ]
+          }
         }
-      ]
+      ],
+      "children": []
     },
     {
       "kind": "complex_pattern",

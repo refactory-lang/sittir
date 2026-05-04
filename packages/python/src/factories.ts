@@ -596,23 +596,23 @@ export function comment(text: string) {
 }
 
 export function comparisonOperator(config: T.ComparisonOperator.Config) {
-  const children = config.children ?? [];
   const _left = config.left;
   const _operators = _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false);
+  const _primary_expression = config.primaryExpression;
   return withMethods({
     $type: TSKindId.ComparisonOperator as const,
     $source: 2 as const,
     $named: true as const,
     _left,
     _operators,
-    $children: children,
+    _primary_expression,
     left() { return _left; },
     operators() { return _operators; },
-    children() { return children; },
+    primaryExpression() { return _primary_expression; },
     $with: {
       left: (value: T.PrimaryExpression) => comparisonOperator({ ...config, left: value }),
       operators: (value: Parameters<typeof comparisonOperator>[0]['operators']) => comparisonOperator({ ...config, operators: value }),
-      children: (...items: NonEmptyArray<T.PrimaryExpression>) => comparisonOperator({ ...config, children: items }),
+      primaryExpression: (...values: NonEmptyArray<T.PrimaryExpression>) => comparisonOperator({ ...config, primaryExpression: values }),
     },
   });
 }
