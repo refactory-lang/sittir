@@ -108,19 +108,22 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	}
 	const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 	const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
+	const usesBooleanKeyword = collectUsesBooleanKeyword(nodeMap);
 	// `AnyNodeData` is needed for method signatures. `FluentNode` is used
-	// in FluentKindMap. `ByteRange`/`Edit` no longer needed in generated
-	// factories (methods come from `withMethods` in @sittir/core).
+	// in FluentKindMap. `BooleanKeyword<T>` wraps boolean-keyword setter
+	// param types so the API matches the storage brand.
 	const utilImports = ['AnyNodeData', 'FluentNode'];
 	if (usesConfigOf) utilImports.push('ConfigOf');
 	if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
+	if (usesBooleanKeyword) utilImports.push('BooleanKeyword');
 	lines.push(
 		`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`
 	);
 	// 1d.xiv shape A: factories import only from per-grammar utils.ts.
-	// `withMethods<T>` adds the four `$`-prefixed methods at the boundary;
-	// `_setField` / `_setFields` wire the `$with` setter rebuilds.
-	lines.push("import { withMethods, _setField, _setFields } from './utils.js';");
+	// `withMethods<T>` adds the four `$`-prefixed methods at the factory
+	// boundary. Setters call the factory directly with a patched config —
+	// no `_setField` / `_setFields` indirection.
+	lines.push("import { withMethods } from './utils.js';");
 	lines.push('');
 	lines.push(...emitFluentSetterHelpers());
 	lines.push(...emitNonEmptyAssertHelper());
@@ -172,6 +175,18 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return [...nodeMap.nodes.values()].some((n) =>
 		allSlotsOf(n).some((f) => isNonEmpty(f))
+	);
+}
+
+/**
+ * Whether any factory's `$with` setter has a boolean-keyword field — when
+ * true, the generated `factories.ts` needs the `BooleanKeyword` type
+ * import from `@sittir/types`. Mirrors the gating pattern of
+ * `collectUsesNonEmptyArray` / `collectUsesHoistedPolymorphForm`.
+ */
+function collectUsesBooleanKeyword(nodeMap: NodeMap): boolean {
+	return [...nodeMap.nodes.values()].some((n) =>
+		allSlotsOf(n).some((f) => keywordPresenceKind(f, nodeMap) === 'boolean')
 	);
 }
 
@@ -461,12 +476,14 @@ function factoryTypeDiscriminant(
 				`Filter this kind at the emitter entry point before calling factoryTypeDiscriminant.`
 		);
 	}
-	// Cast to number: TypeScript infers const-enum members as the enum type
-	// (e.g. `TSKindId`), not as `number`. The factory return object literal
-	// needs `$type: number` for compatibility with `AnyNodeData.$type: number`
-	// in the `render(this: AnyNodeData)` / `toEdit(this: AnyNodeData)` methods.
-	// This is a widening-safe cast: const enum values ARE numbers at runtime.
-	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as number`;
+	// `as const` narrows the literal type to the specific TSKindId member
+	// (e.g. `TSKindId.RangeExpressionBinary`), keeping `$type` discriminable
+	// for kind-narrowing in consumers — `is.functionItem(node)` etc. all
+	// match against the const-enum value, not the widened `number` type.
+	// Factory output remains structurally compatible with `AnyNodeData`
+	// because const-enum members ARE numeric at runtime; the $type read
+	// path doesn't widen.
+	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as const`;
 }
 
 /**
@@ -999,6 +1016,100 @@ function keywordPresenceAssignmentExpr(
  * / literal / alias-source / hidden-keyword / missing-kind logic stays in one
  * place (types.ts::fieldTypeExpr is the same walk with no prefix).
  */
+/**
+ * Whether every value of a slot resolves to a leaf-shaped kind whose only
+ * meaningful state is `$text` — the four "terminal" model types (`leaf`,
+ * `keyword`, `token`, `enum`) plus inline `TerminalValue`s.
+ *
+ * When true, factory storage hoists `config.<name>.$text` directly into the
+ * `_<name>` slot instead of holding the wrapped NodeData. The wrapper carries
+ * no information beyond `$text` for these kinds, so storing the string is
+ * lossless and avoids an allocation per node.
+ *
+ * Returns false when any value resolves to a structural kind (branch, group,
+ * polymorph, multi, supertype) because those carry sub-state the wrapper is
+ * needed to preserve. UnresolvedRef values also force false — without
+ * resolution we cannot prove leaf-shape.
+ */
+/**
+ * Storage expression for a slot: `config<opt>.<propertyName>` plus a
+ * trailing `.$text` access when the slot is all-leaf. Optional fields
+ * read through `?.$text` to short-circuit when the field is absent.
+ *
+ * Used by every factory emit path (branch, refine-form, container,
+ * polymorph stub, hoisted form, leaf) so the leaf-hoist optimization
+ * is applied uniformly.
+ */
+function slotStorageExpr(
+	f: AssembledNonterminal,
+	opt: '' | '?',
+	nodeMap: NodeMap
+): string {
+	const base = `config${opt}.${f.propertyName}`;
+	if (!isAllLeafSlot(f, nodeMap)) return base;
+	// Optional field → optional chaining on `.$text` so absent values stay
+	// undefined rather than throwing on the property access.
+	const sep = isRequired(f) && opt === '' ? '.' : '?.';
+	return `${base}${sep}$text`;
+}
+
+/**
+ * `$with.<name>` setter parameter signature for a single-valued field.
+ * Required fields take `(value: T)`; optional fields take `(value?: T)`.
+ * Pre-1d.xiv emitter unconditionally used `(value?: T)` — the new shape
+ * matches the field's actual required/optional contract so callers can't
+ * accidentally clear a required field by calling `$with.foo()` with no arg.
+ */
+function setterValueSignature(
+	f: AssembledNonterminal,
+	elemType: string
+): string {
+	if (isRequired(f)) return `value: ${elemType}`;
+	return `value?: ${elemType}`;
+}
+
+/**
+ * Param type for a single-valued setter:
+ *   - boolean-keyword: `BooleanKeyword<elemType>` to match the storage brand.
+ *   - bitflag: derive from the factory's own param via
+ *     `Parameters<typeof <fn>>[0]['<propName>']` so the param matches the
+ *     ConfigOf-derived flattened enum type without the emitter having to
+ *     compute the enum name itself.
+ *   - default: plain `elemType`.
+ */
+function setterElemType(
+	f: AssembledNonterminal,
+	elemType: string,
+	fn: string,
+	nodeMap: NodeMap
+): string {
+	const kw = keywordPresenceKind(f, nodeMap);
+	if (kw === 'boolean') return `BooleanKeyword<${elemType}>`;
+	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.propertyName}']`;
+	return elemType;
+}
+
+function isAllLeafSlot(f: AssembledNonterminal, _nodeMap: NodeMap): boolean {
+	if (f.values.length === 0) return false;
+	for (const v of f.values) {
+		// Mixed terminal + node-ref slots fail the hoist because the runtime
+		// value can be a bare string (no `.$text`). Hoist applies ONLY when
+		// every value is a NodeRef pointing to a leaf-shaped kind so the
+		// runtime value is always a NodeData wrapper carrying `$text`.
+		if (v.kind !== 'node-ref') return false;
+		// Post-hydrate (assemble.ts hydrateSlotRefs runs before emit phase),
+		// `v.node` is always a resolved AssembledNode. UnresolvedRef would
+		// have thrown at hydrate time. External-token refs (which legitimately
+		// remain unresolved) are not leaf-shaped here either.
+		if (isUnresolvedRef(v.node)) return false;
+		const m = v.node.modelType;
+		if (m === 'leaf' || m === 'keyword' || m === 'token' || m === 'enum')
+			continue;
+		return false;
+	}
+	return true;
+}
+
 function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
@@ -1128,6 +1239,8 @@ function emitFieldCarryingFactory(
 	//
 	// Step 1: hoist each field's storage value to a local `_<name>` const so
 	// the getter method can `return _<name>;` directly via lexical closure.
+	// All-leaf fields hoist `.$text` so storage holds the string directly
+	// (the wrapper carries no info beyond `$text` for leaf kinds).
 	for (const f of fields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
@@ -1139,7 +1252,9 @@ function emitFieldCarryingFactory(
 			lines.push(`  const _${f.name} = ${kwExpr};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = config${opt}.${f.propertyName};`);
+		lines.push(
+			`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`
+		);
 	}
 
 	// Step 2: emit the literal. Storage uses property shorthand so the local
@@ -1165,29 +1280,33 @@ function emitFieldCarryingFactory(
 		lines.push('    children() { return children; },');
 	}
 
-	// $with: setter wiring exactly as the pre-ADR-0018 emitter wired the
-	// top-level methods, hoisted into `$with`. Auto-stamp fields are skipped
-	// (no setter — value is fixed). `_setField` / `_setFields` come from
-	// utils.ts (per-grammar). Children rebuild is an explicit factory call.
+	// $with: setters call the factory directly with a patched config —
+	// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
+	// `_setFields` indirection (those were OLD pre-ADR-0018 helpers serving
+	// the combined getter/setter method; under shape A getters are pure and
+	// the setter is purely a rebuild). Auto-stamp fields are skipped — no
+	// setter exposed because the value is fixed.
 	lines.push('    $with: {');
 	for (const f of fields) {
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const curExpr = `config${opt}.${f.propertyName}`;
-		if (isMultiple(f)) {
+		// Bitflag fields: even though storage is `NonEmptyArray<...>`, the
+		// Config (per ConfigOf) flattens to a single bitflag enum value, so
+		// the setter takes ONE value — not a rest-array.
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		if (isMultiple(f) && !isBitflag) {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f)
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => _setFields(config, ${fn}, '${f.propertyName}', values, ${curExpr}),`
+				`      ${method}: (...values: ${restType}) => ${fn}({ ...config, ${f.propertyName}: values }),`
 			);
 		} else {
-			const elemType = fieldElementType(f, nodeMap);
-			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
+			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 			lines.push(
-				`      ${method}: (value?: ${paramType}) => _setField(config, ${fn}, '${f.propertyName}', value, ${curExpr}),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...config, ${f.propertyName}: value }),`
 			);
 		}
 	}
@@ -1323,7 +1442,7 @@ function emitRefineFormFactory(
 			lines.push(`  const _${f.name} = ${kwExpr};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = config${opt}.${f.propertyName};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
@@ -1347,21 +1466,20 @@ function emitRefineFormFactory(
 		if (narrowed.has(f.name)) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const curExpr = `config${opt}.${f.propertyName}`;
-		if (isMultiple(f)) {
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		if (isMultiple(f) && !isBitflag) {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f)
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => _setFields(config, ${formFn}, '${f.propertyName}', values, ${curExpr}),`
+				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.propertyName}: values }),`
 			);
 		} else {
-			const elemType = fieldElementType(f, nodeMap);
-			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
+			const elemType = setterElemType(f, fieldElementType(f, nodeMap), formFn, nodeMap);
 			lines.push(
-				`      ${method}: (value?: ${paramType}) => _setField(config, ${formFn}, '${f.propertyName}', value, ${curExpr}),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.propertyName}: value }),`
 			);
 		}
 	}
@@ -1389,7 +1507,7 @@ function resolveRefineFormConfigOptional(
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
-): string {
+): '' | '?' {
 	const hasRequired =
 		fields.some(
 			(f) =>
@@ -1430,7 +1548,7 @@ function resolveConfigOptional(
 	fields: readonly AssembledNonterminal[],
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
-): string {
+): '' | '?' {
 	// Auto-stamp-eligible fields are excluded from the "required" check —
 	// they never appear in Config. Auto-stamp-eligible children are also
 	// excluded: when all required children are parameterless, they are
@@ -1507,76 +1625,6 @@ function resolvePolymorphFormVariantName(
 	return node.parentKind ? node.name : undefined;
 }
 
-/**
- * Emit fluent getter/setter method source lines for all fields of a factory.
- *
- * @param fn - The factory function name (used in setter body to rebuild the node).
- * @param fields - The assembled field descriptors to generate methods for.
- * @param nodeMap - The assembled node map (used for type resolution).
- * @returns Array of source lines for the getter/setter methods (ready to splice into
- *   the `return { ... }` object literal).
- * @remarks
- *   Bodies delegate to `_setField` / `_setFields` helpers (T042j) so each line is one call
- *   instead of a hand-inlined ternary. The explicit parameter / return type
- *   annotations keep consumer IntelliSense seeing the exact per-field shape.
- *
- *   The fluent getter/setter parameter name is always `value` / `values`:
- *   not field-derived — the field name is already the method name, and a derived
- *   param ends up identical to the method (shadowing) or collides with reserved
- *   words. `value`/`values` is unambiguous and keeps signatures uniform.
- */
-function emitFluentFieldMethods(
-	fn: string,
-	fields: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): string[] {
-	const lines: string[] = [];
-	for (const f of fields) {
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			// Auto-stamp: field value is a fixed constant — emit a getter-only
-			// method that returns the constant. No setter parameter.
-			lines.push(`    get ${method}() { return fields.${f.name}; },`);
-			continue;
-		}
-		const fMultiple = isMultiple(f);
-		const param = fMultiple ? 'values' : 'value';
-		// Pass `config?.<propertyName>` (Config-surface type) as the
-		// "current value" to _setField / _setFields — NOT `fields.<name>` (internal
-		// storage). For boolean-keyword fields the two differ:
-		// Config exposes `boolean`, storage holds the literal string
-		// array ("async"[]). Using the Config form keeps the setter's
-		// T[K] inference consistent across the v + cur args. The
-		// optional-chain covers factories where `config` itself is
-		// optional (`config?: ConfigOf<…>`).
-		const curExpr = `config?.${f.propertyName}`;
-		if (fMultiple) {
-			const elemType = fieldElementType(f, nodeMap);
-			// Rest params can't be `readonly T[]` (TS2370) so plain mutable arrays
-			// are used. NonEmptyArray<T> is a tuple alias `readonly [T, ...(readonly T[])]`
-			// which TS does accept as a valid rest type.
-			// When elemType is a union (`A | B`), wrap in parens to avoid
-			// `A | B[]` being parsed as `A | (B[])`.
-			const elemForArray = elemType.includes(' | ')
-				? `(${elemType})`
-				: elemType;
-			const restType = isNonEmpty(f)
-				? `NonEmptyArray<${elemType}>`
-				: `${elemForArray}[]`;
-			lines.push(
-				`    ${method}(...${param}: ${restType}) { return _setFields(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
-			);
-		} else {
-			const elemType = fieldElementType(f, nodeMap);
-			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
-			lines.push(
-				`    ${method}(${param}?: ${paramType}) { return _setField(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
-			);
-		}
-	}
-	return lines;
-}
 
 // ---------------------------------------------------------------------------
 // Container factory (children only, no fields)
@@ -1763,35 +1811,19 @@ function emitPolymorphFactory(
  *   - inner-level patch: `{ left: config.left, right: value }`.
  */
 function buildHoistedRebuildExpr(
-	formFields: readonly AssembledNonterminal[],
-	innerFields: readonly AssembledNonterminal[],
+	_formFields: readonly AssembledNonterminal[],
+	_innerFields: readonly AssembledNonterminal[],
 	patchKey: string,
 	patchVar: string,
-	patchSource: 'form' | 'inner',
-	nodeMap: NodeMap
+	_patchSource: 'form' | 'inner',
+	_nodeMap: NodeMap
 ): string {
-	const parts: string[] = [];
-	// Form-level fields come from `config.<propName>` (already camelCase on
-	// the hoisted Config surface). Skip the patched key if this setter is
-	// patching a form-level field.
-	for (const f of formFields) {
-		if (patchSource === 'form' && f.propertyName === patchKey) continue;
-		parts.push(`${f.propertyName}: config.${f.propertyName}`);
-	}
-	// Inner-level fields come from the materialized inner node's `_<name>`
-	// storage (ADR-0018 Phase 2). Skip the patched key if this setter is
-	// patching an inner-level field. Also skip auto-stamped fields — they
-	// are excluded from ConfigOf<T> so passing them in the rebuild config
-	// is a type error.
-	for (const f of innerFields) {
-		if (patchSource === 'inner' && f.propertyName === patchKey) continue;
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		parts.push(`${f.propertyName}: inner._${f.name}`);
-	}
-	// Patched key appended last so its value is authoritative in the
-	// emitted object literal (shadows any earlier identical key).
-	parts.push(`${patchKey}: ${patchVar}`);
-	return `{ ${parts.join(', ')} }`;
+	// Hoisted-form Config flattens BOTH form-level fields AND the inner
+	// child's Config fields onto the surface (see `ConfigOf` in
+	// `@sittir/types`). Spreading `...config` carries every preserved
+	// field — form-level (`refMarker`) and inner-hoisted (`name`) alike —
+	// in a single token. Patched key shadows the original.
+	return `{ ...config, ${patchKey}: ${patchVar} }`;
 }
 
 /**
@@ -1930,7 +1962,7 @@ function emitHoistedPolymorphFormFactory(
 				lines.push(`  const _${f.name} = ${kwExpr};`);
 				continue;
 			}
-			lines.push(`  const _${f.name} = config${opt}.${f.propertyName};`);
+			lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
 		}
 		lines.push('  const inner = withMethods({');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
@@ -1957,7 +1989,7 @@ function emitHoistedPolymorphFormFactory(
 			lines.push(`  const _${f.name} = ${stamp};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = config${opt}.${f.propertyName};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
@@ -1985,22 +2017,41 @@ function emitHoistedPolymorphFormFactory(
 	// $with: updater namespace for hoisted form. Build a custom $with that
 	// handles both form-level and inner-level field updates via rebuild expr.
 	// Each entry calls fn(rebuildConfig) which returns a new wrapped node.
+	// Setter parameter types match the field's required/optional/multi shape
+	// — same rules as non-hoisted setters (rule 3, consistent across paths).
 	const withEntries: string[] = [];
+	const buildHoistedSetter = (
+		f: AssembledNonterminal,
+		patchSource: 'form' | 'inner'
+	): string => {
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		const fMultiple = isMultiple(f) && !isBitflag;
+		const rawElem = fieldElementType(f, nodeMap);
+		const elemType = setterElemType(f, rawElem, fn, nodeMap);
+		const param = fMultiple
+			? `...values: ${
+				isNonEmpty(f)
+					? `NonEmptyArray<${elemType}>`
+					: `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
+			}`
+			: setterValueSignature(f, elemType);
+		const rebuild = buildHoistedRebuildExpr(
+			formFields,
+			hoist.innerFields,
+			f.propertyName,
+			fMultiple ? 'values' : 'value',
+			patchSource,
+			nodeMap
+		);
+		return `      ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`;
+	};
 	for (const f of formFields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) continue; // auto-stamp: no setter
-		const fMultiple = isMultiple(f);
-		const param = fMultiple ? '...values: unknown[]' : 'value: unknown';
-		const rebuild = buildHoistedRebuildExpr(formFields, hoist.innerFields, f.propertyName, fMultiple ? 'values' : 'value', 'form', nodeMap);
-		withEntries.push(`      ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`);
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		withEntries.push(buildHoistedSetter(f, 'form'));
 	}
 	for (const f of hoist.innerFields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) continue; // auto-stamp: no setter
-		const fMultiple = isMultiple(f);
-		const param = fMultiple ? '...values: unknown[]' : 'value: unknown';
-		const rebuild = buildHoistedRebuildExpr(formFields, hoist.innerFields, f.propertyName, fMultiple ? 'values' : 'value', 'inner', nodeMap);
-		withEntries.push(`      ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`);
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		withEntries.push(buildHoistedSetter(f, 'inner'));
 	}
 	if (withEntries.length > 0) {
 		lines.push(`    $with: {`);
@@ -2014,64 +2065,6 @@ function emitHoistedPolymorphFormFactory(
 	return renameUnusedConfigParam(lines);
 }
 
-interface HoistedSetterContext {
-	readonly fn: string;
-	readonly formFields: readonly AssembledNonterminal[];
-	readonly innerFields: readonly AssembledNonterminal[];
-	readonly nodeMap: NodeMap;
-	/** Source expression for the getter / auto-stamp read (e.g. `fields.x`). */
-	readonly getterExpr: string;
-	/** Which group this field lives in — steers the rebuild-expr skip. */
-	readonly patchSource: 'form' | 'inner';
-}
-
-/**
- * Emit the fluent get/set lines for a single hoisted-form field.
- *
- * @remarks
- *   Auto-stamp fields emit a read-only getter; everything else emits a
- *   no-arg-getter / with-arg-setter combo that rebuilds the form via
- *   {@link buildHoistedRebuildExpr}. Rebuild preserves fields from the OTHER
- *   group (inner vs form) so the setter round-trips through the same factory.
- */
-function emitHoistedSetter(
-	f: AssembledNonterminal,
-	ctx: HoistedSetterContext
-): string[] {
-	const { fn, formFields, innerFields, nodeMap, getterExpr, patchSource } = ctx;
-	const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-	const stamp = autoStampExpression(f, nodeMap);
-	if (stamp !== undefined) {
-		return [`    get ${method}() { return ${getterExpr}; },`];
-	}
-	const fMultiple = isMultiple(f);
-	const param = fMultiple ? 'values' : 'value';
-	const rebuild = buildHoistedRebuildExpr(
-		formFields,
-		innerFields,
-		f.propertyName,
-		param,
-		patchSource,
-		nodeMap
-	);
-	const elemType = fieldElementType(f, nodeMap);
-	if (fMultiple) {
-		const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-		const restType = isNonEmpty(f)
-			? `NonEmptyArray<${elemType}>`
-			: `${elemForArray}[]`;
-		return [
-			`    ${method}(...${param}: ${restType}) { return ${fn}(${rebuild}); },`
-		];
-	}
-	const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
-	return [
-		`    ${method}(${param}?: ${paramType}) {`,
-		`      if (${param} === undefined) return ${getterExpr};`,
-		`      return ${fn}(${rebuild});`,
-		`    },`
-	];
-}
 
 /**
  * Emit the polymorph dispatcher function: overloaded signatures (one per
@@ -2332,97 +2325,6 @@ function factorySuffix(_treeTypeName: string): string[] {
 	return [];
 }
 
-/**
- * Emit the closing lines of a branch/container factory body — adapts the
- * pre-ADR-0018 inline-literal pattern to ADR-0018's `_<name>` storage.
- *
- * Layout, all inside the `_node` literal that the caller has opened with
- * `const _node = {` and populated with `$type`/`$source`/`$named`/`_<name>`
- * storage / `$children`:
- *
- *   1. Per-field accessor methods (pure getters, method shorthand):
- *        `name(this: object) { return readRawField(this, 'name'); },`
- *   2. `$with: { ... }` block — setters wired via `_setField` /
- *      `_setFields` exactly as the pre-ADR-0018 emitter did, just hoisted
- *      from the top-level methods into `$with`. Each entry rebuilds the
- *      node by calling the factory with a patched config.
- *   3. `..._sharedMethods` spread (the four `$`-prefixed methods from utils.ts).
- *
- * Then closes the literal with `};` and returns `_node` directly. No
- * `freezeNodeData` call yet — that's a follow-up optimization.
- *
- * @param nodeVar - Local variable name for the literal (always `'_node'`).
- * @param factoryName - The factory function name (used in the rebuild closures).
- * @param fields - Field metadata for emitting both accessors AND `$with` setters.
- * @param childrenUserConfigurable - When true, emit a `$with.children` setter.
- * @param childrenElementType - Element type for the `children` rest-param (when applicable).
- * @param opt - `''` or `'?'` — matches the factory's `config?:` optional marker.
- * @param accessorPairs - `[rawName, propName]` pairs for getter method emission.
- * @param nodeMap - Used to look up element types and auto-stamp expressions.
- * @returns Array of source lines that close the literal and return.
- */
-function emitWithMethodsAndFreeze(
-	nodeVar: string,
-	factoryName: string,
-	fields: readonly AssembledNonterminal[],
-	childrenUserConfigurable: boolean,
-	childrenElementType: string | undefined,
-	opt: '' | '?',
-	accessorPairs: readonly [rawName: string, propName: string][],
-	nodeMap: NodeMap
-): string[] {
-	const lines: string[] = [];
-	// Per-field pure getters (inside the literal, method shorthand).
-	for (const [rawName, propName] of accessorPairs) {
-		lines.push(
-			`    ${propName}(this: object) { return readRawField(this, '${rawName}'); },`
-		);
-	}
-	// $with block — setters wired with the pre-ADR-0018 `_setField` /
-	// `_setFields` helpers, hoisted from the OLD top-level methods into
-	// `$with`. Auto-stamp fields are skipped (no setter — value is fixed).
-	const withEntries: string[] = [];
-	for (const f of fields) {
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) continue;
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const curExpr = `config${opt}.${f.propertyName}`;
-		if (isMultiple(f)) {
-			const elemType = fieldElementType(f, nodeMap);
-			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-			const restType = isNonEmpty(f)
-				? `NonEmptyArray<${elemType}>`
-				: `${elemForArray}[]`;
-			withEntries.push(
-				`      ${method}: (...values: ${restType}) => _setFields(config, ${factoryName}, '${f.propertyName}', values, ${curExpr}),`
-			);
-		} else {
-			const elemType = fieldElementType(f, nodeMap);
-			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
-			withEntries.push(
-				`      ${method}: (value?: ${paramType}) => _setField(config, ${factoryName}, '${f.propertyName}', value, ${curExpr}),`
-			);
-		}
-	}
-	if (childrenUserConfigurable && childrenElementType !== undefined) {
-		const elemForArray = childrenElementType.includes(' | ')
-			? `(${childrenElementType})`
-			: childrenElementType;
-		withEntries.push(
-			`      children: (...items: ${elemForArray}[]) => _setFields(config, ${factoryName}, 'children', items, config${opt}.children),`
-		);
-	}
-	if (withEntries.length > 0) {
-		lines.push('    $with: {');
-		lines.push(...withEntries);
-		lines.push('    },');
-	}
-	lines.push('    ..._sharedMethods,');
-	// Close literal and return raw — no freeze (follow-up optimization).
-	lines.push('  };');
-	lines.push(`  return ${nodeVar};`);
-	return lines;
-}
 
 // ---------------------------------------------------------------------------
 // Internal interfaces

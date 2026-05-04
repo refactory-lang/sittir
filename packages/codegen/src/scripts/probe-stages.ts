@@ -59,7 +59,7 @@ const requireFromHere = createRequire(import.meta.url);
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { optimize } from '../compiler/optimize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitTypes } from '../emitters/types.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
@@ -116,8 +116,11 @@ async function main(): Promise<void> {
 	stages.assemble = node ? summarizeAssembled(node) : null;
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
-	// Phase 5: emit (optional — heavy).
+	// Phase 5: emit (optional — heavy). Hydrate ON-DEMAND right before
+	// emit so the assemble dump above shows raw slot refs (which is what
+	// the consumer of probe-stages typically wants to see).
 	if (!values['skip-emit']) {
+		hydrateSlotRefs(nodeMap);
 		try {
 			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 			const ifacePat = new RegExp(

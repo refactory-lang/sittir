@@ -158,41 +158,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// Setter helpers (pre-ADR-0018 wiring, restored 1d.xiii).
-	// `$with.<name>(v)` and `$with.<name>(...values)` go through these to
-	// rebuild a node with the patched field. Generic on `T` (Config), `R`
-	// (factory return), and `K` (field key) so the rebuilt node carries
-	// the caller's concrete kind through. Hygiene rule 4.
-
-	lines.push('/**');
-	lines.push(' * Setter helper for single-valued fields. Calls the factory with the');
-	lines.push(' * patched config when `v` is supplied; otherwise returns the current value.');
-	lines.push(' */');
-	lines.push('export function _setField<T, R, K extends keyof T>(');
-	lines.push('  cfg: T | undefined,');
-	lines.push('  fn: (c: T) => R,');
-	lines.push('  key: K,');
-	lines.push('  v: T[K] | undefined,');
-	lines.push('  cur: T[K] | undefined,');
-	lines.push('): T[K] | R | undefined {');
-	lines.push('  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;');
-	lines.push('}');
-	lines.push('');
-
-	lines.push('/**');
-	lines.push(' * Setter helper for repeated-valued fields. Rebuilds with the new array');
-	lines.push(' * when `v.length > 0`; returns the current value when called with no args.');
-	lines.push(' */');
-	lines.push('export function _setFields<T, R, K extends keyof T>(');
-	lines.push('  cfg: T | undefined,');
-	lines.push('  fn: (c: T) => R,');
-	lines.push('  key: K,');
-	lines.push('  v: readonly unknown[],');
-	lines.push('  cur: T[K] | undefined,');
-	lines.push('): T[K] | R | undefined {');
-	lines.push('  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;');
-	lines.push('}');
-	lines.push('');
 
 	// isNodeData
 	lines.push('/**');

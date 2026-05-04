@@ -16,7 +16,7 @@ import { existsSync } from 'node:fs';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
 import { optimize } from '../compiler/optimize.ts';
-import { assemble } from '../compiler/assemble.ts';
+import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
@@ -56,6 +56,7 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	const linked = link(raw);
 	const optimized = optimize(linked);
 	const nodeMap = assemble(optimized);
+	hydrateSlotRefs(nodeMap);
 	const generatedIdTables = await loadGeneratedIdTables(grammar);
 
 	// Emit jinja templates (needed for emitRenderModule)

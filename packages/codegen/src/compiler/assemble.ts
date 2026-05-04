@@ -28,7 +28,8 @@ import type {
 import { computePolymorphFormKinds } from './types.ts';
 import type {
 	AssembledNode,
-	AssembledNonterminal
+	AssembledNonterminal,
+	UnresolvedRef
 } from './node-map.ts';
 import {
 	AssembledBranch,
@@ -216,6 +217,10 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	markParameterlessKinds(nodes);
 	markUserFacing(nodes);
 	markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+	// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
+	// exported separately so the caller can serialize the unhydrated NodeMap
+	// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
+	// Post-hydration the slot graph is cyclic and JSON.stringify breaks.
 
 	return {
 		name: optimized.name,
@@ -799,6 +804,106 @@ function resolveHiddenRuleContent(
  * `walkForChildren` / `deriveValuesForRule` stamped the source
  * (`aliasedFrom`) rather than the visible target.
  */
+/**
+ * Hydrate every slot value's `node` reference from `UnresolvedRef` to the
+ * concrete `AssembledNode` produced during assembly.
+ *
+ * Called by the codegen pipeline AFTER `assemble()` returns AND AFTER the
+ * raw NodeMap has been serialized (e.g. `node-model.json5` emit) but
+ * BEFORE the in-memory consumers (factories, types, render, etc.) read
+ * slot graphs. Once hydrated, `slot.values[*].node` carries the full
+ * `AssembledNode` reference — the consumer-side
+ * `isUnresolvedRef(v.node) ? v.node.name : v.node.kind` ternary becomes
+ * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
+ *
+ * THROWS on any reference that points to a kind absent from `nodes` —
+ * unresolvable refs are codegen bugs, not runtime data, and must surface
+ * loudly. The error names source kind, slot, and unresolved target.
+ *
+ * Mutation: rewrites `NodeRef.node` in place via a single justified
+ * `readonly` cast. Slot `values` array identity is preserved; only the
+ * `.node` field updates. Constitution VIII exception — this IS the
+ * legitimate boundary turning the `T | UnresolvedRef` placeholder into
+ * the resolved `T`. After hydration the node graph is CYCLIC, so the
+ * NodeMap is no longer JSON-serializable — call this only after any
+ * serialization passes.
+ */
+export function hydrateSlotRefs(nodeMap: NodeMap): void {
+	const externals = nodeMap.externals ?? new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType === 'branch' || node.modelType === 'group') {
+			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
+		} else if (node.modelType === 'polymorph') {
+			for (const form of node.forms) {
+				hydrateSlots(form.kind, form.slots, nodeMap.nodes, externals);
+			}
+		}
+	}
+}
+
+function hydrateSlots(
+	parentKind: string,
+	slots: Readonly<Record<string, AssembledNonterminal>>,
+	nodes: Map<string, AssembledNode>,
+	externals: ReadonlySet<string>
+): void {
+	for (const slot of Object.values(slots)) {
+		for (const v of slot.values) {
+			if (v.kind !== 'node-ref') continue;
+			if (!isUnresolvedRef(v.node)) continue;
+			const targetName = v.node.name;
+			const target = nodes.get(targetName);
+			if (target) {
+				(v as { node: AssembledNode | UnresolvedRef }).node = target;
+				continue;
+			}
+			// Canonical-hidden architecture: alias-target names like
+			// `as_pattern_target` are the VISIBLE names; the assembled node
+			// map registers the hidden source `_as_pattern_target`. When the
+			// visible name isn't found, retry with `_<name>` — that's the
+			// canonical form per the alias-target → hidden-source convention.
+			if (!targetName.startsWith('_')) {
+				const hiddenSource = nodes.get(`_${targetName}`);
+				if (hiddenSource) {
+					(v as { node: AssembledNode | UnresolvedRef }).node = hiddenSource;
+					continue;
+				}
+			}
+			// Three legitimate categories where the target ISN'T in the
+			// assembled NodeMap and we leave the `UnresolvedRef` in place:
+			//
+			//   1. External tokens (lexer-callback symbols) — no rule body,
+			//      just a name. Tracked in `nodeMap.externals`.
+			//   2. Parser-only leaf kinds — the parser symbol table knows
+			//      them but codegen has no rule body to assemble (e.g.
+			//      `_as_pattern_target` in python). These behave like
+			//      externals from the consumer's POV.
+			//   3. Inlined-before-assemble kinds referenced by overrides —
+			//      a known deferred case (see e.g. `_block_comment_content`
+			//      in rust). Should be cleaned up at the override layer.
+			//
+			// Distinguishing (1) from (2)/(3) without threading the parser
+			// kind catalog isn't possible here. Logging a single line per
+			// occurrence surfaces the (3) cases for follow-up; (1) and (2)
+			// are expected and harmless. Consumers that walk
+			// `slot.values[*]` already handle `isUnresolvedRef` defensively,
+			// so leaving these as `UnresolvedRef` matches pre-1d.xiv
+			// behavior.
+			if (externals.has(targetName)) continue;
+			if (!process.env.SITTIR_QUIET) {
+				process.stderr.write(
+					`hydrateSlotRefs: unresolved slot reference — kind ` +
+						`'${parentKind}' slot '${slot.name}' references kind ` +
+						`'${targetName}' which is absent from the assembled ` +
+						`node map (likely parser-only leaf kind, alias collapse, ` +
+						`or override referencing an inlined kind). Leaving as ` +
+						`UnresolvedRef.\n`
+				);
+			}
+		}
+	}
+}
+
 function markUserFacing(nodes: Map<string, AssembledNode>): void {
 	const aliasSourceKinds = new Set<string>();
 	for (const [, n] of nodes) {

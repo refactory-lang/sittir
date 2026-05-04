@@ -9,7 +9,7 @@ import { join } from 'node:path';
 import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
-import { assemble } from './assemble.ts';
+import { assemble, hydrateSlotRefs } from './assemble.ts';
 import {
 	resolveGrammarJsPath,
 	resolveOverridesPath
@@ -174,8 +174,20 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// pipeline constructs; warn-and-skip at emit time is correct.
 	const evaluateSynthesizedKinds = collectEvaluateSynthesizedKinds(raw);
 
-	// Phase 5: Emit — every emitter consumes NodeMap directly. The
-	// ir-namespace keys are populated on each AssembledNode during
+	// Phase 5a: Serialize the unhydrated NodeMap. `node-model.json5` is
+	// JSON-stringified, so it MUST run BEFORE `hydrateSlotRefs` wires the
+	// slot graph cyclically. Capture the result here; the rest of the emit
+	// phase reads the hydrated form.
+	const nodeModel = emitNodeModel({ grammar: cfg.grammar, nodeMap });
+
+	// Phase 5b: Hydrate slot refs in place. After this, every
+	// `slot.values[*].node` is a fully-resolved `AssembledNode` — emitters
+	// read `.kind` / `.modelType` directly without the per-call-site
+	// `isUnresolvedRef` fallback ternary. Throws on unresolvable refs.
+	hydrateSlotRefs(nodeMap);
+
+	// Phase 5c: Emit — every emitter consumes the hydrated NodeMap directly.
+	// The ir-namespace keys are populated on each AssembledNode during
 	// assemble() (see resolveIrKeys), so emitters read node.irKey
 	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
 	return {
@@ -201,7 +213,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		tests: emitTests({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		typeTests: emitTypeTests({ nodeMap, generatedIdTables }),
 		config: emitConfig({ grammar: cfg.grammar }),
-		nodeModel: emitNodeModel({ grammar: cfg.grammar, nodeMap }),
+		nodeModel,
 		suggested: emitSuggested({
 			grammar: cfg.grammar,
 			nodeMap,
