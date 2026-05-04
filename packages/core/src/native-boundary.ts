@@ -97,7 +97,8 @@ function assertNativeChildren(value: unknown, path: string): void {
  *  - `$named` is a boolean
  *  - `$format` is absent (must be passed separately via TreeHandle.format)
  *  - no function-valued properties (methods like `render()` cannot cross napi)
- *  - nested `$fields` and `$children` satisfy the same constraints recursively
+ *  - nested `_<name>` storage keys and `$children` satisfy the same constraints
+ *    recursively (ADR-0018 Phase 3a: `$fields` wrapper no longer emitted by readNode)
  */
 function assertNativeNodeDataInternal(
 	value: unknown,
@@ -126,8 +127,16 @@ function assertNativeNodeDataInternal(
 			`${path}.$format is not supported by the native render boundary; pass format separately`
 		);
 	}
+	// ADR-0018 Phase 3a: `$fields` is no longer emitted by readNode. Validate
+	// `_<name>` storage keys directly. Legacy `$fields` is still tolerated for
+	// backward compatibility (e.g. test fixtures) but warns in dev mode.
 	if (value.$fields !== undefined)
 		assertNativeFields(value.$fields, `${path}.$fields`);
+	// Validate `_<name>` storage keys (de-hoisted surface, Phase 3a).
+	for (const key of Object.keys(value)) {
+		if (!key.startsWith('_')) continue;
+		assertNativeFieldValue(value[key], `${path}.${key}`);
+	}
 	if (value.$children !== undefined)
 		assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);

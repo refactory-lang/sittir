@@ -174,13 +174,14 @@ function* iterNodeFields(
  */
 function nodeHasStructure(node: AnyNodeData): boolean {
 	const n = node as unknown as Record<string, unknown>;
-	// New shape: any `_*` enumerable key.
+	// Phase 3a+: any `_*` enumerable key (de-hoisted named slot).
 	for (const key of Object.keys(n)) {
 		if (key.startsWith('_')) return true;
 	}
-	// Legacy shape: `$fields` or `$children`.
-	if (n['$fields'] != null) return true;
+	// Unnamed children slot: `$children`.
 	if (n['$children'] != null) return true;
+	// Legacy shape: `$fields` wrapper (pre-Phase-3a readNode — backward compat).
+	if (n['$fields'] != null) return true;
 	return false;
 }
 
@@ -889,14 +890,16 @@ function renderClause(
 				return clauseTemplate;
 			}
 		}
-		// readNode promotes anonymous tokens to $fields keyed by their
-		// text (see readNode.ts promoteAnonymousKeyword). So a bare-literal
-		// clause body like `!` resolves against $fields['!'] rather than
-		// $children. The walker emits these for non-word-punctuation
-		// optionals (rust `impl_item` trait negation, etc.).
-		// ADR-0018 Phase 2: anonymous tokens use the legacy $fields path only
-		// (factories don't promote anonymous tokens; wrap handles them via $fields).
+		// readNode promotes anonymous tokens to `_<text>` keys directly
+		// (ADR-0018 Phase 3a) so a bare-literal clause body like `!` resolves
+		// against `_!` rather than `$children`. Legacy `$fields[text]` is also
+		// checked for backward compatibility (nodes from older readNode builds).
 		const n0 = node as unknown as Record<string, unknown>;
+		// Phase 3a: de-hoisted `_<text>` path (new readNode output)
+		if (n0['_' + clauseTemplate] !== undefined) {
+			return clauseTemplate;
+		}
+		// Legacy fallback: `$fields[text]` (pre-Phase-3a readNode)
 		const legacyFields0 = n0['$fields'] as Record<string, unknown> | undefined;
 		if (legacyFields0 && legacyFields0[clauseTemplate] !== undefined) {
 			return clauseTemplate;
@@ -1030,11 +1033,23 @@ function flankSepForField(
 		side === 'leading'
 			? Math.min(...fieldSpans.map((s) => s.start))
 			: Math.max(...fieldSpans.map((s) => s.end));
-	// Collect candidate anon sep tokens from $fields[sep] (legacy) and $children.
-	// Anonymous tokens live in $fields for readNode output; factory nodes don't
-	// have them. Use the legacy $fields path directly here.
+	// Collect candidate anon sep tokens from `_<sep>` (Phase 3a), `$fields[sep]`
+	// (legacy), and `$children`. readNode promotes anonymous tokens:
+	//   - Phase 3a+: `_<text>` top-level key on the node
+	//   - Legacy: `$fields[text]` wrapper
+	// Factory nodes don't have anonymous tokens in either location.
 	const candidates: AnyNodeData[] = [];
-	const legacyFieldsSep = (node as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
+	const nodeRec = node as unknown as Record<string, unknown>;
+	// Phase 3a: de-hoisted `_<sep>` path
+	const dehoistedSepEntry = nodeRec['_' + sep];
+	if (dehoistedSepEntry) {
+		const arr = Array.isArray(dehoistedSepEntry) ? dehoistedSepEntry : [dehoistedSepEntry];
+		for (const x of arr)
+			if (x && typeof x === 'object' && (x as AnyNodeData).$named === false)
+				candidates.push(x as AnyNodeData);
+	}
+	// Legacy fallback: `$fields[sep]` (pre-Phase-3a readNode)
+	const legacyFieldsSep = nodeRec['$fields'] as Record<string, unknown> | undefined;
 	const sepEntry = legacyFieldsSep?.[sep];
 	if (sepEntry) {
 		const arr = Array.isArray(sepEntry) ? sepEntry : [sepEntry];
@@ -1087,11 +1102,25 @@ function detectTrailingAnonForField(
 	}
 	if (boundary < 0) return '';
 
-	// Collect all anonymous token candidates from $fields (other keys) and $children.
+	// Collect all anonymous token candidates from `_*` keys (Phase 3a),
+	// `$fields` (legacy), and `$children`. Skip the field itself in each case.
 	const candidates: AnyNodeData[] = [];
-	// Anonymous tokens live in legacy $fields (readNode promotes them there).
-	// Factory nodes don't have anonymous tokens in $fields — they have no $fields.
-	const legacyFieldsAnon = (node as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
+	const nodeRecA = node as unknown as Record<string, unknown>;
+	// Phase 3a: de-hoisted `_<key>` anonymous tokens (new readNode output)
+	for (const key of Object.keys(nodeRecA)) {
+		if (!key.startsWith('_')) continue;
+		const rawKey = key.slice(1);
+		if (rawKey === fieldKey) continue; // skip the field itself
+		const val = nodeRecA[key];
+		const arr = Array.isArray(val) ? val : [val];
+		for (const x of arr) {
+			if (x && typeof x === 'object' && (x as AnyNodeData).$named === false) {
+				candidates.push(x as AnyNodeData);
+			}
+		}
+	}
+	// Legacy fallback: `$fields` wrapper (pre-Phase-3a readNode)
+	const legacyFieldsAnon = nodeRecA['$fields'] as Record<string, unknown> | undefined;
 	if (legacyFieldsAnon) {
 		for (const [key, val] of Object.entries(legacyFieldsAnon)) {
 			if (key === fieldKey) continue; // skip the field itself

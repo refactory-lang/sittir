@@ -169,7 +169,9 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// entry, corrupting the accumulated array with a null-serializing
 	// function object. Others that can bite the same way: `toString`,
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
-	const fields: Record<string, AnyNodeData | AnyNodeData[]> =
+	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
+	// directly on the returned object (de-hoisted storage). No `$fields` wrapper.
+	const namedSlots: Record<string, AnyNodeData | AnyNodeData[]> =
 		Object.create(null);
 	const children: AnyNodeData[] = [];
 
@@ -223,40 +225,53 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 			// `module.exports:` emits five children sharing
 			// `field=declaration` (module, ., property_identifier,
 			// :, object_type); silent replacement drops module/. .
-			const existing = fields[fname];
+			const existing = namedSlots[fname];
 			if (existing === undefined) {
-				fields[fname] = entry;
+				namedSlots[fname] = entry;
 			} else if (
 				!Array.isArray(existing) &&
 				existing.$named === false &&
 				entry.$named === true
 			) {
-				fields[fname] = entry;
+				namedSlots[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);
 			} else {
-				fields[fname] = [existing, entry];
+				namedSlots[fname] = [existing, entry];
 			}
-		} else if (promoteAnonymousKeyword(child, entry, fields)) {
+		} else if (promoteAnonymousKeyword(child, entry, namedSlots)) {
 			// Promoted to a keyword field — no further placement needed.
 		} else {
 			children.push(entry);
 		}
 	}
 
-	const hasStructure = Object.keys(fields).length > 0 || children.length > 0;
+	const slotNames = Object.keys(namedSlots);
+	const hasStructure = slotNames.length > 0 || children.length > 0;
 
-	return {
+	// ADR-0018 Phase 3a: build the result with `_<name>` top-level keys directly.
+	// No `$fields` wrapper — de-hoisted storage shape per FR-001.
+	// Consumers (wrap.ts accessors, transport projection) read `_<name>` directly.
+	const result: AnyNodeData = {
 		$type: resolveKindId(node.type),
 		$source: 0,
 		// Branch nodes: emit $text only when DEBUG_TEXT is enabled.
-		// Leaf nodes (no $fields / $children) always carry $text so the
+		// Leaf nodes (no named slots / $children) always carry $text so the
 		// render fast-path and all leaf-consuming callers work correctly.
 		$text: !hasStructure || DEBUG_TEXT ? node.text() : undefined,
-		$fields: Object.keys(fields).length > 0 ? fields : undefined,
 		$children: children.length > 0 ? children : undefined,
 		$span: { start: node.range().start.index, end: node.range().end.index },
 		$nodeHandle: parentHandle,
 		$named: node.isNamed()
-	};
+	} as AnyNodeData;
+
+	// Stamp `_<name>` storage keys onto the result object directly.
+	// These are enumerable (serializable data) per ADR-0018 §Three namespaces.
+	// Casting through Record to write the `_*` keys without TS index signature.
+	const rec = result as unknown as Record<string, unknown>;
+	for (const name of slotNames) {
+		rec[`_${name}`] = namedSlots[name];
+	}
+
+	return result;
 }
