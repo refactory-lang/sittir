@@ -730,6 +730,7 @@ function deriveFieldsRaw(
 			const outerField: AssembledNonterminal = {
 				name: rule.name,
 				propertyName,
+				storageName: rule.name,
 				paramName: safeParamName(propertyName),
 				values,
 				hasTrailing,
@@ -798,6 +799,7 @@ function deriveFieldsRaw(
 				{
 					name: baseName,
 					propertyName,
+					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values,
 					hasTrailing: false,
@@ -827,6 +829,7 @@ function deriveFieldsRaw(
 				{
 					name: cleanName,
 					propertyName,
+					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values: [
 						{
@@ -852,6 +855,7 @@ function deriveFieldsRaw(
 				{
 					name: cleanName,
 					propertyName,
+					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values: rule.subtypes.map((name) => ({
 						kind: 'node-ref' as const,
@@ -1577,6 +1581,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 export interface AssembledNonterminal {
 	readonly name: string;
 	readonly propertyName: string;
+	readonly storageName: string;
 	readonly values: readonly NodeOrTerminal[];
 	readonly paramName: string;
 	readonly hasTrailing: boolean;
@@ -2344,7 +2349,7 @@ function escapeJinjaBraceCollisions(s: string): string {
  * @param rule - Simplified rule to walk for slots.
  */
 function buildSlotsRecord(
-	_kind: string,
+	kind: string,
 	rule: Rule
 ): Readonly<Record<string, AssembledNonterminal>> {
 	const out: Record<string, AssembledNonterminal> = {};
@@ -2359,6 +2364,28 @@ function buildSlotsRecord(
 		// key, no collision throw, no >1-unnamed throw.
 		out[slot.name] = slot;
 	}
+
+	// Check for storageName collisions — surfaces kinds that have multiple
+	// slots sharing the same NodeData storage key. These need override
+	// curation (promote inferred slots to named fields) before emitters
+	// can use storageName for storage emission.
+	if (!process.env.SITTIR_QUIET) {
+		const byStorageName = new Map<string, string[]>();
+		for (const slot of Object.values(out)) {
+			const list = byStorageName.get(slot.storageName) ?? [];
+			list.push(slot.name);
+			byStorageName.set(slot.storageName, list);
+		}
+		for (const [storageName, names] of byStorageName) {
+			if (names.length > 1) {
+				process.stderr.write(
+					`[assemble] storageName collision: kind '${kind}' has ${names.length} slots ` +
+						`with storageName '${storageName}': ${names.map((n) => `'${n}'`).join(', ')}\n`
+				);
+			}
+		}
+	}
+
 	return Object.freeze(out);
 }
 
