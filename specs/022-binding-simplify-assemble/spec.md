@@ -253,10 +253,14 @@ Phase 1 (renames + Branch/Container merge — primary taxonomy goal):
 - **FR-T04**: `AssembledContainer` MUST be eliminated. `AssembledBranch` MUST absorb its responsibilities — one structural type for all kinds with nonterminal slots, regardless of whether they have named fields. Emitters that previously discriminated on `modelType === 'container'` vs `modelType === 'branch'` MUST switch to discriminating on slot shape (`node.fields.length === 0` for the "container-shaped" case). This is **partition-equivalent**: every kind emits the same artifacts as before; only the internal classification mechanism changes.
 - **FR-T06**: After Phase 1 commits, the regenerated grammar packages MUST diff cleanly against pre-Phase-1 output. (Sub-phases 1a/1b/1c are byte-identical renames; sub-phase 1d is partition-equivalent — the merged AssembledBranch produces the same emitted output as the previous Branch+Container pair, verified by `git diff` empty.)
 
-Phase 4 (architectural — alongside Binding/Simplify rewrite):
-- **FR-T01b**: `AssembledMulti` MUST be removed. The new pipeline (Binding + Simplify) MUST NOT instantiate it — repeat structure becomes multiplicity on slot `values[]` at referrers.
-- **FR-T03**: `AssembledGroup` MUST be absorbed into `AssembledPolymorph` (group form becomes an inline `forms[]` entry). Standalone hidden seqs (currently `AssembledGroup` with no `parentKind`) MUST become `AssembledBranch` instances.
-- **FR-T05**: At most ONE unnamed slot per `AssembledBranch` (the unnamed-slot constraint). Enforced at codegen time after the pipeline rewrite produces the new model.
+Phase 4 (architectural — **DEFERRED to a separate spec**):
+> Phase 4 is officially out of scope for spec 022. See
+> `IMPLEMENTATION-STATUS.md` "Phase 4 — officially deferred" for the
+> full itemized list. Provisional spec: 023-children-naming.
+
+- ~~**FR-T01b**: `AssembledMulti` MUST be removed.~~
+- ~~**FR-T03**: `AssembledGroup` MUST be absorbed into `AssembledPolymorph`.~~
+- ~~**FR-T05**: At most ONE unnamed slot per `AssembledBranch`.~~
 
 **Surface (de-hoist + accessors + freeze)**
 

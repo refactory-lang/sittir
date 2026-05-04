@@ -81,17 +81,63 @@ collection, userFacing), use `allSlotsOf`.
 
 | Phase | Status | Notes |
 |---|---|---|
-| Phase 1: Taxonomy | ✅ Shipped (incl. Phase 1d.i–1d.xi cleanup) | See commits matching `022(taxonomy 1d.*)`. |
-| Phase 2: Surface reshape (`_<name>` storage, `$with`, freeze) | ✅ Shipped | ADR-0018. |
+| Phase 1: Taxonomy | ✅ Shipped (incl. Phase 1d.i–1d.xix cleanup) | See commits matching `022(taxonomy 1d.*)`. |
+| Phase 2: Surface reshape (`_<name>` storage, `$with`, freeze) | ✅ Shipped | ADR-0018. Freeze deferred (hygiene rule: iterative optimizations). |
 | Phase 3: Transport / napi (direct property access, no JSON round-trip) | ✅ Shipped | SC-001 met. |
-| Phase 4: Children-naming + factoryFields gate relaxation + Owner A migration | ⏳ Carved into a separate spec | See planned spec 023+ (TBD — provisional). |
+| Phase 4: Children-naming + factoryFields gate relaxation + Owner A migration | 🚫 **Officially deferred** | Out of scope for spec 022. To be taken up in a separate spec (see below). |
+
+## Phase 4 — officially deferred
+
+Phase 4 is the **Binding / Simplify / Assemble pipeline rewrite**
+(FR-018 through FR-022, FR-T01b/T03/T05). It is **out of scope for
+spec 022** and will be taken up in a separate spec.
+
+The pipeline rewrite restructures how the compiler stages produce
+the assembled model:
+
+1. **Binding precedes Simplify** (FR-018) — attach terminals to the
+   nonterminal constituents they belong with before any rule
+   simplification occurs.
+2. **Simplify pushes down wrappers** (FR-019) — `seq`, `choice`,
+   `optional`, `repeat`, `repeat1`, `prec*` pushed onto constituent
+   rules rather than wrapping them externally.
+3. **Assemble from normalized constituents** (FR-020) — kinds
+   materialize from the normalized constituent-rule surface with
+   parent-edge naming attached.
+4. **RuleId provenance preserved** (FR-021) — spec 021 dependency;
+   every constituent carries its source RuleId through assembly.
+5. **Compatibility views derived, not discovered** (FR-022) — no
+   second independent discovery pass; all views come from the
+   normalized model.
+6. **AssembledMulti removed** (FR-T01b) — repeat structure becomes
+   multiplicity on slot `values[]` at referrers.
+7. **AssembledGroup absorbed into AssembledPolymorph** (FR-T03) —
+   groups become inline `forms[]` entries; standalone hidden seqs
+   become `AssembledBranch`.
+8. **Unnamed-slot constraint enforced** (FR-T05) — at most one
+   unnamed slot per `AssembledBranch`.
+
+Provisional spec number: 023 (or next available). Branch convention:
+`023-binding-simplify` or similar.
+
+## Remaining work (in scope for 022)
+
+- **Owner A migration** — explicit names on inferred-position slots.
+- **Slot-key remap** (`'child'` / `'children'` for unnamed slots).
+- **Eager validation** — collision / mixed-arity throws at `slots`
+  construction.
+- **`factory-map.ts` orphan-promotion gate relaxation** — 73
+  mixed-shape kinds (see memory: `project_factory_map_orphan_gate`).
+- **`drillIn<T>` typed helpers** — wrap accessors return per-field
+  types (type-erasure audit finding #1; in progress via subagent).
+- **5 python typeName collision edge cases** —
+  `_ExpressionStatementTuple`, `_WithClauseBare`, polymorph-form
+  `$children` interface shape issues.
+- **`freezeNodeData`** — re-enable freeze at construction (deferred
+  during shape A iteration; ready to wire back in).
 
 ## Out-of-scope-for-022 follow-ups
 
-- The `factory-map.ts` orphan-promotion gate excludes 73 mixed-shape
-  kinds. Conservative-by-design; relax as part of Phase 4 once
-  consumer-side knows about children-vs-fields. See memory:
-  `project_factory_map_orphan_gate`.
 - TS rtAstMatch baseline = 93/112 (8 captured astMismatches + 9
   render errors + 4 skipped). All pre-existing template/formatter
   issues; no spec 022 attribution.
