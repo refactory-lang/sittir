@@ -68,7 +68,9 @@ import {
 	snakeToCamel,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	structuralFieldsOf,
+	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
@@ -718,8 +720,8 @@ function emitStructuralTransportNamespace(
 		node.typeName,
 		node.kind,
 		undefined,
-		node.structuralFields,
-		node.structuralChildren,
+		structuralFieldsOf(node),
+		structuralChildrenOf(node),
 		nodeMap,
 		transportNodeKinds,
 		kindEntries
@@ -1581,7 +1583,7 @@ function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
 // Interface emitters
 // ---------------------------------------------------------------------------
 
-// `fieldsOf` → `node.structuralFields` (getter on AssembledNodeBase +
+// `fieldsOf` → `nodeFields(node)` (getter on AssembledNodeBase +
 // subclass overrides). One source: each class owns the semantics for
 // its own interface surface.
 
@@ -1594,8 +1596,8 @@ function emitInterface(
 	lookupUnion?: LookupUnion,
 	kindDiscriminant = JSON.stringify(node.kind)
 ): void {
-	const fields = node.structuralFields;
-	const children = node.structuralChildren;
+	const fields = structuralFieldsOf(node);
+	const children = structuralChildrenOf(node);
 	lines.push(`export interface ${node.typeName} {`);
 	// Canonical-hidden architecture (Option Y): hidden alias-source kinds
 	// (`_foo`) keep the leading underscore in the declared `$type`.
@@ -1772,7 +1774,7 @@ function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): strin
 	return parts;
 }
 
-// `childrenOf` → `node.structuralChildren` (getter on AssembledNodeBase +
+// `childrenOf` → `nodeChildren(node)` (getter on AssembledNodeBase +
 // subclass overrides). Each class owns its own children semantics.
 
 function emitFormInterface(
@@ -1885,7 +1887,7 @@ function emitFormChildrenSlot(
 		if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 		// Empty branch / group — no fields and no children to construct.
 		if (n.modelType === 'branch' || n.modelType === 'group') {
-			if (n.structuralFields.length === 0 && n.structuralChildren.length === 0)
+			if (n.fields.length === 0 && n.children.length === 0)
 				return false;
 		}
 		return true;

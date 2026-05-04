@@ -34,7 +34,9 @@ import {
 	isRequired,
 	isNodeRef,
 	isUnresolvedRef,
-	kindsOf
+	kindsOf,
+	structuralFieldsOf,
+	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
@@ -282,7 +284,7 @@ function emitStruct(
 	const multipleByName = new Map<string, boolean>();
 	const requiredByName = new Map<string, boolean>();
 	if (node) {
-		for (const f of node.structuralFields) {
+		for (const f of structuralFieldsOf(node)) {
 			multipleByName.set(f.name, isMultiple(f));
 			requiredByName.set(f.name, isRequired(f));
 		}
@@ -305,12 +307,12 @@ function emitStruct(
 		kind,
 		fields,
 		hasChildren: surface.usesChildren,
-		transportHasChildren: node ? node.structuralChildren.length > 0 : false,
+		transportHasChildren: node ? structuralChildrenOf(node).length > 0 : false,
 		childrenRequired: node
-			? hasRequiredChild(node.structuralChildren)
+			? hasRequiredChild(structuralChildrenOf(node))
 			: false,
 		childrenMultiple: node
-			? hasMultipleChildren(node.structuralChildren)
+			? hasMultipleChildren(structuralChildrenOf(node))
 			: false,
 		hasVariant: surface.usesVariant,
 		hasText: surface.usesText
@@ -1470,13 +1472,13 @@ function renderTypedKindFn(
 function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
-	const hasChildren = hasRequiredChild(node.structuralChildren) || node.structuralChildren.length > 0;
+	const hasChildren = hasRequiredChild(structuralChildrenOf(node)) || structuralChildrenOf(node).length > 0;
 	const lines: string[] = [];
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
 	if (hasChildren) {
-		const childrenIsRequired = hasRequiredChild(node.structuralChildren);
-		const childrenIsMultiple = hasMultipleChildren(node.structuralChildren);
-		const childrenCls = classifySlotFromChildren(node.structuralChildren, nodeMap);
+		const childrenIsRequired = hasRequiredChild(structuralChildrenOf(node));
+		const childrenIsMultiple = hasMultipleChildren(structuralChildrenOf(node));
+		const childrenCls = classifySlotFromChildren(structuralChildrenOf(node), nodeMap);
 		// For per-slot enum (heterogeneous) and concrete/supertype, all implement
 		// RenderableTransport — use `child` directly as the expression.
 		const childRenderCall = buildSlotRenderCall(childrenCls, 'child');
@@ -1651,8 +1653,8 @@ function renderTypedBranchFn(
 	const separator = meta.separators.get(node.kind) ?? '';
 
 	// Build per-field kind maps for typed render call selection (Phase 1).
-	const fieldKindsByName = buildFieldKindsByName(node.structuralFields);
-	const childrenCls = classifySlotFromChildren(node.structuralChildren, nodeMap);
+	const fieldKindsByName = buildFieldKindsByName(structuralFieldsOf(node));
+	const childrenCls = classifySlotFromChildren(structuralChildrenOf(node), nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}) -> Result<String, ::askama::Error> {`);
 	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, childrenCls, nodeMap));
@@ -2421,7 +2423,7 @@ function collectUsedSupertypeNames(
 				collectFromNode(form.fields, form.children);
 			}
 		} else {
-			collectFromNode(node.structuralFields, node.structuralChildren);
+			collectFromNode(structuralFieldsOf(node), structuralChildrenOf(node));
 		}
 	}
 	// Transitive closure: supertype enums include sub-supertypes as variants.
@@ -2806,7 +2808,7 @@ function collectPerSlotChildEnums(
 				consider(form.typeName, form.children);
 			}
 		} else {
-			consider(node.typeName, node.structuralChildren);
+			consider(node.typeName, structuralChildrenOf(node));
 		}
 	}
 	return entries;
@@ -3306,8 +3308,8 @@ function renderTransportToNodeFns(
 				rustTransportToNodeFnName(node.typeName),
 				rustTransportStructName(node),
 				node.kind,
-				node.structuralFields,
-				node.structuralChildren,
+				structuralFieldsOf(node),
+				structuralChildrenOf(node),
 				true,
 				true,
 				kindIdByKind,
@@ -3762,8 +3764,8 @@ function renderTransportStruct(
 	return renderTransportDataStruct(
 		rustTransportStructName(node),
 		node,
-		node.structuralFields,
-		node.structuralChildren,
+		structuralFieldsOf(node),
+		structuralChildrenOf(node),
 		nodeMap
 	);
 }

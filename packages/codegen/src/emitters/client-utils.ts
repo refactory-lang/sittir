@@ -14,7 +14,9 @@ import {
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	structuralFieldsOf,
+	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
@@ -594,7 +596,7 @@ function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> 
 				// For polymorphs, check each form's fields
 				if (node.forms.length > 0) {
 					for (const form of node.forms) {
-						const terminalFields = form.structuralFields
+						const terminalFields = form.fields
 							.filter((field) => isFieldTerminalOnly(field, nodeMap))
 							.map((field) => field.name);
 						if (terminalFields.length > 0) {
@@ -608,7 +610,9 @@ function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> 
 			default:
 				continue;
 		}
-		const terminalFields = node.structuralFields
+		// node is narrowed to 'branch' | 'group' here (polymorph + default
+		// continued out of the switch above).
+		const terminalFields = node.fields
 			.filter((field) => isFieldTerminalOnly(field, nodeMap))
 			.map((field) => field.name);
 		if (terminalFields.length > 0) {
@@ -635,9 +639,11 @@ function nativeTransportRawChildRuleEntries(
 ): NativeTransportRawChildRuleEntry[] {
 	const entries: NativeTransportRawChildRuleEntry[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		const fields = node.structuralFields.filter((field) => isMultiple(field));
+		const fields = structuralFieldsOf(node).filter((field) =>
+			isMultiple(field)
+		);
 		if (fields.length === 0) continue;
-		const children = node.structuralChildren;
+		const children = structuralChildrenOf(node);
 		entries.push({
 			kind: node.kind,
 			childrenRequired: children.some((child) => isRequired(child)),
@@ -683,10 +689,10 @@ function nativeTransportVariantRuleEntries(
 		entries.push({
 			kind: node.kind,
 			rules: node.forms.map((form) => {
-				const children = form.structuralChildren;
+				const children = form.children;
 				return {
 					variant: form.name,
-					fields: form.structuralFields.map((field) => ({
+					fields: form.fields.map((field) => ({
 						name: field.name,
 						multiple: isMultiple(field),
 						required: isRequired(field),
@@ -1101,11 +1107,11 @@ function emitStructuralValidatorBody(
 	lines: string[],
 	node: Extract<
 		AssembledNode,
-		{ modelType: 'branch' | 'container' | 'group' | 'polymorph' }
+		{ modelType: 'branch' | 'group' | 'polymorph' }
 	>,
 	nodeMap: NodeMap
 ): void {
-	const fields = node.structuralFields;
+	const fields = structuralFieldsOf(node);
 	if (fields.length > 0) {
 		for (const field of fields) {
 			const access = `node[${JSON.stringify(field.name)}]`;
@@ -1129,7 +1135,7 @@ function emitStructuralValidatorBody(
 			}
 		}
 	}
-	const children = node.structuralChildren;
+	const children = structuralChildrenOf(node);
 	if (children.length > 0) {
 		const alternatives = transportAlternativesExpr(
 			children.flatMap((child) =>

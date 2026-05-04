@@ -6,7 +6,11 @@ import type {
 	AssembledNode,
 	NodeOrTerminal
 } from '../compiler/node-map.ts';
-import { isTerminalValue } from '../compiler/node-map.ts';
+import {
+	isTerminalValue,
+	allFormFieldsOf,
+	allFormChildrenOf
+} from '../compiler/node-map.ts';
 import {
 	fieldTypeComponents,
 	resolveHiddenKeywordLiteral
@@ -98,29 +102,15 @@ function collectTransportLiterals(
 	};
 
 	for (const node of nodes) {
-		for (const field of transportFields(node)) {
+		for (const field of allFormFieldsOf(node)) {
 			for (const literal of fieldTransportLiterals(field, nodeMap))
 				add(literal);
 		}
-		for (const child of transportChildren(node)) {
+		for (const child of allFormChildrenOf(node)) {
 			for (const literal of childTransportLiterals(child)) add(literal);
 		}
 	}
 	return literals;
-}
-
-function transportFields(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return node.forms.flatMap((form) => form.fields);
-	}
-	return node.structuralFields;
-}
-
-function transportChildren(node: AssembledNode): readonly AssembledNonterminal[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return node.forms.flatMap((form) => form.children);
-	}
-	return node.structuralChildren;
 }
 
 function fieldTransportLiterals(
