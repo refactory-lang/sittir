@@ -2127,35 +2127,35 @@ export const enum UseClauseKind {
 // Node types — concrete interfaces
 export interface ArrayExpressionList {
   readonly $type: TSKindId.ArrayExpressionList;
-  readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly elements: readonly (Expression)[];
-  };
+  readonly _attributes: readonly (AttributeItem)[];
+  readonly _elements: readonly (Expression)[];
+  attributes(): readonly (AttributeItem)[];
+  elements(): readonly (Expression)[];
   readonly $children: readonly (AttributeItem)[];
 }
 
 export interface ArrayExpressionSemi {
   readonly $type: TSKindId.ArrayExpressionSemi;
-  readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly elements: Expression;
-    readonly length: Expression;
-  };
+  readonly _attributes: readonly (AttributeItem)[];
+  readonly _elements: Expression;
+  readonly _length: Expression;
+  attributes(): readonly (AttributeItem)[];
+  elements(): Expression;
+  length(): Expression;
 }
 
 export interface ClosureExpressionBlock {
   readonly $type: TSKindId.ClosureExpressionBlock;
-  readonly $fields: {
-    readonly return_type?: _Type;
-    readonly body: Block;
-  };
+  readonly _return_type?: _Type;
+  readonly _body: Block;
+  returnType(): _Type | undefined;
+  body(): Block;
 }
 
 export interface _ClosureExpressionExpr {
   readonly $type: TSKindId._ClosureExpressionExpr;
-  readonly $fields: {
-    readonly body: Expression | "_";
-  };
+  readonly _body: Expression | "_";
+  body(): Expression | "_";
 }
 
 export interface _DelimTokenTreeBrace {
@@ -2190,24 +2190,22 @@ export interface FieldIdentifier {
 
 export interface FieldPatternNamed {
   readonly $type: TSKindId.FieldPatternNamed;
-  readonly $fields: {
-    readonly name: FieldIdentifier;
-    readonly pattern: Pattern;
-  };
+  readonly _name: FieldIdentifier;
+  readonly _pattern: Pattern;
+  name(): FieldIdentifier;
+  pattern(): Pattern;
 }
 
 export interface _FieldPatternShorthand {
   readonly $type: TSKindId._FieldPatternShorthand;
-  readonly $fields: {
-    readonly name: Identifier;
-  };
+  readonly _name: Identifier;
+  name(): Identifier;
 }
 
 export interface _ForeignModItemBody {
   readonly $type: TSKindId._ForeignModItemBody;
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface FunctionTypeFnForm {
@@ -2217,16 +2215,14 @@ export interface FunctionTypeFnForm {
 
 export interface FunctionTypeTraitForm {
   readonly $type: TSKindId.FunctionTypeTraitForm;
-  readonly $fields: {
-    readonly trait: TypeIdentifier | ScopedTypeIdentifier;
-  };
+  readonly _trait: TypeIdentifier | ScopedTypeIdentifier;
+  trait(): TypeIdentifier | ScopedTypeIdentifier;
 }
 
 export interface _ImplItemBody {
   readonly $type: TSKindId._ImplItemBody;
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface LetChain {
@@ -2236,9 +2232,8 @@ export interface LetChain {
 
 export interface LineCommentDoc {
   readonly $type: TSKindId.LineCommentDoc;
-  readonly $fields: {
-    readonly doc: LineDocContent;
-  };
+  readonly _doc: LineDocContent;
+  doc(): LineDocContent;
   readonly $children: readonly ["/" | "!"];
 }
 
@@ -2259,23 +2254,20 @@ export interface _MacroDefinitionParen {
 
 export interface _MatchArmBlockEnding {
   readonly $type: TSKindId._MatchArmBlockEnding;
-  readonly $fields: {
-    readonly value: ExpressionEndingWithBlock;
-  };
+  readonly _value: ExpressionEndingWithBlock;
+  value(): ExpressionEndingWithBlock;
 }
 
 export interface MatchArmWithComma {
   readonly $type: TSKindId.MatchArmWithComma;
-  readonly $fields: {
-    readonly value: Expression;
-  };
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface _ModItemInline {
   readonly $type: TSKindId._ModItemInline;
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface NonSpecialToken {
@@ -2285,17 +2277,16 @@ export interface NonSpecialToken {
 
 export interface OrPatternBinary {
   readonly $type: TSKindId.OrPatternBinary;
-  readonly $fields: {
-    readonly left: Pattern;
-    readonly right: Pattern;
-  };
+  readonly _left: Pattern;
+  readonly _right: Pattern;
+  left(): Pattern;
+  right(): Pattern;
 }
 
 export interface OrPatternPrefix {
   readonly $type: TSKindId.OrPatternPrefix;
-  readonly $fields: {
-    readonly right: Pattern;
-  };
+  readonly _right: Pattern;
+  right(): Pattern;
 }
 
 export interface _PointerTypeMut {
@@ -2305,48 +2296,46 @@ export interface _PointerTypeMut {
 
 export interface _RangeExpressionBare {
   readonly $type: TSKindId._RangeExpressionBare;
-  readonly $fields: {
-    readonly operator: AutoStamp<Operator>;
-  };
+  readonly _operator: AutoStamp<Operator>;
+  operator(): AutoStamp<Operator>;
 }
 
 export interface RangeExpressionBinary {
   readonly $type: TSKindId.RangeExpressionBinary;
-  readonly $fields: {
-    readonly start: Expression;
-    readonly operator: RangeExpressionBinaryOperator;
-    readonly end: Expression;
-  };
+  readonly _start: Expression;
+  readonly _operator: RangeExpressionBinaryOperator;
+  readonly _end: Expression;
+  start(): Expression;
+  operator(): RangeExpressionBinaryOperator;
+  end(): Expression;
 }
 
 export interface RangeExpressionPostfix {
   readonly $type: TSKindId.RangeExpressionPostfix;
-  readonly $fields: {
-    readonly start: Expression;
-    readonly operator: AutoStamp<Operator>;
-  };
+  readonly _start: Expression;
+  readonly _operator: AutoStamp<Operator>;
+  start(): Expression;
+  operator(): AutoStamp<Operator>;
 }
 
 export interface RangeExpressionPrefix {
   readonly $type: TSKindId.RangeExpressionPrefix;
-  readonly $fields: {
-    readonly operator: AutoStamp<Operator>;
-    readonly end: Expression;
-  };
+  readonly _operator: AutoStamp<Operator>;
+  readonly _end: Expression;
+  operator(): AutoStamp<Operator>;
+  end(): Expression;
 }
 
 export interface RangePatternLeftWithRight {
   readonly $type: TSKindId.RangePatternLeftWithRight;
-  readonly $fields: {
-    readonly right: LiteralPattern | Path;
-  };
+  readonly _right: LiteralPattern | Path;
+  right(): LiteralPattern | Path;
 }
 
 export interface RangePatternPrefix {
   readonly $type: TSKindId.RangePatternPrefix;
-  readonly $fields: {
-    readonly right: LiteralPattern | Path;
-  };
+  readonly _right: LiteralPattern | Path;
+  right(): LiteralPattern | Path;
 }
 
 export interface ReferenceExpressionRawMut {
@@ -2361,17 +2350,15 @@ export interface ReservedIdentifier {
 
 export interface StructItemBrace {
   readonly $type: TSKindId.StructItemBrace;
-  readonly $fields: {
-    readonly body: FieldDeclarationList;
-  };
+  readonly _body: FieldDeclarationList;
+  body(): FieldDeclarationList;
   readonly $children: readonly [WhereClause];
 }
 
 export interface StructItemTuple {
   readonly $type: TSKindId.StructItemTuple;
-  readonly $fields: {
-    readonly body: OrderedFieldDeclarationList;
-  };
+  readonly _body: OrderedFieldDeclarationList;
+  body(): OrderedFieldDeclarationList;
   readonly $children: readonly [WhereClause];
 }
 
@@ -2417,26 +2404,24 @@ export interface _VisibilityModifierCrate {
 
 export interface VisibilityModifierInPath {
   readonly $type: TSKindId.VisibilityModifierInPath;
-  readonly $fields: {
-    readonly in: AutoStamp<VisibilityModifierInPathIn>;
-  };
+  readonly _in: AutoStamp<VisibilityModifierInPathIn>;
+  in(): AutoStamp<VisibilityModifierInPathIn>;
   readonly $children: readonly [Path];
 }
 
 export interface VisibilityModifierPub {
   readonly $type: TSKindId.VisibilityModifierPub;
-  readonly $fields: {
-    readonly pub: AutoStamp<VisibilityModifierPubPub>;
-  };
+  readonly _pub: AutoStamp<VisibilityModifierPubPub>;
+  pub(): AutoStamp<VisibilityModifierPubPub>;
   readonly $children: readonly [Self | Super | Crate | VisibilityModifierInPath];
 }
 
 export interface AbstractType {
   readonly $type: TSKindId.AbstractType;
-  readonly $fields: {
-    readonly type_parameters?: TypeParameters;
-    readonly trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
-  };
+  readonly _type_parameters?: TypeParameters;
+  readonly _trait: TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
+  typeParameters(): TypeParameters | undefined;
+  trait(): TypeIdentifier | ScopedTypeIdentifier | RemovedTraitBound | GenericType | FunctionType | TupleType | BoundedType;
 }
 
 export interface Arguments {
@@ -2459,36 +2444,38 @@ export interface ArrayExpressionUFormList {
 export type ArrayExpression = ArrayExpressionUFormSemi | ArrayExpressionUFormList;
 export interface ArrayType {
   readonly $type: TSKindId.ArrayType;
-  readonly $fields: {
-    readonly element: _Type;
-    readonly length?: Expression;
-  };
+  readonly _element: _Type;
+  readonly _length?: Expression;
+  element(): _Type;
+  length(): Expression | undefined;
 }
 
 export interface AssignmentExpression {
   readonly $type: TSKindId.AssignmentExpression;
-  readonly $fields: {
-    readonly left: Expression;
-    readonly right: Expression;
-  };
+  readonly _left: Expression;
+  readonly _right: Expression;
+  left(): Expression;
+  right(): Expression;
 }
 
 export interface AssociatedType {
   readonly $type: TSKindId.AssociatedType;
-  readonly $fields: {
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly bounds?: TraitBounds;
-    readonly where_clause?: WhereClause;
-  };
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  readonly _bounds?: TraitBounds;
+  readonly _where_clause?: WhereClause;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
+  bounds(): TraitBounds | undefined;
+  whereClause(): WhereClause | undefined;
 }
 
 export interface AsyncBlock {
   readonly $type: TSKindId.AsyncBlock;
-  readonly $fields: {
-    readonly move_marker?: BooleanKeyword<MoveMarker>;
-    readonly block: Block;
-  };
+  readonly _move_marker?: BooleanKeyword<MoveMarker>;
+  readonly _block: Block;
+  moveMarker(): BooleanKeyword<MoveMarker> | undefined;
+  block(): Block;
 }
 
 export interface Attribute {
@@ -2498,9 +2485,8 @@ export interface Attribute {
 
 export interface AttributeItem {
   readonly $type: TSKindId.AttributeItem;
-  readonly $fields: {
-    readonly attribute: Attribute;
-  };
+  readonly _attribute: Attribute;
+  attribute(): Attribute;
 }
 
 export interface AwaitExpression {
@@ -2515,35 +2501,34 @@ export interface BaseFieldInitializer {
 
 export interface BinaryExpression {
   readonly $type: TSKindId.BinaryExpression;
-  readonly $fields: {
-    readonly left: Expression;
-    readonly operator: AutoStamp<BinaryExpressionOperator>;
-    readonly right: Expression;
-  };
+  readonly _left: Expression;
+  readonly _operator: AutoStamp<BinaryExpressionOperator>;
+  readonly _right: Expression;
+  left(): Expression;
+  operator(): AutoStamp<BinaryExpressionOperator>;
+  right(): Expression;
 }
 
 export interface Block {
   readonly $type: TSKindId.Block;
-  readonly $fields: {
-    readonly label?: Label;
-  };
+  readonly _label?: Label;
+  label(): Label | undefined;
   readonly $children: readonly (Statement | Expression)[];
 }
 
 export interface BlockComment {
   readonly $type: TSKindId.BlockComment;
-  readonly $fields: {
-    readonly doc?: BlockCommentContent;
-  };
+  readonly _doc?: BlockCommentContent;
+  doc(): BlockCommentContent | undefined;
   readonly $children: readonly [OuterBlockDocCommentMarker | InnerBlockDocCommentMarker];
 }
 
 export interface BoundedType {
   readonly $type: TSKindId.BoundedType;
-  readonly $fields: {
-    readonly left: Lifetime | _Type | UseBounds;
-    readonly right: Lifetime | _Type | UseBounds;
-  };
+  readonly _left: Lifetime | _Type | UseBounds;
+  readonly _right: Lifetime | _Type | UseBounds;
+  left(): Lifetime | _Type | UseBounds;
+  right(): Lifetime | _Type | UseBounds;
 }
 
 export interface BracketedType {
@@ -2553,56 +2538,57 @@ export interface BracketedType {
 
 export interface BreakExpression {
   readonly $type: TSKindId.BreakExpression;
-  readonly $fields: {
-    readonly label?: Label;
-  };
+  readonly _label?: Label;
+  label(): Label | undefined;
   readonly $children: readonly [Expression];
 }
 
 export interface CallExpression {
   readonly $type: TSKindId.CallExpression;
-  readonly $fields: {
-    readonly function: ExpressionExceptRange;
-    readonly arguments: Arguments;
-  };
+  readonly _function: ExpressionExceptRange;
+  readonly _arguments: Arguments;
+  function(): ExpressionExceptRange;
+  arguments(): Arguments;
 }
 
 export interface CapturedPattern {
   readonly $type: TSKindId.CapturedPattern;
-  readonly $fields: {
-    readonly identifier: Identifier;
-  };
+  readonly _identifier: Identifier;
+  identifier(): Identifier;
   readonly $children: readonly [Pattern];
 }
 
 export interface ClosureExpressionExpr {
   readonly $type: "closure_expression_expr";
-  readonly $fields: {
-    readonly body: Expression | "_";
-  };
+  readonly _body: Expression | "_";
+  body(): Expression | "_";
 }
 
 export interface ClosureExpressionUFormBlock {
   readonly $type: TSKindId.ClosureExpression;
   readonly $variant: 'block';
-  readonly $fields: {
-    readonly static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
-    readonly async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
-    readonly move_marker?: BooleanKeyword<MoveMarker>;
-    readonly parameters: ClosureParameters;
-  };
+  readonly _static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
+  readonly _async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
+  readonly _move_marker?: BooleanKeyword<MoveMarker>;
+  readonly _parameters: ClosureParameters;
+  staticMarker(): BooleanKeyword<ClosureExpressionStaticMarker> | undefined;
+  asyncMarker(): BooleanKeyword<ClosureExpressionAsyncMarker> | undefined;
+  moveMarker(): BooleanKeyword<MoveMarker> | undefined;
+  parameters(): ClosureParameters;
   readonly $children: readonly [ClosureExpressionBlock];
 }
 
 export interface ClosureExpressionUFormExpr {
   readonly $type: TSKindId.ClosureExpression;
   readonly $variant: 'expr';
-  readonly $fields: {
-    readonly static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
-    readonly async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
-    readonly move_marker?: BooleanKeyword<MoveMarker>;
-    readonly parameters: ClosureParameters;
-  };
+  readonly _static_marker?: BooleanKeyword<ClosureExpressionStaticMarker>;
+  readonly _async_marker?: BooleanKeyword<ClosureExpressionAsyncMarker>;
+  readonly _move_marker?: BooleanKeyword<MoveMarker>;
+  readonly _parameters: ClosureParameters;
+  staticMarker(): BooleanKeyword<ClosureExpressionStaticMarker> | undefined;
+  asyncMarker(): BooleanKeyword<ClosureExpressionAsyncMarker> | undefined;
+  moveMarker(): BooleanKeyword<MoveMarker> | undefined;
+  parameters(): ClosureParameters;
   readonly $children: readonly [_ClosureExpressionExpr];
 }
 
@@ -2619,44 +2605,46 @@ export interface Comment {
 
 export interface CompoundAssignmentExpr {
   readonly $type: TSKindId.CompoundAssignmentExpr;
-  readonly $fields: {
-    readonly left: Expression;
-    readonly operator: CompoundAssignmentExprOperator;
-    readonly right: Expression;
-  };
+  readonly _left: Expression;
+  readonly _operator: CompoundAssignmentExprOperator;
+  readonly _right: Expression;
+  left(): Expression;
+  operator(): CompoundAssignmentExprOperator;
+  right(): Expression;
 }
 
 export interface ConstBlock {
   readonly $type: TSKindId.ConstBlock;
-  readonly $fields: {
-    readonly body: Block;
-  };
+  readonly _body: Block;
+  body(): Block;
 }
 
 export interface ConstItem {
   readonly $type: TSKindId.ConstItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: Identifier;
-    readonly type: _Type;
-    readonly value?: Expression;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: Identifier;
+  readonly _type: _Type;
+  readonly _value?: Expression;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): Identifier;
+  typeField(): _Type;
+  value(): Expression | undefined;
 }
 
 export interface ConstParameter {
   readonly $type: TSKindId.ConstParameter;
-  readonly $fields: {
-    readonly name: Identifier;
-    readonly type: _Type;
-    readonly value?: Block | Identifier | Literal | NegativeLiteral;
-  };
+  readonly _name: Identifier;
+  readonly _type: _Type;
+  readonly _value?: Block | Identifier | Literal | NegativeLiteral;
+  name(): Identifier;
+  typeField(): _Type;
+  value(): Block | Identifier | Literal | NegativeLiteral | undefined;
 }
 
 export interface ContinueExpression {
   readonly $type: TSKindId.ContinueExpression;
-  readonly $fields: {
-    readonly label?: Label;
-  };
+  readonly _label?: Label;
+  label(): Label | undefined;
 }
 
 export interface DeclarationList {
@@ -2700,9 +2688,8 @@ export interface DelimTokenTreeUFormBrace {
 export type DelimTokenTree = DelimTokenTreeUFormParen | DelimTokenTreeUFormBracket | DelimTokenTreeUFormBrace;
 export interface DynamicType {
   readonly $type: TSKindId.DynamicType;
-  readonly $fields: {
-    readonly trait: HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
-  };
+  readonly _trait: HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
+  trait(): HigherRankedTraitBound | TypeIdentifier | ScopedTypeIdentifier | GenericType | FunctionType | TupleType;
 }
 
 export interface ElseClause {
@@ -2712,23 +2699,28 @@ export interface ElseClause {
 
 export interface EnumItem {
   readonly $type: TSKindId.EnumItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly where_clause?: WhereClause;
-    readonly body: EnumVariantList;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  readonly _where_clause?: WhereClause;
+  readonly _body: EnumVariantList;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
+  whereClause(): WhereClause | undefined;
+  body(): EnumVariantList;
 }
 
 export interface EnumVariant {
   readonly $type: TSKindId.EnumVariant;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: Identifier;
-    readonly body?: FieldDeclarationList | OrderedFieldDeclarationList;
-    readonly value?: Expression;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: Identifier;
+  readonly _body?: FieldDeclarationList | OrderedFieldDeclarationList;
+  readonly _value?: Expression;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): Identifier;
+  body(): FieldDeclarationList | OrderedFieldDeclarationList | undefined;
+  value(): Expression | undefined;
 }
 
 export interface EnumVariantList {
@@ -2761,28 +2753,30 @@ export interface ExpressionStatementUFormBlockEnding {
 export type ExpressionStatement = ExpressionStatementUFormWithSemi | ExpressionStatementUFormBlockEnding;
 export interface ExternCrateDeclaration {
   readonly $type: TSKindId.ExternCrateDeclaration;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly crate: AutoStamp<_Crate>;
-    readonly name: Identifier;
-    readonly alias?: Identifier;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _crate: AutoStamp<_Crate>;
+  readonly _name: Identifier;
+  readonly _alias?: Identifier;
+  visibilityModifier(): VisibilityModifier | undefined;
+  crate(): AutoStamp<_Crate>;
+  name(): Identifier;
+  alias(): Identifier | undefined;
 }
 
 export interface ExternModifier {
   readonly $type: TSKindId.ExternModifier;
-  readonly $fields: {
-    readonly string_literal?: StringLiteral;
-  };
+  readonly _string_literal?: StringLiteral;
+  stringLiteral(): StringLiteral | undefined;
 }
 
 export interface FieldDeclaration {
   readonly $type: TSKindId.FieldDeclaration;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: FieldIdentifier;
-    readonly type: _Type;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: FieldIdentifier;
+  readonly _type: _Type;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): FieldIdentifier;
+  typeField(): _Type;
 }
 
 export interface FieldDeclarationList {
@@ -2792,18 +2786,18 @@ export interface FieldDeclarationList {
 
 export interface FieldExpression {
   readonly $type: TSKindId.FieldExpression;
-  readonly $fields: {
-    readonly value: Expression;
-    readonly field: FieldIdentifier | IntegerLiteral;
-  };
+  readonly _value: Expression;
+  readonly _field: FieldIdentifier | IntegerLiteral;
+  value(): Expression;
+  field(): FieldIdentifier | IntegerLiteral;
 }
 
 export interface FieldInitializer {
   readonly $type: TSKindId.FieldInitializer;
-  readonly $fields: {
-    readonly field: FieldIdentifier | IntegerLiteral;
-    readonly value: Expression;
-  };
+  readonly _field: FieldIdentifier | IntegerLiteral;
+  readonly _value: Expression;
+  field(): FieldIdentifier | IntegerLiteral;
+  value(): Expression;
   readonly $children: readonly (AttributeItem)[];
 }
 
@@ -2814,40 +2808,41 @@ export interface FieldInitializerList {
 
 export interface FieldPatternShorthand {
   readonly $type: "field_pattern_shorthand";
-  readonly $fields: {
-    readonly name: Identifier;
-  };
+  readonly _name: Identifier;
+  name(): Identifier;
 }
 
 export interface FieldPatternUFormShorthand {
   readonly $type: TSKindId.FieldPattern;
   readonly $variant: 'shorthand';
-  readonly $fields: {
-    readonly ref_marker?: BooleanKeyword<RefMarker>;
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-  };
+  readonly _ref_marker?: BooleanKeyword<RefMarker>;
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  refMarker(): BooleanKeyword<RefMarker> | undefined;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
   readonly $children: readonly [_FieldPatternShorthand];
 }
 
 export interface FieldPatternUFormNamed {
   readonly $type: TSKindId.FieldPattern;
   readonly $variant: 'named';
-  readonly $fields: {
-    readonly ref_marker?: BooleanKeyword<RefMarker>;
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-  };
+  readonly _ref_marker?: BooleanKeyword<RefMarker>;
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  refMarker(): BooleanKeyword<RefMarker> | undefined;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
   readonly $children: readonly [FieldPatternNamed];
 }
 
 export type FieldPattern = FieldPatternUFormShorthand | FieldPatternUFormNamed;
 export interface ForExpression {
   readonly $type: TSKindId.ForExpression;
-  readonly $fields: {
-    readonly label?: Label;
-    readonly pattern: Pattern;
-    readonly value: Expression;
-    readonly body: Block;
-  };
+  readonly _label?: Label;
+  readonly _pattern: Pattern;
+  readonly _value: Expression;
+  readonly _body: Block;
+  label(): Label | undefined;
+  pattern(): Pattern;
+  value(): Expression;
+  body(): Block;
 }
 
 export interface ForLifetimes {
@@ -2857,231 +2852,249 @@ export interface ForLifetimes {
 
 export interface ForeignModItemBody {
   readonly $type: "foreign_mod_item_body";
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface ForeignModItemUFormSemi {
   readonly $type: TSKindId.ForeignModItem;
   readonly $variant: 'semi';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly extern_modifier: ExternModifier;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _extern_modifier: ExternModifier;
+  visibilityModifier(): VisibilityModifier | undefined;
+  externModifier(): ExternModifier;
 }
 
 export interface ForeignModItemUFormBody {
   readonly $type: TSKindId.ForeignModItem;
   readonly $variant: 'body';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly extern_modifier: ExternModifier;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _extern_modifier: ExternModifier;
+  visibilityModifier(): VisibilityModifier | undefined;
+  externModifier(): ExternModifier;
   readonly $children: readonly [_ForeignModItemBody];
 }
 
 export type ForeignModItem = ForeignModItemUFormSemi | ForeignModItemUFormBody;
 export interface FunctionItem {
   readonly $type: TSKindId.FunctionItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly function_modifiers?: FunctionModifiers;
-    readonly name: Identifier | Metavariable;
-    readonly type_parameters?: TypeParameters;
-    readonly parameters: Parameters;
-    readonly return_type?: _Type;
-    readonly where_clause?: WhereClause;
-    readonly body: Block;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _function_modifiers?: FunctionModifiers;
+  readonly _name: Identifier | Metavariable;
+  readonly _type_parameters?: TypeParameters;
+  readonly _parameters: Parameters;
+  readonly _return_type?: _Type;
+  readonly _where_clause?: WhereClause;
+  readonly _body: Block;
+  visibilityModifier(): VisibilityModifier | undefined;
+  functionModifiers(): FunctionModifiers | undefined;
+  name(): Identifier | Metavariable;
+  typeParameters(): TypeParameters | undefined;
+  parameters(): Parameters;
+  returnType(): _Type | undefined;
+  whereClause(): WhereClause | undefined;
+  body(): Block;
 }
 
 export interface FunctionModifiers {
   readonly $type: TSKindId.FunctionModifiers;
-  readonly $fields: {
-    readonly modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
-  };
+  readonly _modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
+  modifier(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
 }
 
 export interface FunctionSignatureItem {
   readonly $type: TSKindId.FunctionSignatureItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly function_modifiers?: FunctionModifiers;
-    readonly name: Identifier | Metavariable;
-    readonly type_parameters?: TypeParameters;
-    readonly parameters: Parameters;
-    readonly return_type?: _Type;
-    readonly where_clause?: WhereClause;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _function_modifiers?: FunctionModifiers;
+  readonly _name: Identifier | Metavariable;
+  readonly _type_parameters?: TypeParameters;
+  readonly _parameters: Parameters;
+  readonly _return_type?: _Type;
+  readonly _where_clause?: WhereClause;
+  visibilityModifier(): VisibilityModifier | undefined;
+  functionModifiers(): FunctionModifiers | undefined;
+  name(): Identifier | Metavariable;
+  typeParameters(): TypeParameters | undefined;
+  parameters(): Parameters;
+  returnType(): _Type | undefined;
+  whereClause(): WhereClause | undefined;
 }
 
 export interface FunctionType {
   readonly $type: TSKindId.FunctionType;
-  readonly $fields: {
-    readonly for_lifetimes?: ForLifetimes;
-    readonly parameters: Parameters;
-    readonly return_type?: _Type;
-  };
+  readonly _for_lifetimes?: ForLifetimes;
+  readonly _parameters: Parameters;
+  readonly _return_type?: _Type;
+  forLifetimes(): ForLifetimes | undefined;
+  parameters(): Parameters;
+  returnType(): _Type | undefined;
   readonly $children: readonly [FunctionTypeTraitForm | FunctionTypeFnForm];
 }
 
 export interface GenBlock {
   readonly $type: TSKindId.GenBlock;
-  readonly $fields: {
-    readonly move_marker?: BooleanKeyword<MoveMarker>;
-    readonly block: Block;
-  };
+  readonly _move_marker?: BooleanKeyword<MoveMarker>;
+  readonly _block: Block;
+  moveMarker(): BooleanKeyword<MoveMarker> | undefined;
+  block(): Block;
 }
 
 export interface GenericFunction {
   readonly $type: TSKindId.GenericFunction;
-  readonly $fields: {
-    readonly function: Identifier | ScopedIdentifier | FieldExpression;
-    readonly type_arguments: TypeArguments;
-  };
+  readonly _function: Identifier | ScopedIdentifier | FieldExpression;
+  readonly _type_arguments: TypeArguments;
+  function(): Identifier | ScopedIdentifier | FieldExpression;
+  typeArguments(): TypeArguments;
 }
 
 export interface GenericPattern {
   readonly $type: TSKindId.GenericPattern;
-  readonly $fields: {
-    readonly type_arguments: TypeArguments;
-  };
+  readonly _type_arguments: TypeArguments;
+  typeArguments(): TypeArguments;
   readonly $children: readonly [Identifier | ScopedIdentifier];
 }
 
 export interface GenericType {
   readonly $type: TSKindId.GenericType;
-  readonly $fields: {
-    readonly type: TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
-    readonly type_arguments: TypeArguments;
-  };
+  readonly _type: TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+  readonly _type_arguments: TypeArguments;
+  typeField(): TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+  typeArguments(): TypeArguments;
 }
 
 export interface GenericTypeWithTurbofish {
   readonly $type: TSKindId.GenericTypeWithTurbofish;
-  readonly $fields: {
-    readonly type: TypeIdentifier | ScopedIdentifier;
-    readonly turbofish: AutoStamp<GenericTypeWithTurbofishTurbofish>;
-    readonly type_arguments: TypeArguments;
-  };
+  readonly _type: TypeIdentifier | ScopedIdentifier;
+  readonly _turbofish: AutoStamp<GenericTypeWithTurbofishTurbofish>;
+  readonly _type_arguments: TypeArguments;
+  typeField(): TypeIdentifier | ScopedIdentifier;
+  turbofish(): AutoStamp<GenericTypeWithTurbofishTurbofish>;
+  typeArguments(): TypeArguments;
 }
 
 export interface HigherRankedTraitBound {
   readonly $type: TSKindId.HigherRankedTraitBound;
-  readonly $fields: {
-    readonly type_parameters: TypeParameters;
-    readonly type: _Type;
-  };
+  readonly _type_parameters: TypeParameters;
+  readonly _type: _Type;
+  typeParameters(): TypeParameters;
+  typeField(): _Type;
 }
 
 export interface IfExpression {
   readonly $type: TSKindId.IfExpression;
-  readonly $fields: {
-    readonly condition: Condition;
-    readonly consequence: Block;
-    readonly alternative?: ElseClause;
-  };
+  readonly _condition: Condition;
+  readonly _consequence: Block;
+  readonly _alternative?: ElseClause;
+  condition(): Condition;
+  consequence(): Block;
+  alternative(): ElseClause | undefined;
 }
 
 export interface ImplItemBody {
   readonly $type: "impl_item_body";
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface ImplItemUFormBody {
   readonly $type: TSKindId.ImplItem;
   readonly $variant: 'body';
-  readonly $fields: {
-    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
-    readonly type_parameters?: TypeParameters;
-    readonly negative?: BooleanKeyword<ImplItemNegative>;
-    readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
-    readonly type: _Type;
-    readonly where_clause?: WhereClause;
-  };
+  readonly _unsafe_marker?: BooleanKeyword<UnsafeMarker>;
+  readonly _type_parameters?: TypeParameters;
+  readonly _negative?: BooleanKeyword<ImplItemNegative>;
+  readonly _trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
+  readonly _type: _Type;
+  readonly _where_clause?: WhereClause;
+  unsafeMarker(): BooleanKeyword<UnsafeMarker> | undefined;
+  typeParameters(): TypeParameters | undefined;
+  negative(): BooleanKeyword<ImplItemNegative> | undefined;
+  trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType | undefined;
+  typeField(): _Type;
+  whereClause(): WhereClause | undefined;
   readonly $children: readonly [_ImplItemBody];
 }
 
 export interface ImplItemUFormSemi {
   readonly $type: TSKindId.ImplItem;
   readonly $variant: 'semi';
-  readonly $fields: {
-    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
-    readonly type_parameters?: TypeParameters;
-    readonly negative?: BooleanKeyword<ImplItemNegative>;
-    readonly trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
-    readonly type: _Type;
-    readonly where_clause?: WhereClause;
-  };
+  readonly _unsafe_marker?: BooleanKeyword<UnsafeMarker>;
+  readonly _type_parameters?: TypeParameters;
+  readonly _negative?: BooleanKeyword<ImplItemNegative>;
+  readonly _trait?: TypeIdentifier | ScopedTypeIdentifier | GenericType;
+  readonly _type: _Type;
+  readonly _where_clause?: WhereClause;
+  unsafeMarker(): BooleanKeyword<UnsafeMarker> | undefined;
+  typeParameters(): TypeParameters | undefined;
+  negative(): BooleanKeyword<ImplItemNegative> | undefined;
+  trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType | undefined;
+  typeField(): _Type;
+  whereClause(): WhereClause | undefined;
 }
 
 export type ImplItem = ImplItemUFormBody | ImplItemUFormSemi;
 export interface IndexExpression {
   readonly $type: TSKindId.IndexExpression;
-  readonly $fields: {
-    readonly object: Expression;
-    readonly index: Expression;
-  };
+  readonly _object: Expression;
+  readonly _index: Expression;
+  object(): Expression;
+  index(): Expression;
 }
 
 export interface InnerAttributeItem {
   readonly $type: TSKindId.InnerAttributeItem;
-  readonly $fields: {
-    readonly attribute: Attribute;
-  };
+  readonly _attribute: Attribute;
+  attribute(): Attribute;
 }
 
 export interface Label {
   readonly $type: TSKindId.Label;
-  readonly $fields: {
-    readonly identifier: Identifier;
-  };
+  readonly _identifier: Identifier;
+  identifier(): Identifier;
 }
 
 export interface LastMatchArm {
   readonly $type: TSKindId.LastMatchArm;
-  readonly $fields: {
-    readonly pattern: MatchPattern;
-    readonly value: Expression;
-  };
+  readonly _pattern: MatchPattern;
+  readonly _value: Expression;
+  pattern(): MatchPattern;
+  value(): Expression;
   readonly $children: readonly (AttributeItem | InnerAttributeItem)[];
 }
 
 export interface LetCondition {
   readonly $type: TSKindId.LetCondition;
-  readonly $fields: {
-    readonly pattern: Pattern;
-    readonly value: Expression;
-  };
+  readonly _pattern: Pattern;
+  readonly _value: Expression;
+  pattern(): Pattern;
+  value(): Expression;
 }
 
 export interface LetDeclaration {
   readonly $type: TSKindId.LetDeclaration;
-  readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly pattern: Pattern;
-    readonly type?: _Type;
-    readonly value?: Expression;
-    readonly alternative?: Block;
-  };
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _pattern: Pattern;
+  readonly _type?: _Type;
+  readonly _value?: Expression;
+  readonly _alternative?: Block;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  pattern(): Pattern;
+  typeField(): _Type | undefined;
+  value(): Expression | undefined;
+  alternative(): Block | undefined;
 }
 
 export interface Lifetime {
   readonly $type: TSKindId.Lifetime;
-  readonly $fields: {
-    readonly identifier: Identifier;
-  };
+  readonly _identifier: Identifier;
+  identifier(): Identifier;
 }
 
 export interface LifetimeParameter {
   readonly $type: TSKindId.LifetimeParameter;
-  readonly $fields: {
-    readonly name: Lifetime;
-    readonly bounds?: TraitBounds;
-  };
+  readonly _name: Lifetime;
+  readonly _bounds?: TraitBounds;
+  name(): Lifetime;
+  bounds(): TraitBounds | undefined;
 }
 
 export interface LineCommentUFormRegularDslash {
@@ -3105,10 +3118,10 @@ export interface LineCommentUFormContent {
 export type LineComment = LineCommentUFormRegularDslash | LineCommentUFormDoc | LineCommentUFormContent;
 export interface LoopExpression {
   readonly $type: TSKindId.LoopExpression;
-  readonly $fields: {
-    readonly label?: Label;
-    readonly body: Block;
-  };
+  readonly _label?: Label;
+  readonly _body: Block;
+  label(): Label | undefined;
+  body(): Block;
 }
 
 export interface MacroDefinitionParen {
@@ -3129,69 +3142,63 @@ export interface MacroDefinitionBrace {
 export interface MacroDefinitionUFormParen {
   readonly $type: TSKindId.MacroDefinition;
   readonly $variant: 'paren';
-  readonly $fields: {
-    readonly name: Identifier | ReservedIdentifier;
-  };
+  readonly _name: Identifier | ReservedIdentifier;
+  name(): Identifier | ReservedIdentifier;
   readonly $children: readonly [_MacroDefinitionParen];
 }
 
 export interface MacroDefinitionUFormBracket {
   readonly $type: TSKindId.MacroDefinition;
   readonly $variant: 'bracket';
-  readonly $fields: {
-    readonly name: Identifier | ReservedIdentifier;
-  };
+  readonly _name: Identifier | ReservedIdentifier;
+  name(): Identifier | ReservedIdentifier;
   readonly $children: readonly [_MacroDefinitionBracket];
 }
 
 export interface MacroDefinitionUFormBrace {
   readonly $type: TSKindId.MacroDefinition;
   readonly $variant: 'brace';
-  readonly $fields: {
-    readonly name: Identifier | ReservedIdentifier;
-  };
+  readonly _name: Identifier | ReservedIdentifier;
+  name(): Identifier | ReservedIdentifier;
   readonly $children: readonly [_MacroDefinitionBrace];
 }
 
 export type MacroDefinition = MacroDefinitionUFormParen | MacroDefinitionUFormBracket | MacroDefinitionUFormBrace;
 export interface MacroInvocation {
   readonly $type: TSKindId.MacroInvocation;
-  readonly $fields: {
-    readonly macro: ScopedIdentifier | Identifier | ReservedIdentifier;
-    readonly token_tree: DelimTokenTree;
-  };
+  readonly _macro: ScopedIdentifier | Identifier | ReservedIdentifier;
+  readonly _token_tree: DelimTokenTree;
+  macro(): ScopedIdentifier | Identifier | ReservedIdentifier;
+  tokenTree(): DelimTokenTree;
 }
 
 export interface MacroRule {
   readonly $type: TSKindId.MacroRule;
-  readonly $fields: {
-    readonly left: TokenTreePattern;
-    readonly right: TokenTree;
-  };
+  readonly _left: TokenTreePattern;
+  readonly _right: TokenTree;
+  left(): TokenTreePattern;
+  right(): TokenTree;
 }
 
 export interface MatchArmBlockEnding {
   readonly $type: "match_arm_block_ending";
-  readonly $fields: {
-    readonly value: ExpressionEndingWithBlock;
-  };
+  readonly _value: ExpressionEndingWithBlock;
+  value(): ExpressionEndingWithBlock;
 }
 
 export interface MatchArmUFormWithComma {
   readonly $type: TSKindId.MatchArm;
   readonly $variant: 'with_comma';
-  readonly $fields: {
-    readonly pattern: MatchPattern;
-  };
+  readonly _pattern: MatchPattern;
+  pattern(): MatchPattern;
   readonly $children: readonly (AttributeItem | InnerAttributeItem | MatchArmWithComma)[];
 }
 
 export interface MatchArmUFormBlockEnding {
   readonly $type: TSKindId.MatchArm;
   readonly $variant: 'block_ending';
-  readonly $fields: {
-    readonly pattern: MatchPattern;
-  };
+  readonly _pattern: MatchPattern;
+  pattern(): MatchPattern;
   readonly $children: readonly (AttributeItem | InnerAttributeItem | _MatchArmBlockEnding)[];
 }
 
@@ -3203,60 +3210,56 @@ export interface MatchBlock {
 
 export interface MatchExpression {
   readonly $type: TSKindId.MatchExpression;
-  readonly $fields: {
-    readonly value: Expression;
-    readonly body: MatchBlock;
-  };
+  readonly _value: Expression;
+  readonly _body: MatchBlock;
+  value(): Expression;
+  body(): MatchBlock;
 }
 
 export interface MatchPattern {
   readonly $type: TSKindId.MatchPattern;
-  readonly $fields: {
-    readonly condition?: Condition;
-  };
+  readonly _condition?: Condition;
+  condition(): Condition | undefined;
   readonly $children: readonly [Pattern];
 }
 
 export interface ModItemInline {
   readonly $type: "mod_item_inline";
-  readonly $fields: {
-    readonly body: DeclarationList;
-  };
+  readonly _body: DeclarationList;
+  body(): DeclarationList;
 }
 
 export interface ModItemUFormExternal {
   readonly $type: TSKindId.ModItem;
   readonly $variant: 'external';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: Identifier;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: Identifier;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): Identifier;
 }
 
 export interface ModItemUFormInline {
   readonly $type: TSKindId.ModItem;
   readonly $variant: 'inline';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: Identifier;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: Identifier;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): Identifier;
   readonly $children: readonly [_ModItemInline];
 }
 
 export type ModItem = ModItemUFormExternal | ModItemUFormInline;
 export interface MutPattern {
   readonly $type: TSKindId.MutPattern;
-  readonly $fields: {
-    readonly mutable_specifier: AutoStamp<_MutableSpecifier>;
-  };
+  readonly _mutable_specifier: AutoStamp<_MutableSpecifier>;
+  mutableSpecifier(): AutoStamp<_MutableSpecifier>;
   readonly $children: readonly [Pattern];
 }
 
 export interface NegativeLiteral {
   readonly $type: TSKindId.NegativeLiteral;
-  readonly $fields: {
-    readonly value: IntegerLiteral | FloatLiteral;
-  };
+  readonly _value: IntegerLiteral | FloatLiteral;
+  value(): IntegerLiteral | FloatLiteral;
 }
 
 export interface OrPatternUFormBinary {
@@ -3274,19 +3277,19 @@ export interface OrPatternUFormPrefix {
 export type OrPattern = OrPatternUFormBinary | OrPatternUFormPrefix;
 export interface OrderedFieldDeclarationList {
   readonly $type: TSKindId.OrderedFieldDeclarationList;
-  readonly $fields: {
-    readonly type: readonly (_Type)[];
-  };
+  readonly _type: readonly (_Type)[];
+  typeField(): readonly (_Type)[];
   readonly $children: readonly (AttributeItem | VisibilityModifier)[];
 }
 
 export interface Parameter {
   readonly $type: TSKindId.Parameter;
-  readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly pattern: Pattern | Self;
-    readonly type: _Type;
-  };
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _pattern: Pattern | Self;
+  readonly _type: _Type;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  pattern(): Pattern | Self;
+  typeField(): _Type;
 }
 
 export interface Parameters {
@@ -3307,34 +3310,31 @@ export interface PointerTypeMut {
 export interface PointerTypeUFormConst {
   readonly $type: TSKindId.PointerType;
   readonly $variant: 'const';
-  readonly $fields: {
-    readonly type: _Type;
-  };
+  readonly _type: _Type;
+  typeField(): _Type;
 }
 
 export interface PointerTypeUFormMut {
   readonly $type: TSKindId.PointerType;
   readonly $variant: 'mut';
-  readonly $fields: {
-    readonly type: _Type;
-  };
+  readonly _type: _Type;
+  typeField(): _Type;
   readonly $children: readonly [_PointerTypeMut];
 }
 
 export type PointerType = PointerTypeUFormConst | PointerTypeUFormMut;
 export interface QualifiedType {
   readonly $type: TSKindId.QualifiedType;
-  readonly $fields: {
-    readonly type: _Type;
-    readonly alias: _Type;
-  };
+  readonly _type: _Type;
+  readonly _alias: _Type;
+  typeField(): _Type;
+  alias(): _Type;
 }
 
 export interface RangeExpressionBare {
   readonly $type: "range_expression_bare";
-  readonly $fields: {
-    readonly operator: AutoStamp<Operator>;
-  };
+  readonly _operator: AutoStamp<Operator>;
+  operator(): AutoStamp<Operator>;
 }
 
 export interface RangeExpressionUFormBinary {
@@ -3365,18 +3365,16 @@ export type RangeExpression = RangeExpressionUFormBinary | RangeExpressionUFormP
 export interface RangePatternUFormLeftWithRight {
   readonly $type: TSKindId.RangePattern;
   readonly $variant: 'left_with_right';
-  readonly $fields: {
-    readonly left: LiteralPattern | Path;
-  };
+  readonly _left: LiteralPattern | Path;
+  left(): LiteralPattern | Path;
   readonly $children: readonly [RangePatternLeftWithRight];
 }
 
 export interface RangePatternUFormLeftBare {
   readonly $type: TSKindId.RangePattern;
   readonly $variant: 'left_bare';
-  readonly $fields: {
-    readonly left: LiteralPattern | Path;
-  };
+  readonly _left: LiteralPattern | Path;
+  left(): LiteralPattern | Path;
 }
 
 export interface RangePatternUFormPrefix {
@@ -3388,11 +3386,12 @@ export interface RangePatternUFormPrefix {
 export type RangePattern = RangePatternUFormLeftWithRight | RangePatternUFormLeftBare | RangePatternUFormPrefix;
 export interface RawStringLiteral {
   readonly $type: TSKindId.RawStringLiteral;
-  readonly $fields: {
-    readonly raw_string_literal_start?: string;
-    readonly string_content: RawStringLiteralContent;
-    readonly raw_string_literal_end?: string;
-  };
+  readonly _raw_string_literal_start?: string;
+  readonly _string_content: RawStringLiteralContent;
+  readonly _raw_string_literal_end?: string;
+  rawStringLiteralStart(): string | undefined;
+  stringContent(): RawStringLiteralContent;
+  rawStringLiteralEnd(): string | undefined;
 }
 
 export interface RefPattern {
@@ -3402,27 +3401,27 @@ export interface RefPattern {
 
 export interface ReferenceExpression {
   readonly $type: TSKindId.ReferenceExpression;
-  readonly $fields: {
-    readonly value: Expression;
-  };
+  readonly _value: Expression;
+  value(): Expression;
   readonly $children: readonly [ReferenceExpressionRawConst | ReferenceExpressionRawMut | MutableSpecifier];
 }
 
 export interface ReferencePattern {
   readonly $type: TSKindId.ReferencePattern;
-  readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly pattern: Pattern;
-  };
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _pattern: Pattern;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  pattern(): Pattern;
 }
 
 export interface ReferenceType {
   readonly $type: TSKindId.ReferenceType;
-  readonly $fields: {
-    readonly lifetime?: Lifetime;
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly type: _Type;
-  };
+  readonly _lifetime?: Lifetime;
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _type: _Type;
+  lifetime(): Lifetime | undefined;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  typeField(): _Type;
 }
 
 export interface RemovedTraitBound {
@@ -3437,52 +3436,54 @@ export interface ReturnExpression {
 
 export interface ScopedIdentifier {
   readonly $type: TSKindId.ScopedIdentifier;
-  readonly $fields: {
-    readonly path?: Path | BracketedType | GenericTypeWithTurbofish;
-    readonly name: Identifier | Super;
-  };
+  readonly _path?: Path | BracketedType | GenericTypeWithTurbofish;
+  readonly _name: Identifier | Super;
+  path(): Path | BracketedType | GenericTypeWithTurbofish | undefined;
+  name(): Identifier | Super;
 }
 
 export interface ScopedTypeIdentifier {
   readonly $type: TSKindId.ScopedTypeIdentifier;
-  readonly $fields: {
-    readonly path?: Path | GenericTypeWithTurbofish | BracketedType;
-    readonly name: TypeIdentifier;
-  };
+  readonly _path?: Path | GenericTypeWithTurbofish | BracketedType;
+  readonly _name: TypeIdentifier;
+  path(): Path | GenericTypeWithTurbofish | BracketedType | undefined;
+  name(): TypeIdentifier;
 }
 
 export interface ScopedTypeIdentifierInExpressionPosition {
   readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
-  readonly $fields: {
-    readonly path?: Path | GenericTypeWithTurbofish;
-    readonly name: TypeIdentifier;
-  };
+  readonly _path?: Path | GenericTypeWithTurbofish;
+  readonly _name: TypeIdentifier;
+  path(): Path | GenericTypeWithTurbofish | undefined;
+  name(): TypeIdentifier;
 }
 
 export interface ScopedUseList {
   readonly $type: TSKindId.ScopedUseList;
-  readonly $fields: {
-    readonly path?: Path;
-    readonly list: UseList;
-  };
+  readonly _path?: Path;
+  readonly _list: UseList;
+  path(): Path | undefined;
+  list(): UseList;
 }
 
 export interface SelfParameter {
   readonly $type: TSKindId.SelfParameter;
-  readonly $fields: {
-    readonly reference?: BooleanKeyword<"&">;
-    readonly lifetime?: Lifetime;
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly self: AutoStamp<_Self>;
-  };
+  readonly _reference?: BooleanKeyword<"&">;
+  readonly _lifetime?: Lifetime;
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _self: AutoStamp<_Self>;
+  reference(): BooleanKeyword<"&"> | undefined;
+  lifetime(): Lifetime | undefined;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  self(): AutoStamp<_Self>;
 }
 
 export interface ShorthandFieldInitializer {
   readonly $type: TSKindId.ShorthandFieldInitializer;
-  readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly identifier: Identifier;
-  };
+  readonly _attributes: readonly (AttributeItem)[];
+  readonly _identifier: Identifier;
+  attributes(): readonly (AttributeItem)[];
+  identifier(): Identifier;
 }
 
 export interface SlicePattern {
@@ -3492,21 +3493,24 @@ export interface SlicePattern {
 
 export interface SourceFile {
   readonly $type: TSKindId.SourceFile;
-  readonly $fields: {
-    readonly shebang?: Shebang;
-    readonly statements: readonly (Statement)[];
-  };
+  readonly _shebang?: Shebang;
+  readonly _statements: readonly (Statement)[];
+  shebang(): Shebang | undefined;
+  statements(): readonly (Statement)[];
 }
 
 export interface StaticItem {
   readonly $type: TSKindId.StaticItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly mutable_specifier?: RefMarker | _MutableSpecifier;
-    readonly name: Identifier;
-    readonly type: _Type;
-    readonly value?: Expression;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _mutable_specifier?: RefMarker | _MutableSpecifier;
+  readonly _name: Identifier;
+  readonly _type: _Type;
+  readonly _value?: Expression;
+  visibilityModifier(): VisibilityModifier | undefined;
+  mutableSpecifier(): RefMarker | _MutableSpecifier | undefined;
+  name(): Identifier;
+  typeField(): _Type;
+  value(): Expression | undefined;
 }
 
 export interface StringLiteral {
@@ -3516,59 +3520,61 @@ export interface StringLiteral {
 
 export interface StructExpression {
   readonly $type: TSKindId.StructExpression;
-  readonly $fields: {
-    readonly name: TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
-    readonly body: FieldInitializerList;
-  };
+  readonly _name: TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+  readonly _body: FieldInitializerList;
+  name(): TypeIdentifier | ScopedTypeIdentifierInExpressionPosition | GenericTypeWithTurbofish;
+  body(): FieldInitializerList;
 }
 
 export interface StructItemUFormBrace {
   readonly $type: TSKindId.StructItem;
   readonly $variant: 'brace';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
   readonly $children: readonly [StructItemBrace];
 }
 
 export interface StructItemUFormTuple {
   readonly $type: TSKindId.StructItem;
   readonly $variant: 'tuple';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
   readonly $children: readonly [StructItemTuple];
 }
 
 export interface StructItemUFormUnit {
   readonly $type: TSKindId.StructItem;
   readonly $variant: 'unit';
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
 }
 
 export type StructItem = StructItemUFormBrace | StructItemUFormTuple | StructItemUFormUnit;
 export interface StructPattern {
   readonly $type: TSKindId.StructPattern;
-  readonly $fields: {
-    readonly type: TypeIdentifier | ScopedTypeIdentifier;
-  };
+  readonly _type: TypeIdentifier | ScopedTypeIdentifier;
+  typeField(): TypeIdentifier | ScopedTypeIdentifier;
   readonly $children: readonly (FieldPattern | RemainingFieldPattern)[];
 }
 
 export interface TokenBindingPattern {
   readonly $type: TSKindId.TokenBindingPattern;
-  readonly $fields: {
-    readonly name: Metavariable;
-    readonly type: TokenBindingPatternType;
-  };
+  readonly _name: Metavariable;
+  readonly _type: TokenBindingPatternType;
+  name(): Metavariable;
+  typeField(): TokenBindingPatternType;
 }
 
 export interface TokenRepetition {
@@ -3656,37 +3662,40 @@ export interface TraitBounds {
 
 export interface TraitItem {
   readonly $type: TSKindId.TraitItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly unsafe_marker?: BooleanKeyword<UnsafeMarker>;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly bounds?: TraitBounds;
-    readonly where_clause?: WhereClause;
-    readonly body: DeclarationList;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _unsafe_marker?: BooleanKeyword<UnsafeMarker>;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  readonly _bounds?: TraitBounds;
+  readonly _where_clause?: WhereClause;
+  readonly _body: DeclarationList;
+  visibilityModifier(): VisibilityModifier | undefined;
+  unsafeMarker(): BooleanKeyword<UnsafeMarker> | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
+  bounds(): TraitBounds | undefined;
+  whereClause(): WhereClause | undefined;
+  body(): DeclarationList;
 }
 
 export interface TryBlock {
   readonly $type: TSKindId.TryBlock;
-  readonly $fields: {
-    readonly block: Block;
-  };
+  readonly _block: Block;
+  block(): Block;
 }
 
 export interface TryExpression {
   readonly $type: TSKindId.TryExpression;
-  readonly $fields: {
-    readonly value: Expression;
-  };
+  readonly _value: Expression;
+  value(): Expression;
 }
 
 export interface TupleExpression {
   readonly $type: TSKindId.TupleExpression;
-  readonly $fields: {
-    readonly attributes: readonly (AttributeItem)[];
-    readonly elements?: readonly (Expression)[];
-  };
+  readonly _attributes: readonly (AttributeItem)[];
+  readonly _elements?: readonly (Expression)[];
+  attributes(): readonly (AttributeItem)[];
+  elements(): readonly (Expression)[];
 }
 
 export interface TuplePattern {
@@ -3696,9 +3705,8 @@ export interface TuplePattern {
 
 export interface TupleStructPattern {
   readonly $type: TSKindId.TupleStructPattern;
-  readonly $fields: {
-    readonly type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-  };
+  readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
+  typeField(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
   readonly $children: readonly (Pattern)[];
 }
 
@@ -3714,40 +3722,46 @@ export interface TypeArguments {
 
 export interface TypeBinding {
   readonly $type: TSKindId.TypeBinding;
-  readonly $fields: {
-    readonly name: TypeIdentifier;
-    readonly type_arguments?: TypeArguments;
-    readonly type: _Type;
-  };
+  readonly _name: TypeIdentifier;
+  readonly _type_arguments?: TypeArguments;
+  readonly _type: _Type;
+  name(): TypeIdentifier;
+  typeArguments(): TypeArguments | undefined;
+  typeField(): _Type;
 }
 
 export interface TypeCastExpression {
   readonly $type: TSKindId.TypeCastExpression;
-  readonly $fields: {
-    readonly value: Expression;
-    readonly type: _Type;
-  };
+  readonly _value: Expression;
+  readonly _type: _Type;
+  value(): Expression;
+  typeField(): _Type;
 }
 
 export interface TypeItem {
   readonly $type: TSKindId.TypeItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly where_clause?: WhereClause;
-    readonly type: _Type;
-    readonly trailing_where_clause?: WhereClause;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  readonly _where_clause?: WhereClause;
+  readonly _type: _Type;
+  readonly _trailing_where_clause?: WhereClause;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
+  whereClause(): WhereClause | undefined;
+  typeField(): _Type;
+  trailingWhereClause(): WhereClause | undefined;
 }
 
 export interface TypeParameter {
   readonly $type: TSKindId.TypeParameter;
-  readonly $fields: {
-    readonly name: TypeIdentifier;
-    readonly bounds?: TraitBounds;
-    readonly default_type?: _Type;
-  };
+  readonly _name: TypeIdentifier;
+  readonly _bounds?: TraitBounds;
+  readonly _default_type?: _Type;
+  name(): TypeIdentifier;
+  bounds(): TraitBounds | undefined;
+  defaultType(): _Type | undefined;
 }
 
 export interface TypeParameters {
@@ -3757,36 +3771,38 @@ export interface TypeParameters {
 
 export interface UnaryExpression {
   readonly $type: TSKindId.UnaryExpression;
-  readonly $fields: {
-    readonly operator: UnaryExpressionOperator;
-    readonly operand: Expression;
-  };
+  readonly _operator: UnaryExpressionOperator;
+  readonly _operand: Expression;
+  operator(): UnaryExpressionOperator;
+  operand(): Expression;
 }
 
 export interface UnionItem {
   readonly $type: TSKindId.UnionItem;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly name: TypeIdentifier;
-    readonly type_parameters?: TypeParameters;
-    readonly where_clause?: WhereClause;
-    readonly body: FieldDeclarationList;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _name: TypeIdentifier;
+  readonly _type_parameters?: TypeParameters;
+  readonly _where_clause?: WhereClause;
+  readonly _body: FieldDeclarationList;
+  visibilityModifier(): VisibilityModifier | undefined;
+  name(): TypeIdentifier;
+  typeParameters(): TypeParameters | undefined;
+  whereClause(): WhereClause | undefined;
+  body(): FieldDeclarationList;
 }
 
 export interface UnsafeBlock {
   readonly $type: TSKindId.UnsafeBlock;
-  readonly $fields: {
-    readonly block: Block;
-  };
+  readonly _block: Block;
+  block(): Block;
 }
 
 export interface UseAsClause {
   readonly $type: TSKindId.UseAsClause;
-  readonly $fields: {
-    readonly path: Path;
-    readonly alias: Identifier;
-  };
+  readonly _path: Path;
+  readonly _alias: Identifier;
+  path(): Path;
+  alias(): Identifier;
 }
 
 export interface UseBounds {
@@ -3796,10 +3812,10 @@ export interface UseBounds {
 
 export interface UseDeclaration {
   readonly $type: TSKindId.UseDeclaration;
-  readonly $fields: {
-    readonly visibility_modifier?: VisibilityModifier;
-    readonly argument: UseClause;
-  };
+  readonly _visibility_modifier?: VisibilityModifier;
+  readonly _argument: UseClause;
+  visibilityModifier(): VisibilityModifier | undefined;
+  argument(): UseClause;
 }
 
 export interface UseList {
@@ -3809,17 +3825,16 @@ export interface UseList {
 
 export interface UseWildcard {
   readonly $type: TSKindId.UseWildcard;
-  readonly $fields: {
-    readonly path?: Path;
-  };
+  readonly _path?: Path;
+  path(): Path | undefined;
 }
 
 export interface VariadicParameter {
   readonly $type: TSKindId.VariadicParameter;
-  readonly $fields: {
-    readonly mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
-    readonly pattern?: Pattern;
-  };
+  readonly _mutable_specifier?: BooleanKeyword<_MutableSpecifier>;
+  readonly _pattern?: Pattern;
+  mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
+  pattern(): Pattern | undefined;
 }
 
 export interface VisibilityModifierCrate {
@@ -3853,19 +3868,20 @@ export interface WhereClause {
 
 export interface WherePredicate {
   readonly $type: TSKindId.WherePredicate;
-  readonly $fields: {
-    readonly left: Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
-    readonly bounds: TraitBounds;
-  };
+  readonly _left: Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
+  readonly _bounds: TraitBounds;
+  left(): Lifetime | TypeIdentifier | ScopedTypeIdentifier | GenericType | ReferenceType | PointerType | TupleType | ArrayType | HigherRankedTraitBound | PrimitiveType;
+  bounds(): TraitBounds;
 }
 
 export interface WhileExpression {
   readonly $type: TSKindId.WhileExpression;
-  readonly $fields: {
-    readonly label?: Label;
-    readonly condition: Condition;
-    readonly body: Block;
-  };
+  readonly _label?: Label;
+  readonly _condition: Condition;
+  readonly _body: Block;
+  label(): Label | undefined;
+  condition(): Condition;
+  body(): Block;
 }
 
 export interface YieldExpression {

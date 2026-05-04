@@ -1229,6 +1229,6 @@ export function isTree(v: unknown): boolean {
 export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;
 export function isNode(v: { readonly $type: string | number }): boolean {
     const o = v as Record<string, unknown>;
-    const hasFields = (o['$fields'] !== undefined && o['$fields'] !== null && typeof o['$fields'] === 'object') || Object.keys(o).some((k) => k.startsWith('_'));
+    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));
     return hasFields || typeof o['$text'] === 'string';
 }

@@ -10,13 +10,12 @@ import { KIND_NAMES, kindIdFromName } from './types.js';
  *
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
  * from loose config bags by the presence of any of:
- *   - `$fields` (branch nodes with named children),
+ * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
+ * from loose config bags by the presence of any of:
+ *   - `_*` storage keys (branch nodes with named fields, ADR-0018 de-hoisted),
  *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
  *   - `$children` (container nodes whose children arrive without field names),
  *   - `$source` (provenance tag stamped by `readNode` and every factory).
- *
- * The `$source` discriminant covers container-style branch nodes (e.g. `match_pattern`)
- * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.
  */
 export function isNodeData<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
@@ -26,9 +25,8 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'number') return false;
-  const hasLegacyFields = o['$fields'] !== null && typeof o['$fields'] === 'object';
   const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));
-  return hasLegacyFields || hasDehoistedFields
+  return hasDehoistedFields
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
     || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
@@ -447,15 +445,8 @@ function projectTransportValue(value: unknown, path: string): unknown {
   // Temporarily store string kind for routing; converted to numeric below.
   projected.$type = resolvedKind;
 
-  const fields = value.$fields;
-  if (isRecord(fields)) {
-    for (const [key, child] of Object.entries(fields)) {
-      projected[key] = projectTransportValue(child, `${path}.${key}`);
-    }
-  }
-
   for (const [key, child] of Object.entries(value)) {
-    if (transportMetadataKeys.has(key) || key === "$fields") continue;
+    if (transportMetadataKeys.has(key)) continue;
     if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
     if (typeof child === "function") continue;
     const projKey = key.startsWith('_') ? key.slice(1) : key;
