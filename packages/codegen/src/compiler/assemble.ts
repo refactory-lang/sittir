@@ -23,7 +23,6 @@ import type {
 	OptimizedGrammar,
 	NodeMap,
 	SignaturePool,
-	ProjectionContext,
 	PolymorphVariant
 } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
@@ -231,7 +230,6 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		name: optimized.name,
 		nodes,
 		signatures: computeSignatures(nodes),
-		projections: buildProjections(nodes),
 		derivations: optimized.derivations,
 		rules: optimized.rules,
 		word: optimized.word,
@@ -1542,8 +1540,3 @@ function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
 
-function buildProjections(
-	_nodes: Map<string, AssembledNode>
-): ProjectionContext {
-	return { projections: new Map() };
-}

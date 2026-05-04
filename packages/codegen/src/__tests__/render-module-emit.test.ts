@@ -63,7 +63,6 @@ describe('buildSupertypeTransportSet', () => {
 			name: 'test',
 			nodes: new Map(),
 			signatures: { signatures: new Map() },
-			projections: { projections: new Map() },
 			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 			rules: {},
 			externals: new Set(),

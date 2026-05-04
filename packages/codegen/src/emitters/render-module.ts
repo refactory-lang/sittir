@@ -33,7 +33,8 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isUnresolvedRef
+	isUnresolvedRef,
+	kindsOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
@@ -1601,7 +1602,7 @@ function buildFieldKindsByName(
 ): ReadonlyMap<string, readonly string[]> {
 	const map = new Map<string, readonly string[]>();
 	for (const f of fields) {
-		map.set(f.name, f.projection.kinds);
+		map.set(f.name, kindsOf(f));
 	}
 	return map;
 }
@@ -2399,7 +2400,7 @@ function collectUsedSupertypeNames(
 		children: readonly AssembledChild[]
 	): void => {
 		for (const field of fields) {
-			const cls = classifySlotForEmit(field.projection.kinds, nodeMap);
+			const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 			if (cls.tag === 'supertype') used.add(cls.supertypeName);
 		}
 		if (children.length > 0) {
@@ -3414,7 +3415,7 @@ function bridgeClassForField(
 	nodeMap: NodeMap | undefined
 ): BridgeFieldClass {
 	if (nodeMap === undefined) return undefined;
-	const cls = classifySlotForEmit(field.projection.kinds, nodeMap);
+	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 	if (cls.tag === 'concrete') return { kind: 'concrete', variant: rustTypeIdent(cls.typeName) };
 	if (cls.tag === 'supertype') {
 		return { kind: 'supertype', toAnyFn: `${rustSnakeIdent(cls.supertypeName)}_transport_to_any` };
@@ -4040,7 +4041,7 @@ function renderTransportField(field: AssembledField, nodeMap: NodeMap): string[]
 }
 
 function rustTransportFieldType(field: AssembledField, nodeMap: NodeMap): string {
-	const cls = classifySlotForEmit(field.projection.kinds, nodeMap);
+	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);

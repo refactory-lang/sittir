@@ -17,7 +17,6 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		polymorphFormKinds: new Set()
 	};
@@ -31,7 +30,6 @@ function makeField(
 		propertyName: 'field',
 		paramName: 'field',
 		source: 'grammar',
-		projection: { typeName: '', kinds: [] },
 		hasTrailing: false,
 		hasLeading: false,
 		...overrides

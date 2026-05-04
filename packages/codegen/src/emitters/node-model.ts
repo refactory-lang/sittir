@@ -32,7 +32,8 @@ import {
 	isUnresolvedRef,
 	isRequired,
 	isMultiple,
-	isNonEmpty
+	isNonEmpty,
+	kindsOf
 } from '../compiler/node-map.ts';
 
 export interface EmitNodeModelConfig {
@@ -319,9 +320,13 @@ function serializeField(field: AssembledField): SerializedField {
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
 		source: field.source,
+		// projection: derived from values via kindsOf() instead of read from
+		// a stored cache (eliminated in spec 022 Phase 1d.i). The serialized
+		// JSON shape is preserved (typeName: '', kinds: [...]) for byte-
+		// identity of node-model.json5 output.
 		projection: {
-			typeName: field.projection.typeName,
-			kinds: [...field.projection.kinds]
+			typeName: '',
+			kinds: [...kindsOf(field)]
 		}
 	};
 	if (field.aliasSources && Object.keys(field.aliasSources).length > 0) {

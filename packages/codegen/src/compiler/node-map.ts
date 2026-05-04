@@ -42,7 +42,6 @@ import type {
 	TerminalRule
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
-import type { KindProjection } from './types.ts';
 import {
 	renderRuleTemplate,
 	findRepeatSeparator,
@@ -625,10 +624,11 @@ export function deriveFields(rule: Rule): AssembledField[] {
  * the from-emitter — must see ONE slot per name, not the raw unmerged list.
  *
  * @remarks
- * We keep the first occurrence's `propertyName` / `paramName` / `source` /
- * `projection.typeName` (none of them vary per-occurrence for the same name
- * in practice — the name determines all three). Projection `kinds` and
- * `aliasSources` are merged per the values they reference.
+ * We keep the first occurrence's `propertyName` / `paramName` / `source`
+ * (none of them vary per-occurrence for the same name in practice — the
+ * name determines them). Values and `aliasSources` are merged. The
+ * referenced kind set is no longer cached on the slot — consumers
+ * derive it via `kindsOf(slot)` from the merged `values` (Phase 1d.i).
  */
 function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 	if (fields.length <= 1) return fields;
@@ -640,9 +640,6 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 			continue;
 		}
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
-		const mergedKinds = [
-			...new Set([...existing.projection.kinds, ...f.projection.kinds])
-		];
 		const mergedAliases =
 			existing.aliasSources || f.aliasSources
 				? { ...existing.aliasSources, ...f.aliasSources }
@@ -655,8 +652,7 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 			aliasSources:
 				mergedAliases && Object.keys(mergedAliases).length > 0
 					? mergedAliases
-					: undefined,
-			projection: { ...existing.projection, kinds: mergedKinds }
+					: undefined
 		});
 	}
 	return Array.from(byName.values());
@@ -700,17 +696,6 @@ function deriveFieldsRaw(
 			const rawValues = deriveValuesForRule(rule.content, innerMult);
 			const values = dedupeValues(rawValues);
 
-			// Compute projection.kinds from node-ref values only (for backwards-
-			// compat with emitters that call projection.kinds).
-			const kindNames = values
-				.filter(isNodeRef)
-				.map((v) =>
-					isUnresolvedRef(v.node)
-						? (v.node as UnresolvedRef).name
-						: (v.node as AssembledNode).kind
-				);
-			const projectionKinds = [...new Set(kindNames)];
-
 			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
 			// slots (i.e. the field backs a repeat that carries the flag). Gate on
 			// multiplicity first so optional(repeat(...)) shapes don't pollute the flag.
@@ -730,8 +715,8 @@ function deriveFieldsRaw(
 				hasLeading,
 				aliasSources:
 					Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-				source: rule.source ?? 'grammar',
-				projection: { typeName: '', kinds: projectionKinds }
+				source: rule.source ?? 'grammar'
+				// projection field eliminated in Phase 1d.i — consumers use kindsOf(slot)
 			};
 
 			return [outerField];
@@ -1712,7 +1697,38 @@ export interface AssembledField extends AssembledChild {
 	 */
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
-	readonly projection: KindProjection;
+}
+
+/**
+ * Derive the slot's referenced kind names from its `values[]`.
+ *
+ * Replaces the prior `slot.projection.kinds` parallel cache (eliminated
+ * in spec 022 Phase 1d.i per Constitution XI DRY — the kinds were a
+ * cache of a derivation from `values`, redundant by construction). The
+ * comment at the prior construction site (`Compute projection.kinds
+ * from node-ref values only (for backwards-compat with emitters that
+ * call projection.kinds)`) was the smoking gun: emitters were already
+ * computing this on demand because the cache was a post-hoc convenience.
+ *
+ * Walks node-ref entries only (terminals contribute no kinds); resolves
+ * each `node` field as either an `UnresolvedRef` (use its `name`) or an
+ * `AssembledNode` (use its `kind`). Deduplicates while preserving
+ * declaration order.
+ */
+export function kindsOf(slot: AssembledChild): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const v of slot.values) {
+		if (v.kind !== 'node-ref') continue;
+		const name = isUnresolvedRef(v.node)
+			? (v.node as UnresolvedRef).name
+			: (v.node as AssembledNode).kind;
+		if (!seen.has(name)) {
+			seen.add(name);
+			out.push(name);
+		}
+	}
+	return out;
 }
 
 // --- Concrete classes per model type ---

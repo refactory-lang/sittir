@@ -378,24 +378,20 @@ export interface OptimizedGrammar {
 // Phase 4 — Assemble output
 // ---------------------------------------------------------------------------
 
-export interface KindProjection {
-	readonly typeName: string;
-	readonly kinds: string[];
-}
+// `KindProjection` and `ProjectionContext` interfaces removed in spec 022
+// Phase 1d.i (parallel-cache anti-pattern per Constitution XI). The kind
+// set previously stored on `AssembledField.projection.kinds` is now derived
+// on demand from `slot.values` via the `kindsOf(slot)` helper in node-map.ts.
+// `NodeMap.projections` was unused (zero consumers) — also removed.
 
 export interface SignaturePool {
 	readonly signatures: Map<string, string>;
-}
-
-export interface ProjectionContext {
-	readonly projections: Map<string, KindProjection>;
 }
 
 export interface NodeMap {
 	readonly name: string;
 	readonly nodes: Map<string, AssembledNode>;
 	readonly signatures: SignaturePool;
-	readonly projections: ProjectionContext;
 	/**
 	 * Sidecar log of every derivation Link produced. Emitters read
 	 * this to surface suggestions regardless of whether the mutation

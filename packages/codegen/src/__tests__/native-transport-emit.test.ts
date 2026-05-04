@@ -26,7 +26,6 @@ function nodeMapWith(
 		name: 'rust',
 		nodes,
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: {
 			inferredFields: [],
 			promotedRules: [],

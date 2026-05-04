@@ -96,7 +96,6 @@ describe('resolveHoistedForm — collision guard', () => {
 			paramName: 'left',
 			values: [],
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			hasTrailing: false,
 			hasLeading: false
 		};
@@ -138,7 +137,6 @@ describe('resolveHoistedForm — collision guard', () => {
 			paramName: 'operator',
 			values: [],
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			hasTrailing: false,
 			hasLeading: false
 		};

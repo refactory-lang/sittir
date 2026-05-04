@@ -114,12 +114,12 @@ responsibilities (RepeatRule support; separator semantics now live on per-value)
 
 #### 1d.i — Eliminate KindProjection (parallel-cache anti-pattern cleanup)
 
-- [ ] T016 [US0] Add helper `export function kindsOf(slot: AssembledNonterminal): readonly string[]` in `packages/codegen/src/compiler/node-map.ts` — derives via `slot.values.filter(v => v.kind === 'node-ref').map(v => v.node.name)` (handle UnresolvedRef vs AssembledNode in `node` field). One walk, no cache. Add JSDoc explaining it replaces `slot.projection.kinds` per Constitution XI.
-- [ ] T017 [US0] Update `render-module.ts` consumers — replace `field.projection.kinds` with `kindsOf(field)` at lines 1604, 2402, 3417, 4043. Update the parallel JSDoc references (lines 1170, 1175) to point at `kindsOf` instead of `projection.kinds`.
-- [ ] T018 [US0] Update `node-model.ts:323-324` — drop `typeName: field.projection.typeName` (field is dead — set to `""` everywhere, never read). Replace `kinds: [...field.projection.kinds]` with `kinds: [...kindsOf(field)]`.
-- [ ] T019 [US0] Remove the `projection` construction in node-map.ts internal slot merge logic (lines 644, 659, 734) — slots no longer carry projection. Update merge logic to operate on `values` only.
-- [ ] T020 [US0] Delete `KindProjection` and `ProjectionContext` interfaces from `packages/codegen/src/compiler/types.ts:381-392`. Delete `projections: ProjectionContext` field from `NodeMap` interface (line 398). Audit zero callers via `rg 'KindProjection|ProjectionContext|nodeMap\.projections|\.projections\.'`.
-- [ ] T021 [P] [US0] Update test fixtures that construct `projection: { typeName: '', kinds: [] }` — drop the field entirely. Sites: `keyword-presence.test.ts:37`, `emitter-consts.test.ts:121, 135, 171, 205, 233`.
+- [x] T016 [US0] Add helper `export function kindsOf(slot: AssembledNonterminal): readonly string[]` in `packages/codegen/src/compiler/node-map.ts` — derives via `slot.values.filter(v => v.kind === 'node-ref').map(v => v.node.name)` (handle UnresolvedRef vs AssembledNode in `node` field). One walk, no cache. Add JSDoc explaining it replaces `slot.projection.kinds` per Constitution XI.
+- [x] T017 [US0] Update `render-module.ts` consumers — replace `field.projection.kinds` with `kindsOf(field)` at lines 1604, 2402, 3417, 4043. Update the parallel JSDoc references (lines 1170, 1175) to point at `kindsOf` instead of `projection.kinds`.
+- [x] T018 [US0] Update `node-model.ts:323-324` — drop `typeName: field.projection.typeName` (field is dead — set to `""` everywhere, never read). Replace `kinds: [...field.projection.kinds]` with `kinds: [...kindsOf(field)]`.
+- [x] T019 [US0] Remove the `projection` construction in node-map.ts internal slot merge logic (lines 644, 659, 734) — slots no longer carry projection. Update merge logic to operate on `values` only.
+- [x] T020 [US0] Delete `KindProjection` and `ProjectionContext` interfaces from `packages/codegen/src/compiler/types.ts:381-392`. Delete `projections: ProjectionContext` field from `NodeMap` interface (line 398). Audit zero callers via `rg 'KindProjection|ProjectionContext|nodeMap\.projections|\.projections\.'`.
+- [x] T021 [P] [US0] Update test fixtures that construct `projection: { typeName: '', kinds: [] }` — drop the field entirely. Sites: `keyword-presence.test.ts:37`, `emitter-consts.test.ts:121, 135, 171, 205, 233`.
 
 #### 1d.ii — Rename AssembledField → AssembledNonterminal; delete AssembledChild
 
