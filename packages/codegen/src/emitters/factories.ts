@@ -19,8 +19,7 @@ import {
 } from './kind-discriminant.ts';
 import {
 	type AssembledNode,
-	type AssembledField,
-	type AssembledChild,
+	type AssembledNonterminal,
 	AssembledGroup
 } from '../compiler/node-map.ts';
 import {
@@ -173,11 +172,11 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return [...nodeMap.nodes.values()].some((n) => {
-		const fs =
+		const fs: readonly AssembledNonterminal[] =
 			n.modelType === 'polymorph'
 				? n.allFormFields
-				: n.modelType === 'branch'
-					? n.fields
+				: n.modelType === 'branch' || n.modelType === 'group'
+					? Object.values(n.slots)
 					: [];
 		return fs.some((f) => isNonEmpty(f));
 	});
@@ -324,11 +323,11 @@ function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
 function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
 	let bitflag = false;
 	for (const [, node] of nodeMap.nodes) {
-		const fields =
+		const fields: readonly AssembledNonterminal[] =
 			node.modelType === 'polymorph'
 				? node.allFormFields
 				: node.modelType === 'branch' || node.modelType === 'group'
-					? node.fields
+					? Object.values(node.slots)
 					: [];
 		for (const f of fields) {
 			if (keywordPresenceKind(f, nodeMap) === 'bitflag') bitflag = true;
@@ -356,7 +355,7 @@ function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
  * defensively).
  */
 function resolveKeywordPresenceTriple(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	literal: string,
 	nodeMap: NodeMap
 ): { kind: string; text: string; named: boolean } | undefined {
@@ -493,11 +492,11 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	// Also include field-level aliasSources (the legacy channel —
 	// some paths populate this without a hidden-ref value slot).
 	for (const [, n] of nodeMap.nodes) {
-		const fs =
+		const fs: readonly AssembledNonterminal[] =
 			n.modelType === 'polymorph'
 				? n.allFormFields
 				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
+					? Object.values(n.slots)
 					: [];
 		for (const f of fs) {
 			if (!f.aliasSources) continue;
@@ -803,7 +802,7 @@ function renderFactoryForNode(
 						typeName: node.typeName,
 						treeTypeName: node.treeTypeName,
 						rawFactoryName: node.rawFactoryName,
-						children: node.children ?? []
+						children: node.children
 					},
 					nodeMap,
 					kindEntries
@@ -812,7 +811,7 @@ function renderFactoryForNode(
 			return emitFieldCarryingFactory(
 				node,
 				node.fields,
-				node.children ?? [],
+				node.children,
 				nodeMap,
 				false,
 				kindEntries
@@ -943,7 +942,7 @@ type FieldCarryingNode = Extract<
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
 function childElementType(
-	node: { children: readonly AssembledChild[] },
+	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap
 ): string {
 	const parts = new Set<string>();
@@ -992,7 +991,7 @@ function childElementType(
  * Returns `undefined` when the field is NOT auto-stamp-eligible.
  */
 function autoStampExpression(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	nodeMap: NodeMap
 ): string | undefined {
 	// Delegates to the shared stampExpressionFor which uses the new values model.
@@ -1020,7 +1019,7 @@ function autoStampExpression(
  * Returns `undefined` when the field doesn't classify as keyword-presence.
  */
 function keywordPresenceAssignmentExpr(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	opt: string,
 	nodeMap: NodeMap
 ): string | undefined {
@@ -1066,7 +1065,7 @@ function keywordPresenceAssignmentExpr(
 }
 
 /**
- * Resolve an AssembledField's element type to a concrete TS type expression
+ * Resolve an AssembledNonterminal's element type to a concrete TS type expression
  * for the factory surface — each resolved node kind is prefixed with `T.` so
  * the reference resolves against the `import * as T from './types.js'` import.
  *
@@ -1074,7 +1073,7 @@ function keywordPresenceAssignmentExpr(
  * / literal / alias-source / hidden-keyword / missing-kind logic stays in one
  * place (types.ts::fieldTypeExpr is the same walk with no prefix).
  */
-function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
+function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
 
@@ -1107,8 +1106,8 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
 
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	isPolymorphForm = false,
 	kindEntries: readonly KindEnumEntry[] | undefined = undefined
@@ -1135,9 +1134,7 @@ function emitFieldCarryingFactory(
 			if (!n.userFacing && !isHiddenGroup) return false;
 			if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 			if (n.modelType === 'branch' || n.modelType === 'group') {
-				const fs = (n as unknown as { fields: readonly unknown[] }).fields;
-				const cs = (n as unknown as { children?: readonly unknown[] }).children;
-				if ((fs?.length ?? 0) === 0 && (cs?.length ?? 0) === 0) return false;
+				if (Object.values(n.slots).length === 0) return false;
 			}
 			return true;
 		})
@@ -1308,9 +1305,8 @@ function emitRefineFormFactory(
 	const formFn = refineFormFactoryName(baseFn, form.name);
 	const narrowed = new Map<string, string>();
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
-	const fields = node.modelType === 'branch' ? node.fields : node.fields;
-	const children =
-		node.modelType === 'branch' ? (node.children ?? []) : node.children;
+	const fields = node.fields;
+	const children = node.children;
 	const hasFields = fields.length > 0;
 	const hasChildren = children.length > 0;
 	const opt = resolveRefineFormConfigOptional(
@@ -1371,8 +1367,8 @@ function emitRefineFormFactory(
  * never come from Config input).
  */
 function resolveRefineFormConfigOptional(
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
 ): string {
@@ -1395,7 +1391,7 @@ function resolveRefineFormConfigOptional(
  *   A single `children[0]` check misses the repeated signal when inlining (T063)
  *   flattens a choice of hidden helpers into a mixed list of single + repeated entries.
  */
-function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
+function resolveChildrenMultiple(children: readonly AssembledNonterminal[]): boolean {
 	return children.some((c) => isMultiple(c));
 }
 
@@ -1413,8 +1409,8 @@ function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
  *   Only fields that remain in Config can make config required.
  */
 function resolveConfigOptional(
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): string {
 	// Auto-stamp-eligible fields are excluded from the "required" check —
@@ -1507,7 +1503,7 @@ function resolvePolymorphFormVariantName(
  */
 function emitFluentFieldMethods(
 	fn: string,
-	fields: readonly AssembledField[],
+	fields: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): string[] {
 	const lines: string[] = [];
@@ -1567,7 +1563,7 @@ interface ContainerNode {
 	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
-	readonly children: readonly AssembledChild[];
+	readonly children: readonly AssembledNonterminal[];
 }
 
 function emitContainerFactory(
@@ -1684,8 +1680,8 @@ function emitPolymorphFactory(
 			parts.push(
 				emitFieldCarryingFactory(
 					form,
-					form.fields,
-					form.children,
+					Object.values(form.slots).filter((s) => s.source !== 'inferred'),
+					Object.values(form.slots).filter((s) => s.source === 'inferred'),
 					nodeMap,
 					true,
 					kindEntries
@@ -1720,8 +1716,8 @@ function emitPolymorphFactory(
  *   - inner-level patch: `{ left: config.left, right: value }`.
  */
 function buildHoistedRebuildExpr(
-	formFields: readonly AssembledField[],
-	innerFields: readonly AssembledField[],
+	formFields: readonly AssembledNonterminal[],
+	innerFields: readonly AssembledNonterminal[],
 	patchKey: string,
 	patchVar: string,
 	patchSource: 'form' | 'inner',
@@ -1778,7 +1774,7 @@ function emitHoistedPolymorphFormFactory(
 	const configType = `Omit<ConfigOf<T.${form.typeName}>, '$variant'>`;
 	const variantName = form.name;
 	const parentKind = form.parentKind ?? form.kind;
-	const formFields = form.fields;
+	const formFields = Object.values(form.slots).filter((s) => s.source !== 'inferred');
 
 	// Required if ANY form-level OR inner-level required field is present
 	// (modulo auto-stamp / literal-resolved — those don't participate in the
@@ -1846,10 +1842,9 @@ function emitHoistedPolymorphFormFactory(
 		hoist.innerNode.isContainerShape &&
 		hoist.innerFields.length === 0;
 	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
-		const container = hoist.innerNode as unknown as {
-			children: readonly AssembledChild[];
-		};
-		const innerChildren = container.children;
+		// innerNode is AssembledBranch (checked via isContainerShape above)
+		const innerNode = hoist.innerNode as { slots: Readonly<Record<string, AssembledNonterminal>> };
+		const innerChildren = Object.values(innerNode.slots);
 		const anyMultiple = innerChildren.some((c) => isMultiple(c));
 		if (anyMultiple) {
 			// Spread coalesces missing children to an empty list — varargs
@@ -1955,8 +1950,8 @@ function emitHoistedPolymorphFormFactory(
 
 interface HoistedSetterContext {
 	readonly fn: string;
-	readonly formFields: readonly AssembledField[];
-	readonly innerFields: readonly AssembledField[];
+	readonly formFields: readonly AssembledNonterminal[];
+	readonly innerFields: readonly AssembledNonterminal[];
 	readonly nodeMap: NodeMap;
 	/** Source expression for the getter / auto-stamp read (e.g. `fields.x`). */
 	readonly getterExpr: string;
@@ -1974,7 +1969,7 @@ interface HoistedSetterContext {
  *   group (inner vs form) so the setter round-trips through the same factory.
  */
 function emitHoistedSetter(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	ctx: HoistedSetterContext
 ): string[] {
 	const { fn, formFields, innerFields, nodeMap, getterExpr, patchSource } = ctx;
@@ -2082,10 +2077,8 @@ function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
  * @returns `''` when any form has a required field or child, `'?'` otherwise.
  */
 function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
-	const anyFormHasRequired = forms.some(
-		(f) =>
-			f.fields.some((fd) => isRequired(fd)) ||
-			f.children.some((c) => isRequired(c))
+	const anyFormHasRequired = forms.some((f) =>
+		Object.values(f.slots).some((s) => isRequired(s))
 	);
 	return anyFormHasRequired ? '' : '?';
 }

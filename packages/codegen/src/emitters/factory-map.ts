@@ -87,13 +87,13 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (node.modelType === 'branch' || node.modelType === 'group') {
 			if (node.fields.length === 0) continue;
-			if (node.children && node.children.length > 0) continue;
+			if (node.children.length > 0) continue;
 			factoryFields[kind] = node.fields.map((f) => f.name);
 		} else if (node.modelType === 'polymorph') {
 			const unique = [...new Set(node.allFormFields.map((f) => f.name))];
 			if (unique.length === 0) continue;
 			const hasChildrenInAnyForm = node.forms.some(
-				(f: AssembledGroup) => f.children && f.children.length > 0
+				(f: AssembledGroup) => f.children.length > 0
 			);
 			if (hasChildrenInAnyForm) continue;
 			factoryFields[kind] = unique;

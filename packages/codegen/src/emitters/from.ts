@@ -18,8 +18,7 @@ import {
 } from './kind-discriminant.ts';
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
 	AssembledGroup
 } from '../compiler/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
@@ -382,7 +381,7 @@ function renderFromForNode(
 						typeName: node.typeName,
 						rawFactoryName: node.rawFactoryName,
 						fromFunctionName: node.fromFunctionName,
-						children: node.children ?? []
+						children: node.children
 					},
 					kindEntries,
 					nodeMap
@@ -428,8 +427,8 @@ interface BranchLikeNode {
 	readonly fromInputTypeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
-	readonly fields: readonly AssembledField[];
-	readonly children?: readonly AssembledChild[];
+	readonly fields: readonly AssembledNonterminal[];
+	readonly children: readonly AssembledNonterminal[];
 }
 
 function _emitVariantFrom(
@@ -453,7 +452,7 @@ function _emitVariantFrom(
 
 	const parentFields =
 		'fields' in node
-			? (node as { fields: readonly AssembledField[] }).fields
+			? (node as { fields: readonly AssembledNonterminal[] }).fields
 			: [];
 	const configParts: string[] = [];
 	for (const f of parentFields) {
@@ -477,7 +476,7 @@ function _emitVariantFrom(
 		if (!vNode) continue;
 		const vFields =
 			'fields' in vNode
-				? (vNode as { fields: readonly AssembledField[] }).fields
+				? (vNode as { fields: readonly AssembledNonterminal[] }).fields
 				: [];
 		for (const vf of vFields) {
 			if (seenProps.has(vf.propertyName)) continue;
@@ -584,7 +583,7 @@ function emitBranchNodeDataPassthrough(
  */
 function emitNonEmptyChildrenHoist(
 	lines: string[],
-	childSlots: readonly AssembledChild[],
+	childSlots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	typeName: string,
 	intern: KindInterner,
@@ -618,7 +617,7 @@ function emitNonEmptyChildrenHoist(
  * walker but lives here to keep the from-emitter standalone.
  */
 function childrenSlotElementType(
-	childSlots: readonly AssembledChild[],
+	childSlots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): string | undefined {
 	const parts = new Set<string>();
@@ -659,7 +658,7 @@ function childrenSlotElementType(
  */
 function emitBranchChildrenEntry(
 	lines: string[],
-	childSlots: readonly AssembledChild[],
+	childSlots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	typeName: string,
 	intern: KindInterner,
@@ -689,7 +688,7 @@ function emitBranchFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const fields = node.fields;
-	const childSlots = node.children ?? [];
+	const childSlots = node.children;
 	// Auto-stamp fields are always `required` but they have no slot in Config —
 	// exclude them from the optionality check so the input `?` marker is correct.
 	// Auto-stamp-eligible children likewise: the factory stamps them directly from
@@ -712,13 +711,13 @@ function emitBranchFrom(
 	);
 	if (fields.length > 0) {
 		emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
-		const neName = (f: AssembledField) => `_ne_${f.propertyName}`;
+		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
 		// the factory's Config surface — they're a `Bitflag<Const, T>` /
 		// `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
 		// when the underlying values are repeat1, otherwise we generate a
 		// `_ne_X` array hoist + `_assertNonEmpty` call against a non-array.
-		const needsNonEmptyHoist = (f: AssembledField): boolean =>
+		const needsNonEmptyHoist = (f: AssembledNonterminal): boolean =>
 			isNonEmpty(f) &&
 			isMultiple(f) &&
 			keywordPresenceKind(f, nodeMap) === null;
@@ -1237,7 +1236,7 @@ type KindInterner = (kinds: readonly string[]) => string;
  * discriminator has already handed back any pre-built node.
  */
 function resolveFieldFromTypedInput(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	parentTypeName: string,
 	intern: KindInterner,
@@ -1275,7 +1274,7 @@ function resolveFieldFromTypedInput(
  * can accept directly, no sideways cast.
  */
 function resolveChildrenFromTypedInput(
-	childSlots: readonly AssembledChild[],
+	childSlots: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	parentTypeName: string,
 	intern: KindInterner,
@@ -1496,7 +1495,7 @@ function buildInternedArrayResolverCall(
 }
 
 /**
- * Resolve an AssembledField's element type to a concrete TS type expression
+ * Resolve an AssembledNonterminal's element type to a concrete TS type expression
  * for the from() surface — each resolved node kind is prefixed with `T.` so
  * the reference resolves against the `import * as T from './types.js'` import.
  *
@@ -1504,7 +1503,7 @@ function buildInternedArrayResolverCall(
  * {@link fieldTypeComponents} walker so node-ref / literal / alias-source
  * / hidden-keyword / missing-kind handling stays in one place.
  */
-function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
+function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
 	if (literals.length > 0 && kindNames.length === 0) {
@@ -1543,7 +1542,7 @@ function resolveFieldCall(
 	applyKeywordPresence = true,
 	/** Pre-computed element type expression for the explicit `<T>` type
 	 * argument on the resolver call. When omitted, falls back to deriving
-	 * from the field shape (only possible when `field` is an `AssembledField`). */
+	 * from the field shape (only possible when `field` is an `AssembledNonterminal`). */
 	elementTypeOverride?: string
 ): string {
 	// ADR-0012: short-circuit keyword-presence fields through dedicated
@@ -1562,13 +1561,13 @@ function resolveFieldCall(
 	);
 
 	// Pass an explicit element type when we have one — `resolveFieldCall` is
-	// also invoked with merged children pseudo-fields (no AssembledField
+	// also invoked with merged children pseudo-fields (no AssembledNonterminal
 	// shape), so prefer an override when supplied; otherwise derive from the
-	// AssembledField when present.
+	// AssembledNonterminal when present.
 	const elementType =
 		elementTypeOverride ??
 		('name' in field
-			? fieldElementType(field as AssembledField, nodeMap)
+			? fieldElementType(field as AssembledNonterminal, nodeMap)
 			: undefined);
 
 	const fastPath = buildSingleKindFastPath(
@@ -1601,7 +1600,7 @@ function keywordPresenceResolverCall(
 	field: { values: readonly NodeOrTerminal[] },
 	nodeMap: NodeMap
 ): string | undefined {
-	const kw = keywordPresenceKind(field as AssembledField, nodeMap);
+	const kw = keywordPresenceKind(field as AssembledNonterminal, nodeMap);
 	if (kw === null) return undefined;
 	if (kw === 'boolean') return `_resolveBooleanKeyword(${prop})`;
 	// bitflag — pass through; the factory handles number expansion via _bf.

@@ -75,20 +75,20 @@ export function traceAssembleNodes(
 		}
 		console.error(`[sittir-trace] ${phase}: '${k}'`);
 		console.error(`  modelType=${node.modelType} typeName=${node.typeName}`);
-		// Lazy-access the derivation getters if present. AssembledBranch's
-		// `fields` / `children` are computed on access.
-		const fields = (node as unknown as { fields?: Array<{ name: string }> })
-			.fields;
-		const children = (
-			node as unknown as {
-				children?: Array<{ name: string; values?: unknown[] }>;
-			}
-		).children;
-		if (fields)
-			console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
-		if (children)
-			console.error(
-				`  children=${JSON.stringify(children.map((c) => ({ name: c.name, slots: c.values?.length ?? 0 })))}`
-			);
+		// Access the slots Record when present (AssembledBranch / AssembledGroup).
+		const slots = (
+			node as unknown as { slots?: Record<string, { name: string; source?: string; values?: unknown[] }> }
+		).slots;
+		if (slots) {
+			const allSlots = Object.values(slots);
+			const fields = allSlots.filter((s) => s.source !== 'inferred');
+			const children = allSlots.filter((s) => s.source === 'inferred');
+			if (fields.length > 0)
+				console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
+			if (children.length > 0)
+				console.error(
+					`  children=${JSON.stringify(children.map((c) => ({ name: c.name, slots: c.values?.length ?? 0 })))}`
+				);
+		}
 	}
 }

@@ -20,7 +20,7 @@ import {
 	type SlotClass
 } from '../emitters/render-module.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
-import type { AssembledChild, AssembledNode } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
@@ -79,8 +79,8 @@ describe('buildSupertypeTransportSet', () => {
 // ---------------------------------------------------------------------------
 
 describe('deriveChildrenKinds', () => {
-	it('extracts resolved node-ref kinds from AssembledChild.values', () => {
-		// Construct a minimal AssembledChild-shaped object for testing.
+	it('extracts resolved node-ref kinds from AssembledNonterminal.values', () => {
+		// Construct a minimal AssembledNonterminal-shaped object for testing.
 		const mockChild = {
 			values: [
 				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' },
@@ -88,7 +88,7 @@ describe('deriveChildrenKinds', () => {
 				{ kind: 'terminal', value: ',', multiplicity: 'array' } // terminals ignored
 			]
 		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledChild);
+		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
 		expect(result).toEqual(['identifier', 'call_expression']);
 	});
 
@@ -99,7 +99,7 @@ describe('deriveChildrenKinds', () => {
 				{ kind: 'node-ref', node: { kind: 'identifier' }, multiplicity: 'array' }
 			]
 		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledChild);
+		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
 		expect(result).toEqual(['identifier']);
 	});
 
@@ -114,7 +114,7 @@ describe('deriveChildrenKinds', () => {
 				{ kind: 'node-ref', node: { kind: 'unresolved-ref', name: '_expression' }, multiplicity: 'array' }
 			]
 		};
-		const result = deriveChildrenKinds(mockChild as unknown as AssembledChild);
+		const result = deriveChildrenKinds(mockChild as unknown as AssembledNonterminal);
 		expect(result).toEqual(['identifier', '_expression']);
 	});
 });

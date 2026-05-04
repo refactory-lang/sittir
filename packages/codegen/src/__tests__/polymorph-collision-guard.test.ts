@@ -15,7 +15,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import {
 	AssembledGroup,
 	AssembledBranch,
-	type AssembledField,
+	type AssembledNonterminal,
 	type AssembledNode
 } from '../compiler/node-map.ts';
 import { resolveHoistedForm } from '../emitters/shared.ts';
@@ -90,7 +90,7 @@ describe('resolveHoistedForm — collision guard', () => {
 
 		const form = makeForm();
 		// Install a form-level field that collides with the inner `left`.
-		const collidingField: AssembledField = {
+		const collidingField: AssembledNonterminal = {
 			name: 'left',
 			propertyName: 'left',
 			paramName: 'left',
@@ -131,7 +131,7 @@ describe('resolveHoistedForm — collision guard', () => {
 		const form = makeForm();
 
 		// Form-level field name that does NOT collide with inner fields.
-		const nonCollidingField: AssembledField = {
+		const nonCollidingField: AssembledNonterminal = {
 			name: 'operator',
 			propertyName: 'operator',
 			paramName: 'operator',

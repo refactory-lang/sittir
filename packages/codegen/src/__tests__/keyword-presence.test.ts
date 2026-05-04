@@ -6,7 +6,7 @@ import {
 	keywordPresenceIsNonEmptyRepeat
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledField, NodeOrTerminal } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
 	AssembledPattern,
@@ -27,7 +27,7 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 	};
 }
 
-function makeField(values: readonly NodeOrTerminal[]): AssembledField {
+function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	return {
 		name: 'field',
 		propertyName: 'field',
@@ -36,7 +36,7 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledField {
 		values,
 		hasTrailing: false,
 		hasLeading: false
-	} as AssembledField;
+	} as AssembledNonterminal;
 }
 
 const terminal = (

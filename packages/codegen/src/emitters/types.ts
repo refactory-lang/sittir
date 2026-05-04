@@ -54,8 +54,8 @@ function kindDiscriminantOrLiteral(
 }
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
+	
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken
@@ -767,8 +767,8 @@ function emitTransportInterfaceNamespace(
 	typeName: string,
 	kind: string,
 	variant: string | undefined,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -950,7 +950,7 @@ function emitTerminalTransportNamespace(
 }
 
 function transportFieldTypeExpr(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -964,7 +964,7 @@ function transportFieldTypeExpr(
 }
 
 function transportChildTypeExpr(
-	child: AssembledChild,
+	child: AssembledNonterminal,
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -1705,7 +1705,7 @@ function emitFieldArrayDeclaration(
  * `[]` — they don't get aliased because they don't produce a
  * multi-type union.
  */
-function _fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
+function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string[] {
 	const litVals = slotLiteralValues(field);
 	if (litVals.length > 0) return [];
 	const kinds = slotKindNames(field);
@@ -1718,7 +1718,7 @@ function _fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
 	});
 }
 
-function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
+function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): string[] {
 	// Inline pure-literal values as string-literal types, mirroring
 	// `fieldTypeComponents`. A child slot that carries terminal values
 	// alongside node refs (e.g. `children` on a union) would surface the
@@ -1905,7 +1905,7 @@ function emitFormChildrenSlot(
  * (factories.ts::fieldElementType is the same walk with a `T.` prefix).
  */
 function fieldTypeExpr(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap?: NodeMap,
 	lookupUnion?: LookupUnion
 ): string {
@@ -1957,7 +1957,7 @@ function fieldTypeExpr(
  * requires repeat.
  */
 function wrapFieldTypeForBrand(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	kind: string,
 	nodeMap: NodeMap,
 	typeExpr: string

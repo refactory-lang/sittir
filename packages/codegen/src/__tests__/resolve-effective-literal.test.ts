@@ -4,7 +4,7 @@ import {
 	isAutoStampField
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledField } from '../compiler/node-map.ts';
+import type { AssembledNonterminal } from '../compiler/node-map.ts';
 import { AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
 
@@ -23,8 +23,8 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 }
 
 function makeField(
-	overrides: Partial<AssembledField> & { values: readonly NodeOrTerminal[] }
-): AssembledField {
+	overrides: Partial<AssembledNonterminal> & { values: readonly NodeOrTerminal[] }
+): AssembledNonterminal {
 	return {
 		name: 'field',
 		propertyName: 'field',
@@ -33,14 +33,14 @@ function makeField(
 		hasTrailing: false,
 		hasLeading: false,
 		...overrides
-	} as AssembledField;
+	} as AssembledNonterminal;
 }
 
 /** Create a single-value field with an inline terminal literal. */
 function literalField(
 	value: string,
 	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledField {
+): AssembledNonterminal {
 	return makeField({
 		values: [{ kind: 'terminal', value, multiplicity }]
 	});
@@ -50,7 +50,7 @@ function literalField(
 function nodeRefField(
 	kindName: string,
 	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledField {
+): AssembledNonterminal {
 	return makeField({
 		values: [
 			{
@@ -63,7 +63,7 @@ function nodeRefField(
 }
 
 /** Create a field with multiple values (choice). */
-function multiValueField(values: readonly NodeOrTerminal[]): AssembledField {
+function multiValueField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	return makeField({ values });
 }
 

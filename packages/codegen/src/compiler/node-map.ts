@@ -629,13 +629,13 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
  * Internal — fields-side walk. The exported derivation surface is
  * `deriveSlots` (Phase 1d.iv); this helper is its fields-portion.
  */
-function _deriveFieldsInternal(rule: Rule): AssembledField[] {
+function _deriveFieldsInternal(rule: Rule): AssembledNonterminal[] {
 	auditDerivationShape(rule, 'fields');
 	return mergeFieldsByName(deriveFieldsRaw(rule, 'single'));
 }
 
 /**
- * Fold fields with the same grammar name into a single AssembledField whose
+ * Fold fields with the same grammar name into a single AssembledNonterminal whose
  * `values` is the union of the contributing fields' values. Tree-sitter allows
  * the same field name to appear multiple times in a rule (e.g. Python's
  * `if_statement` has `field('alternative', $.elif_clause)` inside a repeat AND
@@ -651,9 +651,9 @@ function _deriveFieldsInternal(rule: Rule): AssembledField[] {
  * referenced kind set is no longer cached on the slot — consumers
  * derive it via `kindsOf(slot)` from the merged `values` (Phase 1d.i).
  */
-function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
+function mergeFieldsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
-	const byName = new Map<string, AssembledField>();
+	const byName = new Map<string, AssembledNonterminal>();
 	for (const f of fields) {
 		const existing = byName.get(f.name);
 		if (!existing) {
@@ -680,14 +680,14 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 }
 
 /**
- * Raw field derivation — produces one AssembledField per `field()` encounter.
+ * Raw field derivation — produces one AssembledNonterminal per `field()` encounter.
  * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
  * down from repeat/optional wrappers above the field.
  */
 function deriveFieldsRaw(
 	rule: Rule,
 	outerMultiplicity: Multiplicity
-): AssembledField[] {
+): AssembledNonterminal[] {
 	switch (rule.type) {
 		case 'field': {
 			// Synthetic outer-field wrapper: the autogen wraps a multi-
@@ -727,7 +727,7 @@ function deriveFieldsRaw(
 				isMultiSlot && findRepeatFlag(rule.content, 'trailing');
 			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, 'leading');
 
-			const outerField: AssembledField = {
+			const outerField: AssembledNonterminal = {
 				name: rule.name,
 				propertyName,
 				paramName: safeParamName(propertyName),
@@ -996,20 +996,6 @@ export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
 	return _deriveFieldsInternal(rule);
 }
 
-// Convenience selectors over deriveSlots — used by class getters and
-// internal callers that need the fields-only or children-only view.
-// External callers should prefer deriveSlots directly and filter at the
-// call site (slot.source !== 'inferred' for fields, === 'inferred' for
-// kind-derived positional children).
-
-function _slotsAsFields(rule: Rule): AssembledField[] {
-	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
-}
-
-function _slotsAsChildren(rule: Rule): AssembledChild[] {
-	return deriveSlots(rule).filter((s) => s.source === 'inferred');
-}
-
 /**
  * Walk a field's content and collect alias-source provenance: for each
  * symbol reference that was resolved from `alias($.source, $.target)`
@@ -1158,8 +1144,8 @@ function deriveValuesForRule(
 }
 
 /**
- * Compute the merged `values: NodeOrTerminal[]` for an AssembledChild or
- * AssembledField. Deduplicates by (kind+name/value, multiplicity) pair so
+ * Compute the merged `values: NodeOrTerminal[]` for an AssembledNonterminal or
+ * AssembledNonterminal. Deduplicates by (kind+name/value, multiplicity) pair so
  * that two choice arms referencing the same kind with the same multiplicity
  * produce a single entry.
  *
@@ -1479,16 +1465,16 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 * Emitters (types.ts, factories.ts) read this via the base class
 	 * rather than switching on `modelType` — one source, one derivation.
 	 */
-	get structuralFields(): readonly AssembledField[] {
+	get structuralFields(): readonly AssembledNonterminal[] {
 		return [];
 	}
 
 	/**
 	 * Children visible at the interface surface. Default empty. See
-	 * `structuralFields` for rationale. Overridden by Branch, Container,
-	 * and Group to return their own child slots.
+	 * `structuralFields` for rationale. Overridden by Branch and Group to
+	 * return their own positional slots.
 	 */
-	get structuralChildren(): readonly AssembledChild[] {
+	get structuralChildren(): readonly AssembledNonterminal[] {
 		return [];
 	}
 
@@ -1606,52 +1592,25 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 }
 
 /**
- * Bare slot description — what `deriveChildren` and friends produce.
- * Holds the slot's name, derived camelCase property name, and per-value
- * content with multiplicities.
+ * Unified slot descriptor — covers both named grammar-field slots
+ * (source != 'inferred') and inferred positional slots (source == 'inferred').
+ * Produced by `deriveSlots` and stored in `AssembledBranch.slots` /
+ * `AssembledGroup.slots`. The `source` discriminant replaces the old
+ * `AssembledField` / `AssembledChild` split.
  *
- * Refined into `AssembledNonterminal` (below) when the slot originated
- * from a grammar `field(...)` wrapper; that refinement adds the
- * factory-side parameter name, separator flags, alias provenance, and
- * source provenance.
- *
- * Phase 1d migration note: this interface stays for the duration of
- * Phase 1d.ii — Phase 1d.iv will replace the `deriveChildren` /
- * `deriveFields` walkers with a single `deriveSlots` that produces
- * `AssembledNonterminal` instances directly with full metadata
- * (paramName='child'/'children' for unnamed positions). Once that lands,
- * `AssembledChild` becomes truly unused and is removed.
+ * Phase 1d.viii (spec 022): `AssembledField` and `AssembledChild` have been
+ * removed; all consumers use `AssembledNonterminal` directly.
  */
-export interface AssembledChild {
+export interface AssembledNonterminal {
 	readonly name: string;
 	readonly propertyName: string;
 	readonly values: readonly NodeOrTerminal[];
-}
-
-/**
- * Field-shaped slot — a constituent that originated from a grammar
- * `field(name, content)` wrapper. Carries the factory-side parameter
- * name plus separator/alias/source provenance.
- *
- * Renamed from `AssembledField` in spec 022 Phase 1d.ii. The previous
- * `AssembledField` name remains as a deprecated type alias for the
- * duration of the consumer migration (Phase 1d.viii); after that lands,
- * the alias is removed.
- *
- * `hasTrailing` / `hasLeading` will move to per-value in Phase 1d.iii;
- * once there, this interface drops those properties and consumers read
- * them from `slot.values[i].trailing` instead.
- */
-export interface AssembledNonterminal extends AssembledChild {
 	readonly paramName: string;
 	readonly hasTrailing: boolean;
 	readonly hasLeading: boolean;
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 }
-
-/** @deprecated Use AssembledNonterminal — alias retained during Phase 1d migration. */
-export type AssembledField = AssembledNonterminal;
 
 /**
  * Derive the slot's referenced kind names from its `values[]`.
@@ -1669,7 +1628,7 @@ export type AssembledField = AssembledNonterminal;
  * `AssembledNode` (use its `kind`). Deduplicates while preserving
  * declaration order.
  */
-export function kindsOf(slot: AssembledChild): readonly string[] {
+export function kindsOf(slot: AssembledNonterminal): readonly string[] {
 	const seen = new Set<string>();
 	const out: string[] = [];
 	for (const v of slot.values) {
@@ -2116,7 +2075,7 @@ function wrapOptionalFieldPlaceholders(
 			// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
 			// `$TEXT`, `$CHILDREN`) aren't real fields — `translateToJinja`
 			// converts them to literal characters or list joins. Even if a
-			// `newline`/`indent`/etc. field exists in the AssembledField
+			// `newline`/`indent`/etc. field exists in the AssembledNonterminal
 			// list (e.g. python's decorator carries an empty-values
 			// `newline` slot from the walker's NEWLINE token wrapping), the
 			// placeholder is already structural and must not be gated.
@@ -2219,7 +2178,7 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
 /**
  * Cluster F step 4 (016): convenience wrapper around
  * `wrapOptionalFieldPlaceholders` for callers that already have an
- * `AssembledField` array. Used by `AssembledPolymorph.renderTemplate`
+ * `AssembledNonterminal` array. Used by `AssembledPolymorph.renderTemplate`
  * to gate per-form `$NAME` placeholders BEFORE the variant chain is
  * assembled — once the variant `{% if variant == X %}` blocks form, my
  * `computeGuardedRanges` would treat all interior placeholders as
@@ -2227,7 +2186,7 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
  */
 function _wrapFormOptionalPlaceholders(
 	template: string,
-	fields: readonly AssembledField[]
+	fields: readonly AssembledNonterminal[]
 ): string {
 	const optionalFields = deriveOptionalFieldNames(fields);
 	if (optionalFields.size === 0) return template;
@@ -2238,7 +2197,7 @@ function _wrapFormOptionalPlaceholders(
  * Cluster F step 3 (016): collect raw field names whose `isRequired`
  * derivation is false, for the walker's optional-field detection.
  *
- * `AssembledField.isRequired` is computed across the WHOLE rule tree
+ * `AssembledNonterminal.isRequired` is computed across the WHOLE rule tree
  * — it correctly catches fields that are required at their declaration
  * site but enclosed in an `optional(seq(...))` (rust `impl_item`'s
  * `trait` is the canonical case). The walker uses this set as a
@@ -2265,13 +2224,13 @@ function deriveOptionalSlotNames(
 }
 
 function deriveOptionalFieldNames(
-	fields: readonly AssembledField[]
+	fields: readonly AssembledNonterminal[]
 ): Set<string> {
 	return deriveOptionalSlotNames(fields);
 }
 
 function buildRenderSurface(opts?: {
-	fields?: readonly AssembledField[];
+	fields?: readonly AssembledNonterminal[];
 	slots?: readonly WalkSlotUse[];
 	optionalFields?: ReadonlySet<string>;
 	usesChildren?: boolean;
@@ -2320,7 +2279,7 @@ function deriveCrossFormOptionalFields(
 	forms: readonly AssembledGroup[]
 ): Set<string> {
 	if (forms.length <= 1) return new Set();
-	const perForm = forms.map((f) => new Set(f.fields.map((ff) => ff.name)));
+	const perForm = forms.map((f) => new Set(f.fields.map((ff: AssembledNonterminal) => ff.name)));
 	const allNames = new Set(perForm.flatMap((s) => [...s]));
 	const out = new Set<string>();
 	for (const name of allNames) {
@@ -2502,10 +2461,6 @@ export class AssembledBranch extends AssembledNodeBase<
 	 */
 	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
-	// Cached derivations — lazy, computed on first access
-	#fields?: AssembledField[];
-	#children?: AssembledChild[];
-
 	constructor(
 		kind: string,
 		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
@@ -2565,34 +2520,31 @@ export class AssembledBranch extends AssembledNodeBase<
 		return !hasAnyField(this.rule);
 	}
 
-	get fields(): AssembledField[] {
-		if (this.#fields) return this.#fields;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#fields = _slotsAsFields(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+	/**
+	 * Field-shaped slots only (source !== 'inferred'). Convenience view
+	 * over `slots` for callers that need only named-grammar-field slots.
+	 */
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
 	}
 
 	/** Branch interface surface = own fields. */
-	override get structuralFields(): readonly AssembledField[] {
+	override get structuralFields(): readonly AssembledNonterminal[] {
 		return this.fields;
 	}
 
-	get children(): AssembledChild[] | undefined {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = _slotsAsChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+	/**
+	 * Inferred positional slots only (source === 'inferred'). Convenience
+	 * view over `slots` for callers that need only unnamed positional slots.
+	 * Returns empty array when no inferred slots exist.
+	 */
+	get children(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source === 'inferred');
 	}
 
 	/** Branch interface surface = own children (or empty when absent). */
-	override get structuralChildren(): readonly AssembledChild[] {
-		return this.children ?? [];
+	override get structuralChildren(): readonly AssembledNonterminal[] {
+		return this.children;
 	}
 
 	renderTemplate(
@@ -2982,13 +2934,14 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 
 	/**
 	 * Flattened field list across all forms — the union of every form's
-	 * `fields` array. Used by emitters that need "all fields this polymorph
-	 * may carry" without caring which form owns each one.
+	 * named slots (source !== 'inferred'). Used by emitters that need
+	 * "all fields this polymorph may carry" without caring which form owns
+	 * each one.
 	 *
 	 * Single derivation point for the `forms.flatMap(f => f.fields)` pattern
 	 * that multiple emitters previously duplicated.
 	 */
-	get allFormFields(): AssembledField[] {
+	get allFormFields(): readonly AssembledNonterminal[] {
 		return this.#forms.flatMap((f) => f.fields);
 	}
 
@@ -2998,9 +2951,9 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	 * emitters see when iterating `this.#forms`. Callers that want
 	 * the raw concatenation use `allFormFields`.
 	 */
-	override get structuralFields(): readonly AssembledField[] {
+	override get structuralFields(): readonly AssembledNonterminal[] {
 		const seen = new Set<string>();
-		const out: AssembledField[] = [];
+		const out: AssembledNonterminal[] = [];
 		for (const form of this.#forms) {
 			for (const f of form.fields) {
 				if (!seen.has(f.name)) {
@@ -3434,7 +3387,7 @@ export class AssembledMulti extends AssembledNodeBase<
 
 	/** `true` when the source rule is `repeat1` (at least one element);
 	 * `false` for plain `repeat` (zero-or-more). Referrers thread this
-	 * into AssembledChild.nonEmpty. */
+	 * into AssembledNonterminal.nonEmpty. */
 	get nonEmpty(): boolean {
 		return this.rule.type === 'repeat1';
 	}
@@ -3475,8 +3428,17 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 */
 	readonly parentKind?: string;
 
-	#fields?: AssembledField[];
-	#children?: AssembledChild[];
+	/**
+	 * The unified slot Record — every constituent of this group keyed by
+	 * its grammar field name (for `field()`-derived slots) or its
+	 * kind-derived positional name (for inferred slots). Insertion order
+	 * matches the order produced by `deriveSlots`. Frozen at construction.
+	 *
+	 * Mirrors `AssembledBranch.slots` — added in Phase 1d.viii (spec 022)
+	 * so group consumers migrate off `.fields`/`.children` the same way
+	 * branch consumers do.
+	 */
+	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
 		kind: string,
@@ -3507,16 +3469,15 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
+		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
-	get fields(): AssembledField[] {
-		if (this.#fields) return this.#fields;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#fields = _slotsAsFields(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+	/**
+	 * Field-shaped slots only (source !== 'inferred'). Convenience view
+	 * over `slots` for callers that need only named-grammar-field slots.
+	 */
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
 	}
 
 	/**
@@ -3526,22 +3487,20 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 * the UForm parent references them via `$children`, and callers
 	 * need to supply the field values to construct.
 	 */
-	override get structuralFields(): readonly AssembledField[] {
+	override get structuralFields(): readonly AssembledNonterminal[] {
 		return this.fields;
 	}
 
-	get children(): AssembledChild[] {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = _slotsAsChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+	/**
+	 * Inferred positional slots only (source === 'inferred'). Convenience
+	 * view over `slots` for callers that need only unnamed positional slots.
+	 */
+	get children(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source === 'inferred');
 	}
 
 	/** Group interface surface = own children. */
-	override get structuralChildren(): readonly AssembledChild[] {
+	override get structuralChildren(): readonly AssembledNonterminal[] {
 		return this.children;
 	}
 

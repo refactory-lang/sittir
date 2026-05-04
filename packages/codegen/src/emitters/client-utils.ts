@@ -6,8 +6,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
-	AssembledChild,
-	AssembledField,
+	AssembledNonterminal,
 	NodeOrTerminal
 } from '../compiler/node-map.ts';
 import {
@@ -558,7 +557,7 @@ function collectTerminalTransportKinds(nodeMap: NodeMap): string[] {
  * @returns true if every alternative in the field resolves to a terminal
  * kind (leaf/keyword/token/enum) or an inline literal.
  */
-function isFieldTerminalOnly(field: AssembledField, nodeMap: NodeMap): boolean {
+function isFieldTerminalOnly(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	const components = fieldTypeComponents(field, nodeMap);
 	if (components.length === 0) return false;
 	for (const component of components) {
@@ -1141,7 +1140,7 @@ function emitStructuralValidatorBody(
 				)
 			)
 		);
-		const required = children.some((child: AssembledChild) =>
+		const required = children.some((child: AssembledNonterminal) =>
 			isRequired(child)
 		);
 		if (required) {
@@ -1194,7 +1193,7 @@ interface TransportAlternative {
 }
 
 function fieldTransportAlternatives(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): TransportAlternative[] {
 	return fieldTypeComponents(field, nodeMap).flatMap((component) => {

@@ -1,8 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type {
-	AssembledChild,
-	AssembledField,
+	AssembledNonterminal,
+	
 	AssembledNode,
 	NodeOrTerminal
 } from '../compiler/node-map.ts';
@@ -109,14 +109,14 @@ function collectTransportLiterals(
 	return literals;
 }
 
-function transportFields(node: AssembledNode): readonly AssembledField[] {
+function transportFields(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		return node.forms.flatMap((form) => form.fields);
 	}
 	return node.structuralFields;
 }
 
-function transportChildren(node: AssembledNode): readonly AssembledChild[] {
+function transportChildren(node: AssembledNode): readonly AssembledNonterminal[] {
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
 		return node.forms.flatMap((form) => form.children);
 	}
@@ -124,7 +124,7 @@ function transportChildren(node: AssembledNode): readonly AssembledChild[] {
 }
 
 function fieldTransportLiterals(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): TransportLiteral[] {
 	return fieldTypeComponents(field, nodeMap).flatMap((component) => {
@@ -139,7 +139,7 @@ function fieldTransportLiterals(
 	});
 }
 
-function childTransportLiterals(child: AssembledChild): TransportLiteral[] {
+function childTransportLiterals(child: AssembledNonterminal): TransportLiteral[] {
 	return child.values.flatMap((value) => {
 		const literal = literalForSlotValue(value);
 		return literal === undefined ? [] : [literal];

@@ -4,7 +4,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledField } from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import {
 	collectKindEntries,
@@ -265,7 +265,7 @@ function emitContainerTest(
 	//     — the factory's `_assertNonEmpty` helper throws on empty
 	//     input, so the no-arg form `ir.kind()` would fail at
 	//     runtime even though it type-checks.
-	const children = node.children ?? [];
+	const children = node.children;
 	const first = children[0];
 	const requiredSingular = first && !isMultiple(first) && isRequired(first);
 	const anyNonEmpty = children.some((c) => isNonEmpty(c));
@@ -314,7 +314,7 @@ function emitPolymorphTest(
 		// hoisting fired and produced `ir.macro.paren({})` even though the
 		// factory required `name`.
 		const hoist = resolveHoistedForm(form, nodeMap);
-		const allFields: AssembledField[] = [...form.fields];
+		const allFields: AssembledNonterminal[] = [...form.fields];
 		if (hoist) allFields.push(...hoist.innerFields);
 		const configParts = allFields
 			.filter((f) => isRequired(f) && !isAutoStampField(f, nodeMap))
@@ -608,7 +608,7 @@ function resolveInnerContainerNonEmptyChild(
 }
 
 function dummyValue(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap?: NodeMap,
 	kindEntries?: readonly KindEnumEntry[]
 ): string {

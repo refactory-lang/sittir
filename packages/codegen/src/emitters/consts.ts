@@ -5,7 +5,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledNode, AssembledField } from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledNonterminal } from '../compiler/node-map.ts';
 import type {
 	GeneratedIdEntry,
 	GeneratedIdTable,
@@ -412,7 +412,7 @@ function treeSitterPascalCase(s: string): string {
 
 interface BitflagBinding {
 	readonly kind: string;
-	readonly field: AssembledField;
+	readonly field: AssembledNonterminal;
 	readonly constName: string;
 	readonly values: readonly string[];
 	readonly nonEmptyRepeat: boolean;
@@ -463,7 +463,7 @@ function emitBitflagConstEnums(lines: string[], nodeMap: NodeMap): void {
 function collectBitflagBindings(nodeMap: NodeMap): BitflagBinding[] {
 	const candidates: {
 		kind: string;
-		field: AssembledField;
+		field: AssembledNonterminal;
 		bare: string;
 		prefixed: string;
 		values: readonly string[];
@@ -530,7 +530,7 @@ export function bitflagPrefixedConstName(
  */
 export function resolveBitflagConstName(
 	kind: string,
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): string | undefined {
 	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return undefined;
@@ -672,7 +672,7 @@ function pascalCaseFromCamel(s: string): string {
 }
 
 /** Yield the fields of a node — branch, polymorph (via forms), group. */
-function fieldsOfNode(node: AssembledNode): readonly AssembledField[] {
+function fieldsOfNode(node: AssembledNode): readonly AssembledNonterminal[] {
 	switch (node.modelType) {
 		case 'branch':
 			return node.fields;
@@ -680,7 +680,7 @@ function fieldsOfNode(node: AssembledNode): readonly AssembledField[] {
 			return node.fields;
 		case 'polymorph': {
 			const seen = new Set<string>();
-			const out: AssembledField[] = [];
+			const out: AssembledNonterminal[] = [];
 			for (const form of node.forms) {
 				for (const f of form.fields) {
 					if (!seen.has(f.name)) {
@@ -703,7 +703,7 @@ function getFields(node: AssembledNode) {
 		case 'polymorph': {
 			// Union of all form fields
 			const seen = new Set<string>();
-			const fields: (typeof node.forms)[0]['fields'] = [];
+			const fields: AssembledNonterminal[] = [];
 			for (const form of node.forms) {
 				for (const f of form.fields) {
 					if (!seen.has(f.name)) {

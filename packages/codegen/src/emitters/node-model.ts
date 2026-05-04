@@ -21,8 +21,8 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
+	
 	AssembledGroup,
 	NodeOrTerminal,
 	UnresolvedRef
@@ -234,7 +234,7 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				...base,
 				modelType: 'branch',
 				fields: node.fields.map(serializeField),
-				children: (node.children ?? []).map(serializeChild)
+				children: node.children.map(serializeChild)
 			};
 			if (node.separator !== undefined) out.separator = node.separator;
 			return out;
@@ -314,7 +314,7 @@ function serializeForm(form: AssembledGroup): SerializedForm {
 	};
 }
 
-function serializeField(field: AssembledField): SerializedField {
+function serializeField(field: AssembledNonterminal): SerializedField {
 	const out: SerializedField = {
 		name: field.name,
 		propertyName: field.propertyName,
@@ -339,7 +339,7 @@ function serializeField(field: AssembledField): SerializedField {
 	return out;
 }
 
-function serializeChild(child: AssembledChild): SerializedSlot {
+function serializeChild(child: AssembledNonterminal): SerializedSlot {
 	return {
 		name: child.name,
 		propertyName: child.propertyName,

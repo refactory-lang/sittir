@@ -28,8 +28,7 @@ import type {
 import { computePolymorphFormKinds } from './types.ts';
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild
+	AssembledNonterminal
 } from './node-map.ts';
 import {
 	AssembledBranch,
@@ -504,7 +503,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * user-determined.
  */
 function isAutoStampSlot(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodes: Map<string, AssembledNode>
 ): boolean {
 	if (!isRequired(slot)) return true; // optional slots never block parameterless
@@ -528,21 +527,17 @@ function isAutoStampSlot(
 }
 
 /**
- * Get all slots (fields + children) for compound-like nodes that support
- * the parameterless fixpoint. Returns `undefined` for nodes that have no
- * slot model (supertypes, tokens, multis — these are never parameterless
- * compounds).
+ * Get all slots for compound-like nodes that support the parameterless
+ * fixpoint. Returns `undefined` for nodes that have no slot model
+ * (supertypes, tokens, multis — these are never parameterless compounds).
  */
 function getSlotsForParameterless(
 	node: AssembledNode
-):
-	| { fields: readonly AssembledField[]; children: readonly AssembledChild[] }
-	| undefined {
+): readonly AssembledNonterminal[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
-			return { fields: node.fields, children: node.children ?? [] };
 		case 'group':
-			return { fields: node.fields, children: node.children ?? [] };
+			return Object.values(node.slots);
 		default:
 			return undefined;
 	}
@@ -556,7 +551,7 @@ function getSlotsForParameterless(
  * compounds).
  */
 function _stampExpressionForSlot(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodes: Map<string, AssembledNode>
 ): string | undefined {
 	if (!isRequired(slot)) return undefined; // optional — no stamp needed
@@ -624,10 +619,8 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 		for (const [kind, node] of nodes) {
 			if (node.isParameterless) continue; // already marked
 
-			const slots = getSlotsForParameterless(node);
-			if (!slots) continue; // not a compound with fields/children
-
-			const allSlots = [...slots.fields, ...slots.children];
+			const allSlots = getSlotsForParameterless(node);
+			if (!allSlots) continue; // not a compound with slots
 
 			// A compound is parameterless iff it has at least ONE required slot AND
 			// every required slot auto-stamps. Vacuous truth (no required slots at
@@ -808,17 +801,13 @@ function resolveHiddenRuleContent(
 function markUserFacing(nodes: Map<string, AssembledNode>): void {
 	const aliasSourceKinds = new Set<string>();
 	for (const [, n] of nodes) {
-		const fieldSlots =
+		const allSlots: readonly AssembledNonterminal[] =
 			n.modelType === 'polymorph'
 				? n.allFormFields
 				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
+					? Object.values(n.slots)
 					: [];
-		const childSlots =
-			n.modelType === 'branch' || n.modelType === 'group'
-				? (n.children ?? [])
-				: [];
-		for (const slot of [...fieldSlots, ...childSlots]) {
+		for (const slot of allSlots) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;

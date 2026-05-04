@@ -20,8 +20,8 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
 	RenderTemplateSurface,
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
+	
 	AssembledGroup,
 	AssembledSupertype,
 	UnresolvedRef
@@ -1170,23 +1170,23 @@ export function buildSupertypeTransportSet(
 }
 
 /**
- * Extract the kind set from an `AssembledChild.values` array.
- * Parallel to `AssembledField.projection.kinds` for field slots.
+ * Extract the kind set from an `AssembledNonterminal.values` array.
+ * Parallel to `AssembledNonterminal.projection.kinds` for field slots.
  * Terminal values (inline string literals) are skipped — they do not
  * contribute to the transport type.
  *
  * Unresolved refs are included using their `name` (the grammar kind string,
- * e.g. `_expression`) — mirroring how `AssembledField.projection.kinds` is
+ * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds` is
  * built in `deriveFieldsRaw`. Children nodes are always unresolved in the
  * assembled IR (the `resolveSlotRefs` pass that would replace them with live
  * `AssembledNode` refs is never run). Using the name lets `classifySlotForEmit`
  * look up the node by kind in `nodeMap.nodes` and resolve the correct
  * supertype / concrete classification.
  *
- * @param child - any AssembledChild (field or children slot)
+ * @param child - any AssembledNonterminal (field or children slot)
  * @returns deduplicated list of resolved kind names
  */
-export function deriveChildrenKinds(child: AssembledChild): string[] {
+export function deriveChildrenKinds(child: AssembledNonterminal): string[] {
 	const kinds = new Set<string>();
 	for (const v of child.values) {
 		if (!isNodeRef(v)) continue;
@@ -1600,7 +1600,7 @@ function renderTypedPolymorphFn(
  * @param fields - the node's structural fields
  */
 function buildFieldKindsByName(
-	fields: readonly AssembledField[]
+	fields: readonly AssembledNonterminal[]
 ): ReadonlyMap<string, readonly string[]> {
 	const map = new Map<string, readonly string[]>();
 	for (const f of fields) {
@@ -1621,7 +1621,7 @@ function buildFieldKindsByName(
  * @param nodeMap - for supertype/multi detection
  */
 function classifySlotFromChildren(
-	children: readonly AssembledChild[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): SlotClass {
 	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
@@ -2398,8 +2398,8 @@ function collectUsedSupertypeNames(
 
 	/** Accumulate supertype names from a single node's fields + children. */
 	const collectFromNode = (
-		fields: readonly AssembledField[],
-		children: readonly AssembledChild[]
+		fields: readonly AssembledNonterminal[],
+		children: readonly AssembledNonterminal[]
 	): void => {
 		for (const field of fields) {
 			const cls = classifySlotForEmit(kindsOf(field), nodeMap);
@@ -2785,7 +2785,7 @@ function collectPerSlotChildEnums(
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
 
-	const consider = (typeName: string, children: readonly AssembledChild[]): void => {
+	const consider = (typeName: string, children: readonly AssembledNonterminal[]): void => {
 		if (children.length === 0) return;
 		const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
 		const cls = classifySlotForEmit(allKinds, nodeMap);
@@ -3328,8 +3328,8 @@ function renderTransportDataToNodeFn(
 	fnName: string,
 	structName: string,
 	kind: string,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	defaultNamed: boolean,
 	hasOptionalText: boolean,
 	kindIdByKind?: ReadonlyMap<string, number>,
@@ -3412,7 +3412,7 @@ type BridgeFieldClass =
 	| undefined;
 
 function bridgeClassForField(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap | undefined
 ): BridgeFieldClass {
 	if (nodeMap === undefined) return undefined;
@@ -3437,7 +3437,7 @@ function bridgeClassForField(
  * @param nodeMap - for classification; absent = assume heterogeneous
  */
 function buildBridgeSingleRequired(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	access: string,
 	nodeMap: NodeMap | undefined
 ): string {
@@ -3456,7 +3456,7 @@ function buildBridgeSingleRequired(
  * - supertype: maps via `<supertype>_transport_to_any`
  */
 function buildBridgeListRequired(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	access: string,
 	nodeMap: NodeMap | undefined
 ): string {
@@ -3477,7 +3477,7 @@ function buildBridgeListRequired(
  * - supertype: `<supertype>_transport_to_any(valueExpr)`
  */
 function buildBridgeOptionalSingle(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap | undefined
 ): string {
@@ -3492,7 +3492,7 @@ function buildBridgeOptionalSingle(
  * value (after `if let Some(value) = access`) to `Vec<AnyTransport>`.
  */
 function buildBridgeOptionalList(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	valueExpr: string,
 	nodeMap: NodeMap | undefined
 ): string {
@@ -3505,7 +3505,7 @@ function buildBridgeOptionalList(
 }
 
 function renderTransportChildrenBinding(
-	children: readonly AssembledChild[],
+	children: readonly AssembledNonterminal[],
 	nodeMap?: NodeMap,
 	/** PascalCase typeName of the owning struct — used for the per-slot
 	 *  child enum bridge function name when the slot is heterogeneous. */
@@ -3817,8 +3817,8 @@ function renderPolymorphTransportDefs(
 function renderTransportDataStruct(
 	structName: string,
 	node: AssembledNode,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): string[] {
 	const isLeafNode =
@@ -4028,7 +4028,7 @@ function renderLeafTransportPlainFields(): string[] {
 	];
 }
 
-function renderTransportField(field: AssembledField, nodeMap: NodeMap): string[] {
+function renderTransportField(field: AssembledNonterminal, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.name);
 	if (rustName !== field.name) {
@@ -4040,7 +4040,7 @@ function renderTransportField(field: AssembledField, nodeMap: NodeMap): string[]
 	return lines;
 }
 
-function rustTransportFieldType(field: AssembledField, nodeMap: NodeMap): string {
+function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): string {
 	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 	switch (cls.tag) {
 		case 'concrete': {
@@ -4098,7 +4098,7 @@ function rustTransportFieldType(field: AssembledField, nodeMap: NodeMap): string
  * @param nodeMap  - For kind classification.
  */
 function rustTransportChildrenType(
-	children: readonly AssembledChild[],
+	children: readonly AssembledNonterminal[],
 	typeName: string,
 	nodeMap: NodeMap
 ): string {
@@ -4175,7 +4175,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 	return null;
 }
 
-function hasRequiredChild(children: readonly AssembledChild[]): boolean {
+function hasRequiredChild(children: readonly AssembledNonterminal[]): boolean {
 	return children.some((child) => isRequired(child));
 }
 
@@ -4185,7 +4185,7 @@ function hasRequiredChild(children: readonly AssembledChild[]): boolean {
  * must be `Vec<T>`. When false, the slot holds at most one child and the field
  * should be `T` (required) or `Option<T>` (optional).
  */
-function hasMultipleChildren(children: readonly AssembledChild[]): boolean {
+function hasMultipleChildren(children: readonly AssembledNonterminal[]): boolean {
 	return children.some((child) => isMultiple(child));
 }
 

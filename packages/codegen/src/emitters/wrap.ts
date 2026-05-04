@@ -16,8 +16,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type {
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
+	
 	AssembledNode,
 	AssembledPolymorph
 } from '../compiler/node-map.ts';
@@ -407,7 +407,7 @@ function renderWrapForNode(
 			return emitFieldCarryingWrap(
 				node,
 				node.fields,
-				node.children ?? [],
+				node.children,
 				kindEntries,
 				nodeMap
 			);
@@ -437,16 +437,16 @@ function renderWrapForNode(
  *   array, both deduplicated by name.
  */
 function mergePolymorphFormsIntoFieldsAndChildren(node: AssembledPolymorph): {
-	fields: AssembledField[];
-	children: AssembledChild[];
+	fields: AssembledNonterminal[];
+	children: AssembledNonterminal[];
 } {
-	const allFields = new Map<string, AssembledField>();
+	const allFields = new Map<string, AssembledNonterminal>();
 	for (const form of node.forms) {
 		for (const f of form.fields) {
 			if (!allFields.has(f.name)) allFields.set(f.name, f);
 		}
 	}
-	const allChildren: AssembledChild[] = [];
+	const allChildren: AssembledNonterminal[] = [];
 	for (const form of node.forms) {
 		for (const c of form.children) {
 			if (!allChildren.some((existing) => existing.name === c.name)) {
@@ -511,7 +511,7 @@ function emitWrapFunctionSignature(
  */
 function emitFieldGetterLine(
 	lines: string[],
-	f: AssembledField,
+	f: AssembledNonterminal,
 	method: string
 ): void {
 	const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
@@ -548,7 +548,7 @@ function emitFieldGetterLine(
  */
 function emitChildrenSlotGetters(
 	lines: string[],
-	children: readonly AssembledChild[]
+	children: readonly AssembledNonterminal[]
 ): void {
 	if (children.length > 0) {
 		const anyMultiple = children.some((c) => isMultiple(c));
@@ -588,8 +588,8 @@ function emitWrappedNodeCast(lines: string[], typeName: string): void {
 
 function emitFieldCarryingWrap(
 	node: WrapNode,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	nodeMap: NodeMap
 ): string {
