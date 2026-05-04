@@ -27,6 +27,7 @@ export type {
 	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
+	NodeMemberValue,
 	AnyTreeNode,
 	TemplateRule,
 	TemplateRuleObject,

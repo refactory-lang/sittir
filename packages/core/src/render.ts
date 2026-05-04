@@ -96,6 +96,95 @@ function resolveKindName(
 }
 
 // ---------------------------------------------------------------------------
+// Field-access helpers — ADR-0018 Phase 2 dual-shape compatibility
+// ---------------------------------------------------------------------------
+
+/**
+ * Get the value of a named field from a NodeData.
+ *
+ * ADR-0018 Phase 2: factory/wrap nodes store named fields as `_fieldKey`
+ * top-level properties. Old-shape nodes (readNode output, native JSON path)
+ * store them under `$fields[fieldKey]`. This helper tries the new shape
+ * first, then falls back to the legacy shape.
+ *
+ * @param node - The NodeData to read from.
+ * @param fieldKey - The raw snake_case grammar field name (e.g. `'return_type'`).
+ * @returns The field value, or `undefined` if absent in both shapes.
+ */
+function getNodeField(node: AnyNodeData, fieldKey: string): unknown {
+	const n = node as unknown as Record<string, unknown>;
+	const underscored = n['_' + fieldKey];
+	if (underscored !== undefined) return underscored;
+	const fields = n['$fields'];
+	if (fields != null && typeof fields === 'object') {
+		return (fields as Record<string, unknown>)[fieldKey];
+	}
+	return undefined;
+}
+
+/**
+ * Check whether a NodeData has any named field in either shape.
+ *
+ * @param node - The NodeData to test.
+ * @param fieldKey - The raw snake_case grammar field name to probe.
+ * @returns `true` when the field is present and not `undefined` in either shape.
+ */
+function hasNodeField(node: AnyNodeData, fieldKey: string): boolean {
+	return getNodeField(node, fieldKey) !== undefined;
+}
+
+/**
+ * Enumerate all named field entries from a NodeData.
+ *
+ * ADR-0018 Phase 2: accumulates entries from both `_*` keys (new shape) and
+ * `$fields` (legacy shape). Keys are returned WITHOUT the `_` prefix so
+ * downstream render logic sees the raw grammar field name in both cases.
+ *
+ * @param node - The NodeData to enumerate fields from.
+ * @returns Iterable of `[fieldName, value]` pairs using the raw grammar field name.
+ */
+function* iterNodeFields(
+	node: AnyNodeData
+): Iterable<[string, unknown]> {
+	const n = node as unknown as Record<string, unknown>;
+	// New shape: `_<fieldName>` top-level enumerable keys.
+	for (const key of Object.keys(n)) {
+		if (key.startsWith('_')) {
+			yield [key.slice(1), n[key]];
+		}
+	}
+	// Legacy shape: `$fields` wrapper.
+	const fields = n['$fields'];
+	if (fields != null && typeof fields === 'object') {
+		for (const [k, v] of Object.entries(fields as Record<string, unknown>)) {
+			yield [k, v];
+		}
+	}
+}
+
+/**
+ * Check whether a NodeData has any named structure (named fields or children).
+ *
+ * Handles both the new `_*` shape (ADR-0018 Phase 2) and the legacy `$fields`
+ * shape (readNode/native path). Anonymous-keyword-text fields stored in `$fields`
+ * count as structure; `_*` top-level keys always count as structure.
+ *
+ * @param node - The NodeData to check.
+ * @returns `true` when the node has at least one field or child entry.
+ */
+function nodeHasStructure(node: AnyNodeData): boolean {
+	const n = node as unknown as Record<string, unknown>;
+	// New shape: any `_*` enumerable key.
+	for (const key of Object.keys(n)) {
+		if (key.startsWith('_')) return true;
+	}
+	// Legacy shape: `$fields` or `$children`.
+	if (n['$fields'] != null) return true;
+	if (n['$children'] != null) return true;
+	return false;
+}
+
+// ---------------------------------------------------------------------------
 // Template resolution
 // ---------------------------------------------------------------------------
 
@@ -197,11 +286,9 @@ function isAnonEntry(value: unknown): value is AnyNodeData {
 }
 
 function collectAnonText(node: AnyNodeData): string | null {
-	const fieldsAllAnon =
-		!node.$fields ||
-		Object.values(node.$fields).every((value) =>
-			Array.isArray(value) ? value.every(isAnonEntry) : isAnonEntry(value)
-		);
+	const fieldsAllAnon = [...iterNodeFields(node)].every(([, value]) =>
+		Array.isArray(value) ? value.every(isAnonEntry) : isAnonEntry(value)
+	);
 	const childrenAllAnon =
 		!node.$children ||
 		(node.$children as readonly AnyNodeData[]).every(
@@ -211,13 +298,11 @@ function collectAnonText(node: AnyNodeData): string | null {
 	if (node.$text !== undefined) return node.$text;
 
 	const parts: string[] = [];
-	if (node.$fields) {
-		for (const value of Object.values(node.$fields)) {
-			const items = Array.isArray(value) ? value : [value];
-			for (const item of items) {
-				const anon = item as AnyNodeData | null | undefined;
-				if (anon?.$text !== undefined) parts.push(anon.$text);
-			}
+	for (const [, value] of iterNodeFields(node)) {
+		const items = Array.isArray(value) ? value : [value];
+		for (const item of items) {
+			const anon = item as AnyNodeData | null | undefined;
+			if (anon?.$text !== undefined) parts.push(anon.$text);
 		}
 	}
 	if (node.$children) {
@@ -290,10 +375,10 @@ export function prepare(
 	node: AnyNodeData,
 	ctx: InternalRenderContext
 ): PreparedRender {
-	if (node.$text !== undefined && !node.$fields && !node.$children)
+	if (node.$text !== undefined && !nodeHasStructure(node))
 		return { kind: 'text', text: node.$text };
 
-	if (!node.$fields && !node.$children) {
+	if (!nodeHasStructure(node) && !node.$children) {
 		throw new Error(
 			`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`
 		);
@@ -384,14 +469,12 @@ export function prepare(
 			// on undefined. The $TEXT fallback is a best-effort anyway —
 			// silently dropping absent entries is the right call.
 			const parts: string[] = [];
-			if (node.$fields) {
-				for (const v of Object.values(node.$fields)) {
-					if (v === undefined || v === null) continue;
-					const items = Array.isArray(v) ? v : [v];
-					for (const item of items) {
-						if (item === undefined || item === null) continue;
-						parts.push(renderValue(item as AnyNodeData | string | number, ctx));
-					}
+			for (const [, v] of iterNodeFields(node)) {
+				if (v === undefined || v === null) continue;
+				const items = Array.isArray(v) ? v : [v];
+				for (const item of items) {
+					if (item === undefined || item === null) continue;
+					parts.push(renderValue(item as AnyNodeData | string | number, ctx));
 				}
 			}
 			if (node.$children) {
@@ -419,8 +502,9 @@ export function prepare(
 		}
 
 		// 2. Fields (tree-sitter FIELDs + promoted overrides)
-		if (node.$fields?.[fieldKey] !== undefined) {
-			const value = node.$fields[fieldKey];
+		// ADR-0018 Phase 2: check both new `_fieldKey` shape and legacy `$fields` shape.
+		if (hasNodeField(node, fieldKey)) {
+			const value = getNodeField(node, fieldKey);
 			if (pfx.length === 3 || pfx === `${prefix}${prefix}${prefix}`) {
 				const items = Array.isArray(value) ? value : [value];
 				const sep = resolveJoinBy(ruleObj, name);
@@ -734,7 +818,7 @@ function pickTemplate(
 		tpl.replace(varPattern, (_match: string, _pfx: string, name: string) => {
 			const fieldKey = name.toLowerCase();
 			total++;
-			if (node.$fields?.[fieldKey] !== undefined) {
+			if (hasNodeField(node, fieldKey)) {
 				resolved++;
 				return '';
 			}
@@ -810,7 +894,11 @@ function renderClause(
 		// clause body like `!` resolves against $fields['!'] rather than
 		// $children. The walker emits these for non-word-punctuation
 		// optionals (rust `impl_item` trait negation, etc.).
-		if (node.$fields && node.$fields[clauseTemplate] !== undefined) {
+		// ADR-0018 Phase 2: anonymous tokens use the legacy $fields path only
+		// (factories don't promote anonymous tokens; wrap handles them via $fields).
+		const n0 = node as unknown as Record<string, unknown>;
+		const legacyFields0 = n0['$fields'] as Record<string, unknown> | undefined;
+		if (legacyFields0 && legacyFields0[clauseTemplate] !== undefined) {
 			return clauseTemplate;
 		}
 		return '';
@@ -823,7 +911,7 @@ function renderClause(
 		varPattern,
 		(_match: string, _pfx: string, name: string) => {
 			const fieldKey = name.toLowerCase();
-			if (node.$fields?.[fieldKey] !== undefined) return '';
+			if (hasNodeField(node, fieldKey)) return '';
 			// Also check children by kind
 			if (node.$children && Array.isArray(node.$children)) {
 				const idx = node.$children.findIndex(
@@ -853,8 +941,8 @@ function renderClause(
 					ruleObj
 				);
 			}
-			if (node.$fields?.[fieldKey] !== undefined) {
-				const raw = node.$fields[fieldKey];
+			if (hasNodeField(node, fieldKey)) {
+				const raw = getNodeField(node, fieldKey);
 				// Multi-valued fields (promoted anonymous tokens +
 				// repeated slots) arrive as arrays. renderValue(array)
 				// would treat it as a node with `.type === undefined`
@@ -927,7 +1015,7 @@ function flankSepForField(
 	// as "latest end" and the comma (which is between subject and body)
 	// would fail the `start >= boundary` trailing check.
 	const fieldSpans: { start: number; end: number }[] = [];
-	const value = node.$fields?.[fieldKey];
+	const value = getNodeField(node, fieldKey);
 	if (value !== undefined) {
 		const arr = Array.isArray(value) ? value : [value];
 		for (const item of arr) {
@@ -942,9 +1030,12 @@ function flankSepForField(
 		side === 'leading'
 			? Math.min(...fieldSpans.map((s) => s.start))
 			: Math.max(...fieldSpans.map((s) => s.end));
-	// Collect candidate anon sep tokens from $fields[sep] and $children.
+	// Collect candidate anon sep tokens from $fields[sep] (legacy) and $children.
+	// Anonymous tokens live in $fields for readNode output; factory nodes don't
+	// have them. Use the legacy $fields path directly here.
 	const candidates: AnyNodeData[] = [];
-	const sepEntry = node.$fields?.[sep];
+	const legacyFieldsSep = (node as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
+	const sepEntry = legacyFieldsSep?.[sep];
 	if (sepEntry) {
 		const arr = Array.isArray(sepEntry) ? sepEntry : [sepEntry];
 		for (const x of arr)
@@ -998,8 +1089,11 @@ function detectTrailingAnonForField(
 
 	// Collect all anonymous token candidates from $fields (other keys) and $children.
 	const candidates: AnyNodeData[] = [];
-	if (node.$fields) {
-		for (const [key, val] of Object.entries(node.$fields)) {
+	// Anonymous tokens live in legacy $fields (readNode promotes them there).
+	// Factory nodes don't have anonymous tokens in $fields — they have no $fields.
+	const legacyFieldsAnon = (node as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
+	if (legacyFieldsAnon) {
+		for (const [key, val] of Object.entries(legacyFieldsAnon)) {
 			if (key === fieldKey) continue; // skip the field itself
 			const arr = Array.isArray(val) ? val : [val];
 			for (const x of arr) {
@@ -1156,7 +1250,7 @@ function renderNunjucks(
 	templatesDir: string | undefined
 ): string {
 	// Text-only leaves: short-circuit to $text.
-	if (node.$text !== undefined && !node.$fields && !node.$children) {
+	if (node.$text !== undefined && !nodeHasStructure(node)) {
 		return withFormat(node.$text, node, ctx);
 	}
 
@@ -1309,43 +1403,41 @@ function buildNunjucksTemplateContext(
 	// belong in the joinBy, not in the value list; single slots keep
 	// them (promoted keywords async / move / unsafe arrive this way).
 	const fields: Record<string, string | string[]> = {};
-	if (node.$fields) {
-		for (const [fieldName, raw] of Object.entries(node.$fields)) {
-			// Absent / null value — skip so clause guards like
-			// `{% if return_type %}...{% endif %}` see a falsy value and
-			// omit the body. Defaulting to `[]` makes the guard truthy
-			// (empty arrays coerce to true in JavaScript) and fires
-			// clause bodies spuriously. Sittir's `join` filter override
-			// covers the "template pipes undefined into `| join`" case,
-			// so we don't need to pre-stamp an empty array for safety.
-			if (raw === undefined || raw === null) continue;
-			const isMulti = Array.isArray(raw);
-			if (isMulti) {
-				const effective = (raw as unknown[]).filter((item) => {
-					if (typeof item !== 'object' || item === null) return true;
-					return (item as AnyNodeData).$named !== false;
-				});
-				if (effective.length === 0) continue;
-				// Build a MutableFlankedChildArray so `joinWithTrailing` /
-				// `joinWithLeading` filters can emit trailing / leading anon
-				// separators (e.g. trailing comma in `(0,)`). The cast through
-				// `unknown` is necessary because `Array.map` returns `string[]`
-				// while `MutableFlankedChildArray` extends `string[]` with
-				// optional side-channel properties — structurally identical at
-				// runtime, just needs the type widened.
-				const rendered = effective.map((item) =>
-					renderChild(item as AnyNodeData | string | number)
-				) as unknown as MutableFlankedChildArray;
-				const trailingAnon = detectTrailingAnonForField(
-					node,
-					fieldName,
-					effective
-				);
-				if (trailingAnon !== '') rendered._trailing_anon = trailingAnon;
-				fields[fieldName] = rendered;
-			} else {
-				fields[fieldName] = renderChild(raw as AnyNodeData | string | number);
-			}
+	for (const [fieldName, raw] of iterNodeFields(node)) {
+		// Absent / null value — skip so clause guards like
+		// `{% if return_type %}...{% endif %}` see a falsy value and
+		// omit the body. Defaulting to `[]` makes the guard truthy
+		// (empty arrays coerce to true in JavaScript) and fires
+		// clause bodies spuriously. Sittir's `join` filter override
+		// covers the "template pipes undefined into `| join`" case,
+		// so we don't need to pre-stamp an empty array for safety.
+		if (raw === undefined || raw === null) continue;
+		const isMulti = Array.isArray(raw);
+		if (isMulti) {
+			const effective = (raw as unknown[]).filter((item) => {
+				if (typeof item !== 'object' || item === null) return true;
+				return (item as AnyNodeData).$named !== false;
+			});
+			if (effective.length === 0) continue;
+			// Build a MutableFlankedChildArray so `joinWithTrailing` /
+			// `joinWithLeading` filters can emit trailing / leading anon
+			// separators (e.g. trailing comma in `(0,)`). The cast through
+			// `unknown` is necessary because `Array.map` returns `string[]`
+			// while `MutableFlankedChildArray` extends `string[]` with
+			// optional side-channel properties — structurally identical at
+			// runtime, just needs the type widened.
+			const rendered = effective.map((item) =>
+				renderChild(item as AnyNodeData | string | number)
+			) as unknown as MutableFlankedChildArray;
+			const trailingAnon = detectTrailingAnonForField(
+				node,
+				fieldName,
+				effective
+			);
+			if (trailingAnon !== '') rendered._trailing_anon = trailingAnon;
+			fields[fieldName] = rendered;
+		} else {
+			fields[fieldName] = renderChild(raw as AnyNodeData | string | number);
 		}
 	}
 
@@ -1354,16 +1446,14 @@ function buildNunjucksTemplateContext(
 	// rendered field + children values. Only fires when $text is empty
 	// AND there's structure to synthesize from.
 	let synthesizedText = node.$text ?? '';
-	if (synthesizedText === '' && (node.$fields || node.$children)) {
+	if (synthesizedText === '' && nodeHasStructure(node)) {
 		const parts: string[] = [];
-		if (node.$fields) {
-			for (const v of Object.values(node.$fields)) {
-				if (v === undefined || v === null) continue;
-				const items = Array.isArray(v) ? v : [v];
-				for (const item of items) {
-					if (item === undefined || item === null) continue;
-					parts.push(renderChild(item as AnyNodeData | string | number));
-				}
+		for (const [, v] of iterNodeFields(node)) {
+			if (v === undefined || v === null) continue;
+			const items = Array.isArray(v) ? v : [v];
+			for (const item of items) {
+				if (item === undefined || item === null) continue;
+				parts.push(renderChild(item as AnyNodeData | string | number));
 			}
 		}
 		if (node.$children) {

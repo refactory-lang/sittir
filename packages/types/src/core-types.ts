@@ -37,6 +37,19 @@ export type NodeFieldValue =
 export type NodeChildValue = AnyNodeData | string | number;
 
 /**
+ * Unified named-member value type (ADR-0018 Phase 2).
+ *
+ * Replaces the split `NodeFieldValue` / `NodeChildValue` types on the
+ * de-hoisted NodeData surface. A named slot's `_<name>` storage and its
+ * accessor return type both resolve to `NodeMemberValue`.
+ *
+ * Note: unlike `NodeFieldValue`, this type does NOT include `undefined` or
+ * arrays — the per-slot type annotations on generated interfaces carry those
+ * modifiers directly (optional `?` for absent, `readonly T[]` for repeated).
+ */
+export type NodeMemberValue = AnyNodeData | string | number;
+
+/**
  * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
  * Kept as a simple alias during migration so downstream imports resolve without error.
  */
