@@ -1548,7 +1548,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	}
 
 	/**
-	 * Emit the templates.yaml entry for this node. Returns `undefined`
+	 * Emit the templates directory entry for this node. Returns `undefined`
 	 * for nodes that don't need a template (leaves/keywords/enums/tokens
 	 * render via `.text` directly; supertypes dispatch through their
 	 * concrete subtype). Structural subclasses (AssembledBranch,

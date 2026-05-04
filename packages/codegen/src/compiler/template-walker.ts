@@ -7,7 +7,7 @@
  *   sibling helpers call {@link renderRuleTemplate} to produce the
  *   `{ template, clauses, joinByField }` triple stored on the node model.
  * - `emitters/templates.ts` — the YAML emitter reads the same triple
- *   when serialising per-rule entries into `templates.yaml`.
+ *   when serialising per-rule entries into `templates directory`.
  *
  * The walker only consumes the Rule model — it has no coupling to
  * AssembledNode. That keeps the template surface pure-rule-driven:
