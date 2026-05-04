@@ -9,6 +9,7 @@ function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
 ): asserts arr is readonly [T, ...(readonly T[])] {
+  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
   if (arr.length === 0) {
     throw new Error(`${label}: requires at least one element`);
   }
@@ -1628,7 +1629,7 @@ export function classStaticBlock(config: T.ClassStaticBlock.Config) {
 }
 
 export function comment(text: string) {
-  if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`comment: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Comment as const,
     $source: 2 as const,
@@ -1944,7 +1945,7 @@ export function enumDeclaration(config: T.EnumDeclaration.Config) {
 }
 
 export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return withMethods({
     $type: TSKindId.EscapeSequence as const,
     $source: 2 as const,
@@ -2468,7 +2469,7 @@ export function genericType(config: T.GenericType.Config) {
 }
 
 export function hashBangLine(text: string) {
-  if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`); if (!_leafRe_hashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_hashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.HashBangLine as const,
     $source: 2 as const,
@@ -2478,7 +2479,7 @@ export function hashBangLine(text: string) {
 }
 
 export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`identifier: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Identifier as const,
     $source: 2 as const,
@@ -3053,7 +3054,7 @@ export function memberExpression(config: T.MemberExpression.Config) {
 }
 
 export function metaProperty(text: string) {
-  if (text.length === 0) throw new Error(`meta_property: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`meta_property: text must be non-empty`);
   return withMethods({
     $type: TSKindId.MetaProperty as const,
     $source: 2 as const,
@@ -3311,7 +3312,7 @@ export function null_() {
 }
 
 export function number(text: string) {
-  if (text.length === 0) throw new Error(`number: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`number: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Number as const,
     $source: 2 as const,
@@ -3629,7 +3630,7 @@ export function parenthesizedType(config: T.ParenthesizedType.Config) {
 }
 
 export function predefinedType(text: string) {
-  if (text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
   return withMethods({
     $type: TSKindId.PredefinedType as const,
     $source: 2 as const,
@@ -3639,7 +3640,7 @@ export function predefinedType(text: string) {
 }
 
 export function privatePropertyIdentifier(text: string) {
-  if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
   return withMethods({
     $type: TSKindId.PrivatePropertyIdentifier as const,
     $source: 2 as const,
@@ -3771,7 +3772,7 @@ export function regex(config: T.Regex.Config) {
 }
 
 export function regexFlags(text: string) {
-  if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`); if (!_leafRe_regexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`regex_flags: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_regexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.RegexFlags as const,
     $source: 2 as const,
@@ -3781,7 +3782,7 @@ export function regexFlags(text: string) {
 }
 
 export function regexPattern(text: string) {
-  if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
   return withMethods({
     $type: TSKindId.RegexPattern as const,
     $source: 2 as const,
@@ -4413,7 +4414,7 @@ export function undefined_() {
 }
 
 export function unescapedDoubleStringFragment(text: string) {
-  if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.UnescapedDoubleStringFragment as const,
     $source: 2 as const,
@@ -4423,7 +4424,7 @@ export function unescapedDoubleStringFragment(text: string) {
 }
 
 export function unescapedSingleStringFragment(text: string) {
-  if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`); if (!_leafRe_unescapedSingleStringFragment.test(text)) throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_unescapedSingleStringFragment.test(text)) throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.UnescapedSingleStringFragment as const,
     $source: 2 as const,
@@ -4585,7 +4586,7 @@ export function yieldExpression(config?: T.YieldExpression.Config) {
 }
 
 export function automaticSemicolon(text: string) {
-  if (text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
   return withMethods({
     $type: TSKindId.AutomaticSemicolon as const,
     $source: 2 as const,
@@ -4595,7 +4596,7 @@ export function automaticSemicolon(text: string) {
 }
 
 export function templateChars(text: string) {
-  if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
   return withMethods({
     $type: TSKindId.TemplateChars as const,
     $source: 2 as const,
@@ -4605,7 +4606,7 @@ export function templateChars(text: string) {
 }
 
 export function ternaryQmark(text: string) {
-  if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
   return withMethods({
     $type: TSKindId.TernaryQmark as const,
     $source: 2 as const,
@@ -4615,7 +4616,7 @@ export function ternaryQmark(text: string) {
 }
 
 export function htmlComment(text: string) {
-  if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`html_comment: text must be non-empty`);
   return withMethods({
     $type: TSKindId.HtmlComment as const,
     $source: 2 as const,
@@ -4625,7 +4626,7 @@ export function htmlComment(text: string) {
 }
 
 export function oror(text: string) {
-  if (text.length === 0) throw new Error(`||: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`||: text must be non-empty`);
   return withMethods({
     $type: TSKindId.PipePipe as const,
     $source: 2 as const,
@@ -4635,7 +4636,7 @@ export function oror(text: string) {
 }
 
 export function jsxText(text: string) {
-  if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
   return withMethods({
     $type: TSKindId.JsxText as const,
     $source: 2 as const,
@@ -4645,7 +4646,7 @@ export function jsxText(text: string) {
 }
 
 export function functionSignatureAutomaticSemicolon(text: string) {
-  if (text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
   return withMethods({
     $type: TSKindId.FunctionSignatureAutomaticSemicolon as const,
     $source: 2 as const,
@@ -4655,7 +4656,7 @@ export function functionSignatureAutomaticSemicolon(text: string) {
 }
 
 export function errorRecovery(text: string) {
-  if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
   return withMethods({
     $type: TSKindId.ErrorRecovery as const,
     $source: 2 as const,

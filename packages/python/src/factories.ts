@@ -9,6 +9,7 @@ function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
 ): asserts arr is readonly [T, ...(readonly T[])] {
+  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
   if (arr.length === 0) {
     throw new Error(`${label}: requires at least one element`);
   }
@@ -110,7 +111,7 @@ export function _importList(config: T.ImportList.Config) {
 }
 
 export function isNot(text: string) {
-  if (text.length === 0) throw new Error(`_is_not: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_is_not: text must be non-empty`);
   return withMethods({
     $type: TSKindId.IsNot as const,
     $source: 2 as const,
@@ -175,7 +176,7 @@ export function _matchBlockBlock(config: T.MatchBlockBlock.Config) {
 }
 
 export function notIn(text: string) {
-  if (text.length === 0) throw new Error(`_not_in: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_not_in: text must be non-empty`);
   return withMethods({
     $type: TSKindId.NotIn as const,
     $source: 2 as const,
@@ -585,7 +586,7 @@ export function classPattern(config: T.ClassPattern.Config) {
 }
 
 export function comment(text: string) {
-  if (text.length === 0) throw new Error(`comment: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`comment: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Comment as const,
     $source: 2 as const,
@@ -876,7 +877,7 @@ export function elseClause(config: T.ElseClause.Config) {
 }
 
 export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
   return withMethods({
     $type: TSKindId.EscapeSequence as const,
     $source: 2 as const,
@@ -987,7 +988,7 @@ export function finallyClause(config: T.FinallyClause.Config) {
 }
 
 export function float(text: string) {
-  if (text.length === 0) throw new Error(`float: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`float: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Float as const,
     $source: 2 as const,
@@ -1156,7 +1157,7 @@ export function globalStatement(...children: T.Identifier[]) {
 }
 
 export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`identifier: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.Identifier as const,
     $source: 2 as const,
@@ -1220,7 +1221,7 @@ export function importFromStatement(config: T.ImportFromStatement.Config) {
 }
 
 export function importPrefix(text: string) {
-  if (text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`import_prefix: text must be non-empty`);
   return withMethods({
     $type: TSKindId.ImportPrefix as const,
     $source: 2 as const,
@@ -1244,7 +1245,7 @@ export function importStatement(config: T.ImportStatement.Config) {
 }
 
 export function integer(text: string) {
-  if (text.length === 0) throw new Error(`integer: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`integer: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Integer as const,
     $source: 2 as const,
@@ -1360,7 +1361,7 @@ export function lambdaWithinForInClause(config: T.LambdaWithinForInClause.Config
 }
 
 export function lineContinuation(text: string) {
-  if (text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`line_continuation: text must be non-empty`);
   return withMethods({
     $type: TSKindId.LineContinuation as const,
     $source: 2 as const,
@@ -1885,7 +1886,7 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
 }
 
 export function typeConversion(text: string) {
-  if (text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (!_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`type_conversion: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_typeConversion.test(text)) throw new Error(`type_conversion: text does not match pattern: ${text}`);
   return withMethods({
     $type: TSKindId.TypeConversion as const,
     $source: 2 as const,
@@ -2121,7 +2122,7 @@ export function yield_(child?: (T.Expression | T.Expressions)) {
 }
 
 export function newline(text: string) {
-  if (text.length === 0) throw new Error(`_newline: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_newline: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Newline as const,
     $source: 2 as const,
@@ -2131,7 +2132,7 @@ export function newline(text: string) {
 }
 
 export function indent(text: string) {
-  if (text.length === 0) throw new Error(`_indent: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_indent: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Indent as const,
     $source: 2 as const,
@@ -2141,7 +2142,7 @@ export function indent(text: string) {
 }
 
 export function dedent(text: string) {
-  if (text.length === 0) throw new Error(`_dedent: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_dedent: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Dedent as const,
     $source: 2 as const,
@@ -2151,7 +2152,7 @@ export function dedent(text: string) {
 }
 
 export function stringStart(text: string) {
-  if (text.length === 0) throw new Error(`string_start: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`string_start: text must be non-empty`);
   return withMethods({
     $type: TSKindId.StringStart as const,
     $source: 2 as const,
@@ -2161,7 +2162,7 @@ export function stringStart(text: string) {
 }
 
 export function _stringContent(text: string) {
-  if (text.length === 0) throw new Error(`_string_content: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_string_content: text must be non-empty`);
   return withMethods({
     $type: TSKindId._StringContent as const,
     $source: 2 as const,
@@ -2171,7 +2172,7 @@ export function _stringContent(text: string) {
 }
 
 export function escapeInterpolation(text: string) {
-  if (text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`escape_interpolation: text must be non-empty`);
   return withMethods({
     $type: TSKindId.EscapeInterpolation as const,
     $source: 2 as const,
@@ -2181,7 +2182,7 @@ export function escapeInterpolation(text: string) {
 }
 
 export function stringEnd(text: string) {
-  if (text.length === 0) throw new Error(`string_end: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`string_end: text must be non-empty`);
   return withMethods({
     $type: TSKindId.StringEnd as const,
     $source: 2 as const,
@@ -2191,7 +2192,7 @@ export function stringEnd(text: string) {
 }
 
 export function closeBracket(text: string) {
-  if (text.length === 0) throw new Error(`]: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`]: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Rbrack as const,
     $source: 2 as const,
@@ -2201,7 +2202,7 @@ export function closeBracket(text: string) {
 }
 
 export function closeParen(text: string) {
-  if (text.length === 0) throw new Error(`): text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`): text must be non-empty`);
   return withMethods({
     $type: TSKindId.Rparen as const,
     $source: 2 as const,
@@ -2211,7 +2212,7 @@ export function closeParen(text: string) {
 }
 
 export function closeBrace(text: string) {
-  if (text.length === 0) throw new Error(`}: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`}: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Rbrace as const,
     $source: 2 as const,
@@ -2221,7 +2222,7 @@ export function closeBrace(text: string) {
 }
 
 export function except(text: string) {
-  if (text.length === 0) throw new Error(`except: text must be non-empty`);
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`except: text must be non-empty`);
   return withMethods({
     $type: TSKindId.Except as const,
     $source: 2 as const,

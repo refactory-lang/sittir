@@ -983,6 +983,7 @@ function transportValueMatches(value: unknown, alternatives: readonly NativeTran
  * routing through the generic @sittir/core assertRenderableNodeData validator.
  */
 export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {
+  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
   if (!isRecord(node)) throw new TypeError('node must be an object');
   if (typeof node.$type !== 'number') {
     throw new TypeError('node.$type must be a KindId (number)');
