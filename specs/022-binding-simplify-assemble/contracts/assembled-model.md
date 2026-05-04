@@ -1,5 +1,12 @@
 # Contract: Assembled Model API
 
+> ⚠️ **Status:** Phase 1–3 of this spec landed with naming
+> divergence from the design below (e.g. `AssembledContainer` →
+> `AssembledBranch`, `AssembledField`/`Child` → `AssembledNonterminal`,
+> `$fields` envelope → `_<name>` storage). Read
+> [`IMPLEMENTATION-STATUS.md`](../IMPLEMENTATION-STATUS.md) **first** for the planned-→shipped
+> mapping; this file remains as design rationale.
+
 The internal API the codegen pipeline exposes between Assemble and the
 emitters. Phase 1 collapses the current 10 types into the set below.
 

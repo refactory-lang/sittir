@@ -1,5 +1,12 @@
 # Contract: NodeData Runtime Surface
 
+> ⚠️ **Status:** Phase 1–3 of this spec landed with naming
+> divergence from the design below (e.g. `AssembledContainer` →
+> `AssembledBranch`, `AssembledField`/`Child` → `AssembledNonterminal`,
+> `$fields` envelope → `_<name>` storage). Read
+> [`IMPLEMENTATION-STATUS.md`](../IMPLEMENTATION-STATUS.md) **first** for the planned-→shipped
+> mapping; this file remains as design rationale.
+
 The shape every consumer of a per-grammar package sees. Stable across
 factory and wrap output (US5).
 

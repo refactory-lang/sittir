@@ -1,5 +1,12 @@
 # Implementation Plan: De-hoisted NodeData Surface
 
+> ⚠️ **Status:** Phase 1–3 of this spec landed with naming
+> divergence from the design below (e.g. `AssembledContainer` →
+> `AssembledBranch`, `AssembledField`/`Child` → `AssembledNonterminal`,
+> `$fields` envelope → `_<name>` storage). Read
+> [`IMPLEMENTATION-STATUS.md`](./IMPLEMENTATION-STATUS.md) **first** for the planned-→shipped
+> mapping; this file remains as design rationale.
+
 **Branch**: `022-binding-simplify-assemble` | **Date**: 2026-05-03 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/022-binding-simplify-assemble/spec.md`
 **Source of truth**: `docs/adr/0018-dehoist-nodedata-surface.md`
