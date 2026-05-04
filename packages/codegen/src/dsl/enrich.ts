@@ -575,7 +575,12 @@ function applySymbolToField(
 		precStack.push(cursor);
 		cursor = (cursor as unknown as { content: Rule }).content;
 	}
-	if (!isSeqType(cursor.type)) return rule;
+	if (!isSeqType(cursor.type)) {
+		// Not a top-level seq — check for repeat/repeat1 wrapping a seq.
+		return tryPromoteInRepeatSeq(
+			ruleName, rule, cursor, precStack, supertypeNames
+		);
+	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
 	// Pre-scan: count target symbols across ALL three shapes so a
 	// collision between (e.g.) a bare $.foo and an optional($.foo) on
@@ -629,6 +634,87 @@ function applySymbolToField(
 	let result: Rule = { ...cursor, members: newMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
 		result = { ...precStack[i]!, content: result } as Rule;
+	}
+	return result;
+}
+
+/**
+ * @internal — handle `repeat(seq(...))` / `repeat1(seq(...))` patterns
+ * (possibly prec-wrapped) when the top-level rule is NOT itself a seq.
+ *
+ * Descends into the repeat's content, peeling any prec wrappers on
+ * the inner rule. If the inner content is a seq, applies the same
+ * per-member field-promotion logic as the top-level seq path:
+ * `detectSymbolTarget` + uniqueness via `kindCounts` + claimed-name
+ * via `collectFieldNamesRuntime` + `countSymbolsInRepeat` for further
+ * nested repeats.
+ *
+ * @returns The rebuilt rule if any promotions fired; the original rule
+ *   unchanged otherwise.
+ */
+function tryPromoteInRepeatSeq(
+	ruleName: string,
+	rule: Rule,
+	cursor: Rule,
+	outerPrecStack: Rule[],
+	supertypeNames: ReadonlySet<string>
+): Rule {
+	if (!isRepeatType(cursor.type)) return rule;
+	let inner = (cursor as unknown as { content: Rule }).content;
+	// Peel prec wrappers on the inner content (e.g.
+	// `repeat(prec.left(seq($.a, $.b)))`).
+	const innerPrecStack: Rule[] = [];
+	while (isPrecWrapper(inner as { type: string })) {
+		innerPrecStack.push(inner);
+		inner = (inner as unknown as { content: Rule }).content;
+	}
+	if (!isSeqType(inner.type)) return rule;
+	const members = (inner as unknown as { members: Rule[] }).members;
+	const kindCounts = new Map<string, number>();
+	const targetByIdx: Array<SymbolTarget | null> =
+		members.map(detectSymbolTarget);
+	for (const t of targetByIdx) {
+		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+	}
+	// Count symbols in further-nested repeats within the inner seq so
+	// a symbol appearing both as a direct seq member and inside a
+	// nested repeat is disqualified.
+	for (const m of members) {
+		countSymbolsInRepeat(m, kindCounts);
+	}
+	const existing = collectFieldNamesRuntime(inner);
+	let changed = false;
+	const newMembers = members.map((m, i) => {
+		const t = targetByIdx[i];
+		if (!t) return m;
+		let fieldName = t.name;
+		if (t.name.startsWith('_')) {
+			if (!supertypeNames.has(t.name)) return m;
+			fieldName = t.name.slice(1);
+		}
+		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+		if (existing.has(fieldName)) {
+			reportSkip(
+				'symbol-to-field',
+				ruleName,
+				`field '${fieldName}' already exists`
+			);
+			return m;
+		}
+		existing.add(fieldName);
+		changed = true;
+		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		return t.wrap(fieldNode);
+	});
+	if (!changed) return rule;
+	// Rebuild: inner seq → inner prec stack → repeat → outer prec stack
+	let result: Rule = { ...inner, members: newMembers } as Rule;
+	for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+		result = { ...innerPrecStack[i]!, content: result } as Rule;
+	}
+	result = { ...cursor, content: result } as Rule;
+	for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+		result = { ...outerPrecStack[i]!, content: result } as Rule;
 	}
 	return result;
 }

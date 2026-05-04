@@ -1484,7 +1484,15 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     precStack.push(cursor);
     cursor = cursor.content;
   }
-  if (!isSeqType(cursor.type)) return rule;
+  if (!isSeqType(cursor.type)) {
+    return tryPromoteInRepeatSeq(
+      ruleName,
+      rule,
+      cursor,
+      precStack,
+      supertypeNames
+    );
+  }
   const members = cursor.members;
   const kindCounts = /* @__PURE__ */ new Map();
   const targetByIdx = members.map(detectSymbolTarget);
@@ -1522,6 +1530,59 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   let result = { ...cursor, members: newMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
     result = { ...precStack[i], content: result };
+  }
+  return result;
+}
+function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
+  if (!isRepeatType(cursor.type)) return rule;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return rule;
+  const members = inner.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map(detectSymbolTarget);
+  for (const t of targetByIdx) {
+    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  for (const m of members) {
+    countSymbolsInRepeat(m, kindCounts);
+  }
+  const existing = collectFieldNamesRuntime(inner);
+  let changed = false;
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      fieldName = t.name.slice(1);
+    }
+    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists`
+      );
+      return m;
+    }
+    existing.add(fieldName);
+    changed = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!changed) return rule;
+  let result = { ...inner, members: newMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...innerPrecStack[i], content: result };
+  }
+  result = { ...cursor, content: result };
+  for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...outerPrecStack[i], content: result };
   }
   return result;
 }
