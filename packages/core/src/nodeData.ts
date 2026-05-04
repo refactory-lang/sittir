@@ -10,6 +10,12 @@
  * These functions are called from generated factories.ts and wrap.ts.
  * They share the implementations so every factory gets the same
  * $-prefixed method bodies without per-factory inline emission.
+ *
+ * Per-grammar codegen-hygiene helpers (`defineAccessor`,
+ * `defineNamespace`, `readRawField`) live in each grammar's
+ * `utils.ts` (emitted by `packages/codegen/src/emitters/client-utils.ts`).
+ * Core stays grammar-agnostic — only cross-grammar runtime semantics
+ * belong here.
  */
 
 import type { AnyNodeData, ByteRange, Edit } from './types.ts';
@@ -114,14 +120,17 @@ export function withMethods(
  * Top-level freeze is applied last so the `_*` array-freezing writes can
  * succeed before the top-level object is locked.
  */
-export function freezeNodeData(node: Record<string, unknown>): AnyNodeData {
-	// Freeze any array-valued `_*` storage slots and `$children`.
-	for (const key of Object.keys(node)) {
-		if ((key.startsWith('_') || key === '$children') && Array.isArray(node[key])) {
-			Object.freeze(node[key]);
+export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {
+	// Freeze any array-valued `_*` storage slots and `$children`. Internal
+	// cast bridges Object.keys/index access; the public signature preserves
+	// the caller's concrete `T`. Hygiene rule 4: generics carry type info.
+	const rec = node as unknown as Record<string, unknown>;
+	for (const key of Object.keys(rec)) {
+		if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {
+			Object.freeze(rec[key]);
 		}
 	}
-	return Object.freeze(node) as unknown as AnyNodeData;
+	return Object.freeze(node) as Readonly<T> & AnyNodeData;
 }
 
 // ---------------------------------------------------------------------------
@@ -143,27 +152,29 @@ export function freezeNodeData(node: Record<string, unknown>): AnyNodeData {
  *   `storageKey = '_name'`, `configKey = 'name'` (camelCase property name).
  *   For unnamed slots: `storageKey = '$child'` / `'$children'`,
  *   `configKey = '$child'` / `'$children'` (unchanged).
- * @returns The `$with` namespace object (attached as non-enumerable on the node).
+ * @returns The `$with` namespace object (attached on the node by the caller).
  *
  * @remarks
- * The `$with` object itself is a plain object; it's attached to the node
- * via `Object.defineProperty(..., { enumerable: false })` by the caller.
- * Each updater in `$with` is a regular enumerable property on the `$with`
- * object (consumers need to enumerate them, e.g. for documentation).
+ * Generic on `C` (config) and `R` (factory return) so the caller's concrete
+ * Config and per-kind NodeData types flow through to the namespace updater
+ * signatures. Each `$with.<configKey>(v)` typed as `(v: unknown) => R`.
+ * Hygiene rule 4: no `object` / `Record<string, unknown>` widening at the API
+ * surface; the index-access erasure happens once inside the body.
  */
-export function buildWithNamespace(
-	config: Record<string, unknown>,
-	factory: (cfg: Record<string, unknown>) => AnyNodeData,
+export function buildWithNamespace<C extends object, R extends AnyNodeData>(
+	config: C,
+	factory: (cfg: C) => R,
 	slotKeys: readonly [storageKey: string, configKey: string][]
-): Record<string, unknown> {
-	const withNs: Record<string, unknown> = {};
+): { readonly [k: string]: (v: unknown) => R } {
+	const withNs: Record<string, (v: unknown) => R> = {};
 	for (const [, configKey] of slotKeys) {
-		withNs[configKey] = function(v: unknown): AnyNodeData {
+		withNs[configKey] = function(v: unknown): R {
 			return factory({ ...config, [configKey]: v });
 		};
 	}
 	return withNs;
 }
+
 
 // ---------------------------------------------------------------------------
 // Stub materialization

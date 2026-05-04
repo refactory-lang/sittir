@@ -164,6 +164,98 @@ three after it (fix-the-generator / no-type-escape-hatches /
 wave-decomposition) are auto-checked by `.Codex/hooks/quality-gate.sh`
 (Stop hook).
 
+### Generated-output hygiene (read before any codegen or TS source edit)
+
+Five rules that govern what `packages/<lang>/src/factories.ts`,
+`wrap.ts`, and other generated TS files are allowed to contain. Each
+rule names a forbidden anti-pattern and the canonical replacement.
+Apply them when editing any emitter under `packages/codegen/src/` AND
+when hand-touching any non-generated TypeScript file.
+
+1. **No `Object.defineProperty` in generated output.** Methods,
+   accessors, and namespaces (`$with`, `$render`, etc.) live as
+   inline object-literal method shorthand and properties. Methods
+   are enumerable — `JSON.stringify` drops functions regardless of
+   enumerability, so the only observable difference is `Object.keys`
+   includes the method names. The non-enumerable variant from
+   ADR-0018 Phase 2 (`withMethods` + per-field `defineProperty`) is
+   retired in favor of `..._sharedMethods` spread and inline
+   `name(this: object) { return readRawField(this, 'name'); }`
+   accessor shorthands.
+
+2. **No `Record<string, unknown>` casts in generated output.** The
+   single index-signature bridge is `readRawField(data: object,
+   rawName: string): unknown`, emitted into per-grammar `utils.ts`.
+   Generated code calls this helper instead of casting inline.
+
+3. **Shared boilerplate lives in per-grammar `utils.ts`, not
+   `@sittir/core`.** Anything that imports from `./boundary.ts`
+   (per-grammar `render` / `toEdit`) is grammar-specific and belongs
+   in `utils.ts` (emitted by `packages/codegen/src/emitters/client-utils.ts`).
+   `@sittir/core` stays grammar-agnostic — only cross-grammar runtime
+   semantics (e.g. `freezeNodeData`, `buildWithNamespace`,
+   `materializeStub`) live there.
+
+4. **Shared functions are generic — preserve type information.** Any
+   helper that takes a NodeData / Config / factory shape uses
+   generics so the caller's concrete type flows through. Do NOT
+   widen parameters to `object` or `Record<string, unknown>` if a
+   generic would carry the type:
+
+   ```ts
+   // ❌ Erases type information.
+   export function freezeNodeData(node: object): AnyNodeData;
+   export function buildWithNamespace(
+     config: object, factory: (c: object) => AnyNodeData, ...
+   ): object;
+
+   // ✅ Generics carry the caller's type through.
+   export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData;
+   export function buildWithNamespace<C extends object, F extends (c: C) => AnyNodeData>(
+     config: C, factory: F, slotKeys: readonly [string, string][]
+   ): { [K in (typeof slotKeys)[number][1]]: (v: unknown) => ReturnType<F> };
+   ```
+
+   Cast-at-the-boundary is acceptable for narrow bridges (e.g. the
+   one `Record<string, unknown>` cast inside `readRawField` for
+   index-access). Type erosion at the API surface is not.
+
+5. **Avoid `AnyNodeData` in factory and `from` code.** Factory
+   return types and `.from()` resolver signatures should use
+   concrete per-kind types (e.g. `T.ArrayExpressionListData`,
+   `NamespaceMap['array_expression']['Node']`) instead of
+   collapsing to `AnyNodeData`. The same applies to local variables
+   inside factory bodies — concrete-types flow through assignments
+   and method invocations, `AnyNodeData` does not. The exception is
+   shared infrastructure (per-grammar `readRawField`) where the
+   helper genuinely serves all kinds; even there, prefer generics
+   over `AnyNodeData` when generics are viable.
+
+6. **Don't `...spread` shared-methods objects into factory literals.**
+   Spreading a const like `_sharedMethods` (or any other shared
+   object whose methods are typed with `this: AnyNodeData` or a
+   generic) into a factory's return literal:
+   - **Erases the literal's type narrowness** — the spread brings
+     in the const's broader `this` type, so `node.$render()`
+     dispatches through `AnyNodeData` instead of the concrete
+     per-kind shape.
+   - **Trips circular type inference** — when the literal contains
+     a `$with` whose values reference the factory back, the spread
+     widens the inference enough that TS gives up and emits
+     TS7022/TS7023 ("implicit any return / circular initializer").
+   The fix is to **inline the four `$`-prefixed methods directly
+   in each factory's literal**. Per-factory copies are cheap, every
+   `this` is concrete, no shared widening point. The `_sharedMethods`
+   const stays in `utils.ts` (or anywhere) as documentation of the
+   canonical shape, but generated factories should emit the methods
+   literally rather than spreading.
+
+7. **Pre-flight: re-read these rules at the start of any codegen
+   work or direct TS edit.** They override the "ship it" instinct.
+   When the change touches generated files or emitters, the diff
+   must respect rules 1–6 even when adding what feels like a
+   minimal one-line patch.
+
 ### DRY — one source, one derivation (read this first)
 
 This is the central correctness principle of the codegen pipeline.

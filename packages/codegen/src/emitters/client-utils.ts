@@ -48,10 +48,150 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	);
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';"
 	);
 	lines.push("import type { AnyTransport, NamespaceMap } from './types.js';");
 	lines.push("import { KIND_NAMES, kindIdFromName } from './types.js';");
+	lines.push("import { render, toEdit } from './boundary.ts';");
+	lines.push('');
+
+	// 1d.xiii: emit grammar-agnostic NodeData helpers directly into this
+	// per-grammar utils.ts. Generated factories.ts / wrap.ts only ever
+	// import from `./utils.js`. DRY at the codegen-source layer (one
+	// emitter, one set of bodies); per-grammar duplication of generated
+	// text is intentional locality.
+	lines.push('/**');
+	lines.push(' * Freeze a NodeData object and all its array-valued `_*` storage slots.');
+	lines.push(' *');
+	lines.push(' * Generic on `T` so the caller\'s concrete factory-output type flows');
+	lines.push(' * through to the `Readonly<T> & AnyNodeData` return. Hygiene rule 4:');
+	lines.push(' * preserve type information.');
+	lines.push(' */');
+	lines.push('export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {');
+	lines.push('  const rec = node as unknown as Record<string, unknown>;');
+	lines.push('  for (const key of Object.keys(rec)) {');
+	lines.push("    if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {");
+	lines.push('      Object.freeze(rec[key]);');
+	lines.push('    }');
+	lines.push('  }');
+	lines.push('  return Object.freeze(node) as Readonly<T> & AnyNodeData;');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/**');
+	lines.push(' * Build the `$with` updater namespace for a NodeData.');
+	lines.push(' *');
+	lines.push(' * Each `[storageKey, configKey]` pair becomes a `$with.<configKey>(v)`');
+	lines.push(' * updater that calls `factory({ ...config, <configKey>: v })`. Generic on');
+	lines.push(' * the caller\'s `Config` and per-kind `NodeData` return so updater');
+	lines.push(' * signatures preserve grammar-specific types.');
+	lines.push(' */');
+	lines.push('export function buildWithNamespace<C extends object, R extends AnyNodeData>(');
+	lines.push('  config: C,');
+	lines.push('  factory: (cfg: C) => R,');
+	lines.push('  slotKeys: readonly [storageKey: string, configKey: string][]');
+	lines.push('): { readonly [k: string]: (v: unknown) => R } {');
+	lines.push('  const withNs: Record<string, (v: unknown) => R> = {};');
+	lines.push('  for (const [, configKey] of slotKeys) {');
+	lines.push('    withNs[configKey] = function(v: unknown): R {');
+	lines.push('      return factory({ ...config, [configKey]: v });');
+	lines.push('    };');
+	lines.push('  }');
+	lines.push('  return withNs;');
+	lines.push('}');
+	lines.push('');
+
+	// Codegen-hygiene helpers (post-1d.xiii): consolidate the
+	// `Object.defineProperty` boilerplate that previously appeared
+	// thousands of times across generated factories.ts. Generated factories
+	// now use inline-object-literal method shorthand + spread `_sharedMethods`.
+
+	lines.push('/**');
+	lines.push(' * Read raw `_<rawName>` storage from any NodeData.');
+	lines.push(' *');
+	lines.push(' * The single index-signature bridge for generated readers. Used by');
+	lines.push(' * per-field accessor methods in factories.ts (`name(this: object) {');
+	lines.push(' *   return readRawField(this, "name");');
+	lines.push(' * }`) and by drill-in helpers in wrap.ts.');
+	lines.push(' */');
+	lines.push('export function readRawField(data: object, rawName: string): unknown {');
+	lines.push('  return (data as Record<string, unknown>)[`_${rawName}`];');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/**');
+	lines.push(' * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)');
+	lines.push(' * that every factory-produced NodeData carries. Spread into each factory');
+	lines.push(' * literal via `..._sharedMethods` — no post-construction `defineProperty`');
+	lines.push(' * boilerplate. Methods are enumerable; functions are dropped by');
+	lines.push(' * `JSON.stringify` regardless, so the only visible difference is');
+	lines.push(' * `Object.keys(node)` includes them.');
+	lines.push(' */');
+	lines.push('/**');
+	lines.push(' * Wrap a factory-built node literal with the four `$`-prefixed shared');
+	lines.push(' * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).');
+	lines.push(' *');
+	lines.push(' * Generic on `T` so the literal type flows through unchanged — the');
+	lines.push(' * return type is `T & { ... methods ... }` so callers retain narrow');
+	lines.push(' * per-kind property types. No spread (rule 6), no `defineProperty`');
+	lines.push(' * (rule 1) — methods are merged via `Object.assign` and become');
+	lines.push(' * enumerable members of the returned object.');
+	lines.push(' */');
+	lines.push('export function withMethods<T extends object>(');
+	lines.push('  node: T');
+	lines.push('): T & {');
+	lines.push('  $render(): string;');
+	lines.push('  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;');
+	lines.push('  $replace(target: { range(): ByteRange }): Edit;');
+	lines.push('  $trivia(): AnyNodeData;');
+	lines.push('} {');
+	lines.push('  return Object.assign(node, {');
+	lines.push('    $render(this: AnyNodeData): string { return render(this); },');
+	lines.push('    $toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {');
+	lines.push('      return toEdit(this, startOrRange, endPos);');
+	lines.push('    },');
+	lines.push('    $replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {');
+	lines.push('      return toEdit(this, target.range());');
+	lines.push('    },');
+	lines.push('    $trivia(this: AnyNodeData): AnyNodeData { return this; },');
+	lines.push('  });');
+	lines.push('}');
+	lines.push('');
+
+	// Setter helpers (pre-ADR-0018 wiring, restored 1d.xiii).
+	// `$with.<name>(v)` and `$with.<name>(...values)` go through these to
+	// rebuild a node with the patched field. Generic on `T` (Config), `R`
+	// (factory return), and `K` (field key) so the rebuilt node carries
+	// the caller's concrete kind through. Hygiene rule 4.
+
+	lines.push('/**');
+	lines.push(' * Setter helper for single-valued fields. Calls the factory with the');
+	lines.push(' * patched config when `v` is supplied; otherwise returns the current value.');
+	lines.push(' */');
+	lines.push('export function _setField<T, R, K extends keyof T>(');
+	lines.push('  cfg: T | undefined,');
+	lines.push('  fn: (c: T) => R,');
+	lines.push('  key: K,');
+	lines.push('  v: T[K] | undefined,');
+	lines.push('  cur: T[K] | undefined,');
+	lines.push('): T[K] | R | undefined {');
+	lines.push('  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/**');
+	lines.push(' * Setter helper for repeated-valued fields. Rebuilds with the new array');
+	lines.push(' * when `v.length > 0`; returns the current value when called with no args.');
+	lines.push(' */');
+	lines.push('export function _setFields<T, R, K extends keyof T>(');
+	lines.push('  cfg: T | undefined,');
+	lines.push('  fn: (c: T) => R,');
+	lines.push('  key: K,');
+	lines.push('  v: readonly unknown[],');
+	lines.push('  cur: T[K] | undefined,');
+	lines.push('): T[K] | R | undefined {');
+	lines.push('  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;');
+	lines.push('}');
 	lines.push('');
 
 	// isNodeData
