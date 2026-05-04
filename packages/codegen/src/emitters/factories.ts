@@ -727,11 +727,7 @@ function renderFactoryForNode(
 	const isTextTemplate = detectTextTemplateNode(node, nodeMap);
 	if (isTextTemplate) {
 		return emitTextFactory(
-			node as unknown as {
-				kind: string;
-				treeTypeName: string;
-				rawFactoryName?: string;
-			},
+			node,
 			'(text: string)',
 			'text',
 			undefined,

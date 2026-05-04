@@ -156,10 +156,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 
 	// Phase 4: Assemble
 	const nodeMap = assemble(optimized);
-	traceAssembleNodes(
-		'assemble',
-		nodeMap.nodes as unknown as Map<string, never>
-	);
+	traceAssembleNodes('assemble', nodeMap.nodes);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
 	// Authoritative inline list from the compiled grammar.json (if present).

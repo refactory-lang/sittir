@@ -11,6 +11,7 @@
  * Noise-free when unset: the env-var lookup is O(1) and returns early.
  */
 import type { Rule } from './rule.ts';
+import type { AssembledNode, AssembledNonterminal } from './node-map.ts';
 
 const FLAG = 'SITTIR_TRACE';
 
@@ -57,13 +58,7 @@ export function tracePhaseRules(
  */
 export function traceAssembleNodes(
 	phase: string,
-	nodes: Map<
-		string,
-		{ kind: string; modelType: string; typeName: string; rule?: Rule } & Record<
-			string,
-			unknown
-		>
-	>
+	nodes: Map<string, AssembledNode>
 ): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0) return;
@@ -76,18 +71,17 @@ export function traceAssembleNodes(
 		console.error(`[sittir-trace] ${phase}: '${k}'`);
 		console.error(`  modelType=${node.modelType} typeName=${node.typeName}`);
 		// Access the slots Record when present (AssembledBranch / AssembledGroup).
-		const slots = (
-			node as unknown as { slots?: Record<string, { name: string; source?: string; values?: unknown[] }> }
-		).slots;
-		if (slots) {
-			const allSlots = Object.values(slots);
+		// AssembledBranch and AssembledGroup both carry `slots: Record<string, AssembledNonterminal>`;
+		// other AssembledNode variants do not. `'slots' in node` narrows the union.
+		if ('slots' in node) {
+			const allSlots = Object.values(node.slots as Record<string, AssembledNonterminal>);
 			const fields = allSlots.filter((s) => s.source !== 'inferred');
 			const children = allSlots.filter((s) => s.source === 'inferred');
 			if (fields.length > 0)
 				console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
 			if (children.length > 0)
 				console.error(
-					`  children=${JSON.stringify(children.map((c) => ({ name: c.name, slots: c.values?.length ?? 0 })))}`
+					`  children=${JSON.stringify(children.map((c) => ({ name: c.name, slots: c.values.length })))}`
 				);
 		}
 	}

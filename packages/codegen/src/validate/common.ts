@@ -795,7 +795,7 @@ export function walkWrappedTree(
 		visit(w);
 		for (const k of Object.keys(w)) {
 			if (k.startsWith('$')) continue;
-			const v = (w as unknown as Record<string, unknown>)[k];
+			const v = w[k];
 			if (isWrappedNodeData(v)) recurse(v);
 			else if (Array.isArray(v))
 				for (const x of v) if (isWrappedNodeData(x)) recurse(x);
