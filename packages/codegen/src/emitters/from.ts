@@ -440,7 +440,9 @@ function _emitVariantFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const typeName = node.typeName;
-	const inputType = `T.${typeName}.Loose`;
+	// Input union includes both Loose config + per-kind NodeData so the
+	// `isNodeData` generic overload narrows soundly in the pass-through branch.
+	const inputType = `T.${typeName}.Loose | T.${typeName}`;
 	// Return type unions the factory output with the bare data interface so
 	// the `if (isNodeData(input)) return input;` passthrough — input narrows
 	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
@@ -533,7 +535,11 @@ function buildBranchSignatureParts(
 	factory: string,
 	opt: string
 ): { inputType: string; returnType: string; inputOptional: boolean } {
-	const inputType = `T.${node.typeName}.Loose`;
+	// Input union includes both the Loose config bag AND the per-kind NodeData
+	// interface — callers can pass either a new config or an existing built node.
+	// The `isNodeData` generic overload narrows the union to `T.<Kind>` in the
+	// pass-through branch, making the return type sound without a sideways cast.
+	const inputType = `T.${node.typeName}.Loose | T.${node.typeName}`;
 	// Return type unions the factory output with the bare data interface so
 	// the `if (isNodeData(input)) return input;` passthrough — input narrows
 	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
@@ -1051,7 +1057,9 @@ function emitPolymorphDispatcher(
 	_source: 'override' | 'promoted',
 	_variantChildKinds: readonly string[] | undefined
 ): string {
-	const inputType = `T.${typeName}.Loose`;
+	// Input union includes both Loose config + per-kind NodeData so the
+	// `isNodeData` generic overload narrows soundly in the pass-through branch.
+	const inputType = `T.${typeName}.Loose | T.${typeName}`;
 	// Same passthrough widening as `buildBranchSignatureParts` — see comment
 	// there for rationale.
 	const returnType = `ReturnType<typeof ${factory}> | T.${typeName}`;
