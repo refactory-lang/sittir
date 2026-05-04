@@ -885,7 +885,7 @@ type FieldCarryingNode = Extract<
 >;
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
-function childElementType(
+export function childElementType(
 	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap
 ): string {
@@ -1111,7 +1111,7 @@ function isAllLeafSlot(f: AssembledNonterminal, _nodeMap: NodeMap): boolean {
 	return true;
 }
 
-function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
+export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
 

@@ -25,6 +25,7 @@ import {
 	collectAliasTargetToSourceMap,
 	isMultiple
 } from './shared.ts';
+import { fieldElementType, childElementType } from './factories.ts';
 import {
 	collectKindEntries,
 	kindIdMemberName,
@@ -135,9 +136,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 		// When kindEntries is present, import TSKindId for per-kind $type stamping
 		// (Phase A KindID migration: wrap normalizes string $type from core to numeric).
 		...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
+		"import type * as T from './types.js';",
 		...(typeImportLine ? [typeImportLine] : []),
-		// Shape A: withMethods<T> and readRawField come from per-grammar utils.ts.
-		// withMethods captures render/toEdit via its own imports; no separate import needed here.
 		"import { withMethods, readRawField } from './utils.js';",
 		// wrap $with calls the corresponding factory to produce factory-output nodes.
 		"import * as _factories from './factories.js';",
@@ -497,8 +497,11 @@ interface WrapNode {
  * Returns the raw-field read expression AND the inline accessor body.
  *
  * @param f - The assembled nonterminal field descriptor.
- * @returns An object with `storeExpr` (for `_<name>: readRawField(data, ...)`)
- *   and `accessorBody` (for the inline method shorthand accessor).
+ * @returns An object with `storeExpr` (storage init from `data` via
+ *   `readRawField` — bridges the `AnyNodeData` type which doesn't
+ *   declare per-kind `_<name>` properties) and `accessorBody` (reads
+ *   `this._<name>` directly — the literal declares the property so
+ *   TS resolves it from the inferred literal type).
  */
 function resolveFieldDrillExprs(f: AssembledNonterminal): {
 	storeExpr: string;
@@ -510,17 +513,17 @@ function resolveFieldDrillExprs(f: AssembledNonterminal): {
 		const helper = isMultiple(f) ? 'drillAsAll' : 'drillAs';
 		return {
 			storeExpr: `readRawField(data, '${f.name}')`,
-			accessorBody: `return ${helper}(readRawField(this, '${f.name}'), tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
+			accessorBody: `return ${helper}(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
 		};
 	} else if (isMultiple(f)) {
 		return {
 			storeExpr: `readRawField(data, '${f.name}')`,
-			accessorBody: `return drillInAll(readRawField(this, '${f.name}'), tree)`,
+			accessorBody: `return drillInAll(this._${f.name}, tree)`,
 		};
 	} else {
 		return {
 			storeExpr: `readRawField(data, '${f.name}')`,
-			accessorBody: `return drillIn(readRawField(this, '${f.name}'), tree)`,
+			accessorBody: `return drillIn(this._${f.name}, tree)`,
 		};
 	}
 }
@@ -578,14 +581,14 @@ function emitFieldCarryingWrap(
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
-	// readRawField (which prepends `_`) cannot be used here. Access via data.$children
+	// $children doesn't have the `_` prefix convention — access via data.$children
 	// which AnyNodeData declares as `readonly NodeChildValue[] | undefined`.
 	if (children.length > 0) {
 		lines.push('    $children: data.$children,');
 	}
 	lines.push('');
 
-	// Inline method shorthand accessors: `name()` returns drilled value via `readRawField(this, ...)`.
+	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
 		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
 		const { accessorBody } = resolveFieldDrillExprs(f);
@@ -593,7 +596,7 @@ function emitFieldCarryingWrap(
 	}
 
 	// $with — calls the corresponding factory for update operations.
-	emitInlineWithProperty(lines, node, fields, children);
+	emitInlineWithProperty(lines, node, fields, children, nodeMap);
 
 	lines.push('  });');
 	if (hasWithSetters) {
@@ -619,70 +622,49 @@ function emitInlineWithProperty(
 	lines: string[],
 	node: WrapNode,
 	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[]
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap
 ): void {
 	if (!node.rawFactoryName) return;
 
+	const wrapFn = `wrap${node.typeName}`;
+
 	if (node.isContainerShape) {
-		// Container-shape branches: factory takes rest-params (...children), NOT a
-		// config object. Emit a direct lambda $with matching the container factory signature.
+		const childElem = childElementType({ children }, nodeMap);
 		const anyMultiple = children.some((c) => isMultiple(c));
-		// as unknown as Record<...>: _factories is a module namespace -- its type is
-		// not assignable to Record<string, fn> directly. Route through unknown for
-		// cross-shape bridging (CLAUDE.md: allowed in dsl/ cross-runtime shape bridging).
 		if (anyMultiple) {
 			lines.push(
-				`    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['${node.rawFactoryName}']!(...vs) },`
+				`    $with: { $children: (...vs: ${childElem}[]) => ${wrapFn}({ ...data, $children: vs } as _NodeData, tree) },`
 			);
 		} else {
 			lines.push(
-				`    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['${node.rawFactoryName}']!(v) },`
+				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ...data, $children: [v] } as _NodeData, tree) },`
 			);
 		}
 		return;
 	}
 
-	// Field-carrying branches: per-field setters that read current drilled
-	// values from `_node` (the hoisted literal), patch the target field,
-	// and call the factory. Arrow functions capture `_node` by reference;
-	// it is initialized before any setter runs.
 	if (fields.length === 0 && children.length === 0) {
 		lines.push('    $with: {},');
 		return;
 	}
 
+	// Field-carrying: $with setters spread `data` + patch the target
+	// `_<name>` key, then re-wrap — producing another fluent wrapped node
+	// with drill-in support (not a raw factory node). Typed params align
+	// with the factory version's setter signatures.
 	lines.push('    $with: {');
 	for (const f of fields) {
 		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		// Build a config that reads current drilled values from `_node` via
-		// the accessor methods, patches the target field, and calls the factory.
-		const configEntries: string[] = [];
-		for (const cf of fields) {
-			const cfProp = cf.propertyName === 'type' ? 'typeField' : cf.propertyName;
-			if (cf.name === f.name) {
-				configEntries.push(`${cf.propertyName}: v`);
-			} else {
-				configEntries.push(`${cf.propertyName}: _node.${cfProp}()`);
-			}
-		}
-		if (children.length > 0) {
-			configEntries.push(`children: Array.isArray(_node.$children) ? _node.$children : []`);
-		}
-		const factoryCall = `(_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['${node.rawFactoryName}']!`;
+		const elemType = fieldElementType(f, nodeMap);
 		lines.push(
-			`      ${method}: (v: unknown) => ${factoryCall}({ ${configEntries.join(', ')} }),`
+			`      ${method}: (v: ${elemType}) => ${wrapFn}({ ...data, _${f.name}: v } as _NodeData, tree),`
 		);
 	}
 	if (children.length > 0) {
-		const configEntries: string[] = [];
-		for (const cf of fields) {
-			const cfProp = cf.propertyName === 'type' ? 'typeField' : cf.propertyName;
-			configEntries.push(`${cf.propertyName}: _node.${cfProp}()`);
-		}
-		configEntries.push('children: items');
-		const factoryCall = `(_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['${node.rawFactoryName}']!`;
+		const childElem = childElementType({ children }, nodeMap);
 		lines.push(
-			`      children: (...items: unknown[]) => ${factoryCall}({ ${configEntries.join(', ')} }),`
+			`      children: (...items: ${childElem}[]) => ${wrapFn}({ ...data, $children: items } as _NodeData, tree),`
 		);
 	}
 	lines.push('    },');
