@@ -76,18 +76,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	stripResolvedRoleRules(rules);
 	createSyntheticExternalRules(rules, raw.externals);
 
-	// Alias-target rule synthesis moved to `evaluate.synthesizeAliasTargetRules`
-	// (commit [TBD]) so the synthesized rules flow through this file's
-	// resolveRule pass uniformly with author-declared rules. Previously ran
-	// here AFTER resolveRule, which left nested aliases inside synthesized
-	// target rules un-flattened.
-
-	// Build the hidden-rule → alias-target map BEFORE `resolveRule` has
-	// fully collapsed every alias. We walk the raw grammar (pre-link)
-	// looking for hidden rules whose body IS an alias at the top level
-	// — e.g. `_type_identifier: $ => alias($.identifier, $.type_identifier)`.
-	// These are the collapses that strip the rename; downstream passes
-	// (assemble) use this map to rewrite supertype subtype lists.
+	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
 
 	classifyAndLogHiddenRules(
@@ -101,66 +90,18 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);
 	runFieldNameInferencePass(rules, references, derivations);
 
-	// Keyword-prefix promotion moved to dsl/enrich.ts (spec 006).
-	// Previously this phase wrapped `optional(keywordString)` seq
-	// members in `field(keyword, ...)` to surface prefixes like
-	// python's `optional('async')` as first-class factory parameters.
-	// The same transformation now runs as enrich's
-	// `optionalKeywordPrefixPass` at pre-Evaluate time — override
-	// files that wrap their base in `enrich(base)` get it automatically,
-	// and the Link phase no longer mutates rules for this purpose.
-
-	// tagAllRulesVariants removed (spec 013). Auto-wrapping every
-	// visible choice branch in anonymous `variant(form_N)` tags was a
-	// heuristic for polymorph candidacy that now serves only to block
-	// the simplify `mergeChoiceBranches` + `hoistSharedFieldAcross-
-	// ChoiceBranches` passes and mask real adoption work. The
-	// polymorph-surface classifier still recognizes user-declared
-	// variants from override-side `variant()` / `polymorphs:`; choices
-	// that surface in the audit as non-canonical are the kinds that
-	// genuinely need named variant() declarations in overrides.ts.
 	detectAndLogPolymorphs(rules, derivations);
 
-	// Override-source polymorph classification — variant() metadata.
-	// Per feedback (memory: feedback_polymorph_in_link): classification
-	// belongs in Link, not Optimize. variant() in transform patches
-	// produces PolymorphVariant entries during evaluate; here we wrap
-	// the parent rule as a PolymorphRule with `source: 'override'`.
+	// Override-source polymorph classification from variant() metadata.
 	if (raw.polymorphVariants?.length) {
 		applyOverridePolymorphs(rules, raw.polymorphVariants, derivations);
 	}
 
-	// Hoist `indent` markers into their sibling/target repeats as
-	// `separator: '\n  '`. The python suite/block pair illustrates:
-	//     _suite = choice(_simple_statements, seq(indent, block))
-	//     block  = seq(repeat(_statement), dedent)
-	// The `indent` lives in _suite but the `repeat` lives in block.
-	// At template-emit time we need the repeat to carry a joinBy so
-	// consecutive statements render as `\n  stmt1\n  stmt2`. Runs
-	// before block-bearer annotation so the separator is visible to
-	// downstream template emission.
 	hoistIndentIntoRepeat(rules);
-
-	// Annotate field wrappers whose content transitively reaches an
-	// `indent` Rule node — these render as indented blocks. The
-	// template walker prepends `\n  ` to the field slot so python's
-	// `class X:$BODY` renders as `class X:\n  $BODY`. Runs after all
-	// structural rewrites so symbol refs are stable.
 	annotateBlockBearerFields(rules);
-
-	// Repeated-shape detection: collect every field's content-type
-	// set and find sets that appear in ≥2 distinct parent rules. Each
-	// such set is a hint that the grammar author could declare a
-	// shared supertype (or group) to collapse the repetition. Emits
-	// an entry per unique set to `derivations.repeatedShapes`; the
-	// suggested.ts emitter surfaces it as a review candidate.
 	collectRepeatedShapes(rules, derivations.repeatedShapes);
 
-	// refine() form validation — path + selection checks against the
-	// linked rule tree. Fails loud on any mismatch so an override's
-	// refine declaration that doesn't match the rule shape surfaces
-	// as a codegen error, not silent codegen drift. See ADR-0010
-	// phase 2 for the design.
+	// Validate refine() forms against the linked rule tree.
 	if (raw.refineForms && raw.refineForms.size > 0) {
 		for (const [kind, forms] of raw.refineForms) {
 			const rule = rules[kind];
@@ -793,24 +734,7 @@ export function applyOverridePolymorphs(
 		const found = findVariantChoice(rule);
 		if (!found) continue;
 
-		// When the registered variant children live in a DEEP choice that
-		// findVariantChoice can't reach (e.g. rust's visibility_modifier
-		// buried under `optional(seq('(', inner_choice, ')'))`), this
-		// `found` will be the outermost tagVariants-wrapped choice whose
-		// members don't reference any of the registered
-		// `${parentKind}_${child}` symbols. Overwriting the rule with a
-		// flat polymorph whose form content is bare `symbol(fullName)`
-		// would discard all ambient tokens (`pub`, `(`, `)`) and destroy
-		// the render template. Instead, leave the parent rule intact but
-		// push the ambient scaffold around the variant choice INTO each
-		// variant child's hidden-rule body — each child then renders its
-		// own structural delimiters, and the parent collapses to a
-		// normal branch/container template (`$PUB$$$CHILDREN`) that
-		// dispatches via child-kind without any `{% if variant %}`
-		// chain. See `pushAmbientScaffoldIntoVariantChildren` for the
-		// rewrite. Variant-child derivations are still emitted so
-		// downstream emitters (from.ts, types.ts) learn about the new
-		// kinds.
+		// Deep choice: push ambient scaffold into variant children instead.
 		emitVariantChildDerivations(parentKind, children, derivations);
 
 		const variantChildSymbolNames = new Set(
@@ -835,13 +759,7 @@ export function applyOverridePolymorphs(
 				return m.type === 'symbol' && m.name === fullName;
 			});
 
-			// When the variant symbol is not a direct member of the outer
-			// choice (e.g. it lives inside a SEQ arm: the arm 0 of
-			// range_pattern is `seq(field('left', ...), choice(left_with_right,
-			// left_bare))`), extract that SEQ arm and replace the inner alias
-			// with the resolved symbol so field('left', ...) travels with the
-			// form content. This preserves structural context that the bare
-			// symbol fallback would otherwise drop.
+			// Extract from SEQ arm if variant symbol isn't a direct choice member.
 			const seqArmContent = variantMember
 				? null
 				: findVariantSymbolInSeqArm(found.choice, fullName, rules);
@@ -1093,22 +1011,10 @@ function applyVariantScaffoldPushDown(
 }
 
 export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
-	// Pre-spec-013 this required at least one branch to be
-	// variant-wrapped — the `tagAllRulesVariants` pass used to supply
-	// that wrapping for every visible choice. With auto-tag removed,
-	// a top-level choice of bare symbols is the canonical shape for
-	// polymorph-adopted kinds (e.g. python's
-	// `assignment = choice(assignment_eq, assignment_type)`); match
-	// it here. The caller `applyOverridePolymorphs` validates via
-	// `variantChildSymbolNames` before acting, so picking up a non-
-	// polymorph choice here is harmless — it just gets rejected
-	// downstream.
+	// Matches bare choices (post-spec-013) and seq-wrapped choices.
 	if (isChoice(rule)) {
 		return { choice: rule, prefix: [], suffix: [] };
 	}
-	// A seq containing exactly one choice. The other members
-	// (anonymous delimiters, field wrappers, symbol refs) travel along
-	// with each form so the polymorph faithfully renders the whole rule.
 	if (rule.type === 'seq') {
 		const choiceIdx = rule.members.findIndex((m) => m.type === 'choice');
 		if (choiceIdx === -1) return null;
@@ -2012,12 +1918,7 @@ function classifyHiddenSeqRule(name: string, rule: SeqRule): Rule {
  */
 function collectSubtypeNames(rule: Rule): string[] {
 	const names: string[] = [];
-	// Subtypes refer to kinds that downstream looks up in the rules
-	// map. Post-synthesis-removal the rules map is keyed by the
-	// SOURCE kind (`_X` for aliased kinds), so we emit source names:
-	// `aliasedFrom ?? name` on resolved symbols, and for raw `alias`
-	// members (not yet processed by resolveRule in some test paths)
-	// emit the source-symbol name from the alias's inner content.
+	// Emit source kind names (aliasedFrom ?? name) for rules-map lookup.
 	if (rule.type === 'choice') {
 		for (const m of rule.members) {
 			if (m.type === 'symbol') {
@@ -2038,10 +1939,6 @@ function collectSubtypeNames(rule: Rule): string[] {
 	}
 	return names;
 }
-
-// ---------------------------------------------------------------------------
-// detectClause — optional(seq(STRING, FIELD, ...)) → clause
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // enrichPositions — walk SEQ members to assign position to SymbolRefs
@@ -2306,13 +2203,6 @@ function markBlockBearerFields(rule: Rule, bearers: ReadonlySet<string>): void {
 			return;
 	}
 }
-
-// ---------------------------------------------------------------------------
-// detectClause — optional(seq(STRING, FIELD, ...)) → clause
-// ---------------------------------------------------------------------------
-
-// Alias-target rule synthesis moved to evaluate.synthesizeAliasTargetRules
-// so synthesized rules flow through resolveRule uniformly.
 
 // ---------------------------------------------------------------------------
 // detectClause — optional(seq(STRING, FIELD, ...)) → clause

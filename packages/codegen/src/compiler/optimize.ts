@@ -18,10 +18,6 @@ import type { LinkedGrammar, OptimizedGrammar } from './types.ts';
 import { simplifyRules } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
 
-// ---------------------------------------------------------------------------
-// optimize() — currently a passthrough
-// ---------------------------------------------------------------------------
-
 /**
  * Run the full ordered pipeline of non-lossy normalization passes over the
  * raw rule map from the linked grammar.
@@ -266,20 +262,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
 			const unwrapped = members.map((m) =>
 				m.type === 'variant' ? m.content : m
 			);
-			// Normalize bare atoms (symbols, strings, fields, etc.) as
-			// single-member seqs so the factoring logic can treat them
-			// uniformly. Canonical target case:
-			//
-			//   choice(seq('return', expr), 'return')
-			//      → factor 'return' prefix (common to seq and the
-			//        normalized seq('return')) → seq('return',
-			//        optional(expr))
-			//
-			// Grammar authors occasionally write
-			// `choice(prec.left(seq(KW, content)), prec(-1, KW))`
-			// instead of `seq(KW, optional(content))` for precedence
-			// control. After prec-stripping, the shape is exactly the
-			// asymmetric-length choice this pass can now factor.
+			// Bare atoms normalized to single-member seqs for uniform factoring.
 			const canFactor =
 				unwrapped.length >= 2 &&
 				unwrapped.every((b) => b.type === 'seq' || isAtomForFactoring(b));
@@ -535,14 +518,7 @@ function replaceSymbolRef(
 ): Rule {
 	switch (rule.type) {
 		case 'symbol':
-			if (rule.name === targetName) {
-				// Unwrap the replacement down to its content if the
-				// target carries structural wrappers that would
-				// otherwise stack: `field` and `variant` still
-				// embed content, but a top-level `seq` body should
-				// splice in as-is.
-				return targetRule;
-			}
+			if (rule.name === targetName) return targetRule;
 			return rule;
 		case 'seq': {
 			let changed = false;
