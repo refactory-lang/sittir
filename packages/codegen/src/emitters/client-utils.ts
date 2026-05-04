@@ -861,6 +861,9 @@ function emitNativeTransportAssertions(
 		'export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {'
 	);
 	lines.push(
+		"  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;"
+	);
+	lines.push(
 		"  if (!isRecord(node)) throw new TypeError('node must be an object');"
 	);
 	// $type must be numeric — TSGrammar-only kinds (inlined by tree-sitter,

@@ -349,6 +349,7 @@ function emitNonEmptyAssertHelper(): string[] {
 		'  arr: readonly T[],',
 		'  label: string,',
 		'): asserts arr is readonly [T, ...(readonly T[])] {',
+		"  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;",
 		'  if (arr.length === 0) {',
 		'    throw new Error(`${label}: requires at least one element`);',
 		'  }',
@@ -850,11 +851,11 @@ function buildLeafGuards(
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
 		guards.push(
-			`if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
+			`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
 		);
 	}
 	guards.unshift(
-		`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
+		`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
 	);
 	return guards;
 }
