@@ -7,6 +7,7 @@ import type { TreeHandle } from '@sittir/core';
 // instead of re-declaring locally. Single source of truth.
 import type { AnyNodeData as _NodeData, AnyNodeData } from '@sittir/types';
 import { TSKindId } from './types.js';
+import type * as T from './types.js';
 import { withMethods, readRawField } from './utils.js';
 import * as _factories from './factories.js';
 
@@ -49,13 +50,13 @@ export function wrap_ArrowFunctionUCallSignature(data: _NodeData, tree: TreeHand
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_arrowFunctionUCallSignature']!({ typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_arrowFunctionUCallSignature']!({ typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_arrowFunctionUCallSignature']!({ typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      typeParameters: (v: T.TypeParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrap_ArrowFunctionUCallSignature({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -67,9 +68,9 @@ export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): 
     $type: TSKindId._ArrowFunctionParameter as const,
     _parameter: readRawField(data, 'parameter'),
 
-    parameter() { return drillAs(readRawField(this, 'parameter'), tree, "identifier", "_reserved_identifier"); },
+    parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
-      parameter: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_arrowFunctionParameter']!({ parameter: v }),
+      parameter: (v: T.ReservedIdentifier) => wrap_ArrowFunctionParameter({ ...data, _parameter: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -81,7 +82,7 @@ export function wrapClassBodyMember(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.ClassBodyMember as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['classBodyMember']!(v) },
+    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => wrapClassBodyMember({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -92,7 +93,7 @@ export function wrapClassBodyMethodSig(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.ClassBodyMethodSig as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['classBodyMethodSig']!(v) },
+    $with: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => wrapClassBodyMethodSig({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -103,7 +104,7 @@ export function wrap_ClassHeritageExtendsClause(data: _NodeData, tree: TreeHandl
     $type: TSKindId._ClassHeritageExtendsClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_classHeritageExtendsClause']!(v) },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrap_ClassHeritageExtendsClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -114,7 +115,7 @@ export function wrap_ClassHeritageImplementsClause(data: _NodeData, tree: TreeHa
     $type: TSKindId._ClassHeritageImplementsClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_classHeritageImplementsClause']!(v) },
+    $with: { $child: (v: T.ImplementsClause) => wrap_ClassHeritageImplementsClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -125,7 +126,7 @@ export function wrapExportStatementDefaultFromArm(data: _NodeData, tree: TreeHan
     $type: TSKindId.ExportStatementDefaultFromArm as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['exportStatementDefaultFromArm']!(v) },
+    $with: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => wrapExportStatementDefaultFromArm({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -137,10 +138,10 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: _NodeData, tre
     _source: readRawField(data, 'source'),
     $children: data.$children,
 
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementDefaultFromArmClauseFrom']!({ source: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementDefaultFromArmClauseFrom']!({ source: _node.source(), children: items }),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v } as _NodeData, tree),
+      children: (...items: T.ExportClause[]) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -153,10 +154,10 @@ export function wrapExportStatementDefaultFromArmNsFrom(data: _NodeData, tree: T
     _source: readRawField(data, 'source'),
     $children: data.$children,
 
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementDefaultFromArmNsFrom']!({ source: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementDefaultFromArmNsFrom']!({ source: _node.source(), children: items }),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmNsFrom({ ...data, _source: v } as _NodeData, tree),
+      children: (...items: T.NamespaceExport[]) => wrapExportStatementDefaultFromArmNsFrom({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -168,9 +169,9 @@ export function wrapExportStatementDefaultFromArmStarFrom(data: _NodeData, tree:
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
     _source: readRawField(data, 'source'),
 
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementDefaultFromArmStarFrom']!({ source: v }),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmStarFrom({ ...data, _source: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -182,7 +183,7 @@ export function wrap_ExportStatementEqualsExport(data: _NodeData, tree: TreeHand
     $type: TSKindId._ExportStatementEqualsExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_exportStatementEqualsExport']!(v) },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrap_ExportStatementEqualsExport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -193,7 +194,7 @@ export function wrap_ExportStatementNamespaceExport(data: _NodeData, tree: TreeH
     $type: TSKindId._ExportStatementNamespaceExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_exportStatementNamespaceExport']!(v) },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrap_ExportStatementNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -205,10 +206,10 @@ export function wrap_ExportStatementTypeExport(data: _NodeData, tree: TreeHandle
     _source: readRawField(data, 'source'),
     $children: data.$children,
 
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_exportStatementTypeExport']!({ source: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_exportStatementTypeExport']!({ source: _node.source(), children: items }),
+      source: (v: T.String) => wrap_ExportStatementTypeExport({ ...data, _source: v } as _NodeData, tree),
+      children: (...items: (T.ExportClause | T.Semicolon)[]) => wrap_ExportStatementTypeExport({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -220,9 +221,9 @@ export function wrapForHeaderLhs(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.ForHeaderLhs as const,
     _left: readRawField(data, 'left'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
+    left() { return drillIn(this._left, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forHeaderLhs']!({ left: v }),
+      left: (v: T.LhsExpression | T.ParenthesizedExpression) => wrapForHeaderLhs({ ...data, _left: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -234,7 +235,7 @@ export function wrap_ImportClauseDefaultImport(data: _NodeData, tree: TreeHandle
     $type: TSKindId._ImportClauseDefaultImport as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_importClauseDefaultImport']!(v) },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrap_ImportClauseDefaultImport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -245,7 +246,7 @@ export function wrap_ImportClauseNamedImports(data: _NodeData, tree: TreeHandle)
     $type: TSKindId._ImportClauseNamedImports as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_importClauseNamedImports']!(v) },
+    $with: { $child: (v: T.NamedImports) => wrap_ImportClauseNamedImports({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -256,7 +257,7 @@ export function wrap_ImportClauseNamespaceImport(data: _NodeData, tree: TreeHand
     $type: TSKindId._ImportClauseNamespaceImport as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_importClauseNamespaceImport']!(v) },
+    $with: { $child: (v: T.NamespaceImport) => wrap_ImportClauseNamespaceImport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -267,9 +268,9 @@ export function wrap_ImportSpecifierName(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId._ImportSpecifierName as const,
     _name: readRawField(data, 'name'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
+    name() { return drillIn(this._name, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['_importSpecifierName']!({ name: v }),
+      name: (v: T.ImportIdentifier) => wrap_ImportSpecifierName({ ...data, _name: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -281,7 +282,7 @@ export function wrap_IndexSignatureMappedTypeClause(data: _NodeData, tree: TreeH
     $type: TSKindId._IndexSignatureMappedTypeClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_indexSignatureMappedTypeClause']!(v) },
+    $with: { $child: (v: T.MappedTypeClause) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -292,7 +293,7 @@ export function wrap_ParenthesizedExpressionSequence(data: _NodeData, tree: Tree
     $type: TSKindId._ParenthesizedExpressionSequence as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_parenthesizedExpressionSequence']!(v) },
+    $with: { $child: (v: T.SequenceExpression) => wrap_ParenthesizedExpressionSequence({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -303,9 +304,9 @@ export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: Tree
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
     _accessor_marker: readRawField(data, 'accessor_marker'),
 
-    accessorMarker() { return drillIn(readRawField(this, 'accessor_marker'), tree); },
+    accessorMarker() { return drillIn(this._accessor_marker, tree); },
     $with: {
-      accessorMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinitionAccessorOpt']!({ accessorMarker: v }),
+      accessorMarker: (v: T.PublicFieldDefinitionAccessorOptAccessorMarker) => wrapPublicFieldDefinitionAccessorOpt({ ...data, _accessor_marker: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -317,7 +318,7 @@ export function wrapPublicFieldDefinitionDeclareFirst(data: _NodeData, tree: Tre
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['publicFieldDefinitionDeclareFirst']!(v) },
+    $with: { $child: (v: T.AccessibilityModifier) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -328,7 +329,7 @@ export function wrap_StringDouble(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId._StringDouble as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_stringDouble']!(...vs) },
+    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => wrap_StringDouble({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -339,7 +340,7 @@ export function wrap_StringSingle(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId._StringSingle as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['_stringSingle']!(...vs) },
+    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => wrap_StringSingle({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -350,7 +351,7 @@ export function wrapTypeIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TypeIdentifier as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeIdentifier']!(v) },
+    $with: { $child: (v: T.Identifier) => wrapTypeIdentifier({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -365,17 +366,17 @@ export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle):
     _class_heritage: readRawField(data, 'class_heritage'),
     _body: readRawField(data, 'body'),
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    classHeritage() { return drillIn(readRawField(this, 'class_heritage'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    classHeritage() { return drillIn(this._class_heritage, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractClassDeclaration']!({ decorator: v, name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractClassDeclaration']!({ decorator: _node.decorator(), name: v, typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractClassDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: v, classHeritage: _node.classHeritage(), body: _node.body() }),
-      classHeritage: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractClassDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractClassDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: v }),
+      decorator: (v: T.Decorator) => wrapAbstractClassDeclaration({ ...data, _decorator: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapAbstractClassDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapAbstractClassDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapAbstractClassDeclaration({ ...data, _class_heritage: v } as _NodeData, tree),
+      body: (v: T.ClassBody) => wrapAbstractClassDeclaration({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -394,23 +395,23 @@ export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): 
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    accessibilityModifier() { return drillIn(readRawField(this, 'accessibility_modifier'), tree); },
-    overrideModifier() { return drillIn(readRawField(this, 'override_modifier'), tree); },
-    accessorKind() { return drillIn(readRawField(this, 'accessor_kind'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    optionalMarker() { return drillIn(readRawField(this, 'optional_marker'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
+    overrideModifier() { return drillIn(this._override_modifier, tree); },
+    accessorKind() { return drillIn(this._accessor_kind, tree); },
+    name() { return drillIn(this._name, tree); },
+    optionalMarker() { return drillIn(this._optional_marker, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      accessibilityModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: v, overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      overrideModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: v, accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      accessorKind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: v, name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: v, optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      optionalMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['abstractMethodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), overrideModifier: _node.overrideModifier(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapAbstractMethodSignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapAbstractMethodSignature({ ...data, _override_modifier: v } as _NodeData, tree),
+      accessorKind: (v: T.AccessorKind) => wrapAbstractMethodSignature({ ...data, _accessor_kind: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapAbstractMethodSignature({ ...data, _name: v } as _NodeData, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapAbstractMethodSignature({ ...data, _optional_marker: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapAbstractMethodSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapAbstractMethodSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapAbstractMethodSignature({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -422,9 +423,9 @@ export function wrapAddingTypeAnnotation(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.AddingTypeAnnotation as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['addingTypeAnnotation']!({ type: v }),
+      typeField: (v: T.Type) => wrapAddingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -436,9 +437,9 @@ export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.AmbientDeclaration as const,
     _declaration: readRawField(data, 'declaration'),
 
-    declaration() { return drillAs(readRawField(this, 'declaration'), tree, "property_identifier", "identifier"); },
+    declaration() { return drillAs(this._declaration, tree, "property_identifier", "identifier"); },
     $with: {
-      declaration: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ambientDeclaration']!({ declaration: v }),
+      declaration: (v: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => wrapAmbientDeclaration({ ...data, _declaration: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -450,7 +451,7 @@ export function wrapArguments(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Arguments as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['arguments_']!(...vs) },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => wrapArguments({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -461,7 +462,7 @@ export function wrapArray(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Array as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['array']!(...vs) },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => wrapArray({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -472,7 +473,7 @@ export function wrapArrayPattern(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.ArrayPattern as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['arrayPattern']!(...vs) },
+    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => wrapArrayPattern({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -483,9 +484,9 @@ export function wrapArrayType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.ArrayType as const,
     _primary_type: readRawField(data, 'primary_type'),
 
-    primaryType() { return drillIn(readRawField(this, 'primary_type'), tree); },
+    primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrayType']!({ primaryType: v }),
+      primaryType: (v: T.PrimaryType) => wrapArrayType({ ...data, _primary_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -496,9 +497,9 @@ export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): A
     ...data,
     _parameter: readRawField(data, 'parameter'),
 
-    parameter() { return drillAs(readRawField(this, 'parameter'), tree, "identifier", "_reserved_identifier"); },
+    parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
-      parameter: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunctionParameter']!({ parameter: v }),
+      parameter: (v: T.ReservedIdentifier) => wrapArrowFunctionParameter({ ...data, _parameter: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -511,13 +512,13 @@ export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandl
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunctionUCallSignature']!({ typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunctionUCallSignature']!({ typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunctionUCallSignature']!({ typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      typeParameters: (v: T.TypeParameters) => wrapArrowFunctionUCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapArrowFunctionUCallSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapArrowFunctionUCallSignature({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -531,12 +532,12 @@ export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _body: readRawField(data, 'body'),
     $children: data.$children,
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunction']!({ asyncMarker: v, body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunction']!({ asyncMarker: _node.asyncMarker(), body: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['arrowFunction']!({ asyncMarker: _node.asyncMarker(), body: _node.body(), children: items }),
+      asyncMarker: (v: T.AsyncMarker) => wrapArrowFunction({ ...data, _async_marker: v } as _NodeData, tree),
+      body: (v: T.Expression | T.StatementBlock) => wrapArrowFunction({ ...data, _body: v } as _NodeData, tree),
+      children: (...items: (T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature)[]) => wrapArrowFunction({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -549,11 +550,11 @@ export function wrapAsExpression(data: _NodeData, tree: TreeHandle): AnyNodeData
     _expression: readRawField(data, 'expression'),
     _type_annotation: readRawField(data, 'type_annotation'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
-    typeAnnotation() { return drillIn(readRawField(this, 'type_annotation'), tree); },
+    expression() { return drillIn(this._expression, tree); },
+    typeAnnotation() { return drillIn(this._type_annotation, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['asExpression']!({ expression: v, typeAnnotation: _node.typeAnnotation() }),
-      typeAnnotation: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['asExpression']!({ expression: _node.expression(), typeAnnotation: v }),
+      expression: (v: T.Expression) => wrapAsExpression({ ...data, _expression: v } as _NodeData, tree),
+      typeAnnotation: (v: "const" | T.Type) => wrapAsExpression({ ...data, _type_annotation: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -565,7 +566,7 @@ export function wrapAsserts(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Asserts as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['asserts']!(v) },
+    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => wrapAsserts({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -576,9 +577,9 @@ export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.AssertsAnnotation as const,
     _asserts: readRawField(data, 'asserts'),
 
-    asserts() { return drillIn(readRawField(this, 'asserts'), tree); },
+    asserts() { return drillIn(this._asserts, tree); },
     $with: {
-      asserts: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assertsAnnotation']!({ asserts: v }),
+      asserts: (v: T.AssertsAnnotationAsserts | T.Asserts) => wrapAssertsAnnotation({ ...data, _asserts: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -592,13 +593,13 @@ export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): Any
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
 
-    usingMarker() { return drillIn(readRawField(this, 'using_marker'), tree); },
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    usingMarker() { return drillIn(this._using_marker, tree); },
+    left() { return drillIn(this._left, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      usingMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assignmentExpression']!({ usingMarker: v, left: _node.left(), right: _node.right() }),
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assignmentExpression']!({ usingMarker: _node.usingMarker(), left: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assignmentExpression']!({ usingMarker: _node.usingMarker(), left: _node.left(), right: v }),
+      usingMarker: (v: T.AssignmentExpressionUsingMarker) => wrapAssignmentExpression({ ...data, _using_marker: v } as _NodeData, tree),
+      left: (v: T.ParenthesizedExpression | T.LhsExpression) => wrapAssignmentExpression({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Expression) => wrapAssignmentExpression({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -611,11 +612,11 @@ export function wrapAssignmentPattern(data: _NodeData, tree: TreeHandle): AnyNod
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillIn(this._left, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assignmentPattern']!({ left: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['assignmentPattern']!({ left: _node.left(), right: v }),
+      left: (v: T.Pattern) => wrapAssignmentPattern({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Expression) => wrapAssignmentPattern({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -629,13 +630,13 @@ export function wrapAugmentedAssignmentExpression(data: _NodeData, tree: TreeHan
     _operator: readRawField(data, 'operator'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillAs(readRawField(this, 'left'), tree, "identifier", "_reserved_identifier"); },
-    operator() { return drillIn(readRawField(this, 'operator'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillAs(this._left, tree, "identifier", "_reserved_identifier"); },
+    operator() { return drillIn(this._operator, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['augmentedAssignmentExpression']!({ left: v, operator: _node.operator(), right: _node.right() }),
-      operator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['augmentedAssignmentExpression']!({ left: _node.left(), operator: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['augmentedAssignmentExpression']!({ left: _node.left(), operator: _node.operator(), right: v }),
+      left: (v: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) => wrapAugmentedAssignmentExpression({ ...data, _left: v } as _NodeData, tree),
+      operator: (v: T.AugmentedAssignmentExpressionOperator) => wrapAugmentedAssignmentExpression({ ...data, _operator: v } as _NodeData, tree),
+      right: (v: T.Expression) => wrapAugmentedAssignmentExpression({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -647,9 +648,9 @@ export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.AwaitExpression as const,
     _expression: readRawField(data, 'expression'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['awaitExpression']!({ expression: v }),
+      expression: (v: T.Expression) => wrapAwaitExpression({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -663,13 +664,13 @@ export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle): AnyNode
     _operator: readRawField(data, 'operator'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    operator() { return drillIn(readRawField(this, 'operator'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillIn(this._left, tree); },
+    operator() { return drillIn(this._operator, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['binaryExpression']!({ left: v, operator: _node.operator(), right: _node.right() }),
-      operator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['binaryExpression']!({ left: _node.left(), operator: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['binaryExpression']!({ left: _node.left(), operator: _node.operator(), right: v }),
+      left: (v: T.Expression | T.PrivatePropertyIdentifier) => wrapBinaryExpression({ ...data, _left: v } as _NodeData, tree),
+      operator: (v: T.BinaryExpressionOperator) => wrapBinaryExpression({ ...data, _operator: v } as _NodeData, tree),
+      right: (v: T.Expression) => wrapBinaryExpression({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -682,11 +683,11 @@ export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _label: readRawField(data, 'label'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    label() { return drillAs(readRawField(this, 'label'), tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      label: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['breakStatement']!({ label: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['breakStatement']!({ label: _node.label(), semicolon: v }),
+      label: (v: T.Identifier) => wrapBreakStatement({ ...data, _label: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapBreakStatement({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -699,7 +700,7 @@ export function wrapCallExpression(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['callExpression']!({ children: items }),
+      children: (...items: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)[]) => wrapCallExpression({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -713,13 +714,13 @@ export function wrapCallSignature(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['callSignature']!({ typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['callSignature']!({ typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['callSignature']!({ typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      typeParameters: (v: T.TypeParameters) => wrapCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapCallSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapCallSignature({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -733,13 +734,13 @@ export function wrapCatchClause(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _type: readRawField(data, 'type'),
     _body: readRawField(data, 'body'),
 
-    parameter() { return drillIn(readRawField(this, 'parameter'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    parameter() { return drillIn(this._parameter, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      parameter: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['catchClause']!({ parameter: v, type: _node.typeField(), body: _node.body() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['catchClause']!({ parameter: _node.parameter(), type: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['catchClause']!({ parameter: _node.parameter(), type: _node.typeField(), body: v }),
+      parameter: (v: T.Identifier | T.DestructuringPattern) => wrapCatchClause({ ...data, _parameter: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapCatchClause({ ...data, _type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapCatchClause({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -755,17 +756,17 @@ export function wrapClass(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _class_heritage: readRawField(data, 'class_heritage'),
     _body: readRawField(data, 'body'),
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    classHeritage() { return drillIn(readRawField(this, 'class_heritage'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    classHeritage() { return drillIn(this._class_heritage, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['class_']!({ decorator: v, name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['class_']!({ decorator: _node.decorator(), name: v, typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['class_']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: v, classHeritage: _node.classHeritage(), body: _node.body() }),
-      classHeritage: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['class_']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['class_']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: v }),
+      decorator: (v: T.Decorator) => wrapClass({ ...data, _decorator: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapClass({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapClass({ ...data, _type_parameters: v } as _NodeData, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapClass({ ...data, _class_heritage: v } as _NodeData, tree),
+      body: (v: T.ClassBody) => wrapClass({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -777,7 +778,7 @@ export function wrapClassBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.ClassBody as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['classBody']!(...vs) },
+    $with: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => wrapClassBody({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -793,19 +794,19 @@ export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): AnyNode
     _body: readRawField(data, 'body'),
     _automatic_semicolon: readRawField(data, 'automatic_semicolon'),
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    classHeritage() { return drillIn(readRawField(this, 'class_heritage'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
-    automaticSemicolon() { return drillIn(readRawField(this, 'automatic_semicolon'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    classHeritage() { return drillIn(this._class_heritage, tree); },
+    body() { return drillIn(this._body, tree); },
+    automaticSemicolon() { return drillIn(this._automatic_semicolon, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: v, name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body(), automaticSemicolon: _node.automaticSemicolon() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: _node.decorator(), name: v, typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body(), automaticSemicolon: _node.automaticSemicolon() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: v, classHeritage: _node.classHeritage(), body: _node.body(), automaticSemicolon: _node.automaticSemicolon() }),
-      classHeritage: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: v, body: _node.body(), automaticSemicolon: _node.automaticSemicolon() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: v, automaticSemicolon: _node.automaticSemicolon() }),
-      automaticSemicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classDeclaration']!({ decorator: _node.decorator(), name: _node.name(), typeParameters: _node.typeParameters(), classHeritage: _node.classHeritage(), body: _node.body(), automaticSemicolon: v }),
+      decorator: (v: T.Decorator) => wrapClassDeclaration({ ...data, _decorator: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapClassDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapClassDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapClassDeclaration({ ...data, _class_heritage: v } as _NodeData, tree),
+      body: (v: T.ClassBody) => wrapClassDeclaration({ ...data, _body: v } as _NodeData, tree),
+      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapClassDeclaration({ ...data, _automatic_semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -816,7 +817,7 @@ export function wrapClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['classHeritageExtendsClause']!(v) },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrapClassHeritageExtendsClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -826,7 +827,7 @@ export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHan
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['classHeritageImplementsClause']!(v) },
+    $with: { $child: (v: T.ImplementsClause) => wrapClassHeritageImplementsClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -838,7 +839,7 @@ export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classHeritage']!({ children: items }),
+      children: (...items: (T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause)[]) => wrapClassHeritage({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -851,10 +852,10 @@ export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): AnyNode
     _body: readRawField(data, 'body'),
     $children: data.$children,
 
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classStaticBlock']!({ body: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['classStaticBlock']!({ body: _node.body(), children: items }),
+      body: (v: T.StatementBlock) => wrapClassStaticBlock({ ...data, _body: v } as _NodeData, tree),
+      children: (...items: T.AutomaticSemicolon[]) => wrapClassStaticBlock({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -866,9 +867,9 @@ export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.ComputedPropertyName as const,
     _expression: readRawField(data, 'expression'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['computedPropertyName']!({ expression: v }),
+      expression: (v: T.Expression) => wrapComputedPropertyName({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -883,15 +884,15 @@ export function wrapConditionalType(data: _NodeData, tree: TreeHandle): AnyNodeD
     _consequence: readRawField(data, 'consequence'),
     _alternative: readRawField(data, 'alternative'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
-    consequence() { return drillIn(readRawField(this, 'consequence'), tree); },
-    alternative() { return drillIn(readRawField(this, 'alternative'), tree); },
+    left() { return drillIn(this._left, tree); },
+    right() { return drillIn(this._right, tree); },
+    consequence() { return drillIn(this._consequence, tree); },
+    alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['conditionalType']!({ left: v, right: _node.right(), consequence: _node.consequence(), alternative: _node.alternative() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['conditionalType']!({ left: _node.left(), right: v, consequence: _node.consequence(), alternative: _node.alternative() }),
-      consequence: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['conditionalType']!({ left: _node.left(), right: _node.right(), consequence: v, alternative: _node.alternative() }),
-      alternative: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['conditionalType']!({ left: _node.left(), right: _node.right(), consequence: _node.consequence(), alternative: v }),
+      left: (v: T.Type) => wrapConditionalType({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Type) => wrapConditionalType({ ...data, _right: v } as _NodeData, tree),
+      consequence: (v: T.Type) => wrapConditionalType({ ...data, _consequence: v } as _NodeData, tree),
+      alternative: (v: T.Type) => wrapConditionalType({ ...data, _alternative: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -903,9 +904,9 @@ export function wrapConstraint(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Constraint as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constraint']!({ type: v }),
+      typeField: (v: T.Type) => wrapConstraint({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -920,15 +921,15 @@ export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): AnyNo
     _parameters: readRawField(data, 'parameters'),
     _type: readRawField(data, 'type'),
 
-    abstractMarker() { return drillIn(readRawField(this, 'abstract_marker'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    abstractMarker() { return drillIn(this._abstract_marker, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      abstractMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructSignature']!({ abstractMarker: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), type: _node.typeField() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructSignature']!({ abstractMarker: _node.abstractMarker(), typeParameters: v, parameters: _node.parameters(), type: _node.typeField() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructSignature']!({ abstractMarker: _node.abstractMarker(), typeParameters: _node.typeParameters(), parameters: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructSignature']!({ abstractMarker: _node.abstractMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), type: v }),
+      abstractMarker: (v: T.AbstractMarker) => wrapConstructSignature({ ...data, _abstract_marker: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapConstructSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapConstructSignature({ ...data, _parameters: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapConstructSignature({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -943,15 +944,15 @@ export function wrapConstructorType(data: _NodeData, tree: TreeHandle): AnyNodeD
     _parameters: readRawField(data, 'parameters'),
     _type: readRawField(data, 'type'),
 
-    abstractMarker() { return drillIn(readRawField(this, 'abstract_marker'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    abstractMarker() { return drillIn(this._abstract_marker, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      abstractMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructorType']!({ abstractMarker: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), type: _node.typeField() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructorType']!({ abstractMarker: _node.abstractMarker(), typeParameters: v, parameters: _node.parameters(), type: _node.typeField() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructorType']!({ abstractMarker: _node.abstractMarker(), typeParameters: _node.typeParameters(), parameters: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['constructorType']!({ abstractMarker: _node.abstractMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), type: v }),
+      abstractMarker: (v: T.AbstractMarker) => wrapConstructorType({ ...data, _abstract_marker: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapConstructorType({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapConstructorType({ ...data, _parameters: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapConstructorType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -964,11 +965,11 @@ export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): AnyNod
     _label: readRawField(data, 'label'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    label() { return drillAs(readRawField(this, 'label'), tree, "statement_identifier", "identifier"); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      label: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['continueStatement']!({ label: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['continueStatement']!({ label: _node.label(), semicolon: v }),
+      label: (v: T.Identifier) => wrapContinueStatement({ ...data, _label: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapContinueStatement({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -980,9 +981,9 @@ export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.DebuggerStatement as const,
     _semicolon: readRawField(data, 'semicolon'),
 
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['debuggerStatement']!({ semicolon: v }),
+      semicolon: (v: T.Semicolon) => wrapDebuggerStatement({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -994,7 +995,7 @@ export function wrapDecorator(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Decorator as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['decorator']!(v) },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => wrapDecorator({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1007,13 +1008,13 @@ export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle): 
     _type_arguments: readRawField(data, 'type_arguments'),
     _arguments: readRawField(data, 'arguments'),
 
-    function() { return drillAs(readRawField(this, 'function'), tree, "member_expression", "decorator_member_expression"); },
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
-    arguments() { return drillIn(readRawField(this, 'arguments'), tree); },
+    function() { return drillAs(this._function, tree, "member_expression", "decorator_member_expression"); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
+    arguments() { return drillIn(this._arguments, tree); },
     $with: {
-      function: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['decoratorCallExpression']!({ function: v, typeArguments: _node.typeArguments(), arguments: _node.arguments() }),
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['decoratorCallExpression']!({ function: _node.function(), typeArguments: v, arguments: _node.arguments() }),
-      arguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['decoratorCallExpression']!({ function: _node.function(), typeArguments: _node.typeArguments(), arguments: v }),
+      function: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorCallExpression({ ...data, _function: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapDecoratorCallExpression({ ...data, _type_arguments: v } as _NodeData, tree),
+      arguments: (v: T.Arguments) => wrapDecoratorCallExpression({ ...data, _arguments: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1026,11 +1027,11 @@ export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle)
     _object: readRawField(data, 'object'),
     _property: readRawField(data, 'property'),
 
-    object() { return drillAs(readRawField(this, 'object'), tree, "member_expression", "decorator_member_expression"); },
-    property() { return drillAs(readRawField(this, 'property'), tree, "property_identifier", "identifier"); },
+    object() { return drillAs(this._object, tree, "member_expression", "decorator_member_expression"); },
+    property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['decoratorMemberExpression']!({ object: v, property: _node.property() }),
-      property: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['decoratorMemberExpression']!({ object: _node.object(), property: v }),
+      object: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorMemberExpression({ ...data, _object: v } as _NodeData, tree),
+      property: (v: T.Identifier) => wrapDecoratorMemberExpression({ ...data, _property: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1042,7 +1043,7 @@ export function wrapDecoratorParenthesizedExpression(data: _NodeData, tree: Tree
     $type: TSKindId.DecoratorParenthesizedExpression as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['decoratorParenthesizedExpression']!(v) },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => wrapDecoratorParenthesizedExpression({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1053,9 +1054,9 @@ export function wrapDefaultType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.DefaultType as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['defaultType']!({ type: v }),
+      typeField: (v: T.Type) => wrapDefaultType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1069,13 +1070,13 @@ export function wrapDoStatement(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _condition: readRawField(data, 'condition'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    body() { return drillIn(readRawField(this, 'body'), tree); },
-    condition() { return drillIn(readRawField(this, 'condition'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    body() { return drillIn(this._body, tree); },
+    condition() { return drillIn(this._condition, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['doStatement']!({ body: v, condition: _node.condition(), semicolon: _node.semicolon() }),
-      condition: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['doStatement']!({ body: _node.body(), condition: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['doStatement']!({ body: _node.body(), condition: _node.condition(), semicolon: v }),
+      body: (v: T.Statement) => wrapDoStatement({ ...data, _body: v } as _NodeData, tree),
+      condition: (v: T.ParenthesizedExpression) => wrapDoStatement({ ...data, _condition: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapDoStatement({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1087,9 +1088,9 @@ export function wrapElseClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.ElseClause as const,
     _statement: readRawField(data, 'statement'),
 
-    statement() { return drillIn(readRawField(this, 'statement'), tree); },
+    statement() { return drillIn(this._statement, tree); },
     $with: {
-      statement: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['elseClause']!({ statement: v }),
+      statement: (v: T.Statement) => wrapElseClause({ ...data, _statement: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1102,11 +1103,11 @@ export function wrapEnumAssignment(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _name: readRawField(data, 'name'),
     _value: readRawField(data, 'value'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    name() { return drillIn(this._name, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumAssignment']!({ name: v, value: _node.value() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumAssignment']!({ name: _node.name(), value: v }),
+      name: (v: T.PropertyName) => wrapEnumAssignment({ ...data, _name: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapEnumAssignment({ ...data, _value: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1119,7 +1120,7 @@ export function wrapEnumBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumBody']!({ children: items }),
+      children: (...items: (T.PropertyName | T.EnumAssignment)[]) => wrapEnumBody({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1133,13 +1134,13 @@ export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeD
     _name: readRawField(data, 'name'),
     _body: readRawField(data, 'body'),
 
-    constMarker() { return drillIn(readRawField(this, 'const_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    constMarker() { return drillIn(this._const_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      constMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumDeclaration']!({ constMarker: v, name: _node.name(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumDeclaration']!({ constMarker: _node.constMarker(), name: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['enumDeclaration']!({ constMarker: _node.constMarker(), name: _node.name(), body: v }),
+      constMarker: (v: T.ConstMarker) => wrapEnumDeclaration({ ...data, _const_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapEnumDeclaration({ ...data, _name: v } as _NodeData, tree),
+      body: (v: T.EnumBody) => wrapEnumDeclaration({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1151,7 +1152,7 @@ export function wrapExportClause(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.ExportClause as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['exportClause']!(...vs) },
+    $with: { $children: (...vs: T.ExportSpecifier[]) => wrapExportClause({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1164,13 +1165,13 @@ export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeD
     _name: readRawField(data, 'name'),
     _alias: readRawField(data, 'alias'),
 
-    exportKind() { return drillIn(readRawField(this, 'export_kind'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    alias() { return drillIn(readRawField(this, 'alias'), tree); },
+    exportKind() { return drillIn(this._export_kind, tree); },
+    name() { return drillIn(this._name, tree); },
+    alias() { return drillIn(this._alias, tree); },
     $with: {
-      exportKind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportSpecifier']!({ exportKind: v, name: _node.name(), alias: _node.alias() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportSpecifier']!({ exportKind: _node.exportKind(), name: v, alias: _node.alias() }),
-      alias: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportSpecifier']!({ exportKind: _node.exportKind(), name: _node.name(), alias: v }),
+      exportKind: (v: T.ExportSpecifierExportKind) => wrapExportSpecifier({ ...data, _export_kind: v } as _NodeData, tree),
+      name: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _name: v } as _NodeData, tree),
+      alias: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _alias: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1182,10 +1183,10 @@ export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle)
     _source: readRawField(data, 'source'),
     $children: data.$children,
 
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementTypeExport']!({ source: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatementTypeExport']!({ source: _node.source(), children: items }),
+      source: (v: T.String) => wrapExportStatementTypeExport({ ...data, _source: v } as _NodeData, tree),
+      children: (...items: (T.ExportClause | T.Semicolon)[]) => wrapExportStatementTypeExport({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1196,7 +1197,7 @@ export function wrapExportStatementEqualsExport(data: _NodeData, tree: TreeHandl
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['exportStatementEqualsExport']!(v) },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrapExportStatementEqualsExport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1206,7 +1207,7 @@ export function wrapExportStatementNamespaceExport(data: _NodeData, tree: TreeHa
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['exportStatementNamespaceExport']!(v) },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrapExportStatementNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1218,7 +1219,7 @@ export function wrapExportStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['exportStatement']!({ children: items }),
+      children: (...items: (T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport)[]) => wrapExportStatement({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1231,10 +1232,10 @@ export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): AnyN
     _semicolon: readRawField(data, 'semicolon'),
     $children: data.$children,
 
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['expressionStatement']!({ semicolon: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['expressionStatement']!({ semicolon: _node.semicolon(), children: items }),
+      semicolon: (v: T.Semicolon) => wrapExpressionStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      children: (...items: T.Expressions[]) => wrapExpressionStatement({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1247,11 +1248,11 @@ export function wrapExtendsClause(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _value: readRawField(data, 'value'),
     _type_arguments: readRawField(data, 'type_arguments'),
 
-    value() { return drillInAll(readRawField(this, 'value'), tree); },
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
+    value() { return drillInAll(this._value, tree); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['extendsClause']!({ value: v, typeArguments: _node.typeArguments() }),
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['extendsClause']!({ value: _node.value(), typeArguments: v }),
+      value: (v: T.Expression) => wrapExtendsClause({ ...data, _value: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapExtendsClause({ ...data, _type_arguments: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1263,9 +1264,9 @@ export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.ExtendsTypeClause as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillInAll(readRawField(this, 'type'), tree); },
+    typeField() { return drillInAll(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['extendsTypeClause']!({ type: v }),
+      typeField: (v: T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) => wrapExtendsTypeClause({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1277,9 +1278,9 @@ export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.FinallyClause as const,
     _body: readRawField(data, 'body'),
 
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['finallyClause']!({ body: v }),
+      body: (v: T.StatementBlock) => wrapFinallyClause({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1291,9 +1292,9 @@ export function wrapFlowMaybeType(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.FlowMaybeType as const,
     _primary_type: readRawField(data, 'primary_type'),
 
-    primaryType() { return drillIn(readRawField(this, 'primary_type'), tree); },
+    primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['flowMaybeType']!({ primaryType: v }),
+      primaryType: (v: T.PrimaryType) => wrapFlowMaybeType({ ...data, _primary_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1309,16 +1310,16 @@ export function wrapForInStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _body: readRawField(data, 'body'),
     $children: data.$children,
 
-    awaitMarker() { return drillIn(readRawField(this, 'await_marker'), tree); },
-    operator() { return drillIn(readRawField(this, 'operator'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    awaitMarker() { return drillIn(this._await_marker, tree); },
+    operator() { return drillIn(this._operator, tree); },
+    right() { return drillIn(this._right, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      awaitMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forInStatement']!({ awaitMarker: v, operator: _node.operator(), right: _node.right(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      operator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forInStatement']!({ awaitMarker: _node.awaitMarker(), operator: v, right: _node.right(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forInStatement']!({ awaitMarker: _node.awaitMarker(), operator: _node.operator(), right: v, body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forInStatement']!({ awaitMarker: _node.awaitMarker(), operator: _node.operator(), right: _node.right(), body: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forInStatement']!({ awaitMarker: _node.awaitMarker(), operator: _node.operator(), right: _node.right(), body: _node.body(), children: items }),
+      awaitMarker: (v: T.ForInStatementAwaitMarker) => wrapForInStatement({ ...data, _await_marker: v } as _NodeData, tree),
+      operator: (v: T.ForHeaderOperator) => wrapForInStatement({ ...data, _operator: v } as _NodeData, tree),
+      right: (v: T.Expressions) => wrapForInStatement({ ...data, _right: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapForInStatement({ ...data, _body: v } as _NodeData, tree),
+      children: (...items: (T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind)[]) => wrapForInStatement({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1333,15 +1334,15 @@ export function wrapForStatement(data: _NodeData, tree: TreeHandle): AnyNodeData
     _increment: readRawField(data, 'increment'),
     _body: readRawField(data, 'body'),
 
-    initializer() { return drillIn(readRawField(this, 'initializer'), tree); },
-    condition() { return drillIn(readRawField(this, 'condition'), tree); },
-    increment() { return drillIn(readRawField(this, 'increment'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    initializer() { return drillIn(this._initializer, tree); },
+    condition() { return drillIn(this._condition, tree); },
+    increment() { return drillIn(this._increment, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      initializer: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forStatement']!({ initializer: v, condition: _node.condition(), increment: _node.increment(), body: _node.body() }),
-      condition: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forStatement']!({ initializer: _node.initializer(), condition: v, increment: _node.increment(), body: _node.body() }),
-      increment: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forStatement']!({ initializer: _node.initializer(), condition: _node.condition(), increment: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['forStatement']!({ initializer: _node.initializer(), condition: _node.condition(), increment: _node.increment(), body: v }),
+      initializer: (v: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) => wrapForStatement({ ...data, _initializer: v } as _NodeData, tree),
+      condition: (v: T.Expressions | T.EmptyStatement) => wrapForStatement({ ...data, _condition: v } as _NodeData, tree),
+      increment: (v: T.Expressions) => wrapForStatement({ ...data, _increment: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapForStatement({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1353,7 +1354,7 @@ export function wrapFormalParameters(data: _NodeData, tree: TreeHandle): AnyNode
     $type: TSKindId.FormalParameters as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['formalParameters']!(...vs) },
+    $with: { $children: (...vs: T.FormalParameter[]) => wrapFormalParameters({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1370,20 +1371,20 @@ export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): AnyN
     _body: readRawField(data, 'body'),
     $children: data.$children,
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: v, name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: items }),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionDeclaration({ ...data, _async_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapFunctionDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionDeclaration({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionDeclaration({ ...data, _return_type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapFunctionDeclaration({ ...data, _body: v } as _NodeData, tree),
+      children: (...items: T.AutomaticSemicolon[]) => wrapFunctionDeclaration({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1400,19 +1401,19 @@ export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): AnyNo
     _return_type: readRawField(data, 'return_type'),
     _body: readRawField(data, 'body'),
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: v, name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: _node.asyncMarker(), name: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), body: _node.body() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionExpression']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: v }),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionExpression({ ...data, _async_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapFunctionExpression({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionExpression({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionExpression({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionExpression({ ...data, _return_type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapFunctionExpression({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1429,19 +1430,19 @@ export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): AnyNod
     _return_type: readRawField(data, 'return_type'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: v, name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), semicolon: _node.semicolon() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: _node.asyncMarker(), name: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), semicolon: _node.semicolon() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), semicolon: _node.semicolon() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), semicolon: _node.semicolon() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionSignature']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), semicolon: v }),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionSignature({ ...data, _async_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapFunctionSignature({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionSignature({ ...data, _return_type: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => wrapFunctionSignature({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1455,13 +1456,13 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): AnyNodeData
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionType']!({ typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionType']!({ typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['functionType']!({ typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionType({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionType({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.Type | T.Asserts | T.TypePredicate) => wrapFunctionType({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1478,19 +1479,19 @@ export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): AnyNod
     _return_type: readRawField(data, 'return_type'),
     _body: readRawField(data, 'body'),
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: v, name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: _node.asyncMarker(), name: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), body: _node.body() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunction']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: v }),
+      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunction({ ...data, _async_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapGeneratorFunction({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunction({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapGeneratorFunction({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunction({ ...data, _return_type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapGeneratorFunction({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1508,20 +1509,20 @@ export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHand
     _body: readRawField(data, 'body'),
     $children: data.$children,
 
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: v, name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, body: _node.body(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['generatorFunctionDeclaration']!({ asyncMarker: _node.asyncMarker(), name: _node.name(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body(), children: items }),
+      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunctionDeclaration({ ...data, _async_marker: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapGeneratorFunctionDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunctionDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapGeneratorFunctionDeclaration({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunctionDeclaration({ ...data, _return_type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapGeneratorFunctionDeclaration({ ...data, _body: v } as _NodeData, tree),
+      children: (...items: T.AutomaticSemicolon[]) => wrapGeneratorFunctionDeclaration({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1534,11 +1535,11 @@ export function wrapGenericType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _name: readRawField(data, 'name'),
     _type_arguments: readRawField(data, 'type_arguments'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['genericType']!({ name: v, typeArguments: _node.typeArguments() }),
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['genericType']!({ name: _node.name(), typeArguments: v }),
+      name: (v: T.TypeIdentifier | T.NestedTypeIdentifier) => wrapGenericType({ ...data, _name: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapGenericType({ ...data, _type_arguments: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1552,13 +1553,13 @@ export function wrapIfStatement(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _consequence: readRawField(data, 'consequence'),
     _alternative: readRawField(data, 'alternative'),
 
-    condition() { return drillIn(readRawField(this, 'condition'), tree); },
-    consequence() { return drillIn(readRawField(this, 'consequence'), tree); },
-    alternative() { return drillIn(readRawField(this, 'alternative'), tree); },
+    condition() { return drillIn(this._condition, tree); },
+    consequence() { return drillIn(this._consequence, tree); },
+    alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      condition: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ifStatement']!({ condition: v, consequence: _node.consequence(), alternative: _node.alternative() }),
-      consequence: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ifStatement']!({ condition: _node.condition(), consequence: v, alternative: _node.alternative() }),
-      alternative: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ifStatement']!({ condition: _node.condition(), consequence: _node.consequence(), alternative: v }),
+      condition: (v: T.ParenthesizedExpression) => wrapIfStatement({ ...data, _condition: v } as _NodeData, tree),
+      consequence: (v: T.Statement) => wrapIfStatement({ ...data, _consequence: v } as _NodeData, tree),
+      alternative: (v: T.ElseClause) => wrapIfStatement({ ...data, _alternative: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1570,7 +1571,7 @@ export function wrapImplementsClause(data: _NodeData, tree: TreeHandle): AnyNode
     $type: TSKindId.ImplementsClause as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['implementsClause']!(...vs) },
+    $with: { $children: (...vs: T.Type[]) => wrapImplementsClause({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1583,13 +1584,13 @@ export function wrapImportAlias(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _value: readRawField(data, 'value'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    name() { return drillIn(this._name, tree); },
+    value() { return drillIn(this._value, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importAlias']!({ name: v, value: _node.value(), semicolon: _node.semicolon() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importAlias']!({ name: _node.name(), value: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importAlias']!({ name: _node.name(), value: _node.value(), semicolon: v }),
+      name: (v: T.Identifier) => wrapImportAlias({ ...data, _name: v } as _NodeData, tree),
+      value: (v: T.Identifier | T.NestedIdentifier) => wrapImportAlias({ ...data, _value: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapImportAlias({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1601,9 +1602,9 @@ export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.ImportAttribute as const,
     _object: readRawField(data, 'object'),
 
-    object() { return drillIn(readRawField(this, 'object'), tree); },
+    object() { return drillIn(this._object, tree); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importAttribute']!({ object: v }),
+      object: (v: T.ImportAttributeObject | T.Object) => wrapImportAttribute({ ...data, _object: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1614,7 +1615,7 @@ export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandl
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['importClauseNamespaceImport']!(v) },
+    $with: { $child: (v: T.NamespaceImport) => wrapImportClauseNamespaceImport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1624,7 +1625,7 @@ export function wrapImportClauseNamedImports(data: _NodeData, tree: TreeHandle):
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['importClauseNamedImports']!(v) },
+    $with: { $child: (v: T.NamedImports) => wrapImportClauseNamedImports({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1634,7 +1635,7 @@ export function wrapImportClauseDefaultImport(data: _NodeData, tree: TreeHandle)
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['importClauseDefaultImport']!(v) },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrapImportClauseDefaultImport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1646,7 +1647,7 @@ export function wrapImportClause(data: _NodeData, tree: TreeHandle): AnyNodeData
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importClause']!({ children: items }),
+      children: (...items: (T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport)[]) => wrapImportClause({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1659,11 +1660,11 @@ export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle): AnyN
     _identifier: readRawField(data, 'identifier'),
     _source: readRawField(data, 'source'),
 
-    identifier() { return drillIn(readRawField(this, 'identifier'), tree); },
-    source() { return drillIn(readRawField(this, 'source'), tree); },
+    identifier() { return drillIn(this._identifier, tree); },
+    source() { return drillIn(this._source, tree); },
     $with: {
-      identifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importRequireClause']!({ identifier: v, source: _node.source() }),
-      source: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importRequireClause']!({ identifier: _node.identifier(), source: v }),
+      identifier: (v: T.Identifier) => wrapImportRequireClause({ ...data, _identifier: v } as _NodeData, tree),
+      source: (v: T.String) => wrapImportRequireClause({ ...data, _source: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1674,9 +1675,9 @@ export function wrapImportSpecifierName(data: _NodeData, tree: TreeHandle): AnyN
     ...data,
     _name: readRawField(data, 'name'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
+    name() { return drillIn(this._name, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importSpecifierName']!({ name: v }),
+      name: (v: T.ImportIdentifier) => wrapImportSpecifierName({ ...data, _name: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1689,10 +1690,10 @@ export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeD
     _import_kind: readRawField(data, 'import_kind'),
     $children: data.$children,
 
-    importKind() { return drillIn(readRawField(this, 'import_kind'), tree); },
+    importKind() { return drillIn(this._import_kind, tree); },
     $with: {
-      importKind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importSpecifier']!({ importKind: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importSpecifier']!({ importKind: _node.importKind(), children: items }),
+      importKind: (v: T.ExportSpecifierExportKind) => wrapImportSpecifier({ ...data, _import_kind: v } as _NodeData, tree),
+      children: (...items: (T._ImportSpecifierName | T.ImportSpecifierAs)[]) => wrapImportSpecifier({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1707,15 +1708,15 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     _import_attribute: readRawField(data, 'import_attribute'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    importClause() { return drillIn(readRawField(this, 'import_clause'), tree); },
-    fromClause() { return drillIn(readRawField(this, 'from_clause'), tree); },
-    importAttribute() { return drillIn(readRawField(this, 'import_attribute'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    importClause() { return drillIn(this._import_clause, tree); },
+    fromClause() { return drillIn(this._from_clause, tree); },
+    importAttribute() { return drillIn(this._import_attribute, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      importClause: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importStatement']!({ importClause: v, fromClause: _node.fromClause(), importAttribute: _node.importAttribute(), semicolon: _node.semicolon() }),
-      fromClause: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importStatement']!({ importClause: _node.importClause(), fromClause: v, importAttribute: _node.importAttribute(), semicolon: _node.semicolon() }),
-      importAttribute: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importStatement']!({ importClause: _node.importClause(), fromClause: _node.fromClause(), importAttribute: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['importStatement']!({ importClause: _node.importClause(), fromClause: _node.fromClause(), importAttribute: _node.importAttribute(), semicolon: v }),
+      importClause: (v: "type" | "typeof") => wrapImportStatement({ ...data, _import_clause: v } as _NodeData, tree),
+      fromClause: (v: T.ImportClause | "from" | T.String | T.ImportRequireClause) => wrapImportStatement({ ...data, _from_clause: v } as _NodeData, tree),
+      importAttribute: (v: T.ImportAttribute) => wrapImportStatement({ ...data, _import_attribute: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapImportStatement({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1726,7 +1727,7 @@ export function wrapIndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHa
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['indexSignatureMappedTypeClause']!(v) },
+    $with: { $child: (v: T.MappedTypeClause) => wrapIndexSignatureMappedTypeClause({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1739,12 +1740,12 @@ export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _type: readRawField(data, 'type'),
     $children: data.$children,
 
-    sign() { return drillIn(readRawField(this, 'sign'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    sign() { return drillIn(this._sign, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      sign: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['indexSignature']!({ sign: v, type: _node.typeField(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['indexSignature']!({ sign: _node.sign(), type: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['indexSignature']!({ sign: _node.sign(), type: _node.typeField(), children: items }),
+      sign: (v: "-" | "+") => wrapIndexSignature({ ...data, _sign: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => wrapIndexSignature({ ...data, _type: v } as _NodeData, tree),
+      children: (...items: (T.IndexSignatureColon | T._IndexSignatureMappedTypeClause)[]) => wrapIndexSignature({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1756,9 +1757,9 @@ export function wrapIndexTypeQuery(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.IndexTypeQuery as const,
     _primary_type: readRawField(data, 'primary_type'),
 
-    primaryType() { return drillIn(readRawField(this, 'primary_type'), tree); },
+    primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['indexTypeQuery']!({ primaryType: v }),
+      primaryType: (v: T.PrimaryType) => wrapIndexTypeQuery({ ...data, _primary_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1771,11 +1772,11 @@ export function wrapInferType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _type_identifier: readRawField(data, 'type_identifier'),
     _type: readRawField(data, 'type'),
 
-    typeIdentifier() { return drillIn(readRawField(this, 'type_identifier'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeIdentifier() { return drillIn(this._type_identifier, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeIdentifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['inferType']!({ typeIdentifier: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['inferType']!({ typeIdentifier: _node.typeIdentifier(), type: v }),
+      typeIdentifier: (v: T.TypeIdentifier) => wrapInferType({ ...data, _type_identifier: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapInferType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1788,11 +1789,11 @@ export function wrapInstantiationExpression(data: _NodeData, tree: TreeHandle): 
     _expression: readRawField(data, 'expression'),
     _type_arguments: readRawField(data, 'type_arguments'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
+    expression() { return drillIn(this._expression, tree); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['instantiationExpression']!({ expression: v, typeArguments: _node.typeArguments() }),
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['instantiationExpression']!({ expression: _node.expression(), typeArguments: v }),
+      expression: (v: T.Expression) => wrapInstantiationExpression({ ...data, _expression: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapInstantiationExpression({ ...data, _type_arguments: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1807,15 +1808,15 @@ export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle): Any
     _extends_type_clause: readRawField(data, 'extends_type_clause'),
     _body: readRawField(data, 'body'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    extendsTypeClause() { return drillIn(readRawField(this, 'extends_type_clause'), tree); },
-    body() { return drillAs(readRawField(this, 'body'), tree, "interface_body", "object_type"); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    extendsTypeClause() { return drillIn(this._extends_type_clause, tree); },
+    body() { return drillAs(this._body, tree, "interface_body", "object_type"); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['interfaceDeclaration']!({ name: v, typeParameters: _node.typeParameters(), extendsTypeClause: _node.extendsTypeClause(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['interfaceDeclaration']!({ name: _node.name(), typeParameters: v, extendsTypeClause: _node.extendsTypeClause(), body: _node.body() }),
-      extendsTypeClause: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['interfaceDeclaration']!({ name: _node.name(), typeParameters: _node.typeParameters(), extendsTypeClause: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['interfaceDeclaration']!({ name: _node.name(), typeParameters: _node.typeParameters(), extendsTypeClause: _node.extendsTypeClause(), body: v }),
+      name: (v: T.TypeIdentifier) => wrapInterfaceDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapInterfaceDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      extendsTypeClause: (v: T.ExtendsTypeClause) => wrapInterfaceDeclaration({ ...data, _extends_type_clause: v } as _NodeData, tree),
+      body: (v: T.ObjectType) => wrapInterfaceDeclaration({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1828,11 +1829,11 @@ export function wrapInternalModule(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _name: readRawField(data, 'name'),
     _body: readRawField(data, 'body'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    name() { return drillIn(this._name, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['internalModule']!({ name: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['internalModule']!({ name: _node.name(), body: v }),
+      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapInternalModule({ ...data, _name: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapInternalModule({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1845,11 +1846,11 @@ export function wrapIntersectionType(data: _NodeData, tree: TreeHandle): AnyNode
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillIn(this._left, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['intersectionType']!({ left: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['intersectionType']!({ left: _node.left(), right: v }),
+      left: (v: T.Type) => wrapIntersectionType({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Type) => wrapIntersectionType({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1862,11 +1863,11 @@ export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle): AnyNode
     _label: readRawField(data, 'label'),
     _body: readRawField(data, 'body'),
 
-    label() { return drillAs(readRawField(this, 'label'), tree, "statement_identifier", "_statement_identifier"); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    label() { return drillAs(this._label, tree, "statement_identifier", "_statement_identifier"); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      label: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['labeledStatement']!({ label: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['labeledStatement']!({ label: _node.label(), body: v }),
+      label: (v: T.StatementIdentifier) => wrapLabeledStatement({ ...data, _label: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapLabeledStatement({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1880,13 +1881,13 @@ export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle): AnyNo
     _declarators: readRawField(data, 'declarators'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    kind() { return drillIn(readRawField(this, 'kind'), tree); },
-    declarators() { return drillInAll(readRawField(this, 'declarators'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    kind() { return drillIn(this._kind, tree); },
+    declarators() { return drillInAll(this._declarators, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      kind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['lexicalDeclaration']!({ kind: v, declarators: _node.declarators(), semicolon: _node.semicolon() }),
-      declarators: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['lexicalDeclaration']!({ kind: _node.kind(), declarators: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['lexicalDeclaration']!({ kind: _node.kind(), declarators: _node.declarators(), semicolon: v }),
+      kind: (v: T.Kind) => wrapLexicalDeclaration({ ...data, _kind: v } as _NodeData, tree),
+      declarators: (v: T.VariableDeclarator) => wrapLexicalDeclaration({ ...data, _declarators: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapLexicalDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1898,7 +1899,7 @@ export function wrapLiteralType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.LiteralType as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['literalType']!(v) },
+    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => wrapLiteralType({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -1910,11 +1911,11 @@ export function wrapLookupType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _primary_type: readRawField(data, 'primary_type'),
     _index_type: readRawField(data, 'index_type'),
 
-    primaryType() { return drillIn(readRawField(this, 'primary_type'), tree); },
-    indexType() { return drillIn(readRawField(this, 'index_type'), tree); },
+    primaryType() { return drillIn(this._primary_type, tree); },
+    indexType() { return drillIn(this._index_type, tree); },
     $with: {
-      primaryType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['lookupType']!({ primaryType: v, indexType: _node.indexType() }),
-      indexType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['lookupType']!({ primaryType: _node.primaryType(), indexType: v }),
+      primaryType: (v: T.PrimaryType) => wrapLookupType({ ...data, _primary_type: v } as _NodeData, tree),
+      indexType: (v: T.Type) => wrapLookupType({ ...data, _index_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1928,13 +1929,13 @@ export function wrapMappedTypeClause(data: _NodeData, tree: TreeHandle): AnyNode
     _type: readRawField(data, 'type'),
     _alias: readRawField(data, 'alias'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    alias() { return drillIn(readRawField(this, 'alias'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    alias() { return drillIn(this._alias, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['mappedTypeClause']!({ name: v, type: _node.typeField(), alias: _node.alias() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['mappedTypeClause']!({ name: _node.name(), type: v, alias: _node.alias() }),
-      alias: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['mappedTypeClause']!({ name: _node.name(), type: _node.typeField(), alias: v }),
+      name: (v: T.TypeIdentifier) => wrapMappedTypeClause({ ...data, _name: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapMappedTypeClause({ ...data, _type: v } as _NodeData, tree),
+      alias: (v: T.Type) => wrapMappedTypeClause({ ...data, _alias: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -1948,12 +1949,12 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): AnyNode
     _property: readRawField(data, 'property'),
     $children: data.$children,
 
-    object() { return drillIn(readRawField(this, 'object'), tree); },
-    property() { return drillAs(readRawField(this, 'property'), tree, "property_identifier", "identifier"); },
+    object() { return drillIn(this._object, tree); },
+    property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['memberExpression']!({ object: v, property: _node.property(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      property: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['memberExpression']!({ object: _node.object(), property: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['memberExpression']!({ object: _node.object(), property: _node.property(), children: items }),
+      object: (v: T.Expression | T.PrimaryExpression | T.Import) => wrapMemberExpression({ ...data, _object: v } as _NodeData, tree),
+      property: (v: T.PrivatePropertyIdentifier | T.Identifier) => wrapMemberExpression({ ...data, _property: v } as _NodeData, tree),
+      children: (...items: T.OptionalChain[]) => wrapMemberExpression({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -1976,31 +1977,31 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): AnyNode
     _return_type: readRawField(data, 'return_type'),
     _body: readRawField(data, 'body'),
 
-    accessibilityModifier() { return drillIn(readRawField(this, 'accessibility_modifier'), tree); },
-    staticMarker() { return drillIn(readRawField(this, 'static_marker'), tree); },
-    overrideModifier() { return drillIn(readRawField(this, 'override_modifier'), tree); },
-    readonlyMarker() { return drillIn(readRawField(this, 'readonly_marker'), tree); },
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    accessorKind() { return drillIn(readRawField(this, 'accessor_kind'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    optionalMarker() { return drillIn(readRawField(this, 'optional_marker'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
+    staticMarker() { return drillIn(this._static_marker, tree); },
+    overrideModifier() { return drillIn(this._override_modifier, tree); },
+    readonlyMarker() { return drillIn(this._readonly_marker, tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    accessorKind() { return drillIn(this._accessor_kind, tree); },
+    name() { return drillIn(this._name, tree); },
+    optionalMarker() { return drillIn(this._optional_marker, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      accessibilityModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: v, staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      staticMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: v, overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      overrideModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: v, readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      readonlyMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: v, asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: v, accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      accessorKind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: v, name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: v, optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      optionalMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType(), body: _node.body() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType(), body: _node.body() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodDefinition']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType(), body: v }),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodDefinition({ ...data, _accessibility_modifier: v } as _NodeData, tree),
+      staticMarker: (v: T.StaticMarker) => wrapMethodDefinition({ ...data, _static_marker: v } as _NodeData, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapMethodDefinition({ ...data, _override_modifier: v } as _NodeData, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodDefinition({ ...data, _readonly_marker: v } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapMethodDefinition({ ...data, _async_marker: v } as _NodeData, tree),
+      accessorKind: (v: T.AccessorKind) => wrapMethodDefinition({ ...data, _accessor_kind: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapMethodDefinition({ ...data, _name: v } as _NodeData, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapMethodDefinition({ ...data, _optional_marker: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapMethodDefinition({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapMethodDefinition({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodDefinition({ ...data, _return_type: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapMethodDefinition({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2022,29 +2023,29 @@ export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): AnyNodeD
     _parameters: readRawField(data, 'parameters'),
     _return_type: readRawField(data, 'return_type'),
 
-    accessibilityModifier() { return drillIn(readRawField(this, 'accessibility_modifier'), tree); },
-    staticMarker() { return drillIn(readRawField(this, 'static_marker'), tree); },
-    overrideModifier() { return drillIn(readRawField(this, 'override_modifier'), tree); },
-    readonlyMarker() { return drillIn(readRawField(this, 'readonly_marker'), tree); },
-    asyncMarker() { return drillIn(readRawField(this, 'async_marker'), tree); },
-    accessorKind() { return drillIn(readRawField(this, 'accessor_kind'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    optionalMarker() { return drillIn(readRawField(this, 'optional_marker'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    parameters() { return drillIn(readRawField(this, 'parameters'), tree); },
-    returnType() { return drillIn(readRawField(this, 'return_type'), tree); },
+    accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
+    staticMarker() { return drillIn(this._static_marker, tree); },
+    overrideModifier() { return drillIn(this._override_modifier, tree); },
+    readonlyMarker() { return drillIn(this._readonly_marker, tree); },
+    asyncMarker() { return drillIn(this._async_marker, tree); },
+    accessorKind() { return drillIn(this._accessor_kind, tree); },
+    name() { return drillIn(this._name, tree); },
+    optionalMarker() { return drillIn(this._optional_marker, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    parameters() { return drillIn(this._parameters, tree); },
+    returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      accessibilityModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: v, staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      staticMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: v, overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      overrideModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: v, readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      readonlyMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: v, asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      asyncMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: v, accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      accessorKind: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: v, name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: v, optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      optionalMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: v, typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: _node.returnType() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: v, parameters: _node.parameters(), returnType: _node.returnType() }),
-      parameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: v, returnType: _node.returnType() }),
-      returnType: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['methodSignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), asyncMarker: _node.asyncMarker(), accessorKind: _node.accessorKind(), name: _node.name(), optionalMarker: _node.optionalMarker(), typeParameters: _node.typeParameters(), parameters: _node.parameters(), returnType: v }),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodSignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
+      staticMarker: (v: T.StaticMarker) => wrapMethodSignature({ ...data, _static_marker: v } as _NodeData, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapMethodSignature({ ...data, _override_modifier: v } as _NodeData, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodSignature({ ...data, _readonly_marker: v } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapMethodSignature({ ...data, _async_marker: v } as _NodeData, tree),
+      accessorKind: (v: T.AccessorKind) => wrapMethodSignature({ ...data, _accessor_kind: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapMethodSignature({ ...data, _name: v } as _NodeData, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapMethodSignature({ ...data, _optional_marker: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapMethodSignature({ ...data, _type_parameters: v } as _NodeData, tree),
+      parameters: (v: T.FormalParameters) => wrapMethodSignature({ ...data, _parameters: v } as _NodeData, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodSignature({ ...data, _return_type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2057,11 +2058,11 @@ export function wrapModule(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _name: readRawField(data, 'name'),
     _body: readRawField(data, 'body'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    name() { return drillIn(this._name, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['module']!({ name: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['module']!({ name: _node.name(), body: v }),
+      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapModule({ ...data, _name: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapModule({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2073,7 +2074,7 @@ export function wrapNamedImports(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.NamedImports as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['namedImports']!(...vs) },
+    $with: { $children: (...vs: T.ImportSpecifier[]) => wrapNamedImports({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2084,7 +2085,7 @@ export function wrapNamespaceExport(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.NamespaceExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['namespaceExport']!(v) },
+    $with: { $child: (v: T.ModuleExportName) => wrapNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2095,9 +2096,9 @@ export function wrapNamespaceImport(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.NamespaceImport as const,
     _identifier: readRawField(data, 'identifier'),
 
-    identifier() { return drillIn(readRawField(this, 'identifier'), tree); },
+    identifier() { return drillIn(this._identifier, tree); },
     $with: {
-      identifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['namespaceImport']!({ identifier: v }),
+      identifier: (v: T.Identifier) => wrapNamespaceImport({ ...data, _identifier: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2110,11 +2111,11 @@ export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): AnyNode
     _object: readRawField(data, 'object'),
     _property: readRawField(data, 'property'),
 
-    object() { return drillAs(readRawField(this, 'object'), tree, "member_expression", "nested_identifier"); },
-    property() { return drillAs(readRawField(this, 'property'), tree, "property_identifier", "identifier"); },
+    object() { return drillAs(this._object, tree, "member_expression", "nested_identifier"); },
+    property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['nestedIdentifier']!({ object: v, property: _node.property() }),
-      property: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['nestedIdentifier']!({ object: _node.object(), property: v }),
+      object: (v: T.Identifier | T.NestedIdentifier) => wrapNestedIdentifier({ ...data, _object: v } as _NodeData, tree),
+      property: (v: T.Identifier) => wrapNestedIdentifier({ ...data, _property: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2127,11 +2128,11 @@ export function wrapNestedTypeIdentifier(data: _NodeData, tree: TreeHandle): Any
     _module: readRawField(data, 'module'),
     _name: readRawField(data, 'name'),
 
-    module() { return drillIn(readRawField(this, 'module'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
+    module() { return drillIn(this._module, tree); },
+    name() { return drillIn(this._name, tree); },
     $with: {
-      module: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['nestedTypeIdentifier']!({ module: v, name: _node.name() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['nestedTypeIdentifier']!({ module: _node.module(), name: v }),
+      module: (v: T.Identifier | T.NestedIdentifier) => wrapNestedTypeIdentifier({ ...data, _module: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapNestedTypeIdentifier({ ...data, _name: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2145,13 +2146,13 @@ export function wrapNewExpression(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _type_arguments: readRawField(data, 'type_arguments'),
     _arguments: readRawField(data, 'arguments'),
 
-    constructor() { return drillIn(readRawField(this, 'constructor'), tree); },
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
-    arguments() { return drillIn(readRawField(this, 'arguments'), tree); },
+    constructor() { return drillIn(this._constructor, tree); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
+    arguments() { return drillIn(this._arguments, tree); },
     $with: {
-      constructor: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['newExpression']!({ constructor: v, typeArguments: _node.typeArguments(), arguments: _node.arguments() }),
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['newExpression']!({ constructor: _node.constructor(), typeArguments: v, arguments: _node.arguments() }),
-      arguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['newExpression']!({ constructor: _node.constructor(), typeArguments: _node.typeArguments(), arguments: v }),
+      constructor: (v: T.PrimaryExpression) => wrapNewExpression({ ...data, _constructor: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapNewExpression({ ...data, _type_arguments: v } as _NodeData, tree),
+      arguments: (v: T.Arguments) => wrapNewExpression({ ...data, _arguments: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2163,9 +2164,9 @@ export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.NonNullExpression as const,
     _expression: readRawField(data, 'expression'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['nonNullExpression']!({ expression: v }),
+      expression: (v: T.Expression) => wrapNonNullExpression({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2177,7 +2178,7 @@ export function wrapObject(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.Object as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['object']!(...vs) },
+    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => wrapObject({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2189,11 +2190,11 @@ export function wrapObjectAssignmentPattern(data: _NodeData, tree: TreeHandle): 
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillAs(readRawField(this, 'left'), tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillAs(this._left, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['objectAssignmentPattern']!({ left: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['objectAssignmentPattern']!({ left: _node.left(), right: v }),
+      left: (v: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) => wrapObjectAssignmentPattern({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Expression) => wrapObjectAssignmentPattern({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2205,7 +2206,7 @@ export function wrapObjectPattern(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.ObjectPattern as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['objectPattern']!(...vs) },
+    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => wrapObjectPattern({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2218,13 +2219,13 @@ export function wrapObjectType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _members: readRawField(data, 'members'),
     _closing: readRawField(data, 'closing'),
 
-    opening() { return drillIn(readRawField(this, 'opening'), tree); },
-    members() { return drillInAll(readRawField(this, 'members'), tree); },
-    closing() { return drillIn(readRawField(this, 'closing'), tree); },
+    opening() { return drillIn(this._opening, tree); },
+    members() { return drillInAll(this._members, tree); },
+    closing() { return drillIn(this._closing, tree); },
     $with: {
-      opening: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['objectType']!({ opening: v, members: _node.members(), closing: _node.closing() }),
-      members: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['objectType']!({ opening: _node.opening(), members: v, closing: _node.closing() }),
-      closing: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['objectType']!({ opening: _node.opening(), members: _node.members(), closing: v }),
+      opening: (v: T.ObjectTypeOpening) => wrapObjectType({ ...data, _opening: v } as _NodeData, tree),
+      members: (v: "," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon) => wrapObjectType({ ...data, _members: v } as _NodeData, tree),
+      closing: (v: T.ObjectTypeClosing) => wrapObjectType({ ...data, _closing: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2236,9 +2237,9 @@ export function wrapOmittingTypeAnnotation(data: _NodeData, tree: TreeHandle): A
     $type: TSKindId.OmittingTypeAnnotation as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['omittingTypeAnnotation']!({ type: v }),
+      typeField: (v: T.Type) => wrapOmittingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2250,9 +2251,9 @@ export function wrapOptingTypeAnnotation(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.OptingTypeAnnotation as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optingTypeAnnotation']!({ type: v }),
+      typeField: (v: T.Type) => wrapOptingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2269,18 +2270,18 @@ export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): AnyNod
     _value: readRawField(data, 'value'),
     $children: data.$children,
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    readonlyMarker() { return drillIn(readRawField(this, 'readonly_marker'), tree); },
-    pattern() { return drillIn(readRawField(this, 'pattern'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    readonlyMarker() { return drillIn(this._readonly_marker, tree); },
+    pattern() { return drillIn(this._pattern, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: v, readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      readonlyMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: _node.decorator(), readonlyMarker: v, pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      pattern: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: v, type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: v, value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: items }),
+      decorator: (v: T.Decorator) => wrapOptionalParameter({ ...data, _decorator: v } as _NodeData, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapOptionalParameter({ ...data, _readonly_marker: v } as _NodeData, tree),
+      pattern: (v: T.Pattern | T.This) => wrapOptionalParameter({ ...data, _pattern: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapOptionalParameter({ ...data, _type: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapOptionalParameter({ ...data, _value: v } as _NodeData, tree),
+      children: (...items: (T.AccessibilityModifier | T.OverrideModifier)[]) => wrapOptionalParameter({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2293,11 +2294,11 @@ export function wrapOptionalTupleParameter(data: _NodeData, tree: TreeHandle): A
     _name: readRawField(data, 'name'),
     _type: readRawField(data, 'type'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalTupleParameter']!({ name: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalTupleParameter']!({ name: _node.name(), type: v }),
+      name: (v: T.Identifier) => wrapOptionalTupleParameter({ ...data, _name: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapOptionalTupleParameter({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2309,9 +2310,9 @@ export function wrapOptionalType(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.OptionalType as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['optionalType']!({ type: v }),
+      typeField: (v: T.Type) => wrapOptionalType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2324,11 +2325,11 @@ export function wrapPair(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _key: readRawField(data, 'key'),
     _value: readRawField(data, 'value'),
 
-    key() { return drillIn(readRawField(this, 'key'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    key() { return drillIn(this._key, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      key: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['pair']!({ key: v, value: _node.value() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['pair']!({ key: _node.key(), value: v }),
+      key: (v: T.PropertyName) => wrapPair({ ...data, _key: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapPair({ ...data, _value: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2341,11 +2342,11 @@ export function wrapPairPattern(data: _NodeData, tree: TreeHandle): AnyNodeData 
     _key: readRawField(data, 'key'),
     _value: readRawField(data, 'value'),
 
-    key() { return drillIn(readRawField(this, 'key'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    key() { return drillIn(this._key, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      key: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['pairPattern']!({ key: v, value: _node.value() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['pairPattern']!({ key: _node.key(), value: v }),
+      key: (v: T.PropertyName) => wrapPairPattern({ ...data, _key: v } as _NodeData, tree),
+      value: (v: T.Pattern | T.AssignmentPattern) => wrapPairPattern({ ...data, _value: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2356,7 +2357,7 @@ export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeH
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['parenthesizedExpressionSequence']!(v) },
+    $with: { $child: (v: T.SequenceExpression) => wrapParenthesizedExpressionSequence({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2368,7 +2369,7 @@ export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): 
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['parenthesizedExpression']!({ children: items }),
+      children: (...items: (T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence)[]) => wrapParenthesizedExpression({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2380,9 +2381,9 @@ export function wrapParenthesizedType(data: _NodeData, tree: TreeHandle): AnyNod
     $type: TSKindId.ParenthesizedType as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['parenthesizedType']!({ type: v }),
+      typeField: (v: T.Type) => wrapParenthesizedType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2395,11 +2396,11 @@ export function wrapProgram(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _hash_bang_line: readRawField(data, 'hash_bang_line'),
     _statements: readRawField(data, 'statements'),
 
-    hashBangLine() { return drillIn(readRawField(this, 'hash_bang_line'), tree); },
-    statements() { return drillInAll(readRawField(this, 'statements'), tree); },
+    hashBangLine() { return drillIn(this._hash_bang_line, tree); },
+    statements() { return drillInAll(this._statements, tree); },
     $with: {
-      hashBangLine: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['program']!({ hashBangLine: v, statements: _node.statements() }),
-      statements: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['program']!({ hashBangLine: _node.hashBangLine(), statements: v }),
+      hashBangLine: (v: T.HashBangLine) => wrapProgram({ ...data, _hash_bang_line: v } as _NodeData, tree),
+      statements: (v: T.Statement) => wrapProgram({ ...data, _statements: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2417,21 +2418,21 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): AnyNod
     _optional_marker: readRawField(data, 'optional_marker'),
     _type: readRawField(data, 'type'),
 
-    accessibilityModifier() { return drillIn(readRawField(this, 'accessibility_modifier'), tree); },
-    staticMarker() { return drillIn(readRawField(this, 'static_marker'), tree); },
-    overrideModifier() { return drillIn(readRawField(this, 'override_modifier'), tree); },
-    readonlyMarker() { return drillIn(readRawField(this, 'readonly_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    optionalMarker() { return drillIn(readRawField(this, 'optional_marker'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    accessibilityModifier() { return drillIn(this._accessibility_modifier, tree); },
+    staticMarker() { return drillIn(this._static_marker, tree); },
+    overrideModifier() { return drillIn(this._override_modifier, tree); },
+    readonlyMarker() { return drillIn(this._readonly_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    optionalMarker() { return drillIn(this._optional_marker, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      accessibilityModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: v, staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), name: _node.name(), optionalMarker: _node.optionalMarker(), type: _node.typeField() }),
-      staticMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: v, overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), name: _node.name(), optionalMarker: _node.optionalMarker(), type: _node.typeField() }),
-      overrideModifier: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: v, readonlyMarker: _node.readonlyMarker(), name: _node.name(), optionalMarker: _node.optionalMarker(), type: _node.typeField() }),
-      readonlyMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: v, name: _node.name(), optionalMarker: _node.optionalMarker(), type: _node.typeField() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), name: v, optionalMarker: _node.optionalMarker(), type: _node.typeField() }),
-      optionalMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), name: _node.name(), optionalMarker: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['propertySignature']!({ accessibilityModifier: _node.accessibilityModifier(), staticMarker: _node.staticMarker(), overrideModifier: _node.overrideModifier(), readonlyMarker: _node.readonlyMarker(), name: _node.name(), optionalMarker: _node.optionalMarker(), type: v }),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapPropertySignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
+      staticMarker: (v: T.StaticMarker) => wrapPropertySignature({ ...data, _static_marker: v } as _NodeData, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapPropertySignature({ ...data, _override_modifier: v } as _NodeData, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapPropertySignature({ ...data, _readonly_marker: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapPropertySignature({ ...data, _name: v } as _NodeData, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapPropertySignature({ ...data, _optional_marker: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapPropertySignature({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2448,18 +2449,18 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): An
     _value: readRawField(data, 'value'),
     $children: data.$children,
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    optionalityMarker() { return drillIn(readRawField(this, 'optionality_marker'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    name() { return drillIn(this._name, tree); },
+    optionalityMarker() { return drillIn(this._optionality_marker, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: v, name: _node.name(), optionalityMarker: _node.optionalityMarker(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: _node.decorator(), name: v, optionalityMarker: _node.optionalityMarker(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      optionalityMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: _node.decorator(), name: _node.name(), optionalityMarker: v, type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: _node.decorator(), name: _node.name(), optionalityMarker: _node.optionalityMarker(), type: v, value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: _node.decorator(), name: _node.name(), optionalityMarker: _node.optionalityMarker(), type: _node.typeField(), value: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['publicFieldDefinition']!({ decorator: _node.decorator(), name: _node.name(), optionalityMarker: _node.optionalityMarker(), type: _node.typeField(), value: _node.value(), children: items }),
+      decorator: (v: T.Decorator) => wrapPublicFieldDefinition({ ...data, _decorator: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapPublicFieldDefinition({ ...data, _name: v } as _NodeData, tree),
+      optionalityMarker: (v: T.PublicFieldDefinitionOptionalityMarker) => wrapPublicFieldDefinition({ ...data, _optionality_marker: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapPublicFieldDefinition({ ...data, _type: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapPublicFieldDefinition({ ...data, _value: v } as _NodeData, tree),
+      children: (...items: (T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt)[]) => wrapPublicFieldDefinition({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2471,9 +2472,9 @@ export function wrapReadonlyType(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.ReadonlyType as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['readonlyType']!({ type: v }),
+      typeField: (v: T.Type) => wrapReadonlyType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2486,11 +2487,11 @@ export function wrapRegex(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _pattern: readRawField(data, 'pattern'),
     _flags: readRawField(data, 'flags'),
 
-    pattern() { return drillIn(readRawField(this, 'pattern'), tree); },
-    flags() { return drillIn(readRawField(this, 'flags'), tree); },
+    pattern() { return drillIn(this._pattern, tree); },
+    flags() { return drillIn(this._flags, tree); },
     $with: {
-      pattern: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['regex']!({ pattern: v, flags: _node.flags() }),
-      flags: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['regex']!({ pattern: _node.pattern(), flags: v }),
+      pattern: (v: T.RegexPattern) => wrapRegex({ ...data, _pattern: v } as _NodeData, tree),
+      flags: (v: T.RegexFlags) => wrapRegex({ ...data, _flags: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2507,18 +2508,18 @@ export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): AnyNod
     _value: readRawField(data, 'value'),
     $children: data.$children,
 
-    decorator() { return drillInAll(readRawField(this, 'decorator'), tree); },
-    readonlyMarker() { return drillIn(readRawField(this, 'readonly_marker'), tree); },
-    pattern() { return drillIn(readRawField(this, 'pattern'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    decorator() { return drillInAll(this._decorator, tree); },
+    readonlyMarker() { return drillIn(this._readonly_marker, tree); },
+    pattern() { return drillIn(this._pattern, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: v, readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      readonlyMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: _node.decorator(), readonlyMarker: v, pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      pattern: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: v, type: _node.typeField(), value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: v, value: _node.value(), children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['requiredParameter']!({ decorator: _node.decorator(), readonlyMarker: _node.readonlyMarker(), pattern: _node.pattern(), type: _node.typeField(), value: _node.value(), children: items }),
+      decorator: (v: T.Decorator) => wrapRequiredParameter({ ...data, _decorator: v } as _NodeData, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapRequiredParameter({ ...data, _readonly_marker: v } as _NodeData, tree),
+      pattern: (v: T.Pattern | T.This) => wrapRequiredParameter({ ...data, _pattern: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapRequiredParameter({ ...data, _type: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapRequiredParameter({ ...data, _value: v } as _NodeData, tree),
+      children: (...items: (T.AccessibilityModifier | T.OverrideModifier)[]) => wrapRequiredParameter({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2530,7 +2531,7 @@ export function wrapRestPattern(data: _NodeData, tree: TreeHandle): AnyNodeData 
     $type: TSKindId.RestPattern as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['restPattern']!(v) },
+    $with: { $child: (v: T.LhsExpression) => wrapRestPattern({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2541,9 +2542,9 @@ export function wrapRestType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.RestType as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['restType']!({ type: v }),
+      typeField: (v: T.Type) => wrapRestType({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2556,10 +2557,10 @@ export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     _semicolon: readRawField(data, 'semicolon'),
     $children: data.$children,
 
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['returnStatement']!({ semicolon: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['returnStatement']!({ semicolon: _node.semicolon(), children: items }),
+      semicolon: (v: T.Semicolon) => wrapReturnStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      children: (...items: T.Expressions[]) => wrapReturnStatement({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2572,11 +2573,11 @@ export function wrapSatisfiesExpression(data: _NodeData, tree: TreeHandle): AnyN
     _expression: readRawField(data, 'expression'),
     _type_annotation: readRawField(data, 'type_annotation'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
-    typeAnnotation() { return drillIn(readRawField(this, 'type_annotation'), tree); },
+    expression() { return drillIn(this._expression, tree); },
+    typeAnnotation() { return drillIn(this._type_annotation, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['satisfiesExpression']!({ expression: v, typeAnnotation: _node.typeAnnotation() }),
-      typeAnnotation: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['satisfiesExpression']!({ expression: _node.expression(), typeAnnotation: v }),
+      expression: (v: T.Expression) => wrapSatisfiesExpression({ ...data, _expression: v } as _NodeData, tree),
+      typeAnnotation: (v: T.Type) => wrapSatisfiesExpression({ ...data, _type_annotation: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2588,7 +2589,7 @@ export function wrapSequenceExpression(data: _NodeData, tree: TreeHandle): AnyNo
     $type: TSKindId.SequenceExpression as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['sequenceExpression']!(...vs) },
+    $with: { $children: (...vs: T.Expression[]) => wrapSequenceExpression({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2599,9 +2600,9 @@ export function wrapSpreadElement(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.SpreadElement as const,
     _expression: readRawField(data, 'expression'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['spreadElement']!({ expression: v }),
+      expression: (v: T.Expression) => wrapSpreadElement({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2614,11 +2615,11 @@ export function wrapStatementBlock(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _statements: readRawField(data, 'statements'),
     _automatic_semicolon: readRawField(data, 'automatic_semicolon'),
 
-    statements() { return drillInAll(readRawField(this, 'statements'), tree); },
-    automaticSemicolon() { return drillIn(readRawField(this, 'automatic_semicolon'), tree); },
+    statements() { return drillInAll(this._statements, tree); },
+    automaticSemicolon() { return drillIn(this._automatic_semicolon, tree); },
     $with: {
-      statements: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['statementBlock']!({ statements: v, automaticSemicolon: _node.automaticSemicolon() }),
-      automaticSemicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['statementBlock']!({ statements: _node.statements(), automaticSemicolon: v }),
+      statements: (v: T.Statement) => wrapStatementBlock({ ...data, _statements: v } as _NodeData, tree),
+      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapStatementBlock({ ...data, _automatic_semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2629,7 +2630,7 @@ export function wrapStringDouble(data: _NodeData, tree: TreeHandle): AnyNodeData
     ...data,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['stringDouble']!(...vs) },
+    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => wrapStringDouble({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2639,7 +2640,7 @@ export function wrapStringSingle(data: _NodeData, tree: TreeHandle): AnyNodeData
     ...data,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['stringSingle']!(...vs) },
+    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => wrapStringSingle({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2651,7 +2652,7 @@ export function wrapString(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['string']!({ children: items }),
+      children: (...items: (T._StringDouble | T._StringSingle)[]) => wrapString({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2665,13 +2666,13 @@ export function wrapSubscriptExpression(data: _NodeData, tree: TreeHandle): AnyN
     _optional_chain: readRawField(data, 'optional_chain'),
     _index: readRawField(data, 'index'),
 
-    object() { return drillIn(readRawField(this, 'object'), tree); },
-    optionalChain() { return drillIn(readRawField(this, 'optional_chain'), tree); },
-    index() { return drillIn(readRawField(this, 'index'), tree); },
+    object() { return drillIn(this._object, tree); },
+    optionalChain() { return drillIn(this._optional_chain, tree); },
+    index() { return drillIn(this._index, tree); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['subscriptExpression']!({ object: v, optionalChain: _node.optionalChain(), index: _node.index() }),
-      optionalChain: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['subscriptExpression']!({ object: _node.object(), optionalChain: v, index: _node.index() }),
-      index: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['subscriptExpression']!({ object: _node.object(), optionalChain: _node.optionalChain(), index: v }),
+      object: (v: T.Expression | T.PrimaryExpression) => wrapSubscriptExpression({ ...data, _object: v } as _NodeData, tree),
+      optionalChain: (v: T.OptionalChain) => wrapSubscriptExpression({ ...data, _optional_chain: v } as _NodeData, tree),
+      index: (v: T.Expressions) => wrapSubscriptExpression({ ...data, _index: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2683,7 +2684,7 @@ export function wrapSwitchBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.SwitchBody as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['switchBody']!(...vs) },
+    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => wrapSwitchBody({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2695,11 +2696,11 @@ export function wrapSwitchCase(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _value: readRawField(data, 'value'),
     _body: readRawField(data, 'body'),
 
-    value() { return drillIn(readRawField(this, 'value'), tree); },
-    body() { return drillInAll(readRawField(this, 'body'), tree); },
+    value() { return drillIn(this._value, tree); },
+    body() { return drillInAll(this._body, tree); },
     $with: {
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['switchCase']!({ value: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['switchCase']!({ value: _node.value(), body: v }),
+      value: (v: T.Expressions) => wrapSwitchCase({ ...data, _value: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapSwitchCase({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2711,9 +2712,9 @@ export function wrapSwitchDefault(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.SwitchDefault as const,
     _body: readRawField(data, 'body'),
 
-    body() { return drillInAll(readRawField(this, 'body'), tree); },
+    body() { return drillInAll(this._body, tree); },
     $with: {
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['switchDefault']!({ body: v }),
+      body: (v: T.Statement) => wrapSwitchDefault({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2726,11 +2727,11 @@ export function wrapSwitchStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     _value: readRawField(data, 'value'),
     _body: readRawField(data, 'body'),
 
-    value() { return drillIn(readRawField(this, 'value'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    value() { return drillIn(this._value, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['switchStatement']!({ value: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['switchStatement']!({ value: _node.value(), body: v }),
+      value: (v: T.ParenthesizedExpression) => wrapSwitchStatement({ ...data, _value: v } as _NodeData, tree),
+      body: (v: T.SwitchBody) => wrapSwitchStatement({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2742,7 +2743,7 @@ export function wrapTemplateLiteralType(data: _NodeData, tree: TreeHandle): AnyN
     $type: TSKindId.TemplateLiteralType as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['templateLiteralType']!(...vs) },
+    $with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => wrapTemplateLiteralType({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2753,7 +2754,7 @@ export function wrapTemplateString(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TemplateString as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['templateString']!(...vs) },
+    $with: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => wrapTemplateString({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2764,7 +2765,7 @@ export function wrapTemplateSubstitution(data: _NodeData, tree: TreeHandle): Any
     $type: TSKindId.TemplateSubstitution as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['templateSubstitution']!(v) },
+    $with: { $child: (v: T.Expressions) => wrapTemplateSubstitution({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2775,7 +2776,7 @@ export function wrapTemplateType(data: _NodeData, tree: TreeHandle): AnyNodeData
     $type: TSKindId.TemplateType as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['templateType']!(v) },
+    $with: { $child: (v: (T.PrimaryType | T.InferType)) => wrapTemplateType({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2788,13 +2789,13 @@ export function wrapTernaryExpression(data: _NodeData, tree: TreeHandle): AnyNod
     _consequence: readRawField(data, 'consequence'),
     _alternative: readRawField(data, 'alternative'),
 
-    condition() { return drillIn(readRawField(this, 'condition'), tree); },
-    consequence() { return drillIn(readRawField(this, 'consequence'), tree); },
-    alternative() { return drillIn(readRawField(this, 'alternative'), tree); },
+    condition() { return drillIn(this._condition, tree); },
+    consequence() { return drillIn(this._consequence, tree); },
+    alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      condition: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ternaryExpression']!({ condition: v, consequence: _node.consequence(), alternative: _node.alternative() }),
-      consequence: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ternaryExpression']!({ condition: _node.condition(), consequence: v, alternative: _node.alternative() }),
-      alternative: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['ternaryExpression']!({ condition: _node.condition(), consequence: _node.consequence(), alternative: v }),
+      condition: (v: T.Expression) => wrapTernaryExpression({ ...data, _condition: v } as _NodeData, tree),
+      consequence: (v: T.Expression) => wrapTernaryExpression({ ...data, _consequence: v } as _NodeData, tree),
+      alternative: (v: T.Expression) => wrapTernaryExpression({ ...data, _alternative: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2807,10 +2808,10 @@ export function wrapThrowStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _semicolon: readRawField(data, 'semicolon'),
     $children: data.$children,
 
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['throwStatement']!({ semicolon: v, children: Array.isArray(_node.$children) ? _node.$children : [] }),
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['throwStatement']!({ semicolon: _node.semicolon(), children: items }),
+      semicolon: (v: T.Semicolon) => wrapThrowStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      children: (...items: T.Expressions[]) => wrapThrowStatement({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -2824,13 +2825,13 @@ export function wrapTryStatement(data: _NodeData, tree: TreeHandle): AnyNodeData
     _handler: readRawField(data, 'handler'),
     _finalizer: readRawField(data, 'finalizer'),
 
-    body() { return drillIn(readRawField(this, 'body'), tree); },
-    handler() { return drillIn(readRawField(this, 'handler'), tree); },
-    finalizer() { return drillIn(readRawField(this, 'finalizer'), tree); },
+    body() { return drillIn(this._body, tree); },
+    handler() { return drillIn(this._handler, tree); },
+    finalizer() { return drillIn(this._finalizer, tree); },
     $with: {
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['tryStatement']!({ body: v, handler: _node.handler(), finalizer: _node.finalizer() }),
-      handler: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['tryStatement']!({ body: _node.body(), handler: v, finalizer: _node.finalizer() }),
-      finalizer: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['tryStatement']!({ body: _node.body(), handler: _node.handler(), finalizer: v }),
+      body: (v: T.StatementBlock) => wrapTryStatement({ ...data, _body: v } as _NodeData, tree),
+      handler: (v: T.CatchClause) => wrapTryStatement({ ...data, _handler: v } as _NodeData, tree),
+      finalizer: (v: T.FinallyClause) => wrapTryStatement({ ...data, _finalizer: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2843,11 +2844,11 @@ export function wrapTupleParameter(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _name: readRawField(data, 'name'),
     _type: readRawField(data, 'type'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['tupleParameter']!({ name: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['tupleParameter']!({ name: _node.name(), type: v }),
+      name: (v: T.Identifier | T.RestPattern) => wrapTupleParameter({ ...data, _name: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapTupleParameter({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2859,7 +2860,7 @@ export function wrapTupleType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.TupleType as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['tupleType']!(...vs) },
+    $with: { $children: (...vs: T.TupleTypeMember[]) => wrapTupleType({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2873,15 +2874,15 @@ export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): Any
     _value: readRawField(data, 'value'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeParameters() { return drillIn(readRawField(this, 'type_parameters'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeParameters() { return drillIn(this._type_parameters, tree); },
+    value() { return drillIn(this._value, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAliasDeclaration']!({ name: v, typeParameters: _node.typeParameters(), value: _node.value(), semicolon: _node.semicolon() }),
-      typeParameters: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAliasDeclaration']!({ name: _node.name(), typeParameters: v, value: _node.value(), semicolon: _node.semicolon() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAliasDeclaration']!({ name: _node.name(), typeParameters: _node.typeParameters(), value: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAliasDeclaration']!({ name: _node.name(), typeParameters: _node.typeParameters(), value: _node.value(), semicolon: v }),
+      name: (v: T.TypeIdentifier) => wrapTypeAliasDeclaration({ ...data, _name: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapTypeAliasDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
+      value: (v: T.Type) => wrapTypeAliasDeclaration({ ...data, _value: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapTypeAliasDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2893,9 +2894,9 @@ export function wrapTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TypeAnnotation as const,
     _type: readRawField(data, 'type'),
 
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAnnotation']!({ type: v }),
+      typeField: (v: T.Type) => wrapTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2907,7 +2908,7 @@ export function wrapTypeArguments(data: _NodeData, tree: TreeHandle): AnyNodeDat
     $type: TSKindId.TypeArguments as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeArguments']!(...vs) },
+    $with: { $children: (...vs: T.Type[]) => wrapTypeArguments({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2919,11 +2920,11 @@ export function wrapTypeAssertion(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _type_arguments: readRawField(data, 'type_arguments'),
     _expression: readRawField(data, 'expression'),
 
-    typeArguments() { return drillIn(readRawField(this, 'type_arguments'), tree); },
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    typeArguments() { return drillIn(this._type_arguments, tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      typeArguments: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAssertion']!({ typeArguments: v, expression: _node.expression() }),
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeAssertion']!({ typeArguments: _node.typeArguments(), expression: v }),
+      typeArguments: (v: T.TypeArguments) => wrapTypeAssertion({ ...data, _type_arguments: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapTypeAssertion({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2938,15 +2939,15 @@ export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _constraint: readRawField(data, 'constraint'),
     _value: readRawField(data, 'value'),
 
-    constMarker() { return drillIn(readRawField(this, 'const_marker'), tree); },
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    constraint() { return drillIn(readRawField(this, 'constraint'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    constMarker() { return drillIn(this._const_marker, tree); },
+    name() { return drillIn(this._name, tree); },
+    constraint() { return drillIn(this._constraint, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      constMarker: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeParameter']!({ constMarker: v, name: _node.name(), constraint: _node.constraint(), value: _node.value() }),
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeParameter']!({ constMarker: _node.constMarker(), name: v, constraint: _node.constraint(), value: _node.value() }),
-      constraint: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeParameter']!({ constMarker: _node.constMarker(), name: _node.name(), constraint: v, value: _node.value() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typeParameter']!({ constMarker: _node.constMarker(), name: _node.name(), constraint: _node.constraint(), value: v }),
+      constMarker: (v: T.ConstMarker) => wrapTypeParameter({ ...data, _const_marker: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapTypeParameter({ ...data, _name: v } as _NodeData, tree),
+      constraint: (v: T.Constraint) => wrapTypeParameter({ ...data, _constraint: v } as _NodeData, tree),
+      value: (v: T.DefaultType) => wrapTypeParameter({ ...data, _value: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2958,7 +2959,7 @@ export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): AnyNodeDa
     $type: TSKindId.TypeParameters as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: unknown[]) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeParameters']!(...vs) },
+    $with: { $children: (...vs: T.TypeParameter[]) => wrapTypeParameters({ ...data, $children: vs } as _NodeData, tree) },
   });
   return _node;
 }
@@ -2970,11 +2971,11 @@ export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _name: readRawField(data, 'name'),
     _type: readRawField(data, 'type'),
 
-    name() { return drillAs(readRawField(this, 'name'), tree, "identifier", "predefined_type"); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
+    name() { return drillAs(this._name, tree, "identifier", "predefined_type"); },
+    typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typePredicate']!({ name: v, type: _node.typeField() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typePredicate']!({ name: _node.name(), type: v }),
+      name: (v: T.PredefinedType | T.This) => wrapTypePredicate({ ...data, _name: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapTypePredicate({ ...data, _type: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -2986,9 +2987,9 @@ export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): 
     $type: TSKindId.TypePredicateAnnotation as const,
     _type_predicate: readRawField(data, 'type_predicate'),
 
-    typePredicate() { return drillIn(readRawField(this, 'type_predicate'), tree); },
+    typePredicate() { return drillIn(this._type_predicate, tree); },
     $with: {
-      typePredicate: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['typePredicateAnnotation']!({ typePredicate: v }),
+      typePredicate: (v: T.AssertsAnnotationAsserts | T.TypePredicate) => wrapTypePredicateAnnotation({ ...data, _type_predicate: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3000,7 +3001,7 @@ export function wrapTypeQuery(data: _NodeData, tree: TreeHandle): AnyNodeData {
     $type: TSKindId.TypeQuery as const,
     $children: data.$children,
 
-    $with: { $child: (v: unknown) => (_factories as unknown as Record<string, (...a: unknown[]) => AnyNodeData>)['typeQuery']!(v) },
+    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => wrapTypeQuery({ ...data, $children: [v] } as _NodeData, tree) },
   });
   return _node;
 }
@@ -3012,11 +3013,11 @@ export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     _operator: readRawField(data, 'operator'),
     _argument: readRawField(data, 'argument'),
 
-    operator() { return drillIn(readRawField(this, 'operator'), tree); },
-    argument() { return drillIn(readRawField(this, 'argument'), tree); },
+    operator() { return drillIn(this._operator, tree); },
+    argument() { return drillIn(this._argument, tree); },
     $with: {
-      operator: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['unaryExpression']!({ operator: v, argument: _node.argument() }),
-      argument: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['unaryExpression']!({ operator: _node.operator(), argument: v }),
+      operator: (v: T.UnaryExpressionOperator) => wrapUnaryExpression({ ...data, _operator: v } as _NodeData, tree),
+      argument: (v: T.Expression) => wrapUnaryExpression({ ...data, _argument: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3029,11 +3030,11 @@ export function wrapUnionType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     _left: readRawField(data, 'left'),
     _right: readRawField(data, 'right'),
 
-    left() { return drillIn(readRawField(this, 'left'), tree); },
-    right() { return drillIn(readRawField(this, 'right'), tree); },
+    left() { return drillIn(this._left, tree); },
+    right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['unionType']!({ left: v, right: _node.right() }),
-      right: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['unionType']!({ left: _node.left(), right: v }),
+      left: (v: T.Type) => wrapUnionType({ ...data, _left: v } as _NodeData, tree),
+      right: (v: T.Type) => wrapUnionType({ ...data, _right: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3046,7 +3047,7 @@ export function wrapUpdateExpression(data: _NodeData, tree: TreeHandle): AnyNode
     $children: data.$children,
 
     $with: {
-      children: (...items: unknown[]) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['updateExpression']!({ children: items }),
+      children: (...items: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)[]) => wrapUpdateExpression({ ...data, $children: items } as _NodeData, tree),
     },
   });
   return _node;
@@ -3059,11 +3060,11 @@ export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle): AnyN
     _declarators: readRawField(data, 'declarators'),
     _semicolon: readRawField(data, 'semicolon'),
 
-    declarators() { return drillInAll(readRawField(this, 'declarators'), tree); },
-    semicolon() { return drillIn(readRawField(this, 'semicolon'), tree); },
+    declarators() { return drillInAll(this._declarators, tree); },
+    semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      declarators: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['variableDeclaration']!({ declarators: v, semicolon: _node.semicolon() }),
-      semicolon: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['variableDeclaration']!({ declarators: _node.declarators(), semicolon: v }),
+      declarators: (v: T.VariableDeclarator) => wrapVariableDeclaration({ ...data, _declarators: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapVariableDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3077,13 +3078,13 @@ export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): AnyNo
     _type: readRawField(data, 'type'),
     _value: readRawField(data, 'value'),
 
-    name() { return drillIn(readRawField(this, 'name'), tree); },
-    typeField() { return drillIn(readRawField(this, 'type'), tree); },
-    value() { return drillIn(readRawField(this, 'value'), tree); },
+    name() { return drillIn(this._name, tree); },
+    typeField() { return drillIn(this._type, tree); },
+    value() { return drillIn(this._value, tree); },
     $with: {
-      name: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['variableDeclarator']!({ name: v, type: _node.typeField(), value: _node.value() }),
-      typeField: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['variableDeclarator']!({ name: _node.name(), type: v, value: _node.value() }),
-      value: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['variableDeclarator']!({ name: _node.name(), type: _node.typeField(), value: v }),
+      name: (v: T.Identifier | T.DestructuringPattern) => wrapVariableDeclarator({ ...data, _name: v } as _NodeData, tree),
+      typeField: (v: T.TypeAnnotation) => wrapVariableDeclarator({ ...data, _type: v } as _NodeData, tree),
+      value: (v: T.Expression) => wrapVariableDeclarator({ ...data, _value: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3096,11 +3097,11 @@ export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     _condition: readRawField(data, 'condition'),
     _body: readRawField(data, 'body'),
 
-    condition() { return drillIn(readRawField(this, 'condition'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    condition() { return drillIn(this._condition, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      condition: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['whileStatement']!({ condition: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['whileStatement']!({ condition: _node.condition(), body: v }),
+      condition: (v: T.ParenthesizedExpression) => wrapWhileStatement({ ...data, _condition: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapWhileStatement({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3113,11 +3114,11 @@ export function wrapWithStatement(data: _NodeData, tree: TreeHandle): AnyNodeDat
     _object: readRawField(data, 'object'),
     _body: readRawField(data, 'body'),
 
-    object() { return drillIn(readRawField(this, 'object'), tree); },
-    body() { return drillIn(readRawField(this, 'body'), tree); },
+    object() { return drillIn(this._object, tree); },
+    body() { return drillIn(this._body, tree); },
     $with: {
-      object: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['withStatement']!({ object: v, body: _node.body() }),
-      body: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['withStatement']!({ object: _node.object(), body: v }),
+      object: (v: T.ParenthesizedExpression) => wrapWithStatement({ ...data, _object: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapWithStatement({ ...data, _body: v } as _NodeData, tree),
     },
   });
   return _node;
@@ -3129,9 +3130,9 @@ export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     $type: TSKindId.YieldExpression as const,
     _expression: readRawField(data, 'expression'),
 
-    expression() { return drillIn(readRawField(this, 'expression'), tree); },
+    expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: unknown) => (_factories as unknown as Record<string, (c: Record<string, unknown>) => AnyNodeData>)['yieldExpression']!({ expression: v }),
+      expression: (v: T.Expression) => wrapYieldExpression({ ...data, _expression: v } as _NodeData, tree),
     },
   });
   return _node;
