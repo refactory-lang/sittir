@@ -2592,9 +2592,10 @@ function buildSlotsRecord(
 	for (const slot of deriveSlots(rule)) {
 		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
 		// keys and at most one unnamed slot per branch is permitted. Empirical
-		// check (rust grammar) confirms multiple kinds today have >1 unnamed
-		// positional slot (e.g. rust's `block` has 2). Enforcement requires
-		// grammar overrides to explicitly name those positions first ("Owner A"
+		// check confirms 14 kinds across 3 grammars currently have >1 unnamed
+		// positional slot. Enforcement requires either (a) collapse of choice-
+		// of-distinct-kinds into one slot with multi-value `values[]`, or (b)
+		// grammar overrides to explicitly name the positions ("Owner A"
 		// migration). Until then: keep the kind-derived name as the Record
 		// key, no collision throw, no >1-unnamed throw.
 		out[slot.name] = slot;
