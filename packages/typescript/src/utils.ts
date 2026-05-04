@@ -53,7 +53,7 @@ export function buildWithNamespace<C extends object, R extends AnyNodeData>(
  *   return readRawField(this, "name");
  * }`) and by drill-in helpers in wrap.ts.
  */
-export function readRawField(data: object, rawName: string): unknown {
+export function readRawField<T>(data: T, rawName: string): unknown {
   return (data as Record<string, unknown>)[`_${rawName}`];
 }
 

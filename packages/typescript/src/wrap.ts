@@ -5,7 +5,7 @@ import { readNode as readNodeJs } from '@sittir/core';
 import type { TreeHandle } from '@sittir/core';
 // Spec 008 US4 — import _NodeData (== AnyNodeData) from @sittir/types
 // instead of re-declaring locally. Single source of truth.
-import type { AnyNodeData as _NodeData, AnyNodeData } from '@sittir/types';
+import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type * as T from './types.js';
 import { withMethods, readRawField } from './utils.js';
@@ -42,7 +42,7 @@ function drillAs(entry: unknown, tree: TreeHandle, fromType: string, toType: str
   return readTreeNode(tree, e.$nodeHandle, e.$childIndex, { from: fromType, to: toType });
 }
 
-export function wrap_ArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ArrowFunctionUCallSignature(data: T._ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionUCallSignature as const,
@@ -54,15 +54,15 @@ export function wrap_ArrowFunctionUCallSignature(data: _NodeData, tree: TreeHand
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: T.TypeParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrap_ArrowFunctionUCallSignature({ ...data, _return_type: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrap_ArrowFunctionUCallSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrap_ArrowFunctionUCallSignature({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ArrowFunctionParameter(data: T._ArrowFunctionParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ArrowFunctionParameter as const,
@@ -70,68 +70,68 @@ export function wrap_ArrowFunctionParameter(data: _NodeData, tree: TreeHandle): 
 
     parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
-      parameter: (v: T.ReservedIdentifier) => wrap_ArrowFunctionParameter({ ...data, _parameter: v } as _NodeData, tree),
+      parameter: (v: T.ReservedIdentifier) => wrap_ArrowFunctionParameter({ ...data, _parameter: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapClassBodyMember(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassBodyMember(data: T.ClassBodyMember, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBodyMember as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => wrapClassBodyMember({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => wrapClassBodyMember({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapClassBodyMethodSig(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassBodyMethodSig(data: T.ClassBodyMethodSig, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBodyMethodSig as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => wrapClassBodyMethodSig({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => wrapClassBodyMethodSig({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ClassHeritageExtendsClause(data: T._ClassHeritageExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ClassHeritageExtendsClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrap_ClassHeritageExtendsClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrap_ClassHeritageExtendsClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ClassHeritageImplementsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ClassHeritageImplementsClause(data: T._ClassHeritageImplementsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ClassHeritageImplementsClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.ImplementsClause) => wrap_ClassHeritageImplementsClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.ImplementsClause) => wrap_ClassHeritageImplementsClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArm(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementDefaultFromArm(data: T.ExportStatementDefaultFromArm, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArm as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => wrapExportStatementDefaultFromArm({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => wrapExportStatementDefaultFromArm({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArmClauseFrom(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementDefaultFromArmClauseFrom(data: T.ExportStatementDefaultFromArmClauseFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as const,
@@ -140,14 +140,14 @@ export function wrapExportStatementDefaultFromArmClauseFrom(data: _NodeData, tre
 
     source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: T.String) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v } as _NodeData, tree),
-      children: (...items: T.ExportClause[]) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, $children: items } as _NodeData, tree),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, _source: v }, tree),
+      children: (...items: readonly [T.ExportClause]) => wrapExportStatementDefaultFromArmClauseFrom({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArmNsFrom(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementDefaultFromArmNsFrom(data: T.ExportStatementDefaultFromArmNsFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmNsFrom as const,
@@ -156,14 +156,14 @@ export function wrapExportStatementDefaultFromArmNsFrom(data: _NodeData, tree: T
 
     source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: T.String) => wrapExportStatementDefaultFromArmNsFrom({ ...data, _source: v } as _NodeData, tree),
-      children: (...items: T.NamespaceExport[]) => wrapExportStatementDefaultFromArmNsFrom({ ...data, $children: items } as _NodeData, tree),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmNsFrom({ ...data, _source: v }, tree),
+      children: (...items: readonly [T.NamespaceExport]) => wrapExportStatementDefaultFromArmNsFrom({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExportStatementDefaultFromArmStarFrom(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementDefaultFromArmStarFrom(data: T.ExportStatementDefaultFromArmStarFrom, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as const,
@@ -171,35 +171,35 @@ export function wrapExportStatementDefaultFromArmStarFrom(data: _NodeData, tree:
 
     source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: T.String) => wrapExportStatementDefaultFromArmStarFrom({ ...data, _source: v } as _NodeData, tree),
+      source: (v: T.String) => wrapExportStatementDefaultFromArmStarFrom({ ...data, _source: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrap_ExportStatementEqualsExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ExportStatementEqualsExport(data: T._ExportStatementEqualsExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementEqualsExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrap_ExportStatementEqualsExport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrap_ExportStatementEqualsExport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ExportStatementNamespaceExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ExportStatementNamespaceExport(data: T._ExportStatementNamespaceExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementNamespaceExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrap_ExportStatementNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrap_ExportStatementNamespaceExport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ExportStatementTypeExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ExportStatementTypeExport(data: T._ExportStatementTypeExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ExportStatementTypeExport as const,
@@ -208,14 +208,14 @@ export function wrap_ExportStatementTypeExport(data: _NodeData, tree: TreeHandle
 
     source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: T.String) => wrap_ExportStatementTypeExport({ ...data, _source: v } as _NodeData, tree),
-      children: (...items: (T.ExportClause | T.Semicolon)[]) => wrap_ExportStatementTypeExport({ ...data, $children: items } as _NodeData, tree),
+      source: (v: T.String) => wrap_ExportStatementTypeExport({ ...data, _source: v }, tree),
+      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => wrap_ExportStatementTypeExport({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapForHeaderLhs(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapForHeaderLhs(data: T.ForHeaderLhs, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForHeaderLhs as const,
@@ -223,46 +223,46 @@ export function wrapForHeaderLhs(data: _NodeData, tree: TreeHandle): AnyNodeData
 
     left() { return drillIn(this._left, tree); },
     $with: {
-      left: (v: T.LhsExpression | T.ParenthesizedExpression) => wrapForHeaderLhs({ ...data, _left: v } as _NodeData, tree),
+      left: (v: T.LhsExpression | T.ParenthesizedExpression) => wrapForHeaderLhs({ ...data, _left: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrap_ImportClauseDefaultImport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ImportClauseDefaultImport(data: T._ImportClauseDefaultImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseDefaultImport as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrap_ImportClauseDefaultImport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrap_ImportClauseDefaultImport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ImportClauseNamedImports(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ImportClauseNamedImports(data: T._ImportClauseNamedImports, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseNamedImports as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.NamedImports) => wrap_ImportClauseNamedImports({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.NamedImports) => wrap_ImportClauseNamedImports({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ImportClauseNamespaceImport(data: T._ImportClauseNamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportClauseNamespaceImport as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.NamespaceImport) => wrap_ImportClauseNamespaceImport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.NamespaceImport) => wrap_ImportClauseNamespaceImport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ImportSpecifierName(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ImportSpecifierName(data: T._ImportSpecifierName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ImportSpecifierName as const,
@@ -270,35 +270,35 @@ export function wrap_ImportSpecifierName(data: _NodeData, tree: TreeHandle): Any
 
     name() { return drillIn(this._name, tree); },
     $with: {
-      name: (v: T.ImportIdentifier) => wrap_ImportSpecifierName({ ...data, _name: v } as _NodeData, tree),
+      name: (v: T.ImportIdentifier) => wrap_ImportSpecifierName({ ...data, _name: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrap_IndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_IndexSignatureMappedTypeClause(data: T._IndexSignatureMappedTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._IndexSignatureMappedTypeClause as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.MappedTypeClause) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.MappedTypeClause) => wrap_IndexSignatureMappedTypeClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_ParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_ParenthesizedExpressionSequence(data: T._ParenthesizedExpressionSequence, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._ParenthesizedExpressionSequence as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.SequenceExpression) => wrap_ParenthesizedExpressionSequence({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.SequenceExpression) => wrap_ParenthesizedExpressionSequence({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPublicFieldDefinitionAccessorOpt(data: T.PublicFieldDefinitionAccessorOpt, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as const,
@@ -306,57 +306,57 @@ export function wrapPublicFieldDefinitionAccessorOpt(data: _NodeData, tree: Tree
 
     accessorMarker() { return drillIn(this._accessor_marker, tree); },
     $with: {
-      accessorMarker: (v: T.PublicFieldDefinitionAccessorOptAccessorMarker) => wrapPublicFieldDefinitionAccessorOpt({ ...data, _accessor_marker: v } as _NodeData, tree),
+      accessorMarker: (v: T.PublicFieldDefinitionAccessorOptAccessorMarker) => wrapPublicFieldDefinitionAccessorOpt({ ...data, _accessor_marker: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapPublicFieldDefinitionDeclareFirst(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPublicFieldDefinitionDeclareFirst(data: T.PublicFieldDefinitionDeclareFirst, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.AccessibilityModifier) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.AccessibilityModifier) => wrapPublicFieldDefinitionDeclareFirst({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrap_StringDouble(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_StringDouble(data: T._StringDouble, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._StringDouble as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => wrap_StringDouble({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.UnescapedDoubleStringFragment | T.EscapeSequence))[]) => wrap_StringDouble({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrap_StringSingle(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrap_StringSingle(data: T._StringSingle, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId._StringSingle as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => wrap_StringSingle({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.UnescapedSingleStringFragment | T.EscapeSequence))[]) => wrap_StringSingle({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTypeIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeIdentifier as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.Identifier) => wrapTypeIdentifier({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.Identifier) => wrapTypeIdentifier({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractClassDeclaration as const,
@@ -372,17 +372,17 @@ export function wrapAbstractClassDeclaration(data: _NodeData, tree: TreeHandle):
     classHeritage() { return drillIn(this._class_heritage, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapAbstractClassDeclaration({ ...data, _decorator: v } as _NodeData, tree),
-      name: (v: T.TypeIdentifier) => wrapAbstractClassDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapAbstractClassDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      classHeritage: (v: T.ClassHeritage) => wrapAbstractClassDeclaration({ ...data, _class_heritage: v } as _NodeData, tree),
-      body: (v: T.ClassBody) => wrapAbstractClassDeclaration({ ...data, _body: v } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapAbstractClassDeclaration({ ...data, _decorator: v }, tree),
+      name: (v: T.TypeIdentifier) => wrapAbstractClassDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapAbstractClassDeclaration({ ...data, _type_parameters: v }, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapAbstractClassDeclaration({ ...data, _class_heritage: v }, tree),
+      body: (v: T.ClassBody) => wrapAbstractClassDeclaration({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAbstractMethodSignature(data: T.AbstractMethodSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AbstractMethodSignature as const,
@@ -404,20 +404,20 @@ export function wrapAbstractMethodSignature(data: _NodeData, tree: TreeHandle): 
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      accessibilityModifier: (v: T._AccessibilityModifier) => wrapAbstractMethodSignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
-      overrideModifier: (v: T._OverrideModifier) => wrapAbstractMethodSignature({ ...data, _override_modifier: v } as _NodeData, tree),
-      accessorKind: (v: T.AccessorKind) => wrapAbstractMethodSignature({ ...data, _accessor_kind: v } as _NodeData, tree),
-      name: (v: T.PropertyName) => wrapAbstractMethodSignature({ ...data, _name: v } as _NodeData, tree),
-      optionalMarker: (v: T.OptionalMarker) => wrapAbstractMethodSignature({ ...data, _optional_marker: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapAbstractMethodSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapAbstractMethodSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapAbstractMethodSignature({ ...data, _return_type: v } as _NodeData, tree),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapAbstractMethodSignature({ ...data, _accessibility_modifier: v }, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapAbstractMethodSignature({ ...data, _override_modifier: v }, tree),
+      accessorKind: (v: T.AccessorKind) => wrapAbstractMethodSignature({ ...data, _accessor_kind: v }, tree),
+      name: (v: T.PropertyName) => wrapAbstractMethodSignature({ ...data, _name: v }, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapAbstractMethodSignature({ ...data, _optional_marker: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapAbstractMethodSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapAbstractMethodSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapAbstractMethodSignature({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAddingTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAddingTypeAnnotation(data: T.AddingTypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AddingTypeAnnotation as const,
@@ -425,13 +425,13 @@ export function wrapAddingTypeAnnotation(data: _NodeData, tree: TreeHandle): Any
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapAddingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapAddingTypeAnnotation({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAmbientDeclaration(data: T.AmbientDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AmbientDeclaration as const,
@@ -439,46 +439,46 @@ export function wrapAmbientDeclaration(data: _NodeData, tree: TreeHandle): AnyNo
 
     declaration() { return drillAs(this._declaration, tree, "property_identifier", "identifier"); },
     $with: {
-      declaration: (v: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => wrapAmbientDeclaration({ ...data, _declaration: v } as _NodeData, tree),
+      declaration: (v: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => wrapAmbientDeclaration({ ...data, _declaration: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapArguments(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => wrapArguments({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.Expression | T.SpreadElement))[]) => wrapArguments({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapArray(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArray(data: T.Array, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Array as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => wrapArray({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.Expression | T.SpreadElement))[]) => wrapArray({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapArrayPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArrayPattern(data: T.ArrayPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayPattern as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => wrapArrayPattern({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.Pattern | T.AssignmentPattern))[]) => wrapArrayPattern({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapArrayType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArrayType(data: T.ArrayType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrayType as const,
@@ -486,26 +486,26 @@ export function wrapArrayType(data: _NodeData, tree: TreeHandle): AnyNodeData {
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: T.PrimaryType) => wrapArrayType({ ...data, _primary_type: v } as _NodeData, tree),
+      primaryType: (v: T.PrimaryType) => wrapArrayType({ ...data, _primary_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapArrowFunctionParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArrowFunctionParameter(data: T.ArrowFunctionParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     _parameter: readRawField(data, 'parameter'),
 
     parameter() { return drillAs(this._parameter, tree, "identifier", "_reserved_identifier"); },
     $with: {
-      parameter: (v: T.ReservedIdentifier) => wrapArrowFunctionParameter({ ...data, _parameter: v } as _NodeData, tree),
+      parameter: (v: T.ReservedIdentifier) => wrapArrowFunctionParameter({ ...data, _parameter: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArrowFunctionUCallSignature(data: T.ArrowFunctionUCallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     _type_parameters: readRawField(data, 'type_parameters'),
@@ -516,15 +516,15 @@ export function wrapArrowFunctionUCallSignature(data: _NodeData, tree: TreeHandl
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: T.TypeParameters) => wrapArrowFunctionUCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapArrowFunctionUCallSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapArrowFunctionUCallSignature({ ...data, _return_type: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapArrowFunctionUCallSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapArrowFunctionUCallSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapArrowFunctionUCallSignature({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapArrowFunction(data: T.ArrowFunction, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ArrowFunction as const,
@@ -535,15 +535,15 @@ export function wrapArrowFunction(data: _NodeData, tree: TreeHandle): AnyNodeDat
     asyncMarker() { return drillIn(this._async_marker, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapArrowFunction({ ...data, _async_marker: v } as _NodeData, tree),
-      body: (v: T.Expression | T.StatementBlock) => wrapArrowFunction({ ...data, _body: v } as _NodeData, tree),
-      children: (...items: (T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature)[]) => wrapArrowFunction({ ...data, $children: items } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapArrowFunction({ ...data, _async_marker: v }, tree),
+      body: (v: T.Expression | T.StatementBlock) => wrapArrowFunction({ ...data, _body: v }, tree),
+      children: (...items: readonly [((T._ArrowFunctionParameter | T._ArrowFunctionUCallSignature))]) => wrapArrowFunction({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAsExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAsExpression(data: T.AsExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AsExpression as const,
@@ -553,25 +553,25 @@ export function wrapAsExpression(data: _NodeData, tree: TreeHandle): AnyNodeData
     expression() { return drillIn(this._expression, tree); },
     typeAnnotation() { return drillIn(this._type_annotation, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapAsExpression({ ...data, _expression: v } as _NodeData, tree),
-      typeAnnotation: (v: "const" | T.Type) => wrapAsExpression({ ...data, _type_annotation: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapAsExpression({ ...data, _expression: v }, tree),
+      typeAnnotation: (v: "const" | T.Type) => wrapAsExpression({ ...data, _type_annotation: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAsserts(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAsserts(data: T.Asserts, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Asserts as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => wrapAsserts({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => wrapAsserts({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAssertsAnnotation(data: T.AssertsAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssertsAnnotation as const,
@@ -579,13 +579,13 @@ export function wrapAssertsAnnotation(data: _NodeData, tree: TreeHandle): AnyNod
 
     asserts() { return drillIn(this._asserts, tree); },
     $with: {
-      asserts: (v: T.AssertsAnnotationAsserts | T.Asserts) => wrapAssertsAnnotation({ ...data, _asserts: v } as _NodeData, tree),
+      asserts: (v: T.AssertsAnnotationAsserts | T.Asserts) => wrapAssertsAnnotation({ ...data, _asserts: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAssignmentExpression(data: T.AssignmentExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentExpression as const,
@@ -597,15 +597,15 @@ export function wrapAssignmentExpression(data: _NodeData, tree: TreeHandle): Any
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      usingMarker: (v: T.AssignmentExpressionUsingMarker) => wrapAssignmentExpression({ ...data, _using_marker: v } as _NodeData, tree),
-      left: (v: T.ParenthesizedExpression | T.LhsExpression) => wrapAssignmentExpression({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Expression) => wrapAssignmentExpression({ ...data, _right: v } as _NodeData, tree),
+      usingMarker: (v: T.AssignmentExpressionUsingMarker) => wrapAssignmentExpression({ ...data, _using_marker: v }, tree),
+      left: (v: T.ParenthesizedExpression | T.LhsExpression) => wrapAssignmentExpression({ ...data, _left: v }, tree),
+      right: (v: T.Expression) => wrapAssignmentExpression({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAssignmentPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAssignmentPattern(data: T.AssignmentPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AssignmentPattern as const,
@@ -615,14 +615,14 @@ export function wrapAssignmentPattern(data: _NodeData, tree: TreeHandle): AnyNod
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.Pattern) => wrapAssignmentPattern({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Expression) => wrapAssignmentPattern({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.Pattern) => wrapAssignmentPattern({ ...data, _left: v }, tree),
+      right: (v: T.Expression) => wrapAssignmentPattern({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAugmentedAssignmentExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAugmentedAssignmentExpression(data: T.AugmentedAssignmentExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AugmentedAssignmentExpression as const,
@@ -634,15 +634,15 @@ export function wrapAugmentedAssignmentExpression(data: _NodeData, tree: TreeHan
     operator() { return drillIn(this._operator, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) => wrapAugmentedAssignmentExpression({ ...data, _left: v } as _NodeData, tree),
-      operator: (v: T.AugmentedAssignmentExpressionOperator) => wrapAugmentedAssignmentExpression({ ...data, _operator: v } as _NodeData, tree),
-      right: (v: T.Expression) => wrapAugmentedAssignmentExpression({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) => wrapAugmentedAssignmentExpression({ ...data, _left: v }, tree),
+      operator: (v: T.AugmentedAssignmentExpressionOperator) => wrapAugmentedAssignmentExpression({ ...data, _operator: v }, tree),
+      right: (v: T.Expression) => wrapAugmentedAssignmentExpression({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapAwaitExpression(data: T.AwaitExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.AwaitExpression as const,
@@ -650,13 +650,13 @@ export function wrapAwaitExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapAwaitExpression({ ...data, _expression: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapAwaitExpression({ ...data, _expression: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapBinaryExpression(data: T.BinaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.BinaryExpression as const,
@@ -668,15 +668,15 @@ export function wrapBinaryExpression(data: _NodeData, tree: TreeHandle): AnyNode
     operator() { return drillIn(this._operator, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.Expression | T.PrivatePropertyIdentifier) => wrapBinaryExpression({ ...data, _left: v } as _NodeData, tree),
-      operator: (v: T.BinaryExpressionOperator) => wrapBinaryExpression({ ...data, _operator: v } as _NodeData, tree),
-      right: (v: T.Expression) => wrapBinaryExpression({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.Expression | T.PrivatePropertyIdentifier) => wrapBinaryExpression({ ...data, _left: v }, tree),
+      operator: (v: T.BinaryExpressionOperator) => wrapBinaryExpression({ ...data, _operator: v }, tree),
+      right: (v: T.Expression) => wrapBinaryExpression({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapBreakStatement(data: T.BreakStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.BreakStatement as const,
@@ -686,27 +686,27 @@ export function wrapBreakStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      label: (v: T.Identifier) => wrapBreakStatement({ ...data, _label: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapBreakStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      label: (v: T.Identifier) => wrapBreakStatement({ ...data, _label: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapBreakStatement({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapCallExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapCallExpression(data: T.CallExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallExpression as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember)[]) => wrapCallExpression({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T.CallExpressionCall | T.CallExpressionTemplateCall | T.CallExpressionMember))]) => wrapCallExpression({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapCallSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapCallSignature(data: T.CallSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CallSignature as const,
@@ -718,15 +718,15 @@ export function wrapCallSignature(data: _NodeData, tree: TreeHandle): AnyNodeDat
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: T.TypeParameters) => wrapCallSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapCallSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapCallSignature({ ...data, _return_type: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapCallSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapCallSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapCallSignature({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapCatchClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapCatchClause(data: T.CatchClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.CatchClause as const,
@@ -738,15 +738,15 @@ export function wrapCatchClause(data: _NodeData, tree: TreeHandle): AnyNodeData 
     typeField() { return drillIn(this._type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      parameter: (v: T.Identifier | T.DestructuringPattern) => wrapCatchClause({ ...data, _parameter: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapCatchClause({ ...data, _type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapCatchClause({ ...data, _body: v } as _NodeData, tree),
+      parameter: (v: T.Identifier | T.DestructuringPattern) => wrapCatchClause({ ...data, _parameter: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapCatchClause({ ...data, _type: v }, tree),
+      body: (v: T.StatementBlock) => wrapCatchClause({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapClass(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClass(data: T.Class, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Class as const,
@@ -762,28 +762,28 @@ export function wrapClass(data: _NodeData, tree: TreeHandle): AnyNodeData {
     classHeritage() { return drillIn(this._class_heritage, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapClass({ ...data, _decorator: v } as _NodeData, tree),
-      name: (v: T.TypeIdentifier) => wrapClass({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapClass({ ...data, _type_parameters: v } as _NodeData, tree),
-      classHeritage: (v: T.ClassHeritage) => wrapClass({ ...data, _class_heritage: v } as _NodeData, tree),
-      body: (v: T.ClassBody) => wrapClass({ ...data, _body: v } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapClass({ ...data, _decorator: v }, tree),
+      name: (v: T.TypeIdentifier) => wrapClass({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapClass({ ...data, _type_parameters: v }, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapClass({ ...data, _class_heritage: v }, tree),
+      body: (v: T.ClassBody) => wrapClass({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapClassBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassBody(data: T.ClassBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassBody as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => wrapClassBody({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember))[]) => wrapClassBody({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassDeclaration as const,
@@ -801,51 +801,51 @@ export function wrapClassDeclaration(data: _NodeData, tree: TreeHandle): AnyNode
     body() { return drillIn(this._body, tree); },
     automaticSemicolon() { return drillIn(this._automatic_semicolon, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapClassDeclaration({ ...data, _decorator: v } as _NodeData, tree),
-      name: (v: T.TypeIdentifier) => wrapClassDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapClassDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      classHeritage: (v: T.ClassHeritage) => wrapClassDeclaration({ ...data, _class_heritage: v } as _NodeData, tree),
-      body: (v: T.ClassBody) => wrapClassDeclaration({ ...data, _body: v } as _NodeData, tree),
-      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapClassDeclaration({ ...data, _automatic_semicolon: v } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapClassDeclaration({ ...data, _decorator: v }, tree),
+      name: (v: T.TypeIdentifier) => wrapClassDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapClassDeclaration({ ...data, _type_parameters: v }, tree),
+      classHeritage: (v: T.ClassHeritage) => wrapClassDeclaration({ ...data, _class_heritage: v }, tree),
+      body: (v: T.ClassBody) => wrapClassDeclaration({ ...data, _body: v }, tree),
+      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapClassDeclaration({ ...data, _automatic_semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapClassHeritageExtendsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassHeritageExtendsClause(data: T.ClassHeritageExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrapClassHeritageExtendsClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => wrapClassHeritageExtendsClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapClassHeritageImplementsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassHeritageImplementsClause(data: T.ClassHeritageImplementsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: T.ImplementsClause) => wrapClassHeritageImplementsClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.ImplementsClause) => wrapClassHeritageImplementsClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapClassHeritage(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassHeritage(data: T.ClassHeritage, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassHeritage as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause)[]) => wrapClassHeritage({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T._ClassHeritageExtendsClause | T._ClassHeritageImplementsClause))]) => wrapClassHeritage({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapClassStaticBlock(data: T.ClassStaticBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ClassStaticBlock as const,
@@ -854,14 +854,14 @@ export function wrapClassStaticBlock(data: _NodeData, tree: TreeHandle): AnyNode
 
     body() { return drillIn(this._body, tree); },
     $with: {
-      body: (v: T.StatementBlock) => wrapClassStaticBlock({ ...data, _body: v } as _NodeData, tree),
-      children: (...items: T.AutomaticSemicolon[]) => wrapClassStaticBlock({ ...data, $children: items } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapClassStaticBlock({ ...data, _body: v }, tree),
+      children: (...items: readonly [T.AutomaticSemicolon]) => wrapClassStaticBlock({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapComputedPropertyName(data: T.ComputedPropertyName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ComputedPropertyName as const,
@@ -869,13 +869,13 @@ export function wrapComputedPropertyName(data: _NodeData, tree: TreeHandle): Any
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapComputedPropertyName({ ...data, _expression: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapComputedPropertyName({ ...data, _expression: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapConditionalType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapConditionalType(data: T.ConditionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConditionalType as const,
@@ -889,16 +889,16 @@ export function wrapConditionalType(data: _NodeData, tree: TreeHandle): AnyNodeD
     consequence() { return drillIn(this._consequence, tree); },
     alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      left: (v: T.Type) => wrapConditionalType({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Type) => wrapConditionalType({ ...data, _right: v } as _NodeData, tree),
-      consequence: (v: T.Type) => wrapConditionalType({ ...data, _consequence: v } as _NodeData, tree),
-      alternative: (v: T.Type) => wrapConditionalType({ ...data, _alternative: v } as _NodeData, tree),
+      left: (v: T.Type) => wrapConditionalType({ ...data, _left: v }, tree),
+      right: (v: T.Type) => wrapConditionalType({ ...data, _right: v }, tree),
+      consequence: (v: T.Type) => wrapConditionalType({ ...data, _consequence: v }, tree),
+      alternative: (v: T.Type) => wrapConditionalType({ ...data, _alternative: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapConstraint(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapConstraint(data: T.Constraint, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Constraint as const,
@@ -906,13 +906,13 @@ export function wrapConstraint(data: _NodeData, tree: TreeHandle): AnyNodeData {
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapConstraint({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapConstraint({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapConstructSignature(data: T.ConstructSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructSignature as const,
@@ -926,16 +926,16 @@ export function wrapConstructSignature(data: _NodeData, tree: TreeHandle): AnyNo
     parameters() { return drillIn(this._parameters, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      abstractMarker: (v: T.AbstractMarker) => wrapConstructSignature({ ...data, _abstract_marker: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapConstructSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapConstructSignature({ ...data, _parameters: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapConstructSignature({ ...data, _type: v } as _NodeData, tree),
+      abstractMarker: (v: T.AbstractMarker) => wrapConstructSignature({ ...data, _abstract_marker: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapConstructSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapConstructSignature({ ...data, _parameters: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapConstructSignature({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapConstructorType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapConstructorType(data: T.ConstructorType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ConstructorType as const,
@@ -949,16 +949,16 @@ export function wrapConstructorType(data: _NodeData, tree: TreeHandle): AnyNodeD
     parameters() { return drillIn(this._parameters, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      abstractMarker: (v: T.AbstractMarker) => wrapConstructorType({ ...data, _abstract_marker: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapConstructorType({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapConstructorType({ ...data, _parameters: v } as _NodeData, tree),
-      typeField: (v: T.Type) => wrapConstructorType({ ...data, _type: v } as _NodeData, tree),
+      abstractMarker: (v: T.AbstractMarker) => wrapConstructorType({ ...data, _abstract_marker: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapConstructorType({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapConstructorType({ ...data, _parameters: v }, tree),
+      typeField: (v: T.Type) => wrapConstructorType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapContinueStatement(data: T.ContinueStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ContinueStatement as const,
@@ -968,14 +968,14 @@ export function wrapContinueStatement(data: _NodeData, tree: TreeHandle): AnyNod
     label() { return drillAs(this._label, tree, "statement_identifier", "identifier"); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      label: (v: T.Identifier) => wrapContinueStatement({ ...data, _label: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapContinueStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      label: (v: T.Identifier) => wrapContinueStatement({ ...data, _label: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapContinueStatement({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDebuggerStatement(data: T.DebuggerStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DebuggerStatement as const,
@@ -983,24 +983,24 @@ export function wrapDebuggerStatement(data: _NodeData, tree: TreeHandle): AnyNod
 
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: T.Semicolon) => wrapDebuggerStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapDebuggerStatement({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapDecorator(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Decorator as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => wrapDecorator({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => wrapDecorator({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDecoratorCallExpression(data: T.DecoratorCallExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorCallExpression as const,
@@ -1012,15 +1012,15 @@ export function wrapDecoratorCallExpression(data: _NodeData, tree: TreeHandle): 
     typeArguments() { return drillIn(this._type_arguments, tree); },
     arguments() { return drillIn(this._arguments, tree); },
     $with: {
-      function: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorCallExpression({ ...data, _function: v } as _NodeData, tree),
-      typeArguments: (v: T.TypeArguments) => wrapDecoratorCallExpression({ ...data, _type_arguments: v } as _NodeData, tree),
-      arguments: (v: T.Arguments) => wrapDecoratorCallExpression({ ...data, _arguments: v } as _NodeData, tree),
+      function: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorCallExpression({ ...data, _function: v }, tree),
+      typeArguments: (v: T.TypeArguments) => wrapDecoratorCallExpression({ ...data, _type_arguments: v }, tree),
+      arguments: (v: T.Arguments) => wrapDecoratorCallExpression({ ...data, _arguments: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDecoratorMemberExpression(data: T.DecoratorMemberExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorMemberExpression as const,
@@ -1030,25 +1030,25 @@ export function wrapDecoratorMemberExpression(data: _NodeData, tree: TreeHandle)
     object() { return drillAs(this._object, tree, "member_expression", "decorator_member_expression"); },
     property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorMemberExpression({ ...data, _object: v } as _NodeData, tree),
-      property: (v: T.Identifier) => wrapDecoratorMemberExpression({ ...data, _property: v } as _NodeData, tree),
+      object: (v: T.Identifier | T.DecoratorMemberExpression) => wrapDecoratorMemberExpression({ ...data, _object: v }, tree),
+      property: (v: T.Identifier) => wrapDecoratorMemberExpression({ ...data, _property: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapDecoratorParenthesizedExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDecoratorParenthesizedExpression(data: T.DecoratorParenthesizedExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DecoratorParenthesizedExpression as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => wrapDecoratorParenthesizedExpression({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => wrapDecoratorParenthesizedExpression({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapDefaultType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDefaultType(data: T.DefaultType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DefaultType as const,
@@ -1056,13 +1056,13 @@ export function wrapDefaultType(data: _NodeData, tree: TreeHandle): AnyNodeData 
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapDefaultType({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapDefaultType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapDoStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapDoStatement(data: T.DoStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.DoStatement as const,
@@ -1074,15 +1074,15 @@ export function wrapDoStatement(data: _NodeData, tree: TreeHandle): AnyNodeData 
     condition() { return drillIn(this._condition, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      body: (v: T.Statement) => wrapDoStatement({ ...data, _body: v } as _NodeData, tree),
-      condition: (v: T.ParenthesizedExpression) => wrapDoStatement({ ...data, _condition: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapDoStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      body: (v: T.Statement) => wrapDoStatement({ ...data, _body: v }, tree),
+      condition: (v: T.ParenthesizedExpression) => wrapDoStatement({ ...data, _condition: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapDoStatement({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapElseClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ElseClause as const,
@@ -1090,13 +1090,13 @@ export function wrapElseClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
 
     statement() { return drillIn(this._statement, tree); },
     $with: {
-      statement: (v: T.Statement) => wrapElseClause({ ...data, _statement: v } as _NodeData, tree),
+      statement: (v: T.Statement) => wrapElseClause({ ...data, _statement: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapEnumAssignment(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapEnumAssignment(data: T.EnumAssignment, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumAssignment as const,
@@ -1106,27 +1106,27 @@ export function wrapEnumAssignment(data: _NodeData, tree: TreeHandle): AnyNodeDa
     name() { return drillIn(this._name, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      name: (v: T.PropertyName) => wrapEnumAssignment({ ...data, _name: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapEnumAssignment({ ...data, _value: v } as _NodeData, tree),
+      name: (v: T.PropertyName) => wrapEnumAssignment({ ...data, _name: v }, tree),
+      value: (v: T.Expression) => wrapEnumAssignment({ ...data, _value: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapEnumBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapEnumBody(data: T.EnumBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumBody as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T.PropertyName | T.EnumAssignment)[]) => wrapEnumBody({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => wrapEnumBody({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapEnumDeclaration(data: T.EnumDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumDeclaration as const,
@@ -1138,26 +1138,26 @@ export function wrapEnumDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeD
     name() { return drillIn(this._name, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      constMarker: (v: T.ConstMarker) => wrapEnumDeclaration({ ...data, _const_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapEnumDeclaration({ ...data, _name: v } as _NodeData, tree),
-      body: (v: T.EnumBody) => wrapEnumDeclaration({ ...data, _body: v } as _NodeData, tree),
+      constMarker: (v: T.ConstMarker) => wrapEnumDeclaration({ ...data, _const_marker: v }, tree),
+      name: (v: T.Identifier) => wrapEnumDeclaration({ ...data, _name: v }, tree),
+      body: (v: T.EnumBody) => wrapEnumDeclaration({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExportClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportClause(data: T.ExportClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportClause as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.ExportSpecifier[]) => wrapExportClause({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: T.ExportSpecifier[]) => wrapExportClause({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportSpecifier(data: T.ExportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportSpecifier as const,
@@ -1169,15 +1169,15 @@ export function wrapExportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeD
     name() { return drillIn(this._name, tree); },
     alias() { return drillIn(this._alias, tree); },
     $with: {
-      exportKind: (v: T.ExportSpecifierExportKind) => wrapExportSpecifier({ ...data, _export_kind: v } as _NodeData, tree),
-      name: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _name: v } as _NodeData, tree),
-      alias: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _alias: v } as _NodeData, tree),
+      exportKind: (v: T.ExportSpecifierExportKind) => wrapExportSpecifier({ ...data, _export_kind: v }, tree),
+      name: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _name: v }, tree),
+      alias: (v: T.ModuleExportName) => wrapExportSpecifier({ ...data, _alias: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementTypeExport(data: T.ExportStatementTypeExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     _source: readRawField(data, 'source'),
@@ -1185,47 +1185,47 @@ export function wrapExportStatementTypeExport(data: _NodeData, tree: TreeHandle)
 
     source() { return drillIn(this._source, tree); },
     $with: {
-      source: (v: T.String) => wrapExportStatementTypeExport({ ...data, _source: v } as _NodeData, tree),
-      children: (...items: (T.ExportClause | T.Semicolon)[]) => wrapExportStatementTypeExport({ ...data, $children: items } as _NodeData, tree),
+      source: (v: T.String) => wrapExportStatementTypeExport({ ...data, _source: v }, tree),
+      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => wrapExportStatementTypeExport({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExportStatementEqualsExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementEqualsExport(data: T.ExportStatementEqualsExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrapExportStatementEqualsExport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => wrapExportStatementEqualsExport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapExportStatementNamespaceExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatementNamespaceExport(data: T.ExportStatementNamespaceExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrapExportStatementNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => wrapExportStatementNamespaceExport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapExportStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExportStatement(data: T.ExportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExportStatement as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport)[]) => wrapExportStatement({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T.ExportStatementDefault | T._ExportStatementTypeExport | T._ExportStatementEqualsExport | T._ExportStatementNamespaceExport))]) => wrapExportStatement({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExpressionStatement as const,
@@ -1234,14 +1234,14 @@ export function wrapExpressionStatement(data: _NodeData, tree: TreeHandle): AnyN
 
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: T.Semicolon) => wrapExpressionStatement({ ...data, _semicolon: v } as _NodeData, tree),
-      children: (...items: T.Expressions[]) => wrapExpressionStatement({ ...data, $children: items } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapExpressionStatement({ ...data, _semicolon: v }, tree),
+      children: (...items: readonly [T.Expressions]) => wrapExpressionStatement({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExtendsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsClause as const,
@@ -1251,14 +1251,14 @@ export function wrapExtendsClause(data: _NodeData, tree: TreeHandle): AnyNodeDat
     value() { return drillInAll(this._value, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      value: (v: T.Expression) => wrapExtendsClause({ ...data, _value: v } as _NodeData, tree),
-      typeArguments: (v: T.TypeArguments) => wrapExtendsClause({ ...data, _type_arguments: v } as _NodeData, tree),
+      value: (...v: NonEmptyArray<T.Expression>) => wrapExtendsClause({ ...data, _value: v }, tree),
+      typeArguments: (v: T.TypeArguments) => wrapExtendsClause({ ...data, _type_arguments: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ExtendsTypeClause as const,
@@ -1266,13 +1266,13 @@ export function wrapExtendsTypeClause(data: _NodeData, tree: TreeHandle): AnyNod
 
     typeField() { return drillInAll(this._type, tree); },
     $with: {
-      typeField: (v: T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) => wrapExtendsTypeClause({ ...data, _type: v } as _NodeData, tree),
+      typeField: (...v: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => wrapExtendsTypeClause({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FinallyClause as const,
@@ -1280,13 +1280,13 @@ export function wrapFinallyClause(data: _NodeData, tree: TreeHandle): AnyNodeDat
 
     body() { return drillIn(this._body, tree); },
     $with: {
-      body: (v: T.StatementBlock) => wrapFinallyClause({ ...data, _body: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapFinallyClause({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFlowMaybeType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFlowMaybeType(data: T.FlowMaybeType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FlowMaybeType as const,
@@ -1294,13 +1294,13 @@ export function wrapFlowMaybeType(data: _NodeData, tree: TreeHandle): AnyNodeDat
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: T.PrimaryType) => wrapFlowMaybeType({ ...data, _primary_type: v } as _NodeData, tree),
+      primaryType: (v: T.PrimaryType) => wrapFlowMaybeType({ ...data, _primary_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapForInStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapForInStatement(data: T.ForInStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForInStatement as const,
@@ -1315,17 +1315,17 @@ export function wrapForInStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     right() { return drillIn(this._right, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      awaitMarker: (v: T.ForInStatementAwaitMarker) => wrapForInStatement({ ...data, _await_marker: v } as _NodeData, tree),
-      operator: (v: T.ForHeaderOperator) => wrapForInStatement({ ...data, _operator: v } as _NodeData, tree),
-      right: (v: T.Expressions) => wrapForInStatement({ ...data, _right: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapForInStatement({ ...data, _body: v } as _NodeData, tree),
-      children: (...items: (T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind)[]) => wrapForInStatement({ ...data, $children: items } as _NodeData, tree),
+      awaitMarker: (v: T.ForInStatementAwaitMarker) => wrapForInStatement({ ...data, _await_marker: v }, tree),
+      operator: (v: T.ForHeaderOperator) => wrapForInStatement({ ...data, _operator: v }, tree),
+      right: (v: T.Expressions) => wrapForInStatement({ ...data, _right: v }, tree),
+      body: (v: T.Statement) => wrapForInStatement({ ...data, _body: v }, tree),
+      children: (...items: readonly [((T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind))]) => wrapForInStatement({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapForStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ForStatement as const,
@@ -1339,27 +1339,27 @@ export function wrapForStatement(data: _NodeData, tree: TreeHandle): AnyNodeData
     increment() { return drillIn(this._increment, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      initializer: (v: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) => wrapForStatement({ ...data, _initializer: v } as _NodeData, tree),
-      condition: (v: T.Expressions | T.EmptyStatement) => wrapForStatement({ ...data, _condition: v } as _NodeData, tree),
-      increment: (v: T.Expressions) => wrapForStatement({ ...data, _increment: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapForStatement({ ...data, _body: v } as _NodeData, tree),
+      initializer: (v: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) => wrapForStatement({ ...data, _initializer: v }, tree),
+      condition: (v: T.Expressions | T.EmptyStatement) => wrapForStatement({ ...data, _condition: v }, tree),
+      increment: (v: T.Expressions) => wrapForStatement({ ...data, _increment: v }, tree),
+      body: (v: T.Statement) => wrapForStatement({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFormalParameters(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFormalParameters(data: T.FormalParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FormalParameters as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.FormalParameter[]) => wrapFormalParameters({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: T.FormalParameter[]) => wrapFormalParameters({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFunctionDeclaration(data: T.FunctionDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionDeclaration as const,
@@ -1378,19 +1378,19 @@ export function wrapFunctionDeclaration(data: _NodeData, tree: TreeHandle): AnyN
     returnType() { return drillIn(this._return_type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapFunctionDeclaration({ ...data, _async_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapFunctionDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapFunctionDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapFunctionDeclaration({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionDeclaration({ ...data, _return_type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapFunctionDeclaration({ ...data, _body: v } as _NodeData, tree),
-      children: (...items: T.AutomaticSemicolon[]) => wrapFunctionDeclaration({ ...data, $children: items } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionDeclaration({ ...data, _async_marker: v }, tree),
+      name: (v: T.Identifier) => wrapFunctionDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionDeclaration({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionDeclaration({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionDeclaration({ ...data, _return_type: v }, tree),
+      body: (v: T.StatementBlock) => wrapFunctionDeclaration({ ...data, _body: v }, tree),
+      children: (...items: readonly [T.AutomaticSemicolon]) => wrapFunctionDeclaration({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFunctionExpression(data: T.FunctionExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionExpression as const,
@@ -1408,18 +1408,18 @@ export function wrapFunctionExpression(data: _NodeData, tree: TreeHandle): AnyNo
     returnType() { return drillIn(this._return_type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapFunctionExpression({ ...data, _async_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapFunctionExpression({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapFunctionExpression({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapFunctionExpression({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionExpression({ ...data, _return_type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapFunctionExpression({ ...data, _body: v } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionExpression({ ...data, _async_marker: v }, tree),
+      name: (v: T.Identifier) => wrapFunctionExpression({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionExpression({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionExpression({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionExpression({ ...data, _return_type: v }, tree),
+      body: (v: T.StatementBlock) => wrapFunctionExpression({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFunctionSignature(data: T.FunctionSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionSignature as const,
@@ -1437,18 +1437,18 @@ export function wrapFunctionSignature(data: _NodeData, tree: TreeHandle): AnyNod
     returnType() { return drillIn(this._return_type, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapFunctionSignature({ ...data, _async_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapFunctionSignature({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapFunctionSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapFunctionSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionSignature({ ...data, _return_type: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => wrapFunctionSignature({ ...data, _semicolon: v } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapFunctionSignature({ ...data, _async_marker: v }, tree),
+      name: (v: T.Identifier) => wrapFunctionSignature({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapFunctionSignature({ ...data, _return_type: v }, tree),
+      semicolon: (v: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => wrapFunctionSignature({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapFunctionType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapFunctionType(data: T.FunctionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.FunctionType as const,
@@ -1460,15 +1460,15 @@ export function wrapFunctionType(data: _NodeData, tree: TreeHandle): AnyNodeData
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      typeParameters: (v: T.TypeParameters) => wrapFunctionType({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapFunctionType({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.Type | T.Asserts | T.TypePredicate) => wrapFunctionType({ ...data, _return_type: v } as _NodeData, tree),
+      typeParameters: (v: T.TypeParameters) => wrapFunctionType({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapFunctionType({ ...data, _parameters: v }, tree),
+      returnType: (v: T.Type | T.Asserts | T.TypePredicate) => wrapFunctionType({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapGeneratorFunction(data: T.GeneratorFunction, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunction as const,
@@ -1486,18 +1486,18 @@ export function wrapGeneratorFunction(data: _NodeData, tree: TreeHandle): AnyNod
     returnType() { return drillIn(this._return_type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunction({ ...data, _async_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapGeneratorFunction({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunction({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapGeneratorFunction({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunction({ ...data, _return_type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapGeneratorFunction({ ...data, _body: v } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunction({ ...data, _async_marker: v }, tree),
+      name: (v: T.Identifier) => wrapGeneratorFunction({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunction({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapGeneratorFunction({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunction({ ...data, _return_type: v }, tree),
+      body: (v: T.StatementBlock) => wrapGeneratorFunction({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapGeneratorFunctionDeclaration(data: T.GeneratorFunctionDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GeneratorFunctionDeclaration as const,
@@ -1516,19 +1516,19 @@ export function wrapGeneratorFunctionDeclaration(data: _NodeData, tree: TreeHand
     returnType() { return drillIn(this._return_type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunctionDeclaration({ ...data, _async_marker: v } as _NodeData, tree),
-      name: (v: T.Identifier) => wrapGeneratorFunctionDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunctionDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapGeneratorFunctionDeclaration({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunctionDeclaration({ ...data, _return_type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapGeneratorFunctionDeclaration({ ...data, _body: v } as _NodeData, tree),
-      children: (...items: T.AutomaticSemicolon[]) => wrapGeneratorFunctionDeclaration({ ...data, $children: items } as _NodeData, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapGeneratorFunctionDeclaration({ ...data, _async_marker: v }, tree),
+      name: (v: T.Identifier) => wrapGeneratorFunctionDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapGeneratorFunctionDeclaration({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapGeneratorFunctionDeclaration({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapGeneratorFunctionDeclaration({ ...data, _return_type: v }, tree),
+      body: (v: T.StatementBlock) => wrapGeneratorFunctionDeclaration({ ...data, _body: v }, tree),
+      children: (...items: readonly [T.AutomaticSemicolon]) => wrapGeneratorFunctionDeclaration({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapGenericType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.GenericType as const,
@@ -1538,14 +1538,14 @@ export function wrapGenericType(data: _NodeData, tree: TreeHandle): AnyNodeData 
     name() { return drillIn(this._name, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      name: (v: T.TypeIdentifier | T.NestedTypeIdentifier) => wrapGenericType({ ...data, _name: v } as _NodeData, tree),
-      typeArguments: (v: T.TypeArguments) => wrapGenericType({ ...data, _type_arguments: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier | T.NestedTypeIdentifier) => wrapGenericType({ ...data, _name: v }, tree),
+      typeArguments: (v: T.TypeArguments) => wrapGenericType({ ...data, _type_arguments: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapIfStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IfStatement as const,
@@ -1557,26 +1557,26 @@ export function wrapIfStatement(data: _NodeData, tree: TreeHandle): AnyNodeData 
     consequence() { return drillIn(this._consequence, tree); },
     alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      condition: (v: T.ParenthesizedExpression) => wrapIfStatement({ ...data, _condition: v } as _NodeData, tree),
-      consequence: (v: T.Statement) => wrapIfStatement({ ...data, _consequence: v } as _NodeData, tree),
-      alternative: (v: T.ElseClause) => wrapIfStatement({ ...data, _alternative: v } as _NodeData, tree),
+      condition: (v: T.ParenthesizedExpression) => wrapIfStatement({ ...data, _condition: v }, tree),
+      consequence: (v: T.Statement) => wrapIfStatement({ ...data, _consequence: v }, tree),
+      alternative: (v: T.ElseClause) => wrapIfStatement({ ...data, _alternative: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImplementsClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImplementsClause(data: T.ImplementsClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImplementsClause as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.Type[]) => wrapImplementsClause({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapImplementsClause({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapImportAlias(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportAlias(data: T.ImportAlias, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAlias as const,
@@ -1588,15 +1588,15 @@ export function wrapImportAlias(data: _NodeData, tree: TreeHandle): AnyNodeData 
     value() { return drillIn(this._value, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      name: (v: T.Identifier) => wrapImportAlias({ ...data, _name: v } as _NodeData, tree),
-      value: (v: T.Identifier | T.NestedIdentifier) => wrapImportAlias({ ...data, _value: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapImportAlias({ ...data, _semicolon: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapImportAlias({ ...data, _name: v }, tree),
+      value: (v: T.Identifier | T.NestedIdentifier) => wrapImportAlias({ ...data, _value: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapImportAlias({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportAttribute(data: T.ImportAttribute, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportAttribute as const,
@@ -1604,56 +1604,56 @@ export function wrapImportAttribute(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     object() { return drillIn(this._object, tree); },
     $with: {
-      object: (v: T.ImportAttributeObject | T.Object) => wrapImportAttribute({ ...data, _object: v } as _NodeData, tree),
+      object: (v: T.ImportAttributeObject | T.Object) => wrapImportAttribute({ ...data, _object: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportClauseNamespaceImport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportClauseNamespaceImport(data: T.ImportClauseNamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: T.NamespaceImport) => wrapImportClauseNamespaceImport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.NamespaceImport) => wrapImportClauseNamespaceImport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapImportClauseNamedImports(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportClauseNamedImports(data: T.ImportClauseNamedImports, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: T.NamedImports) => wrapImportClauseNamedImports({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.NamedImports) => wrapImportClauseNamedImports({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapImportClauseDefaultImport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportClauseDefaultImport(data: T.ImportClauseDefaultImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrapImportClauseDefaultImport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => wrapImportClauseDefaultImport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapImportClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportClause(data: T.ImportClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportClause as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport)[]) => wrapImportClause({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T._ImportClauseNamespaceImport | T._ImportClauseNamedImports | T._ImportClauseDefaultImport))]) => wrapImportClause({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportRequireClause(data: T.ImportRequireClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportRequireClause as const,
@@ -1663,27 +1663,27 @@ export function wrapImportRequireClause(data: _NodeData, tree: TreeHandle): AnyN
     identifier() { return drillIn(this._identifier, tree); },
     source() { return drillIn(this._source, tree); },
     $with: {
-      identifier: (v: T.Identifier) => wrapImportRequireClause({ ...data, _identifier: v } as _NodeData, tree),
-      source: (v: T.String) => wrapImportRequireClause({ ...data, _source: v } as _NodeData, tree),
+      identifier: (v: T.Identifier) => wrapImportRequireClause({ ...data, _identifier: v }, tree),
+      source: (v: T.String) => wrapImportRequireClause({ ...data, _source: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportSpecifierName(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportSpecifierName(data: T.ImportSpecifierName, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     _name: readRawField(data, 'name'),
 
     name() { return drillIn(this._name, tree); },
     $with: {
-      name: (v: T.ImportIdentifier) => wrapImportSpecifierName({ ...data, _name: v } as _NodeData, tree),
+      name: (v: T.ImportIdentifier) => wrapImportSpecifierName({ ...data, _name: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportSpecifier(data: T.ImportSpecifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportSpecifier as const,
@@ -1692,14 +1692,14 @@ export function wrapImportSpecifier(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     importKind() { return drillIn(this._import_kind, tree); },
     $with: {
-      importKind: (v: T.ExportSpecifierExportKind) => wrapImportSpecifier({ ...data, _import_kind: v } as _NodeData, tree),
-      children: (...items: (T._ImportSpecifierName | T.ImportSpecifierAs)[]) => wrapImportSpecifier({ ...data, $children: items } as _NodeData, tree),
+      importKind: (v: T.ExportSpecifierExportKind) => wrapImportSpecifier({ ...data, _import_kind: v }, tree),
+      children: (...items: readonly [((T._ImportSpecifierName | T.ImportSpecifierAs))]) => wrapImportSpecifier({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapImportStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ImportStatement as const,
@@ -1713,26 +1713,26 @@ export function wrapImportStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     importAttribute() { return drillIn(this._import_attribute, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      importClause: (v: "type" | "typeof") => wrapImportStatement({ ...data, _import_clause: v } as _NodeData, tree),
-      fromClause: (v: T.ImportClause | "from" | T.String | T.ImportRequireClause) => wrapImportStatement({ ...data, _from_clause: v } as _NodeData, tree),
-      importAttribute: (v: T.ImportAttribute) => wrapImportStatement({ ...data, _import_attribute: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapImportStatement({ ...data, _semicolon: v } as _NodeData, tree),
+      importClause: (v: "type" | "typeof") => wrapImportStatement({ ...data, _import_clause: v }, tree),
+      fromClause: (v: T.ImportClause | "from" | T.String | T.ImportRequireClause) => wrapImportStatement({ ...data, _from_clause: v }, tree),
+      importAttribute: (v: T.ImportAttribute) => wrapImportStatement({ ...data, _import_attribute: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapImportStatement({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapIndexSignatureMappedTypeClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapIndexSignatureMappedTypeClause(data: T.IndexSignatureMappedTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: T.MappedTypeClause) => wrapIndexSignatureMappedTypeClause({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.MappedTypeClause) => wrapIndexSignatureMappedTypeClause({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapIndexSignature(data: T.IndexSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexSignature as const,
@@ -1743,15 +1743,15 @@ export function wrapIndexSignature(data: _NodeData, tree: TreeHandle): AnyNodeDa
     sign() { return drillIn(this._sign, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      sign: (v: "-" | "+") => wrapIndexSignature({ ...data, _sign: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => wrapIndexSignature({ ...data, _type: v } as _NodeData, tree),
-      children: (...items: (T.IndexSignatureColon | T._IndexSignatureMappedTypeClause)[]) => wrapIndexSignature({ ...data, $children: items } as _NodeData, tree),
+      sign: (v: "-" | "+") => wrapIndexSignature({ ...data, _sign: v }, tree),
+      typeField: (v: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => wrapIndexSignature({ ...data, _type: v }, tree),
+      children: (...items: readonly [((T.IndexSignatureColon | T._IndexSignatureMappedTypeClause))]) => wrapIndexSignature({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapIndexTypeQuery(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapIndexTypeQuery(data: T.IndexTypeQuery, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IndexTypeQuery as const,
@@ -1759,13 +1759,13 @@ export function wrapIndexTypeQuery(data: _NodeData, tree: TreeHandle): AnyNodeDa
 
     primaryType() { return drillIn(this._primary_type, tree); },
     $with: {
-      primaryType: (v: T.PrimaryType) => wrapIndexTypeQuery({ ...data, _primary_type: v } as _NodeData, tree),
+      primaryType: (v: T.PrimaryType) => wrapIndexTypeQuery({ ...data, _primary_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapInferType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapInferType(data: T.InferType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InferType as const,
@@ -1775,14 +1775,14 @@ export function wrapInferType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     typeIdentifier() { return drillIn(this._type_identifier, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeIdentifier: (v: T.TypeIdentifier) => wrapInferType({ ...data, _type_identifier: v } as _NodeData, tree),
-      typeField: (v: T.Type) => wrapInferType({ ...data, _type: v } as _NodeData, tree),
+      typeIdentifier: (v: T.TypeIdentifier) => wrapInferType({ ...data, _type_identifier: v }, tree),
+      typeField: (v: T.Type) => wrapInferType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapInstantiationExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapInstantiationExpression(data: T.InstantiationExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InstantiationExpression as const,
@@ -1792,14 +1792,14 @@ export function wrapInstantiationExpression(data: _NodeData, tree: TreeHandle): 
     expression() { return drillIn(this._expression, tree); },
     typeArguments() { return drillIn(this._type_arguments, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapInstantiationExpression({ ...data, _expression: v } as _NodeData, tree),
-      typeArguments: (v: T.TypeArguments) => wrapInstantiationExpression({ ...data, _type_arguments: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapInstantiationExpression({ ...data, _expression: v }, tree),
+      typeArguments: (v: T.TypeArguments) => wrapInstantiationExpression({ ...data, _type_arguments: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapInterfaceDeclaration(data: T.InterfaceDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InterfaceDeclaration as const,
@@ -1813,16 +1813,16 @@ export function wrapInterfaceDeclaration(data: _NodeData, tree: TreeHandle): Any
     extendsTypeClause() { return drillIn(this._extends_type_clause, tree); },
     body() { return drillAs(this._body, tree, "interface_body", "object_type"); },
     $with: {
-      name: (v: T.TypeIdentifier) => wrapInterfaceDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapInterfaceDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      extendsTypeClause: (v: T.ExtendsTypeClause) => wrapInterfaceDeclaration({ ...data, _extends_type_clause: v } as _NodeData, tree),
-      body: (v: T.ObjectType) => wrapInterfaceDeclaration({ ...data, _body: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapInterfaceDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapInterfaceDeclaration({ ...data, _type_parameters: v }, tree),
+      extendsTypeClause: (v: T.ExtendsTypeClause) => wrapInterfaceDeclaration({ ...data, _extends_type_clause: v }, tree),
+      body: (v: T.ObjectType) => wrapInterfaceDeclaration({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapInternalModule(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapInternalModule(data: T.InternalModule, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.InternalModule as const,
@@ -1832,14 +1832,14 @@ export function wrapInternalModule(data: _NodeData, tree: TreeHandle): AnyNodeDa
     name() { return drillIn(this._name, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapInternalModule({ ...data, _name: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapInternalModule({ ...data, _body: v } as _NodeData, tree),
+      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapInternalModule({ ...data, _name: v }, tree),
+      body: (v: T.StatementBlock) => wrapInternalModule({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapIntersectionType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapIntersectionType(data: T.IntersectionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.IntersectionType as const,
@@ -1849,14 +1849,14 @@ export function wrapIntersectionType(data: _NodeData, tree: TreeHandle): AnyNode
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.Type) => wrapIntersectionType({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Type) => wrapIntersectionType({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.Type) => wrapIntersectionType({ ...data, _left: v }, tree),
+      right: (v: T.Type) => wrapIntersectionType({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapLabeledStatement(data: T.LabeledStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LabeledStatement as const,
@@ -1866,14 +1866,14 @@ export function wrapLabeledStatement(data: _NodeData, tree: TreeHandle): AnyNode
     label() { return drillAs(this._label, tree, "statement_identifier", "_statement_identifier"); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      label: (v: T.StatementIdentifier) => wrapLabeledStatement({ ...data, _label: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapLabeledStatement({ ...data, _body: v } as _NodeData, tree),
+      label: (v: T.StatementIdentifier) => wrapLabeledStatement({ ...data, _label: v }, tree),
+      body: (v: T.Statement) => wrapLabeledStatement({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapLexicalDeclaration(data: T.LexicalDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LexicalDeclaration as const,
@@ -1885,26 +1885,26 @@ export function wrapLexicalDeclaration(data: _NodeData, tree: TreeHandle): AnyNo
     declarators() { return drillInAll(this._declarators, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      kind: (v: T.Kind) => wrapLexicalDeclaration({ ...data, _kind: v } as _NodeData, tree),
-      declarators: (v: T.VariableDeclarator) => wrapLexicalDeclaration({ ...data, _declarators: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapLexicalDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
+      kind: (v: T.Kind) => wrapLexicalDeclaration({ ...data, _kind: v }, tree),
+      declarators: (...v: NonEmptyArray<T.VariableDeclarator>) => wrapLexicalDeclaration({ ...data, _declarators: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapLexicalDeclaration({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapLiteralType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapLiteralType(data: T.LiteralType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LiteralType as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => wrapLiteralType({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => wrapLiteralType({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapLookupType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapLookupType(data: T.LookupType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.LookupType as const,
@@ -1914,14 +1914,14 @@ export function wrapLookupType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     primaryType() { return drillIn(this._primary_type, tree); },
     indexType() { return drillIn(this._index_type, tree); },
     $with: {
-      primaryType: (v: T.PrimaryType) => wrapLookupType({ ...data, _primary_type: v } as _NodeData, tree),
-      indexType: (v: T.Type) => wrapLookupType({ ...data, _index_type: v } as _NodeData, tree),
+      primaryType: (v: T.PrimaryType) => wrapLookupType({ ...data, _primary_type: v }, tree),
+      indexType: (v: T.Type) => wrapLookupType({ ...data, _index_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapMappedTypeClause(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapMappedTypeClause(data: T.MappedTypeClause, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MappedTypeClause as const,
@@ -1933,15 +1933,15 @@ export function wrapMappedTypeClause(data: _NodeData, tree: TreeHandle): AnyNode
     typeField() { return drillIn(this._type, tree); },
     alias() { return drillIn(this._alias, tree); },
     $with: {
-      name: (v: T.TypeIdentifier) => wrapMappedTypeClause({ ...data, _name: v } as _NodeData, tree),
-      typeField: (v: T.Type) => wrapMappedTypeClause({ ...data, _type: v } as _NodeData, tree),
-      alias: (v: T.Type) => wrapMappedTypeClause({ ...data, _alias: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapMappedTypeClause({ ...data, _name: v }, tree),
+      typeField: (v: T.Type) => wrapMappedTypeClause({ ...data, _type: v }, tree),
+      alias: (v: T.Type) => wrapMappedTypeClause({ ...data, _alias: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapMemberExpression(data: T.MemberExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MemberExpression as const,
@@ -1952,15 +1952,15 @@ export function wrapMemberExpression(data: _NodeData, tree: TreeHandle): AnyNode
     object() { return drillIn(this._object, tree); },
     property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: T.Expression | T.PrimaryExpression | T.Import) => wrapMemberExpression({ ...data, _object: v } as _NodeData, tree),
-      property: (v: T.PrivatePropertyIdentifier | T.Identifier) => wrapMemberExpression({ ...data, _property: v } as _NodeData, tree),
-      children: (...items: T.OptionalChain[]) => wrapMemberExpression({ ...data, $children: items } as _NodeData, tree),
+      object: (v: T.Expression | T.PrimaryExpression | T.Import) => wrapMemberExpression({ ...data, _object: v }, tree),
+      property: (v: T.PrivatePropertyIdentifier | T.Identifier) => wrapMemberExpression({ ...data, _property: v }, tree),
+      children: (...items: readonly [T.OptionalChain]) => wrapMemberExpression({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapMethodDefinition(data: T.MethodDefinition, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodDefinition as const,
@@ -1990,24 +1990,24 @@ export function wrapMethodDefinition(data: _NodeData, tree: TreeHandle): AnyNode
     returnType() { return drillIn(this._return_type, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodDefinition({ ...data, _accessibility_modifier: v } as _NodeData, tree),
-      staticMarker: (v: T.StaticMarker) => wrapMethodDefinition({ ...data, _static_marker: v } as _NodeData, tree),
-      overrideModifier: (v: T._OverrideModifier) => wrapMethodDefinition({ ...data, _override_modifier: v } as _NodeData, tree),
-      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodDefinition({ ...data, _readonly_marker: v } as _NodeData, tree),
-      asyncMarker: (v: T.AsyncMarker) => wrapMethodDefinition({ ...data, _async_marker: v } as _NodeData, tree),
-      accessorKind: (v: T.AccessorKind) => wrapMethodDefinition({ ...data, _accessor_kind: v } as _NodeData, tree),
-      name: (v: T.PropertyName) => wrapMethodDefinition({ ...data, _name: v } as _NodeData, tree),
-      optionalMarker: (v: T.OptionalMarker) => wrapMethodDefinition({ ...data, _optional_marker: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapMethodDefinition({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapMethodDefinition({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodDefinition({ ...data, _return_type: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapMethodDefinition({ ...data, _body: v } as _NodeData, tree),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodDefinition({ ...data, _accessibility_modifier: v }, tree),
+      staticMarker: (v: T.StaticMarker) => wrapMethodDefinition({ ...data, _static_marker: v }, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapMethodDefinition({ ...data, _override_modifier: v }, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodDefinition({ ...data, _readonly_marker: v }, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapMethodDefinition({ ...data, _async_marker: v }, tree),
+      accessorKind: (v: T.AccessorKind) => wrapMethodDefinition({ ...data, _accessor_kind: v }, tree),
+      name: (v: T.PropertyName) => wrapMethodDefinition({ ...data, _name: v }, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapMethodDefinition({ ...data, _optional_marker: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapMethodDefinition({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapMethodDefinition({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodDefinition({ ...data, _return_type: v }, tree),
+      body: (v: T.StatementBlock) => wrapMethodDefinition({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapMethodSignature(data: T.MethodSignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MethodSignature as const,
@@ -2035,23 +2035,23 @@ export function wrapMethodSignature(data: _NodeData, tree: TreeHandle): AnyNodeD
     parameters() { return drillIn(this._parameters, tree); },
     returnType() { return drillIn(this._return_type, tree); },
     $with: {
-      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodSignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
-      staticMarker: (v: T.StaticMarker) => wrapMethodSignature({ ...data, _static_marker: v } as _NodeData, tree),
-      overrideModifier: (v: T._OverrideModifier) => wrapMethodSignature({ ...data, _override_modifier: v } as _NodeData, tree),
-      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodSignature({ ...data, _readonly_marker: v } as _NodeData, tree),
-      asyncMarker: (v: T.AsyncMarker) => wrapMethodSignature({ ...data, _async_marker: v } as _NodeData, tree),
-      accessorKind: (v: T.AccessorKind) => wrapMethodSignature({ ...data, _accessor_kind: v } as _NodeData, tree),
-      name: (v: T.PropertyName) => wrapMethodSignature({ ...data, _name: v } as _NodeData, tree),
-      optionalMarker: (v: T.OptionalMarker) => wrapMethodSignature({ ...data, _optional_marker: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapMethodSignature({ ...data, _type_parameters: v } as _NodeData, tree),
-      parameters: (v: T.FormalParameters) => wrapMethodSignature({ ...data, _parameters: v } as _NodeData, tree),
-      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodSignature({ ...data, _return_type: v } as _NodeData, tree),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapMethodSignature({ ...data, _accessibility_modifier: v }, tree),
+      staticMarker: (v: T.StaticMarker) => wrapMethodSignature({ ...data, _static_marker: v }, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapMethodSignature({ ...data, _override_modifier: v }, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapMethodSignature({ ...data, _readonly_marker: v }, tree),
+      asyncMarker: (v: T.AsyncMarker) => wrapMethodSignature({ ...data, _async_marker: v }, tree),
+      accessorKind: (v: T.AccessorKind) => wrapMethodSignature({ ...data, _accessor_kind: v }, tree),
+      name: (v: T.PropertyName) => wrapMethodSignature({ ...data, _name: v }, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapMethodSignature({ ...data, _optional_marker: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapMethodSignature({ ...data, _type_parameters: v }, tree),
+      parameters: (v: T.FormalParameters) => wrapMethodSignature({ ...data, _parameters: v }, tree),
+      returnType: (v: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation) => wrapMethodSignature({ ...data, _return_type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapModule(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapModule(data: T.Module, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Module as const,
@@ -2061,36 +2061,36 @@ export function wrapModule(data: _NodeData, tree: TreeHandle): AnyNodeData {
     name() { return drillIn(this._name, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapModule({ ...data, _name: v } as _NodeData, tree),
-      body: (v: T.StatementBlock) => wrapModule({ ...data, _body: v } as _NodeData, tree),
+      name: (v: T.String | T.Identifier | T.NestedIdentifier) => wrapModule({ ...data, _name: v }, tree),
+      body: (v: T.StatementBlock) => wrapModule({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapNamedImports(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNamedImports(data: T.NamedImports, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamedImports as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.ImportSpecifier[]) => wrapNamedImports({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: T.ImportSpecifier[]) => wrapNamedImports({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapNamespaceExport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNamespaceExport(data: T.NamespaceExport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamespaceExport as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.ModuleExportName) => wrapNamespaceExport({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.ModuleExportName) => wrapNamespaceExport({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapNamespaceImport(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNamespaceImport(data: T.NamespaceImport, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NamespaceImport as const,
@@ -2098,13 +2098,13 @@ export function wrapNamespaceImport(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     identifier() { return drillIn(this._identifier, tree); },
     $with: {
-      identifier: (v: T.Identifier) => wrapNamespaceImport({ ...data, _identifier: v } as _NodeData, tree),
+      identifier: (v: T.Identifier) => wrapNamespaceImport({ ...data, _identifier: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedIdentifier as const,
@@ -2114,14 +2114,14 @@ export function wrapNestedIdentifier(data: _NodeData, tree: TreeHandle): AnyNode
     object() { return drillAs(this._object, tree, "member_expression", "nested_identifier"); },
     property() { return drillAs(this._property, tree, "property_identifier", "identifier"); },
     $with: {
-      object: (v: T.Identifier | T.NestedIdentifier) => wrapNestedIdentifier({ ...data, _object: v } as _NodeData, tree),
-      property: (v: T.Identifier) => wrapNestedIdentifier({ ...data, _property: v } as _NodeData, tree),
+      object: (v: T.Identifier | T.NestedIdentifier) => wrapNestedIdentifier({ ...data, _object: v }, tree),
+      property: (v: T.Identifier) => wrapNestedIdentifier({ ...data, _property: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapNestedTypeIdentifier(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNestedTypeIdentifier(data: T.NestedTypeIdentifier, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NestedTypeIdentifier as const,
@@ -2131,14 +2131,14 @@ export function wrapNestedTypeIdentifier(data: _NodeData, tree: TreeHandle): Any
     module() { return drillIn(this._module, tree); },
     name() { return drillIn(this._name, tree); },
     $with: {
-      module: (v: T.Identifier | T.NestedIdentifier) => wrapNestedTypeIdentifier({ ...data, _module: v } as _NodeData, tree),
-      name: (v: T.TypeIdentifier) => wrapNestedTypeIdentifier({ ...data, _name: v } as _NodeData, tree),
+      module: (v: T.Identifier | T.NestedIdentifier) => wrapNestedTypeIdentifier({ ...data, _module: v }, tree),
+      name: (v: T.TypeIdentifier) => wrapNestedTypeIdentifier({ ...data, _name: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapNewExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNewExpression(data: T.NewExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NewExpression as const,
@@ -2150,15 +2150,15 @@ export function wrapNewExpression(data: _NodeData, tree: TreeHandle): AnyNodeDat
     typeArguments() { return drillIn(this._type_arguments, tree); },
     arguments() { return drillIn(this._arguments, tree); },
     $with: {
-      constructor: (v: T.PrimaryExpression) => wrapNewExpression({ ...data, _constructor: v } as _NodeData, tree),
-      typeArguments: (v: T.TypeArguments) => wrapNewExpression({ ...data, _type_arguments: v } as _NodeData, tree),
-      arguments: (v: T.Arguments) => wrapNewExpression({ ...data, _arguments: v } as _NodeData, tree),
+      constructor: (v: T.PrimaryExpression) => wrapNewExpression({ ...data, _constructor: v }, tree),
+      typeArguments: (v: T.TypeArguments) => wrapNewExpression({ ...data, _type_arguments: v }, tree),
+      arguments: (v: T.Arguments) => wrapNewExpression({ ...data, _arguments: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapNonNullExpression(data: T.NonNullExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.NonNullExpression as const,
@@ -2166,24 +2166,24 @@ export function wrapNonNullExpression(data: _NodeData, tree: TreeHandle): AnyNod
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapNonNullExpression({ ...data, _expression: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapNonNullExpression({ ...data, _expression: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapObject(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapObject(data: T.Object, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Object as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => wrapObject({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier))[]) => wrapObject({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapObjectAssignmentPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapObjectAssignmentPattern(data: T.ObjectAssignmentPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectAssignmentPattern as const,
@@ -2193,25 +2193,25 @@ export function wrapObjectAssignmentPattern(data: _NodeData, tree: TreeHandle): 
     left() { return drillAs(this._left, tree, "shorthand_property_identifier_pattern", "_shorthand_property_identifier_pattern"); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) => wrapObjectAssignmentPattern({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Expression) => wrapObjectAssignmentPattern({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) => wrapObjectAssignmentPattern({ ...data, _left: v }, tree),
+      right: (v: T.Expression) => wrapObjectAssignmentPattern({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapObjectPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapObjectPattern(data: T.ObjectPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectPattern as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => wrapObjectPattern({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern))[]) => wrapObjectPattern({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapObjectType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapObjectType(data: T.ObjectType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ObjectType as const,
@@ -2223,15 +2223,15 @@ export function wrapObjectType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     members() { return drillInAll(this._members, tree); },
     closing() { return drillIn(this._closing, tree); },
     $with: {
-      opening: (v: T.ObjectTypeOpening) => wrapObjectType({ ...data, _opening: v } as _NodeData, tree),
-      members: (v: "," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon) => wrapObjectType({ ...data, _members: v } as _NodeData, tree),
-      closing: (v: T.ObjectTypeClosing) => wrapObjectType({ ...data, _closing: v } as _NodeData, tree),
+      opening: (v: T.ObjectTypeOpening) => wrapObjectType({ ...data, _opening: v }, tree),
+      members: (...v: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => wrapObjectType({ ...data, _members: v }, tree),
+      closing: (v: T.ObjectTypeClosing) => wrapObjectType({ ...data, _closing: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapOmittingTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapOmittingTypeAnnotation(data: T.OmittingTypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OmittingTypeAnnotation as const,
@@ -2239,13 +2239,13 @@ export function wrapOmittingTypeAnnotation(data: _NodeData, tree: TreeHandle): A
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapOmittingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapOmittingTypeAnnotation({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapOptingTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapOptingTypeAnnotation(data: T.OptingTypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptingTypeAnnotation as const,
@@ -2253,13 +2253,13 @@ export function wrapOptingTypeAnnotation(data: _NodeData, tree: TreeHandle): Any
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapOptingTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapOptingTypeAnnotation({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalParameter as const,
@@ -2276,18 +2276,18 @@ export function wrapOptionalParameter(data: _NodeData, tree: TreeHandle): AnyNod
     typeField() { return drillIn(this._type, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapOptionalParameter({ ...data, _decorator: v } as _NodeData, tree),
-      readonlyMarker: (v: T.ReadonlyMarker) => wrapOptionalParameter({ ...data, _readonly_marker: v } as _NodeData, tree),
-      pattern: (v: T.Pattern | T.This) => wrapOptionalParameter({ ...data, _pattern: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapOptionalParameter({ ...data, _type: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapOptionalParameter({ ...data, _value: v } as _NodeData, tree),
-      children: (...items: (T.AccessibilityModifier | T.OverrideModifier)[]) => wrapOptionalParameter({ ...data, $children: items } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapOptionalParameter({ ...data, _decorator: v }, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapOptionalParameter({ ...data, _readonly_marker: v }, tree),
+      pattern: (v: T.Pattern | T.This) => wrapOptionalParameter({ ...data, _pattern: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapOptionalParameter({ ...data, _type: v }, tree),
+      value: (v: T.Expression) => wrapOptionalParameter({ ...data, _value: v }, tree),
+      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => wrapOptionalParameter({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapOptionalTupleParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapOptionalTupleParameter(data: T.OptionalTupleParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalTupleParameter as const,
@@ -2297,14 +2297,14 @@ export function wrapOptionalTupleParameter(data: _NodeData, tree: TreeHandle): A
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: T.Identifier) => wrapOptionalTupleParameter({ ...data, _name: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapOptionalTupleParameter({ ...data, _type: v } as _NodeData, tree),
+      name: (v: T.Identifier) => wrapOptionalTupleParameter({ ...data, _name: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapOptionalTupleParameter({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapOptionalType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapOptionalType(data: T.OptionalType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.OptionalType as const,
@@ -2312,13 +2312,13 @@ export function wrapOptionalType(data: _NodeData, tree: TreeHandle): AnyNodeData
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapOptionalType({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapOptionalType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapPair(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPair(data: T.Pair, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Pair as const,
@@ -2328,14 +2328,14 @@ export function wrapPair(data: _NodeData, tree: TreeHandle): AnyNodeData {
     key() { return drillIn(this._key, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      key: (v: T.PropertyName) => wrapPair({ ...data, _key: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapPair({ ...data, _value: v } as _NodeData, tree),
+      key: (v: T.PropertyName) => wrapPair({ ...data, _key: v }, tree),
+      value: (v: T.Expression) => wrapPair({ ...data, _value: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapPairPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPairPattern(data: T.PairPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PairPattern as const,
@@ -2345,37 +2345,37 @@ export function wrapPairPattern(data: _NodeData, tree: TreeHandle): AnyNodeData 
     key() { return drillIn(this._key, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      key: (v: T.PropertyName) => wrapPairPattern({ ...data, _key: v } as _NodeData, tree),
-      value: (v: T.Pattern | T.AssignmentPattern) => wrapPairPattern({ ...data, _value: v } as _NodeData, tree),
+      key: (v: T.PropertyName) => wrapPairPattern({ ...data, _key: v }, tree),
+      value: (v: T.Pattern | T.AssignmentPattern) => wrapPairPattern({ ...data, _value: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapParenthesizedExpressionSequence(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapParenthesizedExpressionSequence(data: T.ParenthesizedExpressionSequence, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $child: (v: T.SequenceExpression) => wrapParenthesizedExpressionSequence({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.SequenceExpression) => wrapParenthesizedExpressionSequence({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapParenthesizedExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedExpression as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence)[]) => wrapParenthesizedExpression({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T.ParenthesizedExpressionTyped | T._ParenthesizedExpressionSequence))]) => wrapParenthesizedExpression({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapParenthesizedType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapParenthesizedType(data: T.ParenthesizedType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ParenthesizedType as const,
@@ -2383,13 +2383,13 @@ export function wrapParenthesizedType(data: _NodeData, tree: TreeHandle): AnyNod
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapParenthesizedType({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapParenthesizedType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapProgram(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapProgram(data: T.Program, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Program as const,
@@ -2399,14 +2399,14 @@ export function wrapProgram(data: _NodeData, tree: TreeHandle): AnyNodeData {
     hashBangLine() { return drillIn(this._hash_bang_line, tree); },
     statements() { return drillInAll(this._statements, tree); },
     $with: {
-      hashBangLine: (v: T.HashBangLine) => wrapProgram({ ...data, _hash_bang_line: v } as _NodeData, tree),
-      statements: (v: T.Statement) => wrapProgram({ ...data, _statements: v } as _NodeData, tree),
+      hashBangLine: (v: T.HashBangLine) => wrapProgram({ ...data, _hash_bang_line: v }, tree),
+      statements: (...v: T.Statement[]) => wrapProgram({ ...data, _statements: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPropertySignature(data: T.PropertySignature, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PropertySignature as const,
@@ -2426,19 +2426,19 @@ export function wrapPropertySignature(data: _NodeData, tree: TreeHandle): AnyNod
     optionalMarker() { return drillIn(this._optional_marker, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      accessibilityModifier: (v: T._AccessibilityModifier) => wrapPropertySignature({ ...data, _accessibility_modifier: v } as _NodeData, tree),
-      staticMarker: (v: T.StaticMarker) => wrapPropertySignature({ ...data, _static_marker: v } as _NodeData, tree),
-      overrideModifier: (v: T._OverrideModifier) => wrapPropertySignature({ ...data, _override_modifier: v } as _NodeData, tree),
-      readonlyMarker: (v: T.ReadonlyMarker) => wrapPropertySignature({ ...data, _readonly_marker: v } as _NodeData, tree),
-      name: (v: T.PropertyName) => wrapPropertySignature({ ...data, _name: v } as _NodeData, tree),
-      optionalMarker: (v: T.OptionalMarker) => wrapPropertySignature({ ...data, _optional_marker: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapPropertySignature({ ...data, _type: v } as _NodeData, tree),
+      accessibilityModifier: (v: T._AccessibilityModifier) => wrapPropertySignature({ ...data, _accessibility_modifier: v }, tree),
+      staticMarker: (v: T.StaticMarker) => wrapPropertySignature({ ...data, _static_marker: v }, tree),
+      overrideModifier: (v: T._OverrideModifier) => wrapPropertySignature({ ...data, _override_modifier: v }, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapPropertySignature({ ...data, _readonly_marker: v }, tree),
+      name: (v: T.PropertyName) => wrapPropertySignature({ ...data, _name: v }, tree),
+      optionalMarker: (v: T.OptionalMarker) => wrapPropertySignature({ ...data, _optional_marker: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapPropertySignature({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.PublicFieldDefinition as const,
@@ -2455,18 +2455,18 @@ export function wrapPublicFieldDefinition(data: _NodeData, tree: TreeHandle): An
     typeField() { return drillIn(this._type, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapPublicFieldDefinition({ ...data, _decorator: v } as _NodeData, tree),
-      name: (v: T.PropertyName) => wrapPublicFieldDefinition({ ...data, _name: v } as _NodeData, tree),
-      optionalityMarker: (v: T.PublicFieldDefinitionOptionalityMarker) => wrapPublicFieldDefinition({ ...data, _optionality_marker: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapPublicFieldDefinition({ ...data, _type: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapPublicFieldDefinition({ ...data, _value: v } as _NodeData, tree),
-      children: (...items: (T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt)[]) => wrapPublicFieldDefinition({ ...data, $children: items } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
+      name: (v: T.PropertyName) => wrapPublicFieldDefinition({ ...data, _name: v }, tree),
+      optionalityMarker: (v: T.PublicFieldDefinitionOptionalityMarker) => wrapPublicFieldDefinition({ ...data, _optionality_marker: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapPublicFieldDefinition({ ...data, _type: v }, tree),
+      value: (v: T.Expression) => wrapPublicFieldDefinition({ ...data, _value: v }, tree),
+      children: (...items: readonly [((T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt))]) => wrapPublicFieldDefinition({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapReadonlyType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapReadonlyType(data: T.ReadonlyType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReadonlyType as const,
@@ -2474,13 +2474,13 @@ export function wrapReadonlyType(data: _NodeData, tree: TreeHandle): AnyNodeData
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapReadonlyType({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapReadonlyType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapRegex(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapRegex(data: T.Regex, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Regex as const,
@@ -2490,14 +2490,14 @@ export function wrapRegex(data: _NodeData, tree: TreeHandle): AnyNodeData {
     pattern() { return drillIn(this._pattern, tree); },
     flags() { return drillIn(this._flags, tree); },
     $with: {
-      pattern: (v: T.RegexPattern) => wrapRegex({ ...data, _pattern: v } as _NodeData, tree),
-      flags: (v: T.RegexFlags) => wrapRegex({ ...data, _flags: v } as _NodeData, tree),
+      pattern: (v: T.RegexPattern) => wrapRegex({ ...data, _pattern: v }, tree),
+      flags: (v: T.RegexFlags) => wrapRegex({ ...data, _flags: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RequiredParameter as const,
@@ -2514,29 +2514,29 @@ export function wrapRequiredParameter(data: _NodeData, tree: TreeHandle): AnyNod
     typeField() { return drillIn(this._type, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      decorator: (v: T.Decorator) => wrapRequiredParameter({ ...data, _decorator: v } as _NodeData, tree),
-      readonlyMarker: (v: T.ReadonlyMarker) => wrapRequiredParameter({ ...data, _readonly_marker: v } as _NodeData, tree),
-      pattern: (v: T.Pattern | T.This) => wrapRequiredParameter({ ...data, _pattern: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapRequiredParameter({ ...data, _type: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapRequiredParameter({ ...data, _value: v } as _NodeData, tree),
-      children: (...items: (T.AccessibilityModifier | T.OverrideModifier)[]) => wrapRequiredParameter({ ...data, $children: items } as _NodeData, tree),
+      decorator: (...v: T.Decorator[]) => wrapRequiredParameter({ ...data, _decorator: v }, tree),
+      readonlyMarker: (v: T.ReadonlyMarker) => wrapRequiredParameter({ ...data, _readonly_marker: v }, tree),
+      pattern: (v: T.Pattern | T.This) => wrapRequiredParameter({ ...data, _pattern: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapRequiredParameter({ ...data, _type: v }, tree),
+      value: (v: T.Expression) => wrapRequiredParameter({ ...data, _value: v }, tree),
+      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => wrapRequiredParameter({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapRestPattern(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RestPattern as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.LhsExpression) => wrapRestPattern({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.LhsExpression) => wrapRestPattern({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapRestType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapRestType(data: T.RestType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.RestType as const,
@@ -2544,13 +2544,13 @@ export function wrapRestType(data: _NodeData, tree: TreeHandle): AnyNodeData {
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapRestType({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapRestType({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ReturnStatement as const,
@@ -2559,14 +2559,14 @@ export function wrapReturnStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: T.Semicolon) => wrapReturnStatement({ ...data, _semicolon: v } as _NodeData, tree),
-      children: (...items: T.Expressions[]) => wrapReturnStatement({ ...data, $children: items } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapReturnStatement({ ...data, _semicolon: v }, tree),
+      children: (...items: readonly [T.Expressions]) => wrapReturnStatement({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSatisfiesExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSatisfiesExpression(data: T.SatisfiesExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SatisfiesExpression as const,
@@ -2576,25 +2576,25 @@ export function wrapSatisfiesExpression(data: _NodeData, tree: TreeHandle): AnyN
     expression() { return drillIn(this._expression, tree); },
     typeAnnotation() { return drillIn(this._type_annotation, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapSatisfiesExpression({ ...data, _expression: v } as _NodeData, tree),
-      typeAnnotation: (v: T.Type) => wrapSatisfiesExpression({ ...data, _type_annotation: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapSatisfiesExpression({ ...data, _expression: v }, tree),
+      typeAnnotation: (v: T.Type) => wrapSatisfiesExpression({ ...data, _type_annotation: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSequenceExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSequenceExpression(data: T.SequenceExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SequenceExpression as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.Expression[]) => wrapSequenceExpression({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapSequenceExpression({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapSpreadElement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSpreadElement(data: T.SpreadElement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SpreadElement as const,
@@ -2602,13 +2602,13 @@ export function wrapSpreadElement(data: _NodeData, tree: TreeHandle): AnyNodeDat
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapSpreadElement({ ...data, _expression: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapSpreadElement({ ...data, _expression: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapStatementBlock(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapStatementBlock(data: T.StatementBlock, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.StatementBlock as const,
@@ -2618,47 +2618,47 @@ export function wrapStatementBlock(data: _NodeData, tree: TreeHandle): AnyNodeDa
     statements() { return drillInAll(this._statements, tree); },
     automaticSemicolon() { return drillIn(this._automatic_semicolon, tree); },
     $with: {
-      statements: (v: T.Statement) => wrapStatementBlock({ ...data, _statements: v } as _NodeData, tree),
-      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapStatementBlock({ ...data, _automatic_semicolon: v } as _NodeData, tree),
+      statements: (...v: T.Statement[]) => wrapStatementBlock({ ...data, _statements: v }, tree),
+      automaticSemicolon: (v: T.AutomaticSemicolon) => wrapStatementBlock({ ...data, _automatic_semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapStringDouble(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapStringDouble(data: T.StringDouble, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => wrapStringDouble({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.UnescapedDoubleStringFragment | T.EscapeSequence))[]) => wrapStringDouble({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapStringSingle(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapStringSingle(data: T.StringSingle, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => wrapStringSingle({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.UnescapedSingleStringFragment | T.EscapeSequence))[]) => wrapStringSingle({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapString(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapString(data: T.String, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.String as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T._StringDouble | T._StringSingle)[]) => wrapString({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T._StringDouble | T._StringSingle))]) => wrapString({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSubscriptExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSubscriptExpression(data: T.SubscriptExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SubscriptExpression as const,
@@ -2670,26 +2670,26 @@ export function wrapSubscriptExpression(data: _NodeData, tree: TreeHandle): AnyN
     optionalChain() { return drillIn(this._optional_chain, tree); },
     index() { return drillIn(this._index, tree); },
     $with: {
-      object: (v: T.Expression | T.PrimaryExpression) => wrapSubscriptExpression({ ...data, _object: v } as _NodeData, tree),
-      optionalChain: (v: T.OptionalChain) => wrapSubscriptExpression({ ...data, _optional_chain: v } as _NodeData, tree),
-      index: (v: T.Expressions) => wrapSubscriptExpression({ ...data, _index: v } as _NodeData, tree),
+      object: (v: T.Expression | T.PrimaryExpression) => wrapSubscriptExpression({ ...data, _object: v }, tree),
+      optionalChain: (v: T.OptionalChain) => wrapSubscriptExpression({ ...data, _optional_chain: v }, tree),
+      index: (v: T.Expressions) => wrapSubscriptExpression({ ...data, _index: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSwitchBody(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSwitchBody(data: T.SwitchBody, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchBody as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => wrapSwitchBody({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.SwitchCase | T.SwitchDefault))[]) => wrapSwitchBody({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapSwitchCase(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchCase as const,
@@ -2699,14 +2699,14 @@ export function wrapSwitchCase(data: _NodeData, tree: TreeHandle): AnyNodeData {
     value() { return drillIn(this._value, tree); },
     body() { return drillInAll(this._body, tree); },
     $with: {
-      value: (v: T.Expressions) => wrapSwitchCase({ ...data, _value: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapSwitchCase({ ...data, _body: v } as _NodeData, tree),
+      value: (v: T.Expressions) => wrapSwitchCase({ ...data, _value: v }, tree),
+      body: (...v: T.Statement[]) => wrapSwitchCase({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSwitchDefault(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchDefault as const,
@@ -2714,13 +2714,13 @@ export function wrapSwitchDefault(data: _NodeData, tree: TreeHandle): AnyNodeDat
 
     body() { return drillInAll(this._body, tree); },
     $with: {
-      body: (v: T.Statement) => wrapSwitchDefault({ ...data, _body: v } as _NodeData, tree),
+      body: (...v: T.Statement[]) => wrapSwitchDefault({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapSwitchStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapSwitchStatement(data: T.SwitchStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.SwitchStatement as const,
@@ -2730,58 +2730,58 @@ export function wrapSwitchStatement(data: _NodeData, tree: TreeHandle): AnyNodeD
     value() { return drillIn(this._value, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      value: (v: T.ParenthesizedExpression) => wrapSwitchStatement({ ...data, _value: v } as _NodeData, tree),
-      body: (v: T.SwitchBody) => wrapSwitchStatement({ ...data, _body: v } as _NodeData, tree),
+      value: (v: T.ParenthesizedExpression) => wrapSwitchStatement({ ...data, _value: v }, tree),
+      body: (v: T.SwitchBody) => wrapSwitchStatement({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTemplateLiteralType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTemplateLiteralType(data: T.TemplateLiteralType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateLiteralType as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => wrapTemplateLiteralType({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.TemplateChars | T.TemplateType))[]) => wrapTemplateLiteralType({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTemplateString(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTemplateString(data: T.TemplateString, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateString as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => wrapTemplateString({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: ((T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution))[]) => wrapTemplateString({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTemplateSubstitution(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTemplateSubstitution(data: T.TemplateSubstitution, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateSubstitution as const,
     $children: data.$children,
 
-    $with: { $child: (v: T.Expressions) => wrapTemplateSubstitution({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: T.Expressions) => wrapTemplateSubstitution({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapTemplateType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTemplateType(data: T.TemplateType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TemplateType as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.PrimaryType | T.InferType)) => wrapTemplateType({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.PrimaryType | T.InferType)) => wrapTemplateType({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapTernaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTernaryExpression(data: T.TernaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TernaryExpression as const,
@@ -2793,15 +2793,15 @@ export function wrapTernaryExpression(data: _NodeData, tree: TreeHandle): AnyNod
     consequence() { return drillIn(this._consequence, tree); },
     alternative() { return drillIn(this._alternative, tree); },
     $with: {
-      condition: (v: T.Expression) => wrapTernaryExpression({ ...data, _condition: v } as _NodeData, tree),
-      consequence: (v: T.Expression) => wrapTernaryExpression({ ...data, _consequence: v } as _NodeData, tree),
-      alternative: (v: T.Expression) => wrapTernaryExpression({ ...data, _alternative: v } as _NodeData, tree),
+      condition: (v: T.Expression) => wrapTernaryExpression({ ...data, _condition: v }, tree),
+      consequence: (v: T.Expression) => wrapTernaryExpression({ ...data, _consequence: v }, tree),
+      alternative: (v: T.Expression) => wrapTernaryExpression({ ...data, _alternative: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapThrowStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapThrowStatement(data: T.ThrowStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.ThrowStatement as const,
@@ -2810,14 +2810,14 @@ export function wrapThrowStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
 
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      semicolon: (v: T.Semicolon) => wrapThrowStatement({ ...data, _semicolon: v } as _NodeData, tree),
-      children: (...items: T.Expressions[]) => wrapThrowStatement({ ...data, $children: items } as _NodeData, tree),
+      semicolon: (v: T.Semicolon) => wrapThrowStatement({ ...data, _semicolon: v }, tree),
+      children: (...items: readonly [T.Expressions]) => wrapThrowStatement({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTryStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TryStatement as const,
@@ -2829,15 +2829,15 @@ export function wrapTryStatement(data: _NodeData, tree: TreeHandle): AnyNodeData
     handler() { return drillIn(this._handler, tree); },
     finalizer() { return drillIn(this._finalizer, tree); },
     $with: {
-      body: (v: T.StatementBlock) => wrapTryStatement({ ...data, _body: v } as _NodeData, tree),
-      handler: (v: T.CatchClause) => wrapTryStatement({ ...data, _handler: v } as _NodeData, tree),
-      finalizer: (v: T.FinallyClause) => wrapTryStatement({ ...data, _finalizer: v } as _NodeData, tree),
+      body: (v: T.StatementBlock) => wrapTryStatement({ ...data, _body: v }, tree),
+      handler: (v: T.CatchClause) => wrapTryStatement({ ...data, _handler: v }, tree),
+      finalizer: (v: T.FinallyClause) => wrapTryStatement({ ...data, _finalizer: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTupleParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTupleParameter(data: T.TupleParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleParameter as const,
@@ -2847,25 +2847,25 @@ export function wrapTupleParameter(data: _NodeData, tree: TreeHandle): AnyNodeDa
     name() { return drillIn(this._name, tree); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: T.Identifier | T.RestPattern) => wrapTupleParameter({ ...data, _name: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapTupleParameter({ ...data, _type: v } as _NodeData, tree),
+      name: (v: T.Identifier | T.RestPattern) => wrapTupleParameter({ ...data, _name: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapTupleParameter({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTupleType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTupleType(data: T.TupleType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TupleType as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.TupleTypeMember[]) => wrapTupleType({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: T.TupleTypeMember[]) => wrapTupleType({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeAliasDeclaration(data: T.TypeAliasDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAliasDeclaration as const,
@@ -2879,16 +2879,16 @@ export function wrapTypeAliasDeclaration(data: _NodeData, tree: TreeHandle): Any
     value() { return drillIn(this._value, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      name: (v: T.TypeIdentifier) => wrapTypeAliasDeclaration({ ...data, _name: v } as _NodeData, tree),
-      typeParameters: (v: T.TypeParameters) => wrapTypeAliasDeclaration({ ...data, _type_parameters: v } as _NodeData, tree),
-      value: (v: T.Type) => wrapTypeAliasDeclaration({ ...data, _value: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapTypeAliasDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
+      name: (v: T.TypeIdentifier) => wrapTypeAliasDeclaration({ ...data, _name: v }, tree),
+      typeParameters: (v: T.TypeParameters) => wrapTypeAliasDeclaration({ ...data, _type_parameters: v }, tree),
+      value: (v: T.Type) => wrapTypeAliasDeclaration({ ...data, _value: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapTypeAliasDeclaration({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeAnnotation(data: T.TypeAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAnnotation as const,
@@ -2896,24 +2896,24 @@ export function wrapTypeAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeDa
 
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapTypeAnnotation({ ...data, _type: v } as _NodeData, tree),
+      typeField: (v: T.Type) => wrapTypeAnnotation({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypeArguments(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeArguments as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.Type[]) => wrapTypeArguments({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapTypeArguments({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTypeAssertion(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeAssertion(data: T.TypeAssertion, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeAssertion as const,
@@ -2923,14 +2923,14 @@ export function wrapTypeAssertion(data: _NodeData, tree: TreeHandle): AnyNodeDat
     typeArguments() { return drillIn(this._type_arguments, tree); },
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      typeArguments: (v: T.TypeArguments) => wrapTypeAssertion({ ...data, _type_arguments: v } as _NodeData, tree),
-      expression: (v: T.Expression) => wrapTypeAssertion({ ...data, _expression: v } as _NodeData, tree),
+      typeArguments: (v: T.TypeArguments) => wrapTypeAssertion({ ...data, _type_arguments: v }, tree),
+      expression: (v: T.Expression) => wrapTypeAssertion({ ...data, _expression: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameter as const,
@@ -2944,27 +2944,27 @@ export function wrapTypeParameter(data: _NodeData, tree: TreeHandle): AnyNodeDat
     constraint() { return drillIn(this._constraint, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      constMarker: (v: T.ConstMarker) => wrapTypeParameter({ ...data, _const_marker: v } as _NodeData, tree),
-      name: (v: T.TypeIdentifier) => wrapTypeParameter({ ...data, _name: v } as _NodeData, tree),
-      constraint: (v: T.Constraint) => wrapTypeParameter({ ...data, _constraint: v } as _NodeData, tree),
-      value: (v: T.DefaultType) => wrapTypeParameter({ ...data, _value: v } as _NodeData, tree),
+      constMarker: (v: T.ConstMarker) => wrapTypeParameter({ ...data, _const_marker: v }, tree),
+      name: (v: T.TypeIdentifier) => wrapTypeParameter({ ...data, _name: v }, tree),
+      constraint: (v: T.Constraint) => wrapTypeParameter({ ...data, _constraint: v }, tree),
+      value: (v: T.DefaultType) => wrapTypeParameter({ ...data, _value: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypeParameters(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
     $children: data.$children,
 
-    $with: { $children: (...vs: T.TypeParameter[]) => wrapTypeParameters({ ...data, $children: vs } as _NodeData, tree) },
+    $with: { $children: (...vs: NonEmptyArray<T.TypeParameter>) => wrapTypeParameters({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
 
-export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypePredicate(data: T.TypePredicate, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicate as const,
@@ -2974,14 +2974,14 @@ export function wrapTypePredicate(data: _NodeData, tree: TreeHandle): AnyNodeDat
     name() { return drillAs(this._name, tree, "identifier", "predefined_type"); },
     typeField() { return drillIn(this._type, tree); },
     $with: {
-      name: (v: T.PredefinedType | T.This) => wrapTypePredicate({ ...data, _name: v } as _NodeData, tree),
-      typeField: (v: T.Type) => wrapTypePredicate({ ...data, _type: v } as _NodeData, tree),
+      name: (v: T.PredefinedType | T.This) => wrapTypePredicate({ ...data, _name: v }, tree),
+      typeField: (v: T.Type) => wrapTypePredicate({ ...data, _type: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypePredicateAnnotation(data: T.TypePredicateAnnotation, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypePredicateAnnotation as const,
@@ -2989,24 +2989,24 @@ export function wrapTypePredicateAnnotation(data: _NodeData, tree: TreeHandle): 
 
     typePredicate() { return drillIn(this._type_predicate, tree); },
     $with: {
-      typePredicate: (v: T.AssertsAnnotationAsserts | T.TypePredicate) => wrapTypePredicateAnnotation({ ...data, _type_predicate: v } as _NodeData, tree),
+      typePredicate: (v: T.AssertsAnnotationAsserts | T.TypePredicate) => wrapTypePredicateAnnotation({ ...data, _type_predicate: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapTypeQuery(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapTypeQuery(data: T.TypeQuery, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeQuery as const,
     $children: data.$children,
 
-    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => wrapTypeQuery({ ...data, $children: [v] } as _NodeData, tree) },
+    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => wrapTypeQuery({ ...data, $children: [v] }, tree) },
   });
   return _node;
 }
 
-export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapUnaryExpression(data: T.UnaryExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnaryExpression as const,
@@ -3016,14 +3016,14 @@ export function wrapUnaryExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
     operator() { return drillIn(this._operator, tree); },
     argument() { return drillIn(this._argument, tree); },
     $with: {
-      operator: (v: T.UnaryExpressionOperator) => wrapUnaryExpression({ ...data, _operator: v } as _NodeData, tree),
-      argument: (v: T.Expression) => wrapUnaryExpression({ ...data, _argument: v } as _NodeData, tree),
+      operator: (v: T.UnaryExpressionOperator) => wrapUnaryExpression({ ...data, _operator: v }, tree),
+      argument: (v: T.Expression) => wrapUnaryExpression({ ...data, _argument: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapUnionType(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UnionType as const,
@@ -3033,27 +3033,27 @@ export function wrapUnionType(data: _NodeData, tree: TreeHandle): AnyNodeData {
     left() { return drillIn(this._left, tree); },
     right() { return drillIn(this._right, tree); },
     $with: {
-      left: (v: T.Type) => wrapUnionType({ ...data, _left: v } as _NodeData, tree),
-      right: (v: T.Type) => wrapUnionType({ ...data, _right: v } as _NodeData, tree),
+      left: (v: T.Type) => wrapUnionType({ ...data, _left: v }, tree),
+      right: (v: T.Type) => wrapUnionType({ ...data, _right: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapUpdateExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapUpdateExpression(data: T.UpdateExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.UpdateExpression as const,
     $children: data.$children,
 
     $with: {
-      children: (...items: (T.UpdateExpressionPostfix | T.UpdateExpressionPrefix)[]) => wrapUpdateExpression({ ...data, $children: items } as _NodeData, tree),
+      children: (...items: readonly [((T.UpdateExpressionPostfix | T.UpdateExpressionPrefix))]) => wrapUpdateExpression({ ...data, $children: items }, tree),
     },
   });
   return _node;
 }
 
-export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapVariableDeclaration(data: T.VariableDeclaration, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclaration as const,
@@ -3063,14 +3063,14 @@ export function wrapVariableDeclaration(data: _NodeData, tree: TreeHandle): AnyN
     declarators() { return drillInAll(this._declarators, tree); },
     semicolon() { return drillIn(this._semicolon, tree); },
     $with: {
-      declarators: (v: T.VariableDeclarator) => wrapVariableDeclaration({ ...data, _declarators: v } as _NodeData, tree),
-      semicolon: (v: T.Semicolon) => wrapVariableDeclaration({ ...data, _semicolon: v } as _NodeData, tree),
+      declarators: (...v: NonEmptyArray<T.VariableDeclarator>) => wrapVariableDeclaration({ ...data, _declarators: v }, tree),
+      semicolon: (v: T.Semicolon) => wrapVariableDeclaration({ ...data, _semicolon: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapVariableDeclarator(data: T.VariableDeclarator, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.VariableDeclarator as const,
@@ -3082,15 +3082,15 @@ export function wrapVariableDeclarator(data: _NodeData, tree: TreeHandle): AnyNo
     typeField() { return drillIn(this._type, tree); },
     value() { return drillIn(this._value, tree); },
     $with: {
-      name: (v: T.Identifier | T.DestructuringPattern) => wrapVariableDeclarator({ ...data, _name: v } as _NodeData, tree),
-      typeField: (v: T.TypeAnnotation) => wrapVariableDeclarator({ ...data, _type: v } as _NodeData, tree),
-      value: (v: T.Expression) => wrapVariableDeclarator({ ...data, _value: v } as _NodeData, tree),
+      name: (v: T.Identifier | T.DestructuringPattern) => wrapVariableDeclarator({ ...data, _name: v }, tree),
+      typeField: (v: T.TypeAnnotation) => wrapVariableDeclarator({ ...data, _type: v }, tree),
+      value: (v: T.Expression) => wrapVariableDeclarator({ ...data, _value: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WhileStatement as const,
@@ -3100,14 +3100,14 @@ export function wrapWhileStatement(data: _NodeData, tree: TreeHandle): AnyNodeDa
     condition() { return drillIn(this._condition, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      condition: (v: T.ParenthesizedExpression) => wrapWhileStatement({ ...data, _condition: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapWhileStatement({ ...data, _body: v } as _NodeData, tree),
+      condition: (v: T.ParenthesizedExpression) => wrapWhileStatement({ ...data, _condition: v }, tree),
+      body: (v: T.Statement) => wrapWhileStatement({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapWithStatement(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.WithStatement as const,
@@ -3117,14 +3117,14 @@ export function wrapWithStatement(data: _NodeData, tree: TreeHandle): AnyNodeDat
     object() { return drillIn(this._object, tree); },
     body() { return drillIn(this._body, tree); },
     $with: {
-      object: (v: T.ParenthesizedExpression) => wrapWithStatement({ ...data, _object: v } as _NodeData, tree),
-      body: (v: T.Statement) => wrapWithStatement({ ...data, _body: v } as _NodeData, tree),
+      object: (v: T.ParenthesizedExpression) => wrapWithStatement({ ...data, _object: v }, tree),
+      body: (v: T.Statement) => wrapWithStatement({ ...data, _body: v }, tree),
     },
   });
   return _node;
 }
 
-export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): AnyNodeData {
+export function wrapYieldExpression(data: T.YieldExpression, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.YieldExpression as const,
@@ -3132,7 +3132,7 @@ export function wrapYieldExpression(data: _NodeData, tree: TreeHandle): AnyNodeD
 
     expression() { return drillIn(this._expression, tree); },
     $with: {
-      expression: (v: T.Expression) => wrapYieldExpression({ ...data, _expression: v } as _NodeData, tree),
+      expression: (v: T.Expression) => wrapYieldExpression({ ...data, _expression: v }, tree),
     },
   });
   return _node;
