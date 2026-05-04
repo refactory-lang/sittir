@@ -75,7 +75,7 @@
     "_visibility_modifier_in_path": "config",
     "_visibility_modifier_pub": "config",
     "abstract_type": "config",
-    "arguments": "children",
+    "arguments": "config",
     "array_expression": "config",
     "array_type": "config",
     "assignment_expression": "config",
@@ -233,7 +233,7 @@
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
-    "type_parameters": "children",
+    "type_parameters": "config",
     "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
@@ -404,6 +404,9 @@
     "abstract_type": [
       "type_parameters",
       "trait"
+    ],
+    "arguments": [
+      "attributes"
     ],
     "array_type": [
       "element",
@@ -725,6 +728,9 @@
       "name",
       "bounds",
       "default_type"
+    ],
+    "type_parameters": [
+      "attributes"
     ],
     "unary_expression": [
       "operator",

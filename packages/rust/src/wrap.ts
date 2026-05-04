@@ -406,9 +406,12 @@ export function wrapArguments(data: T.Arguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Arguments as const,
-    $children: data.$children,
+    _attributes: data._attributes,
 
-    $with: { $children: (...vs: ((T.AttributeItem | T.Expression))[]) => wrapArguments({ ...data, $children: vs }, tree) },
+    attributes() { return drillInAll<T.AttributeItem | T.Expression>(this._attributes, tree); },
+    $with: {
+      attributes: (...v: (T.AttributeItem | T.Expression)[]) => wrapArguments({ ...data, _attributes: v }, tree),
+    },
   });
   return _node;
 }
@@ -504,10 +507,13 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Attribute as const,
+    _path: data._path,
     $children: data.$children,
 
+    path() { return drillIn<T.Path>(this._path, tree); },
     $with: {
-      children: (...items: readonly [((T.Path | T.Expression | T.DelimTokenTree))]) => wrapAttribute({ ...data, $children: items }, tree),
+      path: (v: T.Path) => wrapAttribute({ ...data, _path: v }, tree),
+      children: (...items: readonly [((T.Expression | T.DelimTokenTree))]) => wrapAttribute({ ...data, $children: items }, tree),
     },
   });
   return _node;
@@ -574,12 +580,15 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
     ...data,
     $type: TSKindId.Block as const,
     _label: data._label,
+    _trailing_expression: data._trailing_expression,
     $children: data.$children,
 
     label() { return drillIn<T.Label | undefined>(this._label, tree); },
+    trailingExpression() { return drillIn<T.Expression | undefined>(this._trailing_expression, tree); },
     $with: {
       label: (v: T.Label) => wrapBlock({ ...data, _label: v }, tree),
-      children: (...items: ((T.Statement | T.Expression))[]) => wrapBlock({ ...data, $children: items }, tree),
+      trailingExpression: (v: T.Expression) => wrapBlock({ ...data, _trailing_expression: v }, tree),
+      children: (...items: T.Statement[]) => wrapBlock({ ...data, $children: items }, tree),
     },
   });
   return _node;
@@ -1749,13 +1758,16 @@ export function wrapMatchArm(data: T.MatchArm, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.MatchArm as const,
+    _attributes: data._attributes,
     _pattern: data._pattern,
     $children: data.$children,
 
+    attributes() { return drillInAll<T.AttributeItem | T.InnerAttributeItem>(this._attributes, tree); },
     pattern() { return drillIn<T.MatchPattern>(this._pattern, tree); },
     $with: {
+      attributes: (...v: (T.AttributeItem | T.InnerAttributeItem)[]) => wrapMatchArm({ ...data, _attributes: v }, tree),
       pattern: (v: T.MatchPattern) => wrapMatchArm({ ...data, _pattern: v }, tree),
-      children: (...items: ((T.AttributeItem | T.InnerAttributeItem | T.MatchArmWithComma | T._MatchArmBlockEnding))[]) => wrapMatchArm({ ...data, $children: items }, tree),
+      children: (...items: readonly [((T.MatchArmWithComma | T._MatchArmBlockEnding))]) => wrapMatchArm({ ...data, $children: items }, tree),
     },
   });
   return _node;
@@ -2722,9 +2734,12 @@ export function wrapTypeParameters(data: T.TypeParameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeParameters as const,
-    $children: data.$children,
+    _attributes: data._attributes,
 
-    $with: { $children: (...vs: NonEmptyArray<(T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)>) => wrapTypeParameters({ ...data, $children: vs }, tree) },
+    attributes() { return drillInAll<T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>(this._attributes, tree); },
+    $with: {
+      attributes: (...v: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => wrapTypeParameters({ ...data, _attributes: v }, tree),
+    },
   });
   return _node;
 }

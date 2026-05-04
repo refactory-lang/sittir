@@ -17,9 +17,13 @@ describe('abstract_type', () => {
 
 describe('arguments', () => {
   it('factory produces correct type', () => {
-    const node = ir.arguments();
+    const node = ir.arguments({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$type).toBe(TSKindId.Arguments);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.arguments({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
@@ -86,12 +90,12 @@ describe('async_block', () => {
 
 describe('attribute', () => {
   it('factory produces correct type', () => {
-    const node = ir.attribute({ children: [{ $type: 'self', $text: 'self', $source: 2, $named: true } as any] as any });
+    const node = ir.attribute({ path: { $type: 'self', $text: 'self', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.Attribute);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.attribute({ children: [{ $type: 'self', $text: 'self', $source: 2, $named: true } as any] as any });
+    const node = ir.attribute({ path: { $type: 'self', $text: 'self', $source: 2, $named: true } as any, children: [{ $type: 'char_literal', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1018,12 +1022,12 @@ describe('match_arm_block_ending', () => {
 
 describe('match_arm', () => {
   it('with_comma form produces correct type', () => {
-    const node = ir.matchArm.with_comma({ pattern: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.matchArm.with_comma({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'char_literal', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.MatchArm);
     expect(node.$source).toBe(2);
   });
   it('block_ending form produces correct type', () => {
-    const node = ir.matchArm.block_ending({ pattern: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.matchArm.block_ending({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], pattern: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.MatchArm);
     expect(node.$source).toBe(2);
   });
@@ -1773,9 +1777,13 @@ describe('type_parameter', () => {
 
 describe('type_parameters', () => {
   it('factory produces correct type', () => {
-    const node = ir.typeParameters({ type: "attribute_item" } as never);
+    const node = ir.typeParameters({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$type).toBe(TSKindId.TypeParameters);
     expect(node.$source).toBe(2);
+  });
+  it('render produces non-empty string', () => {
+    const node = ir.typeParameters({ attributes: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 

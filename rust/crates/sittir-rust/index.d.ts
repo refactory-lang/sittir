@@ -58,7 +58,7 @@ export interface ArgumentsTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<ArgumentsChildTransport>
+  attributes: Array<AnyTransport>
 }
 
 export interface ArrayExpressionListTransport {
@@ -168,7 +168,8 @@ export interface AttributeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Box<AnyTransport>
+  path: PathTransport
+  '$children'?: Box<AnyTransport>
 }
 
 export interface AwaitExpressionTransport {
@@ -222,7 +223,8 @@ export interface BlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   label?: LabelTransport
-  '$children': Array<AnyTransport>
+  trailingExpression?: ExpressionTransport
+  '$children': Array<StatementTransport>
 }
 
 export interface BoundedTypeTransport {
@@ -1348,8 +1350,9 @@ export interface MatchArmUFormBlockEndingTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributes: Array<DeclarationStatementTransport>
   pattern: MatchPatternTransport
-  '$children': Array<MatchArmUFormBlockEndingChildTransport>
+  '$children': MatchArmBlockEndingTransport
 }
 
 export interface MatchArmUFormWithCommaTransport {
@@ -1359,8 +1362,9 @@ export interface MatchArmUFormWithCommaTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributes: Array<DeclarationStatementTransport>
   pattern: MatchPatternTransport
-  '$children': Array<MatchArmUFormWithCommaChildTransport>
+  '$children': MatchArmWithCommaTransport
 }
 
 export interface MatchArmWithCommaTransport {
@@ -2422,7 +2426,7 @@ export interface TypeParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<TypeParametersChildTransport>
+  attributes: Array<AnyTransport>
 }
 
 export interface TypeParameterTransport {

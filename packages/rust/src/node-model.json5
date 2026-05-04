@@ -3789,11 +3789,11 @@
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3803,26 +3803,25 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item",
+              "_expression"
+            ]
+          }
         }
       ],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "array_expression",
@@ -4193,11 +4192,11 @@
       "factoryName": "attribute",
       "irKey": "attribute",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "path",
           "propertyName": "path",
+          "paramName": "path",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -4208,8 +4207,17 @@
               "name": "_path",
               "unresolved": true
             }
-          ]
-        },
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_path"
+            ]
+          }
+        }
+      ],
+      "children": [
         {
           "name": "expression",
           "propertyName": "expression",
@@ -4439,6 +4447,29 @@
               "label"
             ]
           }
+        },
+        {
+          "name": "trailing_expression",
+          "propertyName": "trailingExpression",
+          "paramName": "trailingExpression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
         }
       ],
       "children": [
@@ -4453,21 +4484,6 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_expression",
               "unresolved": true
             }
           ]
@@ -9960,6 +9976,36 @@
           "parentKind": "match_arm",
           "fields": [
             {
+              "name": "attributes",
+              "propertyName": "attributes",
+              "paramName": "attributes",
+              "required": true,
+              "multiple": true,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "attribute_item",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "inner_attribute_item",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "attribute_item",
+                  "inner_attribute_item"
+                ]
+              }
+            },
+            {
               "name": "pattern",
               "propertyName": "pattern",
               "paramName": "pattern",
@@ -9984,27 +10030,6 @@
             }
           ],
           "children": [
-            {
-              "name": "attribute_item",
-              "propertyName": "attributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "attribute_item",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "inner_attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "match_arm_with_comma",
               "propertyName": "matchArmWithComma",
@@ -10031,6 +10056,36 @@
           "parentKind": "match_arm",
           "fields": [
             {
+              "name": "attributes",
+              "propertyName": "attributes",
+              "paramName": "attributes",
+              "required": true,
+              "multiple": true,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "attribute_item",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "inner_attribute_item",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "attribute_item",
+                  "inner_attribute_item"
+                ]
+              }
+            },
+            {
               "name": "pattern",
               "propertyName": "pattern",
               "paramName": "pattern",
@@ -10055,27 +10110,6 @@
             }
           ],
           "children": [
-            {
-              "name": "attribute_item",
-              "propertyName": "attributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "attribute_item",
-                  "unresolved": true
-                },
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "inner_attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "match_arm_block_ending",
               "propertyName": "matchArmBlockEnding",
@@ -14462,11 +14496,11 @@
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -14476,16 +14510,7 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "metavariable",
-          "propertyName": "metavariable",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -14510,10 +14535,21 @@
               "name": "const_parameter",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item",
+              "metavariable",
+              "type_parameter",
+              "lifetime_parameter",
+              "const_parameter"
+            ]
+          }
         }
       ],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "unary_expression",

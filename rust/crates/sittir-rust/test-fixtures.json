@@ -3643,7 +3643,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo () {\n    return\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (return_expression)))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block trailing_expression: (return_expression)))",
     "wrappedText": "fn foo () {\n    return\n}",
     "wrappedOffset": 0
   },
@@ -3791,7 +3791,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo (#[attr] x: i32, #[attr] x: i64) {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (attribute_item attribute: (attribute (identifier))) (parameter pattern: (identifier) type: (primitive_type)) (attribute_item attribute: (attribute (identifier))) (parameter pattern: (identifier) type: (primitive_type))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type)) (attribute_item attribute: (attribute path: (identifier))) (parameter pattern: (identifier) type: (primitive_type))) body: (block))",
     "wrappedText": "fn foo (#[attr] x: i32, #[attr] x: i64) {}",
     "wrappedOffset": 0
   },
@@ -3889,7 +3889,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn accumulate (self) ->Machine<{State::Accumulate}> {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (self_parameter self: (self))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (block (scoped_identifier path: (identifier) name: (identifier))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (self_parameter self: (self))) return_type: (generic_type type: (type_identifier) type_arguments: (type_arguments (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier))))) body: (block))",
     "wrappedText": "fn accumulate (self) ->Machine<{State::Accumulate}> {}",
     "wrappedOffset": 0
   },
@@ -3963,7 +3963,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo (bar: impl for<'a> Baz<Quux<'a>>) {}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier))))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier))))))))) body: (block))",
     "wrappedText": "fn foo (bar: impl for<'a> Baz<Quux<'a>>) {}",
     "wrappedOffset": 0
   },
@@ -4279,20 +4279,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 254,
-          "$source": 0,
-          "$text": "return",
-          "$span": {
-            "start": 239,
-            "end": 245
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 233,
         "end": 247
@@ -4311,6 +4297,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 254,
+        "$source": 0,
+        "$text": "return",
+        "$span": {
+          "start": 239,
+          "end": 245
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -4324,7 +4322,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ return }"
+    "expectedOutput": "{  return }"
   },
   {
     "kind": "roundtrip",
@@ -4332,9 +4330,9 @@
     "sourceIn": "{\n    return\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ return }",
-    "expectedReparseTree": "(block (return_expression))",
-    "wrappedText": "fn _f() { let _ = { return }; }",
+    "expectedSourceOut": "{  return }",
+    "expectedReparseTree": "(block trailing_expression: (return_expression))",
+    "wrappedText": "fn _f() { let _ = {  return }; }",
     "wrappedOffset": 18
   },
   {
@@ -4543,20 +4541,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 243,
-          "$source": 0,
-          "$text": "State::Accumulate",
-          "$span": {
-            "start": 377,
-            "end": 394
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 376,
         "end": 395
@@ -4575,6 +4559,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 243,
+        "$source": 0,
+        "$text": "State::Accumulate",
+        "$span": {
+          "start": 377,
+          "end": 394
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -4588,7 +4584,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ State::Accumulate }"
+    "expectedOutput": "{  State::Accumulate }"
   },
   {
     "kind": "roundtrip",
@@ -4596,9 +4592,9 @@
     "sourceIn": "{State::Accumulate}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ State::Accumulate }",
-    "expectedReparseTree": "(block (scoped_identifier path: (identifier) name: (identifier)))",
-    "wrappedText": "fn _f() { let _ = { State::Accumulate }; }",
+    "expectedSourceOut": "{  State::Accumulate }",
+    "expectedReparseTree": "(block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))",
+    "wrappedText": "fn _f() { let _ = {  State::Accumulate }; }",
     "wrappedOffset": 18
   },
   {
@@ -5455,7 +5451,7 @@
     "pattern": "abstract_type",
     "edits": [],
     "expectedSourceOut": "impl for <'a> Baz<Quux<'a>>",
-    "expectedReparseTree": "(abstract_type type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)))))))",
+    "expectedReparseTree": "(abstract_type type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) trait: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)))))))",
     "wrappedText": "type _X = impl for <'a> Baz<Quux<'a>>;",
     "wrappedOffset": 10
   },
@@ -5581,7 +5577,7 @@
     "pattern": "generic_type",
     "edits": [],
     "expectedSourceOut": "Machine <{State::Accumulate}>",
-    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (block (scoped_identifier path: (identifier) name: (identifier)))))",
+    "expectedReparseTree": "(generic_type type: (type_identifier) type_arguments: (type_arguments (block trailing_expression: (scoped_identifier path: (identifier) name: (identifier)))))",
     "wrappedText": "type _X = Machine <{State::Accumulate}>;",
     "wrappedOffset": 10
   },
@@ -5867,7 +5863,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attr]",
     "wrappedOffset": 0
   },
@@ -5941,7 +5937,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attr]",
     "wrappedOffset": 0
   },
@@ -6615,7 +6611,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<'a>(x: impl 'a + Clone) {}",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))) body: (block)))",
     "wrappedText": "fn foo<'a>(x: impl 'a + Clone) {}",
     "wrappedOffset": 0
   },
@@ -6701,7 +6697,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo <'a> (x: impl 'a + Clone) {}",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) parameters: (parameters (parameter pattern: (identifier) type: (abstract_type trait: (bounded_type left: (lifetime identifier: (identifier)) right: (type_identifier))))) body: (block))",
     "wrappedText": "fn foo <'a> (x: impl 'a + Clone) {}",
     "wrappedOffset": 0
   },
@@ -7343,7 +7339,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "pub unsafe extern \"C\" fn c_variadic_no_use (fmt: *const i8, mut ap: ...) ->i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
-    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type))) (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) (call_expression function: (identifier) arguments: (arguments (identifier) (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))) (line_comment (line_comment_content))))",
+    "expectedReparseTree": "(function_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) function_modifiers: (function_modifiers modifier: (extern_modifier string_literal: (string_literal (string_content)))) name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (pointer_type (pointer_type_const) type: (primitive_type))) (variadic_parameter mutable_specifier: (mutable_specifier) pattern: (identifier))) return_type: (primitive_type) body: (block (line_comment (line_comment_content)) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments)))) (line_comment (line_comment_content))))",
     "wrappedText": "pub unsafe extern \"C\" fn c_variadic_no_use (fmt: *const i8, mut ap: ...) ->i32 {\n    // CHECK: call void @llvm.va_start\n    vprintf(fmt, ap.as_va_list())\n    // CHECK: call void @llvm.va_end\n}",
     "wrappedOffset": 0
   },
@@ -7853,7 +7849,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "vprintf (fmt, ap.as_va_list())",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier) (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments))))",
     "wrappedText": "fn _f() { let _ = vprintf (fmt, ap.as_va_list()); }",
     "wrappedOffset": 18
   },
@@ -10377,7 +10373,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let Foo::Bar {\n    texts,\n    values,\n} =foo().bar().await? else {\n    return Err(index)\n};",
-    "expectedReparseTree": "(let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier))) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block (return_expression (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(let_declaration pattern: (struct_pattern type: (scoped_type_identifier path: (identifier) name: (type_identifier)) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier))) (field_pattern (field_pattern_shorthand name: (shorthand_field_identifier)))) value: (try_expression value: (await_expression (call_expression function: (field_expression value: (call_expression function: (identifier) arguments: (arguments)) field: (field_identifier)) arguments: (arguments)))) alternative: (block trailing_expression: (return_expression (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "let Foo::Bar {\n    texts,\n    values,\n} =foo().bar().await? else {\n    return Err(index)\n};",
     "wrappedOffset": 0
   },
@@ -10985,7 +10981,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "Err (index)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = Err (index); }",
     "wrappedOffset": 18
   },
@@ -11157,20 +11153,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 254,
-          "$source": 0,
-          "$text": "return Err(index)",
-          "$span": {
-            "start": 72,
-            "end": 89
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 66,
         "end": 91
@@ -11189,6 +11171,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 254,
+        "$source": 0,
+        "$text": "return Err(index)",
+        "$span": {
+          "start": 72,
+          "end": 89
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -11202,7 +11196,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ return Err(index) }"
+    "expectedOutput": "{  return Err(index) }"
   },
   {
     "kind": "roundtrip",
@@ -11210,9 +11204,9 @@
     "sourceIn": "{\n    return Err(index)\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ return Err(index) }",
-    "expectedReparseTree": "(block (return_expression (call_expression function: (identifier) arguments: (arguments (identifier)))))",
-    "wrappedText": "fn _f() { let _ = { return Err(index) }; }",
+    "expectedSourceOut": "{  return Err(index) }",
+    "expectedReparseTree": "(block trailing_expression: (return_expression (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))))",
+    "wrappedText": "fn _f() { let _ = {  return Err(index) }; }",
     "wrappedOffset": 18
   },
   {
@@ -11415,7 +11409,7 @@
     "pattern": "return_expression",
     "edits": [],
     "expectedSourceOut": "return Err(index)",
-    "expectedReparseTree": "(return_expression (call_expression function: (identifier) arguments: (arguments (identifier))))",
+    "expectedReparseTree": "(return_expression (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
     "wrappedText": "fn _f() { let _ = return Err(index); }",
     "wrappedOffset": 18
   },
@@ -11605,7 +11599,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let a = if b {\n    c\n} else {\n    d\n};",
-    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block (identifier)) alternative: (else_clause (block (identifier))))))",
+    "expectedReparseTree": "(source_file statements: (let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier))))))",
     "wrappedText": "let a = if b {\n    c\n} else {\n    d\n};",
     "wrappedOffset": 0
   },
@@ -11691,7 +11685,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let a =if b {\n    c\n} else {\n    d\n};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block (identifier)) alternative: (else_clause (block (identifier)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier)))))",
     "wrappedText": "let a =if b {\n    c\n} else {\n    d\n};",
     "wrappedOffset": 0
   },
@@ -11765,7 +11759,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if b {\n    c\n} else {\n    d\n}",
-    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block (identifier)) alternative: (else_clause (block (identifier))))",
+    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block trailing_expression: (identifier)) alternative: (else_clause (block trailing_expression: (identifier))))",
     "wrappedText": "fn _f() { let _ = if b {\n    c\n} else {\n    d\n}; }",
     "wrappedOffset": 18
   },
@@ -11775,20 +11769,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "c",
-          "$span": {
-            "start": 19,
-            "end": 20
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 13,
         "end": 22
@@ -11807,6 +11787,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "c",
+        "$span": {
+          "start": 19,
+          "end": 20
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -11820,7 +11812,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ c }"
+    "expectedOutput": "{  c }"
   },
   {
     "kind": "roundtrip",
@@ -11828,9 +11820,9 @@
     "sourceIn": "{\n    c\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ c }",
-    "expectedReparseTree": "(block (identifier))",
-    "wrappedText": "fn _f() { let _ = { c }; }",
+    "expectedSourceOut": "{  c }",
+    "expectedReparseTree": "(block trailing_expression: (identifier))",
+    "wrappedText": "fn _f() { let _ = {  c }; }",
     "wrappedOffset": 18
   },
   {
@@ -11839,20 +11831,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "d",
-          "$span": {
-            "start": 34,
-            "end": 35
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 28,
         "end": 37
@@ -11871,6 +11849,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "d",
+        "$span": {
+          "start": 34,
+          "end": 35
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -11884,7 +11874,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ d }"
+    "expectedOutput": "{  d }"
   },
   {
     "kind": "roundtrip",
@@ -11892,9 +11882,9 @@
     "sourceIn": "{\n    d\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ d }",
-    "expectedReparseTree": "(block (identifier))",
-    "wrappedText": "fn _f() { let _ = { d }; }",
+    "expectedSourceOut": "{  d }",
+    "expectedReparseTree": "(block trailing_expression: (identifier))",
+    "wrappedText": "fn _f() { let _ = {  d }; }",
     "wrappedOffset": 18
   },
   {
@@ -12321,7 +12311,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration name: (field_identifier) type: (primitive_type)) (attribute_item attribute: (attribute (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) (struct_item_brace body: (field_declaration_list (field_declaration name: (field_identifier) type: (primitive_type)) (attribute_item attribute: (attribute path: (identifier))) (field_declaration name: (field_identifier) type: (primitive_type)))))",
     "wrappedText": "struct Point {\n  x: i32,\n\n  #[attribute1]\n  y: i32,\n}",
     "wrappedOffset": 0
   },
@@ -12747,7 +12737,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attribute1]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attribute1]",
     "wrappedOffset": 0
   },
@@ -13439,7 +13429,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct A <B> {}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) (struct_item_brace body: (field_declaration_list)))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) (struct_item_brace body: (field_declaration_list)))",
     "wrappedText": "struct A <B> {}",
     "wrappedOffset": 0
   },
@@ -13515,7 +13505,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct C <'a, 'b> {}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (lifetime_parameter name: (lifetime identifier: (identifier)))) (struct_item_brace body: (field_declaration_list)))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier))) (lifetime_parameter name: (lifetime identifier: (identifier)))) (struct_item_brace body: (field_declaration_list)))",
     "wrappedText": "struct C <'a, 'b> {}",
     "wrappedOffset": 0
   },
@@ -13591,7 +13581,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct C <'a,> {}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) (struct_item_brace body: (field_declaration_list)))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) (struct_item_brace body: (field_declaration_list)))",
     "wrappedText": "struct C <'a,> {}",
     "wrappedOffset": 0
   },
@@ -13667,7 +13657,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct D <const SIZE: usize> {}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters (const_parameter name: (identifier) type: (primitive_type))) (struct_item_brace body: (field_declaration_list)))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters attributes: (const_parameter name: (identifier) type: (primitive_type))) (struct_item_brace body: (field_declaration_list)))",
     "wrappedText": "struct D <const SIZE: usize> {}",
     "wrappedOffset": 0
   },
@@ -13743,7 +13733,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "struct E <#[attr] T> {}",
-    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters (attribute_item attribute: (attribute (identifier))) (type_parameter name: (type_identifier))) (struct_item_brace body: (field_declaration_list)))",
+    "expectedReparseTree": "(struct_item name: (type_identifier) type_parameters: (type_parameters attributes: (attribute_item attribute: (attribute path: (identifier))) attributes: (type_parameter name: (type_identifier))) (struct_item_brace body: (field_declaration_list)))",
     "wrappedText": "struct E <#[attr] T> {}",
     "wrappedOffset": 0
   },
@@ -13817,7 +13807,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attr]",
     "wrappedOffset": 0
   },
@@ -13903,7 +13893,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Option <T> {\n    None,\n    Some(T),\n}",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) body: (enum_variant_list (enum_variant name: (identifier)) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier)))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) body: (enum_variant_list (enum_variant name: (identifier)) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier)))))",
     "wrappedText": "pub enum Option <T> {\n    None,\n    Some(T),\n}",
     "wrappedOffset": 0
   },
@@ -13989,7 +13979,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Node <T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier)))) body: (enum_variant_list (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) (field_declaration name: (field_identifier) type: (primitive_type)))) (attribute_item attribute: (attribute (identifier))) (attribute_item attribute: (attribute (identifier))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (type_identifier))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier)))) body: (enum_variant_list (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) (field_declaration name: (field_identifier) type: (primitive_type)))) (attribute_item attribute: (attribute path: (identifier))) (attribute_item attribute: (attribute path: (identifier))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (type_identifier))))))",
     "wrappedText": "pub enum Node <T: Item> {\n    Internal {\n        children: Vec<Tree<T>>,\n        height: u16\n    },\n    #[attribute1]\n    #[attribute2]\n    Leaf {\n        value: T\n    }\n}",
     "wrappedOffset": 0
   },
@@ -14243,7 +14233,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attribute1]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attribute1]",
     "wrappedOffset": 0
   },
@@ -14317,7 +14307,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attribute2]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attribute2]",
     "wrappedOffset": 0
   },
@@ -16577,7 +16567,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type Name <T>=Vec<T>;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
     "wrappedText": "type Name <T>=Vec<T>;",
     "wrappedOffset": 0
   },
@@ -17175,7 +17165,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type Foo <T> where T: Copy=Box<T>;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) where_clause: (where_clause (where_predicate left: (type_identifier) bounds: (trait_bounds (type_identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) where_clause: (where_clause (where_predicate left: (type_identifier) bounds: (trait_bounds (type_identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))))",
     "wrappedText": "type Foo <T> where T: Copy=Box<T>;",
     "wrappedOffset": 0
   },
@@ -17573,7 +17563,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[test]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[test]",
     "wrappedOffset": 0
   },
@@ -17647,7 +17637,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
     "wrappedText": "#[derive(Debug)]",
     "wrappedOffset": 0
   },
@@ -17721,7 +17711,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Debug, Eq,)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
     "wrappedText": "#[derive(Debug, Eq,)]",
     "wrappedOffset": 0
   },
@@ -17795,7 +17785,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(target_os = \"macos\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
     "wrappedText": "#[cfg(target_os = \"macos\")]",
     "wrappedOffset": 0
   },
@@ -17869,7 +17859,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[clippy::cyclomatic_complexity = \"100\"]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (scoped_identifier path: (identifier) name: (identifier)) value: (string_literal (string_content))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (scoped_identifier path: (identifier) name: (identifier)) value: (string_literal (string_content))))",
     "wrappedText": "#[clippy::cyclomatic_complexity = \"100\"]",
     "wrappedOffset": 0
   },
@@ -18399,7 +18389,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![allow(clippy::useless_transmute)]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
     "wrappedText": "#![allow(clippy::useless_transmute)]",
     "wrappedOffset": 0
   },
@@ -18525,7 +18515,7 @@
     "pattern": "mod_item",
     "edits": [],
     "expectedSourceOut": "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
-    "expectedReparseTree": "(mod_item name: (identifier) (mod_item_inline body: (declaration_list (inner_attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))))))",
+    "expectedReparseTree": "(mod_item name: (identifier) (mod_item_inline body: (declaration_list (inner_attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))))))",
     "wrappedText": "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
     "wrappedOffset": 0
   },
@@ -18611,7 +18601,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg(target_os = \"macos\")]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
     "wrappedText": "#![cfg(target_os = \"macos\")]",
     "wrappedOffset": 0
   },
@@ -18697,7 +18687,7 @@
     "pattern": "inner_attribute_item",
     "edits": [],
     "expectedSourceOut": "#![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
-    "expectedReparseTree": "(inner_attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (token_tree (delim_token_tree_paren (identifier) (identifier))) (identifier) (token_tree (delim_token_tree_paren (identifier)))))))",
+    "expectedReparseTree": "(inner_attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (token_tree (delim_token_tree_paren (identifier) (identifier))) (identifier) (token_tree (delim_token_tree_paren (identifier)))))))",
     "wrappedText": "#![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]",
     "wrappedOffset": 0
   },
@@ -19011,7 +19001,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "self.visit_type (&ty.elem)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (self) field: (field_identifier)) arguments: (arguments attributes: (reference_expression value: (field_expression value: (identifier) field: (field_identifier)))))",
     "wrappedText": "fn _f() { let _ = self.visit_type (&ty.elem); }",
     "wrappedOffset": 18
   },
@@ -19259,7 +19249,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[doc = include_str!(\"foo-doc.md\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content)))))))",
     "wrappedText": "#[doc = include_str!(\"foo-doc.md\")]",
     "wrappedOffset": 0
   },
@@ -19333,7 +19323,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[namespace = foo::bar]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) value: (scoped_identifier path: (identifier) name: (identifier))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) value: (scoped_identifier path: (identifier) name: (identifier))))",
     "wrappedText": "#[namespace = foo::bar]",
     "wrappedOffset": 0
   },
@@ -19819,7 +19809,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo (#[attr(=> arbitrary tokens <=)] x, y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier))))) (identifier) (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier))))) attributes: (identifier) attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = foo (#[attr(=> arbitrary tokens <=)] x, y); }",
     "wrappedOffset": 18
   },
@@ -19869,7 +19859,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "foo (#[bar(some tokens are special in other contexts: $/';()*()+.)] x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (token_tree (delim_token_tree_paren)) (token_tree (delim_token_tree_paren)))))) (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (token_tree (delim_token_tree_paren)) (token_tree (delim_token_tree_paren)))))) attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = foo (#[bar(some tokens are special in other contexts: $/';()*()+.)] x); }",
     "wrappedOffset": 18
   },
@@ -19943,7 +19933,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr(=> arbitrary tokens <=)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
     "wrappedText": "#[attr(=> arbitrary tokens <=)]",
     "wrappedOffset": 0
   },
@@ -20017,7 +20007,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[bar(some tokens are special in other contexts: $/';()*()+.)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (token_tree (delim_token_tree_paren)) (token_tree (delim_token_tree_paren))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (identifier) (token_tree (delim_token_tree_paren)) (token_tree (delim_token_tree_paren))))))",
     "wrappedText": "#[bar(some tokens are special in other contexts: $/';()*()+.)]",
     "wrappedOffset": 0
   },
@@ -20215,7 +20205,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[derive(Error, Debug)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (identifier)))))",
     "wrappedText": "#[derive(Error, Debug)]",
     "wrappedOffset": 0
   },
@@ -20289,7 +20279,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (token_tree (delim_token_tree_paren (integer_literal)))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (token_tree (delim_token_tree_paren (integer_literal)))))))",
     "wrappedText": "#[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]",
     "wrappedOffset": 0
   },
@@ -20363,7 +20353,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (identifier) (identifier) (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (identifier) (identifier) (identifier)))))",
     "wrappedText": "#[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]",
     "wrappedOffset": 0
   },
@@ -20437,7 +20427,7 @@
     "pattern": "enum_item",
     "edits": [],
     "expectedSourceOut": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
-    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (token_tree (delim_token_tree_paren (integer_literal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier))) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (identifier) (identifier) (identifier))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (primitive_type)) (field_declaration name: (field_identifier) type: (type_identifier))))))",
+    "expectedReparseTree": "(enum_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (enum_variant_list (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (token_tree (delim_token_tree_paren (integer_literal))))))) (enum_variant name: (identifier) body: (ordered_field_declaration_list type: (type_identifier))) (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (string_literal (string_content)) (identifier) (identifier) (identifier) (identifier))))) (enum_variant name: (identifier) body: (field_declaration_list (field_declaration name: (field_identifier) type: (primitive_type)) (field_declaration name: (field_identifier) type: (type_identifier))))))",
     "wrappedText": "pub enum Error {\n    #[error(\"first letter must be lowercase but was {:?}\", first_char(.0))]\n    WrongCase(String),\n    #[error(\"invalid index {idx}, expected at least {} and at most {}\", .limits.lo, .limits.hi)]\n    OutOfBounds { idx: usize, limits: Limits },\n}",
     "wrappedOffset": 0
   },
@@ -20643,7 +20633,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) attributes: (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))))",
     "wrappedText": "fn foo() {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "wrappedOffset": 0
   },
@@ -20717,7 +20707,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters) body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) attributes: (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))))",
     "wrappedText": "fn foo () {\n   bar(x,\n       #[cfg(foo = \"bar\")]\n       y);\n   let z = [#[hello] 2, 7, 8];\n   let t = (#[hello] 2, 7, 8);\n}",
     "wrappedOffset": 0
   },
@@ -20805,7 +20795,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ bar(x,\n       #[cfg(foo = \"bar\")]\n       y); let z = [#[hello] 2, 7, 8]; let t = (#[hello] 2, 7, 8); }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) attributes: (identifier))))) (let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))) (let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = { bar(x,\n       #[cfg(foo = \"bar\")]\n       y); let z = [#[hello] 2, 7, 8]; let t = (#[hello] 2, 7, 8); }; }",
     "wrappedOffset": 18
   },
@@ -20855,7 +20845,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "bar (x,\n       #[cfg(foo = \"bar\")]\n       y)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier) attributes: (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content)))))) attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = bar (x,\n       #[cfg(foo = \"bar\")]\n       y); }",
     "wrappedOffset": 18
   },
@@ -20929,7 +20919,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[hello]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[hello]",
     "wrappedOffset": 0
   },
@@ -21003,7 +20993,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[hello]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[hello]",
     "wrappedOffset": 0
   },
@@ -21077,7 +21067,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo = \"bar\")]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier) (string_literal (string_content))))))",
     "wrappedText": "#[cfg(foo = \"bar\")]",
     "wrappedOffset": 0
   },
@@ -21227,7 +21217,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let z =[#[hello] 2, 7, 8];",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))))",
     "wrappedText": "let z =[#[hello] 2, 7, 8];",
     "wrappedOffset": 0
   },
@@ -21313,7 +21303,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let t =(#[hello] 2, 7, 8);",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
     "wrappedText": "let t =(#[hello] 2, 7, 8);",
     "wrappedOffset": 0
   },
@@ -21353,7 +21343,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[#[hello] 2, 7, 8]",
-    "expectedReparseTree": "(array_expression (array_expression_list (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
+    "expectedReparseTree": "(array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = [#[hello] 2, 7, 8]; }",
     "wrappedOffset": 18
   },
@@ -21479,7 +21469,7 @@
     "pattern": "tuple_expression",
     "edits": [],
     "expectedSourceOut": "(#[hello] 2,7,8)",
-    "expectedReparseTree": "(tuple_expression attributes: (attribute_item attribute: (attribute (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))",
+    "expectedReparseTree": "(tuple_expression attributes: (attribute_item attribute: (attribute path: (identifier))) elements: (integer_literal) elements: (integer_literal) elements: (integer_literal))",
     "wrappedText": "fn _f() { let _ = (#[hello] 2,7,8); }",
     "wrappedOffset": 18
   },
@@ -22407,7 +22397,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl <K: Debug + Ord> Debug for OccupiedError<K> ;",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier) (type_identifier)))) trait: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))) (impl_item_semi))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier) (type_identifier)))) trait: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))) (impl_item_semi))",
     "wrappedText": "impl <K: Debug + Ord> Debug for OccupiedError<K> ;",
     "wrappedOffset": 0
   },
@@ -22507,7 +22497,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl <K: Debug + Ord> Display for OccupiedError<K> ;",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier) (type_identifier)))) trait: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))) (impl_item_semi))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier) (type_identifier)))) trait: (type_identifier) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier))) (impl_item_semi))",
     "wrappedText": "impl <K: Debug + Ord> Display for OccupiedError<K> ;",
     "wrappedOffset": 0
   },
@@ -23045,7 +23035,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait Add<RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
-    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) default_type: (type_identifier))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))",
+    "expectedReparseTree": "(source_file statements: (trait_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) default_type: (type_identifier))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier))))))",
     "wrappedText": "trait Add<RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
     "wrappedOffset": 0
   },
@@ -23119,7 +23109,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait Add <RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
-    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) default_type: (type_identifier))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
+    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) default_type: (type_identifier))) body: (declaration_list (associated_type name: (type_identifier)) (function_signature_item name: (identifier) parameters: (parameters (self_parameter self: (self)) (parameter pattern: (identifier) type: (type_identifier))) return_type: (scoped_type_identifier path: (identifier) name: (type_identifier)))))",
     "wrappedText": "trait Add <RHS=Self> {\n    type Output;\n    fn add(self, rhs: RHS) -> Self::Output;\n}",
     "wrappedOffset": 0
   },
@@ -23415,7 +23405,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait Foo <T: ?Sized> {\n}",
-    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (removed_trait_bound (type_identifier))))) body: (declaration_list))",
+    "expectedReparseTree": "(trait_item name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (removed_trait_bound (type_identifier))))) body: (declaration_list))",
     "wrappedText": "trait Foo <T: ?Sized> {\n}",
     "wrappedOffset": 0
   },
@@ -24059,7 +24049,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
-    "expectedReparseTree": "(source_file statements: (impl_item type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier) (trait_bounds (type_identifier))))))) trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list))))",
+    "expectedReparseTree": "(source_file statements: (impl_item type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier) (trait_bounds (type_identifier))))))) trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list))))",
     "wrappedText": "impl<T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
     "wrappedOffset": 0
   },
@@ -24159,7 +24149,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
-    "expectedReparseTree": "(impl_item type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier) (trait_bounds (type_identifier))))))) trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list)))",
+    "expectedReparseTree": "(impl_item type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier) (trait_bounds (type_identifier))))))) trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list)))",
     "wrappedText": "impl <T: AstDeref<Target: HasNodeId>> HasNodeId for T {}",
     "wrappedOffset": 0
   },
@@ -24845,7 +24835,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
-    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))))",
+    "expectedReparseTree": "(trait_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) body: (declaration_list (associated_type name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))))",
     "wrappedText": "pub trait Database {\n    type F<'a, D>: Future<Output = D> + 'a;\n}",
     "wrappedOffset": 0
   },
@@ -24971,7 +24961,7 @@
     "pattern": "associated_type",
     "edits": [],
     "expectedSourceOut": "type F <'a, D> : Future<Output = D> + 'a;",
-    "expectedReparseTree": "(associated_type name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))",
+    "expectedReparseTree": "(associated_type name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type: (type_identifier)))) (lifetime identifier: (identifier))))",
     "wrappedText": "type F <'a, D> : Future<Output = D> + 'a;",
     "wrappedOffset": 0
   },
@@ -25259,7 +25249,7 @@
     "pattern": "impl_item",
     "edits": [],
     "expectedSourceOut": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
-    "expectedReparseTree": "(impl_item trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list (type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)))))))",
+    "expectedReparseTree": "(impl_item trait: (type_identifier) type: (type_identifier) (impl_item_body body: (declaration_list (type_item name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)))))))",
     "wrappedText": "impl Database for Foo {\n    type F<'a, D> = DatabaseFuture<'a, D>;\n}",
     "wrappedOffset": 0
   },
@@ -25345,7 +25335,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type F <'a, D>=DatabaseFuture<'a, D>;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier))) (type_parameter name: (type_identifier))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier))))",
     "wrappedText": "type F <'a, D>=DatabaseFuture<'a, D>;",
     "wrappedOffset": 0
   },
@@ -25431,7 +25421,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn use_database1 <D: Database<F<'a, TD> = F>> () {}",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)) type: (type_identifier))))))) parameters: (parameters) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)) type: (type_identifier))))))) parameters: (parameters) body: (block))",
     "wrappedText": "fn use_database1 <D: Database<F<'a, TD> = F>> () {}",
     "wrappedOffset": 0
   },
@@ -25529,7 +25519,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn use_database2 <D> () where\n    D: Database<F<'a, TD> = F>, {}",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (parameters) where_clause: (where_clause (where_predicate left: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)) type: (type_identifier))))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) parameters: (parameters) where_clause: (where_clause (where_predicate left: (type_identifier) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_binding name: (type_identifier) type_arguments: (type_arguments (lifetime identifier: (identifier)) (type_identifier)) type: (type_identifier))))))) body: (block))",
     "wrappedText": "fn use_database2 <D> () where\n    D: Database<F<'a, TD> = F>, {}",
     "wrappedOffset": 0
   },
@@ -25703,7 +25693,7 @@
     "pattern": "trait_item",
     "edits": [],
     "expectedSourceOut": "trait T : for<'a> AddAssign<&'a usize> {\n}",
-    "expectedReparseTree": "(trait_item name: (type_identifier) bounds: (trait_bounds (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) body: (declaration_list))",
+    "expectedReparseTree": "(trait_item name: (type_identifier) bounds: (trait_bounds (higher_ranked_trait_bound type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) body: (declaration_list))",
     "wrappedText": "trait T : for<'a> AddAssign<&'a usize> {\n}",
     "wrappedOffset": 0
   },
@@ -26075,7 +26065,7 @@
     "pattern": "type_item",
     "edits": [],
     "expectedSourceOut": "type FnObject <'b>=dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
-    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) right: (lifetime identifier: (identifier))))",
+    "expectedReparseTree": "(type_item name: (type_identifier) type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) right: (lifetime identifier: (identifier))))",
     "wrappedText": "type FnObject <'b>=dyn for<'a> FnLike<&'a isize, &'a isize> + 'b;",
     "wrappedOffset": 0
   },
@@ -26137,7 +26127,7 @@
     "pattern": "bounded_type",
     "edits": [],
     "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize>+'b",
-    "expectedReparseTree": "(bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) right: (lifetime identifier: (identifier)))",
+    "expectedReparseTree": "(bounded_type left: (dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)))))) right: (lifetime identifier: (identifier)))",
     "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize>+'b;",
     "wrappedOffset": 10
   },
@@ -26187,7 +26177,7 @@
     "pattern": "dynamic_type",
     "edits": [],
     "expectedSourceOut": "dyn for<'a> FnLike<&'a isize, &'a isize>",
-    "expectedReparseTree": "(dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type))))))",
+    "expectedReparseTree": "(dynamic_type trait: (higher_ranked_trait_bound type_parameters: (type_parameters attributes: (lifetime_parameter name: (lifetime identifier: (identifier)))) type: (generic_type type: (type_identifier) type_arguments: (type_arguments (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type)) (reference_type lifetime: (lifetime identifier: (identifier)) type: (primitive_type))))))",
     "wrappedText": "type _X = dyn for<'a> FnLike<&'a isize, &'a isize>;",
     "wrappedOffset": 10
   },
@@ -28377,7 +28367,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}",
-    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (parameters (parameter pattern: (identifier) type: (type_identifier))) where_clause: (where_clause (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) body: (block)))",
+    "expectedReparseTree": "(source_file statements: (function_item name: (identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) parameters: (parameters (parameter pattern: (identifier) type: (type_identifier))) where_clause: (where_clause (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) body: (block)))",
     "wrappedText": "fn foo<D>(val: D)\nwhere\n    [u8; 32]: From<D>,\n\n{}",
     "wrappedOffset": 0
   },
@@ -28475,7 +28465,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo <D> (val: D) where\n    [u8; 32]: From<D>, {}",
-    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier))) parameters: (parameters (parameter pattern: (identifier) type: (type_identifier))) where_clause: (where_clause (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) body: (block))",
+    "expectedReparseTree": "(function_item name: (identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier))) parameters: (parameters (parameter pattern: (identifier) type: (type_identifier))) where_clause: (where_clause (where_predicate left: (array_type element: (primitive_type) length: (integer_literal)) bounds: (trait_bounds (generic_type type: (type_identifier) type_arguments: (type_arguments (type_identifier)))))) body: (block))",
     "wrappedText": "fn foo <D> (val: D) where\n    [u8; 32]: From<D>, {}",
     "wrappedOffset": 0
   },
@@ -28699,7 +28689,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
-    "expectedReparseTree": "(source_file statements: (struct_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier))) (const_parameter name: (identifier) type: (primitive_type) value: (integer_literal))) (struct_item_tuple body: (ordered_field_declaration_list type: (array_type element: (type_identifier) length: (identifier))))))",
+    "expectedReparseTree": "(source_file statements: (struct_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier))) (const_parameter name: (identifier) type: (primitive_type) value: (integer_literal))) (struct_item_tuple body: (ordered_field_declaration_list type: (array_type element: (type_identifier) length: (identifier))))))",
     "wrappedText": "pub struct Loaf<T: Sized, const N: usize = 1>([T; N]);",
     "wrappedOffset": 0
   },
@@ -28787,7 +28777,7 @@
     "pattern": "struct_item",
     "edits": [],
     "expectedSourceOut": "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N]);",
-    "expectedReparseTree": "(struct_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier))) (const_parameter name: (identifier) type: (primitive_type) value: (integer_literal))) (struct_item_tuple body: (ordered_field_declaration_list type: (array_type element: (type_identifier) length: (identifier)))))",
+    "expectedReparseTree": "(struct_item visibility_modifier: (visibility_modifier (visibility_modifier_pub)) name: (type_identifier) type_parameters: (type_parameters attributes: (type_parameter name: (type_identifier) bounds: (trait_bounds (type_identifier))) (const_parameter name: (identifier) type: (primitive_type) value: (integer_literal))) (struct_item_tuple body: (ordered_field_declaration_list type: (array_type element: (type_identifier) length: (identifier)))))",
     "wrappedText": "pub struct Loaf <T: Sized, const N: usize = 1> ([T; N]);",
     "wrappedOffset": 0
   },
@@ -31439,7 +31429,7 @@
     "pattern": "range_expression",
     "edits": [],
     "expectedSourceOut": "1..{1}",
-    "expectedReparseTree": "(range_expression (range_expression_binary start: (integer_literal) end: (block (integer_literal))))",
+    "expectedReparseTree": "(range_expression (range_expression_binary start: (integer_literal) end: (block trailing_expression: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = 1..{1}; }",
     "wrappedOffset": 18
   },
@@ -31795,20 +31785,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 126,
-          "$source": 0,
-          "$text": "1",
-          "$span": {
-            "start": 62,
-            "end": 63
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 61,
         "end": 64
@@ -31827,6 +31803,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "1",
+        "$span": {
+          "start": 62,
+          "end": 63
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -31840,7 +31828,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ 1 }"
+    "expectedOutput": "{  1 }"
   },
   {
     "kind": "roundtrip",
@@ -31848,9 +31836,9 @@
     "sourceIn": "{1}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ 1 }",
-    "expectedReparseTree": "(block (integer_literal))",
-    "wrappedText": "fn _f() { let _ = { 1 }; }",
+    "expectedSourceOut": "{  1 }",
+    "expectedReparseTree": "(block trailing_expression: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = {  1 }; }",
     "wrappedOffset": 18
   },
   {
@@ -32221,7 +32209,7 @@
     "pattern": "type_cast_expression",
     "edits": [],
     "expectedSourceOut": "-len(values) as f64",
-    "expectedReparseTree": "(type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments (identifier)))) type: (primitive_type))",
+    "expectedReparseTree": "(type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) type: (primitive_type))",
     "wrappedText": "fn _f() { let _ = -len(values) as f64; }",
     "wrappedOffset": 18
   },
@@ -32417,7 +32405,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let size :f64 =1.0 + -len(values) as f64 + 1.0;",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) type: (primitive_type) value: (binary_expression left: (binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments (identifier)))) type: (primitive_type))) right: (float_literal)))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) type: (primitive_type) value: (binary_expression left: (binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) type: (primitive_type))) right: (float_literal)))",
     "wrappedText": "let size :f64 =1.0 + -len(values) as f64 + 1.0;",
     "wrappedOffset": 0
   },
@@ -32479,7 +32467,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "1.0 + -len(values) as f64 + 1.0",
-    "expectedReparseTree": "(binary_expression left: (binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments (identifier)))) type: (primitive_type))) right: (float_literal))",
+    "expectedReparseTree": "(binary_expression left: (binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) type: (primitive_type))) right: (float_literal))",
     "wrappedText": "fn _f() { let _ = 1.0 + -len(values) as f64 + 1.0; }",
     "wrappedOffset": 18
   },
@@ -32541,7 +32529,7 @@
     "pattern": "binary_expression",
     "edits": [],
     "expectedSourceOut": "1.0 + -len(values) as f64",
-    "expectedReparseTree": "(binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments (identifier)))) type: (primitive_type)))",
+    "expectedReparseTree": "(binary_expression left: (float_literal) right: (type_cast_expression value: (unary_expression operand: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))) type: (primitive_type)))",
     "wrappedText": "fn _f() { let _ = 1.0 + -len(values) as f64; }",
     "wrappedOffset": 18
   },
@@ -32591,7 +32579,7 @@
     "pattern": "unary_expression",
     "edits": [],
     "expectedSourceOut": "- len(values)",
-    "expectedReparseTree": "(unary_expression operand: (call_expression function: (identifier) arguments: (arguments (identifier))))",
+    "expectedReparseTree": "(unary_expression operand: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
     "wrappedText": "fn _f() { let _ = - len(values); }",
     "wrappedOffset": 18
   },
@@ -32641,7 +32629,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "len (values)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = len (values); }",
     "wrappedOffset": 18
   },
@@ -32741,7 +32729,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "add (1i32, 2i32)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (integer_literal) (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (integer_literal) attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = add (1i32, 2i32); }",
     "wrappedOffset": 18
   },
@@ -32791,7 +32779,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "add (\n    1i32,\n    2i32,\n)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (integer_literal) (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (integer_literal) attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = add (\n    1i32,\n    2i32,\n); }",
     "wrappedOffset": 18
   },
@@ -32991,7 +32979,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[\n    #[cfg(foo)]\n    \"foo\",\n    #[cfg(bar)]\n    \"bar\",\n]",
-    "expectedReparseTree": "(array_expression (array_expression_list (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier))))) elements: (string_literal (string_content)) (attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier))))) elements: (string_literal (string_content))))",
+    "expectedReparseTree": "(array_expression (array_expression_list (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier))))) elements: (string_literal (string_content)) (attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier))))) elements: (string_literal (string_content))))",
     "wrappedText": "fn _f() { let _ = [\n    #[cfg(foo)]\n    \"foo\",\n    #[cfg(bar)]\n    \"bar\",\n]; }",
     "wrappedOffset": 18
   },
@@ -33385,7 +33373,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(foo)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
     "wrappedText": "#[cfg(foo)]",
     "wrappedOffset": 0
   },
@@ -33459,7 +33447,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[cfg(bar)]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier) arguments: (token_tree (delim_token_tree_paren (identifier)))))",
     "wrappedText": "#[cfg(bar)]",
     "wrappedOffset": 0
   },
@@ -33921,7 +33909,7 @@
     "pattern": "struct_expression",
     "edits": [],
     "expectedSourceOut": "Instant { 0: Duration::from_millis(0) }",
-    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments (integer_literal))))))",
+    "expectedReparseTree": "(struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal))))))",
     "wrappedText": "fn _f() { let _ = Instant { 0: Duration::from_millis(0) }; }",
     "wrappedOffset": 18
   },
@@ -34279,7 +34267,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let i =Instant { 0: Duration::from_millis(0) };",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments (integer_literal)))))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (struct_expression name: (type_identifier) body: (field_initializer_list (field_initializer field: (integer_literal) value: (call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal)))))))",
     "wrappedText": "let i =Instant { 0: Duration::from_millis(0) };",
     "wrappedOffset": 0
   },
@@ -34455,7 +34443,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "Duration::from_millis (0)",
-    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (identifier) name: (identifier)) arguments: (arguments attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = Duration::from_millis (0); }",
     "wrappedOffset": 18
   },
@@ -34889,20 +34877,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 126,
-          "$source": 0,
-          "$text": "10",
-          "$span": {
-            "start": 85,
-            "end": 87
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 83,
         "end": 89
@@ -34921,6 +34895,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "10",
+        "$span": {
+          "start": 85,
+          "end": 87
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -34934,7 +34920,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ 10 }"
+    "expectedOutput": "{  10 }"
   },
   {
     "kind": "roundtrip",
@@ -34942,9 +34928,9 @@
     "sourceIn": "{ 10 }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ 10 }",
-    "expectedReparseTree": "(block (integer_literal))",
-    "wrappedText": "fn _f() { let _ = { 10 }; }",
+    "expectedSourceOut": "{  10 }",
+    "expectedReparseTree": "(block trailing_expression: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = {  10 }; }",
     "wrappedOffset": 18
   },
   {
@@ -34953,20 +34939,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 126,
-          "$source": 0,
-          "$text": "15",
-          "$span": {
-            "start": 97,
-            "end": 99
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 95,
         "end": 101
@@ -34985,6 +34957,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 126,
+        "$source": 0,
+        "$text": "15",
+        "$span": {
+          "start": 97,
+          "end": 99
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -34998,7 +34982,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ 15 }"
+    "expectedOutput": "{  15 }"
   },
   {
     "kind": "roundtrip",
@@ -35006,9 +34990,9 @@
     "sourceIn": "{ 15 }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ 15 }",
-    "expectedReparseTree": "(block (integer_literal))",
-    "wrappedText": "fn _f() { let _ = { 15 }; }",
+    "expectedSourceOut": "{  15 }",
+    "expectedReparseTree": "(block trailing_expression: (integer_literal))",
+    "wrappedText": "fn _f() { let _ = {  15 }; }",
     "wrappedOffset": 18
   },
   {
@@ -35331,7 +35315,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if x == 5 { 10 } else { 15 }",
-    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block (integer_literal)) alternative: (else_clause (block (integer_literal))))",
+    "expectedReparseTree": "(if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block trailing_expression: (integer_literal)) alternative: (else_clause (block trailing_expression: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = if x == 5 { 10 } else { 15 }; }",
     "wrappedOffset": 18
   },
@@ -35937,7 +35921,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let y =if x == 5 { 10 } else { 15 };",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block (integer_literal)) alternative: (else_clause (block (integer_literal)))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (if_expression condition: (binary_expression left: (identifier) right: (integer_literal)) consequence: (block trailing_expression: (integer_literal)) alternative: (else_clause (block trailing_expression: (integer_literal)))))",
     "wrappedText": "let y =if x == 5 { 10 } else { 15 };",
     "wrappedOffset": 0
   },
@@ -37273,7 +37257,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content)))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content)))))",
     "wrappedText": "fn _f() { let _ = match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n}; }",
     "wrappedOffset": 18
   },
@@ -37283,20 +37267,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 311,
-          "$source": 0,
-          "$text": "\"one\"",
-          "$span": {
-            "start": 21,
-            "end": 26
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 19,
         "end": 28
@@ -37315,6 +37285,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 311,
+        "$source": 0,
+        "$text": "\"one\"",
+        "$span": {
+          "start": 21,
+          "end": 26
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -37328,7 +37310,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ \"one\" }"
+    "expectedOutput": "{  \"one\" }"
   },
   {
     "kind": "roundtrip",
@@ -37336,9 +37318,9 @@
     "sourceIn": "{ \"one\" }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ \"one\" }",
-    "expectedReparseTree": "(block (string_literal (string_content)))",
-    "wrappedText": "fn _f() { let _ = { \"one\" }; }",
+    "expectedSourceOut": "{  \"one\" }",
+    "expectedReparseTree": "(block trailing_expression: (string_literal (string_content)))",
+    "wrappedText": "fn _f() { let _ = {  \"one\" }; }",
     "wrappedOffset": 18
   },
   {
@@ -37347,20 +37329,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 311,
-          "$source": 0,
-          "$text": "\"200 (but this is not very stylish)\"",
-          "$span": {
-            "start": 331,
-            "end": 367
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 321,
         "end": 375
@@ -37379,6 +37347,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 311,
+        "$source": 0,
+        "$text": "\"200 (but this is not very stylish)\"",
+        "$span": {
+          "start": 331,
+          "end": 367
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -37392,7 +37372,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ \"200 (but this is not very stylish)\" }"
+    "expectedOutput": "{  \"200 (but this is not very stylish)\" }"
   },
   {
     "kind": "roundtrip",
@@ -37400,9 +37380,9 @@
     "sourceIn": "{\n        \"200 (but this is not very stylish)\"\n      }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ \"200 (but this is not very stylish)\" }",
-    "expectedReparseTree": "(block (string_literal (string_content)))",
-    "wrappedText": "fn _f() { let _ = { \"200 (but this is not very stylish)\" }; }",
+    "expectedSourceOut": "{  \"200 (but this is not very stylish)\" }",
+    "expectedReparseTree": "(block trailing_expression: (string_literal (string_content)))",
+    "wrappedText": "fn _f() { let _ = {  \"200 (but this is not very stylish)\" }; }",
     "wrappedOffset": 18
   },
   {
@@ -38215,7 +38195,7 @@
     "pattern": "attribute_item",
     "edits": [],
     "expectedSourceOut": "#[attr1]",
-    "expectedReparseTree": "(attribute_item attribute: (attribute (identifier)))",
+    "expectedReparseTree": "(attribute_item attribute: (attribute path: (identifier)))",
     "wrappedText": "#[attr1]",
     "wrappedOffset": 0
   },
@@ -38363,7 +38343,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content))))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (or_pattern (or_pattern_binary left: (or_pattern (or_pattern_binary left: (integer_literal) right: (integer_literal))) right: (integer_literal)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (identifier) condition: (binary_expression left: (identifier) right: (integer_literal))) (match_arm_block_ending value: (if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal (string_content)))))) (match_arm pattern: (match_pattern (identifier) condition: (let_chain (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)) (identifier) (let_condition pattern: (tuple_struct_pattern type: (identifier) (identifier)) value: (identifier)))) (match_arm_with_comma value: (string_literal (string_content)))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (string_literal (string_content))))))",
     "wrappedText": "let msg =match x {\n    0 | 1 | 10 => \"one of zero, one, or ten\",\n    y if y < 20 => \"less than 20, but not zero, one, or ten\",\n    y if y == 200 =>\n      if a {\n        \"200 (but this is not very stylish)\"\n      }\n    y if let Some(z) = foo && z && let Some(w) = bar => \"very chained\",\n    _ => \"something else\",\n};",
     "wrappedOffset": 0
   },
@@ -38629,7 +38609,7 @@
     "pattern": "if_expression",
     "edits": [],
     "expectedSourceOut": "if a {\n        \"200 (but this is not very stylish)\"\n      }",
-    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block (string_literal (string_content))))",
+    "expectedReparseTree": "(if_expression condition: (identifier) consequence: (block trailing_expression: (string_literal (string_content))))",
     "wrappedText": "fn _f() { let _ = if a {\n        \"200 (but this is not very stylish)\"\n      }; }",
     "wrappedOffset": 18
   },
@@ -39447,7 +39427,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ bar(e); }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "fn _f() { let _ = { bar(e); }; }",
     "wrappedOffset": 18
   },
@@ -39511,7 +39491,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ bar(i); }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "fn _f() { let _ = { bar(i); }; }",
     "wrappedOffset": 18
   },
@@ -39829,7 +39809,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "bar (e)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = bar (e); }",
     "wrappedOffset": 18
   },
@@ -39879,7 +39859,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "bar (i)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = bar (i); }",
     "wrappedOffset": 18
   },
@@ -40943,7 +40923,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "1.max (2)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = 1.max (2); }",
     "wrappedOffset": 18
   },
@@ -41481,7 +41461,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "<Dog as Animal>::eat (d)",
-    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (scoped_identifier path: (bracketed_type (qualified_type type: (type_identifier) alias: (type_identifier))) name: (identifier)) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = <Dog as Animal>::eat (d); }",
     "wrappedOffset": 18
   },
@@ -42227,7 +42207,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "a.map (|(b, c)| b.push(c))",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))))",
     "wrappedText": "fn _f() { let _ = a.map (|(b, c)| b.push(c)); }",
     "wrappedOffset": 18
   },
@@ -42277,7 +42257,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "d.map (move |mut e| {\n    f(e);\n    g(e)\n})",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))) (call_expression function: (identifier) arguments: (arguments (identifier))))))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))))",
     "wrappedText": "fn _f() { let _ = d.map (move |mut e| {\n    f(e);\n    g(e)\n}); }",
     "wrappedOffset": 18
   },
@@ -42327,7 +42307,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "h (|| -> i { j })",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block (identifier))))))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block trailing_expression: (identifier))))))",
     "wrappedText": "fn _f() { let _ = h (|| -> i { j }); }",
     "wrappedOffset": 18
   },
@@ -42377,7 +42357,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "b.push (c)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = b.push (c); }",
     "wrappedOffset": 18
   },
@@ -42427,7 +42407,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "g (e)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = g (e); }",
     "wrappedOffset": 18
   },
@@ -42477,7 +42457,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "f (e)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = f (e); }",
     "wrappedOffset": 18
   },
@@ -42715,7 +42695,7 @@
     "pattern": "closure_expression",
     "edits": [],
     "expectedSourceOut": "|(b, c)| b.push(c)",
-    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))))",
+    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (tuple_pattern (identifier) (identifier))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))",
     "wrappedText": "fn _f() { let _ = |(b, c)| b.push(c); }",
     "wrappedOffset": 18
   },
@@ -42779,7 +42759,7 @@
     "pattern": "closure_expression",
     "edits": [],
     "expectedSourceOut": "move |mut e| {\n    f(e);\n    g(e)\n}",
-    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))) (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (mut_pattern mutable_specifier: (mutable_specifier) (identifier))) (closure_expression_expr body: (block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "fn _f() { let _ = move |mut e| {\n    f(e);\n    g(e)\n}; }",
     "wrappedOffset": 18
   },
@@ -42831,7 +42811,7 @@
     "pattern": "closure_expression",
     "edits": [],
     "expectedSourceOut": "|| -> i { j }",
-    "expectedReparseTree": "(closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block (identifier))))",
+    "expectedReparseTree": "(closure_expression parameters: (closure_parameters) (closure_expression_block return_type: (type_identifier) body: (block trailing_expression: (identifier))))",
     "wrappedText": "fn _f() { let _ = || -> i { j }; }",
     "wrappedOffset": 18
   },
@@ -42993,18 +42973,6 @@
           "$nodeHandle": 0,
           "$childIndex": 1,
           "$named": true
-        },
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "g(e)",
-          "$span": {
-            "start": 62,
-            "end": 66
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 2,
-          "$named": true
         }
       ],
       "$span": {
@@ -43024,6 +42992,18 @@
         "$nodeHandle": 0,
         "$childIndex": 0,
         "$named": false
+      },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "g(e)",
+        "$span": {
+          "start": 62,
+          "end": 66
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
       },
       "_}": {
         "$type": 115,
@@ -43047,7 +43027,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ f(e); g(e) }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))) (call_expression function: (identifier) arguments: (arguments (identifier))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))) trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
     "wrappedText": "fn _f() { let _ = { f(e); g(e) }; }",
     "wrappedOffset": 18
   },
@@ -43057,20 +43037,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "j",
-          "$span": {
-            "start": 83,
-            "end": 84
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 81,
         "end": 86
@@ -43089,6 +43055,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "j",
+        "$span": {
+          "start": 83,
+          "end": 84
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -43102,7 +43080,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ j }"
+    "expectedOutput": "{  j }"
   },
   {
     "kind": "roundtrip",
@@ -43110,9 +43088,9 @@
     "sourceIn": "{ j }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ j }",
-    "expectedReparseTree": "(block (identifier))",
-    "wrappedText": "fn _f() { let _ = { j }; }",
+    "expectedSourceOut": "{  j }",
+    "expectedReparseTree": "(block trailing_expression: (identifier))",
+    "wrappedText": "fn _f() { let _ = {  j }; }",
     "wrappedOffset": 18
   },
   {
@@ -43161,7 +43139,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "a.map (|b: usize| b.push(c))",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (closure_expression parameters: (closure_parameters (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (closure_expression parameters: (closure_parameters (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))))",
     "wrappedText": "fn _f() { let _ = a.map (|b: usize| b.push(c)); }",
     "wrappedOffset": 18
   },
@@ -43211,7 +43189,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "b.push (c)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = b.push (c); }",
     "wrappedOffset": 18
   },
@@ -43387,7 +43365,7 @@
     "pattern": "closure_expression",
     "edits": [],
     "expectedSourceOut": "|b: usize| b.push(c)",
-    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (identifier)))))",
+    "expectedReparseTree": "(closure_expression parameters: (closure_parameters (parameter pattern: (identifier) type: (primitive_type))) (closure_expression_expr body: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (identifier)))))",
     "wrappedText": "fn _f() { let _ = |b: usize| b.push(c); }",
     "wrappedOffset": 18
   },
@@ -43917,7 +43895,7 @@
     "pattern": "const_item",
     "edits": [],
     "expectedSourceOut": "const a : A = unsafe { foo() };",
-    "expectedReparseTree": "(source_file statements: (const_item name: (identifier) type: (type_identifier) value: (unsafe_block block: (block (call_expression function: (identifier) arguments: (arguments))))))",
+    "expectedReparseTree": "(source_file statements: (const_item name: (identifier) type: (type_identifier) value: (unsafe_block block: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments))))))",
     "wrappedText": "const a : A = unsafe { foo() };",
     "wrappedOffset": 0
   },
@@ -44027,7 +44005,7 @@
     "pattern": "const_item",
     "edits": [],
     "expectedSourceOut": "const a:A =unsafe { foo() };",
-    "expectedReparseTree": "(const_item name: (identifier) type: (type_identifier) value: (unsafe_block block: (block (call_expression function: (identifier) arguments: (arguments)))))",
+    "expectedReparseTree": "(const_item name: (identifier) type: (type_identifier) value: (unsafe_block block: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments)))))",
     "wrappedText": "const a:A =unsafe { foo() };",
     "wrappedOffset": 0
   },
@@ -44077,7 +44055,7 @@
     "pattern": "unsafe_block",
     "edits": [],
     "expectedSourceOut": "unsafe { foo() }",
-    "expectedReparseTree": "(unsafe_block block: (block (call_expression function: (identifier) arguments: (arguments))))",
+    "expectedReparseTree": "(unsafe_block block: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments))))",
     "wrappedText": "fn _f() { let _ = unsafe { foo() }; }",
     "wrappedOffset": 18
   },
@@ -44087,20 +44065,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "foo()",
-          "$span": {
-            "start": 23,
-            "end": 28
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 21,
         "end": 30
@@ -44119,6 +44083,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "foo()",
+        "$span": {
+          "start": 23,
+          "end": 28
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -44132,7 +44108,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ foo() }"
+    "expectedOutput": "{  foo() }"
   },
   {
     "kind": "roundtrip",
@@ -44140,9 +44116,9 @@
     "sourceIn": "{ foo() }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ foo() }",
-    "expectedReparseTree": "(block (call_expression function: (identifier) arguments: (arguments)))",
-    "wrappedText": "fn _f() { let _ = { foo() }; }",
+    "expectedSourceOut": "{  foo() }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments)))",
+    "wrappedText": "fn _f() { let _ = {  foo() }; }",
     "wrappedOffset": 18
   },
   {
@@ -44241,7 +44217,7 @@
     "pattern": "const_block",
     "edits": [],
     "expectedSourceOut": "const { (0..=5).into_inner() }",
-    "expectedReparseTree": "(const_block body: (block (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments))))",
+    "expectedReparseTree": "(const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments))))",
     "wrappedText": "fn _f() { let _ = const { (0..=5).into_inner() }; }",
     "wrappedOffset": 18
   },
@@ -44291,7 +44267,7 @@
     "pattern": "const_block",
     "edits": [],
     "expectedSourceOut": "const { &4i32.pow(4) }",
-    "expectedReparseTree": "(const_block body: (block (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal))))))",
+    "expectedReparseTree": "(const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal))))))",
     "wrappedText": "fn _f() { let _ = const { &4i32.pow(4) }; }",
     "wrappedOffset": 18
   },
@@ -44301,20 +44277,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 250,
-          "$source": 0,
-          "$text": "1 + 3",
-          "$span": {
-            "start": 8,
-            "end": 13
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 6,
         "end": 15
@@ -44333,6 +44295,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 250,
+        "$source": 0,
+        "$text": "1 + 3",
+        "$span": {
+          "start": 8,
+          "end": 13
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -44346,7 +44320,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ 1 + 3 }"
+    "expectedOutput": "{  1 + 3 }"
   },
   {
     "kind": "roundtrip",
@@ -44354,9 +44328,9 @@
     "sourceIn": "{ 1 + 3 }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ 1 + 3 }",
-    "expectedReparseTree": "(block (binary_expression left: (integer_literal) right: (integer_literal)))",
-    "wrappedText": "fn _f() { let _ = { 1 + 3 }; }",
+    "expectedSourceOut": "{  1 + 3 }",
+    "expectedReparseTree": "(block trailing_expression: (binary_expression left: (integer_literal) right: (integer_literal)))",
+    "wrappedText": "fn _f() { let _ = {  1 + 3 }; }",
     "wrappedOffset": 18
   },
   {
@@ -44419,7 +44393,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ const { &4i32.pow(4) } }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_block_ending (const_block body: (block (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_block_ending (const_block body: (block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))))))",
     "wrappedText": "fn _f() { let _ = { const { &4i32.pow(4) } }; }",
     "wrappedOffset": 18
   },
@@ -44429,20 +44403,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 1,
-          "$source": 0,
-          "$text": "x",
-          "$span": {
-            "start": 61,
-            "end": 62
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 59,
         "end": 64
@@ -44461,6 +44421,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 1,
+        "$source": 0,
+        "$text": "x",
+        "$span": {
+          "start": 61,
+          "end": 62
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -44474,7 +44446,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ x }"
+    "expectedOutput": "{  x }"
   },
   {
     "kind": "roundtrip",
@@ -44482,9 +44454,9 @@
     "sourceIn": "{ x }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ x }",
-    "expectedReparseTree": "(block (identifier))",
-    "wrappedText": "fn _f() { let _ = { x }; }",
+    "expectedSourceOut": "{  x }",
+    "expectedReparseTree": "(block trailing_expression: (identifier))",
+    "wrappedText": "fn _f() { let _ = {  x }; }",
     "wrappedOffset": 18
   },
   {
@@ -44493,20 +44465,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "(0..=5).into_inner()",
-          "$span": {
-            "start": 93,
-            "end": 113
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 91,
         "end": 115
@@ -44525,6 +44483,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "(0..=5).into_inner()",
+        "$span": {
+          "start": 93,
+          "end": 113
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -44538,7 +44508,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ (0..=5).into_inner() }"
+    "expectedOutput": "{  (0..=5).into_inner() }"
   },
   {
     "kind": "roundtrip",
@@ -44546,9 +44516,9 @@
     "sourceIn": "{ (0..=5).into_inner() }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ (0..=5).into_inner() }",
-    "expectedReparseTree": "(block (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))",
-    "wrappedText": "fn _f() { let _ = { (0..=5).into_inner() }; }",
+    "expectedSourceOut": "{  (0..=5).into_inner() }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))",
+    "wrappedText": "fn _f() { let _ = {  (0..=5).into_inner() }; }",
     "wrappedOffset": 18
   },
   {
@@ -44557,20 +44527,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 249,
-          "$source": 0,
-          "$text": "&4i32.pow(4)",
-          "$span": {
-            "start": 37,
-            "end": 49
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 35,
         "end": 51
@@ -44589,6 +44545,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 249,
+        "$source": 0,
+        "$text": "&4i32.pow(4)",
+        "$span": {
+          "start": 37,
+          "end": 49
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -44602,7 +44570,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ &4i32.pow(4) }"
+    "expectedOutput": "{  &4i32.pow(4) }"
   },
   {
     "kind": "roundtrip",
@@ -44610,9 +44578,9 @@
     "sourceIn": "{ &4i32.pow(4) }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ &4i32.pow(4) }",
-    "expectedReparseTree": "(block (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))",
-    "wrappedText": "fn _f() { let _ = { &4i32.pow(4) }; }",
+    "expectedSourceOut": "{  &4i32.pow(4) }",
+    "expectedReparseTree": "(block trailing_expression: (reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))",
+    "wrappedText": "fn _f() { let _ = {  &4i32.pow(4) }; }",
     "wrappedOffset": 18
   },
   {
@@ -44835,7 +44803,7 @@
     "pattern": "reference_expression",
     "edits": [],
     "expectedSourceOut": "& 4i32.pow(4)",
-    "expectedReparseTree": "(reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal))))",
+    "expectedReparseTree": "(reference_expression value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal))))",
     "wrappedText": "fn _f() { let _ = & 4i32.pow(4); }",
     "wrappedOffset": 18
   },
@@ -44935,7 +44903,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "4i32.pow (4)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = 4i32.pow (4); }",
     "wrappedOffset": 18
   },
@@ -45145,7 +45113,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let three_ranges =[const { (0..=5).into_inner() }; 3];",
-    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_semi elements: (const_block body: (block (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))",
+    "expectedReparseTree": "(let_declaration pattern: (identifier) value: (array_expression (array_expression_semi elements: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal))))",
     "wrappedText": "let three_ranges =[const { (0..=5).into_inner() }; 3];",
     "wrappedOffset": 0
   },
@@ -45185,7 +45153,7 @@
     "pattern": "array_expression",
     "edits": [],
     "expectedSourceOut": "[const { (0..=5).into_inner() }; 3]",
-    "expectedReparseTree": "(array_expression (array_expression_semi elements: (const_block body: (block (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))",
+    "expectedReparseTree": "(array_expression (array_expression_semi elements: (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (parenthesized_expression (range_expression (range_expression_binary start: (integer_literal) end: (integer_literal)))) field: (field_identifier)) arguments: (arguments)))) length: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = [const { (0..=5).into_inner() }; 3]; }",
     "wrappedOffset": 18
   },
@@ -51567,7 +51535,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ do_stuff_with(x); }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "fn _f() { let _ = { do_stuff_with(x); }; }",
     "wrappedOffset": 18
   },
@@ -51631,7 +51599,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ do_stuff_with(x); }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments (identifier))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_with_semi (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))))",
     "wrappedText": "fn _f() { let _ = { do_stuff_with(x); }; }",
     "wrappedOffset": 18
   },
@@ -51831,7 +51799,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "slice.binary_search (&x)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (reference_expression value: (identifier))))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (reference_expression value: (identifier))))",
     "wrappedText": "fn _f() { let _ = slice.binary_search (&x); }",
     "wrappedOffset": 18
   },
@@ -51881,7 +51849,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "binary_search (x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = binary_search (x); }",
     "wrappedOffset": 18
   },
@@ -51981,7 +51949,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "do_stuff_with (x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = do_stuff_with (x); }",
     "wrappedOffset": 18
   },
@@ -52031,7 +51999,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "do_stuff_with (x)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = do_stuff_with (x); }",
     "wrappedOffset": 18
   },
@@ -52117,7 +52085,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let Ok(index) | Err(index) =slice.binary_search(&x);",
-    "expectedReparseTree": "(let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments (reference_expression value: (identifier)))))",
+    "expectedReparseTree": "(let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (field_expression value: (identifier) field: (field_identifier)) arguments: (arguments attributes: (reference_expression value: (identifier)))))",
     "wrappedText": "let Ok(index) | Err(index) =slice.binary_search(&x);",
     "wrappedOffset": 0
   },
@@ -52203,7 +52171,7 @@
     "pattern": "let_declaration",
     "edits": [],
     "expectedSourceOut": "let Ok(x) | Err(x) =binary_search(x);",
-    "expectedReparseTree": "(let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (identifier) arguments: (arguments (identifier))))",
+    "expectedReparseTree": "(let_declaration pattern: (or_pattern (or_pattern_binary left: (tuple_struct_pattern type: (identifier) (identifier)) right: (tuple_struct_pattern type: (identifier) (identifier)))) value: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
     "wrappedText": "let Ok(x) | Err(x) =binary_search(x);",
     "wrappedOffset": 0
   },
@@ -53113,7 +53081,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))) (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type))) body: (block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))) (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo (x: i32) {\n    const CUBE: i32 = 3.pow(3);\n    match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "wrappedOffset": 0
   },
@@ -53187,7 +53155,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn foo (x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type))) body: (block (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type))) body: (block (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))))))",
     "wrappedText": "fn foo (x: i32) {\n    match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }\n}",
     "wrappedOffset": 0
   },
@@ -53263,7 +53231,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ const CUBE: i32 = 3.pow(3); match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    } }",
-    "expectedReparseTree": "(block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))) (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block (const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))) (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (identifier)) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = { const CUBE: i32 = 3.pow(3); match x {\n        CUBE => println!(\"three cubed\"),\n        _ => {}\n    } }; }",
     "wrappedOffset": 18
   },
@@ -53327,7 +53295,7 @@
     "pattern": "block",
     "edits": [],
     "expectedSourceOut": "{ match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    } }",
-    "expectedReparseTree": "(block (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block)))))))",
+    "expectedReparseTree": "(block (expression_statement (expression_statement_block_ending (match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block)))))))",
     "wrappedText": "fn _f() { let _ = { match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    } }; }",
     "wrappedOffset": 18
   },
@@ -53437,20 +53405,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "3.pow(3)",
-          "$span": {
-            "start": 176,
-            "end": 184
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 174,
         "end": 186
@@ -53469,6 +53423,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "3.pow(3)",
+        "$span": {
+          "start": 176,
+          "end": 184
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -53482,7 +53448,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ 3.pow(3) }"
+    "expectedOutput": "{  3.pow(3) }"
   },
   {
     "kind": "roundtrip",
@@ -53490,9 +53456,9 @@
     "sourceIn": "{ 3.pow(3) }",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ 3.pow(3) }",
-    "expectedReparseTree": "(block (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal))))",
-    "wrappedText": "fn _f() { let _ = { 3.pow(3) }; }",
+    "expectedSourceOut": "{  3.pow(3) }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal))))",
+    "wrappedText": "fn _f() { let _ = {  3.pow(3) }; }",
     "wrappedOffset": 18
   },
   {
@@ -53601,7 +53567,7 @@
     "pattern": "const_item",
     "edits": [],
     "expectedSourceOut": "const CUBE:i32 =3.pow(3);",
-    "expectedReparseTree": "(const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal))))",
+    "expectedReparseTree": "(const_item name: (identifier) type: (primitive_type) value: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal))))",
     "wrappedText": "const CUBE:i32 =3.pow(3);",
     "wrappedOffset": 0
   },
@@ -53651,7 +53617,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "3.pow (3)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = 3.pow (3); }",
     "wrappedOffset": 18
   },
@@ -53701,7 +53667,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "3.pow (3)",
-    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))",
+    "expectedReparseTree": "(call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))",
     "wrappedText": "fn _f() { let _ = 3.pow (3); }",
     "wrappedOffset": 18
   },
@@ -53949,7 +53915,7 @@
     "pattern": "match_expression",
     "edits": [],
     "expectedSourceOut": "match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }",
-    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))",
+    "expectedReparseTree": "(match_expression value: (identifier) body: (match_block (match_arm pattern: (match_pattern (const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))) (match_arm_with_comma value: (macro_invocation macro: (identifier) token_tree: (token_tree (delim_token_tree_paren (string_literal (string_content))))))) (match_arm pattern: (match_pattern (wildcard_pattern)) value: (block))))",
     "wrappedText": "fn _f() { let _ = match x {\n        const { 3.pow(3) } => println!(\"three cubed\"),\n        _ => {}\n    }; }",
     "wrappedOffset": 18
   },
@@ -54251,7 +54217,7 @@
     "pattern": "const_block",
     "edits": [],
     "expectedSourceOut": "const { 3.pow(3) }",
-    "expectedReparseTree": "(const_block body: (block (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments (integer_literal)))))",
+    "expectedReparseTree": "(const_block body: (block trailing_expression: (call_expression function: (field_expression value: (integer_literal) field: (field_identifier)) arguments: (arguments attributes: (integer_literal)))))",
     "wrappedText": "fn _f() { let _ = const { 3.pow(3) }; }",
     "wrappedOffset": 18
   },
@@ -57055,7 +57021,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn high_order2 (value: i32, f: fn(i32) -> i32) ->i32 {\n    f(value)\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type)) (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (primitive_type)) return_type: (primitive_type)))) return_type: (primitive_type) body: (block (call_expression function: (identifier) arguments: (arguments (identifier)))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type)) (parameter pattern: (identifier) type: (function_type (function_type_fn_form) parameters: (parameters (primitive_type)) return_type: (primitive_type)))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))))",
     "wrappedText": "fn high_order2 (value: i32, f: fn(i32) -> i32) ->i32 {\n    f(value)\n}",
     "wrappedOffset": 0
   },
@@ -57153,7 +57119,7 @@
     "pattern": "function_item",
     "edits": [],
     "expectedSourceOut": "fn high_order3 (value: i32, f: &FnOnce(i32) -> i32) ->i32 {\n    f(value)\n}",
-    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type)) (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (primitive_type)) return_type: (primitive_type))))) return_type: (primitive_type) body: (block (call_expression function: (identifier) arguments: (arguments (identifier)))))",
+    "expectedReparseTree": "(function_item name: (identifier) parameters: (parameters (parameter pattern: (identifier) type: (primitive_type)) (parameter pattern: (identifier) type: (reference_type type: (function_type (function_type_trait_form trait: (type_identifier)) parameters: (parameters (primitive_type)) return_type: (primitive_type))))) return_type: (primitive_type) body: (block trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier)))))",
     "wrappedText": "fn high_order3 (value: i32, f: &FnOnce(i32) -> i32) ->i32 {\n    f(value)\n}",
     "wrappedOffset": 0
   },
@@ -57505,20 +57471,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "f(value)",
-          "$span": {
-            "start": 109,
-            "end": 117
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 103,
         "end": 119
@@ -57537,6 +57489,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "f(value)",
+        "$span": {
+          "start": 109,
+          "end": 117
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -57550,7 +57514,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ f(value) }"
+    "expectedOutput": "{  f(value) }"
   },
   {
     "kind": "roundtrip",
@@ -57558,9 +57522,9 @@
     "sourceIn": "{\n    f(value)\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ f(value) }",
-    "expectedReparseTree": "(block (call_expression function: (identifier) arguments: (arguments (identifier))))",
-    "wrappedText": "fn _f() { let _ = { f(value) }; }",
+    "expectedSourceOut": "{  f(value) }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
+    "wrappedText": "fn _f() { let _ = {  f(value) }; }",
     "wrappedOffset": 18
   },
   {
@@ -57569,20 +57533,6 @@
     "input": {
       "$type": 293,
       "$source": 0,
-      "$children": [
-        {
-          "$type": 256,
-          "$source": 0,
-          "$text": "f(value)",
-          "$span": {
-            "start": 185,
-            "end": 193
-          },
-          "$nodeHandle": 0,
-          "$childIndex": 1,
-          "$named": true
-        }
-      ],
       "$span": {
         "start": 179,
         "end": 195
@@ -57601,6 +57551,18 @@
         "$childIndex": 0,
         "$named": false
       },
+      "_trailing_expression": {
+        "$type": 256,
+        "$source": 0,
+        "$text": "f(value)",
+        "$span": {
+          "start": 185,
+          "end": 193
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
       "_}": {
         "$type": 115,
         "$source": 0,
@@ -57614,7 +57576,7 @@
         "$named": false
       }
     },
-    "expectedOutput": "{ f(value) }"
+    "expectedOutput": "{  f(value) }"
   },
   {
     "kind": "roundtrip",
@@ -57622,9 +57584,9 @@
     "sourceIn": "{\n    f(value)\n}",
     "pattern": "block",
     "edits": [],
-    "expectedSourceOut": "{ f(value) }",
-    "expectedReparseTree": "(block (call_expression function: (identifier) arguments: (arguments (identifier))))",
-    "wrappedText": "fn _f() { let _ = { f(value) }; }",
+    "expectedSourceOut": "{  f(value) }",
+    "expectedReparseTree": "(block trailing_expression: (call_expression function: (identifier) arguments: (arguments attributes: (identifier))))",
+    "wrappedText": "fn _f() { let _ = {  f(value) }; }",
     "wrappedOffset": 18
   },
   {
@@ -57673,7 +57635,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "f (value)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = f (value); }",
     "wrappedOffset": 18
   },
@@ -57723,7 +57685,7 @@
     "pattern": "call_expression",
     "edits": [],
     "expectedSourceOut": "f (value)",
-    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments (identifier)))",
+    "expectedReparseTree": "(call_expression function: (identifier) arguments: (arguments attributes: (identifier)))",
     "wrappedText": "fn _f() { let _ = f (value); }",
     "wrappedOffset": 18
   },

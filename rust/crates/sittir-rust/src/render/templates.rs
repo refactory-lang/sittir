@@ -4150,59 +4150,6 @@ impl ::sittir_core::types::RenderableTransport for VisibilityModifierPubChildTra
 }
 
 #[derive(Debug, Clone)]
-pub enum ArgumentsChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for ArgumentsChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in ArgumentsChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in ArgumentsChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for ArgumentsChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("ArgumentsChildTransport is receive-only"))
-    }
-}
-
-fn arguments_child_transport_to_any(t: ArgumentsChildTransport) -> AnyTransport {
-    match t {
-        ArgumentsChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for ArgumentsChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            ArgumentsChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
 pub enum BlockCommentChildTransport {
     OuterBlockDocCommentMarker(OuterBlockDocCommentMarkerTransport),
     InnerBlockDocCommentMarker(InnerBlockDocCommentMarkerTransport),
@@ -4539,136 +4486,6 @@ impl ::sittir_core::types::RenderableTransport for FunctionTypeChildTransport {
         let s = match self {
             FunctionTypeChildTransport::FunctionTypeTraitForm(inner) => render_function_type_trait_form_transport(inner.as_ref())?,
             FunctionTypeChildTransport::FunctionTypeFnForm(inner) => render_function_type_fn_form_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum MatchArmUFormWithCommaChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
-    MatchArmWithComma(Box<MatchArmWithCommaTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchArmUFormWithCommaChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in MatchArmUFormWithCommaChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            171 => Ok(Self::InnerAttributeItem(Box::new(
-                InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            369 => Ok(Self::MatchArmWithComma(Box::new(
-                MatchArmWithCommaTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in MatchArmUFormWithCommaChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MatchArmUFormWithCommaChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MatchArmUFormWithCommaChildTransport is receive-only"))
-    }
-}
-
-fn match_arm_uform_with_comma_child_transport_to_any(t: MatchArmUFormWithCommaChildTransport) -> AnyTransport {
-    match t {
-        MatchArmUFormWithCommaChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        MatchArmUFormWithCommaChildTransport::InnerAttributeItem(inner) => AnyTransport::InnerAttributeItem(*inner),
-        MatchArmUFormWithCommaChildTransport::MatchArmWithComma(inner) => AnyTransport::MatchArmWithComma(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MatchArmUFormWithCommaChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            MatchArmUFormWithCommaChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-            MatchArmUFormWithCommaChildTransport::InnerAttributeItem(inner) => render_inner_attribute_item_transport(inner.as_ref())?,
-            MatchArmUFormWithCommaChildTransport::MatchArmWithComma(inner) => render_match_arm_with_comma_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum MatchArmUFormBlockEndingChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-    InnerAttributeItem(Box<InnerAttributeItemTransport>),
-    _MatchArmBlockEnding(Box<_MatchArmBlockEndingTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for MatchArmUFormBlockEndingChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in MatchArmUFormBlockEndingChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            171 => Ok(Self::InnerAttributeItem(Box::new(
-                InnerAttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            370 => Ok(Self::_MatchArmBlockEnding(Box::new(
-                _MatchArmBlockEndingTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in MatchArmUFormBlockEndingChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for MatchArmUFormBlockEndingChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("MatchArmUFormBlockEndingChildTransport is receive-only"))
-    }
-}
-
-fn match_arm_uform_block_ending_child_transport_to_any(t: MatchArmUFormBlockEndingChildTransport) -> AnyTransport {
-    match t {
-        MatchArmUFormBlockEndingChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        MatchArmUFormBlockEndingChildTransport::InnerAttributeItem(inner) => AnyTransport::InnerAttributeItem(*inner),
-        MatchArmUFormBlockEndingChildTransport::_MatchArmBlockEnding(inner) => AnyTransport::_MatchArmBlockEnding(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for MatchArmUFormBlockEndingChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            MatchArmUFormBlockEndingChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-            MatchArmUFormBlockEndingChildTransport::InnerAttributeItem(inner) => render_inner_attribute_item_transport(inner.as_ref())?,
-            MatchArmUFormBlockEndingChildTransport::_MatchArmBlockEnding(inner) => render__match_arm_block_ending_transport(inner.as_ref())?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -5088,83 +4905,6 @@ impl ::sittir_core::types::RenderableTransport for TypeArgumentsChildTransport {
             TypeArgumentsChildTransport::TypeBinding(inner) => render_type_binding_transport(inner.as_ref())?,
             TypeArgumentsChildTransport::Lifetime(inner) => render_lifetime_transport(inner.as_ref())?,
             TypeArgumentsChildTransport::Block(inner) => render_block_transport(inner.as_ref())?,
-        };
-        dest.write_str(&s).map_err(::askama::Error::from)
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum TypeParametersChildTransport {
-    AttributeItem(Box<AttributeItemTransport>),
-    Metavariable(MetavariableTransport),
-    TypeParameter(Box<TypeParameterTransport>),
-    LifetimeParameter(Box<LifetimeParameterTransport>),
-    ConstParameter(Box<ConstParameterTransport>),
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::FromNapiValue for TypeParametersChildTransport {
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
-        let kind_id: u16 = obj.get("$type")?
-            .ok_or_else(|| ::napi::Error::from_reason("$type property missing in TypeParametersChildTransport"))?;
-        match kind_id {
-            170 => Ok(Self::AttributeItem(Box::new(
-                AttributeItemTransport::from_napi_value(env, napi_val)?
-            ))),
-            142 => Ok(Self::Metavariable(
-                MetavariableTransport::from_napi_value(env, napi_val)?
-            )),
-            201 => Ok(Self::TypeParameter(Box::new(
-                TypeParameterTransport::from_napi_value(env, napi_val)?
-            ))),
-            202 => Ok(Self::LifetimeParameter(Box::new(
-                LifetimeParameterTransport::from_napi_value(env, napi_val)?
-            ))),
-            200 => Ok(Self::ConstParameter(Box::new(
-                ConstParameterTransport::from_napi_value(env, napi_val)?
-            ))),
-            other => Err(::napi::Error::from_reason(format!(
-                "unknown kind id {{other}} in TypeParametersChildTransport",
-            ))),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl ::napi::bindgen_prelude::ToNapiValue for TypeParametersChildTransport {
-    unsafe fn to_napi_value(
-        _env: ::napi::sys::napi_env,
-        _val: Self,
-    ) -> ::napi::Result<::napi::sys::napi_value> {
-        Err(::napi::Error::from_reason("TypeParametersChildTransport is receive-only"))
-    }
-}
-
-fn type_parameters_child_transport_to_any(t: TypeParametersChildTransport) -> AnyTransport {
-    match t {
-        TypeParametersChildTransport::AttributeItem(inner) => AnyTransport::AttributeItem(*inner),
-        TypeParametersChildTransport::Metavariable(inner) => AnyTransport::Metavariable(inner),
-        TypeParametersChildTransport::TypeParameter(inner) => AnyTransport::TypeParameter(*inner),
-        TypeParametersChildTransport::LifetimeParameter(inner) => AnyTransport::LifetimeParameter(*inner),
-        TypeParametersChildTransport::ConstParameter(inner) => AnyTransport::ConstParameter(*inner),
-    }
-}
-
-impl ::sittir_core::types::RenderableTransport for TypeParametersChildTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        let s = match self {
-            TypeParametersChildTransport::AttributeItem(inner) => render_attribute_item_transport(inner.as_ref())?,
-            TypeParametersChildTransport::Metavariable(inner) => render_metavariable_transport(inner)?,
-            TypeParametersChildTransport::TypeParameter(inner) => render_type_parameter_transport(inner.as_ref())?,
-            TypeParametersChildTransport::LifetimeParameter(inner) => render_lifetime_parameter_transport(inner.as_ref())?,
-            TypeParametersChildTransport::ConstParameter(inner) => render_const_parameter_transport(inner.as_ref())?,
         };
         dest.write_str(&s).map_err(::askama::Error::from)
     }
@@ -8651,8 +8391,7 @@ pub struct ArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<ArgumentsChildTransport>,
+    pub attributes: Vec<AnyTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for ArgumentsTransport {
@@ -8896,8 +8635,9 @@ pub struct AttributeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub path: PathTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Box<AnyTransport>,
+    pub children: Option<Box<AnyTransport>>,
 }
 
 impl ::sittir_core::types::RenderableTransport for AttributeTransport {
@@ -9042,8 +8782,9 @@ pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
     pub label: Option<LabelTransport>,
+    pub trailing_expression: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<AnyTransport>,
+    pub children: Vec<StatementTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for BlockTransport {
@@ -12482,9 +12223,10 @@ pub struct MatchArmUFormWithCommaTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub attributes: Vec<DeclarationStatementTransport>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<MatchArmUFormWithCommaChildTransport>,
+    pub children: MatchArmWithCommaTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmUFormWithCommaTransport {
@@ -12512,9 +12254,10 @@ pub struct MatchArmUFormBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    pub attributes: Vec<DeclarationStatementTransport>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<MatchArmUFormBlockEndingChildTransport>,
+    pub children: _MatchArmBlockEndingTransport,
 }
 
 impl ::sittir_core::types::RenderableTransport for MatchArmUFormBlockEndingTransport {
@@ -15641,8 +15384,7 @@ pub struct TypeParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: Vec<TypeParametersChildTransport>,
+    pub attributes: Vec<AnyTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for TypeParametersTransport {
@@ -22732,13 +22474,13 @@ fn render_abstract_type_transport(node: &AbstractTypeTransport) -> Result<String
 }
 
 fn render_arguments_transport(node: &ArgumentsTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = ArgumentsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -22829,15 +22571,9 @@ fn render_async_block_transport(node: &AsyncBlockTransport) -> Result<String, ::
 }
 
 fn render_attribute_transport(node: &AttributeTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
     let template = AttributeTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
         arguments: ::sittir_core::filters::OptionalNonterminalView::Missing,
+        path: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.path as &dyn ::sittir_core::types::RenderableTransport)),
         value: ::sittir_core::filters::OptionalNonterminalView::Missing,
     };
     template.render()
@@ -22899,6 +22635,10 @@ fn render_block_transport(node: &BlockTransport) -> Result<String, ::askama::Err
             trailing: false,
         },
         label: match &node.label {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
+        trailing_expression: match &node.trailing_expression {
             Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v as &dyn ::sittir_core::types::RenderableTransport)),
             None => ::sittir_core::filters::OptionalNonterminalView::Missing,
         },
@@ -24182,12 +23922,19 @@ fn render_match_arm_transport(t: &MatchArmTransport) -> Result<String, ::askama:
 }
 
 fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = MatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -24198,12 +23945,19 @@ fn render_match_arm_uform_with_comma_transport(node: &MatchArmUFormWithCommaTran
 }
 
 fn render_match_arm_uform_block_ending_transport(node: &MatchArmUFormBlockEndingTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = MatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -25407,13 +25161,13 @@ fn render_type_parameter_transport(node: &TypeParameterTransport) -> Result<Stri
 }
 
 fn render_type_parameters_transport(node: &TypeParametersTransport) -> Result<String, ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+    let attributes_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.attributes.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
     let template = TypeParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: ",",
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: attributes_buf.as_slice(),
+            separator: "",
             leading: false,
             trailing: false,
         },
@@ -28688,8 +28442,9 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
 
 fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| arguments_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = None;
     Ok(transport_node_data(
         TransportKindId(257) /* "arguments" */,
         transport.transport_source,
@@ -28841,8 +28596,12 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
 
 fn transport_to_node_attribute(transport: AttributeTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("path".to_string(), transport_field_value(path_transport_to_any(transport.path))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![*transport.children])?);
+    let children = match transport.children {
+        Some(c) => Some(transport_children(vec![*c])?),
+        None => None,
+    };
     Ok(transport_node_data(
         TransportKindId(172) /* "attribute" */,
         transport.transport_source,
@@ -28938,8 +28697,11 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
     if let Some(value) = transport.label {
         fields.insert("label".to_string(), transport_field_value(AnyTransport::Label(value))?);
     }
+    if let Some(value) = transport.trailing_expression {
+        fields.insert("trailing_expression".to_string(), transport_field_value(expression_transport_to_any(value))?);
+    }
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children)?);
+    let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(293) /* "block" */,
         transport.transport_source,
@@ -30890,9 +30652,10 @@ fn transport_to_node_match_arm(transport: MatchArmTransport) -> Result<Transport
 
 fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithCommaTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
     fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| match_arm_uform_with_comma_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::MatchArmWithComma(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(274) /* "match_arm" */,
         transport.transport_source,
@@ -30909,9 +30672,10 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
 
 fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockEndingTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
     fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| match_arm_uform_block_ending_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = Some(transport_children(vec![AnyTransport::_MatchArmBlockEnding(transport.children)])?);
     Ok(transport_node_data(
         TransportKindId(274) /* "match_arm" */,
         transport.transport_source,
@@ -32650,8 +32414,9 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
 
 fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Result<TransportNodeData, ::askama::Error> {
     let mut fields = TransportHashMap::new();
+    fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(transport.children.into_iter().map(|v| type_parameters_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let children = None;
     Ok(transport_node_data(
         TransportKindId(199) /* "type_parameters" */,
         transport.transport_source,
@@ -34562,7 +34327,7 @@ pub struct AbstractTypeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "arguments.jinja", escape = "none")]
 pub struct ArgumentsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -34610,8 +34375,8 @@ pub struct AttributeItemTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub arguments: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub path: ::sittir_core::filters::SingleNonterminalView<'a>,
     pub value: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
@@ -34648,6 +34413,7 @@ pub struct BlockCommentTemplate<'a> {
 pub struct BlockTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub label: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub trailing_expression: ::sittir_core::filters::OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35159,6 +34925,7 @@ pub struct MatchArmBlockEndingTemplate<'a> {
 #[template(path = "match_arm.jinja", escape = "none")]
 pub struct MatchArmTemplate<'a> {
     pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
     pub pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
@@ -35594,7 +35361,7 @@ pub struct TypeParameterTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "type_parameters.jinja", escape = "none")]
 pub struct TypeParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub attributes: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -35768,14 +35535,12 @@ impl ResolvedField {
 
 fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
-        257 => ",", // "arguments"
         282 => ",", // "closure_parameters"
         263 => ",", // "field_initializer_list"
         297 => ",", // "slice_pattern"
         196 => "+", // "trait_bounds"
         296 => ",", // "tuple_pattern"
         223 => ",", // "tuple_type"
-        199 => ",", // "type_parameters"
         207 => ",", // "use_list"
         _ => "",
     }
@@ -36757,14 +36522,15 @@ fn render_abstract_type(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_arguments(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
+    let children = resolve_children(node, &["attributes"])?;
+    let field_0 = resolve_field(node, "attributes", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = ArgumentsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()
@@ -36857,24 +36623,19 @@ fn render_attribute_item(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["arguments", "value"])?;
+    let children = resolve_children(node, &["arguments", "path", "value"])?;
     let field_0 = resolve_field(node, "arguments", false)?;
-    let field_1 = resolve_field(node, "value", false)?;
-    let children_renderables = children.renderable_items();
+    let field_1 = resolve_field(node, "path", true)?;
+    let field_2 = resolve_field(node, "value", false)?;
     let template = AttributeTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
-        },
         arguments: match field_0.kind {
             ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
             ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        value: match field_1.kind {
+        path: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: match field_2.kind {
             ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
         },
     };
     template.render()
@@ -36944,8 +36705,9 @@ fn render_block_comment(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["label"])?;
+    let children = resolve_children(node, &["label", "trailing_expression"])?;
     let field_0 = resolve_field(node, "label", false)?;
+    let field_1 = resolve_field(node, "trailing_expression", false)?;
     let children_renderables = children.renderable_items();
     let template = BlockTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
@@ -36957,6 +36719,10 @@ fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
         label: match field_0.kind {
             ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
             ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        trailing_expression: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -38087,9 +37853,11 @@ fn render_match_arm_block_ending(node: &NodeData) -> Result<String, ::askama::Er
 }
 
 fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["pattern"])?;
-    let field_0 = resolve_field(node, "pattern", true)?;
+    let children = resolve_children(node, &["attributes", "pattern"])?;
+    let field_0 = resolve_field(node, "attributes", true)?;
+    let field_1 = resolve_field(node, "pattern", true)?;
     let children_renderables = children.renderable_items();
+    let field_0_renderables = field_0.renderable_items();
     let template = MatchArmTemplate {
         children: ::sittir_core::filters::ListNonterminalView {
             items: children_renderables.as_slice(),
@@ -38097,7 +37865,13 @@ fn render_match_arm(node: &NodeData) -> Result<String, ::askama::Error> {
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
+        },
+        pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -39090,14 +38864,15 @@ fn render_type_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_type_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let children_renderables = children.renderable_items();
+    let children = resolve_children(node, &["attributes"])?;
+    let field_0 = resolve_field(node, "attributes", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = TypeParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
-            items: children_renderables.as_slice(),
-            separator: children.separator,
-            leading: children.leading_sep,
-            trailing: children.trailing_sep,
+        attributes: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
         },
     };
     template.render()

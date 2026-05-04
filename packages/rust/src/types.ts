@@ -2426,7 +2426,8 @@ export interface AbstractType {
 
 export interface Arguments {
   readonly $type: TSKindId.Arguments;
-  readonly $children: readonly (AttributeItem | Expression)[];
+  readonly _attributes: readonly (AttributeItem | Expression)[];
+  attributes(): readonly (AttributeItem | Expression)[];
 }
 
 export interface ArrayExpressionUFormSemi {
@@ -2480,7 +2481,9 @@ export interface AsyncBlock {
 
 export interface Attribute {
   readonly $type: TSKindId.Attribute;
-  readonly $children: readonly [Path | Expression | DelimTokenTree];
+  readonly _path: Path;
+  path(): Path;
+  readonly $children: readonly [Expression | DelimTokenTree];
 }
 
 export interface AttributeItem {
@@ -2512,8 +2515,10 @@ export interface BinaryExpression {
 export interface Block {
   readonly $type: TSKindId.Block;
   readonly _label?: Label;
+  readonly _trailing_expression?: Expression;
   label(): Label | undefined;
-  readonly $children: readonly (Statement | Expression)[];
+  trailingExpression(): Expression | undefined;
+  readonly $children: readonly (Statement)[];
 }
 
 export interface BlockComment {
@@ -3193,17 +3198,21 @@ export interface MatchArmBlockEnding {
 export interface MatchArmUFormWithComma {
   readonly $type: TSKindId.MatchArm;
   readonly $variant: 'with_comma';
+  readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
   readonly _pattern: MatchPattern;
+  attributes(): readonly (AttributeItem | InnerAttributeItem)[];
   pattern(): MatchPattern;
-  readonly $children: readonly (AttributeItem | InnerAttributeItem | MatchArmWithComma)[];
+  readonly $children: readonly [MatchArmWithComma];
 }
 
 export interface MatchArmUFormBlockEnding {
   readonly $type: TSKindId.MatchArm;
   readonly $variant: 'block_ending';
+  readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
   readonly _pattern: MatchPattern;
+  attributes(): readonly (AttributeItem | InnerAttributeItem)[];
   pattern(): MatchPattern;
-  readonly $children: readonly (AttributeItem | InnerAttributeItem | _MatchArmBlockEnding)[];
+  readonly $children: readonly [_MatchArmBlockEnding];
 }
 
 export type MatchArm = MatchArmUFormWithComma | MatchArmUFormBlockEnding;
@@ -3776,7 +3785,8 @@ export interface TypeParameter {
 
 export interface TypeParameters {
   readonly $type: TSKindId.TypeParameters;
-  readonly $children: NonEmptyArray<AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter>;
+  readonly _attributes: readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
+  attributes(): readonly (AttributeItem | Metavariable | TypeParameter | LifetimeParameter | ConstParameter)[];
 }
 
 export interface UnaryExpression {
@@ -7988,7 +7998,7 @@ export namespace Arguments {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | Expression.Transport)[];
+    readonly attributes: readonly (AttributeItem.Transport | Expression.Transport)[];
   }
 }
 
@@ -8091,7 +8101,8 @@ export namespace Attribute {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Path.Transport | Expression.Transport | DelimTokenTree.Transport];
+    readonly path: Path.Transport;
+    readonly $children?: readonly [Expression.Transport | DelimTokenTree.Transport];
   }
 }
 
@@ -8159,7 +8170,8 @@ export namespace Block {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly label?: Label.Transport;
-    readonly $children: readonly (Statement.Transport | Expression.Transport)[];
+    readonly trailing_expression?: Expression.Transport;
+    readonly $children: readonly (Statement.Transport)[];
   }
 }
 
@@ -9443,8 +9455,9 @@ export namespace MatchArmUFormWithComma {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
+    readonly attributes: readonly (AttributeItem.Transport | InnerAttributeItem.Transport)[];
     readonly pattern: MatchPattern.Transport;
-    readonly $children: readonly (AttributeItem.Transport | InnerAttributeItem.Transport | MatchArmWithComma.Transport)[];
+    readonly $children: readonly [MatchArmWithComma.Transport];
   }
 }
 
@@ -9458,8 +9471,9 @@ export namespace MatchArmUFormBlockEnding {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
+    readonly attributes: readonly (AttributeItem.Transport | InnerAttributeItem.Transport)[];
     readonly pattern: MatchPattern.Transport;
-    readonly $children: readonly (AttributeItem.Transport | InnerAttributeItem.Transport | _MatchArmBlockEnding.Transport)[];
+    readonly $children: readonly [_MatchArmBlockEnding.Transport];
   }
 }
 
@@ -10613,7 +10627,7 @@ export namespace TypeParameters {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly (AttributeItem.Transport | Metavariable.Transport | TypeParameter.Transport | LifetimeParameter.Transport | ConstParameter.Transport)[];
+    readonly attributes: readonly (AttributeItem.Transport | Metavariable.Transport | TypeParameter.Transport | LifetimeParameter.Transport | ConstParameter.Transport)[];
   }
 }
 

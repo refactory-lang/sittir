@@ -713,14 +713,17 @@ export function abstractType(config: T.AbstractType.Config) {
   });
 }
 
-export function arguments_(...children: (T.AttributeItem | T.Expression)[]) {
+export function arguments_(config: T.Arguments.Config) {
+  const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.Expression)[]) => arguments_(...vs) },
+    _attributes,
+    attributes() { return _attributes; },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ...config, attributes: values }),
+    },
   });
 }
 
@@ -852,14 +855,18 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
 
 export function attribute(config: T.Attribute.Config) {
   const children = config.children ?? [];
+  const _path = config.path;
   return withMethods({
     $type: TSKindId.Attribute as const,
     $source: 2 as const,
     $named: true as const,
+    _path,
     $children: children,
+    path() { return _path; },
     children() { return children; },
     $with: {
-      children: (...items: readonly [((T.Path | T.Expression | T.DelimTokenTree))]) => attribute({ ...config, children: items }),
+      path: (value: T.Path) => attribute({ ...config, path: value }),
+      children: (...items: readonly [((T.Expression | T.DelimTokenTree))]) => attribute({ ...config, children: items }),
     },
   });
 }
@@ -926,17 +933,21 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
 export function block(config: T.Block.Config) {
   const children = config.children ?? [];
   const _label = config.label;
+  const _trailing_expression = config.trailingExpression;
   return withMethods({
     $type: TSKindId.Block as const,
     $source: 2 as const,
     $named: true as const,
     _label,
+    _trailing_expression,
     $children: children,
     label() { return _label; },
+    trailingExpression() { return _trailing_expression; },
     children() { return children; },
     $with: {
       label: (value?: T.Label) => block({ ...config, label: value }),
-      children: (...items: ((T.Statement | T.Expression))[]) => block({ ...config, children: items }),
+      trailingExpression: (value?: T.Expression) => block({ ...config, trailingExpression: value }),
+      children: (...items: T.Statement[]) => block({ ...config, children: items }),
     },
   });
 }
@@ -2589,38 +2600,48 @@ export function matchArm(config: ConfigOf<T.MatchArmUFormWithComma> | ConfigOf<T
   throw new Error(`matchArm: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'with_comma' | 'block_ending'.`);
 }
 export function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmUFormWithComma>, '$variant'>) {
-  const children = config.children ?? [];
+  const inner = _matchArmWithComma(config);
+  const children = [inner] as const;
+  const _attributes = config.attributes;
   const _pattern = config.pattern;
   return withMethods({
     $type: TSKindId.MatchArm as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'with_comma' as const,
+    _attributes,
     _pattern,
     $children: children,
+    attributes() { return _attributes; },
     pattern() { return _pattern; },
-    children() { return children; },
+    value() { return inner.value(); },
     $with: {
-      pattern: (value: T.MatchPattern) => matchArmUFormWithComma({ ...config, pattern: value }),
-      children: (...items: ((T.AttributeItem | T.InnerAttributeItem | T.MatchArmWithComma))[]) => matchArmUFormWithComma({ ...config, children: items }),
+      attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => matchArmUFormWithComma({ ...config, attributes: values } as Parameters<typeof matchArmUFormWithComma>[0]),
+      pattern: (value: T.MatchPattern) => matchArmUFormWithComma({ ...config, pattern: value } as Parameters<typeof matchArmUFormWithComma>[0]),
+      value: (value: T.Expression) => matchArmUFormWithComma({ ...config, value: value } as Parameters<typeof matchArmUFormWithComma>[0]),
     },
   });
 }
 export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>) {
-  const children = config.children ?? [];
+  const inner = _matchArmBlockEnding(config);
+  const children = [inner] as const;
+  const _attributes = config.attributes;
   const _pattern = config.pattern;
   return withMethods({
     $type: TSKindId.MatchArm as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'block_ending' as const,
+    _attributes,
     _pattern,
     $children: children,
+    attributes() { return _attributes; },
     pattern() { return _pattern; },
-    children() { return children; },
+    value() { return inner.value(); },
     $with: {
-      pattern: (value: T.MatchPattern) => matchArmUFormBlockEnding({ ...config, pattern: value }),
-      children: (...items: ((T.AttributeItem | T.InnerAttributeItem | T._MatchArmBlockEnding))[]) => matchArmUFormBlockEnding({ ...config, children: items }),
+      attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => matchArmUFormBlockEnding({ ...config, attributes: values } as Parameters<typeof matchArmUFormBlockEnding>[0]),
+      pattern: (value: T.MatchPattern) => matchArmUFormBlockEnding({ ...config, pattern: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
+      value: (value: T.ExpressionEndingWithBlock) => matchArmUFormBlockEnding({ ...config, value: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
     },
   });
 }
@@ -4018,15 +4039,17 @@ export function typeParameter(config: T.TypeParameter.Config) {
   });
 }
 
-export function typeParameters(...children: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) {
-  _assertNonEmpty(children, 'type_parameters.children');
+export function typeParameters(config: T.TypeParameters.Config) {
+  const _attributes = config.attributes;
   return withMethods({
     $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    children() { return children; },
-    $with: { $children: (...vs: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters(...vs) },
+    _attributes,
+    attributes() { return _attributes; },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ...config, attributes: values }),
+    },
   });
 }
 

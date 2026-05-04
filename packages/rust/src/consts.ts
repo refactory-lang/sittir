@@ -1229,16 +1229,17 @@ export const enum TSFieldId {
   FieldStringContent = 57,
   FieldStringLiteral = 58,
   FieldTokenTree = 59,
-  FieldTrailingWhereClause = 60,
-  FieldTrait = 61,
-  FieldTurbofish = 62,
-  FieldType = 63,
-  FieldTypeArguments = 64,
-  FieldTypeParameters = 65,
-  FieldUnsafeMarker = 66,
-  FieldValue = 67,
-  FieldVisibilityModifier = 68,
-  FieldWhereClause = 69,
+  FieldTrailingExpression = 60,
+  FieldTrailingWhereClause = 61,
+  FieldTrait = 62,
+  FieldTurbofish = 63,
+  FieldType = 64,
+  FieldTypeArguments = 65,
+  FieldTypeParameters = 66,
+  FieldUnsafeMarker = 67,
+  FieldValue = 68,
+  FieldVisibilityModifier = 69,
+  FieldWhereClause = 70,
 }
 
 export const TREE_SITTER_FIELD_ID_BY_NAME = {
@@ -1299,6 +1300,7 @@ export const TREE_SITTER_FIELD_ID_BY_NAME = {
   "string_content": TSFieldId.FieldStringContent,
   "string_literal": TSFieldId.FieldStringLiteral,
   "token_tree": TSFieldId.FieldTokenTree,
+  "trailing_expression": TSFieldId.FieldTrailingExpression,
   "trailing_where_clause": TSFieldId.FieldTrailingWhereClause,
   "trait": TSFieldId.FieldTrait,
   "turbofish": TSFieldId.FieldTurbofish,
@@ -1369,6 +1371,7 @@ export const TREE_SITTER_FIELD_NAME_BY_ID = {
   [TSFieldId.FieldStringContent]: "string_content",
   [TSFieldId.FieldStringLiteral]: "string_literal",
   [TSFieldId.FieldTokenTree]: "token_tree",
+  [TSFieldId.FieldTrailingExpression]: "trailing_expression",
   [TSFieldId.FieldTrailingWhereClause]: "trailing_where_clause",
   [TSFieldId.FieldTrait]: "trait",
   [TSFieldId.FieldTurbofish]: "turbofish",
@@ -1439,16 +1442,17 @@ export const TREE_SITTER_FIELD_ID_JSON = [
   { name: "string_content", id: 57, enumName: "FieldStringContent", cName: "field_string_content" },
   { name: "string_literal", id: 58, enumName: "FieldStringLiteral", cName: "field_string_literal" },
   { name: "token_tree", id: 59, enumName: "FieldTokenTree", cName: "field_token_tree" },
-  { name: "trailing_where_clause", id: 60, enumName: "FieldTrailingWhereClause", cName: "field_trailing_where_clause" },
-  { name: "trait", id: 61, enumName: "FieldTrait", cName: "field_trait" },
-  { name: "turbofish", id: 62, enumName: "FieldTurbofish", cName: "field_turbofish" },
-  { name: "type", id: 63, enumName: "FieldType", cName: "field_type" },
-  { name: "type_arguments", id: 64, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
-  { name: "type_parameters", id: 65, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
-  { name: "unsafe_marker", id: 66, enumName: "FieldUnsafeMarker", cName: "field_unsafe_marker" },
-  { name: "value", id: 67, enumName: "FieldValue", cName: "field_value" },
-  { name: "visibility_modifier", id: 68, enumName: "FieldVisibilityModifier", cName: "field_visibility_modifier" },
-  { name: "where_clause", id: 69, enumName: "FieldWhereClause", cName: "field_where_clause" },
+  { name: "trailing_expression", id: 60, enumName: "FieldTrailingExpression", cName: "field_trailing_expression" },
+  { name: "trailing_where_clause", id: 61, enumName: "FieldTrailingWhereClause", cName: "field_trailing_where_clause" },
+  { name: "trait", id: 62, enumName: "FieldTrait", cName: "field_trait" },
+  { name: "turbofish", id: 63, enumName: "FieldTurbofish", cName: "field_turbofish" },
+  { name: "type", id: 64, enumName: "FieldType", cName: "field_type" },
+  { name: "type_arguments", id: 65, enumName: "FieldTypeArguments", cName: "field_type_arguments" },
+  { name: "type_parameters", id: 66, enumName: "FieldTypeParameters", cName: "field_type_parameters" },
+  { name: "unsafe_marker", id: 67, enumName: "FieldUnsafeMarker", cName: "field_unsafe_marker" },
+  { name: "value", id: 68, enumName: "FieldValue", cName: "field_value" },
+  { name: "visibility_modifier", id: 69, enumName: "FieldVisibilityModifier", cName: "field_visibility_modifier" },
+  { name: "where_clause", id: 70, enumName: "FieldWhereClause", cName: "field_where_clause" },
 ] as const;
 
 /** Per-node-kind field metadata. */
@@ -1532,6 +1536,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'trait', required: true, multiple: false },
   ],
   'arguments': [
+    { name: 'attributes', required: true, multiple: true },
   ],
   'array_expression': [
   ],
@@ -1554,6 +1559,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'block', required: true, multiple: false },
   ],
   'attribute': [
+    { name: 'path', required: true, multiple: false },
   ],
   'attribute_item': [
     { name: 'attribute', required: true, multiple: false },
@@ -1569,6 +1575,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'block': [
     { name: 'label', required: false, multiple: false },
+    { name: 'trailingExpression', required: false, multiple: false },
   ],
   'block_comment': [
     { name: 'doc', required: false, multiple: false },
@@ -1833,6 +1840,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'right', required: true, multiple: false },
   ],
   'match_arm': [
+    { name: 'attributes', required: true, multiple: true },
     { name: 'pattern', required: true, multiple: false },
   ],
   'match_arm_block_ending': [
@@ -2047,6 +2055,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'defaultType', required: false, multiple: false },
   ],
   'type_parameters': [
+    { name: 'attributes', required: true, multiple: true },
   ],
   'unary_expression': [
     { name: 'operator', required: true, multiple: false },
