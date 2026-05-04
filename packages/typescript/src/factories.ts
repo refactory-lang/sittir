@@ -3,8 +3,7 @@
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
 import type { AnyNodeData, ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
-import { render, toEdit } from './boundary.ts';
-import { withMethods, freezeNodeData, buildWithNamespace } from '@sittir/core';
+import { withMethods, _setField, _setFields } from './utils.js';
 
 function _assertNonEmpty<T>(
   arr: readonly T[],
@@ -24,973 +23,1127 @@ const _leafRe_unescapedDoubleStringFragment = /^(?:[^"\\\r\n]+)/u;
 const _leafRe_unescapedSingleJsxStringFragment = /^(?:([^'&]|&[^#A-Za-z])+)/u;
 const _leafRe_unescapedSingleStringFragment = /^(?:[^'\\\r\n]+)/u;
 
-export function _arrowFunctionUCallSignature(config: ConfigOf<T._ArrowFunctionUCallSignature>) {
-  const _node: Record<string,unknown> = {
+export function _arrowFunctionUCallSignature(config: T._ArrowFunctionUCallSignature.Config) {
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId._ArrowFunctionUCallSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _arrowFunctionUCallSignature as (c: Record<string,unknown>) => AnyNodeData, [['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_parameters,
+    _parameters,
+    _return_type,
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, _arrowFunctionUCallSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, _arrowFunctionUCallSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, _arrowFunctionUCallSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
-export function _arrowFunctionParameter(config: ConfigOf<T._ArrowFunctionParameter>) {
-  const _node: Record<string,unknown> = {
+export function _arrowFunctionParameter(config: T._ArrowFunctionParameter.Config) {
+  const _parameter = config.parameter;
+  return withMethods({
     $type: TSKindId._ArrowFunctionParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _parameter: config.parameter,
-  };
-  Object.defineProperty(_node, 'parameter', { value: function() { return (this as Record<string,unknown>)['_parameter']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _arrowFunctionParameter as (c: Record<string,unknown>) => AnyNodeData, [['_parameter', 'parameter']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _parameter,
+    parameter() { return _parameter; },
+    $with: {
+      parameter: (value?: T.ReservedIdentifier) => _setField(config, _arrowFunctionParameter, 'parameter', value, config.parameter),
+    },
+  });
 }
 
-export function _callExpressionCall(config: ConfigOf<T.CallExpressionCall>) {
-  const _node: Record<string,unknown> = {
+export function _callExpressionCall(config: T.CallExpressionCall.Config) {
+  const _function = config.function;
+  const _type_arguments = config.typeArguments;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.CallExpressionCall as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _type_arguments: config.typeArguments,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _callExpressionCall as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_type_arguments', 'typeArguments'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _type_arguments,
+    _arguments,
+    function() { return _function; },
+    typeArguments() { return _type_arguments; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.Expression | T.Import) => _setField(config, _callExpressionCall, 'function', value, config.function),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, _callExpressionCall, 'typeArguments', value, config.typeArguments),
+      arguments: (value?: T.Arguments) => _setField(config, _callExpressionCall, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function _callExpressionMember(config: ConfigOf<T.CallExpressionMember>) {
-  const _node: Record<string,unknown> = {
+export function _callExpressionMember(config: T.CallExpressionMember.Config) {
+  const _function = config.function;
+  const _type_arguments = config.typeArguments;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.CallExpressionMember as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _type_arguments: config.typeArguments,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _callExpressionMember as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_type_arguments', 'typeArguments'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _type_arguments,
+    _arguments,
+    function() { return _function; },
+    typeArguments() { return _type_arguments; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.PrimaryExpression) => _setField(config, _callExpressionMember, 'function', value, config.function),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, _callExpressionMember, 'typeArguments', value, config.typeArguments),
+      arguments: (value?: T.Arguments) => _setField(config, _callExpressionMember, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function _callExpressionTemplateCall(config: ConfigOf<T.CallExpressionTemplateCall>) {
-  const _node: Record<string,unknown> = {
+export function _callExpressionTemplateCall(config: T.CallExpressionTemplateCall.Config) {
+  const _function = config.function;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.CallExpressionTemplateCall as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _callExpressionTemplateCall as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _arguments,
+    function() { return _function; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.PrimaryExpression | T.NewExpression) => _setField(config, _callExpressionTemplateCall, 'function', value, config.function),
+      arguments: (value?: T.TemplateString) => _setField(config, _callExpressionTemplateCall, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function _callSignature(config: ConfigOf<T._CallSignature>) {
-  const _node: Record<string,unknown> = {
+export function _callSignature(config: T._CallSignature.Config) {
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId._CallSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _callSignature as (c: Record<string,unknown>) => AnyNodeData, [['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_parameters,
+    _parameters,
+    _return_type,
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, _callSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, _callSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, _callSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
 export function classBodyMember(child: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ClassBodyMember as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => classBodyMember(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.AbstractMethodSignature | T.IndexSignature | T.MethodSignature | T.PublicFieldDefinition | T.Semicolon)) => classBodyMember(v) },
+  });
 }
 
-export function _classBodyMethod(config: ConfigOf<T.ClassBodyMethod>) {
+export function _classBodyMethod(config: T.ClassBodyMethod.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  return withMethods({
     $type: TSKindId.ClassBodyMethod as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
+    _decorator,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _classBodyMethod as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, _classBodyMethod, 'decorator', values, config.decorator),
+      children: (...items: readonly [((T.MethodDefinition | T.Semicolon))]) => _classBodyMethod({ ...config, children: items }),
+    },
+  });
 }
 
 export function classBodyMethodSig(child: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ClassBodyMethodSig as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => classBodyMethodSig(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.MethodSignature | T.FunctionSignatureAutomaticSemicolon)) => classBodyMethodSig(v) },
+  });
 }
 
 export function _classHeritageExtendsClause(child: (T.ExtendsClause | T.ImplementsClause)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ClassHeritageExtendsClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => _classHeritageExtendsClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => _classHeritageExtendsClause(v) },
+  });
 }
 
 export function _classHeritageImplementsClause(child: T.ImplementsClause) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ClassHeritageImplementsClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.ImplementsClause) => _classHeritageImplementsClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.ImplementsClause) => _classHeritageImplementsClause(v) },
+  });
 }
 
-export function _exportStatementDefaultDeclArm(config: ConfigOf<T.ExportStatementDefaultDeclArm>) {
+export function _exportStatementDefaultDeclArm(config: T.ExportStatementDefaultDeclArm.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultDeclArm as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
+    _decorator,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _exportStatementDefaultDeclArm as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, _exportStatementDefaultDeclArm, 'decorator', values, config.decorator),
+      children: (...items: readonly [((T.Declaration | T.ExportStatementDefaultDeclArmDefaultKw))]) => _exportStatementDefaultDeclArm({ ...config, children: items }),
+    },
+  });
 }
 
-export function _exportStatementDefaultDeclArmDefaultKw(config: ConfigOf<T.ExportStatementDefaultDeclArmDefaultKw>) {
+export function _exportStatementDefaultDeclArmDefaultKw(config: T.ExportStatementDefaultDeclArmDefaultKw.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKw as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  const _with = buildWithNamespace(config as Record<string,unknown>, _exportStatementDefaultDeclArmDefaultKw as (c: Record<string,unknown>) => AnyNodeData, [['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [((T.Declaration | T.ExportStatementDefaultDeclArmDefaultKwValue))]) => _exportStatementDefaultDeclArmDefaultKw({ ...config, children: items }),
+    },
+  });
 }
 
-export function _exportStatementDefaultDeclArmDefaultKwValue(config: ConfigOf<T.ExportStatementDefaultDeclArmDefaultKwValue>) {
+export function _exportStatementDefaultDeclArmDefaultKwValue(config: T.ExportStatementDefaultDeclArmDefaultKwValue.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultDeclArmDefaultKwValue as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
+    _value,
     $children: children,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _exportStatementDefaultDeclArmDefaultKwValue as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      value: (value?: T.Expression) => _setField(config, _exportStatementDefaultDeclArmDefaultKwValue, 'value', value, config.value),
+      children: (...items: readonly [T.Semicolon]) => _exportStatementDefaultDeclArmDefaultKwValue({ ...config, children: items }),
+    },
+  });
 }
 
 export function exportStatementDefaultFromArm(child: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultFromArm as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => exportStatementDefaultFromArm(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.ExportStatementDefaultFromArmStarFrom | T.ExportStatementDefaultFromArmNsFrom | T.ExportStatementDefaultFromArmClauseFrom | T.ExportClause | T.Semicolon)) => exportStatementDefaultFromArm(v) },
+  });
 }
 
-export function exportStatementDefaultFromArmClauseFrom(config: ConfigOf<T.ExportStatementDefaultFromArmClauseFrom>) {
+export function exportStatementDefaultFromArmClauseFrom(config: T.ExportStatementDefaultFromArmClauseFrom.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultFromArmClauseFrom as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
+    _source,
     $children: children,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportStatementDefaultFromArmClauseFrom as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    source() { return _source; },
+    children() { return children; },
+    $with: {
+      source: (value?: T.String) => _setField(config, exportStatementDefaultFromArmClauseFrom, 'source', value, config.source),
+      children: (...items: readonly [T.ExportClause]) => exportStatementDefaultFromArmClauseFrom({ ...config, children: items }),
+    },
+  });
 }
 
-export function exportStatementDefaultFromArmNsFrom(config: ConfigOf<T.ExportStatementDefaultFromArmNsFrom>) {
+export function exportStatementDefaultFromArmNsFrom(config: T.ExportStatementDefaultFromArmNsFrom.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultFromArmNsFrom as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
+    _source,
     $children: children,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportStatementDefaultFromArmNsFrom as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    source() { return _source; },
+    children() { return children; },
+    $with: {
+      source: (value?: T.String) => _setField(config, exportStatementDefaultFromArmNsFrom, 'source', value, config.source),
+      children: (...items: readonly [T.NamespaceExport]) => exportStatementDefaultFromArmNsFrom({ ...config, children: items }),
+    },
+  });
 }
 
-export function exportStatementDefaultFromArmStarFrom(config: ConfigOf<T.ExportStatementDefaultFromArmStarFrom>) {
-  const _node: Record<string,unknown> = {
+export function exportStatementDefaultFromArmStarFrom(config: T.ExportStatementDefaultFromArmStarFrom.Config) {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId.ExportStatementDefaultFromArmStarFrom as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportStatementDefaultFromArmStarFrom as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _source,
+    source() { return _source; },
+    $with: {
+      source: (value?: T.String) => _setField(config, exportStatementDefaultFromArmStarFrom, 'source', value, config.source),
+    },
+  });
 }
 
 export function _exportStatementEqualsExport(child: (T.Expression | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ExportStatementEqualsExport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Expression | T.Semicolon)) => _exportStatementEqualsExport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => _exportStatementEqualsExport(v) },
+  });
 }
 
 export function _exportStatementNamespaceExport(child: (T.Identifier | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ExportStatementNamespaceExport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Identifier | T.Semicolon)) => _exportStatementNamespaceExport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => _exportStatementNamespaceExport(v) },
+  });
 }
 
-export function _exportStatementTypeExport(config: ConfigOf<T._ExportStatementTypeExport>) {
+export function _exportStatementTypeExport(config: T._ExportStatementTypeExport.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId._ExportStatementTypeExport as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
+    _source,
     $children: children,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _exportStatementTypeExport as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    source() { return _source; },
+    children() { return children; },
+    $with: {
+      source: (value?: T.String | undefined) => _setField(config, _exportStatementTypeExport, 'source', value, config.source),
+      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => _exportStatementTypeExport({ ...config, children: items }),
+    },
+  });
 }
 
-export function _extendsClauseSingle(config: ConfigOf<T.ExtendsClauseSingle>) {
-  const _node: Record<string,unknown> = {
+export function _extendsClauseSingle(config: T.ExtendsClauseSingle.Config) {
+  const _value = config.value;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
     $type: TSKindId.ExtendsClauseSingle as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
-    _type_arguments: config.typeArguments,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _extendsClauseSingle as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value'], ['_type_arguments', 'typeArguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _value,
+    _type_arguments,
+    value() { return _value; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      value: (value?: T.Expression) => _setField(config, _extendsClauseSingle, 'value', value, config.value),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, _extendsClauseSingle, 'typeArguments', value, config.typeArguments),
+    },
+  });
 }
 
-export function _forHeader(config: ConfigOf<T.ForHeader>) {
+export function _forHeader(config: T.ForHeader.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _operator = config.operator;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.ForHeader as number,
     $source: 2 as const,
     $named: true as const,
-    _operator: config.operator,
-    _right: config.right,
+    _operator,
+    _right,
     $children: children,
-  };
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _forHeader as (c: Record<string,unknown>) => AnyNodeData, [['_operator', 'operator'], ['_right', 'right'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    operator() { return _operator; },
+    right() { return _right; },
+    children() { return children; },
+    $with: {
+      operator: (value?: T.ForHeaderOperator) => _setField(config, _forHeader, 'operator', value, config.operator),
+      right: (value?: T.Expressions) => _setField(config, _forHeader, 'right', value, config.right),
+      children: (...items: readonly [((T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind))]) => _forHeader({ ...config, children: items }),
+    },
+  });
 }
 
-export function _forHeaderLetConstKind(config: ConfigOf<T.ForHeaderLetConstKind>) {
+export function _forHeaderLetConstKind(config: T.ForHeaderLetConstKind.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _kind = config.kind;
+  const _left = config.left;
+  return withMethods({
     $type: TSKindId.ForHeaderLetConstKind as number,
     $source: 2 as const,
     $named: true as const,
-    _kind: config.kind,
-    _left: config.left,
+    _kind,
+    _left,
     $children: children,
-  };
-  Object.defineProperty(_node, 'kind', { value: function() { return (this as Record<string,unknown>)['_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _forHeaderLetConstKind as (c: Record<string,unknown>) => AnyNodeData, [['_kind', 'kind'], ['_left', 'left'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    kind() { return _kind; },
+    left() { return _left; },
+    children() { return children; },
+    $with: {
+      kind: (value?: T.Kind) => _setField(config, _forHeaderLetConstKind, 'kind', value, config.kind),
+      left: (value?: T.Identifier | T.DestructuringPattern) => _setField(config, _forHeaderLetConstKind, 'left', value, config.left),
+      children: (...items: readonly [T.AutomaticSemicolon]) => _forHeaderLetConstKind({ ...config, children: items }),
+    },
+  });
 }
 
-export function forHeaderLhs(config: ConfigOf<T.ForHeaderLhs>) {
-  const _node: Record<string,unknown> = {
+export function forHeaderLhs(config: T.ForHeaderLhs.Config) {
+  const _left = config.left;
+  return withMethods({
     $type: TSKindId.ForHeaderLhs as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, forHeaderLhs as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    left() { return _left; },
+    $with: {
+      left: (value?: T.LhsExpression | T.ParenthesizedExpression) => _setField(config, forHeaderLhs, 'left', value, config.left),
+    },
+  });
 }
 
-export function _forHeaderVarKind(config: ConfigOf<T.ForHeaderVarKind>) {
+export function _forHeaderVarKind(config: T.ForHeaderVarKind.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _kind = "var" as const;
+  const _left = config.left;
+  return withMethods({
     $type: TSKindId.ForHeaderVarKind as number,
     $source: 2 as const,
     $named: true as const,
-    _kind: "var" as const,
-    _left: config.left,
+    _kind,
+    _left,
     $children: children,
-  };
-  Object.defineProperty(_node, 'kind', { value: function() { return (this as Record<string,unknown>)['_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _forHeaderVarKind as (c: Record<string,unknown>) => AnyNodeData, [['_kind', 'kind'], ['_left', 'left'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    kind() { return _kind; },
+    left() { return _left; },
+    children() { return children; },
+    $with: {
+      left: (value?: T.Identifier | T.DestructuringPattern) => _setField(config, _forHeaderVarKind, 'left', value, config.left),
+      children: (...items: readonly [T.Initializer]) => _forHeaderVarKind({ ...config, children: items }),
+    },
+  });
 }
 
-export function _fromClause(config: ConfigOf<T.FromClause>) {
-  const _node: Record<string,unknown> = {
+export function _fromClause(config: T.FromClause.Config) {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId.FromClause as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _fromClause as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _source,
+    source() { return _source; },
+    $with: {
+      source: (value?: T.String) => _setField(config, _fromClause, 'source', value, config.source),
+    },
+  });
 }
 
 export function _importClauseDefaultImport(child: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseDefaultImport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => _importClauseDefaultImport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => _importClauseDefaultImport(v) },
+  });
 }
 
 export function _importClauseNamedImports(child: T.NamedImports) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseNamedImports as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.NamedImports) => _importClauseNamedImports(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.NamedImports) => _importClauseNamedImports(v) },
+  });
 }
 
 export function _importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseNamespaceImport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.NamespaceImport) => _importClauseNamespaceImport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.NamespaceImport) => _importClauseNamespaceImport(v) },
+  });
 }
 
-export function _importSpecifierAs(config: ConfigOf<T.ImportSpecifierAs>) {
-  const _node: Record<string,unknown> = {
+export function _importSpecifierAs(config: T.ImportSpecifierAs.Config) {
+  const _name = config.name;
+  const _alias = config.alias;
+  return withMethods({
     $type: TSKindId.ImportSpecifierAs as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _alias: config.alias,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alias', { value: function() { return (this as Record<string,unknown>)['_alias']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _importSpecifierAs as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_alias', 'alias']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _alias,
+    name() { return _name; },
+    alias() { return _alias; },
+    $with: {
+      name: (value?: T.ModuleExportName | T.Identifier) => _setField(config, _importSpecifierAs, 'name', value, config.name),
+      alias: (value?: T.ImportIdentifier) => _setField(config, _importSpecifierAs, 'alias', value, config.alias),
+    },
+  });
 }
 
-export function _importSpecifierName(config: ConfigOf<T._ImportSpecifierName>) {
-  const _node: Record<string,unknown> = {
+export function _importSpecifierName(config: T._ImportSpecifierName.Config) {
+  const _name = config.name;
+  return withMethods({
     $type: TSKindId._ImportSpecifierName as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _importSpecifierName as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    name() { return _name; },
+    $with: {
+      name: (value?: T.ImportIdentifier) => _setField(config, _importSpecifierName, 'name', value, config.name),
+    },
+  });
 }
 
-export function _indexSignatureColon(config: ConfigOf<T.IndexSignatureColon>) {
-  const _node: Record<string,unknown> = {
+export function _indexSignatureColon(config: T.IndexSignatureColon.Config) {
+  const _name = config.name;
+  const _index_type = config.indexType;
+  return withMethods({
     $type: TSKindId.IndexSignatureColon as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _index_type: config.indexType,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'indexType', { value: function() { return (this as Record<string,unknown>)['_index_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _indexSignatureColon as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_index_type', 'indexType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _index_type,
+    name() { return _name; },
+    indexType() { return _index_type; },
+    $with: {
+      name: (value?: T.ReservedIdentifier) => _setField(config, _indexSignatureColon, 'name', value, config.name),
+      indexType: (value?: T.Type) => _setField(config, _indexSignatureColon, 'indexType', value, config.indexType),
+    },
+  });
 }
 
 export function _indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._IndexSignatureMappedTypeClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.MappedTypeClause) => _indexSignatureMappedTypeClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.MappedTypeClause) => _indexSignatureMappedTypeClause(v) },
+  });
 }
 
-export function _initializer(config: ConfigOf<T.Initializer>) {
-  const _node: Record<string,unknown> = {
+export function _initializer(config: T.Initializer.Config) {
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.Initializer as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _initializer as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value?: T.Expression) => _setField(config, _initializer, 'value', value, config.value),
+    },
+  });
 }
 
-export function _module(config: ConfigOf<T._Module>) {
-  const _node: Record<string,unknown> = {
+export function _module(config: T._Module.Config) {
+  const _name = config.name;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId._Module as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _module as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _body,
+    name() { return _name; },
+    body() { return _body; },
+    $with: {
+      name: (value?: T.String | T.Identifier | T.NestedIdentifier) => _setField(config, _module, 'name', value, config.name),
+      body: (value?: T.StatementBlock | undefined) => _setField(config, _module, 'body', value, config.body),
+    },
+  });
 }
 
-export function _number(config: ConfigOf<T._Number>) {
-  const _node: Record<string,unknown> = {
+export function _number(config: T._Number.Config) {
+  const _operator = config.operator;
+  const _argument = config.argument;
+  return withMethods({
     $type: TSKindId._Number as number,
     $source: 2 as const,
     $named: true as const,
-    _operator: config.operator,
-    _argument: config.argument,
-  };
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'argument', { value: function() { return (this as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _number as (c: Record<string,unknown>) => AnyNodeData, [['_operator', 'operator'], ['_argument', 'argument']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _operator,
+    _argument,
+    operator() { return _operator; },
+    argument() { return _argument; },
+    $with: {
+      operator: (value?: T.NumberOperator) => _setField(config, _number, 'operator', value, config.operator),
+      argument: (value?: T.Number) => _setField(config, _number, 'argument', value, config.argument),
+    },
+  });
 }
 
-export function _parameterName(config: ConfigOf<T.ParameterName>) {
+export function _parameterName(config: T.ParameterName.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _pattern = config.pattern;
+  return withMethods({
     $type: TSKindId.ParameterName as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _pattern: config.pattern,
+    _decorator,
+    _readonly_marker,
+    _pattern,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'pattern', { value: function() { return (this as Record<string,unknown>)['_pattern']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _parameterName as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_readonly_marker', 'readonlyMarker'], ['_pattern', 'pattern'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    readonlyMarker() { return _readonly_marker; },
+    pattern() { return _pattern; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, _parameterName, 'decorator', values, config.decorator),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, _parameterName, 'readonlyMarker', value, config.readonlyMarker),
+      pattern: (value?: T.Pattern | T.This) => _setField(config, _parameterName, 'pattern', value, config.pattern),
+      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => _parameterName({ ...config, children: items }),
+    },
+  });
 }
 
 export function _parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ParenthesizedExpressionSequence as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.SequenceExpression) => _parenthesizedExpressionSequence(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.SequenceExpression) => _parenthesizedExpressionSequence(v) },
+  });
 }
 
-export function _parenthesizedExpressionTyped(config: ConfigOf<T.ParenthesizedExpressionTyped>) {
+export function _parenthesizedExpressionTyped(config: T.ParenthesizedExpressionTyped.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ParenthesizedExpressionTyped as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
+    _type,
     $children: children,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _parenthesizedExpressionTyped as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    typeField() { return _type; },
+    children() { return children; },
+    $with: {
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, _parenthesizedExpressionTyped, 'type', value, config.type),
+      children: (...items: readonly [T.Expression]) => _parenthesizedExpressionTyped({ ...config, children: items }),
+    },
+  });
 }
 
-export function _publicFieldDefinitionAbstractFirst(config?: ConfigOf<T.PublicFieldDefinitionAbstractFirst>) {
-  const _node: Record<string,unknown> = {
+export function _publicFieldDefinitionAbstractFirst(config?: T.PublicFieldDefinitionAbstractFirst.Config) {
+  const _abstract_marker = "abstract" as const;
+  const _readonly_marker = config?.readonlyMarker ? "readonly" as const : undefined;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as number,
     $source: 2 as const,
     $named: true as const,
-    _abstract_marker: "abstract" as const,
-    _readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
-  };
-  Object.defineProperty(_node, 'abstractMarker', { value: function() { return (this as Record<string,unknown>)['_abstract_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace((config ?? {}) as Record<string,unknown>, _publicFieldDefinitionAbstractFirst as (c: Record<string,unknown>) => AnyNodeData, [['_abstract_marker', 'abstractMarker'], ['_readonly_marker', 'readonlyMarker']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _abstract_marker,
+    _readonly_marker,
+    abstractMarker() { return _abstract_marker; },
+    readonlyMarker() { return _readonly_marker; },
+    $with: {
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, _publicFieldDefinitionAbstractFirst, 'readonlyMarker', value, config?.readonlyMarker),
+    },
+  });
 }
 
-export function _publicFieldDefinitionAccessFirst(config: ConfigOf<T.PublicFieldDefinitionAccessFirst>) {
+export function _publicFieldDefinitionAccessFirst(config: T.PublicFieldDefinitionAccessFirst.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _declare_marker = config.declareMarker ? "declare" as const : undefined;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionAccessFirst as number,
     $source: 2 as const,
     $named: true as const,
-    _declare_marker: config.declareMarker ? "declare" as const : undefined,
+    _declare_marker,
     $children: children,
-  };
-  Object.defineProperty(_node, 'declareMarker', { value: function() { return (this as Record<string,unknown>)['_declare_marker']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _publicFieldDefinitionAccessFirst as (c: Record<string,unknown>) => AnyNodeData, [['_declare_marker', 'declareMarker'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    declareMarker() { return _declare_marker; },
+    children() { return children; },
+    $with: {
+      declareMarker: (value?: T.PublicFieldDefinitionAccessFirstDeclareMarker | undefined) => _setField(config, _publicFieldDefinitionAccessFirst, 'declareMarker', value, config.declareMarker),
+      children: (...items: readonly [T.AccessibilityModifier]) => _publicFieldDefinitionAccessFirst({ ...config, children: items }),
+    },
+  });
 }
 
-export function publicFieldDefinitionAccessorOpt(config?: ConfigOf<T.PublicFieldDefinitionAccessorOpt>) {
-  const _node: Record<string,unknown> = {
+export function publicFieldDefinitionAccessorOpt(_config?: T.PublicFieldDefinitionAccessorOpt.Config) {
+  const _accessor_marker = "accessor" as const;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionAccessorOpt as number,
     $source: 2 as const,
     $named: true as const,
-    _accessor_marker: "accessor" as const,
-  };
-  Object.defineProperty(_node, 'accessorMarker', { value: function() { return (this as Record<string,unknown>)['_accessor_marker']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace((config ?? {}) as Record<string,unknown>, publicFieldDefinitionAccessorOpt as (c: Record<string,unknown>) => AnyNodeData, [['_accessor_marker', 'accessorMarker']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _accessor_marker,
+    accessorMarker() { return _accessor_marker; },
+    $with: {
+    },
+  });
 }
 
 export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifier) {
   const children = child != null ? [child] : [];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionDeclareFirst as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.AccessibilityModifier) => publicFieldDefinitionDeclareFirst(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.AccessibilityModifier) => publicFieldDefinitionDeclareFirst(v) },
+  });
 }
 
-export function _publicFieldDefinitionReadonlyFirst(config?: ConfigOf<T.PublicFieldDefinitionReadonlyFirst>) {
-  const _node: Record<string,unknown> = {
+export function _publicFieldDefinitionReadonlyFirst(config?: T.PublicFieldDefinitionReadonlyFirst.Config) {
+  const _readonly_marker = "readonly" as const;
+  const _abstract_marker = config?.abstractMarker ? "abstract" as const : undefined;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as number,
     $source: 2 as const,
     $named: true as const,
-    _readonly_marker: "readonly" as const,
-    _abstract_marker: config?.abstractMarker ? "abstract" as const : undefined,
-  };
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'abstractMarker', { value: function() { return (this as Record<string,unknown>)['_abstract_marker']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace((config ?? {}) as Record<string,unknown>, _publicFieldDefinitionReadonlyFirst as (c: Record<string,unknown>) => AnyNodeData, [['_readonly_marker', 'readonlyMarker'], ['_abstract_marker', 'abstractMarker']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _readonly_marker,
+    _abstract_marker,
+    readonlyMarker() { return _readonly_marker; },
+    abstractMarker() { return _abstract_marker; },
+    $with: {
+      abstractMarker: (value?: T.AbstractMarker | undefined) => _setField(config, _publicFieldDefinitionReadonlyFirst, 'abstractMarker', value, config?.abstractMarker),
+    },
+  });
 }
 
-export function _publicFieldDefinitionStaticMods(config?: ConfigOf<T.PublicFieldDefinitionStaticMods>) {
+export function _publicFieldDefinitionStaticMods(config?: T.PublicFieldDefinitionStaticMods.Config) {
   const children = config?.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _static_marker = "static" as const;
+  const _readonly_marker = config?.readonlyMarker ? "readonly" as const : undefined;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinitionStaticMods as number,
     $source: 2 as const,
     $named: true as const,
-    _static_marker: "static" as const,
-    _readonly_marker: config?.readonlyMarker ? "readonly" as const : undefined,
+    _static_marker,
+    _readonly_marker,
     $children: children,
-  };
-  Object.defineProperty(_node, 'staticMarker', { value: function() { return (this as Record<string,unknown>)['_static_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace((config ?? {}) as Record<string,unknown>, _publicFieldDefinitionStaticMods as (c: Record<string,unknown>) => AnyNodeData, [['_static_marker', 'staticMarker'], ['_readonly_marker', 'readonlyMarker'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    staticMarker() { return _static_marker; },
+    readonlyMarker() { return _readonly_marker; },
+    children() { return children; },
+    $with: {
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, _publicFieldDefinitionStaticMods, 'readonlyMarker', value, config?.readonlyMarker),
+      children: (...items: readonly [T.OverrideModifier]) => _publicFieldDefinitionStaticMods({ ...config, children: items }),
+    },
+  });
 }
 
 export function _stringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._StringDouble as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => _stringDouble(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => _stringDouble(...vs) },
+  });
 }
 
 export function _stringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._StringSingle as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => _stringSingle(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => _stringSingle(...vs) },
+  });
 }
 
 export function typeIdentifier(child: T.Identifier) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TypeIdentifier as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.Identifier) => typeIdentifier(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.Identifier) => typeIdentifier(v) },
+  });
 }
 
-export function _typeQueryCallExpression(config: ConfigOf<T.TypeQueryCallExpression>) {
-  const _node: Record<string,unknown> = {
+export function _typeQueryCallExpression(config: T.TypeQueryCallExpression.Config) {
+  const _function = config.function;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.TypeQueryCallExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQueryCallExpression as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _arguments,
+    function() { return _function; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) => _setField(config, _typeQueryCallExpression, 'function', value, config.function),
+      arguments: (value?: T.Arguments) => _setField(config, _typeQueryCallExpression, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function _typeQueryCallExpressionInTypeAnnotation(config: ConfigOf<T.TypeQueryCallExpressionInTypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function _typeQueryCallExpressionInTypeAnnotation(config: T.TypeQueryCallExpressionInTypeAnnotation.Config) {
+  const _function = config.function;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.TypeQueryCallExpressionInTypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQueryCallExpressionInTypeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _arguments,
+    function() { return _function; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation) => _setField(config, _typeQueryCallExpressionInTypeAnnotation, 'function', value, config.function),
+      arguments: (value?: T.Arguments) => _setField(config, _typeQueryCallExpressionInTypeAnnotation, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function _typeQueryInstantiationExpression(config: ConfigOf<T.TypeQueryInstantiationExpression>) {
-  const _node: Record<string,unknown> = {
+export function _typeQueryInstantiationExpression(config: T.TypeQueryInstantiationExpression.Config) {
+  const _function = config.function;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
     $type: TSKindId.TypeQueryInstantiationExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _type_arguments: config.typeArguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQueryInstantiationExpression as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_type_arguments', 'typeArguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _type_arguments,
+    function() { return _function; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      function: (value?: T.Import | T.Identifier | T.TypeQueryMemberExpression | T.TypeQuerySubscriptExpression) => _setField(config, _typeQueryInstantiationExpression, 'function', value, config.function),
+      typeArguments: (value?: T.TypeArguments) => _setField(config, _typeQueryInstantiationExpression, 'typeArguments', value, config.typeArguments),
+    },
+  });
 }
 
-export function _typeQueryMemberExpression(config: ConfigOf<T.TypeQueryMemberExpression>) {
-  const _node: Record<string,unknown> = {
+export function _typeQueryMemberExpression(config: T.TypeQueryMemberExpression.Config) {
+  const _object = config.object;
+  const _property = config.property;
+  return withMethods({
     $type: TSKindId.TypeQueryMemberExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _property: config.property,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'property', { value: function() { return (this as Record<string,unknown>)['_property']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQueryMemberExpression as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_property', 'property']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _property,
+    object() { return _object; },
+    property() { return _property; },
+    $with: {
+      object: (value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) => _setField(config, _typeQueryMemberExpression, 'object', value, config.object),
+      property: (value?: T.PrivatePropertyIdentifier | T.Identifier) => _setField(config, _typeQueryMemberExpression, 'property', value, config.property),
+    },
+  });
 }
 
-export function _typeQueryMemberExpressionInTypeAnnotation(config: ConfigOf<T.TypeQueryMemberExpressionInTypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function _typeQueryMemberExpressionInTypeAnnotation(config: T.TypeQueryMemberExpressionInTypeAnnotation.Config) {
+  const _object = config.object;
+  const _property = config.property;
+  return withMethods({
     $type: TSKindId.TypeQueryMemberExpressionInTypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _property: config.property,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'property', { value: function() { return (this as Record<string,unknown>)['_property']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQueryMemberExpressionInTypeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_property', 'property']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _property,
+    object() { return _object; },
+    property() { return _property; },
+    $with: {
+      object: (value?: T.Import | T.TypeQueryMemberExpressionInTypeAnnotation | T.TypeQueryCallExpressionInTypeAnnotation) => _setField(config, _typeQueryMemberExpressionInTypeAnnotation, 'object', value, config.object),
+      property: (value?: T.PrivatePropertyIdentifier | T.Identifier) => _setField(config, _typeQueryMemberExpressionInTypeAnnotation, 'property', value, config.property),
+    },
+  });
 }
 
-export function _typeQuerySubscriptExpression(config: ConfigOf<T.TypeQuerySubscriptExpression>) {
-  const _node: Record<string,unknown> = {
+export function _typeQuerySubscriptExpression(config: T.TypeQuerySubscriptExpression.Config) {
+  const _object = config.object;
+  const _index = config.index;
+  return withMethods({
     $type: TSKindId.TypeQuerySubscriptExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _index: config.index,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'index', { value: function() { return (this as Record<string,unknown>)['_index']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _typeQuerySubscriptExpression as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_index', 'index']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _index,
+    object() { return _object; },
+    index() { return _index; },
+    $with: {
+      object: (value?: T.Identifier | T.This | T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression) => _setField(config, _typeQuerySubscriptExpression, 'object', value, config.object),
+      index: (value?: T.PredefinedType | T.String | T.Number) => _setField(config, _typeQuerySubscriptExpression, 'index', value, config.index),
+    },
+  });
 }
 
-export function _updateExpressionPostfix(config: ConfigOf<T.UpdateExpressionPostfix>) {
-  const _node: Record<string,unknown> = {
+export function _updateExpressionPostfix(config: T.UpdateExpressionPostfix.Config) {
+  const _argument = config.argument;
+  const _operator = config.operator;
+  return withMethods({
     $type: TSKindId.UpdateExpressionPostfix as number,
     $source: 2 as const,
     $named: true as const,
-    _argument: config.argument,
-    _operator: config.operator,
-  };
-  Object.defineProperty(_node, 'argument', { value: function() { return (this as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _updateExpressionPostfix as (c: Record<string,unknown>) => AnyNodeData, [['_argument', 'argument'], ['_operator', 'operator']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _argument,
+    _operator,
+    argument() { return _argument; },
+    operator() { return _operator; },
+    $with: {
+      argument: (value?: T.Expression) => _setField(config, _updateExpressionPostfix, 'argument', value, config.argument),
+      operator: (value?: T.Operator) => _setField(config, _updateExpressionPostfix, 'operator', value, config.operator),
+    },
+  });
 }
 
-export function _updateExpressionPrefix(config: ConfigOf<T.UpdateExpressionPrefix>) {
-  const _node: Record<string,unknown> = {
+export function _updateExpressionPrefix(config: T.UpdateExpressionPrefix.Config) {
+  const _operator = config.operator;
+  const _argument = config.argument;
+  return withMethods({
     $type: TSKindId.UpdateExpressionPrefix as number,
     $source: 2 as const,
     $named: true as const,
-    _operator: config.operator,
-    _argument: config.argument,
-  };
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'argument', { value: function() { return (this as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, _updateExpressionPrefix as (c: Record<string,unknown>) => AnyNodeData, [['_operator', 'operator'], ['_argument', 'argument']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _operator,
+    _argument,
+    operator() { return _operator; },
+    argument() { return _argument; },
+    $with: {
+      operator: (value?: T.Operator) => _setField(config, _updateExpressionPrefix, 'operator', value, config.operator),
+      argument: (value?: T.Expression) => _setField(config, _updateExpressionPrefix, 'argument', value, config.argument),
+    },
+  });
 }
 
-export function abstractClassDeclaration(config: ConfigOf<T.AbstractClassDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Config) {
+  const _decorator = config.decorator;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _class_heritage = config.classHeritage;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.AbstractClassDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _class_heritage: config.classHeritage,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'classHeritage', { value: function() { return (this as Record<string,unknown>)['_class_heritage']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, abstractClassDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_class_heritage', 'classHeritage'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _decorator,
+    _name,
+    _type_parameters,
+    _class_heritage,
+    _body,
+    decorator() { return _decorator; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    classHeritage() { return _class_heritage; },
+    body() { return _body; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, abstractClassDeclaration, 'decorator', values, config.decorator),
+      name: (value?: T.TypeIdentifier) => _setField(config, abstractClassDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, abstractClassDeclaration, 'typeParameters', value, config.typeParameters),
+      classHeritage: (value?: T.ClassHeritage | undefined) => _setField(config, abstractClassDeclaration, 'classHeritage', value, config.classHeritage),
+      body: (value?: T.ClassBody) => _setField(config, abstractClassDeclaration, 'body', value, config.body),
+    },
+  });
 }
 
-export function abstractMethodSignature(config: ConfigOf<T.AbstractMethodSignature>) {
-  const _node: Record<string,unknown> = {
+export function abstractMethodSignature(config: T.AbstractMethodSignature.Config) {
+  const _accessibility_modifier = config.accessibilityModifier;
+  const _override_modifier = config.overrideModifier ? "override" as const : undefined;
+  const _accessor_kind = config.accessorKind;
+  const _name = config.name;
+  const _optional_marker = config.optionalMarker ? "?" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId.AbstractMethodSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _accessibility_modifier: config.accessibilityModifier,
-    _override_modifier: config.overrideModifier ? "override" as const : undefined,
-    _accessor_kind: config.accessorKind,
-    _name: config.name,
-    _optional_marker: config.optionalMarker ? "?" as const : undefined,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'accessibilityModifier', { value: function() { return (this as Record<string,unknown>)['_accessibility_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'overrideModifier', { value: function() { return (this as Record<string,unknown>)['_override_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'accessorKind', { value: function() { return (this as Record<string,unknown>)['_accessor_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalMarker', { value: function() { return (this as Record<string,unknown>)['_optional_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, abstractMethodSignature as (c: Record<string,unknown>) => AnyNodeData, [['_accessibility_modifier', 'accessibilityModifier'], ['_override_modifier', 'overrideModifier'], ['_accessor_kind', 'accessorKind'], ['_name', 'name'], ['_optional_marker', 'optionalMarker'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _accessibility_modifier,
+    _override_modifier,
+    _accessor_kind,
+    _name,
+    _optional_marker,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    accessibilityModifier() { return _accessibility_modifier; },
+    overrideModifier() { return _override_modifier; },
+    accessorKind() { return _accessor_kind; },
+    name() { return _name; },
+    optionalMarker() { return _optional_marker; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      accessibilityModifier: (value?: T._AccessibilityModifier | undefined) => _setField(config, abstractMethodSignature, 'accessibilityModifier', value, config.accessibilityModifier),
+      overrideModifier: (value?: T._OverrideModifier | undefined) => _setField(config, abstractMethodSignature, 'overrideModifier', value, config.overrideModifier),
+      accessorKind: (value?: T.AccessorKind | undefined) => _setField(config, abstractMethodSignature, 'accessorKind', value, config.accessorKind),
+      name: (value?: T.PropertyName) => _setField(config, abstractMethodSignature, 'name', value, config.name),
+      optionalMarker: (value?: T.OptionalMarker | undefined) => _setField(config, abstractMethodSignature, 'optionalMarker', value, config.optionalMarker),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, abstractMethodSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, abstractMethodSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, abstractMethodSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
 export function accessibilityModifier(text: 'public' | 'private' | 'protected') {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.AccessibilityModifier as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function addingTypeAnnotation(config: ConfigOf<T.AddingTypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.AddingTypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, addingTypeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, addingTypeAnnotation, 'type', value, config.type),
+    },
+  });
 }
 
-export function ambientDeclaration(config: ConfigOf<T.AmbientDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
+  const _declaration = config.declaration;
+  return withMethods({
     $type: TSKindId.AmbientDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _declaration: config.declaration,
-  };
-  Object.defineProperty(_node, 'declaration', { value: function() { return (this as Record<string,unknown>)['_declaration']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, ambientDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_declaration', 'declaration']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _declaration,
+    declaration() { return _declaration; },
+    $with: {
+      declaration: (value?: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => _setField(config, ambientDeclaration, 'declaration', value, config.declaration),
+    },
+  });
 }
 
 export function arguments_(...children: (T.Expression | T.SpreadElement)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Arguments as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => arguments_(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => arguments_(...vs) },
+  });
 }
 
 export function array(...children: (T.Expression | T.SpreadElement)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Array as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => array(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.Expression | T.SpreadElement)[]) => array(...vs) },
+  });
 }
 
 export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ArrayPattern as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.Pattern | T.AssignmentPattern)[]) => arrayPattern(...vs) },
+  });
 }
 
-export function arrayType(config: ConfigOf<T.ArrayType>) {
-  const _node: Record<string,unknown> = {
+export function arrayType(config: T.ArrayType.Config) {
+  const _primary_type = config.primaryType;
+  return withMethods({
     $type: TSKindId.ArrayType as number,
     $source: 2 as const,
     $named: true as const,
-    _primary_type: config.primaryType,
-  };
-  Object.defineProperty(_node, 'primaryType', { value: function() { return (this as Record<string,unknown>)['_primary_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, arrayType as (c: Record<string,unknown>) => AnyNodeData, [['_primary_type', 'primaryType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _primary_type,
+    primaryType() { return _primary_type; },
+    $with: {
+      primaryType: (value?: T.PrimaryType) => _setField(config, arrayType, 'primaryType', value, config.primaryType),
+    },
+  });
 }
 
-export function arrowFunctionParameter(config: ConfigOf<T.ArrowFunctionParameter>) {
-  const _node: Record<string,unknown> = {
+export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) {
+  const _parameter = config.parameter;
+  return withMethods({
     $type: TSKindId._ArrowFunctionParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _parameter: config.parameter,
-  };
-  Object.defineProperty(_node, 'parameter', { value: function() { return (this as Record<string,unknown>)['_parameter']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, arrowFunctionParameter as (c: Record<string,unknown>) => AnyNodeData, [['_parameter', 'parameter']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _parameter,
+    parameter() { return _parameter; },
+    $with: {
+      parameter: (value?: T.ReservedIdentifier) => _setField(config, arrowFunctionParameter, 'parameter', value, config.parameter),
+    },
+  });
 }
 
-export function arrowFunctionUCallSignature(config: ConfigOf<T.ArrowFunctionUCallSignature>) {
-  const _node: Record<string,unknown> = {
+export function arrowFunctionUCallSignature(config: T.ArrowFunctionUCallSignature.Config) {
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId._ArrowFunctionUCallSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, arrowFunctionUCallSignature as (c: Record<string,unknown>) => AnyNodeData, [['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_parameters,
+    _parameters,
+    _return_type,
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, arrowFunctionUCallSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, arrowFunctionUCallSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, arrowFunctionUCallSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
 export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter>): ReturnType<typeof arrowFunctionUFormParameter>;
@@ -1005,186 +1158,211 @@ export function arrowFunction(config: ConfigOf<T.ArrowFunctionUFormParameter> | 
 export function arrowFunctionUFormParameter(config: Omit<ConfigOf<T.ArrowFunctionUFormParameter>, '$variant'>) {
   const inner = _arrowFunctionParameter(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _async_marker = config.asyncMarker;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.ArrowFunction as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'parameter' as const,
-    _async_marker: config.asyncMarker,
-    _body: config.body,
+    _async_marker,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameter', { value: function() { return (inner as unknown as Record<string,unknown>)['_parameter']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    asyncMarker: (value: unknown) => arrowFunctionUFormParameter({ body: config.body, parameter: (inner as unknown as Record<string,unknown>)['_parameter'], asyncMarker: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
-    body: (value: unknown) => arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, parameter: (inner as unknown as Record<string,unknown>)['_parameter'], body: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
-    parameter: (value: unknown) => arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, body: config.body, parameter: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    asyncMarker() { return _async_marker; },
+    body() { return _body; },
+    parameter() { return inner.parameter(); },
+    $with: {
+      asyncMarker: (value: unknown) => arrowFunctionUFormParameter({ body: config.body, parameter: inner._parameter, asyncMarker: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
+      body: (value: unknown) => arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, parameter: inner._parameter, body: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
+      parameter: (value: unknown) => arrowFunctionUFormParameter({ asyncMarker: config.asyncMarker, body: config.body, parameter: value } as Parameters<typeof arrowFunctionUFormParameter>[0]),
+    },
+  });
 }
 export function arrowFunctionUFormUCallSignature(config: Omit<ConfigOf<T.ArrowFunctionUFormUCallSignature>, '$variant'>) {
   const inner = _arrowFunctionUCallSignature(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _async_marker = config.asyncMarker;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.ArrowFunction as number,
     $source: 2 as const,
     $named: true as const,
     $variant: '_call_signature' as const,
-    _async_marker: config.asyncMarker,
-    _body: config.body,
+    _async_marker,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (inner as unknown as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (inner as unknown as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (inner as unknown as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    asyncMarker: (value: unknown) => arrowFunctionUFormUCallSignature({ body: config.body, typeParameters: (inner as unknown as Record<string,unknown>)['_type_parameters'], parameters: (inner as unknown as Record<string,unknown>)['_parameters'], returnType: (inner as unknown as Record<string,unknown>)['_return_type'], asyncMarker: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
-    body: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, typeParameters: (inner as unknown as Record<string,unknown>)['_type_parameters'], parameters: (inner as unknown as Record<string,unknown>)['_parameters'], returnType: (inner as unknown as Record<string,unknown>)['_return_type'], body: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
-    typeParameters: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, parameters: (inner as unknown as Record<string,unknown>)['_parameters'], returnType: (inner as unknown as Record<string,unknown>)['_return_type'], typeParameters: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
-    parameters: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: (inner as unknown as Record<string,unknown>)['_type_parameters'], returnType: (inner as unknown as Record<string,unknown>)['_return_type'], parameters: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
-    returnType: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: (inner as unknown as Record<string,unknown>)['_type_parameters'], parameters: (inner as unknown as Record<string,unknown>)['_parameters'], returnType: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    asyncMarker() { return _async_marker; },
+    body() { return _body; },
+    typeParameters() { return inner.typeParameters(); },
+    parameters() { return inner.parameters(); },
+    returnType() { return inner.returnType(); },
+    $with: {
+      asyncMarker: (value: unknown) => arrowFunctionUFormUCallSignature({ body: config.body, typeParameters: inner._type_parameters, parameters: inner._parameters, returnType: inner._return_type, asyncMarker: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
+      body: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, typeParameters: inner._type_parameters, parameters: inner._parameters, returnType: inner._return_type, body: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
+      typeParameters: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, parameters: inner._parameters, returnType: inner._return_type, typeParameters: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
+      parameters: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: inner._type_parameters, returnType: inner._return_type, parameters: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
+      returnType: (value: unknown) => arrowFunctionUFormUCallSignature({ asyncMarker: config.asyncMarker, body: config.body, typeParameters: inner._type_parameters, parameters: inner._parameters, returnType: value } as Parameters<typeof arrowFunctionUFormUCallSignature>[0]),
+    },
+  });
 }
 
-export function asExpression(config: ConfigOf<T.AsExpression>) {
-  const _node: Record<string,unknown> = {
+export function asExpression(config: T.AsExpression.Config) {
+  const _expression = config.expression;
+  const _type_annotation = config.typeAnnotation;
+  return withMethods({
     $type: TSKindId.AsExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-    _type_annotation: config.typeAnnotation,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeAnnotation', { value: function() { return (this as Record<string,unknown>)['_type_annotation']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, asExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression'], ['_type_annotation', 'typeAnnotation']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    _type_annotation,
+    expression() { return _expression; },
+    typeAnnotation() { return _type_annotation; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, asExpression, 'expression', value, config.expression),
+      typeAnnotation: (value?: "const" | T.Type) => _setField(config, asExpression, 'typeAnnotation', value, config.typeAnnotation),
+    },
+  });
 }
 
 export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Asserts as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => asserts(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.TypePredicate | T.Identifier | T.This)) => asserts(v) },
+  });
 }
 
-export function assertsAnnotation(config: ConfigOf<T.AssertsAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
+  const _asserts = config.asserts;
+  return withMethods({
     $type: TSKindId.AssertsAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _asserts: config.asserts,
-  };
-  Object.defineProperty(_node, 'asserts', { value: function() { return (this as Record<string,unknown>)['_asserts']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, assertsAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_asserts', 'asserts']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _asserts,
+    asserts() { return _asserts; },
+    $with: {
+      asserts: (value?: T.AssertsAnnotationAsserts | T.Asserts) => _setField(config, assertsAnnotation, 'asserts', value, config.asserts),
+    },
+  });
 }
 
-export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
-  const _node: Record<string,unknown> = {
+export function assignmentExpression(config: T.AssignmentExpression.Config) {
+  const _using_marker = config.usingMarker ? "using" as const : undefined;
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.AssignmentExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _using_marker: config.usingMarker ? "using" as const : undefined,
-    _left: config.left,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'usingMarker', { value: function() { return (this as Record<string,unknown>)['_using_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, assignmentExpression as (c: Record<string,unknown>) => AnyNodeData, [['_using_marker', 'usingMarker'], ['_left', 'left'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _using_marker,
+    _left,
+    _right,
+    usingMarker() { return _using_marker; },
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      usingMarker: (value?: T.AssignmentExpressionUsingMarker | undefined) => _setField(config, assignmentExpression, 'usingMarker', value, config.usingMarker),
+      left: (value?: T.ParenthesizedExpression | T.LhsExpression) => _setField(config, assignmentExpression, 'left', value, config.left),
+      right: (value?: T.Expression) => _setField(config, assignmentExpression, 'right', value, config.right),
+    },
+  });
 }
 
-export function assignmentPattern(config: ConfigOf<T.AssignmentPattern>) {
-  const _node: Record<string,unknown> = {
+export function assignmentPattern(config: T.AssignmentPattern.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.AssignmentPattern as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, assignmentPattern as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.Pattern) => _setField(config, assignmentPattern, 'left', value, config.left),
+      right: (value?: T.Expression) => _setField(config, assignmentPattern, 'right', value, config.right),
+    },
+  });
 }
 
-export function augmentedAssignmentExpression(config: ConfigOf<T.AugmentedAssignmentExpression>) {
-  const _node: Record<string,unknown> = {
+export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpression.Config) {
+  const _left = config.left;
+  const _operator = config.operator;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.AugmentedAssignmentExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _operator: config.operator,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, augmentedAssignmentExpression as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_operator', 'operator'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _operator,
+    _right,
+    left() { return _left; },
+    operator() { return _operator; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.MemberExpression | T.SubscriptExpression | T.ReservedIdentifier | T.ParenthesizedExpression | T.NonNullExpression) => _setField(config, augmentedAssignmentExpression, 'left', value, config.left),
+      operator: (value?: T.AugmentedAssignmentExpressionOperator) => _setField(config, augmentedAssignmentExpression, 'operator', value, config.operator),
+      right: (value?: T.Expression) => _setField(config, augmentedAssignmentExpression, 'right', value, config.right),
+    },
+  });
 }
 
-export function awaitExpression(config: ConfigOf<T.AwaitExpression>) {
-  const _node: Record<string,unknown> = {
+export function awaitExpression(config: T.AwaitExpression.Config) {
+  const _expression = config.expression;
+  return withMethods({
     $type: TSKindId.AwaitExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, awaitExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, awaitExpression, 'expression', value, config.expression),
+    },
+  });
 }
 
-export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
-  const _node: Record<string,unknown> = {
+export function binaryExpression(config: T.BinaryExpression.Config) {
+  const _left = config.left;
+  const _operator = "&&" as const;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.BinaryExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _operator: "&&" as const,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, binaryExpression as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_operator', 'operator'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _operator,
+    _right,
+    left() { return _left; },
+    operator() { return _operator; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.Expression | T.PrivatePropertyIdentifier) => _setField(config, binaryExpression, 'left', value, config.left),
+      right: (value?: T.Expression) => _setField(config, binaryExpression, 'right', value, config.right),
+    },
+  });
 }
 
-export function breakStatement(config: ConfigOf<T.BreakStatement>) {
-  const _node: Record<string,unknown> = {
+export function breakStatement(config: T.BreakStatement.Config) {
+  const _label = config.label;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.BreakStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _label: config.label,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'label', { value: function() { return (this as Record<string,unknown>)['_label']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, breakStatement as (c: Record<string,unknown>) => AnyNodeData, [['_label', 'label'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _label,
+    _semicolon,
+    label() { return _label; },
+    semicolon() { return _semicolon; },
+    $with: {
+      label: (value?: T.Identifier | undefined) => _setField(config, breakStatement, 'label', value, config.label),
+      semicolon: (value?: T.Semicolon) => _setField(config, breakStatement, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
 export function callExpression(config: ConfigOf<T.CallExpressionUFormCall>): ReturnType<typeof callExpressionUFormCall>;
@@ -1201,176 +1379,200 @@ export function callExpression(config: ConfigOf<T.CallExpressionUFormCall> | Con
 export function callExpressionUFormCall(config: Omit<ConfigOf<T.CallExpressionUFormCall>, '$variant'>) {
   const inner = _callExpressionCall(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.CallExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'call' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (inner as unknown as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (inner as unknown as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (inner as unknown as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    function: (value: unknown) => callExpressionUFormCall({ typeArguments: (inner as unknown as Record<string,unknown>)['_type_arguments'], arguments: (inner as unknown as Record<string,unknown>)['_arguments'], function: value } as Parameters<typeof callExpressionUFormCall>[0]),
-    typeArguments: (value: unknown) => callExpressionUFormCall({ function: (inner as unknown as Record<string,unknown>)['_function'], arguments: (inner as unknown as Record<string,unknown>)['_arguments'], typeArguments: value } as Parameters<typeof callExpressionUFormCall>[0]),
-    arguments: (value: unknown) => callExpressionUFormCall({ function: (inner as unknown as Record<string,unknown>)['_function'], typeArguments: (inner as unknown as Record<string,unknown>)['_type_arguments'], arguments: value } as Parameters<typeof callExpressionUFormCall>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    function() { return inner.function(); },
+    typeArguments() { return inner.typeArguments(); },
+    arguments() { return inner.arguments(); },
+    $with: {
+      function: (value: unknown) => callExpressionUFormCall({ typeArguments: inner._type_arguments, arguments: inner._arguments, function: value } as Parameters<typeof callExpressionUFormCall>[0]),
+      typeArguments: (value: unknown) => callExpressionUFormCall({ function: inner._function, arguments: inner._arguments, typeArguments: value } as Parameters<typeof callExpressionUFormCall>[0]),
+      arguments: (value: unknown) => callExpressionUFormCall({ function: inner._function, typeArguments: inner._type_arguments, arguments: value } as Parameters<typeof callExpressionUFormCall>[0]),
+    },
+  });
 }
 export function callExpressionUFormTemplateCall(config: Omit<ConfigOf<T.CallExpressionUFormTemplateCall>, '$variant'>) {
   const inner = _callExpressionTemplateCall(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.CallExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'template_call' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (inner as unknown as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (inner as unknown as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    function: (value: unknown) => callExpressionUFormTemplateCall({ arguments: (inner as unknown as Record<string,unknown>)['_arguments'], function: value } as Parameters<typeof callExpressionUFormTemplateCall>[0]),
-    arguments: (value: unknown) => callExpressionUFormTemplateCall({ function: (inner as unknown as Record<string,unknown>)['_function'], arguments: value } as Parameters<typeof callExpressionUFormTemplateCall>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    function() { return inner.function(); },
+    arguments() { return inner.arguments(); },
+    $with: {
+      function: (value: unknown) => callExpressionUFormTemplateCall({ arguments: inner._arguments, function: value } as Parameters<typeof callExpressionUFormTemplateCall>[0]),
+      arguments: (value: unknown) => callExpressionUFormTemplateCall({ function: inner._function, arguments: value } as Parameters<typeof callExpressionUFormTemplateCall>[0]),
+    },
+  });
 }
 export function callExpressionUFormMember(config: Omit<ConfigOf<T.CallExpressionUFormMember>, '$variant'>) {
   const inner = _callExpressionMember(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.CallExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'member' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (inner as unknown as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (inner as unknown as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (inner as unknown as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    function: (value: unknown) => callExpressionUFormMember({ typeArguments: (inner as unknown as Record<string,unknown>)['_type_arguments'], arguments: (inner as unknown as Record<string,unknown>)['_arguments'], function: value } as Parameters<typeof callExpressionUFormMember>[0]),
-    typeArguments: (value: unknown) => callExpressionUFormMember({ function: (inner as unknown as Record<string,unknown>)['_function'], arguments: (inner as unknown as Record<string,unknown>)['_arguments'], typeArguments: value } as Parameters<typeof callExpressionUFormMember>[0]),
-    arguments: (value: unknown) => callExpressionUFormMember({ function: (inner as unknown as Record<string,unknown>)['_function'], typeArguments: (inner as unknown as Record<string,unknown>)['_type_arguments'], arguments: value } as Parameters<typeof callExpressionUFormMember>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    function() { return inner.function(); },
+    typeArguments() { return inner.typeArguments(); },
+    arguments() { return inner.arguments(); },
+    $with: {
+      function: (value: unknown) => callExpressionUFormMember({ typeArguments: inner._type_arguments, arguments: inner._arguments, function: value } as Parameters<typeof callExpressionUFormMember>[0]),
+      typeArguments: (value: unknown) => callExpressionUFormMember({ function: inner._function, arguments: inner._arguments, typeArguments: value } as Parameters<typeof callExpressionUFormMember>[0]),
+      arguments: (value: unknown) => callExpressionUFormMember({ function: inner._function, typeArguments: inner._type_arguments, arguments: value } as Parameters<typeof callExpressionUFormMember>[0]),
+    },
+  });
 }
 
-export function callSignature(config: ConfigOf<T.CallSignature>) {
-  const _node: Record<string,unknown> = {
+export function callSignature(config: T.CallSignature.Config) {
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId.CallSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, callSignature as (c: Record<string,unknown>) => AnyNodeData, [['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_parameters,
+    _parameters,
+    _return_type,
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, callSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, callSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, callSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
-export function catchClause(config: ConfigOf<T.CatchClause>) {
-  const _node: Record<string,unknown> = {
+export function catchClause(config: T.CatchClause.Config) {
+  const _parameter = config.parameter;
+  const _type = config.type;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.CatchClause as number,
     $source: 2 as const,
     $named: true as const,
-    _parameter: config.parameter,
-    _type: config.type,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'parameter', { value: function() { return (this as Record<string,unknown>)['_parameter']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, catchClause as (c: Record<string,unknown>) => AnyNodeData, [['_parameter', 'parameter'], ['_type', 'type'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _parameter,
+    _type,
+    _body,
+    parameter() { return _parameter; },
+    typeField() { return _type; },
+    body() { return _body; },
+    $with: {
+      parameter: (value?: T.Identifier | T.DestructuringPattern | undefined) => _setField(config, catchClause, 'parameter', value, config.parameter),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, catchClause, 'type', value, config.type),
+      body: (value?: T.StatementBlock) => _setField(config, catchClause, 'body', value, config.body),
+    },
+  });
 }
 
-export function class_(config: ConfigOf<T.Class>) {
-  const _node: Record<string,unknown> = {
+export function class_(config: T.Class.Config) {
+  const _decorator = config.decorator;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _class_heritage = config.classHeritage;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.Class as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _class_heritage: config.classHeritage,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'classHeritage', { value: function() { return (this as Record<string,unknown>)['_class_heritage']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, class_ as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_class_heritage', 'classHeritage'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _decorator,
+    _name,
+    _type_parameters,
+    _class_heritage,
+    _body,
+    decorator() { return _decorator; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    classHeritage() { return _class_heritage; },
+    body() { return _body; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, class_, 'decorator', values, config.decorator),
+      name: (value?: T.TypeIdentifier | undefined) => _setField(config, class_, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, class_, 'typeParameters', value, config.typeParameters),
+      classHeritage: (value?: T.ClassHeritage | undefined) => _setField(config, class_, 'classHeritage', value, config.classHeritage),
+      body: (value?: T.ClassBody) => _setField(config, class_, 'body', value, config.body),
+    },
+  });
 }
 
 export function classBody(...children: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ClassBody as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => classBody(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.ClassBodyMethod | T.ClassBodyMethodSig | T.ClassStaticBlock | T.ClassBodyMember)[]) => classBody(...vs) },
+  });
 }
 
-export function classDeclaration(config: ConfigOf<T.ClassDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function classDeclaration(config: T.ClassDeclaration.Config) {
+  const _decorator = config.decorator;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _class_heritage = config.classHeritage;
+  const _body = config.body;
+  const _automatic_semicolon = config.automaticSemicolon;
+  return withMethods({
     $type: TSKindId.ClassDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _class_heritage: config.classHeritage,
-    _body: config.body,
-    _automatic_semicolon: config.automaticSemicolon,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'classHeritage', { value: function() { return (this as Record<string,unknown>)['_class_heritage']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'automaticSemicolon', { value: function() { return (this as Record<string,unknown>)['_automatic_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, classDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_class_heritage', 'classHeritage'], ['_body', 'body'], ['_automatic_semicolon', 'automaticSemicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _decorator,
+    _name,
+    _type_parameters,
+    _class_heritage,
+    _body,
+    _automatic_semicolon,
+    decorator() { return _decorator; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    classHeritage() { return _class_heritage; },
+    body() { return _body; },
+    automaticSemicolon() { return _automatic_semicolon; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, classDeclaration, 'decorator', values, config.decorator),
+      name: (value?: T.TypeIdentifier) => _setField(config, classDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, classDeclaration, 'typeParameters', value, config.typeParameters),
+      classHeritage: (value?: T.ClassHeritage | undefined) => _setField(config, classDeclaration, 'classHeritage', value, config.classHeritage),
+      body: (value?: T.ClassBody) => _setField(config, classDeclaration, 'body', value, config.body),
+      automaticSemicolon: (value?: T.AutomaticSemicolon | undefined) => _setField(config, classDeclaration, 'automaticSemicolon', value, config.automaticSemicolon),
+    },
+  });
 }
 
 export function classHeritageExtendsClause(child: (T.ExtendsClause | T.ImplementsClause)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ClassHeritageExtendsClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => classHeritageExtendsClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.ExtendsClause | T.ImplementsClause)) => classHeritageExtendsClause(v) },
+  });
 }
 
 export function classHeritageImplementsClause(child: T.ImplementsClause) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ClassHeritageImplementsClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.ImplementsClause) => classHeritageImplementsClause(v) },
+  });
 }
 
 export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause>): ReturnType<typeof classHeritageUFormExtendsClause>;
@@ -1385,387 +1587,445 @@ export function classHeritage(config: ConfigOf<T.ClassHeritageUFormExtendsClause
 export function classHeritageUFormExtendsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormExtendsClause>, '$variant'>) {
   const inner = _classHeritageExtendsClause((config?.children ?? [])[0] as Parameters<typeof _classHeritageExtendsClause>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ClassHeritage as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'extends_clause' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 export function classHeritageUFormImplementsClause(config?: Omit<ConfigOf<T.ClassHeritageUFormImplementsClause>, '$variant'>) {
   const inner = _classHeritageImplementsClause((config?.children ?? [])[0] as Parameters<typeof _classHeritageImplementsClause>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ClassHeritage as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'implements_clause' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 
-export function classStaticBlock(config: ConfigOf<T.ClassStaticBlock>) {
+export function classStaticBlock(config: T.ClassStaticBlock.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.ClassStaticBlock as number,
     $source: 2 as const,
     $named: true as const,
-    _body: config.body,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, classStaticBlock as (c: Record<string,unknown>) => AnyNodeData, [['_body', 'body'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      body: (value?: T.StatementBlock) => _setField(config, classStaticBlock, 'body', value, config.body),
+      children: (...items: readonly [T.AutomaticSemicolon]) => classStaticBlock({ ...config, children: items }),
+    },
+  });
 }
 
 export function comment(text: string) {
   if (text.length === 0) throw new Error(`comment: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Comment as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function computedPropertyName(config: ConfigOf<T.ComputedPropertyName>) {
-  const _node: Record<string,unknown> = {
+export function computedPropertyName(config: T.ComputedPropertyName.Config) {
+  const _expression = config.expression;
+  return withMethods({
     $type: TSKindId.ComputedPropertyName as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, computedPropertyName as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, computedPropertyName, 'expression', value, config.expression),
+    },
+  });
 }
 
-export function conditionalType(config: ConfigOf<T.ConditionalType>) {
-  const _node: Record<string,unknown> = {
+export function conditionalType(config: T.ConditionalType.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  const _consequence = config.consequence;
+  const _alternative = config.alternative;
+  return withMethods({
     $type: TSKindId.ConditionalType as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _right: config.right,
-    _consequence: config.consequence,
-    _alternative: config.alternative,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'consequence', { value: function() { return (this as Record<string,unknown>)['_consequence']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alternative', { value: function() { return (this as Record<string,unknown>)['_alternative']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, conditionalType as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_right', 'right'], ['_consequence', 'consequence'], ['_alternative', 'alternative']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _right,
+    _consequence,
+    _alternative,
+    left() { return _left; },
+    right() { return _right; },
+    consequence() { return _consequence; },
+    alternative() { return _alternative; },
+    $with: {
+      left: (value?: T.Type) => _setField(config, conditionalType, 'left', value, config.left),
+      right: (value?: T.Type) => _setField(config, conditionalType, 'right', value, config.right),
+      consequence: (value?: T.Type) => _setField(config, conditionalType, 'consequence', value, config.consequence),
+      alternative: (value?: T.Type) => _setField(config, conditionalType, 'alternative', value, config.alternative),
+    },
+  });
 }
 
-export function constraint(config: ConfigOf<T.Constraint>) {
-  const _node: Record<string,unknown> = {
+export function constraint(config: T.Constraint.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.Constraint as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, constraint as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, constraint, 'type', value, config.type),
+    },
+  });
 }
 
-export function constructSignature(config: ConfigOf<T.ConstructSignature>) {
-  const _node: Record<string,unknown> = {
+export function constructSignature(config: T.ConstructSignature.Config) {
+  const _abstract_marker = config.abstractMarker ? "abstract" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ConstructSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'abstractMarker', { value: function() { return (this as Record<string,unknown>)['_abstract_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, constructSignature as (c: Record<string,unknown>) => AnyNodeData, [['_abstract_marker', 'abstractMarker'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _abstract_marker,
+    _type_parameters,
+    _parameters,
+    _type,
+    abstractMarker() { return _abstract_marker; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    typeField() { return _type; },
+    $with: {
+      abstractMarker: (value?: T.AbstractMarker | undefined) => _setField(config, constructSignature, 'abstractMarker', value, config.abstractMarker),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, constructSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, constructSignature, 'parameters', value, config.parameters),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, constructSignature, 'type', value, config.type),
+    },
+  });
 }
 
-export function constructorType(config: ConfigOf<T.ConstructorType>) {
-  const _node: Record<string,unknown> = {
+export function constructorType(config: T.ConstructorType.Config) {
+  const _abstract_marker = config.abstractMarker ? "abstract" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ConstructorType as number,
     $source: 2 as const,
     $named: true as const,
-    _abstract_marker: config.abstractMarker ? "abstract" as const : undefined,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'abstractMarker', { value: function() { return (this as Record<string,unknown>)['_abstract_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, constructorType as (c: Record<string,unknown>) => AnyNodeData, [['_abstract_marker', 'abstractMarker'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _abstract_marker,
+    _type_parameters,
+    _parameters,
+    _type,
+    abstractMarker() { return _abstract_marker; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    typeField() { return _type; },
+    $with: {
+      abstractMarker: (value?: T.AbstractMarker | undefined) => _setField(config, constructorType, 'abstractMarker', value, config.abstractMarker),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, constructorType, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, constructorType, 'parameters', value, config.parameters),
+      typeField: (value?: T.Type) => _setField(config, constructorType, 'type', value, config.type),
+    },
+  });
 }
 
-export function continueStatement(config: ConfigOf<T.ContinueStatement>) {
-  const _node: Record<string,unknown> = {
+export function continueStatement(config: T.ContinueStatement.Config) {
+  const _label = config.label;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ContinueStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _label: config.label,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'label', { value: function() { return (this as Record<string,unknown>)['_label']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, continueStatement as (c: Record<string,unknown>) => AnyNodeData, [['_label', 'label'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _label,
+    _semicolon,
+    label() { return _label; },
+    semicolon() { return _semicolon; },
+    $with: {
+      label: (value?: T.Identifier | undefined) => _setField(config, continueStatement, 'label', value, config.label),
+      semicolon: (value?: T.Semicolon) => _setField(config, continueStatement, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function debuggerStatement(config: ConfigOf<T.DebuggerStatement>) {
-  const _node: Record<string,unknown> = {
+export function debuggerStatement(config: T.DebuggerStatement.Config) {
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.DebuggerStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, debuggerStatement as (c: Record<string,unknown>) => AnyNodeData, [['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _semicolon,
+    semicolon() { return _semicolon; },
+    $with: {
+      semicolon: (value?: T.Semicolon) => _setField(config, debuggerStatement, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
 export function decorator(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Decorator as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => decorator(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression | T.DecoratorParenthesizedExpression)) => decorator(v) },
+  });
 }
 
-export function decoratorCallExpression(config: ConfigOf<T.DecoratorCallExpression>) {
-  const _node: Record<string,unknown> = {
+export function decoratorCallExpression(config: T.DecoratorCallExpression.Config) {
+  const _function = config.function;
+  const _type_arguments = config.typeArguments;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.DecoratorCallExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _function: config.function,
-    _type_arguments: config.typeArguments,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'function', { value: function() { return (this as Record<string,unknown>)['_function']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, decoratorCallExpression as (c: Record<string,unknown>) => AnyNodeData, [['_function', 'function'], ['_type_arguments', 'typeArguments'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _function,
+    _type_arguments,
+    _arguments,
+    function() { return _function; },
+    typeArguments() { return _type_arguments; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value?: T.Identifier | T.DecoratorMemberExpression) => _setField(config, decoratorCallExpression, 'function', value, config.function),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, decoratorCallExpression, 'typeArguments', value, config.typeArguments),
+      arguments: (value?: T.Arguments) => _setField(config, decoratorCallExpression, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function decoratorMemberExpression(config: ConfigOf<T.DecoratorMemberExpression>) {
-  const _node: Record<string,unknown> = {
+export function decoratorMemberExpression(config: T.DecoratorMemberExpression.Config) {
+  const _object = config.object;
+  const _property = config.property;
+  return withMethods({
     $type: TSKindId.DecoratorMemberExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _property: config.property,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'property', { value: function() { return (this as Record<string,unknown>)['_property']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, decoratorMemberExpression as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_property', 'property']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _property,
+    object() { return _object; },
+    property() { return _property; },
+    $with: {
+      object: (value?: T.Identifier | T.DecoratorMemberExpression) => _setField(config, decoratorMemberExpression, 'object', value, config.object),
+      property: (value?: T.Identifier) => _setField(config, decoratorMemberExpression, 'property', value, config.property),
+    },
+  });
 }
 
 export function decoratorParenthesizedExpression(child: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.DecoratorParenthesizedExpression as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => decoratorParenthesizedExpression(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Identifier | T.DecoratorMemberExpression | T.DecoratorCallExpression)) => decoratorParenthesizedExpression(v) },
+  });
 }
 
-export function defaultType(config: ConfigOf<T.DefaultType>) {
-  const _node: Record<string,unknown> = {
+export function defaultType(config: T.DefaultType.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.DefaultType as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, defaultType as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, defaultType, 'type', value, config.type),
+    },
+  });
 }
 
-export function doStatement(config: ConfigOf<T.DoStatement>) {
-  const _node: Record<string,unknown> = {
+export function doStatement(config: T.DoStatement.Config) {
+  const _body = config.body;
+  const _condition = config.condition;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.DoStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _body: config.body,
-    _condition: config.condition,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'condition', { value: function() { return (this as Record<string,unknown>)['_condition']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, doStatement as (c: Record<string,unknown>) => AnyNodeData, [['_body', 'body'], ['_condition', 'condition'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _body,
+    _condition,
+    _semicolon,
+    body() { return _body; },
+    condition() { return _condition; },
+    semicolon() { return _semicolon; },
+    $with: {
+      body: (value?: T.Statement) => _setField(config, doStatement, 'body', value, config.body),
+      condition: (value?: T.ParenthesizedExpression) => _setField(config, doStatement, 'condition', value, config.condition),
+      semicolon: (value?: T.Semicolon | undefined) => _setField(config, doStatement, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function elseClause(config: ConfigOf<T.ElseClause>) {
-  const _node: Record<string,unknown> = {
+export function elseClause(config: T.ElseClause.Config) {
+  const _statement = config.statement;
+  return withMethods({
     $type: TSKindId.ElseClause as number,
     $source: 2 as const,
     $named: true as const,
-    _statement: config.statement,
-  };
-  Object.defineProperty(_node, 'statement', { value: function() { return (this as Record<string,unknown>)['_statement']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, elseClause as (c: Record<string,unknown>) => AnyNodeData, [['_statement', 'statement']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _statement,
+    statement() { return _statement; },
+    $with: {
+      statement: (value?: T.Statement) => _setField(config, elseClause, 'statement', value, config.statement),
+    },
+  });
 }
 
-export function enumAssignment(config: ConfigOf<T.EnumAssignment>) {
-  const _node: Record<string,unknown> = {
+export function enumAssignment(config: T.EnumAssignment.Config) {
+  const _name = config.name;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.EnumAssignment as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, enumAssignment as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _value,
+    name() { return _name; },
+    value() { return _value; },
+    $with: {
+      name: (value?: T.PropertyName) => _setField(config, enumAssignment, 'name', value, config.name),
+      value: (value?: T.Expression) => _setField(config, enumAssignment, 'value', value, config.value),
+    },
+  });
 }
 
-export function enumBody(config: ConfigOf<T.EnumBody>) {
+export function enumBody(config: T.EnumBody.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.EnumBody as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  const _with = buildWithNamespace(config as Record<string,unknown>, enumBody as (c: Record<string,unknown>) => AnyNodeData, [['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: {
+      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => enumBody({ ...config, children: items }),
+    },
+  });
 }
 
-export function enumDeclaration(config: ConfigOf<T.EnumDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function enumDeclaration(config: T.EnumDeclaration.Config) {
+  const _const_marker = config.constMarker ? "const" as const : undefined;
+  const _name = config.name;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.EnumDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _const_marker: config.constMarker ? "const" as const : undefined,
-    _name: config.name,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'constMarker', { value: function() { return (this as Record<string,unknown>)['_const_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, enumDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_const_marker', 'constMarker'], ['_name', 'name'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _const_marker,
+    _name,
+    _body,
+    constMarker() { return _const_marker; },
+    name() { return _name; },
+    body() { return _body; },
+    $with: {
+      constMarker: (value?: T.ConstMarker | undefined) => _setField(config, enumDeclaration, 'constMarker', value, config.constMarker),
+      name: (value?: T.Identifier) => _setField(config, enumDeclaration, 'name', value, config.name),
+      body: (value?: T.EnumBody) => _setField(config, enumDeclaration, 'body', value, config.body),
+    },
+  });
 }
 
 export function escapeSequence(text: string) {
   if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.EscapeSequence as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function exportClause(...children: T.ExportSpecifier[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.ExportSpecifier[]) => exportClause(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.ExportSpecifier[]) => exportClause(...vs) },
+  });
 }
 
-export function exportSpecifier(config: ConfigOf<T.ExportSpecifier>) {
-  const _node: Record<string,unknown> = {
+export function exportSpecifier(config: T.ExportSpecifier.Config) {
+  const _export_kind = config.exportKind;
+  const _name = config.name;
+  const _alias = config.alias;
+  return withMethods({
     $type: TSKindId.ExportSpecifier as number,
     $source: 2 as const,
     $named: true as const,
-    _export_kind: config.exportKind,
-    _name: config.name,
-    _alias: config.alias,
-  };
-  Object.defineProperty(_node, 'exportKind', { value: function() { return (this as Record<string,unknown>)['_export_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alias', { value: function() { return (this as Record<string,unknown>)['_alias']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportSpecifier as (c: Record<string,unknown>) => AnyNodeData, [['_export_kind', 'exportKind'], ['_name', 'name'], ['_alias', 'alias']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _export_kind,
+    _name,
+    _alias,
+    exportKind() { return _export_kind; },
+    name() { return _name; },
+    alias() { return _alias; },
+    $with: {
+      exportKind: (value?: T.ExportSpecifierExportKind | undefined) => _setField(config, exportSpecifier, 'exportKind', value, config.exportKind),
+      name: (value?: T.ModuleExportName) => _setField(config, exportSpecifier, 'name', value, config.name),
+      alias: (value?: T.ModuleExportName | undefined) => _setField(config, exportSpecifier, 'alias', value, config.alias),
+    },
+  });
 }
 
-export function exportStatementTypeExport(config: ConfigOf<T.ExportStatementTypeExport>) {
+export function exportStatementTypeExport(config: T.ExportStatementTypeExport.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId._ExportStatementTypeExport as number,
     $source: 2 as const,
     $named: true as const,
-    _source: config.source,
+    _source,
     $children: children,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportStatementTypeExport as (c: Record<string,unknown>) => AnyNodeData, [['_source', 'source'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    source() { return _source; },
+    children() { return children; },
+    $with: {
+      source: (value?: T.String | undefined) => _setField(config, exportStatementTypeExport, 'source', value, config.source),
+      children: (...items: readonly [((T.ExportClause | T.Semicolon))]) => exportStatementTypeExport({ ...config, children: items }),
+    },
+  });
 }
 
 export function exportStatementEqualsExport(child: (T.Expression | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ExportStatementEqualsExport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Expression | T.Semicolon)) => exportStatementEqualsExport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Expression | T.Semicolon)) => exportStatementEqualsExport(v) },
+  });
 }
 
 export function exportStatementNamespaceExport(child: (T.Identifier | T.Semicolon)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ExportStatementNamespaceExport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.Identifier | T.Semicolon)) => exportStatementNamespaceExport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.Identifier | T.Semicolon)) => exportStatementNamespaceExport(v) },
+  });
 }
 
 export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault>): ReturnType<typeof exportStatementUFormDefault>;
@@ -1783,467 +2043,563 @@ export function exportStatement(config: ConfigOf<T.ExportStatementUFormDefault> 
 }
 export function exportStatementUFormDefault(config: Omit<ConfigOf<T.ExportStatementUFormDefault>, '$variant'>) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatement as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'default' as const,
     $children: children,
-  };
-  const _with = buildWithNamespace(config as Record<string,unknown>, exportStatementUFormDefault as (c: Record<string,unknown>) => AnyNodeData, [['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [T.ExportStatementDefault]) => exportStatementUFormDefault({ ...config, children: items }),
+    },
+  });
 }
 export function exportStatementUFormTypeExport(config?: Omit<ConfigOf<T.ExportStatementUFormTypeExport>, '$variant'>) {
   const inner = _exportStatementTypeExport(config as Parameters<typeof _exportStatementTypeExport>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatement as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'type_export' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'source', { value: function() { return (inner as unknown as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    source: (value: unknown) => exportStatementUFormTypeExport({ source: value } as Parameters<typeof exportStatementUFormTypeExport>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    source() { return inner.source(); },
+    $with: {
+      source: (value: unknown) => exportStatementUFormTypeExport({ source: value } as Parameters<typeof exportStatementUFormTypeExport>[0]),
+    },
+  });
 }
 export function exportStatementUFormEqualsExport(config?: Omit<ConfigOf<T.ExportStatementUFormEqualsExport>, '$variant'>) {
   const inner = _exportStatementEqualsExport((config?.children ?? [])[0] as Parameters<typeof _exportStatementEqualsExport>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatement as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'equals_export' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 export function exportStatementUFormNamespaceExport(config?: Omit<ConfigOf<T.ExportStatementUFormNamespaceExport>, '$variant'>) {
   const inner = _exportStatementNamespaceExport((config?.children ?? [])[0] as Parameters<typeof _exportStatementNamespaceExport>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ExportStatement as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'namespace_export' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 
-export function expressionStatement(config: ConfigOf<T.ExpressionStatement>) {
+export function expressionStatement(config: T.ExpressionStatement.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ExpressionStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _semicolon: config.semicolon,
+    _semicolon,
     $children: children,
-  };
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, expressionStatement as (c: Record<string,unknown>) => AnyNodeData, [['_semicolon', 'semicolon'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    semicolon() { return _semicolon; },
+    children() { return children; },
+    $with: {
+      semicolon: (value?: T.Semicolon) => _setField(config, expressionStatement, 'semicolon', value, config.semicolon),
+      children: (...items: readonly [T.Expressions]) => expressionStatement({ ...config, children: items }),
+    },
+  });
 }
 
-export function extendsClause(config: ConfigOf<T.ExtendsClause>) {
-  const _node: Record<string,unknown> = {
+export function extendsClause(config: T.ExtendsClause.Config) {
+  const _value = config.value;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
     $type: TSKindId.ExtendsClause as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
-    _type_arguments: config.typeArguments,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, extendsClause as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value'], ['_type_arguments', 'typeArguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _value,
+    _type_arguments,
+    value() { return _value; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      value: (...values: NonEmptyArray<T.Expression>) => _setFields(config, extendsClause, 'value', values, config.value),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, extendsClause, 'typeArguments', value, config.typeArguments),
+    },
+  });
 }
 
-export function extendsTypeClause(config: ConfigOf<T.ExtendsTypeClause>) {
-  const _node: Record<string,unknown> = {
+export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ExtendsTypeClause as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, extendsTypeClause as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => _setFields(config, extendsTypeClause, 'type', values, config.type),
+    },
+  });
 }
 
 export function false_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.False as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'false' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function finallyClause(config: ConfigOf<T.FinallyClause>) {
-  const _node: Record<string,unknown> = {
+export function finallyClause(config: T.FinallyClause.Config) {
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.FinallyClause as number,
     $source: 2 as const,
     $named: true as const,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, finallyClause as (c: Record<string,unknown>) => AnyNodeData, [['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value?: T.StatementBlock) => _setField(config, finallyClause, 'body', value, config.body),
+    },
+  });
 }
 
-export function flowMaybeType(config: ConfigOf<T.FlowMaybeType>) {
-  const _node: Record<string,unknown> = {
+export function flowMaybeType(config: T.FlowMaybeType.Config) {
+  const _primary_type = config.primaryType;
+  return withMethods({
     $type: TSKindId.FlowMaybeType as number,
     $source: 2 as const,
     $named: true as const,
-    _primary_type: config.primaryType,
-  };
-  Object.defineProperty(_node, 'primaryType', { value: function() { return (this as Record<string,unknown>)['_primary_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, flowMaybeType as (c: Record<string,unknown>) => AnyNodeData, [['_primary_type', 'primaryType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _primary_type,
+    primaryType() { return _primary_type; },
+    $with: {
+      primaryType: (value?: T.PrimaryType) => _setField(config, flowMaybeType, 'primaryType', value, config.primaryType),
+    },
+  });
 }
 
-export function forInStatement(config: ConfigOf<T.ForInStatement>) {
+export function forInStatement(config: T.ForInStatement.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _await_marker = config.awaitMarker ? "await" as const : undefined;
+  const _operator = config.operator;
+  const _right = config.right;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.ForInStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _await_marker: config.awaitMarker ? "await" as const : undefined,
-    _operator: config.operator,
-    _right: config.right,
-    _body: config.body,
+    _await_marker,
+    _operator,
+    _right,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'awaitMarker', { value: function() { return (this as Record<string,unknown>)['_await_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, forInStatement as (c: Record<string,unknown>) => AnyNodeData, [['_await_marker', 'awaitMarker'], ['_operator', 'operator'], ['_right', 'right'], ['_body', 'body'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    awaitMarker() { return _await_marker; },
+    operator() { return _operator; },
+    right() { return _right; },
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      awaitMarker: (value?: T.ForInStatementAwaitMarker | undefined) => _setField(config, forInStatement, 'awaitMarker', value, config.awaitMarker),
+      operator: (value?: T.ForHeaderOperator) => _setField(config, forInStatement, 'operator', value, config.operator),
+      right: (value?: T.Expressions) => _setField(config, forInStatement, 'right', value, config.right),
+      body: (value?: T.Statement) => _setField(config, forInStatement, 'body', value, config.body),
+      children: (...items: readonly [((T.ForHeaderLhs | T.ForHeaderVarKind | T.ForHeaderLetConstKind))]) => forInStatement({ ...config, children: items }),
+    },
+  });
 }
 
-export function forStatement(config: ConfigOf<T.ForStatement>) {
-  const _node: Record<string,unknown> = {
+export function forStatement(config: T.ForStatement.Config) {
+  const _initializer = config.initializer;
+  const _condition = config.condition;
+  const _increment = config.increment;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.ForStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _initializer: config.initializer,
-    _condition: config.condition,
-    _increment: config.increment,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'initializer', { value: function() { return (this as Record<string,unknown>)['_initializer']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'condition', { value: function() { return (this as Record<string,unknown>)['_condition']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'increment', { value: function() { return (this as Record<string,unknown>)['_increment']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, forStatement as (c: Record<string,unknown>) => AnyNodeData, [['_initializer', 'initializer'], ['_condition', 'condition'], ['_increment', 'increment'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _initializer,
+    _condition,
+    _increment,
+    _body,
+    initializer() { return _initializer; },
+    condition() { return _condition; },
+    increment() { return _increment; },
+    body() { return _body; },
+    $with: {
+      initializer: (value?: T.LexicalDeclaration | T.VariableDeclaration | T.Expressions | T.ForStatementInitializer) => _setField(config, forStatement, 'initializer', value, config.initializer),
+      condition: (value?: T.Expressions | T.EmptyStatement) => _setField(config, forStatement, 'condition', value, config.condition),
+      increment: (value?: T.Expressions | undefined) => _setField(config, forStatement, 'increment', value, config.increment),
+      body: (value?: T.Statement) => _setField(config, forStatement, 'body', value, config.body),
+    },
+  });
 }
 
 export function formalParameters(...children: T.FormalParameter[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.FormalParameters as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.FormalParameter[]) => formalParameters(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.FormalParameter[]) => formalParameters(...vs) },
+  });
 }
 
-export function functionDeclaration(config: ConfigOf<T.FunctionDeclaration>) {
+export function functionDeclaration(config: T.FunctionDeclaration.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.FunctionDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _body: config.body,
+    _async_marker,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, functionDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_async_marker', 'asyncMarker'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_body', 'body'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    asyncMarker() { return _async_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, functionDeclaration, 'asyncMarker', value, config.asyncMarker),
+      name: (value?: T.Identifier) => _setField(config, functionDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, functionDeclaration, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, functionDeclaration, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, functionDeclaration, 'returnType', value, config.returnType),
+      body: (value?: T.StatementBlock) => _setField(config, functionDeclaration, 'body', value, config.body),
+      children: (...items: readonly [T.AutomaticSemicolon]) => functionDeclaration({ ...config, children: items }),
+    },
+  });
 }
 
-export function functionExpression(config: ConfigOf<T.FunctionExpression>) {
-  const _node: Record<string,unknown> = {
+export function functionExpression(config: T.FunctionExpression.Config) {
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.FunctionExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, functionExpression as (c: Record<string,unknown>) => AnyNodeData, [['_async_marker', 'asyncMarker'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _async_marker,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _body,
+    asyncMarker() { return _async_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    body() { return _body; },
+    $with: {
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, functionExpression, 'asyncMarker', value, config.asyncMarker),
+      name: (value?: T.Identifier | undefined) => _setField(config, functionExpression, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, functionExpression, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, functionExpression, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, functionExpression, 'returnType', value, config.returnType),
+      body: (value?: T.StatementBlock) => _setField(config, functionExpression, 'body', value, config.body),
+    },
+  });
 }
 
-export function functionSignature(config: ConfigOf<T.FunctionSignature>) {
-  const _node: Record<string,unknown> = {
+export function functionSignature(config: T.FunctionSignature.Config) {
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.FunctionSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, functionSignature as (c: Record<string,unknown>) => AnyNodeData, [['_async_marker', 'asyncMarker'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _async_marker,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _semicolon,
+    asyncMarker() { return _async_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    semicolon() { return _semicolon; },
+    $with: {
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, functionSignature, 'asyncMarker', value, config.asyncMarker),
+      name: (value?: T.Identifier) => _setField(config, functionSignature, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, functionSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, functionSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, functionSignature, 'returnType', value, config.returnType),
+      semicolon: (value?: T.Semicolon | T.FunctionSignatureAutomaticSemicolon) => _setField(config, functionSignature, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function functionType(config: ConfigOf<T.FunctionType>) {
-  const _node: Record<string,unknown> = {
+export function functionType(config: T.FunctionType.Config) {
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId.FunctionType as number,
     $source: 2 as const,
     $named: true as const,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, functionType as (c: Record<string,unknown>) => AnyNodeData, [['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_parameters,
+    _parameters,
+    _return_type,
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, functionType, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, functionType, 'parameters', value, config.parameters),
+      returnType: (value?: T.Type | T.Asserts | T.TypePredicate) => _setField(config, functionType, 'returnType', value, config.returnType),
+    },
+  });
 }
 
-export function generatorFunction(config: ConfigOf<T.GeneratorFunction>) {
-  const _node: Record<string,unknown> = {
+export function generatorFunction(config: T.GeneratorFunction.Config) {
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.GeneratorFunction as number,
     $source: 2 as const,
     $named: true as const,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, generatorFunction as (c: Record<string,unknown>) => AnyNodeData, [['_async_marker', 'asyncMarker'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _async_marker,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _body,
+    asyncMarker() { return _async_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    body() { return _body; },
+    $with: {
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, generatorFunction, 'asyncMarker', value, config.asyncMarker),
+      name: (value?: T.Identifier | undefined) => _setField(config, generatorFunction, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, generatorFunction, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, generatorFunction, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, generatorFunction, 'returnType', value, config.returnType),
+      body: (value?: T.StatementBlock) => _setField(config, generatorFunction, 'body', value, config.body),
+    },
+  });
 }
 
-export function generatorFunctionDeclaration(config: ConfigOf<T.GeneratorFunctionDeclaration>) {
+export function generatorFunctionDeclaration(config: T.GeneratorFunctionDeclaration.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.GeneratorFunctionDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _body: config.body,
+    _async_marker,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _body,
     $children: children,
-  };
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, generatorFunctionDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_async_marker', 'asyncMarker'], ['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_body', 'body'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    asyncMarker() { return _async_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, generatorFunctionDeclaration, 'asyncMarker', value, config.asyncMarker),
+      name: (value?: T.Identifier) => _setField(config, generatorFunctionDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, generatorFunctionDeclaration, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, generatorFunctionDeclaration, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, generatorFunctionDeclaration, 'returnType', value, config.returnType),
+      body: (value?: T.StatementBlock) => _setField(config, generatorFunctionDeclaration, 'body', value, config.body),
+      children: (...items: readonly [T.AutomaticSemicolon]) => generatorFunctionDeclaration({ ...config, children: items }),
+    },
+  });
 }
 
-export function genericType(config: ConfigOf<T.GenericType>) {
-  const _node: Record<string,unknown> = {
+export function genericType(config: T.GenericType.Config) {
+  const _name = config.name;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
     $type: TSKindId.GenericType as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type_arguments: config.typeArguments,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, genericType as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type_arguments', 'typeArguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type_arguments,
+    name() { return _name; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      name: (value?: T.TypeIdentifier | T.NestedTypeIdentifier) => _setField(config, genericType, 'name', value, config.name),
+      typeArguments: (value?: T.TypeArguments) => _setField(config, genericType, 'typeArguments', value, config.typeArguments),
+    },
+  });
 }
 
 export function hashBangLine(text: string) {
   if (text.length === 0) throw new Error(`hash_bang_line: text must be non-empty`); if (!_leafRe_hashBangLine.test(text)) throw new Error(`hash_bang_line: text does not match pattern: ${text}`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.HashBangLine as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function identifier(text: string) {
   if (text.length === 0) throw new Error(`identifier: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Identifier as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function ifStatement(config: ConfigOf<T.IfStatement>) {
-  const _node: Record<string,unknown> = {
+export function ifStatement(config: T.IfStatement.Config) {
+  const _condition = config.condition;
+  const _consequence = config.consequence;
+  const _alternative = config.alternative;
+  return withMethods({
     $type: TSKindId.IfStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _condition: config.condition,
-    _consequence: config.consequence,
-    _alternative: config.alternative,
-  };
-  Object.defineProperty(_node, 'condition', { value: function() { return (this as Record<string,unknown>)['_condition']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'consequence', { value: function() { return (this as Record<string,unknown>)['_consequence']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alternative', { value: function() { return (this as Record<string,unknown>)['_alternative']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, ifStatement as (c: Record<string,unknown>) => AnyNodeData, [['_condition', 'condition'], ['_consequence', 'consequence'], ['_alternative', 'alternative']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _condition,
+    _consequence,
+    _alternative,
+    condition() { return _condition; },
+    consequence() { return _consequence; },
+    alternative() { return _alternative; },
+    $with: {
+      condition: (value?: T.ParenthesizedExpression) => _setField(config, ifStatement, 'condition', value, config.condition),
+      consequence: (value?: T.Statement) => _setField(config, ifStatement, 'consequence', value, config.consequence),
+      alternative: (value?: T.ElseClause | undefined) => _setField(config, ifStatement, 'alternative', value, config.alternative),
+    },
+  });
 }
 
 export function implementsClause(...children: T.Type[]) {
   _assertNonEmpty(children, 'implements_clause.children');
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ImplementsClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.Type[]) => implementsClause(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.Type[]) => implementsClause(...vs) },
+  });
 }
 
 export function import_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Import as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'import' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function importAlias(config: ConfigOf<T.ImportAlias>) {
-  const _node: Record<string,unknown> = {
+export function importAlias(config: T.ImportAlias.Config) {
+  const _name = config.name;
+  const _value = config.value;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ImportAlias as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _value: config.value,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, importAlias as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_value', 'value'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _value,
+    _semicolon,
+    name() { return _name; },
+    value() { return _value; },
+    semicolon() { return _semicolon; },
+    $with: {
+      name: (value?: T.Identifier) => _setField(config, importAlias, 'name', value, config.name),
+      value: (value?: T.Identifier | T.NestedIdentifier) => _setField(config, importAlias, 'value', value, config.value),
+      semicolon: (value?: T.Semicolon) => _setField(config, importAlias, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function importAttribute(config: ConfigOf<T.ImportAttribute>) {
-  const _node: Record<string,unknown> = {
+export function importAttribute(config: T.ImportAttribute.Config) {
+  const _object = config.object;
+  return withMethods({
     $type: TSKindId.ImportAttribute as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, importAttribute as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    object() { return _object; },
+    $with: {
+      object: (value?: T.ImportAttributeObject | T.Object) => _setField(config, importAttribute, 'object', value, config.object),
+    },
+  });
 }
 
 export function importClauseNamespaceImport(child: T.NamespaceImport) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseNamespaceImport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.NamespaceImport) => importClauseNamespaceImport(v) },
+  });
 }
 
 export function importClauseNamedImports(child: T.NamedImports) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseNamedImports as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.NamedImports) => importClauseNamedImports(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.NamedImports) => importClauseNamedImports(v) },
+  });
 }
 
 export function importClauseDefaultImport(child: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ImportClauseDefaultImport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => importClauseDefaultImport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.ImportIdentifier | T.NamespaceImport | T.NamedImports)) => importClauseDefaultImport(v) },
+  });
 }
 
 export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport>): ReturnType<typeof importClauseUFormNamespaceImport>;
@@ -2260,69 +2616,70 @@ export function importClause(config: ConfigOf<T.ImportClauseUFormNamespaceImport
 export function importClauseUFormNamespaceImport(config?: Omit<ConfigOf<T.ImportClauseUFormNamespaceImport>, '$variant'>) {
   const inner = _importClauseNamespaceImport((config?.children ?? [])[0] as Parameters<typeof _importClauseNamespaceImport>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ImportClause as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'namespace_import' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 export function importClauseUFormNamedImports(config?: Omit<ConfigOf<T.ImportClauseUFormNamedImports>, '$variant'>) {
   const inner = _importClauseNamedImports((config?.children ?? [])[0] as Parameters<typeof _importClauseNamedImports>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ImportClause as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'named_imports' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 export function importClauseUFormDefaultImport(config?: Omit<ConfigOf<T.ImportClauseUFormDefaultImport>, '$variant'>) {
   const inner = _importClauseDefaultImport((config?.children ?? [])[0] as Parameters<typeof _importClauseDefaultImport>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ImportClause as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'default_import' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 
-export function importRequireClause(config: ConfigOf<T.ImportRequireClause>) {
-  const _node: Record<string,unknown> = {
+export function importRequireClause(config: T.ImportRequireClause.Config) {
+  const _identifier = config.identifier;
+  const _source = config.source;
+  return withMethods({
     $type: TSKindId.ImportRequireClause as number,
     $source: 2 as const,
     $named: true as const,
-    _identifier: config.identifier,
-    _source: config.source,
-  };
-  Object.defineProperty(_node, 'identifier', { value: function() { return (this as Record<string,unknown>)['_identifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'source', { value: function() { return (this as Record<string,unknown>)['_source']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, importRequireClause as (c: Record<string,unknown>) => AnyNodeData, [['_identifier', 'identifier'], ['_source', 'source']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _identifier,
+    _source,
+    identifier() { return _identifier; },
+    source() { return _source; },
+    $with: {
+      identifier: (value?: T.Identifier) => _setField(config, importRequireClause, 'identifier', value, config.identifier),
+      source: (value?: T.String) => _setField(config, importRequireClause, 'source', value, config.source),
+    },
+  });
 }
 
-export function importSpecifierName(config: ConfigOf<T.ImportSpecifierName>) {
-  const _node: Record<string,unknown> = {
+export function importSpecifierName(config: T.ImportSpecifierName.Config) {
+  const _name = config.name;
+  return withMethods({
     $type: TSKindId._ImportSpecifierName as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, importSpecifierName as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    name() { return _name; },
+    $with: {
+      name: (value?: T.ImportIdentifier) => _setField(config, importSpecifierName, 'name', value, config.name),
+    },
+  });
 }
 
 export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName>): ReturnType<typeof importSpecifierUFormName>;
@@ -2337,75 +2694,80 @@ export function importSpecifier(config: ConfigOf<T.ImportSpecifierUFormName> | C
 export function importSpecifierUFormName(config: Omit<ConfigOf<T.ImportSpecifierUFormName>, '$variant'>) {
   const inner = _importSpecifierName(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _import_kind = config.importKind;
+  return withMethods({
     $type: TSKindId.ImportSpecifier as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'name' as const,
-    _import_kind: config.importKind,
+    _import_kind,
     $children: children,
-  };
-  Object.defineProperty(_node, 'importKind', { value: function() { return (this as Record<string,unknown>)['_import_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (inner as unknown as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    importKind: (value: unknown) => importSpecifierUFormName({ name: (inner as unknown as Record<string,unknown>)['_name'], importKind: value } as Parameters<typeof importSpecifierUFormName>[0]),
-    name: (value: unknown) => importSpecifierUFormName({ importKind: config.importKind, name: value } as Parameters<typeof importSpecifierUFormName>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    importKind() { return _import_kind; },
+    name() { return inner.name(); },
+    $with: {
+      importKind: (value: unknown) => importSpecifierUFormName({ name: inner._name, importKind: value } as Parameters<typeof importSpecifierUFormName>[0]),
+      name: (value: unknown) => importSpecifierUFormName({ importKind: config.importKind, name: value } as Parameters<typeof importSpecifierUFormName>[0]),
+    },
+  });
 }
 export function importSpecifierUFormAs(config: Omit<ConfigOf<T.ImportSpecifierUFormAs>, '$variant'>) {
   const inner = _importSpecifierAs(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _import_kind = config.importKind;
+  return withMethods({
     $type: TSKindId.ImportSpecifier as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'as' as const,
-    _import_kind: config.importKind,
+    _import_kind,
     $children: children,
-  };
-  Object.defineProperty(_node, 'importKind', { value: function() { return (this as Record<string,unknown>)['_import_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (inner as unknown as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alias', { value: function() { return (inner as unknown as Record<string,unknown>)['_alias']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    importKind: (value: unknown) => importSpecifierUFormAs({ name: (inner as unknown as Record<string,unknown>)['_name'], alias: (inner as unknown as Record<string,unknown>)['_alias'], importKind: value } as Parameters<typeof importSpecifierUFormAs>[0]),
-    name: (value: unknown) => importSpecifierUFormAs({ importKind: config.importKind, alias: (inner as unknown as Record<string,unknown>)['_alias'], name: value } as Parameters<typeof importSpecifierUFormAs>[0]),
-    alias: (value: unknown) => importSpecifierUFormAs({ importKind: config.importKind, name: (inner as unknown as Record<string,unknown>)['_name'], alias: value } as Parameters<typeof importSpecifierUFormAs>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    importKind() { return _import_kind; },
+    name() { return inner.name(); },
+    alias() { return inner.alias(); },
+    $with: {
+      importKind: (value: unknown) => importSpecifierUFormAs({ name: inner._name, alias: inner._alias, importKind: value } as Parameters<typeof importSpecifierUFormAs>[0]),
+      name: (value: unknown) => importSpecifierUFormAs({ importKind: config.importKind, alias: inner._alias, name: value } as Parameters<typeof importSpecifierUFormAs>[0]),
+      alias: (value: unknown) => importSpecifierUFormAs({ importKind: config.importKind, name: inner._name, alias: value } as Parameters<typeof importSpecifierUFormAs>[0]),
+    },
+  });
 }
 
-export function importStatement(config: ConfigOf<T.ImportStatement>) {
-  const _node: Record<string,unknown> = {
+export function importStatement(config: T.ImportStatement.Config) {
+  const _import_clause = config.importClause;
+  const _from_clause = config.fromClause;
+  const _import_attribute = config.importAttribute;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ImportStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _import_clause: config.importClause,
-    _from_clause: config.fromClause,
-    _import_attribute: config.importAttribute,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'importClause', { value: function() { return (this as Record<string,unknown>)['_import_clause']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'fromClause', { value: function() { return (this as Record<string,unknown>)['_from_clause']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'importAttribute', { value: function() { return (this as Record<string,unknown>)['_import_attribute']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, importStatement as (c: Record<string,unknown>) => AnyNodeData, [['_import_clause', 'importClause'], ['_from_clause', 'fromClause'], ['_import_attribute', 'importAttribute'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _import_clause,
+    _from_clause,
+    _import_attribute,
+    _semicolon,
+    importClause() { return _import_clause; },
+    fromClause() { return _from_clause; },
+    importAttribute() { return _import_attribute; },
+    semicolon() { return _semicolon; },
+    $with: {
+      importClause: (value?: "type" | "typeof" | undefined) => _setField(config, importStatement, 'importClause', value, config.importClause),
+      fromClause: (value?: T.ImportClause | "from" | T.String | T.ImportRequireClause) => _setField(config, importStatement, 'fromClause', value, config.fromClause),
+      importAttribute: (value?: T.ImportAttribute | undefined) => _setField(config, importStatement, 'importAttribute', value, config.importAttribute),
+      semicolon: (value?: T.Semicolon) => _setField(config, importStatement, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
 export function indexSignatureMappedTypeClause(child: T.MappedTypeClause) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._IndexSignatureMappedTypeClause as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.MappedTypeClause) => indexSignatureMappedTypeClause(v) },
+  });
 }
 
 export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon>): ReturnType<typeof indexSignatureUFormColon>;
@@ -2420,661 +2782,799 @@ export function indexSignature(config: ConfigOf<T.IndexSignatureUFormColon> | Co
 export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureUFormColon>, '$variant'>) {
   const inner = _indexSignatureColon(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _sign = config.sign;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.IndexSignature as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'colon' as const,
-    _sign: config.sign,
-    _type: config.type,
+    _sign,
+    _type,
     $children: children,
-  };
-  Object.defineProperty(_node, 'sign', { value: function() { return (this as Record<string,unknown>)['_sign']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (inner as unknown as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'indexType', { value: function() { return (inner as unknown as Record<string,unknown>)['_index_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    sign: (value: unknown) => indexSignatureUFormColon({ type: config.type, name: (inner as unknown as Record<string,unknown>)['_name'], indexType: (inner as unknown as Record<string,unknown>)['_index_type'], sign: value } as Parameters<typeof indexSignatureUFormColon>[0]),
-    type: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, name: (inner as unknown as Record<string,unknown>)['_name'], indexType: (inner as unknown as Record<string,unknown>)['_index_type'], type: value } as Parameters<typeof indexSignatureUFormColon>[0]),
-    name: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, type: config.type, indexType: (inner as unknown as Record<string,unknown>)['_index_type'], name: value } as Parameters<typeof indexSignatureUFormColon>[0]),
-    indexType: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, type: config.type, name: (inner as unknown as Record<string,unknown>)['_name'], indexType: value } as Parameters<typeof indexSignatureUFormColon>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    sign() { return _sign; },
+    typeField() { return _type; },
+    name() { return inner.name(); },
+    indexType() { return inner.indexType(); },
+    $with: {
+      sign: (value: unknown) => indexSignatureUFormColon({ type: config.type, name: inner._name, indexType: inner._index_type, sign: value } as Parameters<typeof indexSignatureUFormColon>[0]),
+      type: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, name: inner._name, indexType: inner._index_type, type: value } as Parameters<typeof indexSignatureUFormColon>[0]),
+      name: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, type: config.type, indexType: inner._index_type, name: value } as Parameters<typeof indexSignatureUFormColon>[0]),
+      indexType: (value: unknown) => indexSignatureUFormColon({ sign: config.sign, type: config.type, name: inner._name, indexType: value } as Parameters<typeof indexSignatureUFormColon>[0]),
+    },
+  });
 }
 export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.IndexSignatureUFormMappedTypeClause>, '$variant'>) {
   const inner = _indexSignatureMappedTypeClause((config?.children ?? [])[0] as Parameters<typeof _indexSignatureMappedTypeClause>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  const _sign = config.sign;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.IndexSignature as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'mapped_type_clause' as const,
-    _sign: config.sign,
-    _type: config.type,
+    _sign,
+    _type,
     $children: children,
-  };
-  Object.defineProperty(_node, 'sign', { value: function() { return (this as Record<string,unknown>)['_sign']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    sign: (value: unknown) => indexSignatureUFormMappedTypeClause({ type: config.type, sign: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
-    type: (value: unknown) => indexSignatureUFormMappedTypeClause({ sign: config.sign, type: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    sign() { return _sign; },
+    typeField() { return _type; },
+    $with: {
+      sign: (value: unknown) => indexSignatureUFormMappedTypeClause({ type: config.type, sign: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
+      type: (value: unknown) => indexSignatureUFormMappedTypeClause({ sign: config.sign, type: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
+    },
+  });
 }
 
-export function indexTypeQuery(config: ConfigOf<T.IndexTypeQuery>) {
-  const _node: Record<string,unknown> = {
+export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
+  const _primary_type = config.primaryType;
+  return withMethods({
     $type: TSKindId.IndexTypeQuery as number,
     $source: 2 as const,
     $named: true as const,
-    _primary_type: config.primaryType,
-  };
-  Object.defineProperty(_node, 'primaryType', { value: function() { return (this as Record<string,unknown>)['_primary_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, indexTypeQuery as (c: Record<string,unknown>) => AnyNodeData, [['_primary_type', 'primaryType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _primary_type,
+    primaryType() { return _primary_type; },
+    $with: {
+      primaryType: (value?: T.PrimaryType) => _setField(config, indexTypeQuery, 'primaryType', value, config.primaryType),
+    },
+  });
 }
 
-export function inferType(config: ConfigOf<T.InferType>) {
-  const _node: Record<string,unknown> = {
+export function inferType(config: T.InferType.Config) {
+  const _type_identifier = config.typeIdentifier;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.InferType as number,
     $source: 2 as const,
     $named: true as const,
-    _type_identifier: config.typeIdentifier,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeIdentifier', { value: function() { return (this as Record<string,unknown>)['_type_identifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, inferType as (c: Record<string,unknown>) => AnyNodeData, [['_type_identifier', 'typeIdentifier'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_identifier,
+    _type,
+    typeIdentifier() { return _type_identifier; },
+    typeField() { return _type; },
+    $with: {
+      typeIdentifier: (value?: T.TypeIdentifier) => _setField(config, inferType, 'typeIdentifier', value, config.typeIdentifier),
+      typeField: (value?: T.Type | undefined) => _setField(config, inferType, 'type', value, config.type),
+    },
+  });
 }
 
-export function instantiationExpression(config: ConfigOf<T.InstantiationExpression>) {
-  const _node: Record<string,unknown> = {
+export function instantiationExpression(config: T.InstantiationExpression.Config) {
+  const _expression = config.expression;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
     $type: TSKindId.InstantiationExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-    _type_arguments: config.typeArguments,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, instantiationExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression'], ['_type_arguments', 'typeArguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    _type_arguments,
+    expression() { return _expression; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, instantiationExpression, 'expression', value, config.expression),
+      typeArguments: (value?: T.TypeArguments) => _setField(config, instantiationExpression, 'typeArguments', value, config.typeArguments),
+    },
+  });
 }
 
-export function interfaceDeclaration(config: ConfigOf<T.InterfaceDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function interfaceDeclaration(config: T.InterfaceDeclaration.Config) {
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _extends_type_clause = config.extendsTypeClause;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.InterfaceDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _extends_type_clause: config.extendsTypeClause,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'extendsTypeClause', { value: function() { return (this as Record<string,unknown>)['_extends_type_clause']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, interfaceDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_extends_type_clause', 'extendsTypeClause'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type_parameters,
+    _extends_type_clause,
+    _body,
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    extendsTypeClause() { return _extends_type_clause; },
+    body() { return _body; },
+    $with: {
+      name: (value?: T.TypeIdentifier) => _setField(config, interfaceDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, interfaceDeclaration, 'typeParameters', value, config.typeParameters),
+      extendsTypeClause: (value?: T.ExtendsTypeClause | undefined) => _setField(config, interfaceDeclaration, 'extendsTypeClause', value, config.extendsTypeClause),
+      body: (value?: T.ObjectType) => _setField(config, interfaceDeclaration, 'body', value, config.body),
+    },
+  });
 }
 
-export function internalModule(config: ConfigOf<T.InternalModule>) {
-  const _node: Record<string,unknown> = {
+export function internalModule(config: T.InternalModule.Config) {
+  const _name = config.name;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.InternalModule as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, internalModule as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _body,
+    name() { return _name; },
+    body() { return _body; },
+    $with: {
+      name: (value?: T.String | T.Identifier | T.NestedIdentifier) => _setField(config, internalModule, 'name', value, config.name),
+      body: (value?: T.StatementBlock | undefined) => _setField(config, internalModule, 'body', value, config.body),
+    },
+  });
 }
 
-export function intersectionType(config: ConfigOf<T.IntersectionType>) {
-  const _node: Record<string,unknown> = {
+export function intersectionType(config: T.IntersectionType.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.IntersectionType as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, intersectionType as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.Type | undefined) => _setField(config, intersectionType, 'left', value, config.left),
+      right: (value?: T.Type) => _setField(config, intersectionType, 'right', value, config.right),
+    },
+  });
 }
 
-export function labeledStatement(config: ConfigOf<T.LabeledStatement>) {
-  const _node: Record<string,unknown> = {
+export function labeledStatement(config: T.LabeledStatement.Config) {
+  const _label = config.label;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.LabeledStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _label: config.label,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'label', { value: function() { return (this as Record<string,unknown>)['_label']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, labeledStatement as (c: Record<string,unknown>) => AnyNodeData, [['_label', 'label'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _label,
+    _body,
+    label() { return _label; },
+    body() { return _body; },
+    $with: {
+      label: (value?: T.StatementIdentifier) => _setField(config, labeledStatement, 'label', value, config.label),
+      body: (value?: T.Statement) => _setField(config, labeledStatement, 'body', value, config.body),
+    },
+  });
 }
 
-export function lexicalDeclaration(config: ConfigOf<T.LexicalDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function lexicalDeclaration(config: T.LexicalDeclaration.Config) {
+  const _kind = config.kind;
+  const _declarators = config.declarators;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.LexicalDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _kind: config.kind,
-    _declarators: config.declarators,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'kind', { value: function() { return (this as Record<string,unknown>)['_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'declarators', { value: function() { return (this as Record<string,unknown>)['_declarators']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, lexicalDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_kind', 'kind'], ['_declarators', 'declarators'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _kind,
+    _declarators,
+    _semicolon,
+    kind() { return _kind; },
+    declarators() { return _declarators; },
+    semicolon() { return _semicolon; },
+    $with: {
+      kind: (value?: T.Kind) => _setField(config, lexicalDeclaration, 'kind', value, config.kind),
+      declarators: (...values: NonEmptyArray<T.VariableDeclarator>) => _setFields(config, lexicalDeclaration, 'declarators', values, config.declarators),
+      semicolon: (value?: T.Semicolon) => _setField(config, lexicalDeclaration, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
 export function literalType(child: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.LiteralType as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => literalType(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T._Number | T.Number | T.String | T.True | T.False | T.Null | T.Undefined)) => literalType(v) },
+  });
 }
 
-export function lookupType(config: ConfigOf<T.LookupType>) {
-  const _node: Record<string,unknown> = {
+export function lookupType(config: T.LookupType.Config) {
+  const _primary_type = config.primaryType;
+  const _index_type = config.indexType;
+  return withMethods({
     $type: TSKindId.LookupType as number,
     $source: 2 as const,
     $named: true as const,
-    _primary_type: config.primaryType,
-    _index_type: config.indexType,
-  };
-  Object.defineProperty(_node, 'primaryType', { value: function() { return (this as Record<string,unknown>)['_primary_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'indexType', { value: function() { return (this as Record<string,unknown>)['_index_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, lookupType as (c: Record<string,unknown>) => AnyNodeData, [['_primary_type', 'primaryType'], ['_index_type', 'indexType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _primary_type,
+    _index_type,
+    primaryType() { return _primary_type; },
+    indexType() { return _index_type; },
+    $with: {
+      primaryType: (value?: T.PrimaryType) => _setField(config, lookupType, 'primaryType', value, config.primaryType),
+      indexType: (value?: T.Type) => _setField(config, lookupType, 'indexType', value, config.indexType),
+    },
+  });
 }
 
-export function mappedTypeClause(config: ConfigOf<T.MappedTypeClause>) {
-  const _node: Record<string,unknown> = {
+export function mappedTypeClause(config: T.MappedTypeClause.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  const _alias = config.alias;
+  return withMethods({
     $type: TSKindId.MappedTypeClause as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type: config.type,
-    _alias: config.alias,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alias', { value: function() { return (this as Record<string,unknown>)['_alias']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, mappedTypeClause as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type', 'type'], ['_alias', 'alias']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type,
+    _alias,
+    name() { return _name; },
+    typeField() { return _type; },
+    alias() { return _alias; },
+    $with: {
+      name: (value?: T.TypeIdentifier) => _setField(config, mappedTypeClause, 'name', value, config.name),
+      typeField: (value?: T.Type) => _setField(config, mappedTypeClause, 'type', value, config.type),
+      alias: (value?: T.Type | undefined) => _setField(config, mappedTypeClause, 'alias', value, config.alias),
+    },
+  });
 }
 
-export function memberExpression(config: ConfigOf<T.MemberExpression>) {
+export function memberExpression(config: T.MemberExpression.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _object = config.object;
+  const _property = config.property;
+  return withMethods({
     $type: TSKindId.MemberExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _property: config.property,
+    _object,
+    _property,
     $children: children,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'property', { value: function() { return (this as Record<string,unknown>)['_property']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, memberExpression as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_property', 'property'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    object() { return _object; },
+    property() { return _property; },
+    children() { return children; },
+    $with: {
+      object: (value?: T.Expression | T.PrimaryExpression | T.Import) => _setField(config, memberExpression, 'object', value, config.object),
+      property: (value?: T.PrivatePropertyIdentifier | T.Identifier) => _setField(config, memberExpression, 'property', value, config.property),
+      children: (...items: readonly [T.OptionalChain]) => memberExpression({ ...config, children: items }),
+    },
+  });
 }
 
 export function metaProperty(text: string) {
   if (text.length === 0) throw new Error(`meta_property: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.MetaProperty as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function methodDefinition(config: ConfigOf<T.MethodDefinition>) {
-  const _node: Record<string,unknown> = {
+export function methodDefinition(config: T.MethodDefinition.Config) {
+  const _accessibility_modifier = config.accessibilityModifier;
+  const _static_marker = config.staticMarker ? "static" as const : undefined;
+  const _override_modifier = config.overrideModifier ? "override" as const : undefined;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _accessor_kind = config.accessorKind;
+  const _name = config.name;
+  const _optional_marker = config.optionalMarker ? "?" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.MethodDefinition as number,
     $source: 2 as const,
     $named: true as const,
-    _accessibility_modifier: config.accessibilityModifier,
-    _static_marker: config.staticMarker ? "static" as const : undefined,
-    _override_modifier: config.overrideModifier ? "override" as const : undefined,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _accessor_kind: config.accessorKind,
-    _name: config.name,
-    _optional_marker: config.optionalMarker ? "?" as const : undefined,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'accessibilityModifier', { value: function() { return (this as Record<string,unknown>)['_accessibility_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'staticMarker', { value: function() { return (this as Record<string,unknown>)['_static_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'overrideModifier', { value: function() { return (this as Record<string,unknown>)['_override_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'accessorKind', { value: function() { return (this as Record<string,unknown>)['_accessor_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalMarker', { value: function() { return (this as Record<string,unknown>)['_optional_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, methodDefinition as (c: Record<string,unknown>) => AnyNodeData, [['_accessibility_modifier', 'accessibilityModifier'], ['_static_marker', 'staticMarker'], ['_override_modifier', 'overrideModifier'], ['_readonly_marker', 'readonlyMarker'], ['_async_marker', 'asyncMarker'], ['_accessor_kind', 'accessorKind'], ['_name', 'name'], ['_optional_marker', 'optionalMarker'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _accessibility_modifier,
+    _static_marker,
+    _override_modifier,
+    _readonly_marker,
+    _async_marker,
+    _accessor_kind,
+    _name,
+    _optional_marker,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _body,
+    accessibilityModifier() { return _accessibility_modifier; },
+    staticMarker() { return _static_marker; },
+    overrideModifier() { return _override_modifier; },
+    readonlyMarker() { return _readonly_marker; },
+    asyncMarker() { return _async_marker; },
+    accessorKind() { return _accessor_kind; },
+    name() { return _name; },
+    optionalMarker() { return _optional_marker; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    body() { return _body; },
+    $with: {
+      accessibilityModifier: (value?: T._AccessibilityModifier | undefined) => _setField(config, methodDefinition, 'accessibilityModifier', value, config.accessibilityModifier),
+      staticMarker: (value?: T.StaticMarker | undefined) => _setField(config, methodDefinition, 'staticMarker', value, config.staticMarker),
+      overrideModifier: (value?: T._OverrideModifier | undefined) => _setField(config, methodDefinition, 'overrideModifier', value, config.overrideModifier),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, methodDefinition, 'readonlyMarker', value, config.readonlyMarker),
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, methodDefinition, 'asyncMarker', value, config.asyncMarker),
+      accessorKind: (value?: T.AccessorKind | undefined) => _setField(config, methodDefinition, 'accessorKind', value, config.accessorKind),
+      name: (value?: T.PropertyName) => _setField(config, methodDefinition, 'name', value, config.name),
+      optionalMarker: (value?: T.OptionalMarker | undefined) => _setField(config, methodDefinition, 'optionalMarker', value, config.optionalMarker),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, methodDefinition, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, methodDefinition, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, methodDefinition, 'returnType', value, config.returnType),
+      body: (value?: T.StatementBlock) => _setField(config, methodDefinition, 'body', value, config.body),
+    },
+  });
 }
 
-export function methodSignature(config: ConfigOf<T.MethodSignature>) {
-  const _node: Record<string,unknown> = {
+export function methodSignature(config: T.MethodSignature.Config) {
+  const _accessibility_modifier = config.accessibilityModifier;
+  const _static_marker = config.staticMarker ? "static" as const : undefined;
+  const _override_modifier = config.overrideModifier ? "override" as const : undefined;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _async_marker = config.asyncMarker ? "async" as const : undefined;
+  const _accessor_kind = config.accessorKind;
+  const _name = config.name;
+  const _optional_marker = config.optionalMarker ? "?" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
     $type: TSKindId.MethodSignature as number,
     $source: 2 as const,
     $named: true as const,
-    _accessibility_modifier: config.accessibilityModifier,
-    _static_marker: config.staticMarker ? "static" as const : undefined,
-    _override_modifier: config.overrideModifier ? "override" as const : undefined,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _async_marker: config.asyncMarker ? "async" as const : undefined,
-    _accessor_kind: config.accessorKind,
-    _name: config.name,
-    _optional_marker: config.optionalMarker ? "?" as const : undefined,
-    _type_parameters: config.typeParameters,
-    _parameters: config.parameters,
-    _return_type: config.returnType,
-  };
-  Object.defineProperty(_node, 'accessibilityModifier', { value: function() { return (this as Record<string,unknown>)['_accessibility_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'staticMarker', { value: function() { return (this as Record<string,unknown>)['_static_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'overrideModifier', { value: function() { return (this as Record<string,unknown>)['_override_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'asyncMarker', { value: function() { return (this as Record<string,unknown>)['_async_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'accessorKind', { value: function() { return (this as Record<string,unknown>)['_accessor_kind']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalMarker', { value: function() { return (this as Record<string,unknown>)['_optional_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'parameters', { value: function() { return (this as Record<string,unknown>)['_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'returnType', { value: function() { return (this as Record<string,unknown>)['_return_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, methodSignature as (c: Record<string,unknown>) => AnyNodeData, [['_accessibility_modifier', 'accessibilityModifier'], ['_static_marker', 'staticMarker'], ['_override_modifier', 'overrideModifier'], ['_readonly_marker', 'readonlyMarker'], ['_async_marker', 'asyncMarker'], ['_accessor_kind', 'accessorKind'], ['_name', 'name'], ['_optional_marker', 'optionalMarker'], ['_type_parameters', 'typeParameters'], ['_parameters', 'parameters'], ['_return_type', 'returnType']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _accessibility_modifier,
+    _static_marker,
+    _override_modifier,
+    _readonly_marker,
+    _async_marker,
+    _accessor_kind,
+    _name,
+    _optional_marker,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    accessibilityModifier() { return _accessibility_modifier; },
+    staticMarker() { return _static_marker; },
+    overrideModifier() { return _override_modifier; },
+    readonlyMarker() { return _readonly_marker; },
+    asyncMarker() { return _async_marker; },
+    accessorKind() { return _accessor_kind; },
+    name() { return _name; },
+    optionalMarker() { return _optional_marker; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    $with: {
+      accessibilityModifier: (value?: T._AccessibilityModifier | undefined) => _setField(config, methodSignature, 'accessibilityModifier', value, config.accessibilityModifier),
+      staticMarker: (value?: T.StaticMarker | undefined) => _setField(config, methodSignature, 'staticMarker', value, config.staticMarker),
+      overrideModifier: (value?: T._OverrideModifier | undefined) => _setField(config, methodSignature, 'overrideModifier', value, config.overrideModifier),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, methodSignature, 'readonlyMarker', value, config.readonlyMarker),
+      asyncMarker: (value?: T.AsyncMarker | undefined) => _setField(config, methodSignature, 'asyncMarker', value, config.asyncMarker),
+      accessorKind: (value?: T.AccessorKind | undefined) => _setField(config, methodSignature, 'accessorKind', value, config.accessorKind),
+      name: (value?: T.PropertyName) => _setField(config, methodSignature, 'name', value, config.name),
+      optionalMarker: (value?: T.OptionalMarker | undefined) => _setField(config, methodSignature, 'optionalMarker', value, config.optionalMarker),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, methodSignature, 'typeParameters', value, config.typeParameters),
+      parameters: (value?: T.FormalParameters) => _setField(config, methodSignature, 'parameters', value, config.parameters),
+      returnType: (value?: T.TypeAnnotation | T.AssertsAnnotation | T.TypePredicateAnnotation | undefined) => _setField(config, methodSignature, 'returnType', value, config.returnType),
+    },
+  });
 }
 
-export function module(config: ConfigOf<T.Module>) {
-  const _node: Record<string,unknown> = {
+export function module(config: T.Module.Config) {
+  const _name = config.name;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.Module as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, module as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _body,
+    name() { return _name; },
+    body() { return _body; },
+    $with: {
+      name: (value?: T.String | T.Identifier | T.NestedIdentifier) => _setField(config, module, 'name', value, config.name),
+      body: (value?: T.StatementBlock | undefined) => _setField(config, module, 'body', value, config.body),
+    },
+  });
 }
 
 export function namedImports(...children: T.ImportSpecifier[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.NamedImports as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.ImportSpecifier[]) => namedImports(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.ImportSpecifier[]) => namedImports(...vs) },
+  });
 }
 
 export function namespaceExport(child: T.ModuleExportName) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.NamespaceExport as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.ModuleExportName) => namespaceExport(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.ModuleExportName) => namespaceExport(v) },
+  });
 }
 
-export function namespaceImport(config: ConfigOf<T.NamespaceImport>) {
-  const _node: Record<string,unknown> = {
+export function namespaceImport(config: T.NamespaceImport.Config) {
+  const _identifier = config.identifier;
+  return withMethods({
     $type: TSKindId.NamespaceImport as number,
     $source: 2 as const,
     $named: true as const,
-    _identifier: config.identifier,
-  };
-  Object.defineProperty(_node, 'identifier', { value: function() { return (this as Record<string,unknown>)['_identifier']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, namespaceImport as (c: Record<string,unknown>) => AnyNodeData, [['_identifier', 'identifier']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _identifier,
+    identifier() { return _identifier; },
+    $with: {
+      identifier: (value?: T.Identifier) => _setField(config, namespaceImport, 'identifier', value, config.identifier),
+    },
+  });
 }
 
-export function nestedIdentifier(config: ConfigOf<T.NestedIdentifier>) {
-  const _node: Record<string,unknown> = {
+export function nestedIdentifier(config: T.NestedIdentifier.Config) {
+  const _object = config.object;
+  const _property = config.property;
+  return withMethods({
     $type: TSKindId.NestedIdentifier as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _property: config.property,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'property', { value: function() { return (this as Record<string,unknown>)['_property']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, nestedIdentifier as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_property', 'property']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _property,
+    object() { return _object; },
+    property() { return _property; },
+    $with: {
+      object: (value?: T.Identifier | T.NestedIdentifier) => _setField(config, nestedIdentifier, 'object', value, config.object),
+      property: (value?: T.Identifier) => _setField(config, nestedIdentifier, 'property', value, config.property),
+    },
+  });
 }
 
-export function nestedTypeIdentifier(config: ConfigOf<T.NestedTypeIdentifier>) {
-  const _node: Record<string,unknown> = {
+export function nestedTypeIdentifier(config: T.NestedTypeIdentifier.Config) {
+  const _module = config.module;
+  const _name = config.name;
+  return withMethods({
     $type: TSKindId.NestedTypeIdentifier as number,
     $source: 2 as const,
     $named: true as const,
-    _module: config.module,
-    _name: config.name,
-  };
-  Object.defineProperty(_node, 'module', { value: function() { return (this as Record<string,unknown>)['_module']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, nestedTypeIdentifier as (c: Record<string,unknown>) => AnyNodeData, [['_module', 'module'], ['_name', 'name']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _module,
+    _name,
+    module() { return _module; },
+    name() { return _name; },
+    $with: {
+      module: (value?: T.Identifier | T.NestedIdentifier) => _setField(config, nestedTypeIdentifier, 'module', value, config.module),
+      name: (value?: T.TypeIdentifier) => _setField(config, nestedTypeIdentifier, 'name', value, config.name),
+    },
+  });
 }
 
-export function newExpression(config: ConfigOf<T.NewExpression>) {
-  const _node: Record<string,unknown> = {
+export function newExpression(config: T.NewExpression.Config) {
+  const _constructor = config.constructor;
+  const _type_arguments = config.typeArguments;
+  const _arguments = config.arguments;
+  return withMethods({
     $type: TSKindId.NewExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _constructor: config.constructor,
-    _type_arguments: config.typeArguments,
-    _arguments: config.arguments,
-  };
-  Object.defineProperty(_node, 'constructor', { value: function() { return (this as Record<string,unknown>)['_constructor']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'arguments', { value: function() { return (this as Record<string,unknown>)['_arguments']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, newExpression as (c: Record<string,unknown>) => AnyNodeData, [['_constructor', 'constructor'], ['_type_arguments', 'typeArguments'], ['_arguments', 'arguments']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _constructor,
+    _type_arguments,
+    _arguments,
+    constructor() { return _constructor; },
+    typeArguments() { return _type_arguments; },
+    arguments() { return _arguments; },
+    $with: {
+      constructor: (value?: T.PrimaryExpression) => _setField(config, newExpression, 'constructor', value, config.constructor),
+      typeArguments: (value?: T.TypeArguments | undefined) => _setField(config, newExpression, 'typeArguments', value, config.typeArguments),
+      arguments: (value?: T.Arguments | undefined) => _setField(config, newExpression, 'arguments', value, config.arguments),
+    },
+  });
 }
 
-export function nonNullExpression(config: ConfigOf<T.NonNullExpression>) {
-  const _node: Record<string,unknown> = {
+export function nonNullExpression(config: T.NonNullExpression.Config) {
+  const _expression = config.expression;
+  return withMethods({
     $type: TSKindId.NonNullExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, nonNullExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, nonNullExpression, 'expression', value, config.expression),
+    },
+  });
 }
 
 export function null_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Null as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'null' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function number(text: string) {
   if (text.length === 0) throw new Error(`number: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Number as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function object(...children: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Object as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)[]) => object(...vs) },
+  });
 }
 
-export function objectAssignmentPattern(config: ConfigOf<T.ObjectAssignmentPattern>) {
-  const _node: Record<string,unknown> = {
+export function objectAssignmentPattern(config: T.ObjectAssignmentPattern.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.ObjectAssignmentPattern as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, objectAssignmentPattern as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.ShorthandPropertyIdentifierPattern | T.DestructuringPattern) => _setField(config, objectAssignmentPattern, 'left', value, config.left),
+      right: (value?: T.Expression) => _setField(config, objectAssignmentPattern, 'right', value, config.right),
+    },
+  });
 }
 
 export function objectPattern(...children: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ObjectPattern as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)[]) => objectPattern(...vs) },
+  });
 }
 
-export function objectType(config: ConfigOf<T.ObjectType>) {
-  const _node: Record<string,unknown> = {
+export function objectType(config: T.ObjectType.Config) {
+  const _opening = config.opening;
+  const _members = config.members;
+  const _closing = config.closing;
+  return withMethods({
     $type: TSKindId.ObjectType as number,
     $source: 2 as const,
     $named: true as const,
-    _opening: config.opening,
-    _members: config.members,
-    _closing: config.closing,
-  };
-  Object.defineProperty(_node, 'opening', { value: function() { return (this as Record<string,unknown>)['_opening']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'members', { value: function() { return (this as Record<string,unknown>)['_members']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'closing', { value: function() { return (this as Record<string,unknown>)['_closing']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, objectType as (c: Record<string,unknown>) => AnyNodeData, [['_opening', 'opening'], ['_members', 'members'], ['_closing', 'closing']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _opening,
+    _members,
+    _closing,
+    opening() { return _opening; },
+    members() { return _members; },
+    closing() { return _closing; },
+    $with: {
+      opening: (value?: T.ObjectTypeOpening) => _setField(config, objectType, 'opening', value, config.opening),
+      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => _setFields(config, objectType, 'members', values, config.members),
+      closing: (value?: T.ObjectTypeClosing) => _setField(config, objectType, 'closing', value, config.closing),
+    },
+  });
 }
 
 export function objectTypeCurly(config: T.ObjectType.Curly.Config) {
-  const _node: Record<string,unknown> = {
+  const _opening = config.opening;
+  const _members = config.members;
+  const _closing = config.closing;
+  return withMethods({
     $type: TSKindId.ObjectType as number,
     $source: 2 as const,
     $named: true as const,
-    _opening: config.opening,
-    _members: config.members,
-    _closing: config.closing,
-  };
-  Object.defineProperty(_node, 'opening', { value: function() { return (this as Record<string,unknown>)['_opening']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'members', { value: function() { return (this as Record<string,unknown>)['_members']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'closing', { value: function() { return (this as Record<string,unknown>)['_closing']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, objectTypeCurly as (c: Record<string,unknown>) => AnyNodeData, [['_opening', 'opening'], ['_members', 'members'], ['_closing', 'closing']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _opening,
+    _members,
+    _closing,
+    opening() { return _opening; },
+    members() { return _members; },
+    closing() { return _closing; },
+    $with: {
+      opening: (value?: T.ObjectTypeOpening) => _setField(config, objectTypeCurly, 'opening', value, config.opening),
+      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => _setFields(config, objectTypeCurly, 'members', values, config.members),
+      closing: (value?: T.ObjectTypeClosing) => _setField(config, objectTypeCurly, 'closing', value, config.closing),
+    },
+  });
 }
 
 export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
-  const _node: Record<string,unknown> = {
+  const _opening = config.opening;
+  const _members = config.members;
+  const _closing = config.closing;
+  return withMethods({
     $type: TSKindId.ObjectType as number,
     $source: 2 as const,
     $named: true as const,
-    _opening: config.opening,
-    _members: config.members,
-    _closing: config.closing,
-  };
-  Object.defineProperty(_node, 'opening', { value: function() { return (this as Record<string,unknown>)['_opening']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'members', { value: function() { return (this as Record<string,unknown>)['_members']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'closing', { value: function() { return (this as Record<string,unknown>)['_closing']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, objectTypeFlow as (c: Record<string,unknown>) => AnyNodeData, [['_opening', 'opening'], ['_members', 'members'], ['_closing', 'closing']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _opening,
+    _members,
+    _closing,
+    opening() { return _opening; },
+    members() { return _members; },
+    closing() { return _closing; },
+    $with: {
+      opening: (value?: T.ObjectTypeOpening) => _setField(config, objectTypeFlow, 'opening', value, config.opening),
+      members: (...values: NonEmptyArray<"," | ";" | T.ExportStatement | T.PropertySignature | T.CallSignature | T.ConstructSignature | T.IndexSignature | T.MethodSignature | T.Semicolon>) => _setFields(config, objectTypeFlow, 'members', values, config.members),
+      closing: (value?: T.ObjectTypeClosing) => _setField(config, objectTypeFlow, 'closing', value, config.closing),
+    },
+  });
 }
 
-export function omittingTypeAnnotation(config: ConfigOf<T.OmittingTypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.OmittingTypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, omittingTypeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, omittingTypeAnnotation, 'type', value, config.type),
+    },
+  });
 }
 
-export function optingTypeAnnotation(config: ConfigOf<T.OptingTypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.OptingTypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, optingTypeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, optingTypeAnnotation, 'type', value, config.type),
+    },
+  });
 }
 
-export function optionalParameter(config: ConfigOf<T.OptionalParameter>) {
+export function optionalParameter(config: T.OptionalParameter.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _pattern = config.pattern;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.OptionalParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _pattern: config.pattern,
-    _type: config.type,
-    _value: config.value,
+    _decorator,
+    _readonly_marker,
+    _pattern,
+    _type,
+    _value,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'pattern', { value: function() { return (this as Record<string,unknown>)['_pattern']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, optionalParameter as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_readonly_marker', 'readonlyMarker'], ['_pattern', 'pattern'], ['_type', 'type'], ['_value', 'value'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    readonlyMarker() { return _readonly_marker; },
+    pattern() { return _pattern; },
+    typeField() { return _type; },
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, optionalParameter, 'decorator', values, config.decorator),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, optionalParameter, 'readonlyMarker', value, config.readonlyMarker),
+      pattern: (value?: T.Pattern | T.This) => _setField(config, optionalParameter, 'pattern', value, config.pattern),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, optionalParameter, 'type', value, config.type),
+      value: (value?: T.Expression | undefined) => _setField(config, optionalParameter, 'value', value, config.value),
+      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => optionalParameter({ ...config, children: items }),
+    },
+  });
 }
 
-export function optionalTupleParameter(config: ConfigOf<T.OptionalTupleParameter>) {
-  const _node: Record<string,unknown> = {
+export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.OptionalTupleParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, optionalTupleParameter as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type,
+    name() { return _name; },
+    typeField() { return _type; },
+    $with: {
+      name: (value?: T.Identifier) => _setField(config, optionalTupleParameter, 'name', value, config.name),
+      typeField: (value?: T.TypeAnnotation) => _setField(config, optionalTupleParameter, 'type', value, config.type),
+    },
+  });
 }
 
-export function optionalType(config: ConfigOf<T.OptionalType>) {
-  const _node: Record<string,unknown> = {
+export function optionalType(config: T.OptionalType.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.OptionalType as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, optionalType as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, optionalType, 'type', value, config.type),
+    },
+  });
 }
 
 export function overrideModifier() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.OverrideModifier as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'override' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function pair(config: ConfigOf<T.Pair>) {
-  const _node: Record<string,unknown> = {
+export function pair(config: T.Pair.Config) {
+  const _key = config.key;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.Pair as number,
     $source: 2 as const,
     $named: true as const,
-    _key: config.key,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'key', { value: function() { return (this as Record<string,unknown>)['_key']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, pair as (c: Record<string,unknown>) => AnyNodeData, [['_key', 'key'], ['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _key,
+    _value,
+    key() { return _key; },
+    value() { return _value; },
+    $with: {
+      key: (value?: T.PropertyName) => _setField(config, pair, 'key', value, config.key),
+      value: (value?: T.Expression) => _setField(config, pair, 'value', value, config.value),
+    },
+  });
 }
 
-export function pairPattern(config: ConfigOf<T.PairPattern>) {
-  const _node: Record<string,unknown> = {
+export function pairPattern(config: T.PairPattern.Config) {
+  const _key = config.key;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.PairPattern as number,
     $source: 2 as const,
     $named: true as const,
-    _key: config.key,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'key', { value: function() { return (this as Record<string,unknown>)['_key']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, pairPattern as (c: Record<string,unknown>) => AnyNodeData, [['_key', 'key'], ['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _key,
+    _value,
+    key() { return _key; },
+    value() { return _value; },
+    $with: {
+      key: (value?: T.PropertyName) => _setField(config, pairPattern, 'key', value, config.key),
+      value: (value?: T.Pattern | T.AssignmentPattern) => _setField(config, pairPattern, 'value', value, config.value),
+    },
+  });
 }
 
 export function parenthesizedExpressionSequence(child: T.SequenceExpression) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._ParenthesizedExpressionSequence as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.SequenceExpression) => parenthesizedExpressionSequence(v) },
+  });
 }
 
 export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressionUFormTyped>): ReturnType<typeof parenthesizedExpressionUFormTyped>;
@@ -3089,320 +3589,367 @@ export function parenthesizedExpression(config: ConfigOf<T.ParenthesizedExpressi
 export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.ParenthesizedExpressionUFormTyped>, '$variant'>) {
   const inner = _parenthesizedExpressionTyped(config as Parameters<typeof _parenthesizedExpressionTyped>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ParenthesizedExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'typed' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (inner as unknown as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    type: (value: unknown) => parenthesizedExpressionUFormTyped({ type: value } as Parameters<typeof parenthesizedExpressionUFormTyped>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    typeField() { return inner.typeField(); },
+    $with: {
+      type: (value: unknown) => parenthesizedExpressionUFormTyped({ type: value } as Parameters<typeof parenthesizedExpressionUFormTyped>[0]),
+    },
+  });
 }
 export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.ParenthesizedExpressionUFormSequence>, '$variant'>) {
   const inner = _parenthesizedExpressionSequence((config?.children ?? [])[0] as Parameters<typeof _parenthesizedExpressionSequence>[0]);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ParenthesizedExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'sequence' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 
-export function parenthesizedType(config: ConfigOf<T.ParenthesizedType>) {
-  const _node: Record<string,unknown> = {
+export function parenthesizedType(config: T.ParenthesizedType.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ParenthesizedType as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, parenthesizedType as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, parenthesizedType, 'type', value, config.type),
+    },
+  });
 }
 
 export function predefinedType(text: string) {
   if (text.length === 0) throw new Error(`predefined_type: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.PredefinedType as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function privatePropertyIdentifier(text: string) {
   if (text.length === 0) throw new Error(`private_property_identifier: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.PrivatePropertyIdentifier as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function program(config: ConfigOf<T.Program>) {
-  const _node: Record<string,unknown> = {
+export function program(config: T.Program.Config) {
+  const _hash_bang_line = config.hashBangLine;
+  const _statements = config.statements;
+  return withMethods({
     $type: TSKindId.Program as number,
     $source: 2 as const,
     $named: true as const,
-    _hash_bang_line: config.hashBangLine,
-    _statements: config.statements,
-  };
-  Object.defineProperty(_node, 'hashBangLine', { value: function() { return (this as Record<string,unknown>)['_hash_bang_line']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'statements', { value: function() { return (this as Record<string,unknown>)['_statements']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, program as (c: Record<string,unknown>) => AnyNodeData, [['_hash_bang_line', 'hashBangLine'], ['_statements', 'statements']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _hash_bang_line,
+    _statements,
+    hashBangLine() { return _hash_bang_line; },
+    statements() { return _statements; },
+    $with: {
+      hashBangLine: (value?: T.HashBangLine | undefined) => _setField(config, program, 'hashBangLine', value, config.hashBangLine),
+      statements: (...values: T.Statement[]) => _setFields(config, program, 'statements', values, config.statements),
+    },
+  });
 }
 
-export function propertySignature(config: ConfigOf<T.PropertySignature>) {
-  const _node: Record<string,unknown> = {
+export function propertySignature(config: T.PropertySignature.Config) {
+  const _accessibility_modifier = config.accessibilityModifier;
+  const _static_marker = config.staticMarker ? "static" as const : undefined;
+  const _override_modifier = config.overrideModifier ? "override" as const : undefined;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _name = config.name;
+  const _optional_marker = config.optionalMarker ? "?" as const : undefined;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.PropertySignature as number,
     $source: 2 as const,
     $named: true as const,
-    _accessibility_modifier: config.accessibilityModifier,
-    _static_marker: config.staticMarker ? "static" as const : undefined,
-    _override_modifier: config.overrideModifier ? "override" as const : undefined,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _name: config.name,
-    _optional_marker: config.optionalMarker ? "?" as const : undefined,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'accessibilityModifier', { value: function() { return (this as Record<string,unknown>)['_accessibility_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'staticMarker', { value: function() { return (this as Record<string,unknown>)['_static_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'overrideModifier', { value: function() { return (this as Record<string,unknown>)['_override_modifier']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalMarker', { value: function() { return (this as Record<string,unknown>)['_optional_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, propertySignature as (c: Record<string,unknown>) => AnyNodeData, [['_accessibility_modifier', 'accessibilityModifier'], ['_static_marker', 'staticMarker'], ['_override_modifier', 'overrideModifier'], ['_readonly_marker', 'readonlyMarker'], ['_name', 'name'], ['_optional_marker', 'optionalMarker'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _accessibility_modifier,
+    _static_marker,
+    _override_modifier,
+    _readonly_marker,
+    _name,
+    _optional_marker,
+    _type,
+    accessibilityModifier() { return _accessibility_modifier; },
+    staticMarker() { return _static_marker; },
+    overrideModifier() { return _override_modifier; },
+    readonlyMarker() { return _readonly_marker; },
+    name() { return _name; },
+    optionalMarker() { return _optional_marker; },
+    typeField() { return _type; },
+    $with: {
+      accessibilityModifier: (value?: T._AccessibilityModifier | undefined) => _setField(config, propertySignature, 'accessibilityModifier', value, config.accessibilityModifier),
+      staticMarker: (value?: T.StaticMarker | undefined) => _setField(config, propertySignature, 'staticMarker', value, config.staticMarker),
+      overrideModifier: (value?: T._OverrideModifier | undefined) => _setField(config, propertySignature, 'overrideModifier', value, config.overrideModifier),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, propertySignature, 'readonlyMarker', value, config.readonlyMarker),
+      name: (value?: T.PropertyName) => _setField(config, propertySignature, 'name', value, config.name),
+      optionalMarker: (value?: T.OptionalMarker | undefined) => _setField(config, propertySignature, 'optionalMarker', value, config.optionalMarker),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, propertySignature, 'type', value, config.type),
+    },
+  });
 }
 
-export function publicFieldDefinition(config: ConfigOf<T.PublicFieldDefinition>) {
+export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  const _name = config.name;
+  const _optionality_marker = config.optionalityMarker;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.PublicFieldDefinition as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _name: config.name,
-    _optionality_marker: config.optionalityMarker,
-    _type: config.type,
-    _value: config.value,
+    _decorator,
+    _name,
+    _optionality_marker,
+    _type,
+    _value,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalityMarker', { value: function() { return (this as Record<string,unknown>)['_optionality_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, publicFieldDefinition as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_name', 'name'], ['_optionality_marker', 'optionalityMarker'], ['_type', 'type'], ['_value', 'value'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    name() { return _name; },
+    optionalityMarker() { return _optionality_marker; },
+    typeField() { return _type; },
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, publicFieldDefinition, 'decorator', values, config.decorator),
+      name: (value?: T.PropertyName) => _setField(config, publicFieldDefinition, 'name', value, config.name),
+      optionalityMarker: (value?: T.PublicFieldDefinitionOptionalityMarker | undefined) => _setField(config, publicFieldDefinition, 'optionalityMarker', value, config.optionalityMarker),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, publicFieldDefinition, 'type', value, config.type),
+      value: (value?: T.Expression | undefined) => _setField(config, publicFieldDefinition, 'value', value, config.value),
+      children: (...items: readonly [((T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt))]) => publicFieldDefinition({ ...config, children: items }),
+    },
+  });
 }
 
-export function readonlyType(config: ConfigOf<T.ReadonlyType>) {
-  const _node: Record<string,unknown> = {
+export function readonlyType(config: T.ReadonlyType.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.ReadonlyType as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, readonlyType as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, readonlyType, 'type', value, config.type),
+    },
+  });
 }
 
-export function regex(config: ConfigOf<T.Regex>) {
-  const _node: Record<string,unknown> = {
+export function regex(config: T.Regex.Config) {
+  const _pattern = config.pattern;
+  const _flags = config.flags;
+  return withMethods({
     $type: TSKindId.Regex as number,
     $source: 2 as const,
     $named: true as const,
-    _pattern: config.pattern,
-    _flags: config.flags,
-  };
-  Object.defineProperty(_node, 'pattern', { value: function() { return (this as Record<string,unknown>)['_pattern']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'flags', { value: function() { return (this as Record<string,unknown>)['_flags']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, regex as (c: Record<string,unknown>) => AnyNodeData, [['_pattern', 'pattern'], ['_flags', 'flags']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _pattern,
+    _flags,
+    pattern() { return _pattern; },
+    flags() { return _flags; },
+    $with: {
+      pattern: (value?: T.RegexPattern) => _setField(config, regex, 'pattern', value, config.pattern),
+      flags: (value?: T.RegexFlags | undefined) => _setField(config, regex, 'flags', value, config.flags),
+    },
+  });
 }
 
 export function regexFlags(text: string) {
   if (text.length === 0) throw new Error(`regex_flags: text must be non-empty`); if (!_leafRe_regexFlags.test(text)) throw new Error(`regex_flags: text does not match pattern: ${text}`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.RegexFlags as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function regexPattern(text: string) {
   if (text.length === 0) throw new Error(`regex_pattern: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.RegexPattern as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function requiredParameter(config: ConfigOf<T.RequiredParameter>) {
+export function requiredParameter(config: T.RequiredParameter.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _decorator = config.decorator;
+  const _readonly_marker = config.readonlyMarker ? "readonly" as const : undefined;
+  const _pattern = config.pattern;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.RequiredParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _decorator: config.decorator,
-    _readonly_marker: config.readonlyMarker ? "readonly" as const : undefined,
-    _pattern: config.pattern,
-    _type: config.type,
-    _value: config.value,
+    _decorator,
+    _readonly_marker,
+    _pattern,
+    _type,
+    _value,
     $children: children,
-  };
-  Object.defineProperty(_node, 'decorator', { value: function() { return (this as Record<string,unknown>)['_decorator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'readonlyMarker', { value: function() { return (this as Record<string,unknown>)['_readonly_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'pattern', { value: function() { return (this as Record<string,unknown>)['_pattern']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, requiredParameter as (c: Record<string,unknown>) => AnyNodeData, [['_decorator', 'decorator'], ['_readonly_marker', 'readonlyMarker'], ['_pattern', 'pattern'], ['_type', 'type'], ['_value', 'value'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    decorator() { return _decorator; },
+    readonlyMarker() { return _readonly_marker; },
+    pattern() { return _pattern; },
+    typeField() { return _type; },
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      decorator: (...values: T.Decorator[]) => _setFields(config, requiredParameter, 'decorator', values, config.decorator),
+      readonlyMarker: (value?: T.ReadonlyMarker | undefined) => _setField(config, requiredParameter, 'readonlyMarker', value, config.readonlyMarker),
+      pattern: (value?: T.Pattern | T.This) => _setField(config, requiredParameter, 'pattern', value, config.pattern),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, requiredParameter, 'type', value, config.type),
+      value: (value?: T.Expression | undefined) => _setField(config, requiredParameter, 'value', value, config.value),
+      children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => requiredParameter({ ...config, children: items }),
+    },
+  });
 }
 
 export function restPattern(child: T.LhsExpression) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.RestPattern as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.LhsExpression) => restPattern(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.LhsExpression) => restPattern(v) },
+  });
 }
 
-export function restType(config: ConfigOf<T.RestType>) {
-  const _node: Record<string,unknown> = {
+export function restType(config: T.RestType.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.RestType as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, restType as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, restType, 'type', value, config.type),
+    },
+  });
 }
 
-export function returnStatement(config: ConfigOf<T.ReturnStatement>) {
+export function returnStatement(config: T.ReturnStatement.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ReturnStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _semicolon: config.semicolon,
+    _semicolon,
     $children: children,
-  };
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, returnStatement as (c: Record<string,unknown>) => AnyNodeData, [['_semicolon', 'semicolon'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    semicolon() { return _semicolon; },
+    children() { return children; },
+    $with: {
+      semicolon: (value?: T.Semicolon) => _setField(config, returnStatement, 'semicolon', value, config.semicolon),
+      children: (...items: readonly [T.Expressions]) => returnStatement({ ...config, children: items }),
+    },
+  });
 }
 
-export function satisfiesExpression(config: ConfigOf<T.SatisfiesExpression>) {
-  const _node: Record<string,unknown> = {
+export function satisfiesExpression(config: T.SatisfiesExpression.Config) {
+  const _expression = config.expression;
+  const _type_annotation = config.typeAnnotation;
+  return withMethods({
     $type: TSKindId.SatisfiesExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-    _type_annotation: config.typeAnnotation,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeAnnotation', { value: function() { return (this as Record<string,unknown>)['_type_annotation']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, satisfiesExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression'], ['_type_annotation', 'typeAnnotation']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    _type_annotation,
+    expression() { return _expression; },
+    typeAnnotation() { return _type_annotation; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, satisfiesExpression, 'expression', value, config.expression),
+      typeAnnotation: (value?: T.Type) => _setField(config, satisfiesExpression, 'typeAnnotation', value, config.typeAnnotation),
+    },
+  });
 }
 
 export function sequenceExpression(...children: T.Expression[]) {
   _assertNonEmpty(children, 'sequence_expression.children');
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.SequenceExpression as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.Expression[]) => sequenceExpression(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.Expression[]) => sequenceExpression(...vs) },
+  });
 }
 
-export function spreadElement(config: ConfigOf<T.SpreadElement>) {
-  const _node: Record<string,unknown> = {
+export function spreadElement(config: T.SpreadElement.Config) {
+  const _expression = config.expression;
+  return withMethods({
     $type: TSKindId.SpreadElement as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config.expression,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, spreadElement as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value?: T.Expression) => _setField(config, spreadElement, 'expression', value, config.expression),
+    },
+  });
 }
 
-export function statementBlock(config: ConfigOf<T.StatementBlock>) {
-  const _node: Record<string,unknown> = {
+export function statementBlock(config: T.StatementBlock.Config) {
+  const _statements = config.statements;
+  const _automatic_semicolon = config.automaticSemicolon;
+  return withMethods({
     $type: TSKindId.StatementBlock as number,
     $source: 2 as const,
     $named: true as const,
-    _statements: config.statements,
-    _automatic_semicolon: config.automaticSemicolon,
-  };
-  Object.defineProperty(_node, 'statements', { value: function() { return (this as Record<string,unknown>)['_statements']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'automaticSemicolon', { value: function() { return (this as Record<string,unknown>)['_automatic_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, statementBlock as (c: Record<string,unknown>) => AnyNodeData, [['_statements', 'statements'], ['_automatic_semicolon', 'automaticSemicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _statements,
+    _automatic_semicolon,
+    statements() { return _statements; },
+    automaticSemicolon() { return _automatic_semicolon; },
+    $with: {
+      statements: (...values: T.Statement[]) => _setFields(config, statementBlock, 'statements', values, config.statements),
+      automaticSemicolon: (value?: T.AutomaticSemicolon | undefined) => _setField(config, statementBlock, 'automaticSemicolon', value, config.automaticSemicolon),
+    },
+  });
 }
 
 export function stringDouble(...children: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._StringDouble as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => stringDouble(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.UnescapedDoubleStringFragment | T.EscapeSequence)[]) => stringDouble(...vs) },
+  });
 }
 
 export function stringSingle(...children: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId._StringSingle as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => stringSingle(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.UnescapedSingleStringFragment | T.EscapeSequence)[]) => stringSingle(...vs) },
+  });
 }
 
 export function string(config: ConfigOf<T.StringUFormDouble>): ReturnType<typeof stringUFormDouble>;
@@ -3417,442 +3964,490 @@ export function string(config: ConfigOf<T.StringUFormDouble> | ConfigOf<T.String
 export function stringUFormDouble(config?: Omit<ConfigOf<T.StringUFormDouble>, '$variant'>) {
   const inner = _stringDouble(...(config?.children ?? []));
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.String as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'double' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 export function stringUFormSingle(config?: Omit<ConfigOf<T.StringUFormSingle>, '$variant'>) {
   const inner = _stringSingle(...(config?.children ?? []));
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.String as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'single' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: {}, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    $with: {},
+  });
 }
 
-export function subscriptExpression(config: ConfigOf<T.SubscriptExpression>) {
-  const _node: Record<string,unknown> = {
+export function subscriptExpression(config: T.SubscriptExpression.Config) {
+  const _object = config.object;
+  const _optional_chain = config.optionalChain ? "?." as const : undefined;
+  const _index = config.index;
+  return withMethods({
     $type: TSKindId.SubscriptExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _optional_chain: config.optionalChain ? "?." as const : undefined,
-    _index: config.index,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'optionalChain', { value: function() { return (this as Record<string,unknown>)['_optional_chain']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'index', { value: function() { return (this as Record<string,unknown>)['_index']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, subscriptExpression as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_optional_chain', 'optionalChain'], ['_index', 'index']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _optional_chain,
+    _index,
+    object() { return _object; },
+    optionalChain() { return _optional_chain; },
+    index() { return _index; },
+    $with: {
+      object: (value?: T.Expression | T.PrimaryExpression) => _setField(config, subscriptExpression, 'object', value, config.object),
+      optionalChain: (value?: T.OptionalChain | undefined) => _setField(config, subscriptExpression, 'optionalChain', value, config.optionalChain),
+      index: (value?: T.Expressions) => _setField(config, subscriptExpression, 'index', value, config.index),
+    },
+  });
 }
 
 export function super_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Super as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'super' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function switchBody(...children: (T.SwitchCase | T.SwitchDefault)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.SwitchBody as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => switchBody(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.SwitchCase | T.SwitchDefault)[]) => switchBody(...vs) },
+  });
 }
 
-export function switchCase(config: ConfigOf<T.SwitchCase>) {
-  const _node: Record<string,unknown> = {
+export function switchCase(config: T.SwitchCase.Config) {
+  const _value = config.value;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.SwitchCase as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, switchCase as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _value,
+    _body,
+    value() { return _value; },
+    body() { return _body; },
+    $with: {
+      value: (value?: T.Expressions) => _setField(config, switchCase, 'value', value, config.value),
+      body: (...values: T.Statement[]) => _setFields(config, switchCase, 'body', values, config.body),
+    },
+  });
 }
 
-export function switchDefault(config: ConfigOf<T.SwitchDefault>) {
-  const _node: Record<string,unknown> = {
+export function switchDefault(config: T.SwitchDefault.Config) {
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.SwitchDefault as number,
     $source: 2 as const,
     $named: true as const,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, switchDefault as (c: Record<string,unknown>) => AnyNodeData, [['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (...values: T.Statement[]) => _setFields(config, switchDefault, 'body', values, config.body),
+    },
+  });
 }
 
-export function switchStatement(config: ConfigOf<T.SwitchStatement>) {
-  const _node: Record<string,unknown> = {
+export function switchStatement(config: T.SwitchStatement.Config) {
+  const _value = config.value;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.SwitchStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _value: config.value,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, switchStatement as (c: Record<string,unknown>) => AnyNodeData, [['_value', 'value'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _value,
+    _body,
+    value() { return _value; },
+    body() { return _body; },
+    $with: {
+      value: (value?: T.ParenthesizedExpression) => _setField(config, switchStatement, 'value', value, config.value),
+      body: (value?: T.SwitchBody) => _setField(config, switchStatement, 'body', value, config.body),
+    },
+  });
 }
 
 export function templateLiteralType(...children: (T.TemplateChars | T.TemplateType)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TemplateLiteralType as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => templateLiteralType(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.TemplateChars | T.TemplateType)[]) => templateLiteralType(...vs) },
+  });
 }
 
 export function templateString(...children: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TemplateString as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => templateString(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: (T.TemplateChars | T.EscapeSequence | T.TemplateSubstitution)[]) => templateString(...vs) },
+  });
 }
 
 export function templateSubstitution(child: T.Expressions) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TemplateSubstitution as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: T.Expressions) => templateSubstitution(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: T.Expressions) => templateSubstitution(v) },
+  });
 }
 
 export function templateType(child: (T.PrimaryType | T.InferType)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TemplateType as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.PrimaryType | T.InferType)) => templateType(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.PrimaryType | T.InferType)) => templateType(v) },
+  });
 }
 
-export function ternaryExpression(config: ConfigOf<T.TernaryExpression>) {
-  const _node: Record<string,unknown> = {
+export function ternaryExpression(config: T.TernaryExpression.Config) {
+  const _condition = config.condition;
+  const _consequence = config.consequence;
+  const _alternative = config.alternative;
+  return withMethods({
     $type: TSKindId.TernaryExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _condition: config.condition,
-    _consequence: config.consequence,
-    _alternative: config.alternative,
-  };
-  Object.defineProperty(_node, 'condition', { value: function() { return (this as Record<string,unknown>)['_condition']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'consequence', { value: function() { return (this as Record<string,unknown>)['_consequence']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'alternative', { value: function() { return (this as Record<string,unknown>)['_alternative']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, ternaryExpression as (c: Record<string,unknown>) => AnyNodeData, [['_condition', 'condition'], ['_consequence', 'consequence'], ['_alternative', 'alternative']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _condition,
+    _consequence,
+    _alternative,
+    condition() { return _condition; },
+    consequence() { return _consequence; },
+    alternative() { return _alternative; },
+    $with: {
+      condition: (value?: T.Expression) => _setField(config, ternaryExpression, 'condition', value, config.condition),
+      consequence: (value?: T.Expression) => _setField(config, ternaryExpression, 'consequence', value, config.consequence),
+      alternative: (value?: T.Expression) => _setField(config, ternaryExpression, 'alternative', value, config.alternative),
+    },
+  });
 }
 
 export function this_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.This as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'this' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function throwStatement(config: ConfigOf<T.ThrowStatement>) {
+export function throwStatement(config: T.ThrowStatement.Config) {
   const children = config.children ?? [];
-  const _node: Record<string,unknown> = {
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.ThrowStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _semicolon: config.semicolon,
+    _semicolon,
     $children: children,
-  };
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, throwStatement as (c: Record<string,unknown>) => AnyNodeData, [['_semicolon', 'semicolon'], ['$children', 'children']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    semicolon() { return _semicolon; },
+    children() { return children; },
+    $with: {
+      semicolon: (value?: T.Semicolon) => _setField(config, throwStatement, 'semicolon', value, config.semicolon),
+      children: (...items: readonly [T.Expressions]) => throwStatement({ ...config, children: items }),
+    },
+  });
 }
 
 export function true_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.True as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'true' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function tryStatement(config: ConfigOf<T.TryStatement>) {
-  const _node: Record<string,unknown> = {
+export function tryStatement(config: T.TryStatement.Config) {
+  const _body = config.body;
+  const _handler = config.handler;
+  const _finalizer = config.finalizer;
+  return withMethods({
     $type: TSKindId.TryStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _body: config.body,
-    _handler: config.handler,
-    _finalizer: config.finalizer,
-  };
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'handler', { value: function() { return (this as Record<string,unknown>)['_handler']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'finalizer', { value: function() { return (this as Record<string,unknown>)['_finalizer']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, tryStatement as (c: Record<string,unknown>) => AnyNodeData, [['_body', 'body'], ['_handler', 'handler'], ['_finalizer', 'finalizer']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _body,
+    _handler,
+    _finalizer,
+    body() { return _body; },
+    handler() { return _handler; },
+    finalizer() { return _finalizer; },
+    $with: {
+      body: (value?: T.StatementBlock) => _setField(config, tryStatement, 'body', value, config.body),
+      handler: (value?: T.CatchClause | undefined) => _setField(config, tryStatement, 'handler', value, config.handler),
+      finalizer: (value?: T.FinallyClause | undefined) => _setField(config, tryStatement, 'finalizer', value, config.finalizer),
+    },
+  });
 }
 
-export function tupleParameter(config: ConfigOf<T.TupleParameter>) {
-  const _node: Record<string,unknown> = {
+export function tupleParameter(config: T.TupleParameter.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.TupleParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, tupleParameter as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type,
+    name() { return _name; },
+    typeField() { return _type; },
+    $with: {
+      name: (value?: T.Identifier | T.RestPattern) => _setField(config, tupleParameter, 'name', value, config.name),
+      typeField: (value?: T.TypeAnnotation) => _setField(config, tupleParameter, 'type', value, config.type),
+    },
+  });
 }
 
 export function tupleType(...children: T.TupleTypeMember[]) {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TupleType as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.TupleTypeMember[]) => tupleType(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.TupleTypeMember[]) => tupleType(...vs) },
+  });
 }
 
-export function typeAliasDeclaration(config: ConfigOf<T.TypeAliasDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _value = config.value;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.TypeAliasDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type_parameters: config.typeParameters,
-    _value: config.value,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeParameters', { value: function() { return (this as Record<string,unknown>)['_type_parameters']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typeAliasDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type_parameters', 'typeParameters'], ['_value', 'value'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type_parameters,
+    _value,
+    _semicolon,
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    value() { return _value; },
+    semicolon() { return _semicolon; },
+    $with: {
+      name: (value?: T.TypeIdentifier) => _setField(config, typeAliasDeclaration, 'name', value, config.name),
+      typeParameters: (value?: T.TypeParameters | undefined) => _setField(config, typeAliasDeclaration, 'typeParameters', value, config.typeParameters),
+      value: (value?: T.Type) => _setField(config, typeAliasDeclaration, 'value', value, config.value),
+      semicolon: (value?: T.Semicolon) => _setField(config, typeAliasDeclaration, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function typeAnnotation(config: ConfigOf<T.TypeAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function typeAnnotation(config: T.TypeAnnotation.Config) {
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.TypeAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typeAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value?: T.Type) => _setField(config, typeAnnotation, 'type', value, config.type),
+    },
+  });
 }
 
 export function typeArguments(...children: T.Type[]) {
   _assertNonEmpty(children, 'type_arguments.children');
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TypeArguments as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.Type[]) => typeArguments(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.Type[]) => typeArguments(...vs) },
+  });
 }
 
-export function typeAssertion(config: ConfigOf<T.TypeAssertion>) {
-  const _node: Record<string,unknown> = {
+export function typeAssertion(config: T.TypeAssertion.Config) {
+  const _type_arguments = config.typeArguments;
+  const _expression = config.expression;
+  return withMethods({
     $type: TSKindId.TypeAssertion as number,
     $source: 2 as const,
     $named: true as const,
-    _type_arguments: config.typeArguments,
-    _expression: config.expression,
-  };
-  Object.defineProperty(_node, 'typeArguments', { value: function() { return (this as Record<string,unknown>)['_type_arguments']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typeAssertion as (c: Record<string,unknown>) => AnyNodeData, [['_type_arguments', 'typeArguments'], ['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_arguments,
+    _expression,
+    typeArguments() { return _type_arguments; },
+    expression() { return _expression; },
+    $with: {
+      typeArguments: (value?: T.TypeArguments) => _setField(config, typeAssertion, 'typeArguments', value, config.typeArguments),
+      expression: (value?: T.Expression) => _setField(config, typeAssertion, 'expression', value, config.expression),
+    },
+  });
 }
 
-export function typeParameter(config: ConfigOf<T.TypeParameter>) {
-  const _node: Record<string,unknown> = {
+export function typeParameter(config: T.TypeParameter.Config) {
+  const _const_marker = config.constMarker ? "const" as const : undefined;
+  const _name = config.name;
+  const _constraint = config.constraint;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.TypeParameter as number,
     $source: 2 as const,
     $named: true as const,
-    _const_marker: config.constMarker ? "const" as const : undefined,
-    _name: config.name,
-    _constraint: config.constraint,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'constMarker', { value: function() { return (this as Record<string,unknown>)['_const_marker']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'constraint', { value: function() { return (this as Record<string,unknown>)['_constraint']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typeParameter as (c: Record<string,unknown>) => AnyNodeData, [['_const_marker', 'constMarker'], ['_name', 'name'], ['_constraint', 'constraint'], ['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _const_marker,
+    _name,
+    _constraint,
+    _value,
+    constMarker() { return _const_marker; },
+    name() { return _name; },
+    constraint() { return _constraint; },
+    value() { return _value; },
+    $with: {
+      constMarker: (value?: T.ConstMarker | undefined) => _setField(config, typeParameter, 'constMarker', value, config.constMarker),
+      name: (value?: T.TypeIdentifier) => _setField(config, typeParameter, 'name', value, config.name),
+      constraint: (value?: T.Constraint | undefined) => _setField(config, typeParameter, 'constraint', value, config.constraint),
+      value: (value?: T.DefaultType | undefined) => _setField(config, typeParameter, 'value', value, config.value),
+    },
+  });
 }
 
 export function typeParameters(...children: T.TypeParameter[]) {
   _assertNonEmpty(children, 'type_parameters.children');
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TypeParameters as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $children: (...vs: T.TypeParameter[]) => typeParameters(...vs) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $children: (...vs: T.TypeParameter[]) => typeParameters(...vs) },
+  });
 }
 
-export function typePredicate(config: ConfigOf<T.TypePredicate>) {
-  const _node: Record<string,unknown> = {
+export function typePredicate(config: T.TypePredicate.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  return withMethods({
     $type: TSKindId.TypePredicate as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type: config.type,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typePredicate as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type', 'type']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type,
+    name() { return _name; },
+    typeField() { return _type; },
+    $with: {
+      name: (value?: T.PredefinedType | T.This) => _setField(config, typePredicate, 'name', value, config.name),
+      typeField: (value?: T.Type) => _setField(config, typePredicate, 'type', value, config.type),
+    },
+  });
 }
 
-export function typePredicateAnnotation(config: ConfigOf<T.TypePredicateAnnotation>) {
-  const _node: Record<string,unknown> = {
+export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
+  const _type_predicate = config.typePredicate;
+  return withMethods({
     $type: TSKindId.TypePredicateAnnotation as number,
     $source: 2 as const,
     $named: true as const,
-    _type_predicate: config.typePredicate,
-  };
-  Object.defineProperty(_node, 'typePredicate', { value: function() { return (this as Record<string,unknown>)['_type_predicate']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, typePredicateAnnotation as (c: Record<string,unknown>) => AnyNodeData, [['_type_predicate', 'typePredicate']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _type_predicate,
+    typePredicate() { return _type_predicate; },
+    $with: {
+      typePredicate: (value?: T.AssertsAnnotationAsserts | T.TypePredicate) => _setField(config, typePredicateAnnotation, 'typePredicate', value, config.typePredicate),
+    },
+  });
 }
 
 export function typeQuery(child: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) {
   const children = [child];
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TypeQuery as number,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-  };
-  Object.defineProperty(_node, '$with', { value: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => typeQuery(v) }, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    children() { return children; },
+    $with: { $child: (v: (T.TypeQuerySubscriptExpression | T.TypeQueryMemberExpression | T.TypeQueryCallExpression | T.TypeQueryInstantiationExpression | T.Identifier | T.This)) => typeQuery(v) },
+  });
 }
 
-export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
-  const _node: Record<string,unknown> = {
+export function unaryExpression(config: T.UnaryExpression.Config) {
+  const _operator = config.operator;
+  const _argument = config.argument;
+  return withMethods({
     $type: TSKindId.UnaryExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _operator: config.operator,
-    _argument: config.argument,
-  };
-  Object.defineProperty(_node, 'operator', { value: function() { return (this as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'argument', { value: function() { return (this as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, unaryExpression as (c: Record<string,unknown>) => AnyNodeData, [['_operator', 'operator'], ['_argument', 'argument']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _operator,
+    _argument,
+    operator() { return _operator; },
+    argument() { return _argument; },
+    $with: {
+      operator: (value?: T.UnaryExpressionOperator) => _setField(config, unaryExpression, 'operator', value, config.operator),
+      argument: (value?: T.Expression) => _setField(config, unaryExpression, 'argument', value, config.argument),
+    },
+  });
 }
 
 export function undefined_() {
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.Undefined as number,
     $source: 2 as const,
     $named: true as const,
     $text: 'undefined' as const,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function unescapedDoubleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_double_string_fragment: text must be non-empty`); if (!_leafRe_unescapedDoubleStringFragment.test(text)) throw new Error(`unescaped_double_string_fragment: text does not match pattern: ${text}`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.UnescapedDoubleStringFragment as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function unescapedSingleStringFragment(text: string) {
   if (text.length === 0) throw new Error(`unescaped_single_string_fragment: text must be non-empty`); if (!_leafRe_unescapedSingleStringFragment.test(text)) throw new Error(`unescaped_single_string_fragment: text does not match pattern: ${text}`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.UnescapedSingleStringFragment as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
-export function unionType(config: ConfigOf<T.UnionType>) {
-  const _node: Record<string,unknown> = {
+export function unionType(config: T.UnionType.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
     $type: TSKindId.UnionType as number,
     $source: 2 as const,
     $named: true as const,
-    _left: config.left,
-    _right: config.right,
-  };
-  Object.defineProperty(_node, 'left', { value: function() { return (this as Record<string,unknown>)['_left']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'right', { value: function() { return (this as Record<string,unknown>)['_right']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, unionType as (c: Record<string,unknown>) => AnyNodeData, [['_left', 'left'], ['_right', 'right']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value?: T.Type | undefined) => _setField(config, unionType, 'left', value, config.left),
+      right: (value?: T.Type) => _setField(config, unionType, 'right', value, config.right),
+    },
+  });
 }
 
 export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix>): ReturnType<typeof updateExpressionUFormPostfix>;
@@ -3867,203 +4462,206 @@ export function updateExpression(config: ConfigOf<T.UpdateExpressionUFormPostfix
 export function updateExpressionUFormPostfix(config: Omit<ConfigOf<T.UpdateExpressionUFormPostfix>, '$variant'>) {
   const inner = _updateExpressionPostfix(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.UpdateExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'postfix' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'argument', { value: function() { return (inner as unknown as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'operator', { value: function() { return (inner as unknown as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    argument: (value: unknown) => updateExpressionUFormPostfix({ operator: (inner as unknown as Record<string,unknown>)['_operator'], argument: value } as Parameters<typeof updateExpressionUFormPostfix>[0]),
-    operator: (value: unknown) => updateExpressionUFormPostfix({ argument: (inner as unknown as Record<string,unknown>)['_argument'], operator: value } as Parameters<typeof updateExpressionUFormPostfix>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    argument() { return inner.argument(); },
+    operator() { return inner.operator(); },
+    $with: {
+      argument: (value: unknown) => updateExpressionUFormPostfix({ operator: inner._operator, argument: value } as Parameters<typeof updateExpressionUFormPostfix>[0]),
+      operator: (value: unknown) => updateExpressionUFormPostfix({ argument: inner._argument, operator: value } as Parameters<typeof updateExpressionUFormPostfix>[0]),
+    },
+  });
 }
 export function updateExpressionUFormPrefix(config: Omit<ConfigOf<T.UpdateExpressionUFormPrefix>, '$variant'>) {
   const inner = _updateExpressionPrefix(config);
   const children = [inner] as const;
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.UpdateExpression as number,
     $source: 2 as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-  };
-  Object.defineProperty(_node, 'operator', { value: function() { return (inner as unknown as Record<string,unknown>)['_operator']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'argument', { value: function() { return (inner as unknown as Record<string,unknown>)['_argument']; }, enumerable: false, writable: false, configurable: false });
-  const _with = {
-    operator: (value: unknown) => updateExpressionUFormPrefix({ argument: (inner as unknown as Record<string,unknown>)['_argument'], operator: value } as Parameters<typeof updateExpressionUFormPrefix>[0]),
-    argument: (value: unknown) => updateExpressionUFormPrefix({ operator: (inner as unknown as Record<string,unknown>)['_operator'], argument: value } as Parameters<typeof updateExpressionUFormPrefix>[0]),
-  };
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    operator() { return inner.operator(); },
+    argument() { return inner.argument(); },
+    $with: {
+      operator: (value: unknown) => updateExpressionUFormPrefix({ argument: inner._argument, operator: value } as Parameters<typeof updateExpressionUFormPrefix>[0]),
+      argument: (value: unknown) => updateExpressionUFormPrefix({ operator: inner._operator, argument: value } as Parameters<typeof updateExpressionUFormPrefix>[0]),
+    },
+  });
 }
 
-export function variableDeclaration(config: ConfigOf<T.VariableDeclaration>) {
-  const _node: Record<string,unknown> = {
+export function variableDeclaration(config: T.VariableDeclaration.Config) {
+  const _declarators = config.declarators;
+  const _semicolon = config.semicolon;
+  return withMethods({
     $type: TSKindId.VariableDeclaration as number,
     $source: 2 as const,
     $named: true as const,
-    _declarators: config.declarators,
-    _semicolon: config.semicolon,
-  };
-  Object.defineProperty(_node, 'declarators', { value: function() { return (this as Record<string,unknown>)['_declarators']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'semicolon', { value: function() { return (this as Record<string,unknown>)['_semicolon']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, variableDeclaration as (c: Record<string,unknown>) => AnyNodeData, [['_declarators', 'declarators'], ['_semicolon', 'semicolon']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _declarators,
+    _semicolon,
+    declarators() { return _declarators; },
+    semicolon() { return _semicolon; },
+    $with: {
+      declarators: (...values: NonEmptyArray<T.VariableDeclarator>) => _setFields(config, variableDeclaration, 'declarators', values, config.declarators),
+      semicolon: (value?: T.Semicolon) => _setField(config, variableDeclaration, 'semicolon', value, config.semicolon),
+    },
+  });
 }
 
-export function variableDeclarator(config: ConfigOf<T.VariableDeclarator>) {
-  const _node: Record<string,unknown> = {
+export function variableDeclarator(config: T.VariableDeclarator.Config) {
+  const _name = config.name;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
     $type: TSKindId.VariableDeclarator as number,
     $source: 2 as const,
     $named: true as const,
-    _name: config.name,
-    _type: config.type,
-    _value: config.value,
-  };
-  Object.defineProperty(_node, 'name', { value: function() { return (this as Record<string,unknown>)['_name']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'typeField', { value: function() { return (this as Record<string,unknown>)['_type']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'value', { value: function() { return (this as Record<string,unknown>)['_value']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, variableDeclarator as (c: Record<string,unknown>) => AnyNodeData, [['_name', 'name'], ['_type', 'type'], ['_value', 'value']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _name,
+    _type,
+    _value,
+    name() { return _name; },
+    typeField() { return _type; },
+    value() { return _value; },
+    $with: {
+      name: (value?: T.Identifier | T.DestructuringPattern) => _setField(config, variableDeclarator, 'name', value, config.name),
+      typeField: (value?: T.TypeAnnotation | undefined) => _setField(config, variableDeclarator, 'type', value, config.type),
+      value: (value?: T.Expression | undefined) => _setField(config, variableDeclarator, 'value', value, config.value),
+    },
+  });
 }
 
-export function whileStatement(config: ConfigOf<T.WhileStatement>) {
-  const _node: Record<string,unknown> = {
+export function whileStatement(config: T.WhileStatement.Config) {
+  const _condition = config.condition;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.WhileStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _condition: config.condition,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'condition', { value: function() { return (this as Record<string,unknown>)['_condition']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, whileStatement as (c: Record<string,unknown>) => AnyNodeData, [['_condition', 'condition'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _condition,
+    _body,
+    condition() { return _condition; },
+    body() { return _body; },
+    $with: {
+      condition: (value?: T.ParenthesizedExpression) => _setField(config, whileStatement, 'condition', value, config.condition),
+      body: (value?: T.Statement) => _setField(config, whileStatement, 'body', value, config.body),
+    },
+  });
 }
 
-export function withStatement(config: ConfigOf<T.WithStatement>) {
-  const _node: Record<string,unknown> = {
+export function withStatement(config: T.WithStatement.Config) {
+  const _object = config.object;
+  const _body = config.body;
+  return withMethods({
     $type: TSKindId.WithStatement as number,
     $source: 2 as const,
     $named: true as const,
-    _object: config.object,
-    _body: config.body,
-  };
-  Object.defineProperty(_node, 'object', { value: function() { return (this as Record<string,unknown>)['_object']; }, enumerable: false, writable: false, configurable: false });
-  Object.defineProperty(_node, 'body', { value: function() { return (this as Record<string,unknown>)['_body']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace(config as Record<string,unknown>, withStatement as (c: Record<string,unknown>) => AnyNodeData, [['_object', 'object'], ['_body', 'body']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _object,
+    _body,
+    object() { return _object; },
+    body() { return _body; },
+    $with: {
+      object: (value?: T.ParenthesizedExpression) => _setField(config, withStatement, 'object', value, config.object),
+      body: (value?: T.Statement) => _setField(config, withStatement, 'body', value, config.body),
+    },
+  });
 }
 
-export function yieldExpression(config?: ConfigOf<T.YieldExpression>) {
-  const _node: Record<string,unknown> = {
+export function yieldExpression(config?: T.YieldExpression.Config) {
+  const _expression = config?.expression;
+  return withMethods({
     $type: TSKindId.YieldExpression as number,
     $source: 2 as const,
     $named: true as const,
-    _expression: config?.expression,
-  };
-  Object.defineProperty(_node, 'expression', { value: function() { return (this as Record<string,unknown>)['_expression']; }, enumerable: false, writable: false, configurable: false });
-  const _with = buildWithNamespace((config ?? {}) as Record<string,unknown>, yieldExpression as (c: Record<string,unknown>) => AnyNodeData, [['_expression', 'expression']] as const);
-  Object.defineProperty(_node, '$with', { value: _with, enumerable: false, writable: false, configurable: false });
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+    _expression,
+    expression() { return _expression; },
+    $with: {
+      expression: (value?: T.Expression | undefined) => _setField(config, yieldExpression, 'expression', value, config?.expression),
+    },
+  });
 }
 
 export function automaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_automatic_semicolon: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.AutomaticSemicolon as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function templateChars(text: string) {
   if (text.length === 0) throw new Error(`_template_chars: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TemplateChars as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function ternaryQmark(text: string) {
   if (text.length === 0) throw new Error(`_ternary_qmark: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.TernaryQmark as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function htmlComment(text: string) {
   if (text.length === 0) throw new Error(`html_comment: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.HtmlComment as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function oror(text: string) {
   if (text.length === 0) throw new Error(`||: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.PipePipe as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function jsxText(text: string) {
   if (text.length === 0) throw new Error(`jsx_text: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.JsxText as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function functionSignatureAutomaticSemicolon(text: string) {
   if (text.length === 0) throw new Error(`_function_signature_automatic_semicolon: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.FunctionSignatureAutomaticSemicolon as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export function errorRecovery(text: string) {
   if (text.length === 0) throw new Error(`__error_recovery: text must be non-empty`);
-  const _node: Record<string,unknown> = {
+  return withMethods({
     $type: TSKindId.ErrorRecovery as number,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  };
-  return freezeNodeData(withMethods(_node, { render, toEdit }));
+  });
 }
 
 export type FluentKindMap = {
