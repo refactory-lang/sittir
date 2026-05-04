@@ -1015,11 +1015,12 @@
     },
     {
       "kind": "_class_body_member",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBodyMember",
       "factoryName": "classBodyMember",
       "irKey": "classBodyMember",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "abstract_method_signature",
@@ -1144,11 +1145,12 @@
     },
     {
       "kind": "_class_body_method_sig",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBodyMethodSig",
       "factoryName": "classBodyMethodSig",
       "irKey": "classBodyMethodSig",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "method_signature",
@@ -1189,11 +1191,12 @@
     },
     {
       "kind": "_class_heritage_extends_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ClassHeritageExtendsClause",
       "factoryName": "_classHeritageExtendsClause",
       "irKey": "_classHeritageExtendsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "extends_clause",
@@ -1229,11 +1232,12 @@
     },
     {
       "kind": "_class_heritage_implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ClassHeritageImplementsClause",
       "factoryName": "_classHeritageImplementsClause",
       "irKey": "_classHeritageImplementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "implements_clause",
@@ -1442,11 +1446,12 @@
     },
     {
       "kind": "_export_statement_default_from_arm",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultFromArm",
       "factoryName": "exportStatementDefaultFromArm",
       "irKey": "exportStatementDefaultFromArm",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "export_statement_default_from_arm_star_from",
@@ -1634,11 +1639,12 @@
     },
     {
       "kind": "_export_statement_equals_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExportStatementEqualsExport",
       "factoryName": "_exportStatementEqualsExport",
       "irKey": "_exportStatementEqualsExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1674,11 +1680,12 @@
     },
     {
       "kind": "_export_statement_namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExportStatementNamespaceExport",
       "factoryName": "_exportStatementNamespaceExport",
       "irKey": "_exportStatementNamespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -2240,11 +2247,12 @@
     },
     {
       "kind": "_import_clause_default_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseDefaultImport",
       "factoryName": "_importClauseDefaultImport",
       "irKey": "_importClauseDefaultImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_identifier",
@@ -2286,11 +2294,12 @@
     },
     {
       "kind": "_import_clause_named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseNamedImports",
       "factoryName": "_importClauseNamedImports",
       "irKey": "_importClauseNamedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "named_imports",
@@ -2311,11 +2320,12 @@
     },
     {
       "kind": "_import_clause_namespace_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseNamespaceImport",
       "factoryName": "_importClauseNamespaceImport",
       "irKey": "_importClauseNamespaceImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "namespace_import",
@@ -2513,11 +2523,12 @@
     },
     {
       "kind": "_index_signature_mapped_type_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_IndexSignatureMappedTypeClause",
       "factoryName": "_indexSignatureMappedTypeClause",
       "irKey": "_indexSignatureMappedTypeClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "mapped_type_clause",
@@ -2763,11 +2774,12 @@
     },
     {
       "kind": "_jsx_string",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxString",
       "factoryName": "jsxString",
       "irKey": "jsxString",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "unescaped_double_jsx_string_fragment",
@@ -2941,11 +2953,12 @@
     },
     {
       "kind": "_lhs_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LhsExpression",
       "factoryName": "lhsExpression",
       "irKey": "lhs",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "member_expression",
@@ -3331,11 +3344,12 @@
     },
     {
       "kind": "_parenthesized_expression_sequence",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ParenthesizedExpressionSequence",
       "factoryName": "_parenthesizedExpressionSequence",
       "irKey": "_parenthesizedExpressionSequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "sequence_expression",
@@ -3579,11 +3593,12 @@
     },
     {
       "kind": "_public_field_definition_declare_first",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "PublicFieldDefinitionDeclareFirst",
       "factoryName": "publicFieldDefinitionDeclareFirst",
       "irKey": "publicFieldDefinitionDeclareFirst",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "accessibility_modifier",
@@ -3829,11 +3844,12 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_StringDouble",
       "factoryName": "_stringDouble",
       "irKey": "_stringDouble",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "unescaped_double_string_fragment",
@@ -3860,11 +3876,12 @@
     },
     {
       "kind": "_string_single",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_StringSingle",
       "factoryName": "_stringSingle",
       "irKey": "_stringSingle",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "unescaped_single_string_fragment",
@@ -3921,11 +3938,12 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_identifier",
@@ -5092,11 +5110,12 @@
     },
     {
       "kind": "arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5124,11 +5143,12 @@
     },
     {
       "kind": "array",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Array",
       "factoryName": "array",
       "irKey": "array",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5156,11 +5176,12 @@
     },
     {
       "kind": "array_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ArrayPattern",
       "factoryName": "arrayPattern",
       "irKey": "arrayPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -5608,11 +5629,12 @@
     },
     {
       "kind": "asserts",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Asserts",
       "factoryName": "asserts",
       "irKey": "asserts",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_predicate",
@@ -6581,11 +6603,12 @@
     },
     {
       "kind": "class_body",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "class_body_method",
@@ -6846,11 +6869,12 @@
     },
     {
       "kind": "class_heritage_extends_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassHeritageExtendsClause",
       "factoryName": "classHeritageExtendsClause",
       "irKey": "classHeritageExtendsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "extends_clause",
@@ -6886,11 +6910,12 @@
     },
     {
       "kind": "class_heritage_implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassHeritageImplementsClause",
       "factoryName": "classHeritageImplementsClause",
       "irKey": "classHeritageImplementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "implements_clause",
@@ -7498,11 +7523,12 @@
     },
     {
       "kind": "decorator",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Decorator",
       "factoryName": "decorator",
       "irKey": "decorator",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -7701,11 +7727,12 @@
     },
     {
       "kind": "decorator_parenthesized_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
       "irKey": "decoratorParenthesized",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -8133,11 +8160,12 @@
     },
     {
       "kind": "export_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportClause",
       "factoryName": "exportClause",
       "irKey": "exportClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "export_specifier",
@@ -8361,11 +8389,12 @@
     },
     {
       "kind": "export_statement_equals_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementEqualsExport",
       "factoryName": "exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -8401,11 +8430,12 @@
     },
     {
       "kind": "export_statement_namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementNamespaceExport",
       "factoryName": "exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -9159,11 +9189,12 @@
     },
     {
       "kind": "formal_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FormalParameters",
       "factoryName": "formalParameters",
       "irKey": "formalParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "formal_parameter",
@@ -10360,11 +10391,12 @@
     },
     {
       "kind": "implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImplementsClause",
       "factoryName": "implementsClause",
       "irKey": "implementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -10619,11 +10651,12 @@
     },
     {
       "kind": "import_clause_default_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseDefaultImport",
       "factoryName": "importClauseDefaultImport",
       "irKey": "importClauseDefaultImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_identifier",
@@ -10665,11 +10698,12 @@
     },
     {
       "kind": "import_clause_named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseNamedImports",
       "factoryName": "importClauseNamedImports",
       "irKey": "importClauseNamedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "named_imports",
@@ -10690,11 +10724,12 @@
     },
     {
       "kind": "import_clause_namespace_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseNamespaceImport",
       "factoryName": "importClauseNamespaceImport",
       "irKey": "importClauseNamespaceImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "namespace_import",
@@ -11264,11 +11299,12 @@
     },
     {
       "kind": "index_signature_mapped_type_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "IndexSignatureMappedTypeClause",
       "factoryName": "indexSignatureMappedTypeClause",
       "irKey": "indexSignatureMappedTypeClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "mapped_type_clause",
@@ -11701,11 +11737,12 @@
     },
     {
       "kind": "jsx_attribute",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxAttribute",
       "factoryName": "jsxAttribute",
       "irKey": "jsxAttribute2",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "jsx_attribute_name",
@@ -11848,11 +11885,12 @@
     },
     {
       "kind": "jsx_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxExpression",
       "factoryName": "jsxExpression",
       "irKey": "jsx",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -11894,11 +11932,12 @@
     },
     {
       "kind": "jsx_namespace_name",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxNamespaceName",
       "factoryName": "jsxNamespaceName",
       "irKey": "jsxNamespaceName",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "jsx_identifier",
@@ -12285,11 +12324,12 @@
     },
     {
       "kind": "literal_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LiteralType",
       "factoryName": "literalType",
       "irKey": "literalType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "number",
@@ -13243,11 +13283,12 @@
     },
     {
       "kind": "named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NamedImports",
       "factoryName": "namedImports",
       "irKey": "namedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_specifier",
@@ -13279,11 +13320,12 @@
     },
     {
       "kind": "namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NamespaceExport",
       "factoryName": "namespaceExport",
       "irKey": "namespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "module_export_name",
@@ -13615,11 +13657,12 @@
     },
     {
       "kind": "object",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Object",
       "factoryName": "object",
       "irKey": "object",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pair",
@@ -13749,11 +13792,12 @@
     },
     {
       "kind": "object_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ObjectPattern",
       "factoryName": "objectPattern",
       "irKey": "objectPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pair_pattern",
@@ -14491,11 +14535,12 @@
     },
     {
       "kind": "parenthesized_expression_sequence",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpressionSequence",
       "factoryName": "parenthesizedExpressionSequence",
       "irKey": "parenthesizedExpressionSequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "sequence_expression",
@@ -15323,11 +15368,12 @@
     },
     {
       "kind": "rest_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RestPattern",
       "factoryName": "restPattern",
       "irKey": "restPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lhs_expression",
@@ -15509,11 +15555,12 @@
     },
     {
       "kind": "sequence_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
       "irKey": "sequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -15733,11 +15780,12 @@
     },
     {
       "kind": "string_double",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringDouble",
       "factoryName": "stringDouble",
       "irKey": "stringDouble",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "unescaped_double_string_fragment",
@@ -15764,11 +15812,12 @@
     },
     {
       "kind": "string_single",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringSingle",
       "factoryName": "stringSingle",
       "irKey": "stringSingle",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "unescaped_single_string_fragment",
@@ -15903,11 +15952,12 @@
     },
     {
       "kind": "switch_body",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SwitchBody",
       "factoryName": "switchBody",
       "irKey": "switchBody",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "switch_case",
@@ -16082,11 +16132,12 @@
     },
     {
       "kind": "template_literal_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateLiteralType",
       "factoryName": "templateLiteralType",
       "irKey": "templateLiteralType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "template_chars",
@@ -16113,11 +16164,12 @@
     },
     {
       "kind": "template_string",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateString",
       "factoryName": "templateString",
       "irKey": "templateString",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "template_chars",
@@ -16150,11 +16202,12 @@
     },
     {
       "kind": "template_substitution",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateSubstitution",
       "factoryName": "templateSubstitution",
       "irKey": "templateSubstitution",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expressions",
@@ -16175,11 +16228,12 @@
     },
     {
       "kind": "template_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateType",
       "factoryName": "templateType",
       "irKey": "templateType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "primary_type",
@@ -16522,11 +16576,12 @@
     },
     {
       "kind": "tuple_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tuple_type_member",
@@ -16701,11 +16756,12 @@
     },
     {
       "kind": "type_arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -16887,11 +16943,12 @@
     },
     {
       "kind": "type_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_parameter",
@@ -17028,11 +17085,12 @@
     },
     {
       "kind": "type_query",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeQuery",
       "factoryName": "typeQuery",
       "irKey": "typeQuery",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_query_subscript_expression",

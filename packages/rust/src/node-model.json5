@@ -854,11 +854,12 @@
     },
     {
       "kind": "_delim_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeBrace",
       "factoryName": "_delimTokenTreeBrace",
       "irKey": "_delimTokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -879,11 +880,12 @@
     },
     {
       "kind": "_delim_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeBracket",
       "factoryName": "_delimTokenTreeBracket",
       "irKey": "_delimTokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -904,11 +906,12 @@
     },
     {
       "kind": "_delim_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeParen",
       "factoryName": "_delimTokenTreeParen",
       "irKey": "_delimTokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -1085,11 +1088,12 @@
     },
     {
       "kind": "_expression_statement_block_ending",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExpressionStatementBlockEnding",
       "factoryName": "_expressionStatementBlockEnding",
       "irKey": "_expressionStatementBlockEnding",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression_ending_with_block",
@@ -1110,11 +1114,12 @@
     },
     {
       "kind": "_expression_statement_with_semi",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExpressionStatementWithSemi",
       "factoryName": "_expressionStatementWithSemi",
       "irKey": "_expressionStatementWithSemi",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1135,11 +1140,12 @@
     },
     {
       "kind": "_field_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldIdentifier",
       "factoryName": "fieldIdentifier",
       "irKey": "fieldIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "field_identifier",
@@ -1299,11 +1305,12 @@
     },
     {
       "kind": "_function_type_fn_form",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FunctionTypeFnForm",
       "factoryName": "functionTypeFnForm",
       "irKey": "functionTypeFnForm",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "function_modifiers",
@@ -1560,11 +1567,12 @@
     },
     {
       "kind": "_let_chain",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LetChain",
       "factoryName": "letChain",
       "irKey": "letChain",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "let_chain",
@@ -1713,11 +1721,12 @@
     },
     {
       "kind": "_macro_definition_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionBrace",
       "factoryName": "_macroDefinitionBrace",
       "irKey": "_macroDefinitionBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1744,11 +1753,12 @@
     },
     {
       "kind": "_macro_definition_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionBracket",
       "factoryName": "_macroDefinitionBracket",
       "irKey": "_macroDefinitionBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1775,11 +1785,12 @@
     },
     {
       "kind": "_macro_definition_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionParen",
       "factoryName": "_macroDefinitionParen",
       "irKey": "_macroDefinitionParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1965,11 +1976,12 @@
     },
     {
       "kind": "_non_special_token",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NonSpecialToken",
       "factoryName": "nonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "literal",
@@ -2574,13 +2586,14 @@
     },
     {
       "kind": "_pointer_type_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_PointerTypeMut",
       "factoryName": "_pointerTypeMut",
       "irKey": "_pointerTypeMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "_pointerTypeMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -2976,13 +2989,14 @@
     },
     {
       "kind": "_reference_expression_raw_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReferenceExpressionRawMut",
       "factoryName": "referenceExpressionRawMut",
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "referenceExpressionRawMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -3003,11 +3017,12 @@
     },
     {
       "kind": "_reserved_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReservedIdentifier",
       "factoryName": "reservedIdentifier",
       "irKey": "reservedIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -3233,11 +3248,12 @@
     },
     {
       "kind": "_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeBrace",
       "factoryName": "_tokenTreeBrace",
       "irKey": "_tokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -3258,11 +3274,12 @@
     },
     {
       "kind": "_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeBracket",
       "factoryName": "_tokenTreeBracket",
       "irKey": "_tokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -3283,11 +3300,12 @@
     },
     {
       "kind": "_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeParen",
       "factoryName": "_tokenTreeParen",
       "irKey": "_tokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -3308,11 +3326,12 @@
     },
     {
       "kind": "_token_tree_pattern_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternBrace",
       "factoryName": "_tokenTreePatternBrace",
       "irKey": "_tokenTreePatternBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3333,11 +3352,12 @@
     },
     {
       "kind": "_token_tree_pattern_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternBracket",
       "factoryName": "_tokenTreePatternBracket",
       "irKey": "_tokenTreePatternBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3358,11 +3378,12 @@
     },
     {
       "kind": "_token_tree_pattern_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternParen",
       "factoryName": "_tokenTreePatternParen",
       "irKey": "_tokenTreePatternParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3432,11 +3453,12 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_identifier",
@@ -3502,13 +3524,14 @@
     },
     {
       "kind": "_visibility_modifier_crate",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_VisibilityModifierCrate",
       "factoryName": "_visibilityModifierCrate",
       "irKey": "_visibilityModifierCrate",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "_visibilityModifierCrate()",
+      "fields": [],
       "children": [
         {
           "name": "crate",
@@ -3761,11 +3784,12 @@
     },
     {
       "kind": "arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -4255,11 +4279,12 @@
     },
     {
       "kind": "await_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
       "irKey": "awaitExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -4280,11 +4305,12 @@
     },
     {
       "kind": "base_field_initializer",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "BaseFieldInitializer",
       "factoryName": "baseFieldInitializer",
       "irKey": "baseFieldInitializer",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -4606,11 +4632,12 @@
     },
     {
       "kind": "bracketed_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "BracketedType",
       "factoryName": "bracketedType",
       "irKey": "bracketedType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -5105,11 +5132,12 @@
     },
     {
       "kind": "closure_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClosureParameters",
       "factoryName": "closureParameters",
       "irKey": "closureParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -5137,11 +5165,12 @@
     },
     {
       "kind": "comment",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Comment",
       "factoryName": "comment",
       "irKey": "comment",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "line_comment",
@@ -5551,11 +5580,12 @@
     },
     {
       "kind": "declaration_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DeclarationList",
       "factoryName": "declarationList",
       "irKey": "declarationList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "declaration_statement",
@@ -5681,11 +5711,12 @@
     },
     {
       "kind": "delim_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeBrace",
       "factoryName": "delimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5706,11 +5737,12 @@
     },
     {
       "kind": "delim_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeBracket",
       "factoryName": "delimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5731,11 +5763,12 @@
     },
     {
       "kind": "delim_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeParen",
       "factoryName": "delimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5845,11 +5878,12 @@
     },
     {
       "kind": "else_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ElseClause",
       "factoryName": "elseClause",
       "irKey": "elseClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "block",
@@ -6132,11 +6166,12 @@
     },
     {
       "kind": "enum_variant_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "EnumVariantList",
       "factoryName": "enumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6249,11 +6284,12 @@
     },
     {
       "kind": "expression_statement_block_ending",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionStatementBlockEnding",
       "factoryName": "expressionStatementBlockEnding",
       "irKey": "expressionStatementBlockEnding",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression_ending_with_block",
@@ -6274,11 +6310,12 @@
     },
     {
       "kind": "expression_statement_with_semi",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionStatementWithSemi",
       "factoryName": "expressionStatementWithSemi",
       "irKey": "expressionStatementWithSemi",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -6526,11 +6563,12 @@
     },
     {
       "kind": "field_declaration_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldDeclarationList",
       "factoryName": "fieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6711,11 +6749,12 @@
     },
     {
       "kind": "field_initializer_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldInitializerList",
       "factoryName": "fieldInitializerList",
       "irKey": "fieldInitializerList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "shorthand_field_initializer",
@@ -7079,11 +7118,12 @@
     },
     {
       "kind": "for_lifetimes",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ForLifetimes",
       "factoryName": "forLifetimes",
       "irKey": "forLifetimes",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lifetime",
@@ -9644,11 +9684,12 @@
     },
     {
       "kind": "macro_definition_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBrace",
       "factoryName": "macroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -9675,11 +9716,12 @@
     },
     {
       "kind": "macro_definition_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBracket",
       "factoryName": "macroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -9706,11 +9748,12 @@
     },
     {
       "kind": "macro_definition_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionParen",
       "factoryName": "macroDefinitionParen",
       "irKey": "macroDefinitionParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -10070,11 +10113,12 @@
     },
     {
       "kind": "match_block",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "match_arm",
@@ -10775,11 +10819,12 @@
     },
     {
       "kind": "parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Parameters",
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -10839,11 +10884,12 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesized",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -10980,13 +11026,14 @@
     },
     {
       "kind": "pointer_type_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "PointerTypeMut",
       "factoryName": "pointerTypeMut",
       "irKey": "pointerTypeMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "pointerTypeMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -11482,11 +11529,12 @@
     },
     {
       "kind": "ref_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RefPattern",
       "factoryName": "refPattern",
       "irKey": "refPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -11716,11 +11764,12 @@
     },
     {
       "kind": "removed_trait_bound",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RemovedTraitBound",
       "factoryName": "removedTraitBound",
       "irKey": "removedTraitBound",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -11751,11 +11800,12 @@
     },
     {
       "kind": "return_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReturnExpression",
       "factoryName": "returnExpression",
       "irKey": "returnExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -12241,11 +12291,12 @@
     },
     {
       "kind": "slice_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SlicePattern",
       "factoryName": "slicePattern",
       "irKey": "slicePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -12475,11 +12526,12 @@
     },
     {
       "kind": "string_literal",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringLiteral",
       "factoryName": "stringLiteral",
       "irKey": "stringLiteral",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "escape_sequence",
@@ -13026,11 +13078,12 @@
     },
     {
       "kind": "token_repetition",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenRepetition",
       "factoryName": "tokenRepetition",
       "irKey": "tokenRepetition",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13051,11 +13104,12 @@
     },
     {
       "kind": "token_repetition_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenRepetitionPattern",
       "factoryName": "tokenRepetitionPattern",
       "irKey": "tokenRepetitionPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13171,11 +13225,12 @@
     },
     {
       "kind": "token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeBrace",
       "factoryName": "tokenTreeBrace",
       "irKey": "tokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13196,11 +13251,12 @@
     },
     {
       "kind": "token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeBracket",
       "factoryName": "tokenTreeBracket",
       "irKey": "tokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13221,11 +13277,12 @@
     },
     {
       "kind": "token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeParen",
       "factoryName": "tokenTreeParen",
       "irKey": "tokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13341,11 +13398,12 @@
     },
     {
       "kind": "token_tree_pattern_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternBrace",
       "factoryName": "tokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13366,11 +13424,12 @@
     },
     {
       "kind": "token_tree_pattern_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternBracket",
       "factoryName": "tokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13391,11 +13450,12 @@
     },
     {
       "kind": "token_tree_pattern_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternParen",
       "factoryName": "tokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13426,11 +13486,12 @@
     },
     {
       "kind": "trait_bounds",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TraitBounds",
       "factoryName": "traitBounds",
       "irKey": "traitBounds",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -13783,11 +13844,12 @@
     },
     {
       "kind": "tuple_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TuplePattern",
       "factoryName": "tuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -13882,11 +13944,12 @@
     },
     {
       "kind": "tuple_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -13918,11 +13981,12 @@
     },
     {
       "kind": "type_arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -14349,11 +14413,12 @@
     },
     {
       "kind": "type_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -14728,11 +14793,12 @@
     },
     {
       "kind": "use_bounds",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "UseBounds",
       "factoryName": "useBounds",
       "irKey": "useBounds",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lifetime",
@@ -14816,11 +14882,12 @@
     },
     {
       "kind": "use_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "UseList",
       "factoryName": "useList",
       "irKey": "useList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "use_clause",
@@ -15028,13 +15095,14 @@
     },
     {
       "kind": "visibility_modifier_crate",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "VisibilityModifierCrate",
       "factoryName": "visibilityModifierCrate",
       "irKey": "visibilityModifierCrate",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "visibilityModifierCrate()",
+      "fields": [],
       "children": [
         {
           "name": "crate",
@@ -15065,11 +15133,12 @@
     },
     {
       "kind": "where_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "WhereClause",
       "factoryName": "whereClause",
       "irKey": "whereClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "where_predicate",
@@ -15313,11 +15382,12 @@
     },
     {
       "kind": "yield_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
