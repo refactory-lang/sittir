@@ -1,5 +1,5 @@
 /**
- * compiler/assemble.ts — Phase 4: Assemble
+ * compiler/assemble.ts — Assemble phase.
  *
  * First time nodes appear. All metadata (required, multiple, contentTypes,
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
@@ -66,7 +66,7 @@ import { compileWordMatcher } from './common.ts';
 export function assemble(optimized: OptimizedGrammar): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	// Parents that went through Link's variant() push-down keep their
-	// original rule shape but should NOT T065-promote to polymorph —
+	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
 	const variantParents = new Set(
 		optimized.polymorphVariants?.map((v) => v.parent) ?? []
@@ -246,11 +246,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
  * @returns The array of `{ name, content }` form descriptors from the
  *   `PolymorphRule`, or synthesised entries when the rule is a raw `choice`
- *   (T065 fallback path).
+ *   (terminal fallback path).
  * @throws {Error} When the rule is neither a `polymorph` nor a `choice`.
  * @remarks
  *   `PolymorphRule` is Link/Optimize's output — normally already has forms in
- *   declaration order. Under T065 the classifier may tag a raw `choice` as
+ *   declaration order. The classifier may tag a raw `choice` as
  *   `polymorph` when promotion was held back (strict debug mode). In that case
  *   synthetic forms are created from the choice members with numerical names
  *   (`'form0'`, `'form1'`, …) rather than any variant label that might have
@@ -413,7 +413,7 @@ function buildVisibleVariantChildGroups(
  * @remarks
  *   Sources in priority order:
  *   1. `SupertypeRule.subtypes` — Link's pre-computed list.
- *   2. `choice` members — each `symbol` child's name (T065 fallback).
+ *   2. `choice` members — each `symbol` child's name (fallback).
  *   3. Empty list — for any other rule shape (best-effort).
  *
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
@@ -453,7 +453,7 @@ function resolveSupertypeSubtypes(
  *   the outer group wrapper; we want the inner content's simplified view to match
  *   what we're passing as `rule`. For the wrapper case the inner content's
  *   simplified view is computed on-the-fly. Non-group rules pass through as-is
- *   (the T065 fallback path — groups that didn't get the GroupRule wrapper).
+ *   (the fallback path — groups that didn't get the GroupRule wrapper).
  */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule,
@@ -492,7 +492,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 }
 
 // ---------------------------------------------------------------------------
-// markParameterlessKinds — fixpoint pass (ADR-0010 Task 1.5)
+// markParameterlessKinds — fixpoint pass
 // ---------------------------------------------------------------------------
 
 /**
@@ -592,11 +592,11 @@ function markNode(node: AssembledNode, stamp: string): void {
 /**
  * Fixpoint pass: propagate parameterless status from terminals up to compounds.
  *
- * Phase 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
+ * Step 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
  * factory already takes `()` and emits a fixed text. Their stamp expression
  * (as seen by parent factories) is the JSON literal of their text.
  *
- * Phase 2 (fixpoint): iteratively mark any compound whose every required
+ * Step 2 (fixpoint): iteratively mark any compound whose every required
  * slot auto-stamps. Converges in ≤ O(depth) passes — for real grammars
  * typically 2–3 passes. Safety cap at 20 iterations.
  *
@@ -605,12 +605,12 @@ function markNode(node: AssembledNode, stamp: string): void {
  * a parent factory emits to produce a value for a slot pointing at this kind.
  */
 function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
-	// Phase 1: single-literal terminals self-initialize `isParameterless`
+	// Step 1: single-literal terminals self-initialize `isParameterless`
 	// and `stampExpression` in their constructors — see
 	// `AssembledKeyword` and `AssembledToken` in node-map.ts. No work
 	// needed here.
 
-	// Phase 2: fixpoint over compounds.
+	// Step 2: fixpoint over compounds.
 	const MAX_ITERS = 20;
 	let changed = true;
 	let iters = 0;
@@ -887,7 +887,7 @@ function hydrateSlots(
 			// occurrence surfaces the (3) cases for follow-up; (1) and (2)
 			// are expected and harmless. Consumers that walk
 			// `slot.values[*]` already handle `isUnresolvedRef` defensively,
-			// so leaving these as `UnresolvedRef` matches pre-1d.xiv
+			// so leaving these as `UnresolvedRef` matches prior
 			// behavior.
 			if (externals.has(targetName)) continue;
 			if (!process.env.SITTIR_QUIET) {
@@ -1110,12 +1110,12 @@ function preclaimSupertypeIrKeys(
  *   a longer factoryName to fall back to on collision). Within each phase, hidden
  *   kinds sort after non-hidden so visible kinds claim the short key first.
  * @remarks
- *   Phase 1 — "short form is the full name". Any node whose short irKey equals its
+ *   Priority 1 — "short form is the full name". Any node whose short irKey equals its
  *   own factoryName gets first dibs (it has nothing to fall back to that wouldn't
  *   also collide). Examples: `expression`, `as_pattern` (→ `asPattern`), `module`
  *   (→ `module`). This forces suffix-stripped collisions (e.g. `expression_statement`
  *   → `expression`) to lose to the genuinely-short kind.
- *   Phase 2 — "short form is a strip of the full name". These have a distinct
+ *   Priority 2 — "short form is a strip of the full name". These have a distinct
  *   factoryName fallback (e.g. `expression_statement` → `expressionStatement`).
  */
 function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
@@ -1390,7 +1390,7 @@ export function classifyNode(
 			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
 
-	// T065 auto-polymorph promotion removed (spec 013 cleanup).
+	// Auto-polymorph promotion removed.
 	// Grammar authors declare polymorph shapes explicitly via
 	// `polymorphs: { parent: { 'path': 'name' } }` in overrides.ts.
 	// Kinds without an adoption classify as plain branches /
@@ -1401,7 +1401,7 @@ export function classifyNode(
 	if (isHiddenRepeatHelper(kind, rule)) return 'multi';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
-	return classifyT065TerminalFallback(kind, rule);
+	return classifyTerminalFallback(kind, rule);
 }
 
 /**
@@ -1424,7 +1424,7 @@ function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
  * Classify a rule as `branch` based on presence of fields or children,
  * or return `null` when neither applies.
  *
- * Phase 1d.vii (spec 022) collapsed the prior `'container'` model into
+ * The prior `'container'` model was collapsed into
  * `'branch'`: nodes that carry only unnamed children (no `field()` on
  * the rule) are still `AssembledBranch` instances, distinguishable at
  * the call site via `AssembledBranch.isContainerShape`. The single
@@ -1445,7 +1445,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
 }
 
 /**
- * Apply the T065 terminal fallback classification after all structural checks
+ * Apply the terminal fallback classification after all structural checks
  * have failed to assign a model type.
  *
  * @param kind - The rule kind name, used in the error message.
@@ -1457,7 +1457,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
  *   unclassifiable after this is a real pipeline error.
  */
-function classifyT065TerminalFallback(kind: string, rule: Rule): ModelType {
+function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
 	if (isAllTextShape(rule)) return 'leaf';
 	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string'))
 		return 'enum';

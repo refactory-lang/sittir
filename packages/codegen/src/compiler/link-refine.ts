@@ -13,7 +13,7 @@
  *   2. Every selection is either a valid branch index for that choice,
  *      or a string matching one of the choice's string branches.
  *
- * See ADR-0010 phase 2 for the full design.
+ * See refine() DSL primitive for the full design.
  */
 
 import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';

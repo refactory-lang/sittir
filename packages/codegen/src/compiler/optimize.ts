@@ -1,13 +1,13 @@
 /**
- * compiler/optimize.ts — Phase 3: Optimize
+ * compiler/optimize.ts — Optimize phase.
  *
  * Restructures seq/choice/optional/repeat for SIMPLIFICATION (fan-out,
  * factoring, prefix/suffix extraction, wrapper collapsing, dedupe,
  * single-use hidden-rule inlining). Does NOT change named content.
  * Non-lossy.
  *
- * Variant tagging and polymorph promotion live in Link (Phase 2) — those
- * are classification, not simplification. Pipeline order is fixed in
+ * Variant tagging and polymorph promotion live in Link — those are
+ * classification, not simplification. Pipeline order is fixed in
  * `optimize()` below: collapse → fan-out → factor → dedupe → inline →
  * re-collapse.
  */
@@ -44,18 +44,18 @@ function applyNormalizationPasses(
 ): Record<string, Rule> {
 	let rules: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rawRules)) {
-		rules[name] = collapseWrappers(rule); // T062
+		rules[name] = collapseWrappers(rule);
 	}
 	for (const name of Object.keys(rules)) {
-		rules[name] = fanOutSeqChoices(rules[name]!); // T060
+		rules[name] = fanOutSeqChoices(rules[name]!);
 	}
 	for (const name of Object.keys(rules)) {
-		rules[name] = factorChoiceBranches(rules[name]!); // T061
+		rules[name] = factorChoiceBranches(rules[name]!);
 	}
 	for (const name of Object.keys(rules)) {
-		rules[name] = dedupeSeqMembers(rules[name]!); // T064
+		rules[name] = dedupeSeqMembers(rules[name]!);
 	}
-	rules = inlineSingleUseHidden(rules); // T063
+	rules = inlineSingleUseHidden(rules);
 	for (const name of Object.keys(rules)) {
 		rules[name] = collapseWrappers(rules[name]!);
 	}
@@ -102,7 +102,7 @@ export function optimize(linked: LinkedGrammar): OptimizedGrammar {
 }
 
 // ---------------------------------------------------------------------------
-// T060 — fanOutSeqChoices
+// fanOutSeqChoices
 // ---------------------------------------------------------------------------
 
 /**
@@ -163,7 +163,7 @@ export function fanOutSeqChoices(rule: Rule): Rule {
 }
 
 // ---------------------------------------------------------------------------
-// T061 — factorChoiceBranches
+// factorChoiceBranches
 // ---------------------------------------------------------------------------
 
 /**
@@ -313,7 +313,7 @@ export function factorChoiceBranches(rule: Rule): Rule {
 }
 
 // ---------------------------------------------------------------------------
-// T064 — dedupeSeqMembers
+// dedupeSeqMembers
 // ---------------------------------------------------------------------------
 
 /**
@@ -355,7 +355,7 @@ export function dedupeSeqMembers(rule: Rule): Rule {
 }
 
 // ---------------------------------------------------------------------------
-// T063 — inlineSingleUseHidden
+// inlineSingleUseHidden
 // ---------------------------------------------------------------------------
 
 /**

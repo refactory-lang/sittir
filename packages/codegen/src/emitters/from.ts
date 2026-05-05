@@ -54,12 +54,12 @@ export interface EmitFromConfig {
 }
 
 // ---------------------------------------------------------------------------
-// T042i dedup helpers
+// Dedup helpers
 // ---------------------------------------------------------------------------
 
 /**
  * Builds a reverse-lookup map from a sorted subtype key to the named
- * supertype constant identifier for T042i dedup.
+ * supertype constant identifier for dedup.
  *
  * @remarks
  * Each unique resolver kind list gets a single module-scoped constant
@@ -94,7 +94,7 @@ function buildSupertypeByKey(nodeMap: NodeMap): Map<string, string> {
 
 /**
  * Creates a kind-list interner that deduplicates resolver kind arrays
- * into module-scoped constants for T042i.
+ * into module-scoped constants.
  *
  * @remarks
  * Looks up by sorted supertype signature first — gives readable names for
@@ -140,7 +140,7 @@ function buildKindInterner(
  * Emits the namespace import lines into the generated from.ts header.
  *
  * @remarks
- * Per spec 008 US3: factories are accessed via `F.<name>`; types via
+ * Factories are accessed via `F.<name>`; types via
  * `T.<Kind>.Config` / `.Loose` / `.Fluent`. Collapsing to a namespace
  * import eliminates the per-factory import wall (~3kB in rust) to a
  * single line.
@@ -202,7 +202,7 @@ function emitFromFieldInputType(lines: string[]): void {
  *
  * @remarks
  * The interner is passed down so every field resolver call registers its
- * kind list through the same dedup table, ensuring T042i constant sharing
+ * kind list through the same dedup table, ensuring constant sharing
  * is effective across all per-node blocks.
  *
  * @param nodeMap - The assembled node map.
@@ -274,7 +274,7 @@ function emitFromMapDeclaration(
 }
 
 /**
- * Emits the interned resolver kind-list constants (T042i dedup table) before
+ * Emits the interned resolver kind-list constants (dedup table) before
  * the per-node blocks, ensuring every `_KN` / `_super_X` identifier is
  * declared by the time it is referenced.
  *
@@ -288,7 +288,7 @@ function emitInternedKindTable(
 	kindTableLiterals: string[]
 ): void {
 	if (kindTableLiterals.length > 0 || namedEntries.size > 0) {
-		lines.push('// Interned resolver kind lists (T042i dedup)');
+		lines.push('// Interned resolver kind lists (dedup)');
 		for (const [name, literal] of namedEntries) {
 			lines.push(`const ${name}: readonly string[] = ${literal};`);
 		}
@@ -368,7 +368,7 @@ function renderFromForNode(
 	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
 	switch (node.modelType) {
 		case 'branch':
-			// Phase 1d.vii (spec 022): the former `AssembledContainer`
+			// The former `AssembledContainer`
 			// shape (no `field()` on the rule) is now an `AssembledBranch`
 			// with `isContainerShape === true`. Dispatch on that BEFORE
 			// the text-template short-circuit so the original behavior is
@@ -518,7 +518,7 @@ function _emitVariantFrom(
  * itself never includes the node arm — only nested branch-slot values do via
  * WidenValue — so the union is added explicitly at the public signature.
  *
- * Per spec 008 US1: `T.<Kind>.Loose` resolves via `NamespaceMap[K]['Loose']`
+ * `T.<Kind>.Loose` resolves via `NamespaceMap[K]['Loose']`
  * (same type as the pre-008 Loose alias). Return type stays
  * `ReturnType<typeof F.<factory>>` — `FluentNodeOf<T>` (what `.Fluent`
  * resolves to) and the factory's concrete return shape are structurally
@@ -553,7 +553,7 @@ function buildBranchSignatureParts(
  * Emits the identity quick-return guard line for a branch from() body.
  *
  * @remarks
- * Per spec 008 US3 / FR-022: wrapped (fluent) NodeData IS the target type,
+ * Wrapped (fluent) NodeData IS the target type,
  * so it is returned unchanged. Bare readNode output (without fluent methods)
  * is an unsupported input path — callers should use readTreeNode (which wraps
  * via per-kind dispatch) before handing to .from().
@@ -874,9 +874,9 @@ function emitRepeatedContainerFrom(
 	// generic shape on `AnyNodeData`); the same boundary cast funnels it
 	// into the factory's narrow children-element type.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
-	// Phase A: TSGrammar-only kinds (string $type) can't satisfy isNodeData()
-	// (which requires numeric $type). Skip the node-data pass-through guard
-	// entirely — the check would always be false at runtime anyway.
+	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+	// requires numeric $type). Skip the node-data pass-through guard entirely
+	// — the check would always be false at runtime anyway.
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
 	if (!hasNumericDiscriminant) {
 		return [
@@ -942,9 +942,9 @@ function emitSingularContainerFrom(
 	// each kind maps to. Runtime behaviour: required factories will throw
 	// on `undefined`, matching the unwrap path's "missing children" diagnostic.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
-	// Phase A: TSGrammar-only kinds (string $type) can't satisfy isNodeData()
-	// (which requires numeric $type). Skip the node-data pass-through guard
-	// entirely — the check would always be false at runtime anyway.
+	// TSGrammar-only kinds (string $type) can't satisfy isNodeData() (which
+	// requires numeric $type). Skip the node-data pass-through guard entirely
+	// — the check would always be false at runtime anyway.
 	const hasNumericDiscriminant = kindEntries?.some((e) => e.kind === kind) ?? false;
 	if (!hasNumericDiscriminant) {
 		return [
@@ -1084,7 +1084,7 @@ function emitPolymorphDispatcher(
  *
  * @remarks
  * Matches the form factory's parameter optionality: the factory declares
- * `config:` (required) when any field OR child slot is required. T063 inlining
+ * `config:` (required) when any field OR child slot is required. Inlining
  * can push a required child onto a form that previously had only optional
  * fields. Passing an optional `input?` where the factory wants a required arg
  * fails the type check.
@@ -1266,7 +1266,7 @@ function resolveFieldFromTypedInput(
 	void parentTypeName;
 	void isPolymorphForm;
 	/**
-	 * Per spec 008 US3 / FR-023: single-access camelCase read on the bag
+	 * Single-access camelCase read on the bag
 	 * branch. After the isNodeData identity quick-return at resolver entry,
 	 * the resolver body runs only for loose-bag input, which carries the
 	 * camelCase property directly. No cast — if the typed input union
@@ -1324,7 +1324,7 @@ function resolveChildrenFromTypedInput(
 	// Direct bag access — same pattern as field reads.
 	const optChain = inputOptional ? '?' : '';
 	const access = `${sourceVar}${optChain}.children`;
-	// ADR-0012: children slots never adopt the boolean-keyword /
+	// Children slots never adopt the boolean-keyword /
 	// bitflag surface — the Config key is `children`, not the keyword
 	// name. Skip the short-circuit here.
 	//
@@ -1352,7 +1352,7 @@ function resolveChildrenFromTypedInput(
  * A content entry whose kind is a supertype in the NodeMap expands to that
  * supertype's declared subtypes — the resolver works at the concrete kind
  * layer, so dispatching through a supertype literal would never match
- * anything. Expansion also lets T042i reach for the named `_super_<name>`
+ * anything. Expansion also lets the interner reach for the named `_super_<name>`
  * dedup entry since the interner keys on the full subtype set.
  *
  * Deduplication is applied after expansion: contentTypes may legitimately
@@ -1472,7 +1472,7 @@ function buildSingleKindFastPath(
 }
 
 /**
- * Emits a T042i interned-array resolver call, referring to module-scoped
+ * Emits an interned-array resolver call, referring to module-scoped
  * constants instead of repeating literal arrays at every call site.
  *
  * @remarks
@@ -1547,7 +1547,7 @@ function resolveFieldCall(
 	fieldMultiple: boolean,
 	nodeMap: NodeMap,
 	intern: KindInterner,
-	/** When true, ADR-0012 keyword-presence short-circuit applies.
+	/** When true, keyword-presence short-circuit applies.
 	 * Children slots (the merged-values pseudo shape) skip it because
 	 * the Config surface there is `children`, not the keyword name — a
 	 * boolean-keyword classifier match on a children slot is coincidental
@@ -1558,7 +1558,7 @@ function resolveFieldCall(
 	 * from the field shape (only possible when `field` is an `AssembledNonterminal`). */
 	elementTypeOverride?: string
 ): string {
-	// ADR-0012: short-circuit keyword-presence fields through dedicated
+	// Short-circuit keyword-presence fields through dedicated
 	// resolvers. Boolean / bitflag inputs must NOT get routed through the
 	// leaf-literal registry (a `true` on a boolean-keyword field is a
 	// presence marker, not a boolean_literal node).
@@ -1603,7 +1603,7 @@ function resolveFieldCall(
 }
 
 /**
- * Emit the resolver call string for a keyword-presence field (ADR-0012).
+ * Emit the resolver call string for a keyword-presence field.
  *
  * Returns `undefined` when the field isn't a keyword-presence pattern
  * (caller falls through to the default resolver).
@@ -1978,7 +1978,7 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
-	// ADR-0012 keyword-presence resolvers — pass-through. For scalar /
+	// Keyword-presence resolvers — pass-through. For scalar /
 	// repeat-of-one booleans the factory inlines
 	// `config.x ? '<literal>' : undefined` (no runtime helper); for
 	// bitflags the `_bf` helper stamps the NodeData container. The

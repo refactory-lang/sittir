@@ -57,7 +57,7 @@ import {
 export interface EmitFactoriesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/** Emit runtime leaf pattern validation — see T067. Default `false`. */
+	/** Emit runtime leaf pattern validation. Default `false`. */
 	strict?: boolean;
 	/**
 	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
@@ -83,7 +83,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const { nodeMap, strict = false, generatedIdTables, inlineKinds, synthesizedKinds } = config;
 
 	// Collect KindEnumEntry table for numeric $type emission when
-	// generatedIdTables is present (Phase A KindID migration). Undefined
+	// generatedIdTables is present for numeric $type emission. Undefined
 	// for legacy callers / unit tests — those fall back to string literals.
 	// Source from the catalog superset so factory bodies for catalog-only
 	// kinds (children-only, anon tokens) can resolve TSKindId.X members.
@@ -119,7 +119,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	lines.push(
 		`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`
 	);
-	// 1d.xiv shape A: factories import only from per-grammar utils.ts.
+	// Factories import only from per-grammar utils.ts.
 	// `withMethods<T>` adds the four `$`-prefixed methods at the factory
 	// boundary. Setters call the factory directly with a patched config —
 	// no `_setField` / `_setFields` indirection.
@@ -214,7 +214,7 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 }
 
 /**
- * ADR-0018 Phase 2: the old `_setField`, `_setFields`, `_branchMethods`, and
+ * The old `_setField`, `_setFields`, `_branchMethods`, and
  * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
  * `buildWithNamespace` runtime helpers from `@sittir/core`. Nothing to emit here.
  *
@@ -236,7 +236,7 @@ function emitFluentSetterHelpers(): string[] {
  *   spread type-checks without a cast.
  */
 /**
- * Emit the ADR-0012 keyword-presence runtime helpers.
+ * Emit the keyword-presence runtime helpers.
  *
  * - `_bf` — bitflag field. Accepts a number (const-enum OR) and emits
  *   the underlying NodeData container. (Only emitted when at least one
@@ -381,7 +381,7 @@ function buildLeafReConsts(
 	for (const [kind, node] of nodeMap.nodes) {
 		// Token modelType hidden kinds (e.g. `_range_pattern_left_bare` = '..') have
 		// no standalone factory — skip their regex consts. Non-token hidden kinds
-		// (groups, branches) get fragment factories (T046) and may carry patterns.
+		// (groups, branches) get fragment factories and may carry patterns.
 		if (kind.startsWith('_') && node.modelType === 'token') continue;
 		if (node.modelType !== 'leaf' || !node.pattern) continue;
 		const fn = node.rawFactoryName!;
@@ -432,7 +432,7 @@ function buildLeafReConsts(
  *   not user-facing kinds. The exception: hidden rules that appear as alias sources.
  *   `alias($._match_block, $.block)` means the body's canonical shape is
  *   `_match_block`; validators drilling into an aliased field need a factory that
- *   accepts the source kind so ADR-0006-symmetric dispatch works through the
+ *   accepts the source kind so alias-symmetric dispatch works through the
  *   `_fieldAliasMap`.
  */
 // Re-export the shared helper under the existing name used throughout
@@ -456,7 +456,7 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 /**
  * Produce the `$type` line for a factory return object literal.
  *
- * When `kindEntries` is present (Phase A KindID migration), emits the
+ * When `kindEntries` is present, emits the
  * numeric `TSKindId.X` discriminant. Without it (legacy callers / unit
  * tests), falls back to `'kind' as const` so the emitter is backward-
  * compatible.
@@ -514,7 +514,7 @@ function emitPerNodeFactories(
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
 	for (const [kind, node] of nodeMap.nodes) {
-		// T046: hidden non-token kinds (groups, branches) emit fragment factories
+		// Hidden non-token kinds (groups, branches) emit fragment factories
 		// even when not `userFacing` — they are composition inputs, not standalone
 		// consumer-facing kinds. Token modelType hidden kinds have no factory surface
 		// (they're bare anon tokens) and stay excluded.
@@ -607,7 +607,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		// T046: include hidden non-token groups even when not userFacing — same
+		// Include hidden non-token groups even when not userFacing — same
 		// predicate as emitPerNodeFactories so the map and emission stay in sync.
 		const isHiddenGroup =
 			kind.startsWith('_') &&
@@ -631,7 +631,7 @@ function buildFactoryMapEntries(
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent =
 			node.modelType === 'branch' || node.modelType === 'polymorph';
-		// Container-shape branches (Phase 1d.vii: former `AssembledContainer`)
+		// Container-shape branches (former `AssembledContainer`)
 		// — no `field()` declarations on the rule; their factory takes a
 		// `children` rest-param and the validator dispatches on
 		// `shape === 'children'`. See `AssembledBranch.isContainerShape`.
@@ -734,7 +734,7 @@ function renderFactoryForNode(
 	}
 	switch (node.modelType) {
 		case 'branch':
-			// Phase 1d.vii (spec 022): the former `AssembledContainer`
+			// The former `AssembledContainer`
 			// shape (no `field()` on the rule) is now an `AssembledBranch`
 			// with `isContainerShape === true`. Route to
 			// `emitContainerFactory` so the rest-param signature and
@@ -944,7 +944,7 @@ function autoStampExpression(
 
 /**
  * Build the RHS expression for a factory field assignment when the
- * field classifies as keyword-presence (ADR-0012).
+ * field classifies as keyword-presence.
  *
  * Scalar boolean:   `config?.propertyName ? '<text>' : undefined`
  * Array  boolean:   `config?.propertyName ? ['<text>'] : undefined`
@@ -1057,7 +1057,7 @@ function slotStorageExpr(
 /**
  * `$with.<name>` setter parameter signature for a single-valued field.
  * Required fields take `(value: T)`; optional fields take `(value?: T)`.
- * Pre-1d.xiv emitter unconditionally used `(value?: T)` — the new shape
+ * Previously the emitter unconditionally used `(value?: T)` — the new shape
  * matches the field's actual required/optional contract so callers can't
  * accidentally clear a required field by calling `$with.foo()` with no arg.
  */
@@ -1165,7 +1165,7 @@ function emitFieldCarryingFactory(
 		slotKindNames(c).some((t) => {
 			const n = nodeMap.nodes.get(t);
 			if (!n) return false;
-			// T046: hidden non-token groups have fragment factories and are constructible —
+			// Hidden non-token groups have fragment factories and are constructible —
 			// include them. Token modelType hidden kinds (bare anon tokens) stay excluded.
 			const isHiddenGroup =
 				t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
@@ -1206,7 +1206,7 @@ function emitFieldCarryingFactory(
 	const childrenUserConfigurable =
 		hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
 
-	// Build children local variable (unchanged from pre-ADR-0018).
+	// Build children local variable.
 	if (hasChildren) {
 		// Stamp expressions use child-context (NodeData wrapper) so
 		// the resulting `$children` array matches the parent's
@@ -1233,7 +1233,7 @@ function emitFieldCarryingFactory(
 			? resolvePolymorphFormVariantName(node)
 			: undefined;
 
-	// 1d.xiv: shape A — closure-based locals + property shorthand storage +
+	// Shape A — closure-based locals + property shorthand storage +
 	// pure-getter methods reading the local consts + `$with` block with
 	// setter wiring. No `Object.defineProperty`. No `..._sharedMethods`
 	// spread. No freeze.
@@ -1283,7 +1283,7 @@ function emitFieldCarryingFactory(
 
 	// $with: setters call the factory directly with a patched config —
 	// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
-	// `_setFields` indirection (those were OLD pre-ADR-0018 helpers serving
+	// `_setFields` indirection (those were old helpers serving
 	// the combined getter/setter method; under shape A getters are pure and
 	// the setter is purely a rebuild). Auto-stamp fields are skipped — no
 	// setter exposed because the value is fixed.
@@ -1369,7 +1369,7 @@ function renameUnusedConfigParam(lines: string[]): string {
 }
 
 // ---------------------------------------------------------------------------
-// refine() per-form factory emission (ADR-0010 phase 2)
+// refine() per-form factory emission
 // ---------------------------------------------------------------------------
 
 /**
@@ -1426,7 +1426,7 @@ function emitRefineFormFactory(
 	if (hasChildren) {
 		lines.push(`  const children = config${opt}.children ?? [];`);
 	}
-	// 1d.xiv shape A: storage hoist + property shorthand + pure getters + $with.
+	// Shape A: storage hoist + property shorthand + pure getters + $with.
 	for (const f of fields) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
@@ -1525,7 +1525,7 @@ function resolveRefineFormConfigOptional(
  * @param children - The assembled child descriptors for the node.
  * @returns `true` when at least one child entry is repeated.
  * @remarks
- *   A single `children[0]` check misses the repeated signal when inlining (T063)
+ *   A single `children[0]` check misses the repeated signal when inlining
  *   flattens a choice of hidden helpers into a mixed list of single + repeated entries.
  */
 function resolveChildrenMultiple(children: readonly AssembledNonterminal[]): boolean {
@@ -1588,7 +1588,7 @@ function resolveConfigType(
 	// first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
 	// dropping the narrowed-out fields. The parent factory still references
 	// those fields directly, so route through `ConfigOf<T.<TypeName>>` here
-	// to get the full Config — same shape as the spec 008 generic indirection
+	// to get the full Config — same shape as the generic indirection
 	// for polymorph dispatchers, just minus the `$variant` Omit.
 	// Hygiene rule 5 — prefer concrete per-kind namespace alias over the
 	// `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
@@ -1667,8 +1667,8 @@ function emitContainerFactory(
 				: `  const children = child != null ? [child] : [];`
 		);
 	}
-	// 1d.xiv shape A: inline literal wrapped by withMethods<T>. No
-	// defineProperty, no spread, no Record cast.
+	// Inline literal wrapped by withMethods<T>. No defineProperty,
+	// no spread, no Record cast.
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
@@ -1698,7 +1698,7 @@ function emitContainerFactory(
  * @returns `true` when any child entry is repeated.
  * @remarks
  *   Containers are "multiple-shaped" when ANY child entry is repeated. Inlining
- *   (T063) can flatten a choice of hidden helpers into a mixed list of single +
+ *   Inlining can flatten a choice of hidden helpers into a mixed list of single +
  *   repeated entries, so checking only `children[0]` misses the repeated signal.
  */
 function resolveContainerMultiple(node: ContainerNode): boolean {
@@ -1747,7 +1747,7 @@ function emitPolymorphFactory(
 
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
-		// 1d.xiv shape A: inline literal + withMethods<T> wrap.
+		// Inline literal + withMethods<T> wrap.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 		return [
 			`export function ${fn}(_config?: unknown) {`,
@@ -1897,7 +1897,7 @@ function emitHoistedPolymorphFormFactory(
 	//     inner kind is a hidden field-carrying group without
 	//     retrofitting factory emission onto every hidden group.
 	//     Example: python's `_assignment_eq`.
-	// Phase 1d.vii (spec 022): the former `AssembledContainer` shape is
+	// The former `AssembledContainer` shape is
 	// now an `AssembledBranch`. Distinguish via the structural
 	// `isContainerShape` getter (no `field()` on the rule). The
 	// `hoist.innerFields.length === 0` clause keeps the prior behavior
@@ -1949,7 +1949,7 @@ function emitHoistedPolymorphFormFactory(
 		// kind. Templates, interfaces, factories all key on the same
 		// hidden name; wrap canonicalizes parser output (visible →
 		// hidden) so consumers always see the canonical hidden form.
-		// 1d.xiv shape A: inner node — local consts + property shorthand +
+		// Inner node — local consts + property shorthand +
 		// pure getters + withMethods<T> wrap. No freeze on the inner —
 		// the outer does the rebuild.
 		for (const f of hoist.innerFields) {
@@ -1980,7 +1980,7 @@ function emitHoistedPolymorphFormFactory(
 	}
 	lines.push(`  const children = [inner] as const;`);
 
-	// 1d.xiv shape A: form-level node — form-field locals + property
+	// Form-level node — form-field locals + property
 	// shorthand + form-field getters from local consts. Inner-field getters
 	// close over the `inner` reference and read its storage via property
 	// access (not readRawField; the closure has the typed reference).
@@ -2213,12 +2213,12 @@ function emitTextFactory(
 	nodeMap?: NodeMap
 ): string {
 	const fn = node.rawFactoryName!;
-	// Phase B-inverse: emit numeric TSKindId discriminant for leaf / keyword /
+	// Emit numeric TSKindId discriminant for leaf / keyword /
 	// enum nodes, matching the AnyNodeData.$type: number contract. Falls back to
 	// string literal for kinds not yet in kindEntries (TSGrammar-only or no
 	// parser.c available).
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
-	// 1d.xiv shape A: leaf/keyword/enum factories — inline literal +
+	// Leaf/keyword/enum factories — inline literal +
 	// `withMethods<T>` wrap. No `_<name>` storage (text nodes carry only
 	// `$text`); no `$with` (no updatable slots).
 	const body: string[] = [`export function ${fn}${sig} {`];
@@ -2314,7 +2314,7 @@ function stripUselessEscapes(pattern: string): string {
 }
 
 /**
- * ADR-0018 Phase 2: `$render`, `$toEdit`, `$replace`, `$trivia` are now
+ * `$render`, `$toEdit`, `$replace`, `$trivia` are now
  * attached by `withMethods(node, { render, toEdit })` from `@sittir/core`
  * after the mutable node object is constructed and `$with` is attached.
  * `factorySuffix` no longer emits into the return-object literal; callers

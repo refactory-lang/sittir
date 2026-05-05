@@ -53,11 +53,11 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push('');
 
-	// 1d.xiii: emit grammar-agnostic NodeData helpers directly into this
-	// per-grammar utils.ts. Generated factories.ts / wrap.ts only ever
-	// import from `./utils.js`. DRY at the codegen-source layer (one
-	// emitter, one set of bodies); per-grammar duplication of generated
-	// text is intentional locality.
+	// Emit grammar-agnostic NodeData helpers directly into this per-grammar
+	// utils.ts. Generated factories.ts / wrap.ts only ever import from
+	// `./utils.js`. DRY at the codegen-source layer (one emitter, one set
+	// of bodies); per-grammar duplication of generated text is intentional
+	// locality.
 	lines.push('/**');
 	lines.push(' * Freeze a NodeData object and all its array-valued `_*` storage slots.');
 	lines.push(' *');
@@ -99,7 +99,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push('}');
 	lines.push('');
 
-	// Codegen-hygiene helpers (post-1d.xiii): consolidate the
+	// Codegen-hygiene helpers: consolidate the
 	// `Object.defineProperty` boilerplate that previously appeared
 	// thousands of times across generated factories.ts. Generated factories
 	// now use inline-object-literal method shorthand + spread `_sharedMethods`.
@@ -156,7 +156,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		' * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished'
 	);
 	lines.push(' * from loose config bags by the presence of any of:');
-	lines.push(' *   - `_*` storage keys (branch nodes with named fields, ADR-0018 de-hoisted),');
+	lines.push(' *   - `_*` storage keys (branch nodes with named fields, de-hoisted),');
 	lines.push(
 		' *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),'
 	);
@@ -177,8 +177,8 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push('  const o = v as Record<string, unknown>;');
 	lines.push("  if (typeof o['$type'] !== 'number') return false;");
-	// ADR-0018 Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
-	// surface). Any top-level `_*` key indicates a branch node with named fields.
+	// Factory/wrap nodes use `_<name>` storage keys (de-hoisted surface).
+	// Any top-level `_*` key indicates a branch node with named fields.
 	lines.push(
 		"  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));"
 	);
@@ -290,7 +290,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('    return { $type: value, $text: value };');
 	lines.push('  }');
 	lines.push('  if (!isRecord(value)) return value;');
-	lines.push('  // Phase D: $type must be numeric (TSKindId). However, factory-constructed');
+	lines.push('  // $type must be numeric (TSKindId). However, factory-constructed');
 	lines.push('  // children can carry a string kind name when kindIdFromName was not invoked');
 	lines.push('  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution');
 	lines.push('  // via kindIdFromName so the full projection pipeline runs.');
@@ -308,7 +308,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  if (numericType === undefined) return value;');
 	lines.push('');
 	lines.push('  // Resolve the wire kind name (including alias rewriting) for internal');
-	lines.push('  // routing. $type is always numeric in Phase D.');
+	lines.push('  // routing. $type is always numeric after projection.');
 	lines.push('  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
@@ -321,8 +321,8 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  // Temporarily store string kind for routing; converted to numeric below.');
 	lines.push('  projected.$type = resolvedKind;');
 	lines.push('');
-	// ADR-0018 Phase 2: factory/wrap nodes store fields under `_<name>` keys
-	// (de-hoisted surface). Iterate all enumerable keys; strip the leading `_`
+	// Factory/wrap nodes store fields under `_<name>` keys (de-hoisted surface).
+	// Iterate all enumerable keys; strip the leading `_`
 	// when projecting to native transport so the transport receives the plain
 	// snake_case field name (e.g. `_name` → `name` field in Rust struct).
 	lines.push('  for (const [key, child] of Object.entries(value)) {');

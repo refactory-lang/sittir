@@ -47,7 +47,7 @@ export interface GeneratedFiles {
 	types: string;
 	/** engine.ts — thin wrapper around createGrammarEngine from @sittir/core/engine */
 	engine: string;
-	/** Per-rule `.jinja` files (feature 011). `EmittedTemplates.bodies`
+	/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
 	 *  is keyed by rule kind with the full file contents (incl.
 	 *  `@generated` header). Separator / flank metadata lives INLINE
 	 *  in each body via `| join("<sep>")` and
@@ -68,9 +68,9 @@ export interface GeneratedFiles {
 	typeTests: string;
 	config: string;
 	nodeModel: string;
-	/** overrides.suggested.ts — human-readable derivation log (T042f). */
+	/** overrides.suggested.ts — human-readable derivation log. */
 	suggested: string;
-	/** is.ts — per-grammar type guards (is/assert/isTree/isNode, spec 008 US2) */
+	/** is.ts — per-grammar type guards (is/assert/isTree/isNode). */
 	is: string;
 	/** kind_ids.rs — per-grammar numeric KindId constants for the Rust render crate */
 	kindIds: string;

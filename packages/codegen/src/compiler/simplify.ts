@@ -112,7 +112,7 @@ export function simplifyRule(
 			if (members.length === 1) return members[0]!;
 			// Merge structurally-equivalent choice branches so same-
 			// named fields across branches fuse into a single field
-			// with union content (spec 013). Closes `BinaryExpression.
+			// with union content. Closes `BinaryExpression.
 			// operator: AutoStamp<"&&">`-style bugs where derivation
 			// walked an uncanonical tree and silently dropped
 			// duplicate-named field occurrences across choice branches.
@@ -192,7 +192,7 @@ export function simplifyRule(
 /**
  * Simplify every rule in an OptimizedGrammar's rules map.
  *
- * Pipeline per rule (spec 013):
+ * Pipeline per rule:
  *   1. `simplifyRule` — strip anon delimiters, collapse single-member
  *      wrappers (legacy behavior).
  *   2. `canonicalize` — merge structurally-equivalent choice branches
@@ -269,7 +269,7 @@ function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Canonicalization (spec 013) — merges structurally-equivalent choice
+// Canonicalization — merges structurally-equivalent choice
 // branches so same-named fields fuse into field(name, choice(v1, v2, ...)).
 // Bottom-up, idempotent. See compiler-phase-glossary.md for details.
 // ---------------------------------------------------------------------------

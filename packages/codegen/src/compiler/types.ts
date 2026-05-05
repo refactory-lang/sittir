@@ -148,7 +148,7 @@ export interface GeneratedMetadataCatalog {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 1 — Evaluate output
+// Evaluate output
 // ---------------------------------------------------------------------------
 
 export interface RawGrammar {
@@ -184,7 +184,7 @@ export interface RawGrammar {
 	 * override layer — authoring-only metadata that codegen reads to
 	 * emit per-form namespace-keyed factories with narrowed Configs.
 	 * Structurally transparent: the rule tree is unchanged by refine().
-	 * See ADR-0010 phase 2 for the full design.
+	 * See refine() DSL primitive for the full design.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
@@ -230,7 +230,7 @@ export interface SuggestedOverride {
  * DerivationLog — sidecar record of everything Link inferred / promoted.
  *
  * Populated unconditionally by Link's derivation passes. The emitter
- * for `overrides.suggested.ts` (T042f) reads this to surface every
+ * for `overrides.suggested.ts` reads this to surface every
  * finding as a reviewable suggestion, regardless of whether Link
  * actually applied the mutation to the rule tree.
  *
@@ -306,7 +306,7 @@ export interface PromotedRuleEntry {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 2 — Link output
+// Link output
 // ---------------------------------------------------------------------------
 
 export interface LinkedGrammar {
@@ -350,7 +350,7 @@ export interface IncludeFilter {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 3 — Optimize output
+// Optimize output
 // ---------------------------------------------------------------------------
 
 export interface OptimizedGrammar {
@@ -375,11 +375,11 @@ export interface OptimizedGrammar {
 }
 
 // ---------------------------------------------------------------------------
-// Phase 4 — Assemble output
+// Assemble output
 // ---------------------------------------------------------------------------
 
-// `KindProjection` and `ProjectionContext` interfaces removed in spec 022
-// Phase 1d.i (parallel-cache anti-pattern per Constitution XI). The kind
+// `KindProjection` and `ProjectionContext` interfaces removed (parallel-cache
+// anti-pattern per DRY — one source, one derivation). The kind
 // set previously stored on `AssembledField.projection.kinds` is now derived
 // on demand from `slot.values` via the `kindsOf(slot)` helper in node-map.ts.
 // `NodeMap.projections` was unused (zero consumers) — also removed.
@@ -441,7 +441,7 @@ export interface NodeMap {
 	/**
 	 * Per-kind refine() form declarations, keyed by rule kind. Emitters
 	 * read this to generate namespace-keyed factories and narrowed
-	 * Config types — see ADR-0010 phase 2. Undefined when no refine()
+	 * Config types for per-form factories. Undefined when no refine()
 	 * calls fired in this grammar's overrides.
 	 */
 	readonly refineForms?: Map<string, RefineForm[]>;

@@ -1,5 +1,5 @@
 /**
- * compiler/link.ts — Phase 2: Link
+ * compiler/link.ts — Link phase.
  *
  * Resolves what nodes ARE.
  * After Link: no symbol, alias, token. `repeat1` is preserved — see rule.ts header.
@@ -316,7 +316,7 @@ function runFieldNameInferencePass(
  * @param derivations - Derivation log; polymorph candidates are appended.
  * @remarks
  *   Previously mutated rules by wrapping heterogeneous-field choices in
- *   `PolymorphRule`. As of spec 007 this is analysis-only for
+ *   `PolymorphRule`. This is analysis-only for
  *   `suggested-overrides.ts`. For rules where `promotePolymorph` returns a
  *   new rule the derivation is logged as `applied: false` (suggestion). For
  *   others, `findAllPolymorphCandidates` surfaces structurally-distinguishable
@@ -437,7 +437,7 @@ function extractAliasedFromName(
 	return undefined;
 }
 
-// tagVariants / isStructurallyHomogeneousChoice removed (spec 013).
+// tagVariants / isStructurallyHomogeneousChoice removed.
 // Auto-wrapping heuristics replaced by explicit user-declared
 // `variant()` / `polymorphs:` in overrides.ts. See commit
 // "013: disable tagAllRulesVariants — auto-tagging masked real
@@ -1735,7 +1735,7 @@ function resolveRepeat1PreservingNonEmpty(
  *   body resolves to a concrete non-supertype symbol.
  * @remarks
  *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
- *   drill-in via `drillAs()`. See ADR-0006.
+ *   drill-in via `drillAs()` for alias-target rewrites.
  */
 function resolveNamedAliasWithProvenance(
 	content: Rule,
