@@ -187,8 +187,8 @@ describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
 // ---------- container node shape ----------
 
 describe('ADR-0018 Phase 2 factory shape — container node', () => {
-	// arguments() is a pure container with no required named fields.
-	const container = ir.arguments();
+	// declarationList() is a pure container with variadic children and no named fields.
+	const container = ir.declarationList();
 
 	it('container: no _<field> keys (uses $children for content)', () => {
 		const keys = Object.keys(container);
@@ -202,7 +202,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	});
 
 	it('container: $type is correct', () => {
-		expect(container.$type).toBe(TSKindId.Arguments);
+		expect(container.$type).toBe(TSKindId.DeclarationList);
 	});
 });
 
@@ -212,7 +212,7 @@ describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () 
 	// Test a variety of node kinds to confirm $fields is never present
 	const nodes = [
 		ir.functionItem({ name: 'f', parameters: [], body: minimalBlock } as any),
-		ir.arguments(),
+		ir.declarationList(),
 		ir.integerLiteral('1'),
 	];
 

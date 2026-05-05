@@ -197,6 +197,35 @@ function emitFromFieldInputType(lines: string[]): void {
 }
 
 /**
+ * Emits the `_applyFactory` helper that bypasses overload resolution for
+ * polymorph factory calls.
+ *
+ * @remarks
+ * Polymorph from-dispatchers receive `Loose` input (which lacks `$variant`)
+ * but need to call an overloaded factory whose every overload requires
+ * `$variant`. `Parameters<typeof factory>[0]` picks the last overload,
+ * and the overlap check (TS2352) fails when the Loose type diverges
+ * too far from that specific overload's config (missing `$variant` +
+ * mismatched hoisted-child field types).
+ *
+ * `_applyFactory` uses `Reflect.apply` to call the factory without
+ * overload resolution. The return type is preserved via `ReturnType<F>`.
+ * This keeps the generated code free of `as` casts while deferring the
+ * `$variant` switch to the factory's runtime dispatch.
+ */
+function emitPolymorphApplyHelper(lines: string[]): void {
+	lines.push(
+		'/** @internal — call an overloaded factory bypassing overload resolution. */'
+	);
+	lines.push(
+		'function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {'
+	);
+	lines.push('  return Reflect.apply(fn, undefined, args);');
+	lines.push('}');
+	lines.push('');
+}
+
+/**
  * Collects per-node from() resolver blocks by iterating all non-hidden,
  * non-polymorph-form kinds through the shared interner.
  *
@@ -345,6 +374,8 @@ export function emitFrom(config: EmitFromConfig): string {
 	// `_FromMap` above and every per-kind `fromX` defined below.
 	emitResolverHelpers(lines, nodeMap, kindEntries);
 	lines.push('');
+
+	emitPolymorphApplyHelper(lines);
 
 	emitInternedKindTable(lines, namedEntries, kindTableLiterals);
 	for (const block of perNodeBlocks) {
@@ -1025,28 +1056,23 @@ interface PolymorphFromNode {
 
 /**
  * Emits the top-level polymorph dispatcher function that accepts a loose
- * input and delegates to the factory's runtime field-presence dispatch.
+ * input and delegates to the factory via `_applyFactory`.
  *
  * @remarks
- * The polymorph factory takes the strict config-union but `input` is a
- * FromInputOf (loose widening). The two types are structurally incompatible
- * at the type level, so the emitter declares an explicit overload — `fromX`
- * takes the loose input externally, delegates to the factory via a single
- * direct `as` (no `unknown` bridge), and lets the factory's runtime
- * field-presence check handle the dispatch. We spell the target as the
- * literal `ConfigOf<FormN> | ...` union rather than `Parameters<typeof fn>[0]`
- * because grammar kinds named `Parameters` would shadow TypeScript's
- * built-in `Parameters<T>`.
- *
- * Polymorph form configs use the legacy `<FormName>Config` alias — polymorph
- * forms don't get namespace sugar (they're synthetic kinds that aren't in the
- * top-level NamespaceMap; their data interface is emitted but not the per-kind
- * namespace block).
+ * The polymorph factory takes the strict config-union (with required
+ * `$variant`) but `input` is a `FromInputOf` (loose widening) that
+ * lacks `$variant`. Direct calls to the overloaded factory fail:
+ * `Parameters<typeof F.xxx>[0]` picks the last overload, whose
+ * `$variant` literal doesn't overlap with the absent field (TS2352).
+ * `_applyFactory` bypasses overload resolution via `Reflect.apply`,
+ * preserving `ReturnType<F>` while deferring `$variant` dispatch to
+ * the factory's runtime switch.
  *
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param typeName - The node's type name.
- * @param forms - The polymorph form descriptors for the config union.
+ * @param forms - The polymorph form descriptors (unused in current dispatch
+ *   strategy but retained for future per-form dispatch).
  * @returns The emitted dispatcher function source string.
  */
 function emitPolymorphDispatcher(
@@ -1066,13 +1092,14 @@ function emitPolymorphDispatcher(
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`);
 	lines.push(`  if (input !== undefined && isNodeData(input)) return input;`);
-	// `$variant` is the authoritative discriminator. Callers must
-	// supply it (ConfigOf<T.Polymorph> requires it in the type) or
-	// obtain it via `readTreeNode`, which stamps it from parse-tree
-	// truth. This dispatcher does NOT infer — passing Loose input
-	// without `$variant` is a type error; a runtime call that
-	// bypasses types hits the factory's throw.
-	lines.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`);
+	// Bypass overload resolution via `_applyFactory`. The Loose input
+	// lacks `$variant` (FromInputOf doesn't project it), so direct
+	// `factory(input)` hits TS2352 / TS2769 — `Parameters<>` picks
+	// the last overload whose `$variant` literal doesn't overlap with
+	// the absent field. `_applyFactory` calls via `Reflect.apply`,
+	// preserving `ReturnType<F>` while deferring `$variant` dispatch
+	// to the factory's runtime switch.
+	lines.push(`  return _applyFactory(${factory}, input);`);
 	lines.push('}');
 	return lines.join('\n');
 }

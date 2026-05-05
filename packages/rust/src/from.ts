@@ -373,6 +373,11 @@ function _assertNonEmpty<T>(
   }
 }
 
+/** @internal — call an overloaded factory bypassing overload resolution. */
+function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {
+  return Reflect.apply(fn, undefined, args);
+}
+
 // Interned resolver kind lists (dedup)
 const _super_expression_ending_with_block: readonly string[] = ["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
 const _K0: readonly string[] = [];
@@ -447,7 +452,7 @@ export function arguments_From(input: T.Arguments.Loose | T.Arguments): ReturnTy
 
 export function arrayExpressionFrom(input?: T.ArrayExpression.Loose | T.ArrayExpression): ReturnType<typeof F.arrayExpression> | T.ArrayExpression {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.arrayExpression(input as Parameters<typeof F.arrayExpression>[0]);
+  return _applyFactory(F.arrayExpression, input);
 }
 
 export function arrayExpressionUFormSemiFrom(input: Omit<ConfigOf<T.ArrayExpressionUFormSemi>, '$variant'>) {
@@ -617,7 +622,7 @@ export function closureExpressionExprFrom(input: T.ClosureExpressionExpr.Loose |
 
 export function closureExpressionFrom(input?: T.ClosureExpression.Loose | T.ClosureExpression): ReturnType<typeof F.closureExpression> | T.ClosureExpression {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.closureExpression(input as Parameters<typeof F.closureExpression>[0]);
+  return _applyFactory(F.closureExpression, input);
 }
 
 export function closureExpressionUFormBlockFrom(input: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
@@ -718,7 +723,7 @@ export function delimTokenTreeBraceFrom(...input: readonly (NonNullable<T.DelimT
 
 export function delimTokenTreeFrom(input?: T.DelimTokenTree.Loose | T.DelimTokenTree): ReturnType<typeof F.delimTokenTree> | T.DelimTokenTree {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.delimTokenTree(input as Parameters<typeof F.delimTokenTree>[0]);
+  return _applyFactory(F.delimTokenTree, input);
 }
 
 export function delimTokenTreeUFormParenFrom(input: Omit<ConfigOf<T.DelimTokenTreeUFormParen>, '$variant'>) {
@@ -793,7 +798,7 @@ export function expressionStatementBlockEndingFrom(input?: NonNullable<T.Express
 
 export function expressionStatementFrom(input?: T.ExpressionStatement.Loose | T.ExpressionStatement): ReturnType<typeof F.expressionStatement> | T.ExpressionStatement {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
+  return _applyFactory(F.expressionStatement, input);
 }
 
 export function expressionStatementUFormWithSemiFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
@@ -871,7 +876,7 @@ export function fieldPatternShorthandFrom(input: T.FieldPatternShorthand.Loose |
 
 export function fieldPatternFrom(input?: T.FieldPattern.Loose | T.FieldPattern): ReturnType<typeof F.fieldPattern> | T.FieldPattern {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.fieldPattern(input as Parameters<typeof F.fieldPattern>[0]);
+  return _applyFactory(F.fieldPattern, input);
 }
 
 export function fieldPatternUFormShorthandFrom(input: Omit<ConfigOf<T.FieldPatternUFormShorthand>, '$variant'>) {
@@ -918,7 +923,7 @@ export function foreignModItemBodyFrom(input: T.ForeignModItemBody.Loose | T.For
 
 export function foreignModItemFrom(input?: T.ForeignModItem.Loose | T.ForeignModItem): ReturnType<typeof F.foreignModItem> | T.ForeignModItem {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.foreignModItem(input as Parameters<typeof F.foreignModItem>[0]);
+  return _applyFactory(F.foreignModItem, input);
 }
 
 export function foreignModItemUFormSemiFrom(input: Omit<ConfigOf<T.ForeignModItemUFormSemi>, '$variant'>) {
@@ -1058,7 +1063,7 @@ export function implItemBodyFrom(input: T.ImplItemBody.Loose | T.ImplItemBody): 
 
 export function implItemFrom(input?: T.ImplItem.Loose | T.ImplItem): ReturnType<typeof F.implItem> | T.ImplItem {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.implItem(input as Parameters<typeof F.implItem>[0]);
+  return _applyFactory(F.implItem, input);
 }
 
 export function implItemUFormBodyFrom(input: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
@@ -1156,7 +1161,7 @@ export function lifetimeParameterFrom(input: T.LifetimeParameter.Loose | T.Lifet
 
 export function lineCommentFrom(input?: T.LineComment.Loose | T.LineComment): ReturnType<typeof F.lineComment> | T.LineComment {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.lineComment(input as Parameters<typeof F.lineComment>[0]);
+  return _applyFactory(F.lineComment, input);
 }
 
 export function lineCommentUFormRegularDslashFrom(input: Omit<ConfigOf<T.LineCommentUFormRegularDslash>, '$variant'>) {
@@ -1195,7 +1200,7 @@ export function macroDefinitionBraceFrom(...input: readonly (NonNullable<T.Macro
 
 export function macroDefinitionFrom(input?: T.MacroDefinition.Loose | T.MacroDefinition): ReturnType<typeof F.macroDefinition> | T.MacroDefinition {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.macroDefinition(input as Parameters<typeof F.macroDefinition>[0]);
+  return _applyFactory(F.macroDefinition, input);
 }
 
 export function macroDefinitionUFormParenFrom(input: Omit<ConfigOf<T.MacroDefinitionUFormParen>, '$variant'>) {
@@ -1241,7 +1246,7 @@ export function matchArmBlockEndingFrom(input: T.MatchArmBlockEnding.Loose | T.M
 
 export function matchArmFrom(input?: T.MatchArm.Loose | T.MatchArm): ReturnType<typeof F.matchArm> | T.MatchArm {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.matchArm(input as Parameters<typeof F.matchArm>[0]);
+  return _applyFactory(F.matchArm, input);
 }
 
 export function matchArmUFormWithCommaFrom(input: Omit<ConfigOf<T.MatchArmUFormWithComma>, '$variant'>) {
@@ -1298,7 +1303,7 @@ export function modItemInlineFrom(input: T.ModItemInline.Loose | T.ModItemInline
 
 export function modItemFrom(input?: T.ModItem.Loose | T.ModItem): ReturnType<typeof F.modItem> | T.ModItem {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.modItem(input as Parameters<typeof F.modItem>[0]);
+  return _applyFactory(F.modItem, input);
 }
 
 export function modItemUFormExternalFrom(input: Omit<ConfigOf<T.ModItemUFormExternal>, '$variant'>) {
@@ -1337,7 +1342,7 @@ export function negativeLiteralFrom(input: T.NegativeLiteral.Loose | T.NegativeL
 
 export function orPatternFrom(input?: T.OrPattern.Loose | T.OrPattern): ReturnType<typeof F.orPattern> | T.OrPattern {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.orPattern(input as Parameters<typeof F.orPattern>[0]);
+  return _applyFactory(F.orPattern, input);
 }
 
 export function orPatternUFormBinaryFrom(input: Omit<ConfigOf<T.OrPatternUFormBinary>, '$variant'>) {
@@ -1394,7 +1399,7 @@ export function pointerTypeMutFrom(input?: NonNullable<T.PointerTypeMut.Config['
 
 export function pointerTypeFrom(input?: T.PointerType.Loose | T.PointerType): ReturnType<typeof F.pointerType> | T.PointerType {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.pointerType(input as Parameters<typeof F.pointerType>[0]);
+  return _applyFactory(F.pointerType, input);
 }
 
 export function pointerTypeUFormConstFrom(input: Omit<ConfigOf<T.PointerTypeUFormConst>, '$variant'>) {
@@ -1425,7 +1430,7 @@ export function rangeExpressionBareFrom(input?: T.RangeExpressionBare.Loose | T.
 
 export function rangeExpressionFrom(input?: T.RangeExpression.Loose | T.RangeExpression): ReturnType<typeof F.rangeExpression> | T.RangeExpression {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.rangeExpression(input as Parameters<typeof F.rangeExpression>[0]);
+  return _applyFactory(F.rangeExpression, input);
 }
 
 export function rangeExpressionUFormBinaryFrom(input: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
@@ -1455,7 +1460,7 @@ export function rangeExpressionUFormBareFrom(_input?: Omit<ConfigOf<T.RangeExpre
 
 export function rangePatternFrom(input?: T.RangePattern.Loose | T.RangePattern): ReturnType<typeof F.rangePattern> | T.RangePattern {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.rangePattern(input as Parameters<typeof F.rangePattern>[0]);
+  return _applyFactory(F.rangePattern, input);
 }
 
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
@@ -1638,7 +1643,7 @@ export function structExpressionFrom(input: T.StructExpression.Loose | T.StructE
 
 export function structItemFrom(input?: T.StructItem.Loose | T.StructItem): ReturnType<typeof F.structItem> | T.StructItem {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.structItem(input as Parameters<typeof F.structItem>[0]);
+  return _applyFactory(F.structItem, input);
 }
 
 export function structItemUFormBraceFrom(input: Omit<ConfigOf<T.StructItemUFormBrace>, '$variant'>) {
@@ -1718,7 +1723,7 @@ export function tokenTreeBraceFrom(...input: readonly (NonNullable<T.TokenTreeBr
 
 export function tokenTreeFrom(input?: T.TokenTree.Loose | T.TokenTree): ReturnType<typeof F.tokenTree> | T.TokenTree {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.tokenTree(input as Parameters<typeof F.tokenTree>[0]);
+  return _applyFactory(F.tokenTree, input);
 }
 
 export function tokenTreeUFormParenFrom(input: Omit<ConfigOf<T.TokenTreeUFormParen>, '$variant'>) {
@@ -1747,7 +1752,7 @@ export function tokenTreePatternBraceFrom(...input: readonly (NonNullable<T.Toke
 
 export function tokenTreePatternFrom(input?: T.TokenTreePattern.Loose | T.TokenTreePattern): ReturnType<typeof F.tokenTreePattern> | T.TokenTreePattern {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.tokenTreePattern(input as Parameters<typeof F.tokenTreePattern>[0]);
+  return _applyFactory(F.tokenTreePattern, input);
 }
 
 export function tokenTreePatternUFormParenFrom(input: Omit<ConfigOf<T.TokenTreePatternUFormParen>, '$variant'>) {
@@ -1973,7 +1978,7 @@ export function visibilityModifierCrateFrom(input?: NonNullable<T.VisibilityModi
 
 export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose | T.VisibilityModifier): ReturnType<typeof F.visibilityModifier> | T.VisibilityModifier {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.visibilityModifier(input as Parameters<typeof F.visibilityModifier>[0]);
+  return _applyFactory(F.visibilityModifier, input);
 }
 
 export function visibilityModifierUFormInPathFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
