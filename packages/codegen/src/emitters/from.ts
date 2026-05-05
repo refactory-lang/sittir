@@ -247,18 +247,37 @@ function collectPerNodeFromBlocks(
 	internKinds: KindInterner,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
-	const perNodeBlocks: string[] = [];
+	from.init();
+
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; from() resolvers for them are dead code.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const source = renderFromForNode(node, nodeMap, internKinds, kindEntries);
-		if (source === undefined) continue;
-		perNodeBlocks.push(source);
+
+		// --- Taxonomy dispatch (replaces renderFromForNode) ---
+		if (!node.rawFactoryName || !node.fromFunctionName) continue;
+
+		switch (node.modelType) {
+			case 'branch':
+				from.branch(node, nodeMap, internKinds, kindEntries);
+				break;
+			case 'polymorph':
+				from.polymorph(node, nodeMap, internKinds);
+				break;
+			case 'pattern':
+			case 'enum':
+			case 'keyword':
+				from.leaf(node);
+				break;
+			default:
+				// token, supertype, group, multi — no from() resolver
+				break;
+		}
 	}
-	return perNodeBlocks;
+
+	return from.collect();
 }
 
 /**
@@ -391,64 +410,108 @@ export function emitFrom(config: EmitFromConfig): string {
 }
 
 // ---------------------------------------------------------------------------
-// Dispatch
+// Namespace — taxonomy-keyed from() dispatch API
 // ---------------------------------------------------------------------------
 
-function renderFromForNode(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	intern: KindInterner,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
-	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
-	switch (node.modelType) {
-		case 'branch':
-			// The former `AssembledContainer`
-			// shape (no `field()` on the rule) is now an `AssembledBranch`
-			// with `isContainerShape === true`. Dispatch on that BEFORE
-			// the text-template short-circuit so the original behavior is
-			// preserved byte-identically — containers always emit a
-			// rest-param `from()` regardless of any text-template flag.
-			if (node.isContainerShape) {
-				return emitContainerFrom(
-					{
-						kind: node.kind,
-						typeName: node.typeName,
-						rawFactoryName: node.rawFactoryName,
-						fromFunctionName: node.fromFunctionName,
-						children: node.children
-					},
-					kindEntries,
-					nodeMap
-				);
-			}
-			// Text-template branches (e.g. rust raw_string_literal) emit a
-			// factory of shape `(text: string)` per factory-map.json5, not a
-			// Config object. Route them through the string-like from() so
-			// the from() signature matches the factory's text-only contract.
-			if (node.isTextTemplate(nodeMap.externals)) {
-				return emitStringLikeFrom({
+/**
+ * Module-local output buffer — populated by {@link from} namespace
+ * functions, read by {@link collectPerNodeFromBlocks} after the dispatch loop.
+ */
+let _fromOutput: string[] = [];
+
+/**
+ * Taxonomy-keyed from() dispatch namespace.
+ *
+ * Each function pushes into the module-local `_fromOutput` buffer
+ * (populated via `init()`, consumed via `collect()`). The functions are
+ * thin wrappers that delegate to the existing internal emit helpers;
+ * no emit-function signatures are changed.
+ */
+export namespace from {
+	/** Reset the output buffer before a new dispatch loop. */
+	export function init(): void {
+		_fromOutput = [];
+	}
+
+	/** Return the accumulated from() source blocks. */
+	export function collect(): string[] {
+		return _fromOutput;
+	}
+
+	/**
+	 * Emit a leaf from() resolver — string-like (pattern, enum) or keyword.
+	 */
+	export function leaf(
+		node: AssembledNode
+	): void {
+		if (!node.rawFactoryName || !node.fromFunctionName) return;
+		let result: string | undefined;
+		switch (node.modelType) {
+			case 'pattern':
+				result = emitStringLikeFrom(node);
+				break;
+			case 'enum':
+				result = emitStringLikeFrom({
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
-					fromFunctionName: node.fromFunctionName
+					fromFunctionName: node.fromFunctionName,
+					enumValues: node.values
 				});
-			}
-			return emitBranchFrom(node, nodeMap, intern);
-		case 'polymorph':
-			return emitPolymorphFrom(node, nodeMap, intern);
-		case 'pattern':
-			return emitStringLikeFrom(node);
-		case 'enum':
-			return emitStringLikeFrom({
+				break;
+			case 'keyword':
+				result = emitKeywordFrom(node);
+				break;
+			default:
+				break;
+		}
+		if (result) _fromOutput.push(result);
+	}
+
+	/**
+	 * Emit a branch from() resolver — container shape, text-template,
+	 * or regular field-carrying branch.
+	 */
+	export function branch(
+		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		nodeMap: NodeMap,
+		intern: KindInterner,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		let result: string;
+		if (node.isContainerShape) {
+			result = emitContainerFrom(
+				{
+					kind: node.kind,
+					typeName: node.typeName,
+					rawFactoryName: node.rawFactoryName,
+					fromFunctionName: node.fromFunctionName,
+					children: node.children
+				},
+				kindEntries,
+				nodeMap
+			);
+		} else if (node.isTextTemplate(nodeMap.externals)) {
+			result = emitStringLikeFrom({
 				typeName: node.typeName,
 				rawFactoryName: node.rawFactoryName,
-				fromFunctionName: node.fromFunctionName,
-				enumValues: node.values
+				fromFunctionName: node.fromFunctionName
 			});
-		case 'keyword':
-			return emitKeywordFrom(node);
-		default:
-			return undefined;
+		} else {
+			result = emitBranchFrom(node, nodeMap, intern);
+		}
+		_fromOutput.push(result);
+	}
+
+	/**
+	 * Emit a polymorph from() resolver — dispatcher + per-form resolvers.
+	 */
+	export function polymorph(
+		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+		nodeMap: NodeMap,
+		intern: KindInterner
+	): void {
+		const result = emitPolymorphFrom(node, nodeMap, intern);
+		_fromOutput.push(result);
 	}
 }
 

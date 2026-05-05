@@ -503,8 +503,8 @@ function factoryTypeDiscriminant(
  */
 function emitPerNodeFactories(
 	nodeMap: NodeMap,
-	strict: boolean,
-	aliasSourceKinds: Set<string>,
+	_strict: boolean,
+	_aliasSourceKinds: Set<string>,
 	leafReConsts: Map<string, string>,
 	kindEntries: readonly KindEnumEntry[] | undefined,
 	inlineKinds: readonly string[] | undefined,
@@ -514,6 +514,9 @@ function emitPerNodeFactories(
 	const refineInfos = collectRefineKindInfos(nodeMap);
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
+
+	factory.init();
+
 	for (const [kind, node] of nodeMap.nodes) {
 		// Hidden non-token kinds (groups, branches) emit fragment factories
 		// even when not `userFacing` — they are composition inputs, not standalone
@@ -567,10 +570,41 @@ function emitPerNodeFactories(
 			}
 			continue;
 		}
-		const source = renderFactoryForNode(node, strict, nodeMap, leafReConsts, kindEntries);
-		if (source === undefined) continue;
-		lines.push(source);
-		lines.push('');
+
+		// --- Taxonomy dispatch (replaces renderFactoryForNode) ---
+		if (!node.rawFactoryName) continue;
+		const isTextTemplate = node.isTextTemplate(nodeMap.externals);
+		const prevLen = _factoryOutput.length;
+
+		if (isTextTemplate) {
+			factory.leaf(node, nodeMap, leafReConsts, kindEntries);
+		} else {
+			switch (node.modelType) {
+				case 'pattern':
+				case 'keyword':
+				case 'enum':
+					factory.leaf(node, nodeMap, leafReConsts, kindEntries);
+					break;
+				case 'branch':
+					factory.branch(node, nodeMap, kindEntries);
+					break;
+				case 'polymorph':
+					factory.polymorph(node, nodeMap, kindEntries);
+					break;
+				case 'group':
+					factory.group(node, nodeMap, kindEntries);
+					break;
+				default:
+					// token, supertype, multi — no factory
+					break;
+			}
+		}
+
+		// Nothing emitted for this node — skip refine forms.
+		if (_factoryOutput.length === prevLen) continue;
+
+		// Refine-form factories — emitted immediately after the base
+		// factory they extend, preserving the original interleaved order.
 		const refineInfo = refineByKind.get(kind);
 		if (refineInfo) {
 			for (const form of refineInfo.forms) {
@@ -582,10 +616,14 @@ function emitPerNodeFactories(
 					kindEntries
 				);
 				if (formSource === undefined) continue;
-				lines.push(formSource);
-				lines.push('');
+				_factoryOutput.push(formSource);
 			}
 		}
+	}
+
+	for (const source of factory.collect()) {
+		lines.push(source);
+		lines.push('');
 	}
 }
 
@@ -711,111 +749,154 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// Dispatch
+// Namespace — taxonomy-keyed factory dispatch API
 // ---------------------------------------------------------------------------
 
-function renderFactoryForNode(
-	node: AssembledNode,
-	_strict: boolean,
-	nodeMap: NodeMap,
-	leafReConsts: Map<string, string>,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
-	if (!node.rawFactoryName) return undefined;
-	const isTextTemplate = detectTextTemplateNode(node, nodeMap);
-	if (isTextTemplate) {
-		return emitTextFactory(
-			node,
-			'(text: string)',
-			'text',
-			undefined,
-			kindEntries,
-			nodeMap
-		);
+/**
+ * Module-local output buffer — populated by {@link factory} namespace
+ * functions, read by {@link emitPerNodeFactories} after the dispatch loop.
+ */
+let _factoryOutput: string[] = [];
+
+/**
+ * Taxonomy-keyed factory dispatch namespace.
+ *
+ * Each function pushes into the module-local `_factoryOutput` buffer
+ * (populated via `init()`, consumed via `collect()`). The functions are
+ * thin wrappers that delegate to the existing internal emit helpers;
+ * no emit-function signatures are changed.
+ */
+export namespace factory {
+	/** Reset the output buffer before a new dispatch loop. */
+	export function init(): void {
+		_factoryOutput = [];
 	}
-	switch (node.modelType) {
-		case 'branch':
-			// The former `AssembledContainer`
-			// shape (no `field()` on the rule) is now an `AssembledBranch`
-			// with `isContainerShape === true`. Route to
-			// `emitContainerFactory` so the rest-param signature and
-			// `$children` shape are preserved byte-identically.
-			if (node.isContainerShape) {
-				return emitContainerFactory(
-					{
-						kind: node.kind,
-						typeName: node.typeName,
-						treeTypeName: node.treeTypeName,
-						rawFactoryName: node.rawFactoryName,
-						children: node.children
-					},
-					nodeMap,
-					kindEntries
-				);
-			}
-			return emitFieldCarryingFactory(
+
+	/** Return the accumulated factory source blocks. */
+	export function collect(): string[] {
+		return _factoryOutput;
+	}
+
+	/**
+	 * Emit a leaf factory (pattern, keyword, enum) or a text-template
+	 * branch factory.
+	 */
+	export function leaf(
+		node: AssembledNode,
+		nodeMap: NodeMap,
+		leafReConsts: Map<string, string>,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		if (!node.rawFactoryName) return;
+		let result: string | undefined;
+		// Text-template branch — external-scanner delimiters that can't be
+		// field-reconstructed. Emit a text-accepting factory.
+		if (node.isTextTemplate(nodeMap.externals)) {
+			result = emitTextFactory(
 				node,
-				node.fields,
-				node.children,
-				nodeMap,
-				false,
-				kindEntries
-			);
-		case 'group':
-			return emitFieldCarryingFactory(
-				node,
-				node.fields,
-				node.children,
-				nodeMap,
-				false,
-				kindEntries
-			);
-		case 'polymorph':
-			return emitPolymorphFactory(node, nodeMap, kindEntries);
-		case 'pattern': {
-			const guards = buildLeafGuards(node, leafReConsts);
-			const guard = guards.join(' ');
-			return emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
-		}
-		case 'keyword':
-			return emitTextFactory(
-				node,
-				'()',
-				`'${escForSource(node.text)}' as const`,
+				'(text: string)',
+				'text',
 				undefined,
 				kindEntries,
 				nodeMap
 			);
-		case 'enum': {
-			const literalUnion = buildEnumLiteralUnion(node);
-			return emitTextFactory(node, `(text: ${literalUnion})`, 'text', undefined, kindEntries, nodeMap);
+		} else {
+			switch (node.modelType) {
+				case 'pattern': {
+					const guards = buildLeafGuards(node, leafReConsts);
+					const guard = guards.join(' ');
+					result = emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
+					break;
+				}
+				case 'keyword':
+					result = emitTextFactory(
+						node,
+						'()',
+						`'${escForSource(node.text)}' as const`,
+						undefined,
+						kindEntries,
+						nodeMap
+					);
+					break;
+				case 'enum': {
+					const literalUnion = buildEnumLiteralUnion(node);
+					result = emitTextFactory(node, `(text: ${literalUnion})`, 'text', undefined, kindEntries, nodeMap);
+					break;
+				}
+				default:
+					break;
+			}
 		}
-		default:
-			return undefined;
+		if (result) _factoryOutput.push(result);
 	}
-}
 
-/**
- * Determine whether a node should be emitted as a text-accepting factory.
- *
- * @param node - The assembled node to test.
- * @param nodeMap - The assembled node map (provides externals).
- * @returns `true` when the node is a `$TEXT`-templated kind.
- * @remarks
- *   `$TEXT`-templated kinds (external-scanner delimiters like rust's
- *   `raw_string_literal`) can't be field-reconstructed — the external tokens never
- *   appear as named children. A field-carrying factory would expose phantom slots
- *   that nothing ever populates. These nodes get a text-accepting factory so callers
- *   supply the full source text.
- *
- *   Delegates to `node.isTextTemplate(externals)` — the class method owns the
- *   detection logic, keeping rule access encapsulated.
- */
-function detectTextTemplateNode(
-	node: AssembledNode,
-	nodeMap: NodeMap
-): boolean {
-	return node.isTextTemplate(nodeMap.externals);
+	/**
+	 * Emit a branch factory — either container-shape (rest-param) or
+	 * field-carrying (config object, internally routes to single-field
+	 * when applicable).
+	 */
+	export function branch(
+		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		nodeMap: NodeMap,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		let result: string;
+		if (node.isContainerShape) {
+			result = emitContainerFactory(
+				{
+					kind: node.kind,
+					typeName: node.typeName,
+					treeTypeName: node.treeTypeName,
+					rawFactoryName: node.rawFactoryName,
+					children: node.children
+				},
+				nodeMap,
+				kindEntries
+			);
+		} else {
+			result = emitFieldCarryingFactory(
+				node,
+				node.fields,
+				node.children,
+				nodeMap,
+				false,
+				kindEntries
+			);
+		}
+		_factoryOutput.push(result);
+	}
+
+	/**
+	 * Emit a polymorph factory — dispatcher + per-form inline factories.
+	 */
+	export function polymorph(
+		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+		nodeMap: NodeMap,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		const result = emitPolymorphFactory(node, nodeMap, kindEntries);
+		_factoryOutput.push(result);
+	}
+
+	/**
+	 * Emit a group factory — field-carrying factory for hidden composition
+	 * fragments (polymorph form inner kinds).
+	 */
+	export function group(
+		node: Extract<AssembledNode, { modelType: 'group' }>,
+		nodeMap: NodeMap,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		const result = emitFieldCarryingFactory(
+			node,
+			node.fields,
+			node.children,
+			nodeMap,
+			false,
+			kindEntries
+		);
+		_factoryOutput.push(result);
+	}
 }
 
 /**
