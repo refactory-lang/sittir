@@ -809,3 +809,88 @@ export function keywordPresenceIsNonEmptyRepeat(
 	if (field.values.length === 0) return false;
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
 }
+
+// ---------------------------------------------------------------------------
+// Branch slot classification — single source of truth
+// ---------------------------------------------------------------------------
+
+/**
+ * Discriminated result of {@link classifyBranchSlots}.
+ *
+ * - `multiSlot` — the node has 2+ user-facing slots (after filtering out
+ *   auto-stamp fields, hidden-infra fields, keyword-presence fields, and
+ *   auto-stamp children). Factory / from / wrap emitters use the standard
+ *   multi-field Config shape.
+ *
+ * - `singleSlot` — exactly one user-facing slot survives filtering. The
+ *   `slot` reference, `arity`, `optional`, and `nonEmpty` flags carry
+ *   everything downstream emitters need to decide between direct-value
+ *   and rest-param signatures.
+ */
+export type BranchSlotClass =
+	| { tag: 'multiSlot' }
+	| {
+			tag: 'singleSlot';
+			arity: 'singular' | 'multiple';
+			optional: boolean;
+			nonEmpty: boolean;
+			slot: AssembledNonterminal;
+	  };
+
+/**
+ * Classify a branch or group node's user-facing slot count — the ONE
+ * source of truth for single-slot vs multi-slot detection.
+ *
+ * Filters out:
+ * - Auto-stamp fields (constant-valued, stamped by factory)
+ * - Hidden-infra fields (all-hidden-kind slots, parser infrastructure)
+ * - Keyword-presence fields (boolean / bitflag keyword toggles)
+ * - Auto-stamp children (constant-valued or parameterless children)
+ *
+ * Returns `multiSlot` when 0 or 2+ user-facing slots remain (0 maps to
+ * the parameterless factory path, which is a multi-slot degenerate).
+ * Returns `singleSlot` with full metadata when exactly 1 survives.
+ *
+ * @remarks
+ * Replaces ad-hoc `isSingleFieldDirect` checks in factories.ts,
+ * factory-map.ts, and from.ts. Those call sites should migrate to
+ * this function (Task 3).
+ *
+ * @param node - An AssembledNode (only `branch` and `group` modelTypes
+ *   produce meaningful results; other modelTypes always return `multiSlot`).
+ * @param nodeMap - The assembled node map, needed by the filtering helpers.
+ */
+export function classifyBranchSlots(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): BranchSlotClass {
+	if (node.modelType !== 'branch' && node.modelType !== 'group') {
+		return { tag: 'multiSlot' };
+	}
+
+	const userSlots: AssembledNonterminal[] = [];
+
+	for (const f of node.fields) {
+		if (isAutoStampField(f, nodeMap)) continue;
+		if (isHiddenInfraSlot(f, nodeMap)) continue;
+		if (keywordPresenceKind(f, nodeMap) !== null) continue;
+		userSlots.push(f);
+	}
+
+	for (const c of node.children) {
+		if (isAutoStampSlot(c, nodeMap)) continue;
+		userSlots.push(c);
+	}
+
+	if (userSlots.length !== 1) return { tag: 'multiSlot' };
+
+	const sole = userSlots[0]!;
+	const multiple = isMultiple(sole);
+	return {
+		tag: 'singleSlot',
+		arity: multiple ? 'multiple' : 'singular',
+		optional: !isRequired(sole),
+		nonEmpty: isNonEmpty(sole),
+		slot: sole
+	};
+}
