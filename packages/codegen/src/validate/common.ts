@@ -36,6 +36,7 @@ import {
 	type PolymorphVariantDescriptor,
 	type PolymorphVariantMap
 } from '../polymorph-variant.ts';
+import type { FactoryShape } from '../emitters/factory-map.ts';
 
 // ---------------------------------------------------------------------------
 // Corpus parser — tree-sitter test corpus format
@@ -971,7 +972,7 @@ export interface NodeToConfigOpts {
 	 * this, recursion defaults to `'config'` which breaks children-shape
 	 * factories (e.g. python `argument_list`) because they'd interpret
 	 * the whole Config object as the single rest-param item. */
-	readonly factoryShapes?: Record<string, 'config' | 'children' | 'text'>;
+	readonly factoryShapes?: Record<string, FactoryShape>;
 	/** Per-field alias-source map (from the generated `_fieldAliasMap`).
 	 * Key format: `"parentKind.fieldName"`; value: the source kind the
 	 * factory expects. When a child arrives at an alias-declared slot,

@@ -1199,6 +1199,28 @@ function emitFieldCarryingFactory(
 		node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const configType = resolveConfigType(node, isPolymorphForm);
 
+	// Gap 5: Single-field-no-children factories take the value directly
+	// instead of a config object. Detection: exactly one non-stamp field
+	// (that is not keyword-presence) and no children. The signature becomes
+	// `fn(fieldName: T)` and the $with setter rebuilds via `fn(value)`.
+	const nonStampFields = fields.filter(
+		(f) => autoStampExpression(f, nodeMap) === undefined
+	);
+	// Exclude hidden kinds (`_`-prefixed) — they're internal infrastructure
+	// (inner children of polymorph dispatchers) whose factories are called
+	// with config objects by the polymorph form wrapper. Also exclude
+	// polymorph forms and keyword-presence / multiple fields.
+	const isSingleFieldDirect =
+		nonStampFields.length === 1 &&
+		!hasChildren &&
+		!isPolymorphForm &&
+		!node.kind.startsWith('_') &&
+		!isMultiple(nonStampFields[0]!) &&
+		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+	if (isSingleFieldDirect) {
+		return emitSingleFieldFactory(node, fields, nonStampFields[0]!, nodeMap, kindEntries);
+	}
+
 	// `childrenUserConfigurable` is false when every required child
 	// auto-stamps AND there are no optional children. In that case
 	// the Config (post-ConfigOf) has no `children` slot — ConfigOf
@@ -1351,6 +1373,90 @@ function emitFieldCarryingFactory(
 	lines.push('  });');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
+}
+
+/**
+ * Emit a factory with a direct-value signature for single-field-no-children kinds.
+ *
+ * @remarks
+ * When a kind has exactly one non-auto-stamp field and no children, the config
+ * object wrapper is unnecessary ceremony. Instead of `label(config: T.Label.Config)`
+ * the factory signature becomes `label(identifier: T.Identifier)` and the `$with`
+ * setter rebuilds via `fn(value)` (direct call, not config-spread).
+ *
+ * @param node - The assembled node descriptor.
+ * @param allFields - All fields including auto-stamp ones (for storage hoisting).
+ * @param soleField - The single non-auto-stamp field.
+ * @param nodeMap - Grammar-wide node map.
+ * @param kindEntries - KindEnumEntry table for numeric `$type` emission.
+ * @returns The emitted factory function source string.
+ */
+function emitSingleFieldFactory(
+	node: FieldCarryingNode,
+	allFields: readonly AssembledNonterminal[],
+	soleField: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const fn = node.rawFactoryName!;
+	const typeKind =
+		node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
+	const variantName =
+		node.modelType === 'group'
+			? resolvePolymorphFormVariantName(node as AssembledGroup)
+			: undefined;
+	const elemType = fieldElementType(soleField, nodeMap);
+	const paramName = soleField.propertyName;
+	const isLeaf = isAllLeafSlot(soleField, nodeMap);
+	const fieldOptional = !isRequired(soleField);
+	const optMark = fieldOptional ? '?' : '';
+
+	const lines: string[] = [];
+	lines.push(`export function ${fn}(${paramName}${optMark}: ${elemType}) {`);
+
+	// Storage hoists for all fields — auto-stamp ones get their stamp expression,
+	// the sole user-facing field reads directly from the parameter.
+	for (const f of allFields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`  const _${f.name} = ${stamp};`);
+			continue;
+		}
+		// This is the sole non-stamp field — read from parameter directly.
+		// Optional fields use optional chaining on `.$text`.
+		if (isLeaf) {
+			const sep = fieldOptional ? '?.' : '.';
+			lines.push(`  const _${f.name} = ${paramName}${sep}$text;`);
+		} else {
+			lines.push(`  const _${f.name} = ${paramName};`);
+		}
+	}
+
+	// Emit the literal object with withMethods wrapper.
+	lines.push('  return withMethods({');
+	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
+	lines.push('    $source: 2 as const,');
+	lines.push('    $named: true as const,');
+	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
+	for (const f of allFields) {
+		lines.push(`    _${f.name},`);
+	}
+
+	// Pure getters.
+	for (const f of allFields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(`    ${propName}() { return _${f.name}; },`);
+	}
+
+	// $with: setter calls the factory directly with the new value.
+	lines.push('    $with: {');
+	const method = soleField.propertyName === 'type' ? 'typeField' : soleField.propertyName;
+	const setterType = setterElemType(soleField, elemType, fn, nodeMap);
+	lines.push(`      ${method}: (${setterValueSignature(soleField, setterType)}) => ${fn}(value),`);
+	lines.push('    },');
+	lines.push('  });');
+	lines.push('}');
+	return lines.join('\n');
 }
 
 /**

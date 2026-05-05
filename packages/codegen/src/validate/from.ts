@@ -11,6 +11,7 @@
 
 import { readNode } from '@sittir/core';
 import type { AnyNodeData } from '@sittir/types';
+import type { FactoryShape } from '../emitters/factory-map.ts';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,
@@ -195,7 +196,7 @@ export async function validateFrom(
 	// wrap function, producing a fluent NodeData that `.from()` accepts.
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let factoryShapes: Record<string, FactoryShape> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let polymorphVariants: Record<string, unknown> = {};
@@ -307,7 +308,7 @@ export async function validateFrom(
 					// factory that must dispatch as `factory()` with no args).
 					const shape = factoryShapes[kind] ?? 'config';
 					const factory = factoryMap[kind]!;
-					if (shape === 'config') {
+					if (shape === 'config' || shape === 'single-field') {
 						// ADR-0018: readNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
@@ -319,7 +320,18 @@ export async function validateFrom(
 							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
-						factoryResult = factory(config) as AnyNodeData;
+						if (shape === 'single-field') {
+							// Gap 5: single-field factory takes value directly.
+							const fieldNames = factoryFields[kind];
+							const rawName = fieldNames?.[0];
+							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
+								c.toUpperCase()
+							);
+							const value = camelName ? (config as Record<string, unknown>)[camelName] : undefined;
+							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
+						} else {
+							factoryResult = factory(config) as AnyNodeData;
+						}
 					} else if (shape === 'text') {
 						// readData.$text is absent on branch nodes (gated by
 						// SITTIR_DEBUG_TEXT). For text-shaped factories, fall back to

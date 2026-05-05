@@ -872,8 +872,8 @@ export function attribute(config: T.Attribute.Config) {
   });
 }
 
-export function attributeItem(config: T.AttributeItem.Config) {
-  const _attribute = config.attribute;
+export function attributeItem(attribute: T.Attribute) {
+  const _attribute = attribute;
   return withMethods({
     $type: TSKindId.AttributeItem as const,
     $source: 2 as const,
@@ -881,7 +881,7 @@ export function attributeItem(config: T.AttributeItem.Config) {
     _attribute,
     attribute() { return _attribute; },
     $with: {
-      attribute: (value: T.Attribute) => attributeItem({ ...config, attribute: value }),
+      attribute: (value: T.Attribute) => attributeItem(value),
     },
   });
 }
@@ -1076,8 +1076,8 @@ export function charLiteral(text: string) {
   });
 }
 
-export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
-  const _body = config.body;
+export function closureExpressionExpr(body: T.Expression | "_") {
+  const _body = body;
   return withMethods({
     $type: TSKindId._ClosureExpressionExpr as const,
     $source: 2 as const,
@@ -1085,7 +1085,7 @@ export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.Expression | "_") => closureExpressionExpr({ ...config, body: value }),
+      body: (value: T.Expression | "_") => closureExpressionExpr(value),
     },
   });
 }
@@ -1197,8 +1197,8 @@ export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) 
   });
 }
 
-export function constBlock(config: T.ConstBlock.Config) {
-  const _body = config.body;
+export function constBlock(body: T.Block) {
+  const _body = body;
   return withMethods({
     $type: TSKindId.ConstBlock as const,
     $source: 2 as const,
@@ -1206,7 +1206,7 @@ export function constBlock(config: T.ConstBlock.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.Block) => constBlock({ ...config, body: value }),
+      body: (value: T.Block) => constBlock(value),
     },
   });
 }
@@ -1259,9 +1259,8 @@ export function constParameter(config: T.ConstParameter.Config) {
   });
 }
 
-export function continueExpression(config?: T.ContinueExpression.Config) {
-  const _config = config ?? {};
-  const _label = _config.label;
+export function continueExpression(label?: T.Label) {
+  const _label = label;
   return withMethods({
     $type: TSKindId.ContinueExpression as const,
     $source: 2 as const,
@@ -1269,7 +1268,7 @@ export function continueExpression(config?: T.ContinueExpression.Config) {
     _label,
     label() { return _label; },
     $with: {
-      label: (value?: T.Label) => continueExpression({ ..._config, label: value }),
+      label: (value?: T.Label) => continueExpression(value),
     },
   });
 }
@@ -1375,8 +1374,8 @@ export function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTree
   });
 }
 
-export function dynamicType(config: T.DynamicType.Config) {
-  const _trait = config.trait;
+export function dynamicType(trait: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) {
+  const _trait = trait;
   return withMethods({
     $type: TSKindId.DynamicType as const,
     $source: 2 as const,
@@ -1384,7 +1383,7 @@ export function dynamicType(config: T.DynamicType.Config) {
     _trait,
     trait() { return _trait; },
     $with: {
-      trait: (value: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) => dynamicType({ ...config, trait: value }),
+      trait: (value: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) => dynamicType(value),
     },
   });
 }
@@ -1561,9 +1560,8 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
   });
 }
 
-export function externModifier(config?: T.ExternModifier.Config) {
-  const _config = config ?? {};
-  const _string_literal = _config.stringLiteral;
+export function externModifier(stringLiteral?: T.StringLiteral) {
+  const _string_literal = stringLiteral;
   return withMethods({
     $type: TSKindId.ExternModifier as const,
     $source: 2 as const,
@@ -1571,7 +1569,7 @@ export function externModifier(config?: T.ExternModifier.Config) {
     _string_literal,
     stringLiteral() { return _string_literal; },
     $with: {
-      stringLiteral: (value?: T.StringLiteral) => externModifier({ ..._config, stringLiteral: value }),
+      stringLiteral: (value?: T.StringLiteral) => externModifier(value),
     },
   });
 }
@@ -1660,8 +1658,8 @@ export function fieldInitializerList(...children: (T.ShorthandFieldInitializer |
   });
 }
 
-export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
-  const _name = config.name.$text;
+export function fieldPatternShorthand(name: T.Identifier) {
+  const _name = name.$text;
   return withMethods({
     $type: TSKindId._FieldPatternShorthand as const,
     $source: 2 as const,
@@ -1669,7 +1667,7 @@ export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
     _name,
     name() { return _name; },
     $with: {
-      name: (value: T.Identifier) => fieldPatternShorthand({ ...config, name: value }),
+      name: (value: T.Identifier) => fieldPatternShorthand(value),
     },
   });
 }
@@ -1770,8 +1768,8 @@ export function forLifetimes(...children: T.Lifetime[]) {
   });
 }
 
-export function foreignModItemBody(config: T.ForeignModItemBody.Config) {
-  const _body = config.body;
+export function foreignModItemBody(body: T.DeclarationList) {
+  const _body = body;
   return withMethods({
     $type: TSKindId._ForeignModItemBody as const,
     $source: 2 as const,
@@ -1779,7 +1777,7 @@ export function foreignModItemBody(config: T.ForeignModItemBody.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.DeclarationList) => foreignModItemBody({ ...config, body: value }),
+      body: (value: T.DeclarationList) => foreignModItemBody(value),
     },
   });
 }
@@ -2107,8 +2105,8 @@ export function ifExpression(config: T.IfExpression.Config) {
   });
 }
 
-export function implItemBody(config: T.ImplItemBody.Config) {
-  const _body = config.body;
+export function implItemBody(body: T.DeclarationList) {
+  const _body = body;
   return withMethods({
     $type: TSKindId._ImplItemBody as const,
     $source: 2 as const,
@@ -2116,7 +2114,7 @@ export function implItemBody(config: T.ImplItemBody.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.DeclarationList) => implItemBody({ ...config, body: value }),
+      body: (value: T.DeclarationList) => implItemBody(value),
     },
   });
 }
@@ -2222,8 +2220,8 @@ export function indexExpression(config: T.IndexExpression.Config) {
   });
 }
 
-export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
-  const _attribute = config.attribute;
+export function innerAttributeItem(attribute: T.Attribute) {
+  const _attribute = attribute;
   return withMethods({
     $type: TSKindId.InnerAttributeItem as const,
     $source: 2 as const,
@@ -2231,7 +2229,7 @@ export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
     _attribute,
     attribute() { return _attribute; },
     $with: {
-      attribute: (value: T.Attribute) => innerAttributeItem({ ...config, attribute: value }),
+      attribute: (value: T.Attribute) => innerAttributeItem(value),
     },
   });
 }
@@ -2246,8 +2244,8 @@ export function integerLiteral(text: string) {
   });
 }
 
-export function label(config: T.Label.Config) {
-  const _identifier = config.identifier.$text;
+export function label(identifier: T.Identifier) {
+  const _identifier = identifier.$text;
   return withMethods({
     $type: TSKindId.Label as const,
     $source: 2 as const,
@@ -2255,7 +2253,7 @@ export function label(config: T.Label.Config) {
     _identifier,
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T.Identifier) => label({ ...config, identifier: value }),
+      identifier: (value: T.Identifier) => label(value),
     },
   });
 }
@@ -2330,8 +2328,8 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
   });
 }
 
-export function lifetime(config: T.Lifetime.Config) {
-  const _identifier = config.identifier.$text;
+export function lifetime(identifier: T.Identifier) {
+  const _identifier = identifier.$text;
   return withMethods({
     $type: TSKindId.Lifetime as const,
     $source: 2 as const,
@@ -2339,7 +2337,7 @@ export function lifetime(config: T.Lifetime.Config) {
     _identifier,
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T.Identifier) => lifetime({ ...config, identifier: value }),
+      identifier: (value: T.Identifier) => lifetime(value),
     },
   });
 }
@@ -2567,8 +2565,8 @@ export function macroRule(config: T.MacroRule.Config) {
   });
 }
 
-export function matchArmBlockEnding(config: T.MatchArmBlockEnding.Config) {
-  const _value = config.value;
+export function matchArmBlockEnding(value: T.ExpressionEndingWithBlock) {
+  const _value = value;
   return withMethods({
     $type: TSKindId._MatchArmBlockEnding as const,
     $source: 2 as const,
@@ -2576,7 +2574,7 @@ export function matchArmBlockEnding(config: T.MatchArmBlockEnding.Config) {
     _value,
     value() { return _value; },
     $with: {
-      value: (value: T.ExpressionEndingWithBlock) => matchArmBlockEnding({ ...config, value: value }),
+      value: (value: T.ExpressionEndingWithBlock) => matchArmBlockEnding(value),
     },
   });
 }
@@ -2694,8 +2692,8 @@ export function metavariable(text: string) {
   });
 }
 
-export function modItemInline(config: T.ModItemInline.Config) {
-  const _body = config.body;
+export function modItemInline(body: T.DeclarationList) {
+  const _body = body;
   return withMethods({
     $type: TSKindId._ModItemInline as const,
     $source: 2 as const,
@@ -2703,7 +2701,7 @@ export function modItemInline(config: T.ModItemInline.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.DeclarationList) => modItemInline({ ...config, body: value }),
+      body: (value: T.DeclarationList) => modItemInline(value),
     },
   });
 }
@@ -2785,8 +2783,8 @@ export function mutableSpecifier() {
   });
 }
 
-export function negativeLiteral(config: T.NegativeLiteral.Config) {
-  const _value = config.value.$text;
+export function negativeLiteral(value: T.IntegerLiteral | T.FloatLiteral) {
+  const _value = value.$text;
   return withMethods({
     $type: TSKindId.NegativeLiteral as const,
     $source: 2 as const,
@@ -2794,7 +2792,7 @@ export function negativeLiteral(config: T.NegativeLiteral.Config) {
     _value,
     value() { return _value; },
     $with: {
-      value: (value: T.IntegerLiteral | T.FloatLiteral) => negativeLiteral({ ...config, value: value }),
+      value: (value: T.IntegerLiteral | T.FloatLiteral) => negativeLiteral(value),
     },
   });
 }
@@ -3819,8 +3817,8 @@ export function traitItem(config: T.TraitItem.Config) {
   });
 }
 
-export function tryBlock(config: T.TryBlock.Config) {
-  const _block = config.block;
+export function tryBlock(block: T.Block) {
+  const _block = block;
   return withMethods({
     $type: TSKindId.TryBlock as const,
     $source: 2 as const,
@@ -3828,13 +3826,13 @@ export function tryBlock(config: T.TryBlock.Config) {
     _block,
     block() { return _block; },
     $with: {
-      block: (value: T.Block) => tryBlock({ ...config, block: value }),
+      block: (value: T.Block) => tryBlock(value),
     },
   });
 }
 
-export function tryExpression(config: T.TryExpression.Config) {
-  const _value = config.value;
+export function tryExpression(value: T.Expression) {
+  const _value = value;
   return withMethods({
     $type: TSKindId.TryExpression as const,
     $source: 2 as const,
@@ -3842,7 +3840,7 @@ export function tryExpression(config: T.TryExpression.Config) {
     _value,
     value() { return _value; },
     $with: {
-      value: (value: T.Expression) => tryExpression({ ...config, value: value }),
+      value: (value: T.Expression) => tryExpression(value),
     },
   });
 }
@@ -4096,8 +4094,8 @@ export function unitType(text: string) {
   });
 }
 
-export function unsafeBlock(config: T.UnsafeBlock.Config) {
-  const _block = config.block;
+export function unsafeBlock(block: T.Block) {
+  const _block = block;
   return withMethods({
     $type: TSKindId.UnsafeBlock as const,
     $source: 2 as const,
@@ -4105,7 +4103,7 @@ export function unsafeBlock(config: T.UnsafeBlock.Config) {
     _block,
     block() { return _block; },
     $with: {
-      block: (value: T.Block) => unsafeBlock({ ...config, block: value }),
+      block: (value: T.Block) => unsafeBlock(value),
     },
   });
 }
@@ -4168,9 +4166,8 @@ export function useList(...children: T.UseClause[]) {
   });
 }
 
-export function useWildcard(config?: T.UseWildcard.Config) {
-  const _config = config ?? {};
-  const _path = _config.path;
+export function useWildcard(path?: T.Path) {
+  const _path = path;
   return withMethods({
     $type: TSKindId.UseWildcard as const,
     $source: 2 as const,
@@ -4178,7 +4175,7 @@ export function useWildcard(config?: T.UseWildcard.Config) {
     _path,
     path() { return _path; },
     $with: {
-      path: (value?: T.Path) => useWildcard({ ..._config, path: value }),
+      path: (value?: T.Path) => useWildcard(value),
     },
   });
 }

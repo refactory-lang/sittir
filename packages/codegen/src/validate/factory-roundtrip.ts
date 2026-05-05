@@ -13,6 +13,7 @@
 import { readNode, createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
+import type { FactoryShape } from '../emitters/factory-map.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -186,7 +187,7 @@ const FACTORY_MAP_PATHS: Record<string, string> = {
  * pure data (no functions). Strips the leading comment block and
  * JSON.parses the rest. */
 async function loadFactoryMap(grammar: string): Promise<{
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
@@ -261,7 +262,7 @@ export interface FactoryRoundTripResult {
  */
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryMap: Record<string, (config?: any) => unknown>;
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
@@ -272,7 +273,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
@@ -485,7 +486,7 @@ function buildFactoryNodeData(
 	readData: AnyNodeData,
 	renderedKind: string,
 	factoryMap: Record<string, (config?: any) => unknown>,
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>,
+	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
 	polymorphVariants: PolymorphVariantMap,
@@ -514,7 +515,7 @@ function buildFactoryNodeData(
 	}
 	try {
 		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config') {
+		if (shape === 'config' || shape === 'single-field') {
 			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 			const config = recursive
 				? nodeToConfig(readData, {
@@ -527,6 +528,19 @@ function buildFactoryNodeData(
 						kindNameFromId
 					})
 				: nodeToConfig(readData, { polymorphVariants, kindNameFromId });
+			if (shape === 'single-field') {
+				// Gap 5: single-field-no-children factory takes the value directly.
+				// Extract the sole field value from the config object.
+				// factoryFields stores raw snake_case names; nodeToConfig
+				// returns camelCase keys — convert for the lookup.
+				const fieldNames = factoryFields[renderedKind];
+				const rawName = fieldNames?.[0];
+				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
+					c.toUpperCase()
+				);
+				const value = camelName ? (config as Record<string, unknown>)[camelName] : undefined;
+				return (factory as (v: unknown) => AnyNodeData)(value);
+			}
 			return factory(config) as AnyNodeData;
 		} else if (shape === 'text') {
 			// $TEXT-templated branch/container (e.g. rust

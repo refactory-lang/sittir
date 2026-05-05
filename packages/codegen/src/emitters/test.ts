@@ -205,10 +205,31 @@ function emitBranchTest(
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
 
-	const typeConfigArg =
-		typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
-	const renderConfigArg =
-		renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
+	// Gap 5: single-field-no-children factories take the value directly.
+	// Detect and emit a direct-value call instead of a config-object.
+	const nonStampFields = node.fields.filter(
+		(f) => !isAutoStampField(f, nodeMap)
+	);
+	const isSingleFieldDirect =
+		nonStampFields.length === 1 &&
+		(!node.children || node.children.length === 0) &&
+		!isMultiple(nonStampFields[0]!) &&
+		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+
+	let typeConfigArg: string;
+	let renderConfigArg: string;
+	if (isSingleFieldDirect) {
+		const sole = nonStampFields[0]!;
+		const dummy = dummyValue(sole, nodeMap, kindEntries);
+		// Optional field: type test passes no arg; render test passes dummy.
+		typeConfigArg = isRequired(sole) ? dummy : '';
+		renderConfigArg = dummy;
+	} else {
+		typeConfigArg =
+			typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
+		renderConfigArg =
+			renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
+	}
 	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);

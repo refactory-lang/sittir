@@ -787,29 +787,52 @@ function emitBranchFrom(
 				node.kind
 			);
 		}
-		lines.push(`  return ${factory}({`);
-		for (const f of fields) {
-			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
-			if (needsNonEmptyHoist(f)) {
-				lines.push(`    ${f.propertyName}: ${neName(f)},`);
-			} else {
-				lines.push(
-					`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`
-				);
-			}
-		}
-		if (childSlots.length > 0) {
-			emitBranchChildrenEntry(
-				lines,
-				childSlots,
+		// Gap 5: single-field-no-children factories take the value directly.
+		// Emit `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
+		// Excluded: hidden kinds (inner polymorph children), keyword-presence,
+		// and multiple (array) fields.
+		const soleFieldDirect =
+			nonStampFields.length === 1 &&
+			childSlots.length === 0 &&
+			!node.kind.startsWith('_') &&
+			!isMultiple(nonStampFields[0]!) &&
+			keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+		if (soleFieldDirect) {
+			const soleField = nonStampFields[0]!;
+			const call = resolveFieldFromTypedInput(
+				soleField,
 				nodeMap,
 				typeName,
 				intern,
-				inputOptional,
-				childrenNonEmpty
+				'input',
+				inputOptional
 			);
+			lines.push(`  return ${factory}(${call});`);
+		} else {
+			lines.push(`  return ${factory}({`);
+			for (const f of fields) {
+				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
+				if (needsNonEmptyHoist(f)) {
+					lines.push(`    ${f.propertyName}: ${neName(f)},`);
+				} else {
+					lines.push(
+						`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`
+					);
+				}
+			}
+			if (childSlots.length > 0) {
+				emitBranchChildrenEntry(
+					lines,
+					childSlots,
+					nodeMap,
+					typeName,
+					intern,
+					inputOptional,
+					childrenNonEmpty
+				);
+			}
+			lines.push('  });');
 		}
-		lines.push('  });');
 	} else {
 		// No fields: pass-through to the factory with a boundary cast — the
 		// Loose input shape is wider than the factory's strict Config, but the
