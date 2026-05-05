@@ -152,10 +152,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		' * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished'
 	);
 	lines.push(' * from loose config bags by the presence of any of:');
-	lines.push(
-		' * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished'
-	);
-	lines.push(' * from loose config bags by the presence of any of:');
 	lines.push(' *   - `_*` storage keys (branch nodes with named fields, de-hoisted),');
 	lines.push(
 		' *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),'
