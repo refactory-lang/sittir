@@ -117,6 +117,20 @@ the assembled model:
 8. **Unnamed-slot constraint enforced** (FR-T05) — at most one
    unnamed slot per `AssembledBranch`.
 
+The follow-up spec also covers completing the **Spec A ontology work**
+(from `docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md`):
+
+- Thread `ruleCatalog` from `RawGrammar` through to `NodeMap` and
+  onto `AssembledNode` (currently built at evaluate but not consumed
+  downstream).
+- Make assemble read `RuleClassification` from the catalog instead
+  of re-deriving terminal/nonterminal from rule-tree walks.
+- Add the 6 validation test categories from the design doc
+  (deterministic RuleId snapshots, field→nonterminal forcing,
+  named-alias→nonterminal, anonymous-alias CST-only, etc.).
+- Stamp `RuleId` on `AssembledNonterminal` slots so provenance is
+  traceable from the emitter surface back to the grammar occurrence.
+
 Provisional spec number: 023 (or next available). Branch convention:
 `023-binding-simplify` or similar.
 
