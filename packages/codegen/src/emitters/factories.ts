@@ -1016,7 +1016,7 @@ function keywordPresenceAssignmentExpr(
 	// Pass the element type as `<T>` so `_bf<T>(...)` returns
 	// `readonly T[] | undefined` matching the slot's `Bitflag<E, T>`-branded
 	// tuple shape — without it the field assignment sees `readonly unknown[]`
-	// and the `$fields` shape stops satisfying AnyNodeData's NodeFieldValue
+	// and the `$fields` shape stops satisfying AnyNodeData's NodeMemberValue
 	// index signature. Element type uses the literal-string union (matching
 	// the `texts` array passed at runtime).
 	const elementType = triples.map((t) => JSON.stringify(t.text)).join(' | ');
@@ -2326,19 +2326,6 @@ function stripUselessEscapes(pattern: string): string {
 		return pattern;
 	}
 	return out;
-}
-
-/**
- * `$render`, `$toEdit`, `$replace`, `$trivia` are now
- * attached by `withMethods(node, { render, toEdit })` from `@sittir/core`
- * after the mutable node object is constructed and `$with` is attached.
- * `factorySuffix` no longer emits into the return-object literal; callers
- * that used it are updated to call `emitWithMethodsAndFreeze` instead.
- *
- * @deprecated Replaced by `emitWithMethodsAndFreeze` in every factory body.
- */
-function factorySuffix(_treeTypeName: string): string[] {
-	return [];
 }
 
 

@@ -25,6 +25,5 @@ export {
 export { applyFormat, rebaseTrivia } from './format.ts';
 export {
 	freezeNodeData,
-	buildWithNamespace,
-	materializeStub
+	buildWithNamespace
 } from './nodeData.ts';

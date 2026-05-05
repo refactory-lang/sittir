@@ -59,23 +59,28 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 	const results: string[] = [];
 	if (node.$type === undefined) results.push(path || 'root');
 
-	if (node.$fields) {
-		for (const [key, value] of Object.entries(node.$fields)) {
-			if (Array.isArray(value)) {
-				value.forEach((v, i) => {
-					if (typeof v === 'object' && v !== null && '$type' in v) {
-						results.push(
-							...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`)
-						);
-					}
-				});
-			} else if (
-				typeof value === 'object' &&
-				value !== null &&
-				'$type' in value
-			) {
-				results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
-			}
+	const rec = node as unknown as Record<string, unknown>;
+	const namedSlotEntries: [string, unknown][] = [];
+	for (const key of Object.keys(rec)) {
+		if (key.startsWith('_')) {
+			namedSlotEntries.push([key.slice(1), rec[key]]);
+		}
+	}
+	for (const [key, value] of namedSlotEntries) {
+		if (Array.isArray(value)) {
+			value.forEach((v, i) => {
+				if (typeof v === 'object' && v !== null && '$type' in v) {
+					results.push(
+						...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`)
+					);
+				}
+			});
+		} else if (
+			typeof value === 'object' &&
+			value !== null &&
+			'$type' in value
+		) {
+			results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
 		}
 	}
 
@@ -109,17 +114,15 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
 
-	const definedKeys = (fields: Record<string, unknown> | undefined): string[] =>
-		Object.entries(fields ?? {})
-			.filter(([, v]) => v !== undefined)
-			.map(([k]) => k);
+	const extractSlotKeys = (node: AnyNodeData): string[] => {
+		const rec = node as unknown as Record<string, unknown>;
+		return Object.keys(rec)
+			.filter((k) => k.startsWith('_') && rec[k] !== undefined)
+			.map((k) => k.slice(1));
+	};
 
-	const bKeys = new Set(
-		definedKeys(b.$fields as Record<string, unknown> | undefined)
-	);
-	const aKeysMatchingB = definedKeys(
-		a.$fields as Record<string, unknown> | undefined
-	).filter((k) => bKeys.has(k));
+	const bKeys = new Set(extractSlotKeys(b));
+	const aKeysMatchingB = extractSlotKeys(a).filter((k) => bKeys.has(k));
 
 	// One-way check: fields factory declared that from() didn't fill in.
 	const missingInA = [...bKeys]

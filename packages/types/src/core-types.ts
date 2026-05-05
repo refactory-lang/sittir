@@ -10,45 +10,14 @@
 // ---------------------------------------------------------------------------
 
 /**
- * A value that can appear as a field entry on `AnyNodeData.fields` or as a
- * child slot on `AnyNodeData.children`. Runtime observed shapes:
- *
- *   - a nested `AnyNodeData` (the most common case: sub-node drilling)
- *   - a `string` (factory input for a leaf like `identifier('foo')`)
- *   - a `number` (numeric leaf input, occasionally used in templates)
- *   - an array of any of the above (multi-valued fields / children slots)
- *   - `undefined` (absent optional field)
- *
- * Union-typed so downstream consumers don't have to cast through `unknown`
- * to reach a NodeData shape. `AnyNodeData` is recursive via this alias.
- */
-/**
- * @deprecated Use `NodeMemberValue` instead. Retained as an alias for
- * backward compatibility with validators that haven't migrated yet.
- */
-export type NodeFieldValue =
-	| AnyNodeData
-	| string
-	| number
-	| readonly (AnyNodeData | string | number)[]
-	| undefined;
-
-/**
- * @deprecated Use `NodeMemberValue` instead. Retained as an alias for
- * backward compatibility with validators that haven't migrated yet.
- */
-export type NodeChildValue = AnyNodeData | string | number;
-
-/**
  * Unified named-member value type (ADR-0018 Phase 2).
  *
- * Replaces the split `NodeFieldValue` / `NodeChildValue` types on the
- * de-hoisted NodeData surface. A named slot's `_<name>` storage and its
- * accessor return type both resolve to `NodeMemberValue`.
+ * A named slot's `_<name>` storage and its accessor return type both
+ * resolve to `NodeMemberValue`.
  *
- * Note: unlike `NodeFieldValue`, this type does NOT include `undefined` or
- * arrays — the per-slot type annotations on generated interfaces carry those
- * modifiers directly (optional `?` for absent, `readonly T[]` for repeated).
+ * Does NOT include `undefined` or arrays — the per-slot type annotations
+ * on generated interfaces carry those modifiers directly (optional `?`
+ * for absent, `readonly T[]` for repeated).
  */
 export type NodeMemberValue = AnyNodeData | string | number;
 
@@ -78,8 +47,6 @@ export interface AnyNodeData {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
-	/** @deprecated Legacy storage wrapper. New code uses `_<name>` top-level keys. */
-	$fields?: { readonly [key: string]: NodeFieldValue };
 	$children?: readonly NodeMemberValue[];
 	/**
 	 * Source text for this node.

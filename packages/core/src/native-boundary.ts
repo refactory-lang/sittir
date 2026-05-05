@@ -1,4 +1,4 @@
-import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -55,7 +55,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 function assertNativeFieldValue(
 	value: unknown,
 	path: string
-): asserts value is NodeFieldValue {
+): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
@@ -64,18 +64,6 @@ function assertNativeFieldValue(
 		return;
 	}
 	assertNativeNodeDataInternal(value, path);
-}
-
-function assertNativeFields(value: unknown, path: string): void {
-	if (!isRecord(value)) {
-		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
-	}
-	for (const [key, entry] of Object.entries(value)) {
-		// Optional fields are stored as `undefined` in factory nodes; JSON.stringify
-		// strips them before the native engine sees the data, so they are safe to skip.
-		if (entry === undefined) continue;
-		assertNativeFieldValue(entry, `${path}.${key}`);
-	}
 }
 
 function assertNativeChildren(value: unknown, path: string): void {
@@ -127,12 +115,7 @@ function assertNativeNodeDataInternal(
 			`${path}.$format is not supported by the native render boundary; pass format separately`
 		);
 	}
-	// ADR-0018 Phase 3a: `$fields` is no longer emitted by readNode. Validate
-	// `_<name>` storage keys directly. Legacy `$fields` is still tolerated for
-	// backward compatibility (e.g. test fixtures) but warns in dev mode.
-	if (value.$fields !== undefined)
-		assertNativeFields(value.$fields, `${path}.$fields`);
-	// Validate `_<name>` storage keys (de-hoisted surface, Phase 3a).
+	// Validate `_<name>` storage keys (de-hoisted surface).
 	for (const key of Object.keys(value)) {
 		if (!key.startsWith('_')) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
@@ -172,7 +155,7 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *  - `$named` is a boolean
  *  - `$format` is absent
  *  - no function-valued properties
- *  - `$fields` and `$children` satisfy the same constraints recursively
+ *  - `_<name>` storage keys and `$children` satisfy the same constraints recursively
  *
  * @see {@link isRenderableNodeData} for the non-throwing predicate.
  */

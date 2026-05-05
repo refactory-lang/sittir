@@ -901,7 +901,7 @@ function emitRepeatedContainerFrom(
 	// this point any `${tName}` element has been ruled out by structural
 	// selection (the only way to land here with the union is a single
 	// self-NodeData first arg, handled above). The unwrap branch's
-	// `data.$children` is typed as `readonly NodeChildValue[]` (the loose
+	// `data.$children` is typed as `readonly NodeMemberValue[]` (the loose
 	// generic shape on `AnyNodeData`); the same boundary cast funnels it
 	// into the factory's narrow children-element type.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
@@ -922,7 +922,7 @@ function emitRepeatedContainerFrom(
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
-		// as unknown as Parameters<>: data.$children is NodeChildValue[] (includes
+		// as unknown as Parameters<>: data.$children is NodeMemberValue[] (includes
 		// string|number + separator literals); factory accepts only semantic nodes.
 		`    return ${factory}(...((data.$children ?? []) as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,

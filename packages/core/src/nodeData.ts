@@ -2,10 +2,8 @@
  * NodeData runtime helpers — ADR-0018 Phase 2.
  *
  * Shared helpers for the de-hoisted NodeData surface:
- *   - `withMethods`        — attaches $render/$toEdit/$replace/$trivia
  *   - `freezeNodeData`     — Object.freeze top-level + array values
  *   - `buildWithNamespace` — produces the $with updater namespace
- *   - `materializeStub`    — resolves a wrap-stub to full NodeData
  *
  * These functions are called from generated factories.ts and wrap.ts.
  * They share the implementations so every factory gets the same
@@ -16,92 +14,14 @@
  * `utils.ts` (emitted by `packages/codegen/src/emitters/client-utils.ts`).
  * Core stays grammar-agnostic — only cross-grammar runtime semantics
  * belong here.
+ *
+ * Note: `withMethods` (attaches $render/$toEdit/$replace/$trivia) is
+ * emitted per-grammar into each grammar's `utils.ts` by codegen, not
+ * shared through core. Each grammar inlines its own copy so the render
+ * closure captures the grammar-specific renderer.
  */
 
-import type { AnyNodeData, ByteRange, Edit } from './types.ts';
-import type { TreeHandle } from './readNode.ts';
-import { readNode } from './readNode.ts';
-
-// ---------------------------------------------------------------------------
-// Method attachment
-// ---------------------------------------------------------------------------
-
-export interface NodeDataMethods {
-	/** Render this node to source text. */
-	$render: () => string;
-	/** Create an Edit replacing the given byte range with this node's rendered text. */
-	$toEdit: (startOrRange: number | ByteRange, endPos?: number) => Edit;
-	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
-	$replace: (target: { range(): ByteRange }) => Edit;
-	/** Return a new frozen node with per-field trivia updates applied. */
-	$trivia: (...args: unknown[]) => AnyNodeData;
-}
-
-/**
- * Attach the shared `$render`, `$toEdit`, `$replace`, and `$trivia`
- * non-enumerable methods to a node object. Called from generated
- * factory/wrap code as the final step before `freezeNodeData`.
- *
- * @param node - The mutable node object (pre-freeze).
- * @param opts - Per-factory render and edit implementations.
- * @returns The same node object, for convenience in call chains.
- *
- * @remarks
- * All methods are non-enumerable so they don't appear in
- * `Object.keys(node)` or `JSON.stringify(node)`. The `$`-prefix
- * ensures they never collide with grammar field names (tree-sitter
- * field names cannot start with `$`).
- */
-export function withMethods(
-	node: Record<string, unknown>,
-	opts: {
-		render: (n: AnyNodeData) => string;
-		toEdit: (n: AnyNodeData, startOrRange: number | ByteRange, endPos?: number) => Edit;
-	}
-): Record<string, unknown> {
-	Object.defineProperty(node, '$render', {
-		value: function(this: AnyNodeData): string {
-			return opts.render(this);
-		},
-		enumerable: false,
-		writable: false,
-		configurable: false
-	});
-	Object.defineProperty(node, '$toEdit', {
-		value: function(
-			this: AnyNodeData,
-			startOrRange: number | ByteRange,
-			endPos?: number
-		): Edit {
-			return opts.toEdit(this, startOrRange, endPos);
-		},
-		enumerable: false,
-		writable: false,
-		configurable: false
-	});
-	Object.defineProperty(node, '$replace', {
-		value: function(
-			this: AnyNodeData,
-			target: { range(): ByteRange }
-		): Edit {
-			const r = target.range();
-			return opts.toEdit(this, r);
-		},
-		enumerable: false,
-		writable: false,
-		configurable: false
-	});
-	// $trivia is a no-op stub for now — implementations can override.
-	Object.defineProperty(node, '$trivia', {
-		value: function(this: AnyNodeData): AnyNodeData {
-			return this;
-		},
-		enumerable: false,
-		writable: false,
-		configurable: false
-	});
-	return node;
-}
+import type { AnyNodeData } from './types.ts';
 
 // ---------------------------------------------------------------------------
 // Freeze
@@ -176,35 +96,3 @@ export function buildWithNamespace<C extends object, R extends AnyNodeData>(
 }
 
 
-// ---------------------------------------------------------------------------
-// Stub materialization
-// ---------------------------------------------------------------------------
-
-/**
- * Materialize a wrap-layer stub (`{ $type, $nodeHandle, $childIndex }`) into
- * a full NodeData by re-reading from the tree.
- *
- * @param stub - The stub object stored in a `_<name>` slot.
- * @param tree - The tree handle that owns the parse tree. When `undefined`
- *   (tree has been freed or is unavailable), an informative error is thrown.
- * @returns The fully-hydrated NodeData for the stub.
- * @throws Error when `tree` is undefined or when the stub cannot be resolved.
- *
- * @remarks
- * Wrap accessors call this on access. The node is frozen — the accessor
- * does NOT cache the materialized value back into `_<name>`. Re-materialization
- * on each call is the correct behavior because the tree may have been
- * re-parsed between calls (and caching would require unfreezing).
- */
-export function materializeStub(
-	stub: AnyNodeData,
-	tree: TreeHandle | undefined
-): AnyNodeData {
-	if (!tree) {
-		throw new Error(
-			`NodeData stub cannot be materialized: parse tree no longer available ` +
-			`(handle=${stub.$nodeHandle ?? 'undefined'}, childIndex=${stub.$childIndex ?? 'undefined'})`
-		);
-	}
-	return readNode(tree, stub.$nodeHandle, stub.$childIndex);
-}

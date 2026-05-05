@@ -11,7 +11,7 @@
  */
 
 import { readNode, createRenderer } from '@sittir/core';
-import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
@@ -124,47 +124,29 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	if (data.$text !== undefined) result.$text = data.$text;
 	if (data.$variant !== undefined) result.$variant = data.$variant;
 
-	// Collect named fields from either the legacy `$fields` wrapper (readNode/wrap path)
-	// or the new `_<name>` top-level keys (ADR-0018 Phase 2 factory/wrap path).
-	const legacyFields = (data as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
-	const dehoistedKeys = Object.keys(data as unknown as Record<string, unknown>).filter((k) => k.startsWith('_'));
-	if (legacyFields || dehoistedKeys.length > 0) {
-		const fields: { [key: string]: NodeFieldValue } = {};
-		// Legacy shape: iterate $fields.
-		if (legacyFields) {
-			for (const [key, value] of Object.entries(legacyFields)) {
-				if (Array.isArray(value)) {
-					fields[key] = value.map((v) =>
-						typeof v === 'object' && v !== null
-							? stripToFactory(v as AnyNodeData)
-							: v
-					) as readonly (AnyNodeData | string | number)[];
-				} else if (typeof value === 'object' && value !== null) {
-					fields[key] = stripToFactory(value as AnyNodeData);
-				} else {
-					fields[key] = value as NodeFieldValue;
-				}
-			}
-		}
-		// New shape: iterate `_<name>` keys and strip the prefix.
-		for (const rawKey of dehoistedKeys) {
-			const fieldName = rawKey.slice(1); // strip leading `_`
-			const value = (data as unknown as Record<string, unknown>)[rawKey];
-			if (Array.isArray(value)) {
-				fields[fieldName] = value.map((v) =>
-					typeof v === 'object' && v !== null
-						? stripToFactory(v as AnyNodeData)
-						: v
-				) as readonly (AnyNodeData | string | number)[];
-			} else if (typeof value === 'object' && value !== null) {
-				fields[fieldName] = stripToFactory(value as AnyNodeData);
-			} else {
-				fields[fieldName] = value as NodeFieldValue;
-			}
-		}
-		result.$fields = fields;
-	}
+	const rec = data as unknown as Record<string, unknown>;
+	const dehoistedKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
 
+	/** Recursively strip a single field value. */
+	const stripFieldValue = (value: unknown): NodeMemberValue | readonly (AnyNodeData | string | number)[] => {
+		if (Array.isArray(value)) {
+			return value.map((v) =>
+				typeof v === 'object' && v !== null
+					? stripToFactory(v as AnyNodeData)
+					: v
+			) as readonly (AnyNodeData | string | number)[];
+		}
+		if (typeof value === 'object' && value !== null) {
+			return stripToFactory(value as AnyNodeData);
+		}
+		return value as NodeMemberValue;
+	};
+
+	// New shape: iterate `_<name>` keys directly.
+	for (const rawKey of dehoistedKeys) {
+		const value = rec[rawKey];
+		(result as unknown as Record<string, unknown>)[rawKey] = stripFieldValue(value);
+	}
 	if (data.$children) {
 		// Factory nodes only have named children — filter anonymous
 		result.$children = (data.$children as AnyNodeData[])
@@ -472,8 +454,8 @@ function resolveNodeForKind(
 
 /**
  * Dispatch `readData` through the appropriate factory call convention and
- * return the resulting `NodeData`. Pure text leaves (no `$fields` and no
- * `$children`) are returned as-is — factories for container-shaped wrappers
+ * return the resulting `NodeData`. Pure text leaves (no `_<name>` keys, no
+ * legacy `$fields`, and no `$children`) are returned as-is — factories for container-shaped wrappers
  * that tree-sitter surfaces as leaves would produce garbage. Factory lookup
  * uses the walker-resolved kind so that alias-source factories are preferred
  * over alias-target factories, keeping the output `$type` aligned with our
@@ -519,7 +501,7 @@ function buildFactoryNodeData(
 	}[],
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
-	// Leaf check: no named fields (legacy $fields or new _* keys) and no $children.
+	// Leaf check: no named fields (_<name> keys or legacy $fields) and no $children.
 	const hasLegacyFields = !!(readData as unknown as Record<string,unknown>)['$fields'];
 	const hasDehoistedFields = Object.keys(readData as unknown as Record<string,unknown>).some((k) => k.startsWith('_'));
 	if (!hasLegacyFields && !hasDehoistedFields && !readData.$children) {

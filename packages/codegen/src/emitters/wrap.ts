@@ -608,7 +608,7 @@ function emitFieldCarryingWrap(
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
 	// $children doesn't have the `_` prefix convention — access via data.$children
-	// which AnyNodeData declares as `readonly NodeChildValue[] | undefined`.
+	// which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
 	// Polymorph parent types are unions of UForm interfaces — not all members
 	// may declare `$children`, but it is always present at runtime. Cast
 	// through `(data as any)` to access the property without type errors.

@@ -384,14 +384,14 @@ export function findNativeNodeId(
 		if (nodeKind === kind && d.$nodeHandle !== undefined && d.$childIndex !== undefined) {
 			return { handle: d.$nodeHandle, childIndex: d.$childIndex };
 		}
-		const fields = d.$fields;
-		if (fields) {
-			for (const v of Object.values(fields)) {
-				const candidates = Array.isArray(v) ? v : [v];
-				for (const c of candidates) {
-					const found = walk(c as AnyNodeData);
-					if (found !== null) return found;
-				}
+		const rec = d as unknown as Record<string, unknown>;
+		for (const key of Object.keys(rec)) {
+			if (!key.startsWith('_')) continue;
+			const v = rec[key];
+			const candidates = Array.isArray(v) ? v : [v];
+			for (const c of candidates) {
+				const found = walk(c as AnyNodeData);
+				if (found !== null) return found;
 			}
 		}
 		const children = d.$children;
@@ -944,9 +944,9 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 // nodeToConfig — NodeData → factory Config-shape conversion
 // ---------------------------------------------------------------------------
 //
-// Validators read tree-sitter output via `readNode` (snake_case $fields
+// Validators read tree-sitter output via `readNode` (snake_case `_<name>`
 // keys, $-prefixed metadata). The factory signatures take `ConfigOf<T>`:
-//   - top-level keys in camelCase (snake→camel on each $fields entry)
+//   - top-level keys in camelCase (snake→camel on each `_<name>` entry)
 //   - `children` in place of $children
 //   - leaf values as bare strings (factory leaf signatures are `(text: string)`)
 //   - branch values as NodeData produced by THAT kind's factory — when
@@ -1013,7 +1013,6 @@ interface ReadNodeLike {
 	readonly $text?: string;
 	readonly $nodeHandle?: number;
 	readonly $childIndex?: number;
-	readonly $fields?: Readonly<Record<string, unknown>>;
 	readonly $children?: readonly unknown[];
 	readonly $named?: boolean;
 }
@@ -1023,7 +1022,7 @@ interface ReadNodeLike {
  * `resolveChild` unchanged.
  *
  * @remarks
- * Anonymous tokens (separators, delimiters, keywords promoted to $fields by
+ * Anonymous tokens (separators, delimiters, keywords promoted to `_<name>` by
  * readNode) must stay as NodeData. Render's `$named !== false` filter drops
  * them from `$$$CHILDREN`, and flankSep probes their span/text to reconstruct
  * trailing separators. Converting them to bare strings bypasses those filters
@@ -1114,7 +1113,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		_fieldName
 	} = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
-	// Drill into the child to materialize its own $fields/$children.
+	// Drill into the child to materialize its own _<name> keys / $children.
 	let drilled: ReadNodeLike = c;
 	if (c.$nodeHandle != null && c.$childIndex != null && tree) {
 		try {
@@ -1171,16 +1170,16 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 }
 
 /**
- * Test whether a `$fields` key is identifier-shaped and thus a valid factory
+ * Test whether a named-slot key is identifier-shaped and thus a valid factory
  * Config slot.
  *
  * @remarks
  * Promoted anonymous keyword / punctuation tokens use the token's raw text as
- * the `$fields` key (e.g. `,`, `:`, `(`). Factory Config types only declare
+ * the storage key (e.g. `_,`, `_:`, `_(`). Factory Config types only declare
  * identifier-shaped slots; spreading punctuation keys pollutes the config
  * without ever being read by the factory.
  *
- * @param key - A raw key from `$fields`.
+ * @param key - A raw key (without `_` prefix) from a named slot.
  * @returns `true` if the key matches `[a-zA-Z_]\w*` and should be included.
  */
 function isIdentifierShapedFieldKey(key: string): boolean {
@@ -1193,7 +1192,7 @@ function isIdentifierShapedFieldKey(key: string): boolean {
  *
  * @remarks
  * When the parent kind declares fields via `_factoryFields` but none of them
- * appear in `data.$fields`, tree-sitter likely elided the field label for this
+ * appear in the node's `_<name>` keys, tree-sitter likely elided the field label for this
  * GLR state (python `list_splat` at expression-statement position is the
  * canonical case). Route the named children into the declared fields by
  * position so the factory sees the expected slots instead of `children`. Fires
@@ -1258,11 +1257,6 @@ export function nodeToConfig(
 	for (const key of Object.keys(rec)) {
 		if (key.startsWith('_')) {
 			namedSlotEntries.push([key.slice(1), rec[key]]);
-		}
-	}
-	if (namedSlotEntries.length === 0 && data.$fields) {
-		for (const [k, v] of Object.entries(data.$fields)) {
-			namedSlotEntries.push([k, v]);
 		}
 	}
 	for (const [k, v] of namedSlotEntries) {
