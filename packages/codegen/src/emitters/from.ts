@@ -482,9 +482,8 @@ function _emitVariantFrom(
 	// the `if (isNodeData(input)) return input;` passthrough — input narrows
 	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
 	// / fluent methods — type-checks without forcing a re-construction.
-	const returnType = `ReturnType<typeof ${factory}> | T.${typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(input: ${inputType}): ${returnType} {`);
+	lines.push(`export function ${fn}(input: ${inputType}) {`);
 	lines.push(`  if (isNodeData(input)) return input;`);
 
 	const parentFields =
@@ -539,68 +538,22 @@ function _emitVariantFrom(
 }
 
 /**
- * Builds the `(input: T.Foo | T.Foo.Loose): ReturnType<typeof F.fooFactory>`
- * signature text for a branch from() function.
- *
- * @remarks
- * Return type is inferred from the factory call so the fluent accessor
- * methods (render, toEdit, replace, per-field getters/setters) flow through.
- * Annotating with the bare interface name `${typeName}` loses the methods and
- * fails assignability.
- *
- * Accepts either a pre-built NodeData (`T.Foo`, with snake_case `.fields`) or
- * the loose camelCase FromInput bag. The top-level `FromInputOf<T>` alias
- * itself never includes the node arm — only nested branch-slot values do via
- * WidenValue — so the union is added explicitly at the public signature.
- *
- * `T.<Kind>.Loose` resolves via `NamespaceMap[K]['Loose']`
- * (same type as the pre-008 Loose alias). Return type stays
- * `ReturnType<typeof F.<factory>>` — `FluentNodeOf<T>` (what `.Fluent`
- * resolves to) and the factory's concrete return shape are structurally
- * isomorphic but TS's strict function-parameter variance rejects the
- * assignment at the value position.
- *
- * @param node - The branch-like node being emitted.
- * @param factory - The `F.<factoryName>` reference string.
- * @param opt - `'?'` when all fields/children are optional, `''` otherwise.
- * @returns Object containing `inputType`, `returnType`, and `inputOptional` flag.
+ * Builds the input signature parts for a branch from() function.
+ * Return type is omitted — TS infers it from the body.
  */
 function buildBranchSignatureParts(
 	node: BranchLikeNode,
-	factory: string,
+	_factory: string,
 	opt: string
-): { inputType: string; returnType: string; inputOptional: boolean } {
-	// Input union includes both the Loose config bag AND the per-kind NodeData
-	// interface — callers can pass either a new config or an existing built node.
-	// The `isNodeData` generic overload narrows the union to `T.<Kind>` in the
-	// pass-through branch, making the return type sound without a sideways cast.
+): { inputType: string; inputOptional: boolean } {
 	const inputType = `T.${node.typeName}.Loose | T.${node.typeName}`;
-	// Return type unions the factory output with the bare data interface so
-	// the `if (isNodeData(input)) return input;` passthrough — input narrows
-	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
-	// / fluent methods — type-checks without forcing a re-construction.
-	const returnType = `ReturnType<typeof ${factory}> | T.${node.typeName}`;
 	const inputOptional = opt === '?';
-	return { inputType, returnType, inputOptional };
+	return { inputType, inputOptional };
 }
 
-/**
- * Emits the identity quick-return guard line for a branch from() body.
- *
- * @remarks
- * Wrapped (fluent) NodeData IS the target type,
- * so it is returned unchanged. Bare readNode output (without fluent methods)
- * is an unsupported input path — callers should use readTreeNode (which wraps
- * via per-kind dispatch) before handing to .from().
- *
- * @param lines - Per-function lines array to push into.
- * @param inputOptional - Whether the input parameter is optional.
- * @param returnType - The return type annotation string for the cast.
- */
 function emitBranchNodeDataPassthrough(
 	lines: string[],
-	inputOptional: boolean,
-	_returnType: string
+	inputOptional: boolean
 ): void {
 	const passGuard = inputOptional ? 'input !== undefined && ' : '';
 	lines.push(`  if (${passGuard}isNodeData(input)) return input;`);
@@ -772,10 +725,7 @@ function canDefaultToEmpty(
 	const targetFields = targetNode.fields;
 	const targetChildren = targetNode.children;
 	const hasBlockingField = targetFields.some(
-		(f) =>
-			isRequired(f) &&
-			stampExpressionFor(f, nodeMap) === undefined &&
-			!isHiddenInfraSlot(f, nodeMap)
+		(f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined
 	);
 	if (hasBlockingField) return null;
 	const hasBlockingChild = targetChildren.some(
@@ -809,16 +759,16 @@ function emitBranchFrom(
 			: '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
-	const { inputType, returnType, inputOptional } = buildBranchSignatureParts(
+	const { inputType, inputOptional } = buildBranchSignatureParts(
 		node,
 		factory,
 		opt
 	);
 	lines.push(
-		`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`
+		`export function ${fn}(input${opt}: ${inputType}) {`
 	);
 	if (fields.length > 0) {
-		emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
+		emitBranchNodeDataPassthrough(lines, inputOptional);
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
 		// the factory's Config surface — they're a `Bitflag<Const, T>` /
@@ -976,8 +926,7 @@ function containerTypeCheck(
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
- * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
- * @param elementType - The `${childType}[number]` element type string.
+ * @param elementType - The child element type union string.
  * @param kind - The grammar kind string for the self-NodeData check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
@@ -987,7 +936,6 @@ function emitRepeatedContainerFrom(
 	fn: string,
 	factory: string,
 	tName: string,
-	_childType: string,
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -1050,8 +998,7 @@ function emitRepeatedContainerFrom(
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
- * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
- * @param elementType - The `${childType}[number]` element type string.
+ * @param elementType - The child element type union string.
  * @param kind - The grammar kind string for the self-NodeData check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
@@ -1061,7 +1008,6 @@ function emitSingularContainerFrom(
 	fn: string,
 	factory: string,
 	tName: string,
-	_childType: string,
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -1107,15 +1053,13 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const childType = `NonNullable<T.${node.typeName}.Config['children']>`;
-	const elementType = `${childType}[number]`;
+	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
 	const childrenMultiple = node.children.some((c) => isMultiple(c));
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(
 			fn,
 			factory,
 			tName,
-			childType,
 			elementType,
 			node.kind,
 			kindEntries,
@@ -1126,7 +1070,6 @@ function emitContainerFrom(
 		fn,
 		factory,
 		tName,
-		childType,
 		elementType,
 		node.kind,
 		kindEntries,
@@ -1186,11 +1129,8 @@ function emitPolymorphDispatcher(
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
 	const inputType = `T.${typeName}.Loose | T.${typeName}`;
-	// Same passthrough widening as `buildBranchSignatureParts` — see comment
-	// there for rationale.
-	const returnType = `ReturnType<typeof ${factory}> | T.${typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`);
+	lines.push(`export function ${fn}(input?: ${inputType}) {`);
 	lines.push(`  if (input !== undefined && isNodeData(input)) return input;`);
 	// Bypass overload resolution via `_applyFactory`. The Loose input
 	// lacks `$variant` (FromInputOf doesn't project it), so direct
