@@ -979,12 +979,12 @@ function autoStampExpression(
  */
 function keywordPresenceAssignmentExpr(
 	f: AssembledNonterminal,
-	opt: string,
+	configAccess: string,
 	nodeMap: NodeMap
 ): string | undefined {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === null) return undefined;
-	const access = `config${opt}.${f.propertyName}`;
+	const access = `${configAccess}.${f.propertyName}`;
 	if (kw === 'boolean') {
 		const lit = keywordPresenceValue(f, nodeMap);
 		if (lit === undefined) return undefined;
@@ -1058,14 +1058,14 @@ function keywordPresenceAssignmentExpr(
  */
 function slotStorageExpr(
 	f: AssembledNonterminal,
-	opt: '' | '?',
+	configAccess: string,
 	nodeMap: NodeMap
 ): string {
-	const base = `config${opt}.${f.propertyName}`;
+	const base = `${configAccess}.${f.propertyName}`;
 	if (!isAllLeafSlot(f, nodeMap)) return base;
 	// Optional field → optional chaining on `.$text` so absent values stay
 	// undefined rather than throwing on the property access.
-	const sep = isRequired(f) && opt === '' ? '.' : '?.';
+	const sep = isRequired(f) ? '.' : '?.';
 	return `${base}${sep}$text`;
 }
 
@@ -1198,8 +1198,6 @@ function emitFieldCarryingFactory(
 	const typeKind =
 		node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const configType = resolveConfigType(node, isPolymorphForm);
-	const lines: string[] = [];
-	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
 
 	// `childrenUserConfigurable` is false when every required child
 	// auto-stamps AND there are no optional children. In that case
@@ -1221,6 +1219,21 @@ function emitFieldCarryingFactory(
 	const childrenUserConfigurable =
 		hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
 
+	// When opt is '?' (all fields optional), emit a local `_config` default so
+	// property access uses `_config.x` (no optional chaining) instead of
+	// `config?.x`. Only emit the default when the body actually reads from
+	// config — avoids dead code when all fields auto-stamp.
+	const hasConfigReads =
+		fields.some((f) => autoStampExpression(f, nodeMap) === undefined) ||
+		childrenUserConfigurable;
+	const configAccess = opt === '?' && hasConfigReads ? '_config' : 'config';
+
+	const lines: string[] = [];
+	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
+	if (opt === '?' && hasConfigReads) {
+		lines.push('  const _config = config ?? {};');
+	}
+
 	// Build children local variable.
 	if (hasChildren) {
 		// Stamp expressions use child-context (NodeData wrapper) so
@@ -1235,11 +1248,11 @@ function emitFieldCarryingFactory(
 				lines.push(`  const children = [${stampedItems.join(', ')}] as const;`);
 			} else {
 				lines.push(
-					`  const children = config${opt}.children ?? [${stampedItems.join(', ')}];`
+					`  const children = ${configAccess}.children ?? [${stampedItems.join(', ')}];`
 				);
 			}
 		} else {
-			lines.push(`  const children = config${opt}.children ?? [];`);
+			lines.push(`  const children = ${configAccess}.children ?? [];`);
 		}
 	}
 
@@ -1263,13 +1276,13 @@ function emitFieldCarryingFactory(
 			lines.push(`  const _${f.name} = ${stamp};`);
 			continue;
 		}
-		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		const kwExpr = keywordPresenceAssignmentExpr(f, configAccess, nodeMap);
 		if (kwExpr !== undefined) {
 			lines.push(`  const _${f.name} = ${kwExpr};`);
 			continue;
 		}
 		lines.push(
-			`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`
+			`  const _${f.name} = ${slotStorageExpr(f, configAccess, nodeMap)};`
 		);
 	}
 
@@ -1317,12 +1330,12 @@ function emitFieldCarryingFactory(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => ${fn}({ ...config, ${f.propertyName}: values }),`
+				`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.propertyName}: values }),`
 			);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...config, ${f.propertyName}: value }),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.propertyName}: value }),`
 			);
 		}
 	}
@@ -1331,7 +1344,7 @@ function emitFieldCarryingFactory(
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const restType = childrenSetterRestType(children, childElem, childRest);
 		lines.push(
-			`      children: (...items: ${restType}) => ${fn}({ ...config, children: items }),`
+			`      children: (...items: ${restType}) => ${fn}({ ...${configAccess}, children: items }),`
 		);
 	}
 	lines.push('    },');
@@ -1453,12 +1466,12 @@ function emitRefineFormFactory(
 			lines.push(`  const _${f.name} = ${stamp};`);
 			continue;
 		}
-		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		const kwExpr = keywordPresenceAssignmentExpr(f, `config${opt}`, nodeMap);
 		if (kwExpr !== undefined) {
 			lines.push(`  const _${f.name} = ${kwExpr};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
@@ -1973,12 +1986,12 @@ function emitHoistedPolymorphFormFactory(
 				lines.push(`  const _${f.name} = ${stamp};`);
 				continue;
 			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+			const kwExpr = keywordPresenceAssignmentExpr(f, `config${opt}`, nodeMap);
 			if (kwExpr !== undefined) {
 				lines.push(`  const _${f.name} = ${kwExpr};`);
 				continue;
 			}
-			lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+			lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
 		}
 		lines.push('  const inner = withMethods({');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
@@ -2005,7 +2018,7 @@ function emitHoistedPolymorphFormFactory(
 			lines.push(`  const _${f.name} = ${stamp};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);

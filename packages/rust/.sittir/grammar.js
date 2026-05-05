@@ -1511,7 +1511,8 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     ruleName,
     newMembers,
     supertypeNames,
-    existing
+    existing,
+    kindCounts
   );
   if (finalMembers === newMembers && !changed) return rule;
   let result = { ...cursor, members: finalMembers };
@@ -1520,14 +1521,15 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
   }
   return result;
 }
-function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing) {
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
   let anyRepeatChanged = false;
   const result = members.map((m) => {
     const rebuilt = tryPromoteInRepeatMember(
       ruleName,
       m,
       supertypeNames,
-      existing
+      existing,
+      outerKindCounts
     );
     if (rebuilt === null) return m;
     anyRepeatChanged = true;
@@ -1536,7 +1538,7 @@ function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing)
   if (!anyRepeatChanged) return members;
   return result;
 }
-function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing) {
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, outerKindCounts) {
   let cursor = member;
   const memberPrecStack = [];
   while (isPrecWrapper(cursor)) {
@@ -1574,6 +1576,7 @@ function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing) {
     if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
     if (innerExisting.has(fieldName)) return im;
     if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+    if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
     if (existing.has(fieldName)) {
       reportSkip(
         "symbol-to-field",

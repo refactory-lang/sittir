@@ -679,7 +679,8 @@ export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Con
 }
 
 export function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config) {
-  const children = config?.children ?? [];
+  const _config = config ?? {};
+  const children = _config.children ?? [];
   const _pub = "pub" as const;
   return withMethods({
     $type: TSKindId.VisibilityModifierPub as const,
@@ -690,7 +691,7 @@ export function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config) 
     pub() { return _pub; },
     children() { return children; },
     $with: {
-      children: (...items: readonly [((T.Self | T.Super | T.Crate | T.VisibilityModifierInPath))]) => _visibilityModifierPub({ ...config, children: items }),
+      children: (...items: readonly [((T.Self | T.Super | T.Crate | T.VisibilityModifierInPath))]) => _visibilityModifierPub({ ..._config, children: items }),
     },
   });
 }
@@ -953,8 +954,9 @@ export function block(config: T.Block.Config) {
 }
 
 export function blockComment(config?: T.BlockComment.Config) {
-  const children = config?.children ?? [];
-  const _doc = config?.doc;
+  const _config = config ?? {};
+  const children = _config.children ?? [];
+  const _doc = _config.doc;
   return withMethods({
     $type: TSKindId.BlockComment as const,
     $source: 2 as const,
@@ -964,8 +966,8 @@ export function blockComment(config?: T.BlockComment.Config) {
     doc() { return _doc; },
     children() { return children; },
     $with: {
-      doc: (value?: T.BlockCommentContent) => blockComment({ ...config, doc: value }),
-      children: (...items: readonly [((T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker))]) => blockComment({ ...config, children: items }),
+      doc: (value?: T.BlockCommentContent) => blockComment({ ..._config, doc: value }),
+      children: (...items: readonly [((T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker))]) => blockComment({ ..._config, children: items }),
     },
   });
 }
@@ -1010,8 +1012,9 @@ export function bracketedType(child: (T._Type | T.QualifiedType)) {
 }
 
 export function breakExpression(config?: T.BreakExpression.Config) {
-  const children = config?.children ?? [];
-  const _label = config?.label;
+  const _config = config ?? {};
+  const children = _config.children ?? [];
+  const _label = _config.label;
   return withMethods({
     $type: TSKindId.BreakExpression as const,
     $source: 2 as const,
@@ -1021,8 +1024,8 @@ export function breakExpression(config?: T.BreakExpression.Config) {
     label() { return _label; },
     children() { return children; },
     $with: {
-      label: (value?: T.Label) => breakExpression({ ...config, label: value }),
-      children: (...items: readonly [T.Expression]) => breakExpression({ ...config, children: items }),
+      label: (value?: T.Label) => breakExpression({ ..._config, label: value }),
+      children: (...items: readonly [T.Expression]) => breakExpression({ ..._config, children: items }),
     },
   });
 }
@@ -1257,7 +1260,8 @@ export function constParameter(config: T.ConstParameter.Config) {
 }
 
 export function continueExpression(config?: T.ContinueExpression.Config) {
-  const _label = config?.label;
+  const _config = config ?? {};
+  const _label = _config.label;
   return withMethods({
     $type: TSKindId.ContinueExpression as const,
     $source: 2 as const,
@@ -1265,7 +1269,7 @@ export function continueExpression(config?: T.ContinueExpression.Config) {
     _label,
     label() { return _label; },
     $with: {
-      label: (value?: T.Label) => continueExpression({ ...config, label: value }),
+      label: (value?: T.Label) => continueExpression({ ..._config, label: value }),
     },
   });
 }
@@ -1453,21 +1457,14 @@ export function enumVariant(config: T.EnumVariant.Config) {
   });
 }
 
-export function enumVariantList(config: T.EnumVariantList.Config) {
-  const children = config.children ?? [];
-  const _enum_variant = config.enumVariant;
+export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
   return withMethods({
     $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
-    _enum_variant,
     $children: children,
-    enumVariant() { return _enum_variant; },
     children() { return children; },
-    $with: {
-      enumVariant: (...values: T.EnumVariant[]) => enumVariantList({ ...config, enumVariant: values }),
-      children: (...items: T.AttributeItem[]) => enumVariantList({ ...config, children: items }),
-    },
+    $with: { $children: (...vs: (T.AttributeItem | T.EnumVariant)[]) => enumVariantList(...vs) },
   });
 }
 
@@ -1565,7 +1562,8 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
 }
 
 export function externModifier(config?: T.ExternModifier.Config) {
-  const _string_literal = config?.stringLiteral;
+  const _config = config ?? {};
+  const _string_literal = _config.stringLiteral;
   return withMethods({
     $type: TSKindId.ExternModifier as const,
     $source: 2 as const,
@@ -1573,7 +1571,7 @@ export function externModifier(config?: T.ExternModifier.Config) {
     _string_literal,
     stringLiteral() { return _string_literal; },
     $with: {
-      stringLiteral: (value?: T.StringLiteral) => externModifier({ ...config, stringLiteral: value }),
+      stringLiteral: (value?: T.StringLiteral) => externModifier({ ..._config, stringLiteral: value }),
     },
   });
 }
@@ -1600,21 +1598,14 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
   });
 }
 
-export function fieldDeclarationList(config: T.FieldDeclarationList.Config) {
-  const children = config.children ?? [];
-  const _field_declaration = config.fieldDeclaration;
+export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
   return withMethods({
     $type: TSKindId.FieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    _field_declaration,
     $children: children,
-    fieldDeclaration() { return _field_declaration; },
     children() { return children; },
-    $with: {
-      fieldDeclaration: (...values: T.FieldDeclaration[]) => fieldDeclarationList({ ...config, fieldDeclaration: values }),
-      children: (...items: T.AttributeItem[]) => fieldDeclarationList({ ...config, children: items }),
-    },
+    $with: { $children: (...vs: (T.AttributeItem | T.FieldDeclaration)[]) => fieldDeclarationList(...vs) },
   });
 }
 
@@ -2852,22 +2843,18 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
 
 export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
   const children = config.children ?? [];
-  const _visibility_modifier = config.visibilityModifier;
   const _type = config.type;
   return withMethods({
     $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    _visibility_modifier,
     _type,
     $children: children,
-    visibilityModifier() { return _visibility_modifier; },
     typeField() { return _type; },
     children() { return children; },
     $with: {
-      visibilityModifier: (value?: T.VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: value }),
       typeField: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
-      children: (...items: T.AttributeItem[]) => orderedFieldDeclarationList({ ...config, children: items }),
+      children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ...config, children: items }),
     },
   });
 }
@@ -2894,21 +2881,14 @@ export function parameter(config: T.Parameter.Config) {
   });
 }
 
-export function parameters(config: T.Parameters.Config) {
-  const children = config.children ?? [];
-  const _attribute_item = config.attributeItem;
+export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
   return withMethods({
     $type: TSKindId.Parameters as const,
     $source: 2 as const,
     $named: true as const,
-    _attribute_item,
     $children: children,
-    attributeItem() { return _attribute_item; },
     children() { return children; },
-    $with: {
-      attributeItem: (value?: T.AttributeItem) => parameters({ ...config, attributeItem: value }),
-      children: (...items: ((T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => parameters({ ...config, children: items }),
-    },
+    $with: { $children: (...vs: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) => parameters(...vs) },
   });
 }
 
@@ -3331,9 +3311,10 @@ export function self() {
 }
 
 export function selfParameter(config?: T.SelfParameter.Config) {
-  const _reference = config?.reference ? "&" as const : undefined;
-  const _lifetime = config?.lifetime;
-  const _mutable_specifier = config?.mutableSpecifier ? "mut" as const : undefined;
+  const _config = config ?? {};
+  const _reference = _config.reference ? "&" as const : undefined;
+  const _lifetime = _config.lifetime;
+  const _mutable_specifier = _config.mutableSpecifier ? "mut" as const : undefined;
   const _self = "self" as const;
   return withMethods({
     $type: TSKindId.SelfParameter as const,
@@ -3348,9 +3329,9 @@ export function selfParameter(config?: T.SelfParameter.Config) {
     mutableSpecifier() { return _mutable_specifier; },
     self() { return _self; },
     $with: {
-      reference: (value?: BooleanKeyword<"&">) => selfParameter({ ...config, reference: value }),
-      lifetime: (value?: T.Lifetime) => selfParameter({ ...config, lifetime: value }),
-      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => selfParameter({ ...config, mutableSpecifier: value }),
+      reference: (value?: BooleanKeyword<"&">) => selfParameter({ ..._config, reference: value }),
+      lifetime: (value?: T.Lifetime) => selfParameter({ ..._config, lifetime: value }),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => selfParameter({ ..._config, mutableSpecifier: value }),
     },
   });
 }
@@ -3925,21 +3906,15 @@ export function tupleType(...children: T._Type[]) {
   });
 }
 
-export function typeArguments(config: T.TypeArguments.Config) {
-  const children = config.children ?? [];
-  const _trait_bounds = config.traitBounds;
+export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
+  _assertNonEmpty(children, 'type_arguments.children');
   return withMethods({
     $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
-    _trait_bounds,
     $children: children,
-    traitBounds() { return _trait_bounds; },
     children() { return children; },
-    $with: {
-      traitBounds: (value?: T.TraitBounds) => typeArguments({ ...config, traitBounds: value }),
-      children: (...items: NonEmptyArray<(T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)>) => typeArguments({ ...config, children: items }),
-    },
+    $with: { $children: (...vs: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) => typeArguments(...vs) },
   });
 }
 
@@ -4194,7 +4169,8 @@ export function useList(...children: T.UseClause[]) {
 }
 
 export function useWildcard(config?: T.UseWildcard.Config) {
-  const _path = config?.path;
+  const _config = config ?? {};
+  const _path = _config.path;
   return withMethods({
     $type: TSKindId.UseWildcard as const,
     $source: 2 as const,
@@ -4202,14 +4178,15 @@ export function useWildcard(config?: T.UseWildcard.Config) {
     _path,
     path() { return _path; },
     $with: {
-      path: (value?: T.Path) => useWildcard({ ...config, path: value }),
+      path: (value?: T.Path) => useWildcard({ ..._config, path: value }),
     },
   });
 }
 
 export function variadicParameter(config?: T.VariadicParameter.Config) {
-  const _mutable_specifier = config?.mutableSpecifier ? "mut" as const : undefined;
-  const _pattern = config?.pattern;
+  const _config = config ?? {};
+  const _mutable_specifier = _config.mutableSpecifier ? "mut" as const : undefined;
+  const _pattern = _config.pattern;
   return withMethods({
     $type: TSKindId.VariadicParameter as const,
     $source: 2 as const,
@@ -4219,8 +4196,8 @@ export function variadicParameter(config?: T.VariadicParameter.Config) {
     mutableSpecifier() { return _mutable_specifier; },
     pattern() { return _pattern; },
     $with: {
-      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => variadicParameter({ ...config, mutableSpecifier: value }),
-      pattern: (value?: T.Pattern) => variadicParameter({ ...config, pattern: value }),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => variadicParameter({ ..._config, mutableSpecifier: value }),
+      pattern: (value?: T.Pattern) => variadicParameter({ ..._config, pattern: value }),
     },
   });
 }

@@ -6187,31 +6187,7 @@
       "factoryName": "enumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "enum_variant",
-          "propertyName": "enumVariant",
-          "paramName": "enumVariant",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_variant",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "enum_variant"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6224,6 +6200,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "enum_variant",
+          "propertyName": "enumVariant",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "enum_variant",
               "unresolved": true
             }
           ]
@@ -6593,31 +6584,7 @@
       "factoryName": "fieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "field_declaration",
-          "propertyName": "fieldDeclaration",
-          "paramName": "fieldDeclaration",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_declaration",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "field_declaration"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6630,6 +6597,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "field_declaration",
+          "propertyName": "fieldDeclaration",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "field_declaration",
               "unresolved": true
             }
           ]
@@ -10726,29 +10708,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "visibility_modifier"
-            ]
-          }
-        },
-        {
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
@@ -10784,6 +10743,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
               "unresolved": true
             }
           ]
@@ -10884,11 +10858,11 @@
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
-      "fields": [
+      "fields": [],
+      "children": [
         {
           "name": "attribute_item",
           "propertyName": "attributeItem",
-          "paramName": "attributeItem",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10899,17 +10873,8 @@
               "name": "attribute_item",
               "unresolved": true
             }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        }
-      ],
-      "children": [
+          ]
+        },
         {
           "name": "parameter",
           "propertyName": "parameter",
@@ -14055,31 +14020,7 @@
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
-      "fields": [
-        {
-          "name": "trait_bounds",
-          "propertyName": "traitBounds",
-          "paramName": "traitBounds",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "trait_bounds",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "trait_bounds"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -14116,6 +14057,21 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "block",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "trait_bounds",
+          "propertyName": "traitBounds",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "trait_bounds",
               "unresolved": true
             }
           ]

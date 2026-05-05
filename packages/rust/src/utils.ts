@@ -88,8 +88,6 @@ export function withMethods<T extends object>(
  *
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
  * from loose config bags by the presence of any of:
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
  *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
  *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
  *   - `$children` (container nodes whose children arrive without field names),
@@ -243,20 +241,6 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
       { name: "attributes", multiple: true, required: true, alternatives: [{"type":"attribute_item"},{"type":"unary_expression"},{"type":"reference_expression"},{"type":"try_expression"},{"type":"binary_expression"},{"type":"assignment_expression"},{"type":"compound_assignment_expr"},{"type":"type_cast_expression"},{"type":"call_expression"},{"type":"return_expression"},{"type":"yield_expression"},{"type":"string_literal"},{"type":"raw_string_literal"},{"type":"char_literal"},{"type":"boolean_literal","text":"true"},{"type":"boolean_literal","text":"false"},{"type":"integer_literal"},{"type":"float_literal"},{"type":"identifier"},{"type":"self","text":"self"},{"type":"scoped_identifier"},{"type":"generic_function"},{"type":"await_expression"},{"type":"field_expression"},{"type":"array_expression"},{"type":"tuple_expression"},{"type":"macro_invocation"},{"type":"unit_expression"},{"type":"break_expression"},{"type":"continue_expression"},{"type":"index_expression"},{"type":"metavariable"},{"type":"closure_expression"},{"type":"parenthesized_expression"},{"type":"struct_expression"},{"type":"unsafe_block"},{"type":"async_block"},{"type":"gen_block"},{"type":"try_block"},{"type":"block"},{"type":"if_expression"},{"type":"match_expression"},{"type":"while_expression"},{"type":"loop_expression"},{"type":"for_expression"},{"type":"const_block"},{"type":"range_expression"}] as const },
     ],
   },
-  "enum_variant_list": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"attribute_item"}] as const,
-    fields: [
-      { name: "enum_variant", multiple: true, required: true, alternatives: [{"type":"enum_variant"}] as const },
-    ],
-  },
-  "field_declaration_list": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"attribute_item"}] as const,
-    fields: [
-      { name: "field_declaration", multiple: true, required: true, alternatives: [{"type":"field_declaration"}] as const },
-    ],
-  },
   "function_modifiers": {
     childrenRequired: false,
     childAlternatives: [] as const,
@@ -273,7 +257,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "ordered_field_declaration_list": {
     childrenRequired: true,
-    childAlternatives: [{"type":"attribute_item"}] as const,
+    childAlternatives: [{"type":"attribute_item"},{"type":"visibility_modifier"}] as const,
     fields: [
       { name: "type", multiple: true, required: true, alternatives: [{"type":"type","text":"type"}] as const },
     ],
