@@ -2083,7 +2083,16 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type Config = ConfigFor<'${kind}'>;`);
 	}
 	lines.push(`  export type Fluent = FluentFor<'${kind}'>;`);
-	lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
+	const isContainer =
+		node.modelType === 'branch' &&
+		(node as AssembledBranch).isContainerShape;
+	if (isContainer) {
+		lines.push(
+			`  export type Loose = NonNullable<Config['children']>[number];`
+		);
+	} else {
+		lines.push(`  export type Loose = LooseFor<'${kind}'>;`);
+	}
 	lines.push(`  export type Tree = TreeFor<'${kind}'>;`);
 	lines.push(`  export type Kind = '${kind}';`);
 	lines.push('}');

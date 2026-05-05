@@ -5643,42 +5643,42 @@ export namespace _ClosureExpressionExpr {
 export namespace _DelimTokenTreeBrace {
   export type Config = ConfigFor<'_delim_token_tree_brace'>;
   export type Fluent = FluentFor<'_delim_token_tree_brace'>;
-  export type Loose = LooseFor<'_delim_token_tree_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_delim_token_tree_brace'>;
   export type Kind = '_delim_token_tree_brace';
 }
 export namespace _DelimTokenTreeBracket {
   export type Config = ConfigFor<'_delim_token_tree_bracket'>;
   export type Fluent = FluentFor<'_delim_token_tree_bracket'>;
-  export type Loose = LooseFor<'_delim_token_tree_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_delim_token_tree_bracket'>;
   export type Kind = '_delim_token_tree_bracket';
 }
 export namespace _DelimTokenTreeParen {
   export type Config = ConfigFor<'_delim_token_tree_paren'>;
   export type Fluent = FluentFor<'_delim_token_tree_paren'>;
-  export type Loose = LooseFor<'_delim_token_tree_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_delim_token_tree_paren'>;
   export type Kind = '_delim_token_tree_paren';
 }
 export namespace _ExpressionStatementBlockEnding {
   export type Config = ConfigFor<'_expression_statement_block_ending'>;
   export type Fluent = FluentFor<'_expression_statement_block_ending'>;
-  export type Loose = LooseFor<'_expression_statement_block_ending'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_expression_statement_block_ending'>;
   export type Kind = '_expression_statement_block_ending';
 }
 export namespace _ExpressionStatementWithSemi {
   export type Config = ConfigFor<'_expression_statement_with_semi'>;
   export type Fluent = FluentFor<'_expression_statement_with_semi'>;
-  export type Loose = LooseFor<'_expression_statement_with_semi'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_expression_statement_with_semi'>;
   export type Kind = '_expression_statement_with_semi';
 }
 export namespace FieldIdentifier {
   export type Config = ConfigFor<'_field_identifier'>;
   export type Fluent = FluentFor<'_field_identifier'>;
-  export type Loose = LooseFor<'_field_identifier'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_field_identifier'>;
   export type Kind = '_field_identifier';
 }
@@ -5706,7 +5706,7 @@ export namespace _ForeignModItemBody {
 export namespace FunctionTypeFnForm {
   export type Config = ConfigFor<'_function_type_fn_form'>;
   export type Fluent = FluentFor<'_function_type_fn_form'>;
-  export type Loose = LooseFor<'_function_type_fn_form'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_function_type_fn_form'>;
   export type Kind = '_function_type_fn_form';
 }
@@ -5727,7 +5727,7 @@ export namespace _ImplItemBody {
 export namespace LetChain {
   export type Config = ConfigFor<'_let_chain'>;
   export type Fluent = FluentFor<'_let_chain'>;
-  export type Loose = LooseFor<'_let_chain'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_let_chain'>;
   export type Kind = '_let_chain';
 }
@@ -5741,21 +5741,21 @@ export namespace LineCommentDoc {
 export namespace _MacroDefinitionBrace {
   export type Config = ConfigFor<'_macro_definition_brace'>;
   export type Fluent = FluentFor<'_macro_definition_brace'>;
-  export type Loose = LooseFor<'_macro_definition_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_macro_definition_brace'>;
   export type Kind = '_macro_definition_brace';
 }
 export namespace _MacroDefinitionBracket {
   export type Config = ConfigFor<'_macro_definition_bracket'>;
   export type Fluent = FluentFor<'_macro_definition_bracket'>;
-  export type Loose = LooseFor<'_macro_definition_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_macro_definition_bracket'>;
   export type Kind = '_macro_definition_bracket';
 }
 export namespace _MacroDefinitionParen {
   export type Config = ConfigFor<'_macro_definition_paren'>;
   export type Fluent = FluentFor<'_macro_definition_paren'>;
-  export type Loose = LooseFor<'_macro_definition_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_macro_definition_paren'>;
   export type Kind = '_macro_definition_paren';
 }
@@ -5783,7 +5783,7 @@ export namespace _ModItemInline {
 export namespace NonSpecialToken {
   export type Config = ConfigFor<'_non_special_token'>;
   export type Fluent = FluentFor<'_non_special_token'>;
-  export type Loose = LooseFor<'_non_special_token'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_non_special_token'>;
   export type Kind = '_non_special_token';
 }
@@ -5804,7 +5804,7 @@ export namespace OrPatternPrefix {
 export namespace _PointerTypeMut {
   export type Config = ConfigFor<'_pointer_type_mut'>;
   export type Fluent = FluentFor<'_pointer_type_mut'>;
-  export type Loose = LooseFor<'_pointer_type_mut'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_pointer_type_mut'>;
   export type Kind = '_pointer_type_mut';
 }
@@ -5853,14 +5853,14 @@ export namespace RangePatternPrefix {
 export namespace ReferenceExpressionRawMut {
   export type Config = ConfigFor<'_reference_expression_raw_mut'>;
   export type Fluent = FluentFor<'_reference_expression_raw_mut'>;
-  export type Loose = LooseFor<'_reference_expression_raw_mut'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_reference_expression_raw_mut'>;
   export type Kind = '_reference_expression_raw_mut';
 }
 export namespace ReservedIdentifier {
   export type Config = ConfigFor<'_reserved_identifier'>;
   export type Fluent = FluentFor<'_reserved_identifier'>;
-  export type Loose = LooseFor<'_reserved_identifier'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_reserved_identifier'>;
   export type Kind = '_reserved_identifier';
 }
@@ -5881,56 +5881,56 @@ export namespace StructItemTuple {
 export namespace _TokenTreeBrace {
   export type Config = ConfigFor<'_token_tree_brace'>;
   export type Fluent = FluentFor<'_token_tree_brace'>;
-  export type Loose = LooseFor<'_token_tree_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_brace'>;
   export type Kind = '_token_tree_brace';
 }
 export namespace _TokenTreeBracket {
   export type Config = ConfigFor<'_token_tree_bracket'>;
   export type Fluent = FluentFor<'_token_tree_bracket'>;
-  export type Loose = LooseFor<'_token_tree_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_bracket'>;
   export type Kind = '_token_tree_bracket';
 }
 export namespace _TokenTreeParen {
   export type Config = ConfigFor<'_token_tree_paren'>;
   export type Fluent = FluentFor<'_token_tree_paren'>;
-  export type Loose = LooseFor<'_token_tree_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_paren'>;
   export type Kind = '_token_tree_paren';
 }
 export namespace _TokenTreePatternBrace {
   export type Config = ConfigFor<'_token_tree_pattern_brace'>;
   export type Fluent = FluentFor<'_token_tree_pattern_brace'>;
-  export type Loose = LooseFor<'_token_tree_pattern_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_pattern_brace'>;
   export type Kind = '_token_tree_pattern_brace';
 }
 export namespace _TokenTreePatternBracket {
   export type Config = ConfigFor<'_token_tree_pattern_bracket'>;
   export type Fluent = FluentFor<'_token_tree_pattern_bracket'>;
-  export type Loose = LooseFor<'_token_tree_pattern_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_pattern_bracket'>;
   export type Kind = '_token_tree_pattern_bracket';
 }
 export namespace _TokenTreePatternParen {
   export type Config = ConfigFor<'_token_tree_pattern_paren'>;
   export type Fluent = FluentFor<'_token_tree_pattern_paren'>;
-  export type Loose = LooseFor<'_token_tree_pattern_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_token_tree_pattern_paren'>;
   export type Kind = '_token_tree_pattern_paren';
 }
 export namespace TypeIdentifier {
   export type Config = ConfigFor<'_type_identifier'>;
   export type Fluent = FluentFor<'_type_identifier'>;
-  export type Loose = LooseFor<'_type_identifier'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_type_identifier'>;
   export type Kind = '_type_identifier';
 }
 export namespace _VisibilityModifierCrate {
   export type Config = ConfigFor<'_visibility_modifier_crate'>;
   export type Fluent = FluentFor<'_visibility_modifier_crate'>;
-  export type Loose = LooseFor<'_visibility_modifier_crate'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'_visibility_modifier_crate'>;
   export type Kind = '_visibility_modifier_crate';
 }
@@ -6014,14 +6014,14 @@ export namespace AttributeItem {
 export namespace AwaitExpression {
   export type Config = ConfigFor<'await_expression'>;
   export type Fluent = FluentFor<'await_expression'>;
-  export type Loose = LooseFor<'await_expression'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'await_expression'>;
   export type Kind = 'await_expression';
 }
 export namespace BaseFieldInitializer {
   export type Config = ConfigFor<'base_field_initializer'>;
   export type Fluent = FluentFor<'base_field_initializer'>;
-  export type Loose = LooseFor<'base_field_initializer'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'base_field_initializer'>;
   export type Kind = 'base_field_initializer';
 }
@@ -6056,7 +6056,7 @@ export namespace BoundedType {
 export namespace BracketedType {
   export type Config = ConfigFor<'bracketed_type'>;
   export type Fluent = FluentFor<'bracketed_type'>;
-  export type Loose = LooseFor<'bracketed_type'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'bracketed_type'>;
   export type Kind = 'bracketed_type';
 }
@@ -6098,14 +6098,14 @@ export namespace ClosureExpression {
 export namespace ClosureParameters {
   export type Config = ConfigFor<'closure_parameters'>;
   export type Fluent = FluentFor<'closure_parameters'>;
-  export type Loose = LooseFor<'closure_parameters'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'closure_parameters'>;
   export type Kind = 'closure_parameters';
 }
 export namespace Comment {
   export type Config = ConfigFor<'comment'>;
   export type Fluent = FluentFor<'comment'>;
-  export type Loose = LooseFor<'comment'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'comment'>;
   export type Kind = 'comment';
 }
@@ -6147,28 +6147,28 @@ export namespace ContinueExpression {
 export namespace DeclarationList {
   export type Config = ConfigFor<'declaration_list'>;
   export type Fluent = FluentFor<'declaration_list'>;
-  export type Loose = LooseFor<'declaration_list'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'declaration_list'>;
   export type Kind = 'declaration_list';
 }
 export namespace DelimTokenTreeParen {
   export type Config = ConfigFor<'delim_token_tree_paren'>;
   export type Fluent = FluentFor<'delim_token_tree_paren'>;
-  export type Loose = LooseFor<'delim_token_tree_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'delim_token_tree_paren'>;
   export type Kind = 'delim_token_tree_paren';
 }
 export namespace DelimTokenTreeBracket {
   export type Config = ConfigFor<'delim_token_tree_bracket'>;
   export type Fluent = FluentFor<'delim_token_tree_bracket'>;
-  export type Loose = LooseFor<'delim_token_tree_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'delim_token_tree_bracket'>;
   export type Kind = 'delim_token_tree_bracket';
 }
 export namespace DelimTokenTreeBrace {
   export type Config = ConfigFor<'delim_token_tree_brace'>;
   export type Fluent = FluentFor<'delim_token_tree_brace'>;
-  export type Loose = LooseFor<'delim_token_tree_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'delim_token_tree_brace'>;
   export type Kind = 'delim_token_tree_brace';
 }
@@ -6189,7 +6189,7 @@ export namespace DynamicType {
 export namespace ElseClause {
   export type Config = ConfigFor<'else_clause'>;
   export type Fluent = FluentFor<'else_clause'>;
-  export type Loose = LooseFor<'else_clause'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'else_clause'>;
   export type Kind = 'else_clause';
 }
@@ -6210,21 +6210,21 @@ export namespace EnumVariant {
 export namespace EnumVariantList {
   export type Config = ConfigFor<'enum_variant_list'>;
   export type Fluent = FluentFor<'enum_variant_list'>;
-  export type Loose = LooseFor<'enum_variant_list'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'enum_variant_list'>;
   export type Kind = 'enum_variant_list';
 }
 export namespace ExpressionStatementWithSemi {
   export type Config = ConfigFor<'expression_statement_with_semi'>;
   export type Fluent = FluentFor<'expression_statement_with_semi'>;
-  export type Loose = LooseFor<'expression_statement_with_semi'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'expression_statement_with_semi'>;
   export type Kind = 'expression_statement_with_semi';
 }
 export namespace ExpressionStatementBlockEnding {
   export type Config = ConfigFor<'expression_statement_block_ending'>;
   export type Fluent = FluentFor<'expression_statement_block_ending'>;
-  export type Loose = LooseFor<'expression_statement_block_ending'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'expression_statement_block_ending'>;
   export type Kind = 'expression_statement_block_ending';
 }
@@ -6259,7 +6259,7 @@ export namespace FieldDeclaration {
 export namespace FieldDeclarationList {
   export type Config = ConfigFor<'field_declaration_list'>;
   export type Fluent = FluentFor<'field_declaration_list'>;
-  export type Loose = LooseFor<'field_declaration_list'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'field_declaration_list'>;
   export type Kind = 'field_declaration_list';
 }
@@ -6280,7 +6280,7 @@ export namespace FieldInitializer {
 export namespace FieldInitializerList {
   export type Config = ConfigFor<'field_initializer_list'>;
   export type Fluent = FluentFor<'field_initializer_list'>;
-  export type Loose = LooseFor<'field_initializer_list'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'field_initializer_list'>;
   export type Kind = 'field_initializer_list';
 }
@@ -6308,7 +6308,7 @@ export namespace ForExpression {
 export namespace ForLifetimes {
   export type Config = ConfigFor<'for_lifetimes'>;
   export type Fluent = FluentFor<'for_lifetimes'>;
-  export type Loose = LooseFor<'for_lifetimes'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'for_lifetimes'>;
   export type Kind = 'for_lifetimes';
 }
@@ -6490,21 +6490,21 @@ export namespace LoopExpression {
 export namespace MacroDefinitionParen {
   export type Config = ConfigFor<'macro_definition_paren'>;
   export type Fluent = FluentFor<'macro_definition_paren'>;
-  export type Loose = LooseFor<'macro_definition_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'macro_definition_paren'>;
   export type Kind = 'macro_definition_paren';
 }
 export namespace MacroDefinitionBracket {
   export type Config = ConfigFor<'macro_definition_bracket'>;
   export type Fluent = FluentFor<'macro_definition_bracket'>;
-  export type Loose = LooseFor<'macro_definition_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'macro_definition_bracket'>;
   export type Kind = 'macro_definition_bracket';
 }
 export namespace MacroDefinitionBrace {
   export type Config = ConfigFor<'macro_definition_brace'>;
   export type Fluent = FluentFor<'macro_definition_brace'>;
-  export type Loose = LooseFor<'macro_definition_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'macro_definition_brace'>;
   export type Kind = 'macro_definition_brace';
 }
@@ -6546,7 +6546,7 @@ export namespace MatchArm {
 export namespace MatchBlock {
   export type Config = ConfigFor<'match_block'>;
   export type Fluent = FluentFor<'match_block'>;
-  export type Loose = LooseFor<'match_block'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'match_block'>;
   export type Kind = 'match_block';
 }
@@ -6616,21 +6616,21 @@ export namespace Parameter {
 export namespace Parameters {
   export type Config = ConfigFor<'parameters'>;
   export type Fluent = FluentFor<'parameters'>;
-  export type Loose = LooseFor<'parameters'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'parameters'>;
   export type Kind = 'parameters';
 }
 export namespace ParenthesizedExpression {
   export type Config = ConfigFor<'parenthesized_expression'>;
   export type Fluent = FluentFor<'parenthesized_expression'>;
-  export type Loose = LooseFor<'parenthesized_expression'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'parenthesized_expression'>;
   export type Kind = 'parenthesized_expression';
 }
 export namespace PointerTypeMut {
   export type Config = ConfigFor<'pointer_type_mut'>;
   export type Fluent = FluentFor<'pointer_type_mut'>;
-  export type Loose = LooseFor<'pointer_type_mut'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'pointer_type_mut'>;
   export type Kind = 'pointer_type_mut';
 }
@@ -6679,7 +6679,7 @@ export namespace RawStringLiteral {
 export namespace RefPattern {
   export type Config = ConfigFor<'ref_pattern'>;
   export type Fluent = FluentFor<'ref_pattern'>;
-  export type Loose = LooseFor<'ref_pattern'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'ref_pattern'>;
   export type Kind = 'ref_pattern';
 }
@@ -6707,14 +6707,14 @@ export namespace ReferenceType {
 export namespace RemovedTraitBound {
   export type Config = ConfigFor<'removed_trait_bound'>;
   export type Fluent = FluentFor<'removed_trait_bound'>;
-  export type Loose = LooseFor<'removed_trait_bound'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'removed_trait_bound'>;
   export type Kind = 'removed_trait_bound';
 }
 export namespace ReturnExpression {
   export type Config = ConfigFor<'return_expression'>;
   export type Fluent = FluentFor<'return_expression'>;
-  export type Loose = LooseFor<'return_expression'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'return_expression'>;
   export type Kind = 'return_expression';
 }
@@ -6763,7 +6763,7 @@ export namespace ShorthandFieldInitializer {
 export namespace SlicePattern {
   export type Config = ConfigFor<'slice_pattern'>;
   export type Fluent = FluentFor<'slice_pattern'>;
-  export type Loose = LooseFor<'slice_pattern'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'slice_pattern'>;
   export type Kind = 'slice_pattern';
 }
@@ -6784,7 +6784,7 @@ export namespace StaticItem {
 export namespace StringLiteral {
   export type Config = ConfigFor<'string_literal'>;
   export type Fluent = FluentFor<'string_literal'>;
-  export type Loose = LooseFor<'string_literal'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'string_literal'>;
   export type Kind = 'string_literal';
 }
@@ -6819,35 +6819,35 @@ export namespace TokenBindingPattern {
 export namespace TokenRepetition {
   export type Config = ConfigFor<'token_repetition'>;
   export type Fluent = FluentFor<'token_repetition'>;
-  export type Loose = LooseFor<'token_repetition'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_repetition'>;
   export type Kind = 'token_repetition';
 }
 export namespace TokenRepetitionPattern {
   export type Config = ConfigFor<'token_repetition_pattern'>;
   export type Fluent = FluentFor<'token_repetition_pattern'>;
-  export type Loose = LooseFor<'token_repetition_pattern'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_repetition_pattern'>;
   export type Kind = 'token_repetition_pattern';
 }
 export namespace TokenTreeParen {
   export type Config = ConfigFor<'token_tree_paren'>;
   export type Fluent = FluentFor<'token_tree_paren'>;
-  export type Loose = LooseFor<'token_tree_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_paren'>;
   export type Kind = 'token_tree_paren';
 }
 export namespace TokenTreeBracket {
   export type Config = ConfigFor<'token_tree_bracket'>;
   export type Fluent = FluentFor<'token_tree_bracket'>;
-  export type Loose = LooseFor<'token_tree_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_bracket'>;
   export type Kind = 'token_tree_bracket';
 }
 export namespace TokenTreeBrace {
   export type Config = ConfigFor<'token_tree_brace'>;
   export type Fluent = FluentFor<'token_tree_brace'>;
-  export type Loose = LooseFor<'token_tree_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_brace'>;
   export type Kind = 'token_tree_brace';
 }
@@ -6861,21 +6861,21 @@ export namespace TokenTree {
 export namespace TokenTreePatternParen {
   export type Config = ConfigFor<'token_tree_pattern_paren'>;
   export type Fluent = FluentFor<'token_tree_pattern_paren'>;
-  export type Loose = LooseFor<'token_tree_pattern_paren'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_pattern_paren'>;
   export type Kind = 'token_tree_pattern_paren';
 }
 export namespace TokenTreePatternBracket {
   export type Config = ConfigFor<'token_tree_pattern_bracket'>;
   export type Fluent = FluentFor<'token_tree_pattern_bracket'>;
-  export type Loose = LooseFor<'token_tree_pattern_bracket'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_pattern_bracket'>;
   export type Kind = 'token_tree_pattern_bracket';
 }
 export namespace TokenTreePatternBrace {
   export type Config = ConfigFor<'token_tree_pattern_brace'>;
   export type Fluent = FluentFor<'token_tree_pattern_brace'>;
-  export type Loose = LooseFor<'token_tree_pattern_brace'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'token_tree_pattern_brace'>;
   export type Kind = 'token_tree_pattern_brace';
 }
@@ -6889,7 +6889,7 @@ export namespace TokenTreePattern {
 export namespace TraitBounds {
   export type Config = ConfigFor<'trait_bounds'>;
   export type Fluent = FluentFor<'trait_bounds'>;
-  export type Loose = LooseFor<'trait_bounds'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'trait_bounds'>;
   export type Kind = 'trait_bounds';
 }
@@ -6924,7 +6924,7 @@ export namespace TupleExpression {
 export namespace TuplePattern {
   export type Config = ConfigFor<'tuple_pattern'>;
   export type Fluent = FluentFor<'tuple_pattern'>;
-  export type Loose = LooseFor<'tuple_pattern'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'tuple_pattern'>;
   export type Kind = 'tuple_pattern';
 }
@@ -6938,14 +6938,14 @@ export namespace TupleStructPattern {
 export namespace TupleType {
   export type Config = ConfigFor<'tuple_type'>;
   export type Fluent = FluentFor<'tuple_type'>;
-  export type Loose = LooseFor<'tuple_type'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'tuple_type'>;
   export type Kind = 'tuple_type';
 }
 export namespace TypeArguments {
   export type Config = ConfigFor<'type_arguments'>;
   export type Fluent = FluentFor<'type_arguments'>;
-  export type Loose = LooseFor<'type_arguments'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'type_arguments'>;
   export type Kind = 'type_arguments';
 }
@@ -7015,7 +7015,7 @@ export namespace UseAsClause {
 export namespace UseBounds {
   export type Config = ConfigFor<'use_bounds'>;
   export type Fluent = FluentFor<'use_bounds'>;
-  export type Loose = LooseFor<'use_bounds'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'use_bounds'>;
   export type Kind = 'use_bounds';
 }
@@ -7029,7 +7029,7 @@ export namespace UseDeclaration {
 export namespace UseList {
   export type Config = ConfigFor<'use_list'>;
   export type Fluent = FluentFor<'use_list'>;
-  export type Loose = LooseFor<'use_list'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'use_list'>;
   export type Kind = 'use_list';
 }
@@ -7050,7 +7050,7 @@ export namespace VariadicParameter {
 export namespace VisibilityModifierCrate {
   export type Config = ConfigFor<'visibility_modifier_crate'>;
   export type Fluent = FluentFor<'visibility_modifier_crate'>;
-  export type Loose = LooseFor<'visibility_modifier_crate'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'visibility_modifier_crate'>;
   export type Kind = 'visibility_modifier_crate';
 }
@@ -7064,7 +7064,7 @@ export namespace VisibilityModifier {
 export namespace WhereClause {
   export type Config = ConfigFor<'where_clause'>;
   export type Fluent = FluentFor<'where_clause'>;
-  export type Loose = LooseFor<'where_clause'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'where_clause'>;
   export type Kind = 'where_clause';
 }
@@ -7085,7 +7085,7 @@ export namespace WhileExpression {
 export namespace YieldExpression {
   export type Config = ConfigFor<'yield_expression'>;
   export type Fluent = FluentFor<'yield_expression'>;
-  export type Loose = LooseFor<'yield_expression'>;
+  export type Loose = NonNullable<Config['children']>[number];
   export type Tree = TreeFor<'yield_expression'>;
   export type Kind = 'yield_expression';
 }

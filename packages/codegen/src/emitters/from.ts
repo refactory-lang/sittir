@@ -477,7 +477,7 @@ function _emitVariantFrom(
 	const typeName = node.typeName;
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose | T.${typeName}`;
+	const inputType = `T.${typeName}.Loose`;
 	// Return type unions the factory output with the bare data interface so
 	// the `if (isNodeData(input)) return input;` passthrough — input narrows
 	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
@@ -546,7 +546,7 @@ function buildBranchSignatureParts(
 	_factory: string,
 	opt: string
 ): { inputType: string; inputOptional: boolean } {
-	const inputType = `T.${node.typeName}.Loose | T.${node.typeName}`;
+	const inputType = `T.${node.typeName}.Loose`;
 	const inputOptional = opt === '?';
 	return { inputType, inputOptional };
 }
@@ -1053,7 +1053,7 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
+	const elementType = `T.${node.typeName}.Loose`;
 	const childrenMultiple = node.children.some((c) => isMultiple(c));
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(
@@ -1128,7 +1128,7 @@ function emitPolymorphDispatcher(
 ): string {
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose | T.${typeName}`;
+	const inputType = `T.${typeName}.Loose`;
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(input?: ${inputType}) {`);
 	lines.push(`  if (input !== undefined && isNodeData(input)) return input;`);
