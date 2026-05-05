@@ -406,11 +406,11 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "_class_heritage_extends_clause": return F._classHeritageExtendsClause(...(children as Parameters<typeof F._classHeritageExtendsClause>));
     case "_class_heritage_implements_clause": return F._classHeritageImplementsClause(...(children as Parameters<typeof F._classHeritageImplementsClause>));
     case "_export_statement_default_from_arm": return F.exportStatementDefaultFromArm(...(children as Parameters<typeof F.exportStatementDefaultFromArm>));
-    case "_export_statement_default_from_arm_clause_from": return F.exportStatementDefaultFromArmClauseFrom({ children } as any);
-    case "_export_statement_default_from_arm_ns_from": return F.exportStatementDefaultFromArmNsFrom({ children } as any);
+    case "_export_statement_default_from_arm_clause_from": return F.exportStatementDefaultFromArmClauseFrom({ children } as Parameters<typeof F.exportStatementDefaultFromArmClauseFrom>[0]);
+    case "_export_statement_default_from_arm_ns_from": return F.exportStatementDefaultFromArmNsFrom({ children } as Parameters<typeof F.exportStatementDefaultFromArmNsFrom>[0]);
     case "_export_statement_equals_export": return F._exportStatementEqualsExport(...(children as Parameters<typeof F._exportStatementEqualsExport>));
     case "_export_statement_namespace_export": return F._exportStatementNamespaceExport(...(children as Parameters<typeof F._exportStatementNamespaceExport>));
-    case "_export_statement_type_export": return F._exportStatementTypeExport({ children } as any);
+    case "_export_statement_type_export": return F._exportStatementTypeExport({ children } as Parameters<typeof F._exportStatementTypeExport>[0]);
     case "_import_clause_default_import": return F._importClauseDefaultImport(...(children as Parameters<typeof F._importClauseDefaultImport>));
     case "_import_clause_named_imports": return F._importClauseNamedImports(...(children as Parameters<typeof F._importClauseNamedImports>));
     case "_import_clause_namespace_import": return F._importClauseNamespaceImport(...(children as Parameters<typeof F._importClauseNamespaceImport>));
@@ -427,36 +427,36 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "class_body": return F.classBody(...(children as Parameters<typeof F.classBody>));
     case "class_heritage_extends_clause": return F.classHeritageExtendsClause(...(children as Parameters<typeof F.classHeritageExtendsClause>));
     case "class_heritage_implements_clause": return F.classHeritageImplementsClause(...(children as Parameters<typeof F.classHeritageImplementsClause>));
-    case "class_static_block": return F.classStaticBlock({ children } as any);
+    case "class_static_block": return F.classStaticBlock({ children } as Parameters<typeof F.classStaticBlock>[0]);
     case "decorator": return F.decorator(...(children as Parameters<typeof F.decorator>));
     case "decorator_parenthesized_expression": return F.decoratorParenthesizedExpression(...(children as Parameters<typeof F.decoratorParenthesizedExpression>));
-    case "enum_body": return F.enumBody({ children } as any);
+    case "enum_body": return F.enumBody({ children } as Parameters<typeof F.enumBody>[0]);
     case "export_clause": return F.exportClause(...(children as Parameters<typeof F.exportClause>));
-    case "export_statement_type_export": return F.exportStatementTypeExport({ children } as any);
+    case "export_statement_type_export": return F.exportStatementTypeExport({ children } as Parameters<typeof F.exportStatementTypeExport>[0]);
     case "export_statement_equals_export": return F.exportStatementEqualsExport(...(children as Parameters<typeof F.exportStatementEqualsExport>));
     case "export_statement_namespace_export": return F.exportStatementNamespaceExport(...(children as Parameters<typeof F.exportStatementNamespaceExport>));
-    case "expression_statement": return F.expressionStatement({ children } as any);
-    case "for_in_statement": return F.forInStatement({ children } as any);
+    case "expression_statement": return F.expressionStatement({ children } as Parameters<typeof F.expressionStatement>[0]);
+    case "for_in_statement": return F.forInStatement({ children } as Parameters<typeof F.forInStatement>[0]);
     case "formal_parameters": return F.formalParameters(...(children as Parameters<typeof F.formalParameters>));
-    case "function_declaration": return F.functionDeclaration({ children } as any);
-    case "generator_function_declaration": return F.generatorFunctionDeclaration({ children } as any);
+    case "function_declaration": return F.functionDeclaration({ children } as Parameters<typeof F.functionDeclaration>[0]);
+    case "generator_function_declaration": return F.generatorFunctionDeclaration({ children } as Parameters<typeof F.generatorFunctionDeclaration>[0]);
     case "implements_clause": return F.implementsClause(...(children as Parameters<typeof F.implementsClause>));
     case "import_clause_namespace_import": return F.importClauseNamespaceImport(...(children as Parameters<typeof F.importClauseNamespaceImport>));
     case "import_clause_named_imports": return F.importClauseNamedImports(...(children as Parameters<typeof F.importClauseNamedImports>));
     case "import_clause_default_import": return F.importClauseDefaultImport(...(children as Parameters<typeof F.importClauseDefaultImport>));
     case "index_signature_mapped_type_clause": return F.indexSignatureMappedTypeClause(...(children as Parameters<typeof F.indexSignatureMappedTypeClause>));
     case "literal_type": return F.literalType(...(children as Parameters<typeof F.literalType>));
-    case "member_expression": return F.memberExpression({ children } as any);
+    case "member_expression": return F.memberExpression({ children } as Parameters<typeof F.memberExpression>[0]);
     case "named_imports": return F.namedImports(...(children as Parameters<typeof F.namedImports>));
     case "namespace_export": return F.namespaceExport(...(children as Parameters<typeof F.namespaceExport>));
     case "object": return F.object(...(children as Parameters<typeof F.object>));
     case "object_pattern": return F.objectPattern(...(children as Parameters<typeof F.objectPattern>));
-    case "optional_parameter": return F.optionalParameter({ children } as any);
+    case "optional_parameter": return F.optionalParameter({ children } as Parameters<typeof F.optionalParameter>[0]);
     case "parenthesized_expression_sequence": return F.parenthesizedExpressionSequence(...(children as Parameters<typeof F.parenthesizedExpressionSequence>));
-    case "public_field_definition": return F.publicFieldDefinition({ children } as any);
-    case "required_parameter": return F.requiredParameter({ children } as any);
+    case "public_field_definition": return F.publicFieldDefinition({ children } as Parameters<typeof F.publicFieldDefinition>[0]);
+    case "required_parameter": return F.requiredParameter({ children } as Parameters<typeof F.requiredParameter>[0]);
     case "rest_pattern": return F.restPattern(...(children as Parameters<typeof F.restPattern>));
-    case "return_statement": return F.returnStatement({ children } as any);
+    case "return_statement": return F.returnStatement({ children } as Parameters<typeof F.returnStatement>[0]);
     case "sequence_expression": return F.sequenceExpression(...(children as Parameters<typeof F.sequenceExpression>));
     case "string_double": return F.stringDouble(...(children as Parameters<typeof F.stringDouble>));
     case "string_single": return F.stringSingle(...(children as Parameters<typeof F.stringSingle>));
@@ -465,7 +465,7 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
     case "template_string": return F.templateString(...(children as Parameters<typeof F.templateString>));
     case "template_substitution": return F.templateSubstitution(...(children as Parameters<typeof F.templateSubstitution>));
     case "template_type": return F.templateType(...(children as Parameters<typeof F.templateType>));
-    case "throw_statement": return F.throwStatement({ children } as any);
+    case "throw_statement": return F.throwStatement({ children } as Parameters<typeof F.throwStatement>[0]);
     case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
     case "type_arguments": return F.typeArguments(...(children as Parameters<typeof F.typeArguments>));
     case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
@@ -1402,7 +1402,7 @@ export function interfaceDeclarationFrom(input: T.InterfaceDeclaration.Loose | T
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     extendsTypeClause: _resolveOneBranch<T.ExtendsTypeClause>(input.extendsTypeClause, "extends_type_clause"),
-    body: _resolveOneBranch<T.ObjectType>(input.body, "object_type"),
+    body: _resolveOneBranch<T.ObjectType>(input.body, "object_type") ?? F.objectType(),
   });
 }
 

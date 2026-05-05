@@ -142,6 +142,10 @@ function assertNativeNodeDataInternal(
  * Type guard — returns `true` iff `node` passes all runtime invariants
  * required by the native (napi) render boundary.
  *
+ * @remarks
+ * Returns `true` unconditionally when `NODE_ENV === 'production'` — the
+ * O(n) tree walk is skipped in production builds for performance.
+ *
  * @see {@link assertRenderableNodeData} for the throwing variant.
  */
 export function isRenderableNodeData(node: AnyNodeData): boolean {

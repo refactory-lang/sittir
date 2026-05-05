@@ -32,13 +32,13 @@ import {
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	fieldTypeComponents,
 	isValidIdent,
 	keywordPresenceKind,
 	resolveHoistedForm,
 	stampExpressionFor,
 	isHiddenInfraSlot
 } from './shared.ts';
+import { fieldElementType } from './factories.ts';
 import {
 	isNodeRef,
 	isTerminalValue,
@@ -743,6 +743,7 @@ function canDefaultToEmpty(
 	nodeMap: NodeMap
 ): string | null {
 	if (!isRequired(field)) return null;
+	if (isHiddenInfraSlot(field, nodeMap)) return null;
 	const kinds = slotKindNames(field);
 	if (kinds.length !== 1) return null;
 	const targetKind = kinds[0]!;
@@ -771,7 +772,10 @@ function canDefaultToEmpty(
 	const targetFields = targetNode.fields;
 	const targetChildren = targetNode.children;
 	const hasBlockingField = targetFields.some(
-		(f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined
+		(f) =>
+			isRequired(f) &&
+			stampExpressionFor(f, nodeMap) === undefined &&
+			!isHiddenInfraSlot(f, nodeMap)
 	);
 	if (hasBlockingField) return null;
 	const hasBlockingChild = targetChildren.some(
@@ -862,6 +866,7 @@ function emitBranchFrom(
 			nonStampFields.length === 1 &&
 			childSlots.length === 0 &&
 			!node.kind.startsWith('_') &&
+			!nodeMap.polymorphFormKinds.has(node.kind) &&
 			!isMultiple(nonStampFields[0]!) &&
 			keywordPresenceKind(nonStampFields[0]!, nodeMap) === null &&
 			!isHiddenInfraSlot(nonStampFields[0]!, nodeMap);
@@ -1629,39 +1634,6 @@ function buildInternedArrayResolverCall(
 	return `${helper}${tArg}(${prop}, ${leafArr}, ${branchArr})`;
 }
 
-/**
- * Resolve an AssembledNonterminal's element type to a concrete TS type expression
- * for the from() surface — each resolved node kind is prefixed with `T.` so
- * the reference resolves against the `import * as T from './types.js'` import.
- *
- * Mirrors `factories.ts::fieldElementType` and delegates to the shared
- * {@link fieldTypeComponents} walker so node-ref / literal / alias-source
- * / hidden-keyword / missing-kind handling stays in one place.
- */
-function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
-	const literals = slotLiteralValues(f);
-	const kindNames = slotKindNames(f);
-	if (literals.length > 0 && kindNames.length === 0) {
-		return literals.map((v) => JSON.stringify(v)).join(' | ');
-	}
-	if (kindNames.length === 0 && literals.length === 0) return 'string';
-	const components = fieldTypeComponents(f, nodeMap);
-	const parts: string[] = [];
-	for (const comp of components) {
-		if (comp.kind === 'literal') {
-			parts.push(JSON.stringify(comp.value));
-		} else if (comp.kind === 'nodeKind') {
-			parts.push(
-				isValidIdent(comp.value)
-					? `T.${comp.value}`
-					: JSON.stringify(comp.rawKind)
-			);
-		} else {
-			parts.push(`T.${comp.value}`);
-		}
-	}
-	return [...new Set(parts)].join(' | ');
-}
 
 function resolveFieldCall(
 	prop: string,
@@ -1982,12 +1954,12 @@ function collectWrapChildrenEntries(
 }
 
 /**
- * Emits the `_wrapKindIds` map, `_wrapWithChildren` dispatcher, and the
- * `_wrapKinds` set into generated from.ts.
+ * Emits the `_wrapKindIds` map and `_wrapWithChildren` dispatcher into
+ * generated from.ts.
  *
  * @remarks
  * Gap 3 (array auto-wrap): when `_resolveOneBranch` receives an array and
- * the target kind is in `_wrapKinds`, each element is resolved and the
+ * the target kind is in `_wrapKindIds`, each element is resolved and the
  * array is forwarded to the factory via `_wrapWithChildren`.
  *
  * Gap 4 (single-value auto-wrap): when `_resolveOneBranch` receives a
@@ -2022,8 +1994,8 @@ function emitWrapWithChildrenTable(
 			// Container factories use rest-params: F.parameters(...children)
 			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`);
 		} else {
-			// Mixed factories use config with children key: F.block({ children } as any)
-			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}({ children } as any);`);
+			// Mixed factories use config with children key
+			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}({ children } as Parameters<typeof F.${e.factoryName}>[0]);`);
 		}
 	}
 	lines.push('    default: return undefined;');
