@@ -6,8 +6,9 @@
  * the Rule union itself. The classes here represent what an assembled
  * grammar node looks like after the full pipeline has classified and
  * enriched the Rule — each subclass corresponds to one ModelType
- * (`branch`, `container`, `polymorph`, `leaf`, `keyword`, `token`,
- * `enum`, `supertype`, `group`, `multi`).
+ * (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
+ * `supertype`, `group`, `multi`). `container` was merged into
+ * `branch` (discriminated by `isContainerShape`).
  *
  * Exports:
  *
@@ -42,7 +43,6 @@ import type {
 	TerminalRule
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
-import type { KindProjection } from './types.ts';
 import {
 	renderRuleTemplate,
 	findRepeatSeparator,
@@ -53,7 +53,7 @@ import { tokenToName } from './optimize.ts';
 import { assertNever } from '../polymorph-variant.ts';
 
 // ---------------------------------------------------------------------------
-// NodeOrTerminal — unified slot-content type (ADR-0010 Task 1.6)
+// NodeOrTerminal — unified slot-content type
 // ---------------------------------------------------------------------------
 
 /**
@@ -83,21 +83,36 @@ export interface UnresolvedRef {
  * `resolveSlotRefs` the `.node` field holds the resolved `AssembledNode`;
  * before that pass (or for unresolvable dead-kind references) it holds
  * an `UnresolvedRef`.
+ *
+ * Per-value `separator` / `trailing` / `leading` replace the prior per-slot
+ * `AssembledNonterminal.hasTrailing` / `hasLeading` flags. Only meaningful
+ * when this value's `multiplicity` is `'array'` or `'nonEmptyArray'`.
+ * Populated by the unified `deriveSlots` walk — undefined on values from
+ * non-repeat positions.
  */
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
 	readonly multiplicity: Multiplicity;
+	readonly separator?: string;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
 }
 
 /**
  * A slot-content entry that is an inline string literal (e.g. `'const'`,
  * `'pub'`, an enum member). The `value` is the exact grammar string.
+ *
+ * See {@link NodeRef} for the per-value `separator` / `trailing` / `leading`
+ * semantics.
  */
 export interface TerminalValue {
 	readonly kind: 'terminal';
 	readonly value: string;
 	readonly multiplicity: Multiplicity;
+	readonly separator?: string;
+	readonly trailing?: boolean;
+	readonly leading?: boolean;
 }
 
 /**
@@ -305,8 +320,8 @@ export function hasAnyChild(rule: Rule): boolean {
 
 /**
  * Dev audit — log shapes that reach derivation in a non-canonical form.
- * Spec 013 Phase 2 prereq: simplify's canonicalization should produce a
- * top-level `seq` (or a single atomic member) with members that are
+ * Simplify's canonicalization should produce a top-level `seq` (or a
+ * single atomic member) with members that are
  * fields / literals / repeats / symbols. Anything else means simplify
  * didn't finish normalizing, and the trivialized `projectFields` /
  * `projectChildren` walks won't see the content.
@@ -317,8 +332,8 @@ export function hasAnyChild(rule: Rule): boolean {
  * which simplify passes still need work.
  */
 const DERIVE_AUDIT = process.env.SITTIR_AUDIT_DERIVE === '1';
-// Audit default is now 'strict' — spec 013 drained every non-canonical
-// shape across the curated grammars via variant adoption + inline
+// Audit default is now 'strict' — every non-canonical shape across the
+// curated grammars has been drained via variant adoption + inline
 // (`rust`, `python`, `typescript` all audit clean). Any non-canonical
 // rule reaching derivation throws with a diagnostic so the walker can
 // safely assume canonical input.
@@ -375,7 +390,7 @@ function auditDerivationShape(
 	}
 }
 function classifyTopLevelShape(rule: Rule): string {
-	// Canonical for the Phase 2 trivial walk: the tree rooted at `rule`
+	// Canonical for the trivial walk: the tree rooted at `rule`
 	// — traversed through the structural wrappers the walker descends
 	// (seq, optional, repeat, repeat1, choice, clause, variant) — must
 	// satisfy:
@@ -609,13 +624,17 @@ export function dumpDerivationAudit(label: string = 'derivation-audit'): void {
 	auditKindsByShape.clear();
 }
 
-export function deriveFields(rule: Rule): AssembledField[] {
+/**
+ * Internal — fields-side walk. The exported derivation surface is
+ * `deriveSlots`; this helper is its fields-portion.
+ */
+function _deriveFieldsInternal(rule: Rule): AssembledNonterminal[] {
 	auditDerivationShape(rule, 'fields');
 	return mergeFieldsByName(deriveFieldsRaw(rule, 'single'));
 }
 
 /**
- * Fold fields with the same grammar name into a single AssembledField whose
+ * Fold fields with the same grammar name into a single AssembledNonterminal whose
  * `values` is the union of the contributing fields' values. Tree-sitter allows
  * the same field name to appear multiple times in a rule (e.g. Python's
  * `if_statement` has `field('alternative', $.elif_clause)` inside a repeat AND
@@ -625,14 +644,15 @@ export function deriveFields(rule: Rule): AssembledField[] {
  * the from-emitter — must see ONE slot per name, not the raw unmerged list.
  *
  * @remarks
- * We keep the first occurrence's `propertyName` / `paramName` / `source` /
- * `projection.typeName` (none of them vary per-occurrence for the same name
- * in practice — the name determines all three). Projection `kinds` and
- * `aliasSources` are merged per the values they reference.
+ * We keep the first occurrence's `propertyName` / `paramName` / `source`
+ * (none of them vary per-occurrence for the same name in practice — the
+ * name determines them). Values and `aliasSources` are merged. The
+ * referenced kind set is no longer cached on the slot — consumers
+ * derive it via `kindsOf(slot)` from the merged `values`.
  */
-function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
+function mergeFieldsByName(fields: AssembledNonterminal[]): AssembledNonterminal[] {
 	if (fields.length <= 1) return fields;
-	const byName = new Map<string, AssembledField>();
+	const byName = new Map<string, AssembledNonterminal>();
 	for (const f of fields) {
 		const existing = byName.get(f.name);
 		if (!existing) {
@@ -640,9 +660,6 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 			continue;
 		}
 		const mergedValues = dedupeValues([...existing.values, ...f.values]);
-		const mergedKinds = [
-			...new Set([...existing.projection.kinds, ...f.projection.kinds])
-		];
 		const mergedAliases =
 			existing.aliasSources || f.aliasSources
 				? { ...existing.aliasSources, ...f.aliasSources }
@@ -655,22 +672,21 @@ function mergeFieldsByName(fields: AssembledField[]): AssembledField[] {
 			aliasSources:
 				mergedAliases && Object.keys(mergedAliases).length > 0
 					? mergedAliases
-					: undefined,
-			projection: { ...existing.projection, kinds: mergedKinds }
+					: undefined
 		});
 	}
 	return Array.from(byName.values());
 }
 
 /**
- * Raw field derivation — produces one AssembledField per `field()` encounter.
+ * Raw field derivation — produces one AssembledNonterminal per `field()` encounter.
  * Duplicates are merged by `deriveFields`. The `outerMultiplicity` threads
  * down from repeat/optional wrappers above the field.
  */
 function deriveFieldsRaw(
 	rule: Rule,
 	outerMultiplicity: Multiplicity
-): AssembledField[] {
+): AssembledNonterminal[] {
 	switch (rule.type) {
 		case 'field': {
 			// Synthetic outer-field wrapper: the autogen wraps a multi-
@@ -700,17 +716,6 @@ function deriveFieldsRaw(
 			const rawValues = deriveValuesForRule(rule.content, innerMult);
 			const values = dedupeValues(rawValues);
 
-			// Compute projection.kinds from node-ref values only (for backwards-
-			// compat with emitters that call projection.kinds).
-			const kindNames = values
-				.filter(isNodeRef)
-				.map((v) =>
-					isUnresolvedRef(v.node)
-						? (v.node as UnresolvedRef).name
-						: (v.node as AssembledNode).kind
-				);
-			const projectionKinds = [...new Set(kindNames)];
-
 			// Derive trailing/leading flags — only meaningful for array/nonEmptyArray
 			// slots (i.e. the field backs a repeat that carries the flag). Gate on
 			// multiplicity first so optional(repeat(...)) shapes don't pollute the flag.
@@ -721,17 +726,18 @@ function deriveFieldsRaw(
 				isMultiSlot && findRepeatFlag(rule.content, 'trailing');
 			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, 'leading');
 
-			const outerField: AssembledField = {
+			const outerField: AssembledNonterminal = {
 				name: rule.name,
 				propertyName,
+				storageName: rule.name,
 				paramName: safeParamName(propertyName),
 				values,
 				hasTrailing,
 				hasLeading,
 				aliasSources:
 					Object.keys(aliasSources).length > 0 ? aliasSources : undefined,
-				source: rule.source ?? 'grammar',
-				projection: { typeName: '', kinds: projectionKinds }
+				source: rule.source ?? 'grammar'
+				// projection field eliminated — consumers use kindsOf(slot)
 			};
 
 			return [outerField];
@@ -739,17 +745,67 @@ function deriveFieldsRaw(
 		case 'seq':
 			return rule.members.flatMap((m) => deriveFieldsRaw(m, outerMultiplicity));
 		case 'optional':
+			// `optional(repeat1(X, sep))` is the canonical lift of
+			// `optional(commaSep1(X))` — e.g. python `parameters: seq('(',
+			// optional(_parameters), ')')` where `_parameters` inlines to
+			// `repeat1($.parameter, ',')`. Empty `()` is valid input, so
+			// the slot is array-multiplicity (zero-or-more), NOT
+			// nonEmptyArray. Recursing through repeat1 with the default
+			// rule would clobber it back to nonEmptyArray, producing a
+			// slot the factory refuses to construct empty. Mirrors
+			// `collectChildFromMember` and `deriveValuesForRule`.
+			if (rule.content.type === 'repeat1') {
+				return deriveFieldsRaw(rule.content.content, 'array');
+			}
 			return deriveFieldsRaw(rule.content, 'optional');
 		case 'repeat':
 			return deriveFieldsRaw(rule.content, 'array');
 		case 'repeat1':
 			return deriveFieldsRaw(rule.content, 'nonEmptyArray');
-		case 'choice':
-			// Canonical choices are union-shaped (all arms token-like /
-			// symbol-like / aliased variants). They contribute children,
-			// not fields — any fields they would contribute ride on the
-			// concrete node kind each arm resolves to.
-			return [];
+		case 'choice': {
+			// Choice at a position contributes ONE slot whose `values`
+			// array is the union of all arms (the field walker handles
+			// every position, so a positional choice no longer explodes
+			// into N separate slots like the old children walker did).
+			// Slot name takes the
+			// first node-ref arm's kind name for naming-continuity with
+			// the historical first-arm-named child entry; final remap to
+			// 'children' / 'child' keys lives in `buildSlotsRecord`
+			// per FR-T05 once the override migration enables strict
+			// enforcement.
+			const values = dedupeValues(
+				deriveValuesForRule(rule, outerMultiplicity)
+			);
+			if (values.length === 0) return [];
+			const firstRef = values.find((v) => v.kind === 'node-ref') as
+				| NodeRef
+				| undefined;
+			const isMultiSlot = values.some(
+				(v) =>
+					v.multiplicity === 'array' || v.multiplicity === 'nonEmptyArray'
+			);
+			const baseName = firstRef
+				? ((firstRef.node as UnresolvedRef).name ?? '').replace(
+						/^_+/,
+						''
+				  ) || (isMultiSlot ? 'children' : 'child')
+				: isMultiSlot
+					? 'children'
+					: 'child';
+			const propertyName = snakeToCamel(baseName);
+			return [
+				{
+					name: baseName,
+					propertyName,
+					storageName: 'children',
+					paramName: safeParamName(propertyName),
+					values,
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
 		case 'clause':
 			return deriveFieldsRaw(rule.content, 'optional');
 		case 'variant':
@@ -759,20 +815,68 @@ function deriveFieldsRaw(
 			// choice arms; unwrap and continue so their inner fields
 			// still surface.
 			return deriveFieldsRaw(rule.content, outerMultiplicity);
-		case 'symbol':
+		case 'symbol': {
+			// Top-level positional symbol — drops the hidden-rule leading
+			// underscore (`_expression` → `expression`); resolves
+			// `aliasedFrom` so only source kinds appear in the values list.
+			const refName = rule.aliasedFrom ?? rule.name;
+			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
+			const propertyName = snakeToCamel(cleanName);
+			return [
+				{
+					name: cleanName,
+					propertyName,
+					storageName: 'children',
+					paramName: safeParamName(propertyName),
+					values: [
+						{
+							kind: 'node-ref',
+							node: { kind: 'unresolved-ref', name: refName },
+							multiplicity: outerMultiplicity
+						}
+					],
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
+		case 'supertype': {
+			// Top-level positional supertype reference — each subtype is
+			// a valid concrete kind the slot can hold;
+			// they share the slot, named after the supertype.
+			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
+			const propertyName = snakeToCamel(cleanName);
+			return [
+				{
+					name: cleanName,
+					propertyName,
+					storageName: 'children',
+					paramName: safeParamName(propertyName),
+					values: rule.subtypes.map((name) => ({
+						kind: 'node-ref' as const,
+						node: { kind: 'unresolved-ref' as const, name },
+						multiplicity: outerMultiplicity
+					})),
+					hasTrailing: false,
+					hasLeading: false,
+					source: 'inferred'
+				}
+			];
+		}
 		case 'string':
 		case 'pattern':
 		case 'terminal':
 		case 'token':
 		case 'enum':
-		case 'supertype':
 		case 'indent':
 		case 'dedent':
 		case 'newline':
-			// Leaves / references — no fields to extract. Explicit
-			// cases keep the switch exhaustive so a new Rule type
-			// added later surfaces here as a compile error instead
-			// of silently returning no fields.
+			// Leaves / token-literals at the top level — render as text,
+			// contribute no addressable slots. Explicit cases keep the
+			// switch exhaustive (Constitution XI corollary: every
+			// discriminated-union switch ends in either a complete
+			// per-variant arm or assertNever).
 			return [];
 		case 'alias':
 		case 'group':
@@ -854,216 +958,25 @@ function fieldContentMultiplicity(
  *     either resolved to aliased symbols or promoted to polymorph
  *     forms. Retained as canonicalization-gap signals.
  */
-export function deriveChildren(rule: Rule): AssembledChild[] {
-	auditDerivationShape(rule, 'children');
-	const members: readonly Rule[] = rule.type === 'seq' ? rule.members : [rule];
-
-	// Sibling-duplicate symbol/supertype refs with the same target
-	// (rust or_pattern: `seq(_pattern, _pattern)`) represent the
-	// multi-children shape; force 'array' multiplicity on those
-	// positions so downstream merge keeps the array semantics.
-	const targetCounts = new Map<string, number>();
-	for (const m of members) {
-		const t = memberTarget(m);
-		if (t !== null) targetCounts.set(t, (targetCounts.get(t) ?? 0) + 1);
-	}
-
-	const raw: AssembledChild[] = [];
-	for (const m of members) {
-		const t = memberTarget(m);
-		const mult: Multiplicity =
-			t !== null && (targetCounts.get(t) ?? 0) > 1 ? 'array' : 'single';
-		collectChildFromMember(m, raw, mult);
-	}
-
-	// Deduplicate by child name. Sources of duplicates:
-	//   - Choice arms referencing the same symbol kind (rare but
-	//     legal — e.g. an override-wrapped supertype whose resolution
-	//     includes the same concrete name twice).
-	//   - Top-level duplicated targets picked up by the array-
-	//     multiplicity detection above — each position emits its own
-	//     child entry; merging folds them into one multi-valued slot.
-	//   - Container kinds: a nested `repeat(seq(a, b))` shape emits
-	//     per-member entries which then merge by name into array-
-	//     multiplicity slots.
-	// Single-source fast path avoids the map allocation.
-	if (raw.length <= 1) return raw;
-	const byName = new Map<string, AssembledChild>();
-	for (const c of raw) {
-		const existing = byName.get(c.name);
-		if (!existing) {
-			byName.set(c.name, c);
-			continue;
-		}
-		byName.set(c.name, {
-			...existing,
-			values: dedupeValues([...existing.values, ...c.values])
-		});
-	}
-	return Array.from(byName.values());
-}
 
 /**
- * Extract the child-target kind name from a top-level seq member, peeling
- * through structural wrappers that don't themselves reference a kind.
- * Returns null when the member is a literal, field, or non-reference
- * structure (choice — which can contain multiple targets and is
- * disambiguated by the caller).
+ * Single-walk slot derivation — returns every slot on a kind in declared
+ * rule order. Replaces the prior `deriveFields` + `deriveChildren` split
+ * (DRY: one source, one derivation). Internally it still delegates to
+ * those walkers for the actual rule traversal — they're factored to walk
+ * identical input — but produces a single unified `AssembledNonterminal[]`
+ * view for consumers that need declared order with full per-slot metadata.
+ *
+ * @remarks
+ * Today the slot ordering is fields-first / children-second because
+ * downstream consumers (factory emitter, types emitter) rely on that
+ * ordering. A future cleanup could rewrite the walk to preserve true
+ * declared-order with one unified pass over the rule tree.
  */
-function memberTarget(rule: Rule): string | null {
-	switch (rule.type) {
-		case 'symbol':
-		case 'supertype':
-			return rule.name;
-		case 'optional':
-		case 'variant':
-		case 'clause':
-		case 'group':
-			return memberTarget(rule.content);
-		default:
-			return null;
-	}
-}
-
-/**
- * Walk one rule position and append AssembledChild entries for every
- * child reference it contributes at `multiplicity`. Called both for
- * top-level seq members and recursively for structural wrappers.
- */
-function collectChildFromMember(
-	rule: Rule,
-	out: AssembledChild[],
-	multiplicity: Multiplicity
-): void {
-	switch (rule.type) {
-		case 'symbol':
-			// Child-slot name drops the hidden-rule leading underscore
-			// (`_expression` → `expression`); the ref target resolves
-			// through `aliasedFrom` when the symbol came from an alias
-			// (only source kinds exist in rules post-synthesis-removal).
-			{
-				const refName = rule.aliasedFrom ?? rule.name;
-				const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-				out.push({
-					name: cleanName,
-					propertyName: snakeToCamel(cleanName),
-					values: [
-						{
-							kind: 'node-ref',
-							node: { kind: 'unresolved-ref', name: refName },
-							multiplicity
-						}
-					]
-				});
-			}
-			break;
-		case 'supertype':
-			{
-				const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-				out.push({
-					name: cleanName,
-					propertyName: snakeToCamel(cleanName),
-					values: rule.subtypes.map((name) => ({
-						kind: 'node-ref' as const,
-						node: { kind: 'unresolved-ref' as const, name },
-						multiplicity
-					}))
-				});
-			}
-			break;
-		case 'optional':
-			// `optional(repeat1(X, sep))` (the canonical lift of
-			// `optional(commaSep1(X))`, e.g. python's
-			// `parameters: seq('(', optional(_parameters), ')')`
-			// where `_parameters` inlines to `repeat1($.parameter, ',')`)
-			// surfaces ZERO-or-more occurrences at the parent slot — the
-			// empty case (`()`) is valid input. Recursing with multiplicity
-			// 'optional' would let the inner `repeat1` case clobber it
-			// back to 'nonEmptyArray', producing a slot the factory
-			// refuses to construct empty (`_assertNonEmpty` throws on
-			// `parameters()`). Downgrade the inner repeat1 to 'array'
-			// here so the outer-optional semantics survive merging.
-			// Mirrors `fieldContentMultiplicity`'s
-			// `optional(repeat1) → array` rule for field-level slots.
-			if (rule.content.type === 'repeat1') {
-				collectChildFromMember(rule.content.content, out, 'array');
-			} else {
-				collectChildFromMember(rule.content, out, 'optional');
-			}
-			break;
-		case 'repeat':
-			collectChildFromMember(rule.content, out, 'array');
-			break;
-		case 'repeat1':
-			collectChildFromMember(rule.content, out, 'nonEmptyArray');
-			break;
-		case 'choice':
-			// Canonical choice: union of symbol-like arms. Each arm
-			// contributes one child value at the enclosing multiplicity.
-			for (const m of rule.members)
-				collectChildFromMember(m, out, multiplicity);
-			break;
-		case 'seq':
-			// Nested seqs reach here from three patterns that the
-			// current canonical form permits:
-			//   - `clause(seq(string, field))` — optional punctuation-
-			//     prefixed field groupings (rust extern_crate_declaration's
-			//     `as alias_name` clause, python `except ... as ...`).
-			//   - `repeat(seq(...))` — container kinds whose elements
-			//     are multi-kind (rust enum_variant_list's
-			//     attribute_item+enum_variant pairs).
-			//   - `optional(seq(...))` — analogous to clause.
-			// A STRICTER canonical form would lift the inner seq into
-			// its own hidden rule so the outer position sees a single
-			// symbol ref — eliminating positional ambiguity at the
-			// container/wrapper level. Until simplify is extended to
-			// hoist these, walk each member at the enclosing
-			// multiplicity so every reference still surfaces as a
-			// child.
-			for (const m of rule.members)
-				collectChildFromMember(m, out, multiplicity);
-			break;
-		case 'field':
-			// Fields are handled by deriveFields, not children.
-			break;
-		case 'string':
-		case 'pattern':
-		case 'terminal':
-		case 'token':
-		case 'enum':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-			// Terminal / token-literal rules — render as text, contribute
-			// no addressable children.
-			break;
-		case 'variant':
-			// Variant wrappers survive in a handful of rust polymorph
-			// arms that weren't adopted via variant(). Unwrap-and-
-			// recurse preserves the child references they contain.
-			collectChildFromMember(rule.content, out, multiplicity);
-			break;
-		case 'clause':
-			// `clause` wraps an optional anon-token / punctuation
-			// position (e.g. `?` / `!` on rust `impl_item` / `match_arm`).
-			// Its content is structurally optional, so descend with
-			// 'optional' multiplicity.
-			collectChildFromMember(rule.content, out, 'optional');
-			break;
-		case 'alias':
-		case 'group':
-		case 'polymorph':
-			// Canonicalization-gap signals. `alias` should resolve to a
-			// `symbol` with `aliasedFrom`; `group` gets stripped by
-			// simplify; `polymorph` classifies into its own assembled
-			// node type via assemble's dispatch. Reaching any of them
-			// here means an upstream pass missed the shape.
-			throw new Error(
-				`deriveChildren: unexpected '${rule.type}' in canonical input — ` +
-					`simplify should have stripped / classified it before derivation. ` +
-					`currentAuditKind=${currentAuditKind ?? '(none)'}`
-			);
-	}
+export function deriveSlots(rule: Rule): readonly AssembledNonterminal[] {
+	// The field walker handles positional symbol/supertype/choice content
+	// too, so it produces every slot — no separate children walker needed.
+	return _deriveFieldsInternal(rule);
 }
 
 /**
@@ -1071,7 +984,7 @@ function collectChildFromMember(
  * symbol reference that was resolved from `alias($.source, $.target)`
  * (i.e. its `aliasedFrom` is set), record `{ [target]: source }`. The
  * wrap emitter consumes this to emit `drillAs(entry, tree, target, source)`
- * rewriting `$type` at drill-in per ADR-0006.
+ * rewriting `$type` at drill-in for alias-target rewrites.
  */
 function deriveAliasSources(rule: Rule): Record<string, string> {
 	const out: Record<string, string> = {};
@@ -1214,8 +1127,8 @@ function deriveValuesForRule(
 }
 
 /**
- * Compute the merged `values: NodeOrTerminal[]` for an AssembledChild or
- * AssembledField. Deduplicates by (kind+name/value, multiplicity) pair so
+ * Compute the merged `values: NodeOrTerminal[]` for an AssembledNonterminal or
+ * AssembledNonterminal. Deduplicates by (kind+name/value, multiplicity) pair so
  * that two choice arms referencing the same kind with the same multiplicity
  * produce a single entry.
  *
@@ -1522,33 +1435,6 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	}
 
 	/**
-	 * Fields visible at the interface / Config surface for this kind.
-	 * Default is empty (leaves, keywords, tokens, enums, supertypes,
-	 * containers, multis — none of which expose a `$fields` slot).
-	 * Subclasses override to surface their own fields:
-	 *
-	 * - `AssembledBranch` / `AssembledGroup` — their own `.fields`.
-	 * - `AssembledPolymorph` — dedup'd union across all forms, keeping
-	 *   the first occurrence per name so the emitted shape matches
-	 *   the order emitters see inside `forms[]`.
-	 *
-	 * Emitters (types.ts, factories.ts) read this via the base class
-	 * rather than switching on `modelType` — one source, one derivation.
-	 */
-	get structuralFields(): readonly AssembledField[] {
-		return [];
-	}
-
-	/**
-	 * Children visible at the interface surface. Default empty. See
-	 * `structuralFields` for rationale. Overridden by Branch, Container,
-	 * and Group to return their own child slots.
-	 */
-	get structuralChildren(): readonly AssembledChild[] {
-		return [];
-	}
-
-	/**
 	 * True when this node's rule shape is a text template — a rule whose
 	 * parse result is emitted as a single string of text rather than a
 	 * structured config/children value. Two sources: verbatim-token-stream
@@ -1645,12 +1531,12 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	}
 
 	/**
-	 * Emit the templates.yaml entry for this node. Returns `undefined`
+	 * Emit the templates directory entry for this node. Returns `undefined`
 	 * for nodes that don't need a template (leaves/keywords/enums/tokens
 	 * render via `.text` directly; supertypes dispatch through their
 	 * concrete subtype). Structural subclasses (AssembledBranch,
-	 * AssembledContainer, AssembledGroup, AssembledPolymorph) override
-	 * this to walk their rule tree and produce the right shape.
+	 * AssembledGroup, AssembledPolymorph) override this to walk their
+	 * rule tree and produce the right shape.
 	 */
 	renderTemplate(
 		_rules?: Record<string, Rule>,
@@ -1661,58 +1547,58 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	}
 }
 
-export interface AssembledChild {
+/**
+ * Unified slot descriptor — covers both named grammar-field slots
+ * (source != 'inferred') and inferred positional slots (source == 'inferred').
+ * Produced by `deriveSlots` and stored in `AssembledBranch.slots` /
+ * `AssembledGroup.slots`. The `source` discriminant replaces the old
+ * `AssembledField` / `AssembledChild` split.
+ *
+ * `AssembledField` and `AssembledChild` have been removed; all consumers
+ * use `AssembledNonterminal` directly.
+ */
+export interface AssembledNonterminal {
 	readonly name: string;
 	readonly propertyName: string;
-	/**
-	 * Unified per-value content. Each entry carries its own `multiplicity`
-	 * so that mixed-cardinality choices (e.g. `choice(optional($.foo),
-	 * repeat($.bar))`) are represented faithfully.
-	 *
-	 * Use the derived helpers (`isRequired`, `isMultiple`, `isNonEmpty`)
-	 * to compute slot-level booleans rather than reading flags directly.
-	 */
+	readonly storageName: string;
 	readonly values: readonly NodeOrTerminal[];
-}
-
-export interface AssembledField extends AssembledChild {
 	readonly paramName: string;
-	/**
-	 * True when the repeat that backs this field carries a `trailing`
-	 * separator flag AND the field's multiplicity is array or
-	 * nonEmptyArray (i.e. `values` contains at least one entry with
-	 * `multiplicity === 'array' | 'nonEmptyArray'`).
-	 *
-	 * Derived once in `deriveFieldsRaw` from the SAME simplifiedRule
-	 * that the template walker walks, replacing the old ad-hoc
-	 * `findFieldsWithRepeatFlag` calls at each renderTemplate site.
-	 */
 	readonly hasTrailing: boolean;
-	/**
-	 * True when the repeat that backs this field carries a `leading`
-	 * separator flag AND the field's multiplicity is array or
-	 * nonEmptyArray. See {@link hasTrailing}.
-	 */
 	readonly hasLeading: boolean;
-	/**
-	 * Alias provenance per content type. When a content element was
-	 * declared at the call site via `alias($.source, $.target)` —
-	 * tree-sitter erases `source` at parse time, so the runtime $type
-	 * is `target` even though the body follows `source`'s shape — we
-	 * preserve that pairing so the wrap emitter can emit a drillAs()
-	 * call that rewrites $type back to source at drill-in.
-	 *
-	 * Keyed by the runtime target kind-name; value is the declared
-	 * source kind-name the codegen wants to present as the canonical
-	 * `$type`. Multiple entries when the same target maps from several
-	 * sources is theoretical — keep as a map for extensibility.
-	 *
-	 * Absent / empty when the field has no aliased content (the
-	 * common case). See ADR-0006.
-	 */
 	readonly aliasSources?: Readonly<Record<string, string>>;
 	readonly source: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
-	readonly projection: KindProjection;
+}
+
+/**
+ * Derive the slot's referenced kind names from its `values[]`.
+ *
+ * Replaces the prior `slot.projection.kinds` parallel cache (the kinds
+ * were a cache of a derivation from `values`, redundant by construction
+ * per DRY — one source, one derivation). The
+ * comment at the prior construction site (`Compute projection.kinds
+ * from node-ref values only (for backwards-compat with emitters that
+ * call projection.kinds)`) was the smoking gun: emitters were already
+ * computing this on demand because the cache was a post-hoc convenience.
+ *
+ * Walks node-ref entries only (terminals contribute no kinds); resolves
+ * each `node` field as either an `UnresolvedRef` (use its `name`) or an
+ * `AssembledNode` (use its `kind`). Deduplicates while preserving
+ * declaration order.
+ */
+export function kindsOf(slot: AssembledNonterminal): readonly string[] {
+	const seen = new Set<string>();
+	const out: string[] = [];
+	for (const v of slot.values) {
+		if (v.kind !== 'node-ref') continue;
+		const name = isUnresolvedRef(v.node)
+			? (v.node as UnresolvedRef).name
+			: (v.node as AssembledNode).kind;
+		if (!seen.has(name)) {
+			seen.add(name);
+			out.push(name);
+		}
+	}
+	return out;
 }
 
 // --- Concrete classes per model type ---
@@ -1873,8 +1759,8 @@ export interface JinjaTranslateMeta {
 	/** Mirror of `trailingFields` for leading-separator fields. */
 	leadingFields?: ReadonlySet<string>;
 	/**
-	 * Cluster F step 4 (016): set of raw field names whose `isRequired`
-	 * derivation is false. Used by `translateToJinja` to wrap unguarded
+	 * Set of raw field names whose `isRequired` derivation is false.
+	 * Used by `translateToJinja` to wrap unguarded
 	 * `$NAME` placeholders with `{% if name | isPresent %}` conditionals
 	 * so empty optional fields contribute no whitespace to the rendered
 	 * output. Placeholders already enclosed in a walker-emitted
@@ -1882,8 +1768,8 @@ export interface JinjaTranslateMeta {
 	 */
 	optionalFields?: ReadonlySet<string>;
 	/**
-	 * T049 (016): true when the container's children may be empty (the
-	 * rule is a `repeat()` — zero-or-more — rather than `repeat1()`). When
+	 * True when the container's children may be empty (the rule is a
+	 * `repeat()` — zero-or-more — rather than `repeat1()`). When
 	 * set, `translateToJinja` wraps the flanking spaces around
 	 * `{{ children | ... }}` inside `{% if children | isPresent %}`
 	 * conditionals so an empty-children render produces no stray space
@@ -1893,7 +1779,7 @@ export interface JinjaTranslateMeta {
 }
 
 /**
- * T049 (016): detect whether a container's children slot may be empty.
+ * Detect whether a container's children slot may be empty.
  *
  * Returns `true` when the rule is a `repeat()` (zero-or-more) at any
  * level reachable without crossing a `repeat1()` boundary, or when a
@@ -1946,7 +1832,7 @@ function childrenMayBeEmpty(rule: Rule): boolean {
 }
 
 /**
- * T049 (016): when `optionalChildren` is set, absorb the flanking spaces
+ * When `optionalChildren` is set, absorb the flanking spaces
  * around `{{ children | ... }}` into a whitespace-controlled
  * `{%- if children | isPresent %} ... {% endif -%}` conditional so an
  * empty-children render emits no stray whitespace between surrounding
@@ -2033,8 +1919,8 @@ export function translateToJinja(
 			if (key === 'indent') return '';
 			if (key === 'dedent') return '';
 			if (pfx === '$$$') {
-				// Cluster H (016): `joinByField['children']` IS honoured — the
-				// walker pins it to `""` for separator-less repeats over visible
+				// `joinByField['children']` IS honoured — the walker pins it
+				// to `""` for separator-less repeats over visible
 				// children (template_literal_type, template_string) so adjacent
 				// substitutions concatenate without a stray space.
 				const sep = meta.joinByField?.[key] ?? defaultSep;
@@ -2053,7 +1939,7 @@ export function translateToJinja(
 }
 
 /**
- * Cluster G (016): leading-list-conditional space absorption.
+ * Leading-list-conditional space absorption.
  *
  * After `wrapOptionalFieldPlaceholders` wraps a `$$$NAME` placeholder
  * sitting at the template head with `{% if name | isPresent %}…{% endif %}`,
@@ -2107,7 +1993,7 @@ function absorbHeadConditionalTrailingSpace(tmpl: string): string {
  * renders empty. Trailing whitespace is left outside so the next
  * required slot still has its own separator.
  *
- * Cluster G (016): also wraps `$$$NAME` list placeholders for optional
+ * Also wraps `$$$NAME` list placeholders for optional
  * list-shaped fields. The list-shape filter `isPresent` returns false
  * for empty arrays, so wrapping `$$$DECORATOR` etc. gates surrounding
  * separators on whether the list actually has elements.
@@ -2146,7 +2032,7 @@ function wrapOptionalFieldPlaceholders(
 			// Special walker placeholders (`$NEWLINE`, `$INDENT`, `$DEDENT`,
 			// `$TEXT`, `$CHILDREN`) aren't real fields — `translateToJinja`
 			// converts them to literal characters or list joins. Even if a
-			// `newline`/`indent`/etc. field exists in the AssembledField
+			// `newline`/`indent`/etc. field exists in the AssembledNonterminal
 			// list (e.g. python's decorator carries an empty-values
 			// `newline` slot from the walker's NEWLINE token wrapping), the
 			// placeholder is already structural and must not be gated.
@@ -2247,28 +2133,10 @@ export function filterForFlanks(key: string, meta: JinjaTranslateMeta): string {
 }
 
 /**
- * Cluster F step 4 (016): convenience wrapper around
- * `wrapOptionalFieldPlaceholders` for callers that already have an
- * `AssembledField` array. Used by `AssembledPolymorph.renderTemplate`
- * to gate per-form `$NAME` placeholders BEFORE the variant chain is
- * assembled — once the variant `{% if variant == X %}` blocks form, my
- * `computeGuardedRanges` would treat all interior placeholders as
- * already-guarded and the wrapper would no-op.
- */
-function _wrapFormOptionalPlaceholders(
-	template: string,
-	fields: readonly AssembledField[]
-): string {
-	const optionalFields = deriveOptionalFieldNames(fields);
-	if (optionalFields.size === 0) return template;
-	return wrapOptionalFieldPlaceholders(template, optionalFields);
-}
-
-/**
- * Cluster F step 3 (016): collect raw field names whose `isRequired`
- * derivation is false, for the walker's optional-field detection.
+ * Collect raw field names whose `isRequired` derivation is false,
+ * for the walker's optional-field detection.
  *
- * `AssembledField.isRequired` is computed across the WHOLE rule tree
+ * `AssembledNonterminal.isRequired` is computed across the WHOLE rule tree
  * — it correctly catches fields that are required at their declaration
  * site but enclosed in an `optional(seq(...))` (rust `impl_item`'s
  * `trait` is the canonical case). The walker uses this set as a
@@ -2284,7 +2152,7 @@ function deriveOptionalSlotNames(
 			out.add(slot.name);
 			continue;
 		}
-		// Cluster G (016): required-at-slot-level but list-shaped + may-be-empty
+		// Required-at-slot-level but list-shaped + may-be-empty
 		// (a bare `repeat()` whose values are all `array`, none `nonEmptyArray`).
 		// Wrapping the `$$$NAME` placeholder gates the surrounding separators
 		// on whether the list actually has elements — ts class_declaration's
@@ -2295,13 +2163,13 @@ function deriveOptionalSlotNames(
 }
 
 function deriveOptionalFieldNames(
-	fields: readonly AssembledField[]
+	fields: readonly AssembledNonterminal[]
 ): Set<string> {
 	return deriveOptionalSlotNames(fields);
 }
 
 function buildRenderSurface(opts?: {
-	fields?: readonly AssembledField[];
+	fields?: readonly AssembledNonterminal[];
 	slots?: readonly WalkSlotUse[];
 	optionalFields?: ReadonlySet<string>;
 	usesChildren?: boolean;
@@ -2350,7 +2218,7 @@ function deriveCrossFormOptionalFields(
 	forms: readonly AssembledGroup[]
 ): Set<string> {
 	if (forms.length <= 1) return new Set();
-	const perForm = forms.map((f) => new Set(f.fields.map((ff) => ff.name)));
+	const perForm = forms.map((f) => new Set(f.fields.map((ff: AssembledNonterminal) => ff.name)));
 	const allNames = new Set(perForm.flatMap((s) => [...s]));
 	const out = new Set<string>();
 	for (const name of allNames) {
@@ -2431,10 +2299,10 @@ function escapeJinjaBraceCollisions(s: string): string {
 		const next = prev
 			.replace(/\{(\{\{[^}]+\}\})/g, '{ $1')
 			.replace(/(\{\{[^}]+\}\})\}/g, '$1 }')
-			// Cluster G (016): also handle `{` literal adjacent to `{% … %}`
-			// block tag (`{{% if … %}`) — introduced when an optional
-			// list-shaped field gets wrapped at the head of a brace-flanked
-			// rule like typescript `statement_block`.
+			// Also handle `{` literal adjacent to `{% … %}` block tag
+			// (`{{% if … %}`) — introduced when an optional list-shaped
+			// field gets wrapped at the head of a brace-flanked rule like
+			// typescript `statement_block`.
 			.replace(/\{(\{%-? [^%]+-?%\})/g, '{ $1')
 			.replace(/(\{%-? [^%]+-?%\})\}/g, '$1 }');
 		if (next === prev) return next;
@@ -2443,11 +2311,90 @@ function escapeJinjaBraceCollisions(s: string): string {
 	return prev;
 }
 
-export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
+/**
+ * Build the frozen slot Record for an AssembledBranch (or any kind that
+ * uses the slot-Record surface). Walks `deriveSlots(rule)` once and
+ * keys each slot by its name. Insertion order = declared rule order.
+ *
+ * Constructor-time helper for every class that exposes the unified
+ * `slots` surface. The locked design's
+ * eager validation (collision throw, >1 unnamed slot throw, mixed-arity
+ * warn, key remap to 'child'/'children' for inferred slots) is NOT
+ * enforced here yet — see the JSDoc on `AssembledBranch.slots` for the
+ * rationale. When the grammar-override migration lands ("Owner A"), this
+ * helper picks up the strict checks and the remap.
+ *
+ * @param kind - Owning kind name. Reserved for future error/warn messages.
+ * @param rule - Simplified rule to walk for slots.
+ */
+function buildSlotsRecord(
+	kind: string,
+	rule: Rule
+): Readonly<Record<string, AssembledNonterminal>> {
+	const out: Record<string, AssembledNonterminal> = {};
+	for (const slot of deriveSlots(rule)) {
+		// Strict design (FR-T05): inferred slots remap to 'child'/'children'
+		// keys and at most one unnamed slot per branch is permitted. Empirical
+		// check confirms 14 kinds across 3 grammars currently have >1 unnamed
+		// positional slot. Enforcement requires either (a) collapse of choice-
+		// of-distinct-kinds into one slot with multi-value `values[]`, or (b)
+		// grammar overrides to explicitly name the positions ("Owner A"
+		// migration). Until then: keep the kind-derived name as the Record
+		// key, no collision throw, no >1-unnamed throw.
+		out[slot.name] = slot;
+	}
+
+	// storageName collision check. Multiple slots sharing the same NodeData
+	// storage key means the emitters can't distinguish them — the override
+	// layer must name N-1 children to eliminate the collision.
+	// Warn (not throw) because assemble runs on base grammars in tests
+	// before overrides apply. The generate() pipeline enforces zero
+	// collisions via the override layer; this warning surfaces any that
+	// slip through during development.
+	if (!process.env.SITTIR_QUIET) {
+		const byStorageName = new Map<string, AssembledNonterminal[]>();
+		for (const slot of Object.values(out)) {
+			const list = byStorageName.get(slot.storageName) ?? [];
+			list.push(slot);
+			byStorageName.set(slot.storageName, list);
+		}
+		for (const [storageName, slots] of byStorageName) {
+			if (slots.length > 1) {
+				const details = slots.map((s) => {
+					const kinds = s.values.map((v) =>
+						v.kind === 'terminal'
+							? `"${v.value}"`
+							: isUnresolvedRef(v.node)
+								? v.node.name
+								: (v.node as AssembledNode).kind
+					);
+					const mult = s.values.length > 0
+						? s.values[0]!.multiplicity
+						: 'single';
+					return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+				});
+				process.stderr.write(
+					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
+						`with storageName '${storageName}':\n${details.join('\n')}\n`
+				);
+			}
+		}
+	}
+
+	return Object.freeze(out);
+}
+
+export class AssembledBranch extends AssembledNodeBase<
+	SeqRule | ChoiceRule | RepeatRule | Repeat1Rule
+> {
 	readonly modelType = 'branch' as const;
-	// rule narrowed to SeqRule | ChoiceRule — branches classify from
-	// compositional rules that carry fields / ordered children; the
-	// classifier routes only these two shapes here.
+	// rule narrowed to SeqRule | ChoiceRule | RepeatRule | Repeat1Rule —
+	// branches classify from compositional rules that carry fields and/or
+	// ordered children. The prior `AssembledContainer` class was absorbed —
+	// repeat / repeat1 shapes (no `field()` on the rule) now route here
+	// too. Use the `isContainerShape` getter
+	// below to discriminate when emitter behavior must differ between
+	// the two shapes.
 	/**
 	 * Rule with anonymous tokens / structural wrappers stripped.
 	 * Computed once by assemble() via `simplifyRule(init.rule)` and
@@ -2469,13 +2416,30 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 	 */
 	readonly variantChildKinds: readonly string[];
 
-	// Cached derivations — lazy, computed on first access
-	#fields?: AssembledField[];
-	#children?: AssembledChild[];
+	/**
+	 * The unified slot Record — every constituent of this branch keyed
+	 * by its grammar field name (for `field()`-derived slots) or its
+	 * kind-derived positional name (for inferred slots). Insertion order
+	 * matches the order produced by `deriveSlots`. Frozen at construction.
+	 *
+	 * Canonical slot surface; the per-class `fields` / `children` getters
+	 * below are convenience views.
+	 *
+	 * Two pieces of the locked design are NOT yet enforced here:
+	 *   - Key remap to `'child'` / `'children'` for `source === 'inferred'`
+	 *     slots is deferred until grammar overrides explicitly name every
+	 *     unnamed positional position (Owner A migration). Today, inferred
+	 *     slots keep their kind-derived name to preserve byte-identity.
+	 *   - Eager validation (collision throw, >1 unnamed throw, mixed-arity
+	 *     warn) is deferred to the same future sub-phase. With kind-derived
+	 *     keys retained, collisions don't naturally occur in the current
+	 *     grammars.
+	 */
+	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
 		kind: string,
-		rule: SeqRule | ChoiceRule,
+		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 		simplifiedRule: Rule,
 		opts?: {
 			factoryName?: string;
@@ -2486,41 +2450,67 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		super(kind, rule, opts);
 		this.simplifiedRule = simplifiedRule;
 		this.variantChildKinds = opts?.variantChildKinds ?? [];
+		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
-	/** Direct access to the rule's ordered members (seq or choice). */
+	/**
+	 * Direct access to the rule's ordered members (seq or choice).
+	 * Returns an empty array for repeat / repeat1 — those shapes don't
+	 * carry an ordered member tuple (the `content` is a single repeated
+	 * rule, surfaced via `children`).
+	 */
 	get members(): readonly Rule[] {
-		return this.rule.members;
+		const r = this.rule;
+		return r.type === 'seq' || r.type === 'choice' ? r.members : [];
 	}
 
-	get fields(): AssembledField[] {
-		if (this.#fields) return this.#fields;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#fields = deriveFields(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
+	/**
+	 * Repeat-list separator (when the simplified rule is a `repeat` or
+	 * `repeat1` carrying a separator captured by Evaluate). Branches
+	 * derived from non-repeat shapes return `undefined`. Absorbed from
+	 * the former `AssembledContainer.separator` getter.
+	 */
+	get separator(): string | undefined {
+		const r = this.simplifiedRule;
+		if (r.type === 'repeat' || r.type === 'repeat1') {
+			return r.separator;
 		}
+		return undefined;
 	}
 
-	/** Branch interface surface = own fields. */
-	override get structuralFields(): readonly AssembledField[] {
-		return this.fields;
+	/**
+	 * `true` when this branch was the former `AssembledContainer` shape
+	 * — i.e., its raw rule contained no `field()` declaration. The
+	 * derivation matches the pre-merge `classifyBranchOrContainer`
+	 * predicate exactly so emitters that previously branched on
+	 * `modelType === 'container'` keep byte-identical output. Note that
+	 * this is *not* the same as `fields.length === 0`: a branch can
+	 * declare `field()` slots that the simplified rule strips out (e.g.
+	 * field references whose visible target was inlined away),
+	 * leaving `fields` empty while the rule still carries field markers.
+	 * Those kinds were `'branch'` originally and stay on the
+	 * field-carrying factory path; only kinds with zero `field()` in the
+	 * raw rule trigger the rest-param container factory shape.
+	 */
+	get isContainerShape(): boolean {
+		return !hasAnyField(this.rule);
 	}
 
-	get children(): AssembledChild[] | undefined {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+	/**
+	 * Field-shaped slots only (source !== 'inferred'). Convenience view
+	 * over `slots` for callers that need only named-grammar-field slots.
+	 */
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
 	}
 
-	/** Branch interface surface = own children (or empty when absent). */
-	override get structuralChildren(): readonly AssembledChild[] {
-		return this.children ?? [];
+	/**
+	 * Inferred positional slots only (source === 'inferred'). Convenience
+	 * view over `slots` for callers that need only unnamed positional slots.
+	 * Returns empty array when no inferred slots exist.
+	 */
+	get children(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source === 'inferred');
 	}
 
 	renderTemplate(
@@ -2541,7 +2531,19 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		// Template walking stays on the RAW rule — templates need the
 		// anonymous delimiters ('(', '{', ';', etc.) to surface as
 		// template text. Only derivations use simplifiedRule.
-		const optionalFields = deriveOptionalFieldNames(this.fields);
+		//
+		// Branches that absorbed the former
+		// `AssembledContainer` shape (children-only, no fields) skip the
+		// optional-field plumbing — `optionalFields` is empty by
+		// construction so the meta + walker call collapses cleanly. The
+		// `optionalChildren` flag (former-container path) flips on when
+		// `childrenMayBeEmpty` so flanking-space absorption fires for
+		// empty-body factory inputs.
+		const fields = this.fields;
+		const hasFields = fields.length > 0;
+		const optionalFields = hasFields
+			? deriveOptionalFieldNames(fields)
+			: undefined;
 		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
 			this.rule,
 			false,
@@ -2561,26 +2563,40 @@ export class AssembledBranch extends AssembledNodeBase<SeqRule | ChoiceRule> {
 		// into this one chokepoint.
 		const withClauses = inlineJinjaClauses(template, clauses);
 		const meta: JinjaTranslateMeta = {};
-		const sep = findRepeatSeparator(this.simplifiedRule);
+		// Container-shape branches surface a separator on `repeat` /
+		// `repeat1` directly; field-carrying branches discover one via
+		// the simplified-rule walk. Prefer the direct getter when
+		// non-empty.
+		const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule);
 		if (sep) meta.joinBy = sep;
 		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
 			meta.joinByTrailing = true;
 		if (findRepeatFlag(this.simplifiedRule, 'leading'))
 			meta.joinByLeading = true;
-		const trailingFields = new Set(
-			this.fields.filter((f) => f.hasTrailing).map((f) => f.name)
-		);
-		const leadingFields = new Set(
-			this.fields.filter((f) => f.hasLeading).map((f) => f.name)
-		);
-		if (trailingFields.size > 0) meta.trailingFields = trailingFields;
-		if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		if (hasFields) {
+			const trailingFields = new Set(
+				fields.filter((f) => f.hasTrailing).map((f) => f.name)
+			);
+			const leadingFields = new Set(
+				fields.filter((f) => f.hasLeading).map((f) => f.name)
+			);
+			if (trailingFields.size > 0) meta.trailingFields = trailingFields;
+			if (leadingFields.size > 0) meta.leadingFields = leadingFields;
+		}
 		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		if (optionalFields.size > 0) meta.optionalFields = optionalFields;
+		if (optionalFields && optionalFields.size > 0)
+			meta.optionalFields = optionalFields;
+		// Container-shape branches: empty children may collapse a flanking
+		// space pair into stray whitespace at render time. Set the meta
+		// flag so `translateToJinja` absorbs the spaces into an isPresent
+		// conditional (moved verbatim from the former
+		// `AssembledContainer.renderTemplate`).
+		if (!hasFields && childrenMayBeEmpty(this.simplifiedRule))
+			meta.optionalChildren = true;
 		return {
 			template: translateToJinja(withClauses, meta),
 			surface: buildRenderSurface({
-				fields: this.fields,
+				fields,
 				slots,
 				optionalFields,
 				usesChildren
@@ -2840,110 +2856,6 @@ function hasExternalBoundaries(
 	);
 }
 
-export class AssembledContainer extends AssembledNodeBase<
-	SeqRule | ChoiceRule | RepeatRule | Repeat1Rule
-> {
-	readonly modelType = 'container' as const;
-	// rule narrowed — containers hold ordered or repeated unnamed
-	// children (no fields). Classifier routes seq/choice/repeat/repeat1
-	// shapes here when the rule has children but no fields.
-	/** See `AssembledBranch.simplifiedRule`. */
-	readonly simplifiedRule: Rule;
-	/** See `AssembledBranch.variantChildKinds`. */
-	readonly variantChildKinds: readonly string[];
-
-	#children?: AssembledChild[];
-
-	constructor(
-		kind: string,
-		rule: SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
-		simplifiedRule: Rule,
-		opts?: {
-			factoryName?: string;
-			irKey?: string;
-			variantChildKinds?: readonly string[];
-		}
-	) {
-		super(kind, rule, opts);
-		this.simplifiedRule = simplifiedRule;
-		this.variantChildKinds = opts?.variantChildKinds ?? [];
-	}
-
-	get children(): AssembledChild[] {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
-	}
-
-	/** Container interface surface = own children (no fields). */
-	override get structuralChildren(): readonly AssembledChild[] {
-		return this.children;
-	}
-
-	get separator(): string | undefined {
-		// Separator is captured on the repeat / repeat1 rule by Evaluate.
-		// Read from the simplified rule — if an anonymous-delimiter seq
-		// wrapped the repeat in the raw form, it's gone now and the
-		// repeat is at the root.
-		const r = this.simplifiedRule;
-		if (r.type === 'repeat' || r.type === 'repeat1') {
-			return r.separator;
-		}
-		return undefined;
-	}
-
-	renderTemplate(
-		rules?: Record<string, Rule>,
-		wordMatcher?: RegExp,
-		externals?: ReadonlySet<string>
-	): RenderTemplateEntry {
-		const textShape = this.textTemplate(externals);
-		if (textShape) return textShape;
-		// Template walking stays on RAW rule (needs literals); derivations
-		// and separator discovery use simplifiedRule. Containers carry no
-		// fields (children-only), so the optional-field set is empty.
-		const { template, clauses, joinByField, usesChildren, slots } = renderRuleTemplate(
-			this.rule,
-			false,
-			rules,
-			wordMatcher
-		);
-		if (!template) {
-			throw new Error(
-				`AssembledContainer.renderTemplate: '${this.kind}' produced an empty template. ` +
-					`Rule has no visible content — should have been classified as leaf/token.`
-			);
-		}
-		const withClauses = inlineJinjaClauses(template, clauses);
-		const meta: JinjaTranslateMeta = {};
-		const sep = this.separator ?? findRepeatSeparator(this.simplifiedRule);
-		if (sep) meta.joinBy = sep;
-		if (findRepeatFlag(this.simplifiedRule, 'trailing'))
-			meta.joinByTrailing = true;
-		if (findRepeatFlag(this.simplifiedRule, 'leading'))
-			meta.joinByLeading = true;
-		// Containers have no fields — trailingFields/leadingFields are always
-		// empty; omit the findFieldsWithRepeatFlag calls (DRY: derived once on
-		// AssembledField.hasTrailing/hasLeading; containers have no AssembledField).
-		if (Object.keys(joinByField).length > 0) meta.joinByField = joinByField;
-		// T049 (016): flag when children may be zero so translateToJinja can
-		// absorb flanking spaces into an isPresent conditional — prevents
-		// stray `{  }` when an empty-body factory node renders via this template.
-		if (childrenMayBeEmpty(this.simplifiedRule)) meta.optionalChildren = true;
-		return {
-			template: translateToJinja(withClauses, meta),
-			surface: buildRenderSurface({
-				slots,
-				usesChildren
-			})
-		};
-	}
-}
-
 export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	readonly modelType = 'polymorph' as const;
 	// #forms is stored separately because AssembledGroup instances are
@@ -2988,30 +2900,62 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 
 	/**
 	 * Flattened field list across all forms — the union of every form's
-	 * `fields` array. Used by emitters that need "all fields this polymorph
-	 * may carry" without caring which form owns each one.
+	 * named slots (source !== 'inferred'). Used by emitters that need
+	 * "all fields this polymorph may carry" without caring which form owns
+	 * each one.
 	 *
 	 * Single derivation point for the `forms.flatMap(f => f.fields)` pattern
 	 * that multiple emitters previously duplicated.
 	 */
-	get allFormFields(): AssembledField[] {
+	get allFormFields(): readonly AssembledNonterminal[] {
 		return this.#forms.flatMap((f) => f.fields);
 	}
 
 	/**
-	 * Polymorph interface surface = dedup'd union of form fields.
-	 * Keeps the first occurrence per name so the order matches what
-	 * emitters see when iterating `this.#forms`. Callers that want
-	 * the raw concatenation use `allFormFields`.
+	 * Dedup'd union of form fields — keeps first-occurrence per name so the
+	 * order matches what emitters see when iterating `this.forms`. Distinct
+	 * from `allFormFields` (raw flatten with name duplicates) and from
+	 * `forms[i].fields` (per-form view).
+	 *
+	 * Lives only on `AssembledPolymorph` because the dedup semantics are
+	 * polymorph-specific. Branch/Group consumers should use `.fields`
+	 * directly; AssembledNode-iterating consumers should narrow on
+	 * `modelType === 'polymorph'` before calling this.
 	 */
-	override get structuralFields(): readonly AssembledField[] {
+	get structuralFields(): readonly AssembledNonterminal[] {
 		const seen = new Set<string>();
-		const out: AssembledField[] = [];
+		const out: AssembledNonterminal[] = [];
 		for (const form of this.#forms) {
 			for (const f of form.fields) {
 				if (!seen.has(f.name)) {
 					seen.add(f.name);
 					out.push(f);
+				}
+			}
+		}
+		return out;
+	}
+
+	/**
+	 * Dedup'd union of every slot across forms — the "all slots" sibling
+	 * to {@link structuralFields}. Includes both named-grammar-field
+	 * slots (`source !== 'inferred'`) and inferred positional slots
+	 * (`source === 'inferred'`). First-occurrence wins per slot name.
+	 *
+	 * Used by graph-traversal walks that don't care about the
+	 * field/child distinction — kind reachability, alias-source
+	 * collection, userFacing classification, etc. The fields-only and
+	 * children-only views remain available via {@link structuralFields}
+	 * + filtering when the TS-emission shape differs by slot kind.
+	 */
+	get structuralSlots(): readonly AssembledNonterminal[] {
+		const seen = new Set<string>();
+		const out: AssembledNonterminal[] = [];
+		for (const form of this.#forms) {
+			for (const s of Object.values(form.slots)) {
+				if (!seen.has(s.name)) {
+					seen.add(s.name);
+					out.push(s);
 				}
 			}
 		}
@@ -3042,7 +2986,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		}
 		let usesChildren = false;
 		const mergedSlots = new Map<string, WalkSlotUse>();
-		// Cluster F step 4 (016): collect optional fields per form so the
+		// Collect optional fields per form so the
 		// polymorph's eventual `translateToJinja` can wrap each form's
 		// unguarded `$NAME` placeholder. Wrapping per-form (instead of
 		// once on the merged template) keeps each `{% if variant == X %}`
@@ -3093,7 +3037,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			Object.assign(mergedJoinByField, joinByField);
 		}
 		// Collapse identical-across-forms variants to a single template
-		// string (ADR-0013 Task 2). Post-collapse the handful of rules
+		// string. Post-collapse the handful of rules
 		// that genuinely branch on form emit a Jinja
 		// `{% if variant == "X" %}` chain inline (populated from the
 		// per-form templates), so the emitter never sees a `variants:`
@@ -3174,6 +3118,11 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		return {
 			template: translateToJinja(withClauses, meta),
 			surface: buildRenderSurface({
+				// Dedup'd union of form fields (matches the order emitters
+				// see when iterating `this.#forms`). The polymorph-specific
+				// `structuralFields` getter does the dedup; lives only on
+				// AssembledPolymorph to avoid restoring the family of
+				// abstract-base getters that were Path-A deleted.
 				fields: this.structuralFields,
 				slots: [...mergedSlots.values()],
 				optionalFields: mergedOptionalFields,
@@ -3184,7 +3133,38 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	}
 }
 
-export class AssembledLeaf extends AssembledNodeBase<
+/**
+ * Abstract base for non-branch ("leaf") kinds — those that have no
+ * constituent slots and render as `$text`. Concrete subtypes:
+ *
+ *   - `AssembledPattern` — open text, optionally regex-validated
+ *     (e.g. `identifier`, `integer_literal`)
+ *   - `AssembledKeyword` — single fixed named string (e.g. `"fn"`)
+ *   - `AssembledToken` — single fixed anonymous delimiter (e.g. `"{"`)
+ *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
+ *
+ * The base intentionally has no `modelType` — each concrete subclass
+ * keeps its own discriminant string (`'leaf'` for Pattern, `'keyword'`,
+ * `'token'`, `'enum'`) so byte-identity of generated output is preserved
+ * during the taxonomy refactor.
+ *
+ * Introduced alongside the rename of the previous
+ * open-text `AssembledLeaf` class to `AssembledPattern`.
+ */
+export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNodeBase<R> {}
+
+/**
+ * Open-text non-branch kind whose surface form is matched by a regex
+ * (PatternRule) or produced by an external scanner (TerminalRule).
+ * Examples: `identifier`, `integer_literal`, `string_content`.
+ *
+ * Renamed from the original `AssembledLeaf` class. The `modelType`
+ * discriminant remains `'leaf'` to preserve
+ * byte-identity in emitted output — only the TypeScript class identifier
+ * changed. The new `AssembledLeaf` is now an abstract base (above);
+ * `AssembledPattern` is one of its four concrete subclasses.
+ */
+export class AssembledPattern extends AssembledLeaf<
 	PatternRule | TerminalRule
 > {
 	readonly modelType = 'leaf' as const;
@@ -3205,7 +3185,7 @@ export class AssembledLeaf extends AssembledNodeBase<
 	}
 }
 
-export class AssembledKeyword extends AssembledNodeBase<StringRule> {
+export class AssembledKeyword extends AssembledLeaf<StringRule> {
 	readonly modelType = 'keyword' as const;
 
 	constructor(
@@ -3242,7 +3222,7 @@ export class AssembledKeyword extends AssembledNodeBase<StringRule> {
 	}
 }
 
-export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
+export class AssembledToken extends AssembledLeaf<StringRule | TokenRule> {
 	readonly modelType = 'token' as const;
 
 	constructor(kind: string, rule: StringRule | TokenRule) {
@@ -3293,7 +3273,7 @@ export class AssembledToken extends AssembledNodeBase<StringRule | TokenRule> {
 	}
 }
 
-export class AssembledEnum extends AssembledNodeBase<EnumRule> {
+export class AssembledEnum extends AssembledLeaf<EnumRule> {
 	readonly modelType = 'enum' as const;
 
 	constructor(
@@ -3409,7 +3389,7 @@ export class AssembledMulti extends AssembledNodeBase<
 
 	/** `true` when the source rule is `repeat1` (at least one element);
 	 * `false` for plain `repeat` (zero-or-more). Referrers thread this
-	 * into AssembledChild.nonEmpty. */
+	 * into AssembledNonterminal.nonEmpty. */
 	get nonEmpty(): boolean {
 		return this.rule.type === 'repeat1';
 	}
@@ -3450,8 +3430,16 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 */
 	readonly parentKind?: string;
 
-	#fields?: AssembledField[];
-	#children?: AssembledChild[];
+	/**
+	 * The unified slot Record — every constituent of this group keyed by
+	 * its grammar field name (for `field()`-derived slots) or its
+	 * kind-derived positional name (for inferred slots). Insertion order
+	 * matches the order produced by `deriveSlots`. Frozen at construction.
+	 *
+	 * Mirrors `AssembledBranch.slots` — group consumers use this instead
+	 * of `.fields`/`.children` directly.
+	 */
+	readonly slots: Readonly<Record<string, AssembledNonterminal>>;
 
 	constructor(
 		kind: string,
@@ -3466,7 +3454,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		}
 	) {
 		// Groups always derive a factoryName — hidden groups emit fragment factories
-		// for composition (T046: hidden-group-factories). Polymorph form groups
+		// for composition (hidden-group-factories). Polymorph form groups
 		// still use the explicitly provided factoryName so their emitted name matches
 		// the form name (e.g. `rangePatternUFormLeftWithRight`), not the raw kind.
 		//
@@ -3482,42 +3470,23 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
-	}
-
-	get fields(): AssembledField[] {
-		if (this.#fields) return this.#fields;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#fields = deriveFields(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
+		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
 	/**
-	 * Group interface surface = own fields. Standalone (non-polymorph-
-	 * form) hidden groups like `_range_expression_postfix` surface
-	 * their content through the interface the same way branches do —
-	 * the UForm parent references them via `$children`, and callers
-	 * need to supply the field values to construct.
+	 * Field-shaped slots only (source !== 'inferred'). Convenience view
+	 * over `slots` for callers that need only named-grammar-field slots.
 	 */
-	override get structuralFields(): readonly AssembledField[] {
-		return this.fields;
+	get fields(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source !== 'inferred');
 	}
 
-	get children(): AssembledChild[] {
-		if (this.#children) return this.#children;
-		setAuditKindContext(this.kind);
-		try {
-			return (this.#children = deriveChildren(this.simplifiedRule));
-		} finally {
-			setAuditKindContext(undefined);
-		}
-	}
-
-	/** Group interface surface = own children. */
-	override get structuralChildren(): readonly AssembledChild[] {
-		return this.children;
+	/**
+	 * Inferred positional slots only (source === 'inferred'). Convenience
+	 * view over `slots` for callers that need only unnamed positional slots.
+	 */
+	get children(): readonly AssembledNonterminal[] {
+		return Object.values(this.slots).filter((s) => s.source === 'inferred');
 	}
 
 	renderTemplate(
@@ -3604,12 +3573,149 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 
 export type AssembledNode =
 	| AssembledBranch
-	| AssembledContainer
 	| AssembledPolymorph
-	| AssembledLeaf
+	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken
 	| AssembledEnum
 	| AssembledSupertype
 	| AssembledGroup
 	| AssembledMulti;
+
+// ============================================================================
+// Canonical structural-view helpers
+// ============================================================================
+//
+// Two distinct facts about a polymorph's slot inventory:
+//
+//   1. Dedup'd structural view — one entry per name across forms. The
+//      "what slots does this kind expose" view used by emitters that
+//      build types, factories, and renderers.
+//
+//   2. Raw cross-form flatten — every form's fields/children
+//      concatenated. The "what literals can ever appear at this kind"
+//      view used by transport projection for literal collection.
+//
+// Branch and Group expose `.fields` / `.children` directly; non-
+// structural kinds (leaf/keyword/token/enum/supertype/multi) have no
+// structural surface. These helpers narrow over `AssembledNode` and
+// give consumers one canonical entry point per fact.
+
+/**
+ * Dedup'd structural fields for a node — Branch/Group return their
+ * own `.fields`; Polymorph returns the dedup'd union across forms;
+ * non-structural kinds return `[]`.
+ *
+ * Use this when emitting types, factories, or anything that asks
+ * "what fields does this kind have." For literal collection across
+ * polymorph variants, see {@link allFormFieldsOf}.
+ */
+export function structuralFieldsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.structuralFields;
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return node.fields;
+	return [];
+}
+
+/**
+ * Structural children for a node — Branch/Group return their own
+ * `.children`; non-structural kinds (including Polymorph, which
+ * routes through forms) return `[]`.
+ *
+ * Use this for emitters that read child slots on the kind itself.
+ */
+export function structuralChildrenOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return node.children;
+	return [];
+}
+
+/**
+ * Raw cross-form flatten of fields — Polymorph yields every form's
+ * fields concatenated (duplicates preserved); Branch/Group return
+ * their own `.fields`; non-structural kinds return `[]`.
+ *
+ * Use this for transport projection / literal collection where each
+ * variant's literal contributions must be visible. For the dedup'd
+ * structural view used by type and factory emitters, see
+ * {@link structuralFieldsOf}.
+ */
+export function allFormFieldsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph')
+		return node.forms.flatMap((form) => form.fields);
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return node.fields;
+	return [];
+}
+
+/**
+ * Raw cross-form flatten of children — Polymorph yields every form's
+ * children concatenated; Branch/Group return their own `.children`;
+ * non-structural kinds return `[]`.
+ *
+ * Use this for transport projection. For structural-view children,
+ * see {@link structuralChildrenOf}.
+ */
+export function allFormChildrenOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph')
+		return node.forms.flatMap((form) => form.children);
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return node.children;
+	return [];
+}
+
+/**
+ * Every slot reachable from a node — Branch/Group return all entries
+ * of their own `.slots`; Polymorph returns every form's slots
+ * concatenated (raw cross-form flatten, duplicates preserved); non-
+ * structural kinds return `[]`.
+ *
+ * The "all slots" sibling of {@link allFormFieldsOf} — covers both
+ * field-shaped slots (`source !== 'inferred'`) and inferred positional
+ * children. Use this when the consumer doesn't care about the
+ * field/child distinction (graph traversal, kind reachability,
+ * alias-source collection, userFacing classification). When TS-
+ * emission shape differs by slot kind (factories, types, render
+ * templates), keep {@link structuralFieldsOf} / {@link structuralChildrenOf}
+ * for the typed-emission split.
+ */
+export function allSlotsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph')
+		return node.forms.flatMap((form) => Object.values(form.slots));
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return Object.values(node.slots);
+	return [];
+}
+
+/**
+ * Dedup'd union of every slot across forms — the "all slots" sibling
+ * of {@link structuralFieldsOf}. Polymorph returns
+ * `node.structuralSlots` (first-occurrence per name across forms,
+ * fields and children both); Branch/Group return all entries of their
+ * own `.slots`; non-structural kinds return `[]`.
+ *
+ * Use this when consumers want the dedup'd view regardless of slot
+ * kind. For most polymorph-aware walks the raw {@link allSlotsOf}
+ * suffices; pick the structural variant only when name-uniqueness
+ * matters to the consumer (e.g. set-collecting where dupes inflate
+ * count without changing meaning).
+ */
+export function allStructuralSlotsOf(
+	node: AssembledNode
+): readonly AssembledNonterminal[] {
+	if (node.modelType === 'polymorph') return node.structuralSlots;
+	if (node.modelType === 'branch' || node.modelType === 'group')
+		return Object.values(node.slots);
+	return [];
+}
+

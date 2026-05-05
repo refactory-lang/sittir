@@ -1,12 +1,16 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
 import type {
-	AssembledChild,
-	AssembledField,
+	AssembledNonterminal,
+	
 	AssembledNode,
 	NodeOrTerminal
 } from '../compiler/node-map.ts';
-import { isTerminalValue } from '../compiler/node-map.ts';
+import {
+	isTerminalValue,
+	allFormFieldsOf,
+	allFormChildrenOf
+} from '../compiler/node-map.ts';
 import {
 	fieldTypeComponents,
 	resolveHiddenKeywordLiteral
@@ -66,7 +70,6 @@ function isConcreteTransportNode(
 ): boolean {
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'polymorph':
 		case 'leaf':
 		case 'keyword':
@@ -99,33 +102,19 @@ function collectTransportLiterals(
 	};
 
 	for (const node of nodes) {
-		for (const field of transportFields(node)) {
+		for (const field of allFormFieldsOf(node)) {
 			for (const literal of fieldTransportLiterals(field, nodeMap))
 				add(literal);
 		}
-		for (const child of transportChildren(node)) {
+		for (const child of allFormChildrenOf(node)) {
 			for (const literal of childTransportLiterals(child)) add(literal);
 		}
 	}
 	return literals;
 }
 
-function transportFields(node: AssembledNode): readonly AssembledField[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return node.forms.flatMap((form) => form.fields);
-	}
-	return node.structuralFields;
-}
-
-function transportChildren(node: AssembledNode): readonly AssembledChild[] {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		return node.forms.flatMap((form) => form.children);
-	}
-	return node.structuralChildren;
-}
-
 function fieldTransportLiterals(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): TransportLiteral[] {
 	return fieldTypeComponents(field, nodeMap).flatMap((component) => {
@@ -140,7 +129,7 @@ function fieldTransportLiterals(
 	});
 }
 
-function childTransportLiterals(child: AssembledChild): TransportLiteral[] {
+function childTransportLiterals(child: AssembledNonterminal): TransportLiteral[] {
 	return child.values.flatMap((value) => {
 		const literal = literalForSlotValue(value);
 		return literal === undefined ? [] : [literal];

@@ -6,10 +6,10 @@ import {
 	keywordPresenceIsNonEmptyRepeat
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledField, NodeOrTerminal } from '../compiler/node-map.ts';
+import type { AssembledNonterminal, NodeOrTerminal } from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledEnum
 } from '../compiler/node-map.ts';
 
@@ -22,23 +22,21 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		polymorphFormKinds: new Set()
 	};
 }
 
-function makeField(values: readonly NodeOrTerminal[]): AssembledField {
+function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	return {
 		name: 'field',
 		propertyName: 'field',
 		paramName: 'field',
 		source: 'grammar',
-		projection: { typeName: '', kinds: [] },
 		values,
 		hasTrailing: false,
 		hasLeading: false
-	} as AssembledField;
+	} as AssembledNonterminal;
 }
 
 const terminal = (
@@ -69,8 +67,8 @@ function makeEnum(kind: string, values: string[]): AssembledEnum {
 	} as any);
 }
 
-function makeLeaf(kind: string): AssembledLeaf {
-	return new AssembledLeaf(kind, { type: 'pattern', value: '' });
+function makeLeaf(kind: string): AssembledPattern {
+	return new AssembledPattern(kind, { type: 'pattern', value: '' });
 }
 
 // ---------------------------------------------------------------------------

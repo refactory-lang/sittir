@@ -2,11 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledEnum,
 	AssembledGroup,
 	AssembledKeyword,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledMulti,
 	AssembledPolymorph,
 	AssembledSupertype
@@ -26,7 +25,6 @@ function nodeMapWith(
 		name: 'rust',
 		nodes,
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: {
 			inferredFields: [],
 			promotedRules: [],
@@ -79,7 +77,7 @@ function makeMinimalNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	nodes.set(
 		'kw_fn',
@@ -121,7 +119,7 @@ function makeRequiredChildrenNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -143,7 +141,7 @@ function makeOptionalChildrenNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -195,7 +193,7 @@ function makePolymorphNodeMap(): NodeMap {
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(
 		nodes,
@@ -230,11 +228,11 @@ function makeHiddenSourceVisibleTransportNodeMap(): NodeMap {
 	nodes.set('_child_list', new AssembledMulti('_child_list', listRule));
 	nodes.set(
 		'child_list',
-		new AssembledContainer('child_list', listRule, listRule)
+		new AssembledBranch('child_list', listRule, listRule)
 	);
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	return nodeMapWith(nodes);
 }
@@ -264,7 +262,7 @@ function makeSupertypeTerminalCollisionNodeMap(): NodeMap {
 	nodes.set('::', new AssembledKeyword('::', { type: 'string', value: '::' }));
 	nodes.set(
 		'identifier',
-		new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+		new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 	);
 	nodes.set('_path', new AssembledSupertype('_path', pathRule, ['identifier']));
 	return nodeMapWith(nodes);
@@ -365,89 +363,36 @@ describe('native transport emission', () => {
 		);
 	});
 
-	it('emits grammar-local native render transport validators', () => {
+	it('emits grammar-local native render transport projection', () => {
 		const contents = emitClientUtils({ nodeMap: makeMinimalNodeMap() });
 
 		expect(contents).toContain(
 			'export function toNativeRenderTransport(node: unknown): AnyTransport'
 		);
-		expect(contents).toContain('const fields = value.$fields;');
+		// ADR-0018 Phase 2: $fields removed from utils; _<name> storage keys iterated via Object.entries.
+		expect(contents).toContain("const projKey = key.startsWith('_') ? key.slice(1) : key;");
 		expect(contents).toContain('projectRawChildrenIntoFields(projected, resolvedKind);');
 		expect(contents).toContain('inferNativeTransportVariant(projected, resolvedKind);');
 		expect(contents).toContain('const nativeTransportAliasTargetToSource');
 		expect(contents).toContain('const nativeTransportRawChildFieldRules');
 		expect(contents).toContain('const nativeTransportVariantRules');
+		// ADR-0018 Phase 2: _<name> keys are stripped to bare names before projection.
 		expect(contents).toContain(
-			'projected[key] = projectTransportValue(child, `${path}.${key}`);'
+			'projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);'
 		);
 		expect(contents).toContain('if (typeof child === "function") continue;');
-		expect(contents).toContain('if (key in projected) continue;');
-		expect(contents).toContain(
-			'assertNativeRenderTransport(node: unknown): asserts node is AnyTransport'
-		);
-		// Per-kind assert functions are emitted even without generatedIdTables.
-		// The switch cases in assertNativeRenderTransport use numeric KindIds
-		// (require generatedIdTables); without them only the default branch exists.
-		// The per-kind validator functions are still defined (used when a call
-		// site has a numeric case via generatedIdTables).
-		expect(contents).toContain('function assertCallExpressionTransport(');
-		expect(contents).toContain(
-			'assertTransportValue(node["callee"], `${path}.callee`, [{"type":"identifier"},{"type":"call_expression"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["keyword"], `${path}.keyword`, [{"type":"kw_fn","text":"fn"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["operator"], `${path}.operator`, [{"type":"operator","text":"+"},{"type":"operator","text":"-"}] as const);'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["semicolon"], `${path}.semicolon`, [{"type":";","text":";"}] as const);'
-		);
+		// ADR-0018 Phase 2: guard uses projKey (bare name after _ strip), not raw key.
+		expect(contents).toContain('if (projKey in projected) continue;');
+		// Transport assertions removed — no assertNativeRenderTransport or per-kind validators.
+		expect(contents).not.toContain('assertNativeRenderTransport');
+		expect(contents).not.toContain('function assertCallExpressionTransport(');
+		expect(contents).not.toContain('assertDataOnlyObject');
 		expect(contents).not.toContain('node.$fields');
-		expect(contents).toContain(
-			'assertTextIn(node.$text, `${path}.$text`, ["fn"] as const);'
-		);
-		expect(contents).toContain(
-			'assertTextIn(node.$text, `${path}.$text`, ["+","-"] as const);'
-		);
 		expect(contents).toContain(
 			"key === 'render' || key === 'toEdit' || key === 'replace'"
 		);
-		expect(contents).toContain("key === '$format'");
-		expect(contents).toContain(
-			'$format is not supported by the native render boundary; pass format separately'
-		);
 		expect(contents).not.toContain('native-boundary');
 		expect(contents).not.toContain('assertNativeNodeData');
-	});
-
-	it('emits polymorph transport validators that dispatch on the form variant', () => {
-		const contents = emitClientUtils({ nodeMap: makePolymorphNodeMap() });
-
-		// Numeric switch cases in assertNativeRenderTransport require generatedIdTables;
-		// without them the switch only has a default branch. The per-form dispatch
-		// still lives inside the per-kind assert function via switch(node.$variant).
-		expect(contents).toContain('switch (node.$variant)');
-		expect(contents).toContain('case "left_form":');
-		expect(contents).toContain(
-			'assertExpressionUFormLeftTransport(node, path);'
-		);
-		expect(contents).toContain(
-			'assertTransportVariant(node, path, "left_form");'
-		);
-		expect(contents).toContain(
-			'if (node["left"] === undefined) throw new TypeError(`${path}.left` + \' is required\');'
-		);
-		expect(contents).toContain(
-			'assertTransportValue(node["left"], `${path}.left`, [{"type":"identifier"}] as const);'
-		);
-		expect(contents).toContain('case "right_form":');
-		expect(contents).toContain(
-			'assertExpressionUFormRightTransport(node, path);'
-		);
-		expect(contents).toContain(
-			'if (node["right"] === undefined) throw new TypeError(`${path}.right` + \' is required\');'
-		);
 	});
 
 	it('emits transport-oriented Rust render support', () => {
@@ -597,7 +542,6 @@ describe('native transport emission', () => {
 	it('uses one transport projection for colliding type names', () => {
 		const nodeMap = makeTypeNameCollisionNodeMap();
 		const types = emitTypes({ grammar: 'python', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 		const rust = emitRenderModule(
 			'python',
 			[
@@ -614,8 +558,6 @@ describe('native transport emission', () => {
 		);
 		expect(types).toContain('  | True.Transport');
 		expect(types).not.toContain('TerminalTransport<number, "True">');
-		// Numeric switch cases in assertNativeRenderTransport require
-		// generatedIdTables; without them neither "true" nor "True" appears.
 		expect(rust).toContain(
 			'#[serde(rename = "true")]\n    True(TrueTransport),'
 		);
@@ -627,22 +569,16 @@ describe('native transport emission', () => {
 	it('resolves hidden source multis to visible transport nodes', () => {
 		const nodeMap = makeHiddenSourceVisibleTransportNodeMap();
 		const types = emitTypes({ grammar: 'python', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 
 		expect(types).toContain(
 			'readonly $children: readonly [ChildList.Transport];'
 		);
 		expect(types).not.toContain('_ChildList.Transport');
-		expect(utils).toContain(
-			'assertTransportValue(node.$children[i], `${path}.$children[${i}]`, [{"type":"child_list"}] as const);'
-		);
-		expect(utils).not.toContain('{"type":"_child_list"}');
 	});
 
 	it('inlines fixed terminals whose type names collide with supertypes', () => {
 		const nodeMap = makeSupertypeTerminalCollisionNodeMap();
 		const types = emitTypes({ grammar: 'rust', nodeMap });
-		const utils = emitClientUtils({ nodeMap });
 
 		expect(types.match(/export namespace Path/g)).toHaveLength(1);
 		expect(types).toContain(
@@ -652,9 +588,5 @@ describe('native transport emission', () => {
 		expect(types).toContain('export namespace Path');
 		expect(types).toContain('export type Transport = Identifier.Transport;');
 		expect(types).toContain('  | LiteralTransport<number, "::">');
-		// Numeric switch cases in assertNativeRenderTransport require
-		// generatedIdTables; without them the "::" literal case is not emitted.
-		// The assertLiteralTransport helper function is still defined for use
-		// when generatedIdTables are provided.
 	});
 });

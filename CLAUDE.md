@@ -16,7 +16,7 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 - `types.ts` — `const enum SyntaxKind`, concrete interfaces (source of truth), `ConfigOf`-derived configs, `TreeNode<K>` interfaces, supertype unions, grammar-bound aliases
 - `rules.ts` — S-expression render templates (tree-sitter query syntax)
 - `joinby.ts` — separator map for list children (ast-grep `joinBy` convention)
-- `factories.ts` — unified factories: config input (camelCase) → NodeData output (raw fields) + fluent getters/setters + methods
+- `factories.ts` — unified factories: config input (camelCase) → NodeData output (`_<name>` storage + pure getters + `$with` setters + `$`-methods via `withMethods<T>`)
 - `from.ts` — `.from()` ergonomic resolution with inlined per-field logic (tree-shakeable)
 - `wrap.ts` — tree node → NodeData hydration via `readNode()` entry point + per-kind wrap functions + `edit()` alias + override field promotion heuristics
 - `utils.ts` — shared client-side utilities (`isNodeData`, `_inferBranch`, `_BRANCH_FIELDS`)
@@ -26,15 +26,15 @@ Generated packages (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) cont
 
 ## Key Design Decisions
 
-- **NodeData** — plain objects, not ES classes. Branches: `{ $type, $source, $named, $fields }`. Leaves: `{ $type, $source, $named, $text }`. Fields stored under **raw** (snake_case) names inside `$fields`. `$`-prefix on metadata (spec 008 US7) eliminates collisions with user-facing field names like `type` (python's `type_alias_statement`).
-- **`$source` provenance** — every NodeData carries `$source: 'ts' | 'sg' | 'factory'` at construction. `readTreeNode` sets `'ts'`; factories set `'factory'`. `.from()` dispatch can branch on it instead of structural probing.
-- **Concrete interfaces** — `interface FunctionItem { $type: 'function_item'; $fields: { ... }; $children?: [...] }` — the source of truth for each node's shape. Config/Tree/FromInput derived via type transformations. Consumer bags (Config, Loose) still use unprefixed `children` for the child-slot key.
-- **Tree-sitter nodes keep unprefixed API** — `AnyTreeNode`, `TreeNodeOf<T>`, `readTreeNode` output all use `.type` / `.text()` / `.children()` (tree-sitter convention). Only the data / factory surface uses `$`-prefix.
-- **S-expression templates** — tree-sitter query syntax for render rules. Field references use raw names.
+- **NodeData** — plain objects, not ES classes. Branches: `{ $type, $source, $named, _<field>..., $children? }`. Leaves: `{ $type, $source, $named, $text }`. Fields stored as `_<name>` top-level keys (ADR-0018 de-hoisted storage). `$`-prefix on metadata eliminates collisions with user-facing field names.
+- **`$source` provenance** — every NodeData carries `$source: 0 | 1 | 2` (0=ts, 1=sg, 2=factory) at construction. `readTreeNode` sets `0`; factories set `2`. `.from()` dispatch can branch on it instead of structural probing.
+- **Concrete interfaces** — `interface FunctionItem { $type: TSKindId.FunctionItem; _name: Identifier; name(): Identifier; ... }` — the source of truth for each node's shape. Storage (`_name`) + getter method (`name()`) + `$with` setters. Config/Tree/FromInput derived via type transformations.
+- **Tree-sitter nodes keep unprefixed API** — `AnyTreeNode`, `TreeNodeOf<T>`, `readTreeNode` output all use `.type` / `.text()` / `.children()` (tree-sitter convention). Only the data / factory surface uses `$`-prefix and `_`-storage.
+- **Jinja templates** — per-rule `.jinja` files for render rules. Field references use raw names.
 - **Grammar-aligned terminology** — kind, field, named, anonymous, supertype (tree-sitter/ast-grep terms)
 - **Supertype unions** — `_expression` → `Expression`, `ExpressionTree`
-- **Factories close over rules** — `node.render()`, `node.toEdit()`, `node.replace()` need no extra args
-- **Render guards** — branch nodes without `$fields` throw; leaf nodes without `$text` throw
+- **Factory shape A** — closure-based storage locals, pure getter methods, `$with` setters via direct factory rebuild, `withMethods<T>` wrapper from per-grammar `utils.ts`. No `Object.defineProperty`, no `Record<string,unknown>` casts, no spread of shared-methods const.
+- **Render guards** — branch nodes without `_<field>` storage throw; leaf nodes without `$text` throw
 
 ### Public API surfaces (post-008)
 
@@ -55,7 +55,7 @@ import { is, isTree, isNode, assert } from '@sittir/rust';
 
 if (is.functionItem(v) && isNode(v)) {
 	// kind + data-shape
-	v.$fields.name; // typed
+	v.name(); // typed getter
 }
 if (is.expression(v) && isTree(v)) {
 	// supertype + tree-shape
@@ -81,19 +81,19 @@ Seven surfaces, one common shape (`NodeData`):
 | Surface         | Shape                                          | Notes                                                                   |
 | --------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
 | Factory input   | `Config` (camelCase, named child slots)        | Developer-facing ergonomic API                                          |
-| Factory output  | `NodeData` + fluent getters/setters + methods  | Raw `$`-prefix metadata, `$fields` snake_case, fluent methods camelCase |
+| Factory output  | `NodeData` + pure getters + `$with` setters + `$`-methods | `_<name>` storage, `name()` getter, `$with.name(v)` setter, `$render/$toEdit/$replace/$trivia` via `withMethods<T>` |
 | From input      | `FromInput` (loose: strings, numbers, objects) | Adds resolution on top of factory                                       |
 | From output     | Same as factory output                         | Calls factory internally                                                |
 | readNode input  | `SgNode` / `TreeNode` (raw field names)        | **ast-grep / tree-sitter owns this shape**                              |
 | readNode output | `NodeData` with `$source: 'ts'`                | Direct mapping, no translation                                          |
-| Render input    | `AnyNodeData` — reads `node.$fields[rawName]`  | Zero-cost from any producer                                             |
+| Render input    | `AnyNodeData` — reads `node._<rawName>`         | Zero-cost from any producer                                             |
 
 Design targets per tier:
 
-- **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory maps to raw `$fields` internally and stamps `$source: 'factory'`. Fluent getters/setters provide camelCase access (setters named `value` / `values`): no-arg = getter, with-arg = setter (returns new node).
+- **Factory** — zero-cost translation + compile-time constraints + client-side validation of text inputs. Config uses camelCase keys; factory hoists to local `_<name>` consts and returns an inline literal with property shorthand. Pure getter methods (`name() { return _name; }`) for read access; `$with.name(v)` setters for immutable updates via direct factory rebuild. `withMethods<T>` adds `$render/$toEdit/$replace/$trivia`.
 - **FromInput** — adds resolution (string → leaf, object → branch inference, supertype expansion) on top of factory. Exposed getters/setters same as factory.
 - **Wrap / readNode** — strips all protections and translations. `readTreeNode(target)` is the typed public entry point (dispatches to per-kind `wrapXxx()` via `_wrapTable[data.$type]`); `readNode(tree, id?)` is the grammar-agnostic raw reader that emits `$source: 'ts'`. Override field promotion heuristics are inlined.
-- **Render** — reads `node.$fields[rawName]` and `node.$children`. Zero-cost consumption from any producer.
+- **Render** — reads `node._<rawName>` and `node.$children`. Zero-cost consumption from any producer.
 
 ## Commands
 
@@ -163,6 +163,93 @@ correctness principle of the codegen pipeline — read it first. The
 three after it (fix-the-generator / no-type-escape-hatches /
 wave-decomposition) are auto-checked by `.Codex/hooks/quality-gate.sh`
 (Stop hook).
+
+### Generated-output hygiene (read before any codegen or TS source edit)
+
+Five rules that govern what `packages/<lang>/src/factories.ts`,
+`wrap.ts`, and other generated TS files are allowed to contain. Each
+rule names a forbidden anti-pattern and the canonical replacement.
+Apply them when editing any emitter under `packages/codegen/src/` AND
+when hand-touching any non-generated TypeScript file.
+
+1. **No `Object.defineProperty` in generated output.** Methods,
+   accessors, and namespaces (`$with`, `$render`, etc.) live as
+   inline object-literal method shorthand and properties. Methods
+   are enumerable — `JSON.stringify` drops functions regardless of
+   enumerability, so the only observable difference is `Object.keys`
+   includes the method names. The non-enumerable variant from
+   ADR-0018 Phase 2 (`withMethods` + per-field `defineProperty`) is
+   retired in favor of inline object-literal method shorthand
+   (`name() { return _name; }` closure-based getters) and
+   `withMethods<T>` wrapper (Object.assign-based `$`-methods).
+
+2. **No `Record<string, unknown>` casts in generated output.** With
+   per-kind typed params (`data: T.Block`), storage reads are direct
+   property access (`data._label`). No index-signature bridge needed.
+
+3. **Shared boilerplate lives in per-grammar `utils.ts`, not
+   `@sittir/core`.** Anything that imports from `./boundary.ts`
+   (per-grammar `render` / `toEdit`) is grammar-specific and belongs
+   in `utils.ts` (emitted by `packages/codegen/src/emitters/client-utils.ts`).
+   `@sittir/core` stays grammar-agnostic — only cross-grammar runtime
+   semantics (e.g. `freezeNodeData`, `buildWithNamespace`,
+   `materializeStub`) live there.
+
+4. **Shared functions are generic — preserve type information.** Any
+   helper that takes a NodeData / Config / factory shape uses
+   generics so the caller's concrete type flows through. Do NOT
+   widen parameters to `object` or `Record<string, unknown>` if a
+   generic would carry the type:
+
+   ```ts
+   // ❌ Erases type information.
+   export function freezeNodeData(node: object): AnyNodeData;
+   export function buildWithNamespace(
+     config: object, factory: (c: object) => AnyNodeData, ...
+   ): object;
+
+   // ✅ Generics carry the caller's type through.
+   export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData;
+   export function buildWithNamespace<C extends object, F extends (c: C) => AnyNodeData>(
+     config: C, factory: F, slotKeys: readonly [string, string][]
+   ): { [K in (typeof slotKeys)[number][1]]: (v: unknown) => ReturnType<F> };
+   ```
+
+   Cast-at-the-boundary is acceptable for narrow bridges (e.g. the
+   `_wrapTable` dispatch where `AnyNodeData` narrows to `T.X` per
+   kind). Type erosion at the API surface is not.
+
+5. **Avoid `AnyNodeData` in factory, wrap, and `from` code.** Factory
+   return types, wrap function params, and `.from()` resolver
+   signatures should use concrete per-kind types (e.g. `T.Block`,
+   `T.Block.Config`, `T.Block.Loose | T.Block`). The same applies
+   to local variables — concrete types flow through assignments and
+   method invocations, `AnyNodeData` does not. The exception is
+   shared infrastructure (`withMethods<T>`) where the helper
+   genuinely serves all kinds via generics.
+
+6. **Don't `...spread` shared-methods objects into factory literals.**
+   Spreading a shared-methods const (or any object whose methods
+   are typed with `this: AnyNodeData` or a generic) into a factory's return literal:
+   - **Erases the literal's type narrowness** — the spread brings
+     in the const's broader `this` type, so `node.$render()`
+     dispatches through `AnyNodeData` instead of the concrete
+     per-kind shape.
+   - **Trips circular type inference** — when the literal contains
+     a `$with` whose values reference the factory back, the spread
+     widens the inference enough that TS gives up and emits
+     TS7022/TS7023 ("implicit any return / circular initializer").
+   The fix is `withMethods<T>(literal)` — a generic function that
+   uses `Object.assign` to merge the four methods onto the literal.
+   Generic `<T>` preserves the literal's narrow type. No spread
+   needed — `Object.assign` is a function call, not an object-
+   literal spread.
+
+7. **Pre-flight: re-read these rules at the start of any codegen
+   work or direct TS edit.** They override the "ship it" instinct.
+   When the change touches generated files or emitters, the diff
+   must respect rules 1–6 even when adding what feels like a
+   minimal one-line patch.
 
 ### DRY — one source, one derivation (read this first)
 
@@ -446,6 +533,10 @@ them independently.
 ## Active Technologies
 - TypeScript 6.0.2 (workspace ESM) and Rust 1.88+ + `@sittir/codegen`, `@sittir/core`, `@sittir/types`, Askama 0.15, napi-rs 3, `web-tree-sitter`, grammar-owned native/render modules under `rust/crates/sittir-{lang}/src/render` (020-render-pipeline-optimization)
 - File system only (generated templates, generated native crates, spec artifacts, parity baselines); no runtime persistence (020-render-pipeline-optimization)
+- TypeScript 6.0.2 (ESM), Rust 1.88+ + `@sittir/core`, `@sittir/types`, `@sittir/codegen`, tree-sitter, napi-rs 3, Askama 0.15 (022-binding-simplify-assemble)
+- File system (generated TS/Rust per grammar) (022-binding-simplify-assemble)
+- TypeScript 6.0.2 (workspace ESM, `.ts` extensions in imports), Rust 1.88+ + `@sittir/core`, `@sittir/types`, `@sittir/codegen` (workspace); `napi-rs` 3, `web-tree-sitter` 0.26.7, `askama` 0.15 (022-binding-simplify-assemble)
+- File system — generated TS/Rust per grammar package; no runtime persistence (022-binding-simplify-assemble)
 
 - TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json) (004-yaml-render-templates)
 - File system (per-rule `.jinja` templates at `packages/{lang}/templates/<kind>.jinja`, read at render time by Nunjucks) (011-jinja-template-migration, supersedes 004's YAML templates)
@@ -465,3 +556,8 @@ them independently.
 ## Recent Changes
 
 - 004-yaml-render-templates: Added TypeScript (ESM, `.ts` extensions in imports), TypeScript 6.0.2 + `@sittir/core`, `@sittir/types`, `@sittir/codegen`; tree-sitter grammars (grammar.json + node-types.json)
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->

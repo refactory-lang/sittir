@@ -54,22 +54,23 @@ function kindDiscriminantOrLiteral(
 }
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild,
-	AssembledLeaf,
+	AssembledNonterminal,
+	
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledPolymorph,
 	AssembledGroup,
 	AssembledEnum,
 	snakeToCamel,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	structuralFieldsOf,
+	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import { loadRawEntries } from '../validate/node-types-loader.ts';
 import {
@@ -93,13 +94,9 @@ import {
 	resolveTransportReferenceKind
 } from './transport-projection.ts';
 
-type StructuralNode =
-	| AssembledBranch
-	| AssembledContainer
-	| AssembledPolymorph
-	| AssembledGroup;
+type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
 type TerminalNode =
-	| AssembledLeaf
+	| AssembledPattern
 	| AssembledKeyword
 	| AssembledToken
 	| AssembledEnum;
@@ -535,7 +532,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 				structNodes.push(node);
 				break;
@@ -640,7 +636,6 @@ function emitTransportDeclarations(
 	for (const node of projection.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph':
 			case 'group':
 				emitStructuralTransportNamespace(
@@ -725,8 +720,8 @@ function emitStructuralTransportNamespace(
 		node.typeName,
 		node.kind,
 		undefined,
-		node.structuralFields,
-		node.structuralChildren,
+		structuralFieldsOf(node),
+		structuralChildrenOf(node),
 		nodeMap,
 		transportNodeKinds,
 		kindEntries
@@ -774,8 +769,8 @@ function emitTransportInterfaceNamespace(
 	typeName: string,
 	kind: string,
 	variant: string | undefined,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -957,7 +952,7 @@ function emitTerminalTransportNamespace(
 }
 
 function transportFieldTypeExpr(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -971,7 +966,7 @@ function transportFieldTypeExpr(
 }
 
 function transportChildTypeExpr(
-	child: AssembledChild,
+	child: AssembledNonterminal,
 	nodeMap: NodeMap,
 	transportNodeKinds: ReadonlySet<string>,
 	kindEntries?: readonly KindEnumEntry[]
@@ -1588,7 +1583,7 @@ function emitNamespaceInterfaceLine(lines: string[], typeName: string): void {
 // Interface emitters
 // ---------------------------------------------------------------------------
 
-// `fieldsOf` → `node.structuralFields` (getter on AssembledNodeBase +
+// `fieldsOf` → `nodeFields(node)` (getter on AssembledNodeBase +
 // subclass overrides). One source: each class owns the semantics for
 // its own interface surface.
 
@@ -1601,8 +1596,8 @@ function emitInterface(
 	lookupUnion?: LookupUnion,
 	kindDiscriminant = JSON.stringify(node.kind)
 ): void {
-	const fields = node.structuralFields;
-	const children = node.structuralChildren;
+	const fields = structuralFieldsOf(node);
+	const children = structuralChildrenOf(node);
 	lines.push(`export interface ${node.typeName} {`);
 	// Canonical-hidden architecture (Option Y): hidden alias-source kinds
 	// (`_foo`) keep the leading underscore in the declared `$type`.
@@ -1611,8 +1606,12 @@ function emitInterface(
 	// `$type` is the single source of truth for both producer paths.
 	lines.push(`  readonly $type: ${kindDiscriminant};`);
 
+	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
+	// function types at the top level instead of the old `$fields: { name: T }`
+	// nested wrapper. FieldsOf<T> in @sittir/types now extracts _-prefixed keys
+	// and strips the underscore prefix for ConfigOf/RuntimeNodeOf derivations.
 	if (fields.length > 0) {
-		lines.push('  readonly $fields: {');
+		// Storage keys: `readonly _name?: T` (enumerable, serializable)
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
@@ -1628,16 +1627,30 @@ function emitInterface(
 			if (isMultiple(f)) {
 				emitFieldArrayDeclaration(
 					lines,
-					f.name,
+					`_${f.name}`,
 					opt,
 					wrappedType,
 					isNonEmpty(f)
 				);
 			} else {
-				lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
 			}
 		}
-		lines.push('  };');
+		// Accessor function types: `name(): T` (non-enumerable at runtime —
+		// declared here for type-safety so consumers can call node.name()).
+		for (const f of fields) {
+			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const opt = isRequired(f) ? '' : '?';
+			if (isMultiple(f)) {
+				// Multiple accessor returns the array type (same as storage type).
+				const arrType = isNonEmpty(f) ? `NonEmptyArray<${wrappedType}>` : `readonly (${wrappedType})[]`;
+				lines.push(`  ${propName}(): ${arrType};`);
+			} else {
+				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+			}
+		}
 	}
 
 	if (children && children.length > 0) {
@@ -1698,10 +1711,12 @@ function emitFieldArrayDeclaration(
 	typeExpr: string,
 	nonEmpty: boolean | undefined
 ): void {
+	// ADR-0018 Phase 2: indentation at interface body level (2 spaces) since
+	// fields are now declared directly on the interface, not inside $fields: {}.
 	if (nonEmpty) {
-		lines.push(`    readonly ${name}${opt}: NonEmptyArray<${typeExpr}>;`);
+		lines.push(`  readonly ${name}${opt}: NonEmptyArray<${typeExpr}>;`);
 	} else {
-		lines.push(`    readonly ${name}${opt}: readonly (${typeExpr})[];`);
+		lines.push(`  readonly ${name}${opt}: readonly (${typeExpr})[];`);
 	}
 }
 
@@ -1712,7 +1727,7 @@ function emitFieldArrayDeclaration(
  * `[]` — they don't get aliased because they don't produce a
  * multi-type union.
  */
-function _fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
+function _fieldTypeParts(field: AssembledNonterminal, nodeMap?: NodeMap): string[] {
 	const litVals = slotLiteralValues(field);
 	if (litVals.length > 0) return [];
 	const kinds = slotKindNames(field);
@@ -1725,7 +1740,7 @@ function _fieldTypeParts(field: AssembledField, nodeMap?: NodeMap): string[] {
 	});
 }
 
-function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
+function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): string[] {
 	// Inline pure-literal values as string-literal types, mirroring
 	// `fieldTypeComponents`. A child slot that carries terminal values
 	// alongside node refs (e.g. `children` on a union) would surface the
@@ -1759,7 +1774,7 @@ function childContentParts(child: AssembledChild, nodeMap: NodeMap): string[] {
 	return parts;
 }
 
-// `childrenOf` → `node.structuralChildren` (getter on AssembledNodeBase +
+// `childrenOf` → `nodeChildren(node)` (getter on AssembledNodeBase +
 // subclass overrides). Each class owns its own children semantics.
 
 function emitFormInterface(
@@ -1784,26 +1799,32 @@ function emitFormInterface(
 	// `if (expr.$variant === 'binary') { … }` without structural probing.
 	lines.push(`  readonly $variant: '${form.name}';`);
 
+	// ADR-0018 Phase 2: emit `_<name>: T` storage + `<name>(): T` accessor
+	// function types at the top level instead of `$fields: { name: T }`.
 	if (form.fields.length > 0) {
-		lines.push('  readonly $fields: {');
+		// Storage keys: `readonly _name?: T`
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
-			const wrappedType = wrapFieldTypeForBrand(
-				f,
-				node.kind,
-				nodeMap,
-				typeExpr
-			);
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
 			if (isMultiple(f)) {
-				lines.push(
-					`    readonly ${f.name}${opt}: readonly (${wrappedType})[];`
-				);
+				lines.push(`  readonly _${f.name}${opt}: readonly (${wrappedType})[];`);
 			} else {
-				lines.push(`    readonly ${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
 			}
 		}
-		lines.push('  };');
+		// Accessor function types: `name(): T`
+		for (const f of form.fields) {
+			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const opt = isRequired(f) ? '' : '?';
+			if (isMultiple(f)) {
+				lines.push(`  ${propName}(): readonly (${wrappedType})[];`);
+			} else {
+				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+			}
+		}
 	}
 
 	emitFormChildrenSlot(lines, form, nodeMap, lookupUnion);
@@ -1866,7 +1887,7 @@ function emitFormChildrenSlot(
 		if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 		// Empty branch / group — no fields and no children to construct.
 		if (n.modelType === 'branch' || n.modelType === 'group') {
-			if (n.structuralFields.length === 0 && n.structuralChildren.length === 0)
+			if (n.fields.length === 0 && n.children.length === 0)
 				return false;
 		}
 		return true;
@@ -1912,7 +1933,7 @@ function emitFormChildrenSlot(
  * (factories.ts::fieldElementType is the same walk with a `T.` prefix).
  */
 function fieldTypeExpr(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap?: NodeMap,
 	lookupUnion?: LookupUnion
 ): string {
@@ -1964,7 +1985,7 @@ function fieldTypeExpr(
  * requires repeat.
  */
 function wrapFieldTypeForBrand(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	kind: string,
 	nodeMap: NodeMap,
 	typeExpr: string

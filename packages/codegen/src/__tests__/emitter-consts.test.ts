@@ -3,7 +3,7 @@ import { emitConsts } from '../emitters/consts.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledBranch,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum
@@ -14,7 +14,6 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		polymorphFormKinds: new Set()
 	};
@@ -48,7 +47,7 @@ describe('emitConsts', () => {
 					typeName: 'Identifier',
 					factoryName: 'identifier',
 					modelType: 'leaf'
-				} as unknown as AssembledLeaf
+				} as unknown as AssembledPattern
 			],
 			[
 				'true',
@@ -118,7 +117,6 @@ describe('emitConsts', () => {
 								}
 							],
 							source: 'grammar',
-							projection: { typeName: '', kinds: [] }
 						},
 						{
 							name: 'body',
@@ -132,7 +130,6 @@ describe('emitConsts', () => {
 								}
 							],
 							source: 'grammar',
-							projection: { typeName: '', kinds: [] }
 						}
 					]
 				} as unknown as AssembledBranch
@@ -168,7 +165,6 @@ describe('emitConsts', () => {
 			propertyName: 'modifiers',
 			paramName: 'modifiers',
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			values: [
 				{ kind: 'terminal', value: 'async', multiplicity: 'nonEmptyArray' },
 				{ kind: 'terminal', value: 'unsafe', multiplicity: 'nonEmptyArray' },
@@ -202,7 +198,6 @@ describe('emitConsts', () => {
 			propertyName: 'modifiers',
 			paramName: 'modifiers',
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			values: [
 				{ kind: 'terminal', value: 'async', multiplicity: 'array' },
 				{ kind: 'terminal', value: 'unsafe', multiplicity: 'array' }
@@ -230,7 +225,6 @@ describe('emitConsts', () => {
 			propertyName: 'modifiers',
 			paramName: 'modifiers',
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			values: values.map((v) => ({
 				kind: 'terminal',
 				value: v,
@@ -272,7 +266,6 @@ describe('emitConsts', () => {
 			propertyName: 'visibility',
 			paramName: 'visibility',
 			source: 'grammar',
-			projection: { typeName: '', kinds: [] },
 			values: [
 				{ kind: 'terminal', value: 'pub', multiplicity: 'nonEmptyArray' },
 				{ kind: 'terminal', value: 'pub(crate)', multiplicity: 'nonEmptyArray' }
@@ -311,7 +304,6 @@ describe('emitConsts', () => {
 							paramName: 'item',
 							values: [],
 							source: 'grammar',
-							projection: { typeName: '', kinds: [] }
 						}
 					]
 				} as unknown as AssembledBranch

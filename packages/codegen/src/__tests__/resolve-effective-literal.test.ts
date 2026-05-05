@@ -4,8 +4,8 @@ import {
 	isAutoStampField
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import type { AssembledField } from '../compiler/node-map.ts';
-import { AssembledKeyword, AssembledLeaf } from '../compiler/node-map.ts';
+import type { AssembledNonterminal } from '../compiler/node-map.ts';
+import { AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -17,32 +17,30 @@ function makeNodeMap(nodes: [string, any][]): NodeMap {
 		name: 'test',
 		nodes: new Map(nodes),
 		signatures: { signatures: new Map() },
-		projections: { projections: new Map() },
 		derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
 		polymorphFormKinds: new Set()
 	};
 }
 
 function makeField(
-	overrides: Partial<AssembledField> & { values: readonly NodeOrTerminal[] }
-): AssembledField {
+	overrides: Partial<AssembledNonterminal> & { values: readonly NodeOrTerminal[] }
+): AssembledNonterminal {
 	return {
 		name: 'field',
 		propertyName: 'field',
 		paramName: 'field',
 		source: 'grammar',
-		projection: { typeName: '', kinds: [] },
 		hasTrailing: false,
 		hasLeading: false,
 		...overrides
-	} as AssembledField;
+	} as AssembledNonterminal;
 }
 
 /** Create a single-value field with an inline terminal literal. */
 function literalField(
 	value: string,
 	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledField {
+): AssembledNonterminal {
 	return makeField({
 		values: [{ kind: 'terminal', value, multiplicity }]
 	});
@@ -52,7 +50,7 @@ function literalField(
 function nodeRefField(
 	kindName: string,
 	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledField {
+): AssembledNonterminal {
 	return makeField({
 		values: [
 			{
@@ -65,7 +63,7 @@ function nodeRefField(
 }
 
 /** Create a field with multiple values (choice). */
-function multiValueField(values: readonly NodeOrTerminal[]): AssembledField {
+function multiValueField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	return makeField({ values });
 }
 
@@ -73,8 +71,8 @@ function makeKeyword(kind: string, text: string): AssembledKeyword {
 	return new AssembledKeyword(kind, { type: 'string', value: text });
 }
 
-function makeLeaf(kind: string): AssembledLeaf {
-	return new AssembledLeaf(kind, { type: 'pattern', value: '' });
+function makeLeaf(kind: string): AssembledPattern {
+	return new AssembledPattern(kind, { type: 'pattern', value: '' });
 }
 
 // ---------------------------------------------------------------------------

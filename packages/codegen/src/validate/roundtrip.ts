@@ -56,14 +56,21 @@ import {
  * @param tree - TreeHandle for node lookup.
  * @param nodeId - If provided, read the node at this id; otherwise read
  *   the root.
- * @param deepReadKinds - Set of `$type` values that should be deep-read
- *   when encountered as named children.
+ * @param deepReadKinds - Membership test for `$type` values that should
+ *   be deep-read when encountered as named children. Only `.has(id)` is
+ *   used, so the parameter is structurally typed to that single method
+ *   — this lets callers pass either a real `Set<number>` or an
+ *   "always-true" stub for the recursive-mode case (read every kind
+ *   deeply) without the ceremony of constructing a full Set covering
+ *   every numeric kind id.
  */
+type KindMembership = { has(value: number): boolean };
+
 function _deepReadNode(
 	tree: TreeHandle,
 	handle: number | undefined,
 	childIndex: number | undefined,
-	deepReadKinds: ReadonlySet<number>
+	deepReadKinds: KindMembership
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, handle, childIndex);
 	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
@@ -662,6 +669,9 @@ export interface ValidateRoundTripOptions {
 	/** Backend to use for `buildReadHandle`. When provided, takes
 	 *  precedence over `process.env.SITTIR_BACKEND`. */
 	backend?: 'native' | 'typescript';
+	/** When true, deep-read ALL named kinds (not just variant-adopted).
+	 *  Exercises full recursive materialization before render. */
+	recursive?: boolean;
 }
 
 export async function validateRoundTrip(
@@ -709,13 +719,17 @@ export async function validateRoundTrip(
 		: rawKindIdFromName;
 	// Phase D: $type is numeric; translate string kind names to numeric IDs for
 	// _deepReadNode's Set<number> membership check.
-	const deepReadKinds: ReadonlySet<number> = kindIdFromName
-		? new Set(
-				[...deepReadKindNames]
-					.map((k) => kindIdFromName(k))
-					.filter((id): id is number => id !== undefined)
-		  )
-		: new Set<number>();
+	// When `recursive: true`, deep-read ALL named kinds (not just variant-adopted).
+	const { recursive } = options;
+	const deepReadKinds: KindMembership = recursive
+		? { has: (_id: number): boolean => true }
+		: kindIdFromName
+			? new Set(
+					[...deepReadKindNames]
+						.map((k) => kindIdFromName(k))
+						.filter((id): id is number => id !== undefined)
+			  )
+			: new Set<number>();
 
 	const entries = loadCorpusEntries(grammar);
 	const errors: {
@@ -979,13 +993,21 @@ export function formatRoundTripReport(result: RoundTripResult): string {
 		`    ast-match ${result.astMatchPass}/${result.total} (${result.astMismatches.length} structural mismatches)`
 	);
 	if (result.errors.length > 0) {
+		lines.push('');
+		lines.push('    Failures:');
 		for (const e of result.errors) {
 			lines.push(`    x ${e.name}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
 		}
 	}
 	if (result.astMismatches.length > 0) {
+		lines.push('');
+		lines.push('    AST mismatches:');
 		for (const e of result.astMismatches.slice(0, 20)) {
 			lines.push(`    ~ ${e.name}: ${e.message}`);
+			if (e.input) lines.push(`      source:   ${JSON.stringify(e.input.slice(0, 80))}`);
+			if (e.rendered) lines.push(`      rendered: ${JSON.stringify(e.rendered.slice(0, 80))}`);
 		}
 		if (result.astMismatches.length > 20) {
 			lines.push(`    … and ${result.astMismatches.length - 20} more`);

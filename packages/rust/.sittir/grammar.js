@@ -1465,7 +1465,15 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     precStack.push(cursor);
     cursor = cursor.content;
   }
-  if (!isSeqType(cursor.type)) return rule;
+  if (!isSeqType(cursor.type)) {
+    return tryPromoteInRepeatSeq(
+      ruleName,
+      rule,
+      cursor,
+      precStack,
+      supertypeNames
+    );
+  }
   const members = cursor.members;
   const kindCounts = /* @__PURE__ */ new Map();
   const targetByIdx = members.map(detectSymbolTarget);
@@ -1499,10 +1507,147 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     const fieldNode = makeField(cursor, fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
-  if (!changed) return rule;
-  let result = { ...cursor, members: newMembers };
+  const finalMembers = promoteInsideRepeatMembers(
+    ruleName,
+    newMembers,
+    supertypeNames,
+    existing
+  );
+  if (finalMembers === newMembers && !changed) return rule;
+  let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
     result = { ...precStack[i], content: result };
+  }
+  return result;
+}
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing) {
+  let anyRepeatChanged = false;
+  const result = members.map((m) => {
+    const rebuilt = tryPromoteInRepeatMember(
+      ruleName,
+      m,
+      supertypeNames,
+      existing
+    );
+    if (rebuilt === null) return m;
+    anyRepeatChanged = true;
+    return rebuilt;
+  });
+  if (!anyRepeatChanged) return members;
+  return result;
+}
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing) {
+  let cursor = member;
+  const memberPrecStack = [];
+  while (isPrecWrapper(cursor)) {
+    memberPrecStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isRepeatType(cursor.type)) return null;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return null;
+  const innerMembers = inner.members;
+  const innerTargets = innerMembers.map(detectSymbolTarget);
+  const innerKindCounts = /* @__PURE__ */ new Map();
+  for (const t of innerTargets) {
+    if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const im of innerMembers) {
+    countSymbolsInRepeat(im, nestedRepeatCounts);
+  }
+  const innerExisting = collectFieldNamesRuntime(inner);
+  let innerChanged = false;
+  const newInnerMembers = innerMembers.map((im, i) => {
+    const t = innerTargets[i];
+    if (!t) return im;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return im;
+      fieldName = t.name.slice(1);
+    }
+    if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
+    if (innerExisting.has(fieldName)) return im;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists (outer seq)`
+      );
+      return im;
+    }
+    innerExisting.add(fieldName);
+    innerChanged = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!innerChanged) return null;
+  let rebuilt = { ...inner, members: newInnerMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+  }
+  rebuilt = { ...cursor, content: rebuilt };
+  for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+  }
+  return rebuilt;
+}
+function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
+  if (!isRepeatType(cursor.type)) return rule;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return rule;
+  const members = inner.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map(detectSymbolTarget);
+  for (const t of targetByIdx) {
+    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  for (const m of members) {
+    countSymbolsInRepeat(m, kindCounts);
+  }
+  const existing = collectFieldNamesRuntime(inner);
+  let changed = false;
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      fieldName = t.name.slice(1);
+    }
+    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists`
+      );
+      return m;
+    }
+    existing.add(fieldName);
+    changed = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!changed) return rule;
+  let result = { ...inner, members: newMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...innerPrecStack[i], content: result };
+  }
+  result = { ...cursor, content: result };
+  for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...outerPrecStack[i], content: result };
   }
   return result;
 }
@@ -1730,6 +1875,32 @@ var config = {
       { 1: field("attributes") },
       { "2/(_expression)": field("elements") }
     ],
+    // arguments: seq('(', repeat(seq(repeat(attribute_item), _expression,
+    // optional(','))), ')').
+    // storageName collision: repeat(attribute_item) at inner-seq pos 0
+    // and _expression at inner-seq pos 1 both infer storageName='children'.
+    // Promote attribute_item to named field; expression stays as $children.
+    arguments: {
+      "1/0": field("attributes")
+    },
+    // attribute: seq(_path, optional(choice(seq('=', field('value',
+    // _expression)), field('arguments', delim_token_tree)))).
+    // storageName collision: _path (pos 0) and the optional choice
+    // (pos 1) both infer storageName='children'. Promote the path at
+    // pos 0 to a named field; the expression/arguments side already
+    // has inner field() wrappers and stays as $children.
+    attribute: {
+      0: field("path")
+    },
+    // block: seq(optional(seq(field('label', label), ':')), '{',
+    // repeat(_statement), optional(_expression), '}').
+    // storageName collision: repeat(_statement) at pos 2 and
+    // optional(_expression) at pos 3 both infer storageName='children'.
+    // Promote the trailing expression to a named field; statements stay
+    // as $children.
+    block: {
+      3: field("trailing_expression")
+    },
     // bounded_type: 2 field(s)
     bounded_type: {
       0: field("left"),
@@ -2026,6 +2197,16 @@ var config = {
       7: field("trailing_where_clause")
       // where_clause [struct=2]
     },
+    // type_parameters: seq('<', repeat1(seq(repeat(attribute_item),
+    // choice(metavariable, type_parameter, lifetime_parameter,
+    // const_parameter))), '>').
+    // storageName collision: repeat(attribute_item) at inner-seq pos 0
+    // and the choice at inner-seq pos 1 both infer storageName='children'.
+    // Promote attribute_item to named field; the type-param choice stays
+    // as $children.
+    type_parameters: {
+      "1/0": field("attributes")
+    },
     // unary_expression — label both the operator token (pos 0) and
     // the operand expression (pos 1). overrides.json promotes both
     // to fields at readNode time; the walker needs matching IR
@@ -2073,14 +2254,18 @@ var config = {
       "1/0/1/0": variant("raw_const"),
       "1/0/1/1": variant("raw_mut")
     },
-    // match_arm: choice(seq(field('value',expr), ','),
-    //                   field('value', prec(1, _expr_ending_with_block)))
-    // The ','-terminated form vs block-ending form have distinct
-    // literals. Split arms.
-    match_arm: {
-      "3/0": variant("with_comma"),
-      "3/1": variant("block_ending")
-    },
+    // match_arm: seq(repeat(choice(attribute_item, inner_attribute_item)),
+    //   field('pattern', match_pattern), '=>', choice(...)).
+    // storageName collision in synthesized form kinds: the
+    // repeat(choice(attribute_item, inner_attribute_item)) at pos 0 and
+    // the variant symbol at pos 3 both infer storageName='children'.
+    // Promote attribute_item to named field; the variant child stays as
+    // $children. Field patch (flat mode) runs before variant patches
+    // (path mode) via array-of-patch-sets.
+    match_arm: [
+      { 0: field("attributes") },
+      { "3/0": variant("with_comma"), "3/1": variant("block_ending") }
+    ],
     // line_comment: choice at pos 1 between regular double-slash,
     // doc-comment, and regular content. Each arm has its own
     // distinct literal prefix.

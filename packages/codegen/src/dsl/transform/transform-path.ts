@@ -18,7 +18,7 @@
  *   '(_expression)'  → every `_expression` symbol in the subtree
  *   '2/elements:'    → descend into field('elements', ...) at position 2
  *
- * Migration notes (ADR-0010):
+ * Migration notes:
  *   '*' → '_'         (wildcard)
  *   'name' → '(name)' (kind-match)
  *
@@ -89,7 +89,7 @@ export type PathSegment =
 			 * unintended — the semi form's `field('length', _expression)`
 			 * must survive when the list form's `_expression` is patched).
 			 *
-			 * Syntax: `(name)` — parentheses are required (ADR-0010).
+			 * Syntax: `(name)` — parentheses are required.
 			 */
 			kind: 'kind-match';
 			name: string;
@@ -100,7 +100,7 @@ export type PathSegment =
 			 * at the current rule position. Hard-errors if the current rule
 			 * is not a field wrapper or if the field name doesn't match.
 			 *
-			 * Syntax: `name:` — colon suffix (ADR-0010).
+			 * Syntax: `name:` — colon suffix.
 			 */
 			kind: 'fieldName';
 			name: string;
@@ -130,11 +130,11 @@ export class ApplyPathSkip extends Error {
  *   - `_`       — wildcard: matches every sibling at this level
  *   - `(name)`  — kind-match: finds every occurrence of symbol `name`
  *                 in the current subtree, skipping pre-fielded ones.
- *                 Parentheses are required (ADR-0010).
+ *                 Parentheses are required.
  *   - `name:`   — field traversal: descend through field('name', ...)
  *                 at the current position. Hard-errors on mismatch.
  *
- * Migration errors (ADR-0010):
+ * Migration errors:
  *   - `*`       — use `_` instead
  *   - bare kind name — use `(name)` instead
  */
@@ -153,15 +153,15 @@ export function parsePath(pathStr: string): PathSegment[] {
 	const segments: PathSegment[] = [];
 	for (const part of parts) {
 		if (part === '_') {
-			// New wildcard syntax (ADR-0010).
+			// Wildcard syntax.
 			segments.push({ kind: 'wildcard' });
 		} else if (/^-?\d+$/.test(part)) {
 			segments.push({ kind: 'index', value: Number(part) });
 		} else if (/^\([A-Za-z_][A-Za-z0-9_]*\)$/.test(part)) {
-			// New kind-match syntax: (name) — ADR-0010.
+			// Kind-match syntax: (name).
 			segments.push({ kind: 'kind-match', name: part.slice(1, -1) });
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*:$/.test(part)) {
-			// New field-traversal syntax: name: — ADR-0010.
+			// Field-traversal syntax: name:.
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
 			throw new Error(

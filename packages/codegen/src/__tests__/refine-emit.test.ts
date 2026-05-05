@@ -248,18 +248,18 @@ describe('factories emitter — per-form factory emission', () => {
 		expect(factoriesSrc).toMatch(/export function ifaceBodyFlow\(/);
 	});
 
-	it('stamps the selected literal into $fields', () => {
+	it('stamps the selected literal into _<name> storage', () => {
 		const { factoriesSrc } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		// Curly factory stamps '{' / '}'.
+		// Curly factory stamps '{' / '}' via _<name> storage.
 		expect(factoriesSrc).toMatch(
-			/ifaceBodyCurly[\s\S]*opening: "\{" as const[\s\S]*closing: "\}" as const/
+			/ifaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/
 		);
-		// Flow factory stamps '{|' / '|}'.
+		// Flow factory stamps '{|' / '|}' via _<name> storage.
 		expect(factoriesSrc).toMatch(
-			/ifaceBodyFlow[\s\S]*opening: "\{\|" as const[\s\S]*closing: "\|\}" as const/
+			/ifaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/
 		);
 	});
 

@@ -58,7 +58,7 @@ export interface ArgumentsTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<ArgumentsChildTransport>
+  attributes: Array<AnyTransport>
 }
 
 export interface ArrayExpressionListTransport {
@@ -168,7 +168,8 @@ export interface AttributeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': PathTransport
+  path: PathTransport
+  '$children'?: Box<AnyTransport>
 }
 
 export interface AwaitExpressionTransport {
@@ -211,6 +212,7 @@ export interface BlockCommentTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   doc?: Box<AnyTransport>
+  '$children'?: BlockCommentChildTransport
 }
 
 export interface BlockTransport {
@@ -221,7 +223,8 @@ export interface BlockTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   label?: LabelTransport
-  '$children': Array<AnyTransport>
+  trailingExpression?: ExpressionTransport
+  '$children': Array<StatementTransport>
 }
 
 export interface BoundedTypeTransport {
@@ -559,7 +562,8 @@ export interface EnumVariantListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<EnumVariantListChildTransport>
+  enumVariant: Array<EnumVariantTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface EnumVariantTransport {
@@ -665,7 +669,8 @@ export interface FieldDeclarationListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<FieldDeclarationListChildTransport>
+  fieldDeclaration: Array<FieldDeclarationTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface FieldDeclarationTransport {
@@ -1159,6 +1164,7 @@ export interface LineCommentDocTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   doc: LineDocContentTransport
+  '$children': LineCommentDocChildTransport
 }
 
 export interface LineCommentUFormContentTransport {
@@ -1344,8 +1350,9 @@ export interface MatchArmUFormBlockEndingTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributes: Array<DeclarationStatementTransport>
   pattern: MatchPatternTransport
-  '$children': Array<MatchArmUFormBlockEndingChildTransport>
+  '$children': MatchArmBlockEndingTransport
 }
 
 export interface MatchArmUFormWithCommaTransport {
@@ -1355,8 +1362,9 @@ export interface MatchArmUFormWithCommaTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributes: Array<DeclarationStatementTransport>
   pattern: MatchPatternTransport
-  '$children': Array<MatchArmUFormWithCommaChildTransport>
+  '$children': MatchArmWithCommaTransport
 }
 
 export interface MatchArmWithCommaTransport {
@@ -1473,7 +1481,7 @@ export interface NonSpecialTokenTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': NonSpecialTokenChildTransport
+  '$children': Array<NonSpecialTokenChildTransport>
 }
 
 export interface OrderedFieldDeclarationListTransport {
@@ -1483,7 +1491,9 @@ export interface OrderedFieldDeclarationListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  visibilityModifier?: Box<AnyTransport>
   type: Array<_TypeTransport>
+  '$children': Array<AttributeItemTransport>
 }
 
 export interface OrPatternBinaryTransport {
@@ -1534,6 +1544,7 @@ export interface ParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  attributeItem?: AttributeItemTransport
   '$children': Array<ParametersChildTransport>
 }
 
@@ -1788,7 +1799,7 @@ export interface ReferenceExpressionTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   value: ExpressionTransport
-  '$children': ReferenceExpressionChildTransport
+  '$children'?: ReferenceExpressionChildTransport
 }
 
 export interface ReferencePatternTransport {
@@ -2356,6 +2367,7 @@ export interface TypeArgumentsTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  traitBounds?: TraitBoundsTransport
   '$children': Array<TypeArgumentsChildTransport>
 }
 
@@ -2414,7 +2426,7 @@ export interface TypeParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<TypeParametersChildTransport>
+  attributes: Array<AnyTransport>
 }
 
 export interface TypeParameterTransport {

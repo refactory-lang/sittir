@@ -1015,11 +1015,12 @@
     },
     {
       "kind": "_class_body_member",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBodyMember",
       "factoryName": "classBodyMember",
       "irKey": "classBodyMember",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "abstract_method_signature",
@@ -1033,46 +1034,19 @@
               "multiplicity": "single",
               "name": "abstract_method_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "index_signature",
-          "propertyName": "indexSignature",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "index_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "method_signature",
-          "propertyName": "methodSignature",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "method_signature",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition",
-          "propertyName": "publicFieldDefinition",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1093,6 +1067,11 @@
               "multiplicity": "single",
               "name": "_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             }
           ]
         }
@@ -1166,11 +1145,12 @@
     },
     {
       "kind": "_class_body_method_sig",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBodyMethodSig",
       "factoryName": "classBodyMethodSig",
       "irKey": "classBodyMethodSig",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "method_signature",
@@ -1199,6 +1179,11 @@
               "multiplicity": "single",
               "name": "_function_signature_automatic_semicolon",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             }
           ]
         }
@@ -1206,11 +1191,12 @@
     },
     {
       "kind": "_class_heritage_extends_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ClassHeritageExtendsClause",
       "factoryName": "_classHeritageExtendsClause",
       "irKey": "_classHeritageExtendsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "extends_clause",
@@ -1246,11 +1232,12 @@
     },
     {
       "kind": "_class_heritage_implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ClassHeritageImplementsClause",
       "factoryName": "_classHeritageImplementsClause",
       "irKey": "_classHeritageImplementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "implements_clause",
@@ -1351,12 +1338,18 @@
       ],
       "children": [
         {
-          "name": "export_statement_default_decl_arm_default_kw",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKw",
+          "name": "declaration",
+          "propertyName": "declaration",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1378,12 +1371,18 @@
       "fields": [],
       "children": [
         {
-          "name": "export_statement_default_decl_arm_default_kw_value",
-          "propertyName": "exportStatementDefaultDeclArmDefaultKwValue",
+          "name": "declaration",
+          "propertyName": "declaration",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "declaration",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1447,11 +1446,12 @@
     },
     {
       "kind": "_export_statement_default_from_arm",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementDefaultFromArm",
       "factoryName": "exportStatementDefaultFromArm",
       "irKey": "exportStatementDefaultFromArm",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "export_statement_default_from_arm_star_from",
@@ -1465,46 +1465,19 @@
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_star_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_statement_default_from_arm_ns_from",
-          "propertyName": "exportStatementDefaultFromArmNsFrom",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_ns_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_statement_default_from_arm_clause_from",
-          "propertyName": "exportStatementDefaultFromArmClauseFrom",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_export_statement_default_from_arm_clause_from",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "export_clause",
-          "propertyName": "exportClause",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1666,11 +1639,12 @@
     },
     {
       "kind": "_export_statement_equals_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExportStatementEqualsExport",
       "factoryName": "_exportStatementEqualsExport",
       "irKey": "_exportStatementEqualsExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1706,11 +1680,12 @@
     },
     {
       "kind": "_export_statement_namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExportStatementNamespaceExport",
       "factoryName": "_exportStatementNamespaceExport",
       "irKey": "_exportStatementNamespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -1947,31 +1922,13 @@
               "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -2290,11 +2247,12 @@
     },
     {
       "kind": "_import_clause_default_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseDefaultImport",
       "factoryName": "_importClauseDefaultImport",
       "irKey": "_importClauseDefaultImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_identifier",
@@ -2323,16 +2281,7 @@
               "multiplicity": "optional",
               "name": "namespace_import",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "named_imports",
-          "propertyName": "namedImports",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -2345,11 +2294,12 @@
     },
     {
       "kind": "_import_clause_named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseNamedImports",
       "factoryName": "_importClauseNamedImports",
       "irKey": "_importClauseNamedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "named_imports",
@@ -2370,11 +2320,12 @@
     },
     {
       "kind": "_import_clause_namespace_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ImportClauseNamespaceImport",
       "factoryName": "_importClauseNamespaceImport",
       "irKey": "_importClauseNamespaceImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "namespace_import",
@@ -2572,11 +2523,12 @@
     },
     {
       "kind": "_index_signature_mapped_type_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_IndexSignatureMappedTypeClause",
       "factoryName": "_indexSignatureMappedTypeClause",
       "irKey": "_indexSignatureMappedTypeClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "mapped_type_clause",
@@ -2822,15 +2774,16 @@
     },
     {
       "kind": "_jsx_string",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxString",
       "factoryName": "jsxString",
       "irKey": "jsxString",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_jsx_string_fragment",
+          "propertyName": "unescapedDoubleJsxStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2844,22 +2797,13 @@
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "unescaped_single_jsx_string_fragment",
+              "name": "html_character_reference",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "html_character_reference",
-          "propertyName": "htmlCharacterReference",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
-              "name": "html_character_reference",
+              "name": "unescaped_single_jsx_string_fragment",
               "unresolved": true
             }
           ]
@@ -3009,11 +2953,12 @@
     },
     {
       "kind": "_lhs_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LhsExpression",
       "factoryName": "lhsExpression",
       "irKey": "lhs",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "member_expression",
@@ -3027,31 +2972,13 @@
               "multiplicity": "single",
               "name": "member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript_expression",
-          "propertyName": "subscriptExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3063,31 +2990,13 @@
               "multiplicity": "single",
               "name": "_reserved_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "destructuring_pattern",
-          "propertyName": "destructuringPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_destructuring_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "non_null_expression",
-          "propertyName": "nonNullExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3435,11 +3344,12 @@
     },
     {
       "kind": "_parenthesized_expression_sequence",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ParenthesizedExpressionSequence",
       "factoryName": "_parenthesizedExpressionSequence",
       "irKey": "_parenthesizedExpressionSequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "sequence_expression",
@@ -3683,11 +3593,12 @@
     },
     {
       "kind": "_public_field_definition_declare_first",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "PublicFieldDefinitionDeclareFirst",
       "factoryName": "publicFieldDefinitionDeclareFirst",
       "irKey": "publicFieldDefinitionDeclareFirst",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "accessibility_modifier",
@@ -3933,15 +3844,16 @@
     },
     {
       "kind": "_string_double",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_StringDouble",
       "factoryName": "_stringDouble",
       "irKey": "_stringDouble",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_string_fragment",
+          "propertyName": "unescapedDoubleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3951,16 +3863,7 @@
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -3973,15 +3876,16 @@
     },
     {
       "kind": "_string_single",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_StringSingle",
       "factoryName": "_stringSingle",
       "irKey": "_stringSingle",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_single_string_fragment",
+          "propertyName": "unescapedSingleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3991,16 +3895,7 @@
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -4043,11 +3938,12 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_identifier",
@@ -5214,11 +5110,12 @@
     },
     {
       "kind": "arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5232,16 +5129,7 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5255,11 +5143,12 @@
     },
     {
       "kind": "array",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Array",
       "factoryName": "array",
       "irKey": "array",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5273,16 +5162,7 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5296,11 +5176,12 @@
     },
     {
       "kind": "array_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ArrayPattern",
       "factoryName": "arrayPattern",
       "irKey": "arrayPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -5314,16 +5195,7 @@
               "multiplicity": "array",
               "name": "pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "assignment_pattern",
-          "propertyName": "assignmentPattern",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5757,11 +5629,12 @@
     },
     {
       "kind": "asserts",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Asserts",
       "factoryName": "asserts",
       "irKey": "asserts",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_predicate",
@@ -5775,31 +5648,13 @@
               "multiplicity": "single",
               "name": "type_predicate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -6748,11 +6603,12 @@
     },
     {
       "kind": "class_body",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassBody",
       "factoryName": "classBody",
       "irKey": "classBody",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "class_body_method",
@@ -6766,51 +6622,29 @@
               "multiplicity": "array",
               "name": "_class_body_method",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_body_method_sig",
-          "propertyName": "classBodyMethodSig",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_class_body_method_sig",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_static_block",
-          "propertyName": "classStaticBlock",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "class_static_block",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "class_body_member",
-          "propertyName": "classBodyMember",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_class_body_member",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": ";"
             }
           ]
         }
@@ -7035,11 +6869,12 @@
     },
     {
       "kind": "class_heritage_extends_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassHeritageExtendsClause",
       "factoryName": "classHeritageExtendsClause",
       "irKey": "classHeritageExtendsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "extends_clause",
@@ -7075,11 +6910,12 @@
     },
     {
       "kind": "class_heritage_implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClassHeritageImplementsClause",
       "factoryName": "classHeritageImplementsClause",
       "irKey": "classHeritageImplementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "implements_clause",
@@ -7687,11 +7523,12 @@
     },
     {
       "kind": "decorator",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Decorator",
       "factoryName": "decorator",
       "irKey": "decorator",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -7705,46 +7542,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_call_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7917,11 +7727,12 @@
     },
     {
       "kind": "decorator_parenthesized_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
       "irKey": "decoratorParenthesized",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -7935,31 +7746,13 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "decorator_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -8235,12 +8028,18 @@
       "fields": [],
       "children": [
         {
-          "name": "enum_assignment",
-          "propertyName": "enumAssignment",
+          "name": "property_name",
+          "propertyName": "propertyName",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "_property_name",
+              "unresolved": true
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -8361,11 +8160,12 @@
     },
     {
       "kind": "export_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportClause",
       "factoryName": "exportClause",
       "irKey": "exportClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "export_specifier",
@@ -8589,11 +8389,12 @@
     },
     {
       "kind": "export_statement_equals_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementEqualsExport",
       "factoryName": "exportStatementEqualsExport",
       "irKey": "exportStatementEqualsExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -8629,11 +8430,12 @@
     },
     {
       "kind": "export_statement_namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExportStatementNamespaceExport",
       "factoryName": "exportStatementNamespaceExport",
       "irKey": "exportStatementNamespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -9237,31 +9039,13 @@
               "multiplicity": "single",
               "name": "_for_header_lhs",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_var_kind",
-          "propertyName": "forHeaderVarKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_for_header_var_kind",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "for_header_let_const_kind",
-          "propertyName": "forHeaderLetConstKind",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -9405,11 +9189,12 @@
     },
     {
       "kind": "formal_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FormalParameters",
       "factoryName": "formalParameters",
       "irKey": "formalParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "formal_parameter",
@@ -10606,11 +10391,12 @@
     },
     {
       "kind": "implements_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImplementsClause",
       "factoryName": "implementsClause",
       "irKey": "implementsClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -10865,11 +10651,12 @@
     },
     {
       "kind": "import_clause_default_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseDefaultImport",
       "factoryName": "importClauseDefaultImport",
       "irKey": "importClauseDefaultImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_identifier",
@@ -10898,16 +10685,7 @@
               "multiplicity": "optional",
               "name": "namespace_import",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "named_imports",
-          "propertyName": "namedImports",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -10920,11 +10698,12 @@
     },
     {
       "kind": "import_clause_named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseNamedImports",
       "factoryName": "importClauseNamedImports",
       "irKey": "importClauseNamedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "named_imports",
@@ -10945,11 +10724,12 @@
     },
     {
       "kind": "import_clause_namespace_import",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ImportClauseNamespaceImport",
       "factoryName": "importClauseNamespaceImport",
       "irKey": "importClauseNamespaceImport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "namespace_import",
@@ -11519,11 +11299,12 @@
     },
     {
       "kind": "index_signature_mapped_type_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "IndexSignatureMappedTypeClause",
       "factoryName": "indexSignatureMappedTypeClause",
       "irKey": "indexSignatureMappedTypeClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "mapped_type_clause",
@@ -11956,11 +11737,12 @@
     },
     {
       "kind": "jsx_attribute",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxAttribute",
       "factoryName": "jsxAttribute",
       "irKey": "jsxAttribute2",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "jsx_attribute_name",
@@ -12103,11 +11885,12 @@
     },
     {
       "kind": "jsx_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxExpression",
       "factoryName": "jsxExpression",
       "irKey": "jsx",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -12121,31 +11904,13 @@
               "multiplicity": "optional",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "sequence_expression",
-          "propertyName": "sequenceExpression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "sequence_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -12167,22 +11932,23 @@
     },
     {
       "kind": "jsx_namespace_name",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "JsxNamespaceName",
       "factoryName": "jsxNamespaceName",
       "irKey": "jsxNamespaceName",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "jsx_identifier",
           "propertyName": "jsxIdentifier",
           "required": true,
-          "multiple": true,
+          "multiple": false,
           "nonEmpty": false,
           "values": [
             {
               "kind": "node-ref",
-              "multiplicity": "array",
+              "multiplicity": "single",
               "name": "_jsx_identifier",
               "unresolved": true
             }
@@ -12558,27 +12324,13 @@
     },
     {
       "kind": "literal_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LiteralType",
       "factoryName": "literalType",
       "irKey": "literalType",
       "hidden": false,
+      "fields": [],
       "children": [
-        {
-          "name": "unary_expression",
-          "propertyName": "unaryExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "_number",
-              "unresolved": true
-            }
-          ]
-        },
         {
           "name": "number",
           "propertyName": "number",
@@ -12589,78 +12341,39 @@
             {
               "kind": "node-ref",
               "multiplicity": "single",
+              "name": "_number",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
               "name": "number",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string",
-          "propertyName": "string",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "string",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "true",
-          "propertyName": "true",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "true",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "false",
-          "propertyName": "false",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "false",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "null",
-          "propertyName": "null",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "null",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "undefined",
-          "propertyName": "undefined",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -12887,7 +12600,28 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "optional_chain",
+          "propertyName": "optionalChain",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "."
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_optional_chain",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "meta_property",
@@ -13549,11 +13283,12 @@
     },
     {
       "kind": "named_imports",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NamedImports",
       "factoryName": "namedImports",
       "irKey": "namedImports",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "import_specifier",
@@ -13585,11 +13320,12 @@
     },
     {
       "kind": "namespace_export",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NamespaceExport",
       "factoryName": "namespaceExport",
       "irKey": "namespaceExport",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "module_export_name",
@@ -13921,11 +13657,12 @@
     },
     {
       "kind": "object",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Object",
       "factoryName": "object",
       "irKey": "object",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pair",
@@ -13942,65 +13679,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pair",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "spread_element",
-          "propertyName": "spreadElement",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "spread_element",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "spread_element",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "method_definition",
-          "propertyName": "methodDefinition",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "method_definition",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "method_definition",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "shorthand_property_identifier",
-          "propertyName": "shorthandPropertyIdentifier",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_shorthand_property_identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "pair",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "spread_element",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "method_definition",
               "unresolved": true
             },
             {
@@ -14082,11 +13792,12 @@
     },
     {
       "kind": "object_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ObjectPattern",
       "factoryName": "objectPattern",
       "irKey": "objectPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pair_pattern",
@@ -14103,65 +13814,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "pair_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "rest_pattern",
-          "propertyName": "restPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "rest_pattern",
               "unresolved": true
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "rest_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "object_assignment_pattern",
-          "propertyName": "objectAssignmentPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "object_assignment_pattern",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "object_assignment_pattern",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "shorthand_property_identifier_pattern",
-          "propertyName": "shorthandPropertyIdentifierPattern",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_shorthand_property_identifier_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "pair_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "rest_pattern",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "object_assignment_pattern",
               "unresolved": true
             },
             {
@@ -14851,11 +14535,12 @@
     },
     {
       "kind": "parenthesized_expression_sequence",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpressionSequence",
       "factoryName": "parenthesizedExpressionSequence",
       "irKey": "parenthesizedExpressionSequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "sequence_expression",
@@ -15345,16 +15030,7 @@
               "multiplicity": "optional",
               "name": "_public_field_definition_declare_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_access_first",
-          "propertyName": "publicFieldDefinitionAccessFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -15375,46 +15051,19 @@
               "multiplicity": "optional",
               "name": "_public_field_definition_static_mods",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_abstract_first",
-          "propertyName": "publicFieldDefinitionAbstractFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_abstract_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_readonly_first",
-          "propertyName": "publicFieldDefinitionReadonlyFirst",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "_public_field_definition_readonly_first",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "public_field_definition_accessor_opt",
-          "propertyName": "publicFieldDefinitionAccessorOpt",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -15719,11 +15368,12 @@
     },
     {
       "kind": "rest_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RestPattern",
       "factoryName": "restPattern",
       "irKey": "restPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lhs_expression",
@@ -15905,11 +15555,12 @@
     },
     {
       "kind": "sequence_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
       "irKey": "sequence",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -16129,15 +15780,16 @@
     },
     {
       "kind": "string_double",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringDouble",
       "factoryName": "stringDouble",
       "irKey": "stringDouble",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_double_string_fragment",
+          "propertyName": "unescapedDoubleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16147,16 +15799,7 @@
               "multiplicity": "array",
               "name": "unescaped_double_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16169,15 +15812,16 @@
     },
     {
       "kind": "string_single",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringSingle",
       "factoryName": "stringSingle",
       "irKey": "stringSingle",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "unescaped_single_string_fragment",
+          "propertyName": "unescapedSingleStringFragment",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16187,16 +15831,7 @@
               "multiplicity": "array",
               "name": "unescaped_single_string_fragment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16317,11 +15952,12 @@
     },
     {
       "kind": "switch_body",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SwitchBody",
       "factoryName": "switchBody",
       "irKey": "switchBody",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "switch_case",
@@ -16335,16 +15971,7 @@
               "multiplicity": "array",
               "name": "switch_case",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "switch_default",
-          "propertyName": "switchDefault",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16505,15 +16132,16 @@
     },
     {
       "kind": "template_literal_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateLiteralType",
       "factoryName": "templateLiteralType",
       "irKey": "templateLiteralType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "template_chars",
+          "propertyName": "templateChars",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16523,16 +16151,7 @@
               "multiplicity": "array",
               "name": "_template_chars",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "template_type",
-          "propertyName": "templateType",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16545,15 +16164,16 @@
     },
     {
       "kind": "template_string",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateString",
       "factoryName": "templateString",
       "irKey": "templateString",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "string_fragment",
-          "propertyName": "stringFragment",
+          "name": "template_chars",
+          "propertyName": "templateChars",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16563,31 +16183,13 @@
               "multiplicity": "array",
               "name": "_template_chars",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "template_substitution",
-          "propertyName": "templateSubstitution",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -16600,11 +16202,12 @@
     },
     {
       "kind": "template_substitution",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateSubstitution",
       "factoryName": "templateSubstitution",
       "irKey": "templateSubstitution",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expressions",
@@ -16625,11 +16228,12 @@
     },
     {
       "kind": "template_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TemplateType",
       "factoryName": "templateType",
       "irKey": "templateType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "primary_type",
@@ -16643,16 +16247,7 @@
               "multiplicity": "single",
               "name": "primary_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "infer_type",
-          "propertyName": "inferType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -16981,11 +16576,12 @@
     },
     {
       "kind": "tuple_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tuple_type_member",
@@ -17160,11 +16756,12 @@
     },
     {
       "kind": "type_arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -17346,11 +16943,12 @@
     },
     {
       "kind": "type_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_parameter",
@@ -17487,15 +17085,16 @@
     },
     {
       "kind": "type_query",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeQuery",
       "factoryName": "typeQuery",
       "irKey": "typeQuery",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "subscript_expression",
-          "propertyName": "subscriptExpression",
+          "name": "type_query_subscript_expression",
+          "propertyName": "typeQuerySubscriptExpression",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -17505,76 +17104,31 @@
               "multiplicity": "single",
               "name": "_type_query_subscript_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_expression",
-          "propertyName": "memberExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_member_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "call_expression",
-          "propertyName": "callExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_call_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "instantiation_expression",
-          "propertyName": "instantiationExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_type_query_instantiation_expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "this",
-          "propertyName": "this",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",

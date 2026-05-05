@@ -27,6 +27,7 @@ export type {
 	NodeId,
 	NodeFieldValue,
 	NodeChildValue,
+	NodeMemberValue,
 	AnyTreeNode,
 	TemplateRule,
 	TemplateRuleObject,
@@ -532,8 +533,18 @@ export type FluentNodeOf<T> = T extends { readonly $type: number }
 // Concrete interface transformations
 // ---------------------------------------------------------------------------
 
-/** Extract the fields record from a concrete node interface, or `{}` if none. */
-type FieldsOf<T> = T extends { readonly $fields: infer F } ? F : {};
+/**
+ * Extract the fields record from a concrete node interface, or `{}` if none.
+ *
+ * ADR-0018 Phase 2: supports both the old `$fields: { name: T }` shape and
+ * the new de-hoisted `_name: T` storage shape. When the interface uses
+ * `_`-prefixed keys, FieldsOf extracts them and strips the underscore prefix
+ * so that `ConfigOf<T>` / `RuntimeNodeOf<T>` / `FluentNodeOf<T>` see the
+ * camelCase (config-friendly) key names.
+ */
+type FieldsOf<T> = T extends { readonly $fields: infer F }
+	? F
+	: { [K in keyof T as K extends `_${infer N}` ? N : never]: T[K] };
 
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —

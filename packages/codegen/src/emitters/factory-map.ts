@@ -17,6 +17,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts';
+import { allSlotsOf } from '../compiler/node-map.ts';
 import type {
 	PolymorphVariantDescriptor,
 	PolymorphVariantMap
@@ -66,15 +67,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const fieldAliasMap: Record<string, Record<string, string>> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		if (
-			node.modelType !== 'branch' &&
-			node.modelType !== 'polymorph' &&
-			node.modelType !== 'group'
-		)
-			continue;
-		const fields =
-			node.modelType === 'polymorph' ? node.allFormFields : node.fields;
-		for (const f of fields) {
+		for (const f of allSlotsOf(node)) {
 			if (!f.aliasSources) continue;
 			const pairs = Object.entries(f.aliasSources).filter(([t, s]) => t !== s);
 			if (pairs.length === 0) continue;
@@ -87,13 +80,13 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (node.modelType === 'branch' || node.modelType === 'group') {
 			if (node.fields.length === 0) continue;
-			if (node.children && node.children.length > 0) continue;
+			if (node.children.length > 0) continue;
 			factoryFields[kind] = node.fields.map((f) => f.name);
 		} else if (node.modelType === 'polymorph') {
 			const unique = [...new Set(node.allFormFields.map((f) => f.name))];
 			if (unique.length === 0) continue;
 			const hasChildrenInAnyForm = node.forms.some(
-				(f: AssembledGroup) => f.children && f.children.length > 0
+				(f: AssembledGroup) => f.children.length > 0
 			);
 			if (hasChildrenInAnyForm) continue;
 			factoryFields[kind] = unique;
@@ -102,17 +95,15 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 
 	const polymorphVariants: Record<string, PolymorphVariantDescriptor> = {};
 	for (const [kind, node] of nodeMap.nodes) {
-		// Variant-adopted branches / containers — kinds that went
-		// through Link's push-down (see link.ts
-		// `pushAmbientScaffoldIntoVariantChildren`) classify as
-		// branch/container but still carry the variant-child kinds on
+		// Variant-adopted branches — kinds that went through Link's
+		// push-down (see link.ts `pushAmbientScaffoldIntoVariantChildren`)
+		// classify as branch but still carry the variant-child kinds on
 		// `variantChildKinds`. Emit them into polymorphVariants so
 		// `.from()`-dispatch and the validator's deep-read path both
 		// know which kinds participate in variant() adoption.
-		if (
-			(node.modelType === 'branch' || node.modelType === 'container') &&
-			node.variantChildKinds.length > 0
-		) {
+		// Phase 1d.vii (spec 022): the former `'container'` modelType
+		// folded into `'branch'`; the discriminant collapses too.
+		if (node.modelType === 'branch' && node.variantChildKinds.length > 0) {
 			if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 			const childKind: Record<string, string> = {};
 			for (const visibleName of node.variantChildKinds) {
@@ -186,9 +177,13 @@ function shapeOf(
 		case 'enum':
 		case 'keyword':
 			return 'text';
-		case 'container':
-			return 'children';
 		case 'branch':
+			// Phase 1d.vii (spec 022): the former `'container'` modelType
+			// (no `field()` on the rule) is now an `AssembledBranch` with
+			// `isContainerShape === true`. Preserve the `'children'`
+			// factory shape for that case so downstream validators
+			// dispatch the same way.
+			return node.isContainerShape ? 'children' : 'config';
 		case 'polymorph':
 		case 'group':
 			return 'config';
@@ -199,16 +194,10 @@ function shapeOf(
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
-	// Field-site alias sources (ADR-0006) — fields declared as
-	// `alias($.source, $.target)` in some other rule's field slot.
+	// Slot-level alias sources (ADR-0006) — slots declared as
+	// `alias($.source, $.target)` in some other rule's value position.
 	for (const [, n] of nodeMap.nodes) {
-		const fs =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
-					: [];
-		for (const f of fs) {
+		for (const f of allSlotsOf(n)) {
 			if (!f.aliasSources) continue;
 			for (const source of Object.values(f.aliasSources)) out.add(source);
 		}

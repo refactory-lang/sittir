@@ -21,8 +21,8 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
+	
 	AssembledGroup,
 	NodeOrTerminal,
 	UnresolvedRef
@@ -32,7 +32,8 @@ import {
 	isUnresolvedRef,
 	isRequired,
 	isMultiple,
-	isNonEmpty
+	isNonEmpty,
+	kindsOf
 } from '../compiler/node-map.ts';
 
 export interface EmitNodeModelConfig {
@@ -95,11 +96,13 @@ interface SerializedBranch extends SerializedNodeBase {
 	modelType: 'branch';
 	fields: SerializedField[];
 	children: SerializedSlot[];
-}
-
-interface SerializedContainer extends SerializedNodeBase {
-	modelType: 'container';
-	children: SerializedSlot[];
+	/**
+	 * Repeat-list separator surfaced when the assembled rule was a
+	 * `repeat` / `repeat1` (the former-container shape, Phase 1d.vii).
+	 * Field-carrying branches don't surface this — the repeat separator
+	 * is reachable via the per-value metadata on the relevant
+	 * `AssembledNonterminal` slot.
+	 */
 	separator?: string;
 }
 
@@ -155,7 +158,6 @@ interface SerializedMulti extends SerializedNodeBase {
 
 type SerializedNode =
 	| SerializedBranch
-	| SerializedContainer
 	| SerializedGroupNode
 	| SerializedPolymorph
 	| SerializedLeaf
@@ -220,20 +222,23 @@ function serializeNode(node: AssembledNode): SerializedNode {
 		stampExpression: node.stampExpression
 	};
 	switch (node.modelType) {
-		case 'branch':
-			return {
+		case 'branch': {
+			// Phase 1d.vii (spec 022): `AssembledBranch` absorbed the
+			// former `AssembledContainer`. Container-shape branches
+			// (no fields) used to serialize as `modelType: 'container'`
+			// with a `separator` field; that variant is gone, but the
+			// runtime separator data still lives on `AssembledBranch.separator`
+			// for branches whose simplified rule is a `repeat` / `repeat1`.
+			// Surface it on the unified branch payload only when present.
+			const out: SerializedBranch = {
 				...base,
 				modelType: 'branch',
 				fields: node.fields.map(serializeField),
-				children: (node.children ?? []).map(serializeChild)
+				children: node.children.map(serializeChild)
 			};
-		case 'container':
-			return {
-				...base,
-				modelType: 'container',
-				children: node.children.map(serializeChild),
-				separator: node.separator
-			};
+			if (node.separator !== undefined) out.separator = node.separator;
+			return out;
+		}
 		case 'group':
 			return {
 				...base,
@@ -309,7 +314,7 @@ function serializeForm(form: AssembledGroup): SerializedForm {
 	};
 }
 
-function serializeField(field: AssembledField): SerializedField {
+function serializeField(field: AssembledNonterminal): SerializedField {
 	const out: SerializedField = {
 		name: field.name,
 		propertyName: field.propertyName,
@@ -319,9 +324,13 @@ function serializeField(field: AssembledField): SerializedField {
 		nonEmpty: isNonEmpty(field),
 		values: field.values.map(serializeValue),
 		source: field.source,
+		// projection: derived from values via kindsOf() instead of read from
+		// a stored cache (eliminated in spec 022 Phase 1d.i). The serialized
+		// JSON shape is preserved (typeName: '', kinds: [...]) for byte-
+		// identity of node-model.json5 output.
 		projection: {
-			typeName: field.projection.typeName,
-			kinds: [...field.projection.kinds]
+			typeName: '',
+			kinds: [...kindsOf(field)]
 		}
 	};
 	if (field.aliasSources && Object.keys(field.aliasSources).length > 0) {
@@ -330,7 +339,7 @@ function serializeField(field: AssembledField): SerializedField {
 	return out;
 }
 
-function serializeChild(child: AssembledChild): SerializedSlot {
+function serializeChild(child: AssembledNonterminal): SerializedSlot {
 	return {
 		name: child.name,
 		propertyName: child.propertyName,

@@ -7,33 +7,75 @@
     "__range_expression_binary_operator": "text",
     "__visibility_modifier_in_path_in": "text",
     "__visibility_modifier_pub_pub": "text",
+    "_array_expression_list": "config",
+    "_array_expression_semi": "config",
     "_binary_expression_operator": "text",
     "_closure_expression_async_marker": "text",
+    "_closure_expression_block": "config",
+    "_closure_expression_expr": "config",
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
     "_crate": "text",
+    "_delim_token_tree_brace": "children",
+    "_delim_token_tree_bracket": "children",
+    "_delim_token_tree_paren": "children",
+    "_expression_statement_block_ending": "children",
+    "_expression_statement_with_semi": "children",
     "_field_identifier": "children",
+    "_field_pattern_named": "config",
+    "_field_pattern_shorthand": "config",
+    "_foreign_mod_item_body": "config",
     "_function_type_fn_form": "children",
     "_function_type_trait_form": "config",
     "_generic_type_with_turbofish_turbofish": "text",
+    "_impl_item_body": "config",
     "_impl_item_negative": "text",
     "_let_chain": "children",
+    "_line_comment_content": "text",
+    "_line_comment_doc": "config",
+    "_line_comment_regular_dslash": "text",
+    "_macro_definition_brace": "children",
+    "_macro_definition_bracket": "children",
+    "_macro_definition_paren": "children",
+    "_match_arm_block_ending": "config",
+    "_match_arm_with_comma": "config",
+    "_mod_item_inline": "config",
     "_move_marker": "text",
     "_mutable_specifier": "text",
     "_operator": "text",
+    "_or_pattern_binary": "config",
+    "_or_pattern_prefix": "config",
+    "_pointer_type_const": "text",
+    "_pointer_type_mut": "children",
     "_primitive_type": "text",
+    "_range_expression_bare": "config",
+    "_range_expression_binary": "config",
+    "_range_expression_postfix": "config",
+    "_range_expression_prefix": "config",
+    "_range_pattern_left_with_right": "config",
+    "_range_pattern_prefix": "config",
     "_ref_marker": "text",
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "children",
     "_reserved_identifier": "children",
     "_self": "text",
+    "_struct_item_brace": "config",
+    "_struct_item_tuple": "config",
     "_token_binding_pattern_type": "text",
+    "_token_tree_brace": "children",
+    "_token_tree_bracket": "children",
+    "_token_tree_paren": "children",
+    "_token_tree_pattern_brace": "children",
+    "_token_tree_pattern_bracket": "children",
+    "_token_tree_pattern_paren": "children",
     "_type_identifier": "children",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
+    "_visibility_modifier_crate": "children",
     "_visibility_modifier_in_path": "config",
+    "_visibility_modifier_pub": "config",
     "abstract_type": "config",
-    "arguments": "children",
+    "arguments": "config",
     "array_expression": "config",
     "array_type": "config",
     "assignment_expression": "config",
@@ -72,7 +114,7 @@
     "else_clause": "children",
     "enum_item": "config",
     "enum_variant": "config",
-    "enum_variant_list": "children",
+    "enum_variant_list": "config",
     "escape_sequence": "text",
     "expression_statement_with_semi": "children",
     "expression_statement_block_ending": "children",
@@ -80,7 +122,7 @@
     "extern_crate_declaration": "config",
     "extern_modifier": "config",
     "field_declaration": "config",
-    "field_declaration_list": "children",
+    "field_declaration_list": "config",
     "field_expression": "config",
     "field_initializer": "config",
     "field_initializer_list": "children",
@@ -136,7 +178,7 @@
     "or_pattern": "config",
     "ordered_field_declaration_list": "config",
     "parameter": "config",
-    "parameters": "children",
+    "parameters": "config",
     "parenthesized_expression": "children",
     "pointer_type_mut": "children",
     "pointer_type": "config",
@@ -186,12 +228,12 @@
     "tuple_pattern": "children",
     "tuple_struct_pattern": "config",
     "tuple_type": "children",
-    "type_arguments": "children",
+    "type_arguments": "config",
     "type_binding": "config",
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
-    "type_parameters": "children",
+    "type_parameters": "config",
     "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
@@ -212,6 +254,8 @@
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
+    "_outer_block_doc_comment_marker": "text",
+    "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
     "fn": "text",
     "async": "text",
@@ -291,12 +335,78 @@
     }
   },
   "factoryFields": {
+    "_array_expression_semi": [
+      "attributes",
+      "elements",
+      "length"
+    ],
+    "_closure_expression_block": [
+      "return_type",
+      "body"
+    ],
+    "_closure_expression_expr": [
+      "body"
+    ],
+    "_field_pattern_named": [
+      "name",
+      "pattern"
+    ],
+    "_field_pattern_shorthand": [
+      "name"
+    ],
+    "_foreign_mod_item_body": [
+      "body"
+    ],
     "_function_type_trait_form": [
       "trait"
+    ],
+    "_impl_item_body": [
+      "body"
+    ],
+    "_match_arm_block_ending": [
+      "value"
+    ],
+    "_match_arm_with_comma": [
+      "value"
+    ],
+    "_mod_item_inline": [
+      "body"
+    ],
+    "_or_pattern_binary": [
+      "left",
+      "right"
+    ],
+    "_or_pattern_prefix": [
+      "right"
+    ],
+    "_range_expression_bare": [
+      "operator"
+    ],
+    "_range_expression_binary": [
+      "start",
+      "operator",
+      "end"
+    ],
+    "_range_expression_postfix": [
+      "start",
+      "operator"
+    ],
+    "_range_expression_prefix": [
+      "operator",
+      "end"
+    ],
+    "_range_pattern_left_with_right": [
+      "right"
+    ],
+    "_range_pattern_prefix": [
+      "right"
     ],
     "abstract_type": [
       "type_parameters",
       "trait"
+    ],
+    "arguments": [
+      "attributes"
     ],
     "array_type": [
       "element",
@@ -323,9 +433,6 @@
       "left",
       "operator",
       "right"
-    ],
-    "block_comment": [
-      "doc"
     ],
     "bounded_type": [
       "left",
@@ -510,9 +617,6 @@
     "negative_literal": [
       "value"
     ],
-    "ordered_field_declaration_list": [
-      "type"
-    ],
     "parameter": [
       "mutable_specifier",
       "pattern",
@@ -624,6 +728,9 @@
       "name",
       "bounds",
       "default_type"
+    ],
+    "type_parameters": [
+      "attributes"
     ],
     "unary_expression": [
       "operator",

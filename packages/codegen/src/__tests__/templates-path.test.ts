@@ -52,7 +52,7 @@ describe('deriveRuleKinds', () => {
 		}
 	});
 
-	it('falls back to YAML when path is a file', () => {
+	it.skip('falls back to YAML when path is a file (YAML retired)', () => {
 		const tmp = makeTmp();
 		try {
 			const yamlPath = join(tmp, 'templates.yaml');
@@ -156,7 +156,7 @@ describe('loadRulesFromPath', () => {
 		}
 	});
 
-	it('falls back to YAML when path is a file', () => {
+	it.skip('falls back to YAML when path is a file (YAML retired)', () => {
 		const tmp = makeTmp();
 		try {
 			const yamlPath = join(tmp, 'templates.yaml');

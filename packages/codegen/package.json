@@ -41,8 +41,7 @@
 	},
 	"dependencies": {
 		"@sittir/core": "workspace:*",
-		"@sittir/types": "workspace:*",
-		"yaml": "^2.8.3"
+		"@sittir/types": "workspace:*"
 	},
 	"devDependencies": {
 		"@ast-grep/wasm": "^0.42.1",

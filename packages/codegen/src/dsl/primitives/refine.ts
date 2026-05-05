@@ -23,7 +23,7 @@
  *
  * Codegen emits per-form namespace-keyed factories — `ir.interfaceBody
  * .curly(config)`, `ir.interfaceBody.flow(config)` — with narrowed
- * Config types for the refined positions. Phase 1's auto-stamp rule
+ * Config types for the refined positions. The auto-stamp rule
  * then collapses the now-single-literal fields to absent Config keys,
  * so callers don't restate the literals that were implied by the form.
  *
@@ -34,7 +34,7 @@
  * Round-trip: readNode output and refine-factory output produce
  * identical NodeData shapes — no `$variant` tag, no discriminator.
  * Consumers that need "which form is this?" inspect
- * `$fields.opening` (or any refined position) directly. See ADR-0010.
+ * `$fields.opening` (or any refined position) directly.
  *
  * @see packages/codegen/src/dsl/wire/wire.ts — WireContext.refineForms
  */

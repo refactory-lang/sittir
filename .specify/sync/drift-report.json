@@ -1,0 +1,140 @@
+{
+  "generated": "2026-05-04T00:00:00Z",
+  "project": "sittir",
+  "branch": "022-binding-simplify-assemble",
+  "summary": {
+    "specs_analyzed": 1,
+    "requirements_checked": 33,
+    "aligned": 17,
+    "intentionally_drifted": 7,
+    "not_implemented": 5,
+    "regressed": 4,
+    "unspecced_features": 5
+  },
+  "specs": [
+    {
+      "id": "022-binding-simplify-assemble",
+      "title": "De-hoisted NodeData Surface",
+      "aligned": [
+        "FR-001", "FR-002", "FR-006", "FR-007", "FR-008", "FR-009a",
+        "FR-011", "FR-013", "FR-015", "FR-016", "FR-017", "FR-020",
+        "FR-023", "SC-001", "SC-005", "SC-007", "SC-008"
+      ],
+      "intentionally_drifted": [
+        {
+          "requirement": "FR-004",
+          "spec_text": "All NodeData objects MUST be frozen at construction",
+          "actual": "No freezeNodeData call; return raw literal",
+          "reason": "User deferred: 'don't worry about freeze yet'",
+          "severity": "moderate"
+        },
+        {
+          "requirement": "FR-009",
+          "spec_text": "$with MUST be non-enumerable",
+          "actual": "$with is enumerable inline property",
+          "reason": "Hygiene rule 1: no Object.defineProperty",
+          "severity": "minor"
+        },
+        {
+          "requirement": "FR-012",
+          "spec_text": "$-methods MUST be non-enumerable",
+          "actual": "Methods are enumerable via Object.assign",
+          "reason": "Hygiene rule 1: no Object.defineProperty",
+          "severity": "minor"
+        },
+        {
+          "requirement": "SC-002",
+          "spec_text": "Per-field fluent method removed, net ~-1500 lines",
+          "actual": "Getter methods remain (pure); setters in $with. Smaller net reduction.",
+          "reason": "Shape A: pure getters useful for read access",
+          "severity": "minor"
+        },
+        {
+          "requirement": "SC-003",
+          "spec_text": "withMethods from @sittir/core",
+          "actual": "withMethods<T> in per-grammar utils.ts via Object.assign",
+          "reason": "Hygiene rules 1+3",
+          "severity": "minor"
+        },
+        {
+          "requirement": "SC-004",
+          "spec_text": "Object.keys returns only $-metadata and _-storage",
+          "actual": "Getter methods + $with + $render also in Object.keys",
+          "reason": "Consequence of no-defineProperty; harmless for JSON.stringify",
+          "severity": "minor"
+        },
+        {
+          "requirement": "FR-010",
+          "spec_text": "$-prefixed methods via defineProperty",
+          "actual": "$-methods via Object.assign (enumerable)",
+          "reason": "Hygiene rule 1",
+          "severity": "minor"
+        }
+      ],
+      "not_implemented": [
+        "FR-003", "FR-005", "FR-014", "FR-018", "FR-021"
+      ],
+      "regressed": [
+        {
+          "requirement": "SC-006",
+          "spec_text": "Factory round-trip ceilings drop to zero",
+          "actual": "fromPass regressed by -43 total (rust -18, ts -14, py -11)",
+          "location": "packages/*/src/factories.ts (.$text hoist)",
+          "severity": "major",
+          "tracking": "Task #82"
+        },
+        {
+          "requirement": "SC-009",
+          "spec_text": "All factories produce frozen objects",
+          "actual": "No freeze call (deferred)",
+          "severity": "moderate"
+        },
+        {
+          "requirement": "SC-010",
+          "spec_text": "$with chain verified in tests",
+          "actual": "No test coverage for $with chaining",
+          "severity": "moderate"
+        }
+      ]
+    }
+  ],
+  "unspecced": [
+    {
+      "feature": "hydrateSlotRefs pass",
+      "location": "packages/codegen/src/compiler/assemble.ts + generate.ts",
+      "suggested_spec": "022"
+    },
+    {
+      "feature": "isAllLeafSlot helper (.$text hoist)",
+      "location": "packages/codegen/src/emitters/factories.ts",
+      "suggested_spec": "022"
+    },
+    {
+      "feature": "BooleanKeyword<> setter wrapping",
+      "location": "packages/codegen/src/emitters/factories.ts",
+      "suggested_spec": "022"
+    },
+    {
+      "feature": "childrenSetterRestType (tuple/NonEmpty typing)",
+      "location": "packages/codegen/src/emitters/factories.ts",
+      "suggested_spec": "022"
+    },
+    {
+      "feature": "Generated-output hygiene rules (7 rules)",
+      "location": "CLAUDE.md",
+      "suggested_spec": "022"
+    }
+  ],
+  "conflicts": [
+    {
+      "between": ["FR-009", "FR-012", "SC-004"],
+      "and": "CLAUDE.md Hygiene Rule 1 (no Object.defineProperty)",
+      "resolution": "Spec should be updated to reflect enumerable-methods pivot"
+    },
+    {
+      "between": ["FR-011"],
+      "and": "CLAUDE.md Hygiene Rule 3 (shared boilerplate in utils.ts not core)",
+      "resolution": "Spec should be updated — withMethods now in per-grammar utils.ts"
+    }
+  ]
+}

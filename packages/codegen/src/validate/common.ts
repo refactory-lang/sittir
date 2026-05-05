@@ -795,7 +795,7 @@ export function walkWrappedTree(
 		visit(w);
 		for (const k of Object.keys(w)) {
 			if (k.startsWith('$')) continue;
-			const v = (w as unknown as Record<string, unknown>)[k];
+			const v = w[k];
 			if (isWrappedNodeData(v)) recurse(v);
 			else if (Array.isArray(v))
 				for (const x of v) if (isWrappedNodeData(x)) recurse(x);
@@ -1250,22 +1250,35 @@ export function nodeToConfig(
 			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
 			: data.$type)
 		: undefined;
-	if (data.$fields) {
-		for (const [k, v] of Object.entries(data.$fields)) {
-			if (v === undefined) continue;
-			if (!isIdentifierShapedFieldKey(k)) continue;
-			const camelKey = k.replace(/_([a-z])/g, (_m, c: string) =>
-				c.toUpperCase()
-			);
-			const childOpts: NodeToConfigOpts = {
-				...opts,
-				_parentKind: parentKind,
-				_fieldName: k
-			};
-			out[camelKey] = Array.isArray(v)
-				? v.map((item) => resolveChild(item, childOpts))
-				: resolveChild(v, childOpts);
+	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
+	// directly on the NodeData object (de-hoisted storage). Fall back to the
+	// legacy `$fields` wrapper for backward compatibility with old fixtures.
+	const rec = data as unknown as Record<string, unknown>;
+	const namedSlotEntries: [string, unknown][] = [];
+	for (const key of Object.keys(rec)) {
+		if (key.startsWith('_')) {
+			namedSlotEntries.push([key.slice(1), rec[key]]);
 		}
+	}
+	if (namedSlotEntries.length === 0 && data.$fields) {
+		for (const [k, v] of Object.entries(data.$fields)) {
+			namedSlotEntries.push([k, v]);
+		}
+	}
+	for (const [k, v] of namedSlotEntries) {
+		if (v === undefined) continue;
+		if (!isIdentifierShapedFieldKey(k)) continue;
+		const camelKey = k.replace(/_([a-z])/g, (_m, c: string) =>
+			c.toUpperCase()
+		);
+		const childOpts: NodeToConfigOpts = {
+			...opts,
+			_parentKind: parentKind,
+			_fieldName: k
+		};
+		out[camelKey] = Array.isArray(v)
+			? v.map((item) => resolveChild(item, childOpts))
+			: resolveChild(v, childOpts);
 	}
 	if (data.$children) {
 		const declaredFields = parentKind

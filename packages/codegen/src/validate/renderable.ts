@@ -12,7 +12,7 @@
  *                    `render()` returns `node.text` directly without any
  *                    template lookup.
  *
- *   3. Has rule    — kind appears in the `rules` map of templates.yaml
+ *   3. Has rule    — kind appears in the `rules` map of templates directory
  *                    (either as a top-level entry or as a variant target).
  *
  * Anything else is un-renderable: calling `render()` on an instance will
@@ -22,32 +22,12 @@
 
 import { loadRawEntries } from './node-types-loader.ts';
 import type { RawNodeEntry } from './node-types-loader.ts';
-import type { TemplateRule } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
 import { buildRuleLookup } from './rule-lookup.ts';
-import { deriveRuleKinds, loadRulesFromPath } from './templates-path.ts';
+import { deriveRuleKinds } from './templates-path.ts';
 
-/**
- * Derive the set of rule kinds the renderer can handle. For a directory
- * of `.jinja` files (feature 011 layout) the set is the filename stems.
- * For a legacy YAML file we ALSO expand variant subtypes (a variant
- * template selects by child kind, so each variant's subtype is
- * renderable through the parent rule). The Jinja layout inlines
- * variant branching into the template body, so no expansion is
- * possible or needed.
- */
 function collectRuleKindsFromPath(templatesPath: string): Set<string> {
-	const base = deriveRuleKinds(templatesPath);
-	if (!templatesPath.endsWith('.yaml') && !templatesPath.endsWith('.yml'))
-		return base;
-	// YAML path — expand variant subtypes recorded in the rule objects.
-	const rules = loadRulesFromPath(templatesPath) as Record<
-		string,
-		TemplateRule
-	>;
-	for (const rule of Object.values(rules))
-		collectVariantKindsFromRule(rule, base);
-	return base;
+	return deriveRuleKinds(templatesPath);
 }
 
 // ---------------------------------------------------------------------------
@@ -77,7 +57,7 @@ export interface MissingKind {
  *
  * @param grammar        Grammar name (rust, typescript, python).
  * @param templatesPath  Path to either a `.jinja` templates directory
- *                       (feature 011) or a legacy `templates.yaml` file.
+ *                       (feature 011) or a legacy `templates directory` file.
  */
 export function validateRenderable(
 	grammar: string,
@@ -121,7 +101,7 @@ export function validateRenderable(
 }
 
 /**
- * C12: NodeMap-sourced variant. Skips the templates.yaml round-trip
+ * C12: NodeMap-sourced variant. Skips the templates directory round-trip
  * entirely — renderability is a structural property, and the
  * shared `buildRuleLookup()` answers it directly from NodeMap.
  * Prefer this when you already have a NodeMap in hand (generate
@@ -220,7 +200,7 @@ function classifyRenderability(
 	const hasChildren = entry.children !== undefined;
 	if (!hasFields && !hasChildren) return 'leaf';
 
-	// 3. Has a template rule in templates.yaml.
+	// 3. Has a template rule in templates directory.
 	if (ruleKinds.has(entry.type)) return 'rule';
 
 	return null;
@@ -232,36 +212,13 @@ function reasonFor(entry: RawNodeEntry, _ruleKinds: Set<string>): string {
 	const parts: string[] = [];
 	if (hasFields) parts.push(`fields=[${Object.keys(entry.fields!).join(',')}]`);
 	if (hasChildren) parts.push('children');
-	return `structural node (${parts.join(', ')}) but no rule in templates.yaml`;
+	return `structural node (${parts.join(', ')}) but no rule in templates directory`;
 }
 
 // ---------------------------------------------------------------------------
 // Rule-map extraction
 // ---------------------------------------------------------------------------
 
-/**
- * Extract variant matcher kinds from a single rule entry and add them to the
- * accumulator set.
- *
- * @param rule   A single entry from the `rules` map (may be any shape).
- * @param kinds  Accumulator set to which discovered variant names are added.
- * @remarks Variant-bearing rules list subtypes dispatched through the parent,
- *   so each variant's `name` field also counts as renderable. Variant shape:
- *   `{ variants: [{ name, template, ... }, ...] }`.
- */
-function collectVariantKindsFromRule(
-	rule: TemplateRule,
-	kinds: Set<string>
-): void {
-	if (rule && typeof rule === 'object' && !Array.isArray(rule)) {
-		const variants = (rule as { variants?: Array<{ name?: string }> }).variants;
-		if (Array.isArray(variants)) {
-			for (const v of variants) {
-				if (v?.name) kinds.add(v.name);
-			}
-		}
-	}
-}
 
 // ---------------------------------------------------------------------------
 // Formatting

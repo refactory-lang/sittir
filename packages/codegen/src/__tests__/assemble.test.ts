@@ -9,7 +9,14 @@ import {
 import { simplifyRules } from '../compiler/simplify.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
-import { deriveFields, isRequired, isMultiple } from '../compiler/node-map.ts';
+import { deriveSlots, isRequired, isMultiple } from '../compiler/node-map.ts';
+
+// Helper — fields-equivalent view over deriveSlots: every slot that came
+// from a grammar `field(name, ...)` wrapper (excludes kind-derived
+// positional children, which carry source='inferred').
+function deriveFields(rule: Parameters<typeof deriveSlots>[0]) {
+	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
+}
 
 function makeOptimized(
 	rules: Record<string, Rule>,
@@ -87,12 +94,16 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('function_item', rule)).toBe('branch');
 	});
 
-	it('classifies visible repeat as container', () => {
+	it('classifies visible repeat as branch (container-shape)', () => {
+		// Phase 1d.vii (spec 022): the prior `'container'` modelType was
+		// folded into `'branch'`. Container-shape kinds (no `field()` on
+		// the rule) are still `AssembledBranch` instances; the per-emitter
+		// discriminator is now `AssembledBranch.isContainerShape`.
 		const rule: Rule = {
 			type: 'repeat',
 			content: { type: 'symbol', name: 'item' }
 		};
-		expect(classifyNode('items', rule)).toBe('container');
+		expect(classifyNode('items', rule)).toBe('branch');
 	});
 
 	it('classifies a PolymorphRule as polymorph', () => {

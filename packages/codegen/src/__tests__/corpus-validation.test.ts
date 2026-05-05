@@ -51,6 +51,12 @@ import { validateTemplateCoverage } from '../validate/template-coverage.ts';
  * will lift these floors back up as it eliminates per-template
  * whitespace artifacts. Each cluster commit raises floors back toward
  * the legacy baseline; never below.
+ *
+ * NATIVE RENDER (ADR-0017, 2026-05-03): RT validation uses the native
+ * Askama render path (`backend: 'native'`). Both parse and render go
+ * through the napi engine. This is the authoritative RT surface —
+ * the JS Nunjucks path has known Cluster F spacing bugs that native
+ * handles correctly. NEVER run RT without `backend: 'native'`.
  */
 const FLOORS = {
 	// Python floors adjusted for override-compiled parser (spec 007).
@@ -214,6 +220,19 @@ describe.each(Object.keys(FLOORS) as GrammarName[])(
 
 			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 		}, 60000);
+
+		it(`deep round-trip (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+			// Full recursive read — deep-reads ALL named kinds, not just
+			// variant-adopted. Exercises full materialization path.
+			// Native parse + native render + recursive drill-in.
+			// Floor matches shallow RT — deep must be at least as good.
+			// Asserts structural identity (not just "kind found").
+			const templatesPath = resolveTemplatesPath(grammar);
+			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native', recursive: true });
+
+			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
+			expect(result.astMatchPass).toBe(result.pass);
+		}, 120000);
 
 		it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
 			const templatesPath = resolveTemplatesPath(grammar);

@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	AssembledBranch,
 	AssembledKeyword,
-	AssembledLeaf
+	AssembledPattern
 } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { SeqRule } from '../compiler/rule.ts';
@@ -33,12 +33,12 @@ function makeMinimalNodeMap(): NodeMap {
 	};
 	const nodes = new Map<
 		string,
-		AssembledBranch | AssembledLeaf | AssembledKeyword
+		AssembledBranch | AssembledPattern | AssembledKeyword
 	>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
 		[
 			'identifier',
-			new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+			new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 		],
 		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
 	]);

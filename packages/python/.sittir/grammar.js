@@ -27,7 +27,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// packages/python/overrides.ts
+// ../python/overrides.ts
 var overrides_exports = {};
 __export(overrides_exports, {
   default: () => overrides_default
@@ -35,7 +35,7 @@ __export(overrides_exports, {
 module.exports = __toCommonJS(overrides_exports);
 var import_grammar = __toESM(require("tree-sitter-python/grammar.js"), 1);
 
-// packages/codegen/src/dsl/runtime-shapes.ts
+// src/dsl/runtime-shapes.ts
 function isSymbolLike(v) {
   if (!v || typeof v !== "object") return false;
   const t = v.type;
@@ -81,7 +81,7 @@ var isPlainRepeatType = (t) => typeEq(t, "repeat");
 var isRepeatType = (t) => typeEq(t, "repeat") || typeEq(t, "repeat1");
 var isBlankType = (t) => typeEq(t, "blank");
 
-// packages/codegen/src/dsl/transform/transform-path.ts
+// src/dsl/transform/transform-path.ts
 function dsl() {
   return globalThis;
 }
@@ -491,7 +491,7 @@ function applyWildcardToMembers(rule, members, rest, patch, precStack) {
   return reconstructContainer(rule, members);
 }
 
-// packages/codegen/src/dsl/primitives/variant.ts
+// src/dsl/primitives/variant.ts
 function isVariantPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "variant";
 }
@@ -499,12 +499,12 @@ function variant(name) {
   return { __sittirPlaceholder: "variant", name };
 }
 
-// packages/codegen/src/dsl/primitives/alias.ts
+// src/dsl/primitives/alias.ts
 function isAliasPlaceholder(v) {
   return !!v && typeof v === "object" && v.__sittirPlaceholder === "alias";
 }
 
-// packages/codegen/src/dsl/wire/wire.ts
+// src/dsl/wire/wire.ts
 var currentContext = null;
 function wireRegisterSyntheticRule(name, content) {
   if (!currentContext) return false;
@@ -703,7 +703,7 @@ function symbolizeRef(_$, name) {
   return { type: "SYMBOL", name };
 }
 
-// packages/codegen/src/dsl/primitives/field.ts
+// src/dsl/primitives/field.ts
 function maybeKeywordSymbol(fieldName, content, wrapSyntheticBody) {
   const c = content;
   if (!c || typeof c.type !== "string") return content;
@@ -805,7 +805,7 @@ function buildTwoArgFieldResult(native, name, content) {
   return { ...initial, source: "override" };
 }
 
-// packages/codegen/src/dsl/transform/transform.ts
+// src/dsl/transform/transform.ts
 function transform(original, ...patchSets) {
   let rule = original;
   for (const patches of patchSets) {
@@ -1211,7 +1211,7 @@ function extractNonEmpty(rule) {
   return null;
 }
 
-// packages/codegen/src/dsl/primitives/role.ts
+// src/dsl/primitives/role.ts
 var currentRoles = null;
 var VALID_ROLE_NAMES = /* @__PURE__ */ new Set(["indent", "dedent", "newline"]);
 function role(symbol, roleName) {
@@ -1231,7 +1231,7 @@ function role(symbol, roleName) {
   return symbol;
 }
 
-// packages/codegen/src/dsl/enrich.ts
+// src/dsl/enrich.ts
 function enrich(base2) {
   if (!base2 || typeof base2 !== "object") {
     throw new Error("enrich(): expected a grammar object, got " + typeof base2);
@@ -1484,7 +1484,15 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     precStack.push(cursor);
     cursor = cursor.content;
   }
-  if (!isSeqType(cursor.type)) return rule;
+  if (!isSeqType(cursor.type)) {
+    return tryPromoteInRepeatSeq(
+      ruleName,
+      rule,
+      cursor,
+      precStack,
+      supertypeNames
+    );
+  }
   const members = cursor.members;
   const kindCounts = /* @__PURE__ */ new Map();
   const targetByIdx = members.map(detectSymbolTarget);
@@ -1518,10 +1526,150 @@ function applySymbolToField(ruleName, rule, supertypeNames) {
     const fieldNode = makeField(cursor, fieldName, t.symbolRule);
     return t.wrap(fieldNode);
   });
-  if (!changed) return rule;
-  let result = { ...cursor, members: newMembers };
+  const finalMembers = promoteInsideRepeatMembers(
+    ruleName,
+    newMembers,
+    supertypeNames,
+    existing,
+    kindCounts
+  );
+  if (finalMembers === newMembers && !changed) return rule;
+  let result = { ...cursor, members: finalMembers };
   for (let i = precStack.length - 1; i >= 0; i--) {
     result = { ...precStack[i], content: result };
+  }
+  return result;
+}
+function promoteInsideRepeatMembers(ruleName, members, supertypeNames, existing, outerKindCounts) {
+  let anyRepeatChanged = false;
+  const result = members.map((m) => {
+    const rebuilt = tryPromoteInRepeatMember(
+      ruleName,
+      m,
+      supertypeNames,
+      existing,
+      outerKindCounts
+    );
+    if (rebuilt === null) return m;
+    anyRepeatChanged = true;
+    return rebuilt;
+  });
+  if (!anyRepeatChanged) return members;
+  return result;
+}
+function tryPromoteInRepeatMember(ruleName, member, supertypeNames, existing, outerKindCounts) {
+  let cursor = member;
+  const memberPrecStack = [];
+  while (isPrecWrapper(cursor)) {
+    memberPrecStack.push(cursor);
+    cursor = cursor.content;
+  }
+  if (!isRepeatType(cursor.type)) return null;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return null;
+  const innerMembers = inner.members;
+  const innerTargets = innerMembers.map(detectSymbolTarget);
+  const innerKindCounts = /* @__PURE__ */ new Map();
+  for (const t of innerTargets) {
+    if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+  }
+  const nestedRepeatCounts = /* @__PURE__ */ new Map();
+  for (const im of innerMembers) {
+    countSymbolsInRepeat(im, nestedRepeatCounts);
+  }
+  const innerExisting = collectFieldNamesRuntime(inner);
+  let innerChanged = false;
+  const newInnerMembers = innerMembers.map((im, i) => {
+    const t = innerTargets[i];
+    if (!t) return im;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return im;
+      fieldName = t.name.slice(1);
+    }
+    if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
+    if (innerExisting.has(fieldName)) return im;
+    if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+    if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists (outer seq)`
+      );
+      return im;
+    }
+    innerExisting.add(fieldName);
+    innerChanged = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!innerChanged) return null;
+  let rebuilt = { ...inner, members: newInnerMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...innerPrecStack[i], content: rebuilt };
+  }
+  rebuilt = { ...cursor, content: rebuilt };
+  for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+    rebuilt = { ...memberPrecStack[i], content: rebuilt };
+  }
+  return rebuilt;
+}
+function tryPromoteInRepeatSeq(ruleName, rule, cursor, outerPrecStack, supertypeNames) {
+  if (!isRepeatType(cursor.type)) return rule;
+  let inner = cursor.content;
+  const innerPrecStack = [];
+  while (isPrecWrapper(inner)) {
+    innerPrecStack.push(inner);
+    inner = inner.content;
+  }
+  if (!isSeqType(inner.type)) return rule;
+  const members = inner.members;
+  const kindCounts = /* @__PURE__ */ new Map();
+  const targetByIdx = members.map(detectSymbolTarget);
+  for (const t of targetByIdx) {
+    if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+  }
+  for (const m of members) {
+    countSymbolsInRepeat(m, kindCounts);
+  }
+  const existing = collectFieldNamesRuntime(inner);
+  let changed = false;
+  const newMembers = members.map((m, i) => {
+    const t = targetByIdx[i];
+    if (!t) return m;
+    let fieldName = t.name;
+    if (t.name.startsWith("_")) {
+      if (!supertypeNames.has(t.name)) return m;
+      fieldName = t.name.slice(1);
+    }
+    if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+    if (existing.has(fieldName)) {
+      reportSkip(
+        "symbol-to-field",
+        ruleName,
+        `field '${fieldName}' already exists`
+      );
+      return m;
+    }
+    existing.add(fieldName);
+    changed = true;
+    const fieldNode = makeField(inner, fieldName, t.symbolRule);
+    return t.wrap(fieldNode);
+  });
+  if (!changed) return rule;
+  let result = { ...inner, members: newMembers };
+  for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...innerPrecStack[i], content: result };
+  }
+  result = { ...cursor, content: result };
+  for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+    result = { ...outerPrecStack[i], content: result };
   }
   return result;
 }
@@ -1636,7 +1784,7 @@ function rebuildOptional(optionalRule, newInner) {
   return { ...optionalRule, members: newMembers };
 }
 
-// packages/python/overrides.ts
+// ../python/overrides.ts
 var overrides_default = grammar(
   enrich(import_grammar.default),
   wire({

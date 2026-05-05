@@ -2,47 +2,14 @@
 
 import type * as T from './types.js';
 import { TSKindId } from './types.js';
-import type { AnyNodeData, ByteRange, ConfigOf, Edit, FluentNode, NonEmptyArray } from '@sittir/types';
-import { render, toEdit } from './boundary.ts';
+import type { AnyNodeData, BooleanKeyword, ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
+import { withMethods } from './utils.js';
 
-function _setField<T, R, K extends keyof T>(
-  cfg: T | undefined,
-  fn: (c: T) => R,
-  key: K,
-  v: T[K] | undefined,
-  cur: T[K] | undefined,
-): T[K] | R | undefined {
-  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;
-}
-function _setFields<T, R, K extends keyof T>(
-  cfg: T | undefined,
-  fn: (c: T) => R,
-  key: K,
-  v: readonly unknown[],
-  cur: T[K] | undefined,
-): T[K] | R | undefined {
-  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;
-}
-const _branchMethods = {
-  render(this: AnyNodeData): string { return render(this); },
-  toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
-    if (typeof startOrRange === 'number') return toEdit(this, startOrRange, endPos!);
-    return toEdit(this, startOrRange);
-  },
-};
-function _leafMethods(text: string) {
-  return {
-    render: () => text,
-    toEdit: (s: number | ByteRange, e?: number): Edit =>
-      typeof s === 'number'
-        ? { startPos: s, endPos: e!, insertedText: text }
-        : { startPos: s.start.index, endPos: s.end.index, insertedText: text },
-  };
-}
 function _assertNonEmpty<T>(
   arr: readonly T[],
   label: string,
 ): asserts arr is readonly [T, ...(readonly T[])] {
+  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;
   if (arr.length === 0) {
     throw new Error(`${label}: requires at least one element`);
   }
@@ -53,733 +20,711 @@ const _leafRe_identifier = /^(?:(r#)?[_\p{XID_Start}][_\p{XID_Continue}]*)/u;
 const _leafRe_metavariable = /^(?:\$[a-zA-Z_]\w*)/u;
 const _leafRe_shebang = /^(?:#![\r\f\t\v ]*([^[\n].*)?\n)/u;
 
-export function _arrayExpressionList(config: ConfigOf<T.ArrayExpressionList>) {
-  const fields = {
-    attributes: config.attributes,
-    elements: config.elements,
-  };
+export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.ArrayExpressionList as number,
+  const _attributes = config.attributes;
+  const _elements = config.elements;
+  return withMethods({
+    $type: TSKindId.ArrayExpressionList as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _attributes,
+    _elements,
     $children: children,
-    attributes(...values: T.AttributeItem[]) { return _setFields(config, _arrayExpressionList, 'attributes', values, config?.attributes); },
-    elements(...values: T.Expression[]) { return _setFields(config, _arrayExpressionList, 'elements', values, config?.elements); },
-    children(...items: T.AttributeItem[]) {
-      if (items.length === 0) return children;
-      return _arrayExpressionList({ ...config, children: items });
+    attributes() { return _attributes; },
+    elements() { return _elements; },
+    children() { return children; },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => _arrayExpressionList({ ...config, attributes: values }),
+      elements: (...values: T.Expression[]) => _arrayExpressionList({ ...config, elements: values }),
+      children: (...items: T.AttributeItem[]) => _arrayExpressionList({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArrayExpressionListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function _arrayExpressionSemi(config: ConfigOf<T.ArrayExpressionSemi>) {
-  const fields = {
-    attributes: config.attributes,
-    elements: config.elements,
-    length: config.length,
-  };
-  return {
-    $type: TSKindId.ArrayExpressionSemi as number,
+export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
+  const _attributes = config.attributes;
+  const _elements = config.elements;
+  const _length = config.length;
+  return withMethods({
+    $type: TSKindId.ArrayExpressionSemi as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    attributes(...values: T.AttributeItem[]) { return _setFields(config, _arrayExpressionSemi, 'attributes', values, config?.attributes); },
-    elements(value?: T.Expression) { return _setField(config, _arrayExpressionSemi, 'elements', value, config?.elements); },
-    length(value?: T.Expression) { return _setField(config, _arrayExpressionSemi, 'length', value, config?.length); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArrayExpressionSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attributes,
+    _elements,
+    _length,
+    attributes() { return _attributes; },
+    elements() { return _elements; },
+    length() { return _length; },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => _arrayExpressionSemi({ ...config, attributes: values }),
+      elements: (value: T.Expression) => _arrayExpressionSemi({ ...config, elements: value }),
+      length: (value: T.Expression) => _arrayExpressionSemi({ ...config, length: value }),
+    },
+  });
 }
 
-export function _closureExpressionBlock(config: ConfigOf<T.ClosureExpressionBlock>) {
-  const fields = {
-    return_type: config.returnType,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.ClosureExpressionBlock as number,
+export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
+  const _return_type = config.returnType;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.ClosureExpressionBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    returnType(value?: T._Type | undefined) { return _setField(config, _closureExpressionBlock, 'returnType', value, config?.returnType); },
-    body(value?: T.Block) { return _setField(config, _closureExpressionBlock, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ClosureExpressionBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _return_type,
+    _body,
+    returnType() { return _return_type; },
+    body() { return _body; },
+    $with: {
+      returnType: (value?: T._Type) => _closureExpressionBlock({ ...config, returnType: value }),
+      body: (value: T.Block) => _closureExpressionBlock({ ...config, body: value }),
+    },
+  });
 }
 
-export function _closureExpressionExpr(config: ConfigOf<T._ClosureExpressionExpr>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ClosureExpressionExpr as number,
+export function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ClosureExpressionExpr as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.Expression | "_") { return _setField(config, _closureExpressionExpr, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ClosureExpressionExprTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.Expression | "_") => _closureExpressionExpr({ ...config, body: value }),
+    },
+  });
 }
 
 export function _delimTokenTreeBrace(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeBrace as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._DelimTokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBrace(...vs) },
+  });
 }
 
 export function _delimTokenTreeBracket(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeBracket as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._DelimTokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBracket(...vs) },
+  });
 }
 
 export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeParen as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._DelimTokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeParen(...vs) },
+  });
 }
 
 export function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
   const children = [child];
-  return {
-    $type: TSKindId._ExpressionStatementBlockEnding as number,
+  return withMethods({
+    $type: TSKindId._ExpressionStatementBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ExpressionStatementBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.ExpressionEndingWithBlock) => _expressionStatementBlockEnding(v) },
+  });
 }
 
 export function _expressionStatementWithSemi(child: T.Expression) {
   const children = [child];
-  return {
-    $type: TSKindId._ExpressionStatementWithSemi as number,
+  return withMethods({
+    $type: TSKindId._ExpressionStatementWithSemi as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ExpressionStatementWithSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => _expressionStatementWithSemi(v) },
+  });
 }
 
 export function fieldIdentifier(child: T.Identifier) {
   const children = [child];
-  return {
-    $type: TSKindId.FieldIdentifier as number,
+  return withMethods({
+    $type: TSKindId.FieldIdentifier as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Identifier) => fieldIdentifier(v) },
+  });
 }
 
-export function _fieldPatternNamed(config: ConfigOf<T.FieldPatternNamed>) {
-  const fields = {
-    name: config.name,
-    pattern: config.pattern,
-  };
-  return {
-    $type: TSKindId.FieldPatternNamed as number,
+export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
+  const _name = config.name;
+  const _pattern = config.pattern;
+  return withMethods({
+    $type: TSKindId.FieldPatternNamed as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.FieldIdentifier) { return _setField(config, _fieldPatternNamed, 'name', value, config?.name); },
-    pattern(value?: T.Pattern) { return _setField(config, _fieldPatternNamed, 'pattern', value, config?.pattern); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldPatternNamedTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _pattern,
+    name() { return _name; },
+    pattern() { return _pattern; },
+    $with: {
+      name: (value: T.FieldIdentifier) => _fieldPatternNamed({ ...config, name: value }),
+      pattern: (value: T.Pattern) => _fieldPatternNamed({ ...config, pattern: value }),
+    },
+  });
 }
 
-export function _fieldPatternShorthand(config: ConfigOf<T._FieldPatternShorthand>) {
-  const fields = {
-    name: config.name,
-  };
-  return {
-    $type: TSKindId._FieldPatternShorthand as number,
+export function _fieldPatternShorthand(config: T._FieldPatternShorthand.Config) {
+  const _name = config.name.$text;
+  return withMethods({
+    $type: TSKindId._FieldPatternShorthand as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier) { return _setField(config, _fieldPatternShorthand, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._FieldPatternShorthandTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    name() { return _name; },
+    $with: {
+      name: (value: T.Identifier) => _fieldPatternShorthand({ ...config, name: value }),
+    },
+  });
 }
 
-export function _foreignModItemBody(config: ConfigOf<T._ForeignModItemBody>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ForeignModItemBody as number,
+export function _foreignModItemBody(config: T._ForeignModItemBody.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ForeignModItemBody as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, _foreignModItemBody, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ForeignModItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => _foreignModItemBody({ ...config, body: value }),
+    },
+  });
 }
 
 export function functionTypeFnForm(child?: T.FunctionModifiers) {
   const children = child != null ? [child] : [];
-  return {
-    $type: TSKindId.FunctionTypeFnForm as number,
+  return withMethods({
+    $type: TSKindId.FunctionTypeFnForm as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionTypeFnFormTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.FunctionModifiers) => functionTypeFnForm(v) },
+  });
 }
 
-export function functionTypeTraitForm(config: ConfigOf<T.FunctionTypeTraitForm>) {
-  const fields = {
-    trait: config.trait,
-  };
-  return {
-    $type: TSKindId.FunctionTypeTraitForm as number,
+export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
+  const _trait = config.trait;
+  return withMethods({
+    $type: TSKindId.FunctionTypeTraitForm as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier) { return _setField(config, functionTypeTraitForm, 'trait', value, config?.trait); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionTypeTraitFormTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _trait,
+    trait() { return _trait; },
+    $with: {
+      trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value }),
+    },
+  });
 }
 
-export function _implItemBody(config: ConfigOf<T._ImplItemBody>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ImplItemBody as number,
+export function _implItemBody(config: T._ImplItemBody.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ImplItemBody as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, _implItemBody, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ImplItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => _implItemBody({ ...config, body: value }),
+    },
+  });
 }
 
 export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
   const children = [child];
-  return {
-    $type: TSKindId.LetChain as number,
+  return withMethods({
+    $type: TSKindId.LetChain as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LetChainTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: (T.LetChain | T.LetCondition | T.Expression)) => letChain(v) },
+  });
 }
 
 export function lineCommentContent(text: string) {
-  if (text.length === 0) throw new Error(`_line_comment_content: text must be non-empty`); if (!_leafRe_lineCommentContent.test(text)) throw new Error(`_line_comment_content: text does not match pattern: ${text}`);
-  return {
-    $type: TSKindId.LineCommentContent as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_line_comment_content: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_lineCommentContent.test(text)) throw new Error(`_line_comment_content: text does not match pattern: ${text}`);
+  return withMethods({
+    $type: TSKindId.LineCommentContent as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.LineCommentContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function _lineCommentDoc(config: ConfigOf<T.LineCommentDoc>) {
-  const fields = {
-    doc: config.doc,
-  };
-  return {
-    $type: TSKindId.LineCommentDoc as number,
+export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
+  const _doc = config.doc.$text;
+  return withMethods({
+    $type: TSKindId.LineCommentDoc as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    doc(value?: T.LineDocContent) { return _setField(config, _lineCommentDoc, 'doc', value, config?.doc); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LineCommentDocTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _doc,
+    doc() { return _doc; },
+    $with: {
+      doc: (value: T.LineDocContent) => _lineCommentDoc({ ...config, doc: value }),
+    },
+  });
 }
 
 export function lineCommentRegularDslash(text: string) {
-  if (text.length === 0) throw new Error(`_line_comment_regular_dslash: text must be non-empty`);
-  return {
-    $type: TSKindId.LineCommentRegularDslash as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_line_comment_regular_dslash: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.LineCommentRegularDslash as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.LineCommentRegularDslashTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function _macroDefinitionBrace(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionBrace as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._MacroDefinitionBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionBrace(...vs) },
+  });
 }
 
 export function _macroDefinitionBracket(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionBracket as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._MacroDefinitionBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionBracket(...vs) },
+  });
 }
 
 export function _macroDefinitionParen(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionParen as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._MacroDefinitionParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => _macroDefinitionParen(...vs) },
+  });
 }
 
-export function _matchArmBlockEnding(config: ConfigOf<T._MatchArmBlockEnding>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: TSKindId._MatchArmBlockEnding as number,
+export function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Config) {
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId._MatchArmBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.ExpressionEndingWithBlock) { return _setField(config, _matchArmBlockEnding, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._MatchArmBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value: T.ExpressionEndingWithBlock) => _matchArmBlockEnding({ ...config, value: value }),
+    },
+  });
 }
 
-export function _matchArmWithComma(config: ConfigOf<T.MatchArmWithComma>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.MatchArmWithComma as number,
+export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.MatchArmWithComma as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _setField(config, _matchArmWithComma, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchArmWithCommaTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value: T.Expression) => _matchArmWithComma({ ...config, value: value }),
+    },
+  });
 }
 
-export function _modItemInline(config: ConfigOf<T._ModItemInline>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ModItemInline as number,
+export function _modItemInline(config: T._ModItemInline.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ModItemInline as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, _modItemInline, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._ModItemInlineTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => _modItemInline({ ...config, body: value }),
+    },
+  });
 }
 
-export function _orPatternBinary(config: ConfigOf<T.OrPatternBinary>) {
-  const fields = {
-    left: config.left,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.OrPatternBinary as number,
+export function _orPatternBinary(config: T.OrPatternBinary.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.OrPatternBinary as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.Pattern) { return _setField(config, _orPatternBinary, 'left', value, config?.left); },
-    right(value?: T.Pattern) { return _setField(config, _orPatternBinary, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.OrPatternBinaryTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.Pattern) => _orPatternBinary({ ...config, left: value }),
+      right: (value: T.Pattern) => _orPatternBinary({ ...config, right: value }),
+    },
+  });
 }
 
-export function _orPatternPrefix(config: ConfigOf<T.OrPatternPrefix>) {
-  const fields = {
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.OrPatternPrefix as number,
+export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.OrPatternPrefix as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    right(value?: T.Pattern) { return _setField(config, _orPatternPrefix, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.OrPatternPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _right,
+    right() { return _right; },
+    $with: {
+      right: (value: T.Pattern) => _orPatternPrefix({ ...config, right: value }),
+    },
+  });
 }
 
 export function _pointerTypeMut(child: T.MutableSpecifier) {
   const children = [child];
-  return {
-    $type: TSKindId._PointerTypeMut as number,
+  return withMethods({
+    $type: TSKindId._PointerTypeMut as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._PointerTypeMutTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.MutableSpecifier) => _pointerTypeMut(v) },
+  });
 }
 
-export function _rangeExpressionBare(_config?: ConfigOf<T._RangeExpressionBare>) {
-  const fields = {
-    operator: ".." as const,
-  };
-  return {
-    $type: TSKindId._RangeExpressionBare as number,
+export function _rangeExpressionBare(_config?: T._RangeExpressionBare.Config) {
+  const _operator = ".." as const;
+  return withMethods({
+    $type: TSKindId._RangeExpressionBare as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    get operator() { return fields.operator; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._RangeExpressionBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _operator,
+    operator() { return _operator; },
+    $with: {
+    },
+  });
 }
 
-export function _rangeExpressionBinary(config: ConfigOf<T.RangeExpressionBinary>) {
-  const fields = {
-    start: config.start,
-    operator: config.operator,
-    end: config.end,
-  };
-  return {
-    $type: TSKindId.RangeExpressionBinary as number,
+export function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
+  const _start = config.start;
+  const _operator = config.operator.$text;
+  const _end = config.end;
+  return withMethods({
+    $type: TSKindId.RangeExpressionBinary as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    start(value?: T.Expression) { return _setField(config, _rangeExpressionBinary, 'start', value, config?.start); },
-    operator(value?: T.RangeExpressionBinaryOperator) { return _setField(config, _rangeExpressionBinary, 'operator', value, config?.operator); },
-    end(value?: T.Expression) { return _setField(config, _rangeExpressionBinary, 'end', value, config?.end); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionBinaryTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _start,
+    _operator,
+    _end,
+    start() { return _start; },
+    operator() { return _operator; },
+    end() { return _end; },
+    $with: {
+      start: (value: T.Expression) => _rangeExpressionBinary({ ...config, start: value }),
+      operator: (value: T.RangeExpressionBinaryOperator) => _rangeExpressionBinary({ ...config, operator: value }),
+      end: (value: T.Expression) => _rangeExpressionBinary({ ...config, end: value }),
+    },
+  });
 }
 
-export function _rangeExpressionPostfix(config: ConfigOf<T.RangeExpressionPostfix>) {
-  const fields = {
-    start: config.start,
-    operator: ".." as const,
-  };
-  return {
-    $type: TSKindId.RangeExpressionPostfix as number,
+export function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
+  const _start = config.start;
+  const _operator = ".." as const;
+  return withMethods({
+    $type: TSKindId.RangeExpressionPostfix as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    start(value?: T.Expression) { return _setField(config, _rangeExpressionPostfix, 'start', value, config?.start); },
-    get operator() { return fields.operator; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionPostfixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _start,
+    _operator,
+    start() { return _start; },
+    operator() { return _operator; },
+    $with: {
+      start: (value: T.Expression) => _rangeExpressionPostfix({ ...config, start: value }),
+    },
+  });
 }
 
-export function _rangeExpressionPrefix(config: ConfigOf<T.RangeExpressionPrefix>) {
-  const fields = {
-    operator: ".." as const,
-    end: config.end,
-  };
-  return {
-    $type: TSKindId.RangeExpressionPrefix as number,
+export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
+  const _operator = ".." as const;
+  const _end = config.end;
+  return withMethods({
+    $type: TSKindId.RangeExpressionPrefix as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    get operator() { return fields.operator; },
-    end(value?: T.Expression) { return _setField(config, _rangeExpressionPrefix, 'end', value, config?.end); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _operator,
+    _end,
+    operator() { return _operator; },
+    end() { return _end; },
+    $with: {
+      end: (value: T.Expression) => _rangeExpressionPrefix({ ...config, end: value }),
+    },
+  });
 }
 
-export function _rangePatternLeftWithRight(config: ConfigOf<T.RangePatternLeftWithRight>) {
-  const fields = {
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.RangePatternLeftWithRight as number,
+export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.RangePatternLeftWithRight as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    right(value?: T.LiteralPattern | T.Path) { return _setField(config, _rangePatternLeftWithRight, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangePatternLeftWithRightTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _right,
+    right() { return _right; },
+    $with: {
+      right: (value: T.LiteralPattern | T.Path) => _rangePatternLeftWithRight({ ...config, right: value }),
+    },
+  });
 }
 
-export function _rangePatternPrefix(config: ConfigOf<T.RangePatternPrefix>) {
-  const fields = {
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.RangePatternPrefix as number,
+export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.RangePatternPrefix as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    right(value?: T.LiteralPattern | T.Path) { return _setField(config, _rangePatternPrefix, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangePatternPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _right,
+    right() { return _right; },
+    $with: {
+      right: (value: T.LiteralPattern | T.Path) => _rangePatternPrefix({ ...config, right: value }),
+    },
+  });
 }
 
 export function referenceExpressionRawConst(text: string) {
-  if (text.length === 0) throw new Error(`_reference_expression_raw_const: text must be non-empty`);
-  return {
-    $type: TSKindId.ReferenceExpressionRawConst as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_reference_expression_raw_const: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.ReferenceExpressionRawConst as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.ReferenceExpressionRawConstTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function referenceExpressionRawMut(child: T.MutableSpecifier) {
   const children = [child];
-  return {
-    $type: TSKindId.ReferenceExpressionRawMut as number,
+  return withMethods({
+    $type: TSKindId.ReferenceExpressionRawMut as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ReferenceExpressionRawMutTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.MutableSpecifier) => referenceExpressionRawMut(v) },
+  });
 }
 
-export function _structItemBrace(config: ConfigOf<T.StructItemBrace>) {
-  const fields = {
-    body: config.body,
-  };
+export function _structItemBrace(config: T.StructItemBrace.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.StructItemBrace as number,
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.StructItemBrace as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _body,
     $children: children,
-    body(value?: T.FieldDeclarationList) { return _setField(config, _structItemBrace, 'body', value, config?.body); },
-    child(value?: T.WhereClause) {
-      if (value === undefined) return children[0];
-      return _structItemBrace({ ...config, children: [value] });
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      body: (value: T.FieldDeclarationList) => _structItemBrace({ ...config, body: value }),
+      children: (...items: readonly [T.WhereClause]) => _structItemBrace({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructItemBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function _structItemTuple(config: ConfigOf<T.StructItemTuple>) {
-  const fields = {
-    body: config.body,
-  };
+export function _structItemTuple(config: T.StructItemTuple.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.StructItemTuple as number,
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.StructItemTuple as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _body,
     $children: children,
-    body(value?: T.OrderedFieldDeclarationList) { return _setField(config, _structItemTuple, 'body', value, config?.body); },
-    child(value?: T.WhereClause) {
-      if (value === undefined) return children[0];
-      return _structItemTuple({ ...config, children: [value] });
+    body() { return _body; },
+    children() { return children; },
+    $with: {
+      body: (value: T.OrderedFieldDeclarationList) => _structItemTuple({ ...config, body: value }),
+      children: (...items: readonly [T.WhereClause]) => _structItemTuple({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructItemTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function _tokenTreeBrace(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeBrace as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBrace(...vs) },
+  });
 }
 
 export function _tokenTreeBracket(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeBracket as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBracket(...vs) },
+  });
 }
 
 export function _tokenTreeParen(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeParen as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => _tokenTreeParen(...vs) },
+  });
 }
 
 export function _tokenTreePatternBrace(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternBrace as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreePatternBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBrace(...vs) },
+  });
 }
 
 export function _tokenTreePatternBracket(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternBracket as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreePatternBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBracket(...vs) },
+  });
 }
 
 export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternParen as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._TokenTreePatternParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternParen(...vs) },
+  });
 }
 
 export function typeIdentifier(child: T.Identifier) {
   const children = [child];
-  return {
-    $type: TSKindId.TypeIdentifier as number,
+  return withMethods({
+    $type: TSKindId.TypeIdentifier as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Identifier) => typeIdentifier(v) },
+  });
 }
 
 export function _visibilityModifierCrate(child: T.Crate) {
   const children = [child];
-  return {
-    $type: TSKindId._VisibilityModifierCrate as number,
+  return withMethods({
+    $type: TSKindId._VisibilityModifierCrate as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T._VisibilityModifierCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Crate) => _visibilityModifierCrate(v) },
+  });
 }
 
-export function _visibilityModifierInPath(config: ConfigOf<T.VisibilityModifierInPath>) {
-  const fields = {
-    in: "in" as const,
-  };
+export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.VisibilityModifierInPath as number,
+  const _in = "in" as const;
+  return withMethods({
+    $type: TSKindId.VisibilityModifierInPath as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _in,
     $children: children,
-    get in() { return fields.in; },
-    child(value?: T.Path) {
-      if (value === undefined) return children[0];
-      return _visibilityModifierInPath({ ...config, children: [value] });
+    in() { return _in; },
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [T.Path]) => _visibilityModifierInPath({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierInPathTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function _visibilityModifierPub(config?: ConfigOf<T.VisibilityModifierPub>) {
-  const fields = {
-    pub: "pub" as const,
-  };
+export function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config) {
   const children = config?.children ?? [];
-  return {
-    $type: TSKindId.VisibilityModifierPub as number,
+  const _pub = "pub" as const;
+  return withMethods({
+    $type: TSKindId.VisibilityModifierPub as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _pub,
     $children: children,
-    get pub() { return fields.pub; },
-    child(value?: (T.Self | T.Super | T.Crate | T.VisibilityModifierInPath)) {
-      if (value === undefined) return children[0];
-      return _visibilityModifierPub({ ...config, children: [value] });
+    pub() { return _pub; },
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [((T.Self | T.Super | T.Crate | T.VisibilityModifierInPath))]) => _visibilityModifierPub({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierPubTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function abstractType(config: ConfigOf<T.AbstractType>) {
-  const fields = {
-    type_parameters: config.typeParameters,
-    trait: config.trait,
-  };
-  return {
-    $type: TSKindId.AbstractType as number,
+export function abstractType(config: T.AbstractType.Config) {
+  const _type_parameters = config.typeParameters;
+  const _trait = config.trait;
+  return withMethods({
+    $type: TSKindId.AbstractType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, abstractType, 'typeParameters', value, config?.typeParameters); },
-    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) { return _setField(config, abstractType, 'trait', value, config?.trait); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AbstractTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _type_parameters,
+    _trait,
+    typeParameters() { return _type_parameters; },
+    trait() { return _trait; },
+    $with: {
+      typeParameters: (value?: T.TypeParameters) => abstractType({ ...config, typeParameters: value }),
+      trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) => abstractType({ ...config, trait: value }),
+    },
+  });
 }
 
-export function arguments_(...children: (T.AttributeItem | T.Expression)[]) {
-  return {
-    $type: TSKindId.Arguments as number,
+export function arguments_(config: T.Arguments.Config) {
+  const _attributes = config.attributes;
+  return withMethods({
+    $type: TSKindId.Arguments as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attributes,
+    attributes() { return _attributes; },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ...config, attributes: values }),
+    },
+  });
 }
 
 export function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormSemi>): ReturnType<typeof arrayExpressionUFormSemi>;
@@ -794,347 +739,352 @@ export function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormSemi> | C
 export function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayExpressionUFormSemi>, '$variant'>) {
   const inner = _arrayExpressionSemi(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ArrayExpression as number,
+  return withMethods({
+    $type: TSKindId.ArrayExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'semi' as const,
     $children: children,
-    attributes(...values: T.AttributeItem[]) { return arrayExpressionUFormSemi({ elements: inner.$fields.elements, length: inner.$fields.length, attributes: values }); },
-    elements(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.elements;
-      return arrayExpressionUFormSemi({ attributes: inner.$fields.attributes, length: inner.$fields.length, elements: value });
+    attributes() { return inner.attributes(); },
+    elements() { return inner.elements(); },
+    length() { return inner.length(); },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => arrayExpressionUFormSemi({ ...config, attributes: values } as Parameters<typeof arrayExpressionUFormSemi>[0]),
+      elements: (value: T.Expression) => arrayExpressionUFormSemi({ ...config, elements: value } as Parameters<typeof arrayExpressionUFormSemi>[0]),
+      length: (value: T.Expression) => arrayExpressionUFormSemi({ ...config, length: value } as Parameters<typeof arrayExpressionUFormSemi>[0]),
     },
-    length(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.length;
-      return arrayExpressionUFormSemi({ attributes: inner.$fields.attributes, elements: inner.$fields.elements, length: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArrayExpressionUFormSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
   const inner = _arrayExpressionList(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ArrayExpression as number,
+  return withMethods({
+    $type: TSKindId.ArrayExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'list' as const,
     $children: children,
-    attributes(...values: T.AttributeItem[]) { return arrayExpressionUFormList({ elements: inner.$fields.elements, attributes: values }); },
-    elements(...values: T.Expression[]) { return arrayExpressionUFormList({ attributes: inner.$fields.attributes, elements: values }); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArrayExpressionUFormListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function arrayType(config: ConfigOf<T.ArrayType>) {
-  const fields = {
-    element: config.element,
-    length: config.length,
-  };
-  return {
-    $type: TSKindId.ArrayType as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    element(value?: T._Type) { return _setField(config, arrayType, 'element', value, config?.element); },
-    length(value?: T.Expression | undefined) { return _setField(config, arrayType, 'length', value, config?.length); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ArrayTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function assignmentExpression(config: ConfigOf<T.AssignmentExpression>) {
-  const fields = {
-    left: config.left,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.AssignmentExpression as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    left(value?: T.Expression) { return _setField(config, assignmentExpression, 'left', value, config?.left); },
-    right(value?: T.Expression) { return _setField(config, assignmentExpression, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AssignmentExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function associatedType(config: ConfigOf<T.AssociatedType>) {
-  const fields = {
-    name: config.name,
-    type_parameters: config.typeParameters,
-    bounds: config.bounds,
-    where_clause: config.whereClause,
-  };
-  return {
-    $type: TSKindId.AssociatedType as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    name(value?: T.TypeIdentifier) { return _setField(config, associatedType, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, associatedType, 'typeParameters', value, config?.typeParameters); },
-    bounds(value?: T.TraitBounds | undefined) { return _setField(config, associatedType, 'bounds', value, config?.bounds); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, associatedType, 'whereClause', value, config?.whereClause); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AssociatedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function asyncBlock(config: ConfigOf<T.AsyncBlock>) {
-  const fields = {
-    move_marker: config.moveMarker ? "move" as const : undefined,
-    block: config.block,
-  };
-  return {
-    $type: TSKindId.AsyncBlock as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    moveMarker(value?: T.MoveMarker | undefined) { return _setField(config, asyncBlock, 'moveMarker', value, config?.moveMarker); },
-    block(value?: T.Block) { return _setField(config, asyncBlock, 'block', value, config?.block); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AsyncBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function attribute(config: ConfigOf<T.Attribute>) {
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.Attribute as number,
-    $source: 2 as const,
-    $named: true as const,
-    $children: children,
-    child(value?: T.Path) {
-      if (value === undefined) return children[0];
-      return attribute({ ...config, children: [value] });
+    attributes() { return inner.attributes(); },
+    elements() { return inner.elements(); },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => arrayExpressionUFormList({ ...config, attributes: values } as Parameters<typeof arrayExpressionUFormList>[0]),
+      elements: (...values: T.Expression[]) => arrayExpressionUFormList({ ...config, elements: values } as Parameters<typeof arrayExpressionUFormList>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AttributeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function attributeItem(config: ConfigOf<T.AttributeItem>) {
-  const fields = {
-    attribute: config.attribute,
-  };
-  return {
-    $type: TSKindId.AttributeItem as number,
+export function arrayType(config: T.ArrayType.Config) {
+  const _element = config.element;
+  const _length = config.length;
+  return withMethods({
+    $type: TSKindId.ArrayType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    attribute(value?: T.Attribute) { return _setField(config, attributeItem, 'attribute', value, config?.attribute); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AttributeItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _element,
+    _length,
+    element() { return _element; },
+    length() { return _length; },
+    $with: {
+      element: (value: T._Type) => arrayType({ ...config, element: value }),
+      length: (value?: T.Expression) => arrayType({ ...config, length: value }),
+    },
+  });
+}
+
+export function assignmentExpression(config: T.AssignmentExpression.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.AssignmentExpression as const,
+    $source: 2 as const,
+    $named: true as const,
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.Expression) => assignmentExpression({ ...config, left: value }),
+      right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
+    },
+  });
+}
+
+export function associatedType(config: T.AssociatedType.Config) {
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _bounds = config.bounds;
+  const _where_clause = config.whereClause;
+  return withMethods({
+    $type: TSKindId.AssociatedType as const,
+    $source: 2 as const,
+    $named: true as const,
+    _name,
+    _type_parameters,
+    _bounds,
+    _where_clause,
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    bounds() { return _bounds; },
+    whereClause() { return _where_clause; },
+    $with: {
+      name: (value: T.TypeIdentifier) => associatedType({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => associatedType({ ...config, typeParameters: value }),
+      bounds: (value?: T.TraitBounds) => associatedType({ ...config, bounds: value }),
+      whereClause: (value?: T.WhereClause) => associatedType({ ...config, whereClause: value }),
+    },
+  });
+}
+
+export function asyncBlock(config: T.AsyncBlock.Config) {
+  const _move_marker = config.moveMarker ? "move" as const : undefined;
+  const _block = config.block;
+  return withMethods({
+    $type: TSKindId.AsyncBlock as const,
+    $source: 2 as const,
+    $named: true as const,
+    _move_marker,
+    _block,
+    moveMarker() { return _move_marker; },
+    block() { return _block; },
+    $with: {
+      moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => asyncBlock({ ...config, moveMarker: value }),
+      block: (value: T.Block) => asyncBlock({ ...config, block: value }),
+    },
+  });
+}
+
+export function attribute(config: T.Attribute.Config) {
+  const children = config.children ?? [];
+  const _path = config.path;
+  return withMethods({
+    $type: TSKindId.Attribute as const,
+    $source: 2 as const,
+    $named: true as const,
+    _path,
+    $children: children,
+    path() { return _path; },
+    children() { return children; },
+    $with: {
+      path: (value: T.Path) => attribute({ ...config, path: value }),
+      children: (...items: readonly [((T.Expression | T.DelimTokenTree))]) => attribute({ ...config, children: items }),
+    },
+  });
+}
+
+export function attributeItem(config: T.AttributeItem.Config) {
+  const _attribute = config.attribute;
+  return withMethods({
+    $type: TSKindId.AttributeItem as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute,
+    attribute() { return _attribute; },
+    $with: {
+      attribute: (value: T.Attribute) => attributeItem({ ...config, attribute: value }),
+    },
+  });
 }
 
 export function awaitExpression(child: T.Expression) {
   const children = [child];
-  return {
-    $type: TSKindId.AwaitExpression as number,
+  return withMethods({
+    $type: TSKindId.AwaitExpression as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.AwaitExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => awaitExpression(v) },
+  });
 }
 
 export function baseFieldInitializer(child: T.Expression) {
   const children = [child];
-  return {
-    $type: TSKindId.BaseFieldInitializer as number,
+  return withMethods({
+    $type: TSKindId.BaseFieldInitializer as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BaseFieldInitializerTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => baseFieldInitializer(v) },
+  });
 }
 
-export function binaryExpression(config: ConfigOf<T.BinaryExpression>) {
-  const fields = {
-    left: config.left,
-    operator: "&&" as const,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.BinaryExpression as number,
+export function binaryExpression(config: T.BinaryExpression.Config) {
+  const _left = config.left;
+  const _operator = "&&" as const;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.BinaryExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.Expression) { return _setField(config, binaryExpression, 'left', value, config?.left); },
-    get operator() { return fields.operator; },
-    right(value?: T.Expression) { return _setField(config, binaryExpression, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BinaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function block(config: ConfigOf<T.Block>) {
-  const fields = {
-    label: config.label,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.Block as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    label(value?: T.Label | undefined) { return _setField(config, block, 'label', value, config?.label); },
-    children(...items: (T.Statement | T.Expression)[]) {
-      if (items.length === 0) return children;
-      return block({ ...config, children: items });
+    _left,
+    _operator,
+    _right,
+    left() { return _left; },
+    operator() { return _operator; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.Expression) => binaryExpression({ ...config, left: value }),
+      right: (value: T.Expression) => binaryExpression({ ...config, right: value }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function blockComment(config?: ConfigOf<T.BlockComment>) {
-  const fields = {
-    doc: config?.doc,
-  };
-  return {
-    $type: TSKindId.BlockComment as number,
+export function block(config: T.Block.Config) {
+  const children = config.children ?? [];
+  const _label = config.label;
+  const _trailing_expression = config.trailingExpression;
+  return withMethods({
+    $type: TSKindId.Block as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    doc(value?: T.BlockCommentContent | undefined) { return _setField(config, blockComment, 'doc', value, config?.doc); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BlockCommentTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _label,
+    _trailing_expression,
+    $children: children,
+    label() { return _label; },
+    trailingExpression() { return _trailing_expression; },
+    children() { return children; },
+    $with: {
+      label: (value?: T.Label) => block({ ...config, label: value }),
+      trailingExpression: (value?: T.Expression) => block({ ...config, trailingExpression: value }),
+      children: (...items: T.Statement[]) => block({ ...config, children: items }),
+    },
+  });
+}
+
+export function blockComment(config?: T.BlockComment.Config) {
+  const children = config?.children ?? [];
+  const _doc = config?.doc;
+  return withMethods({
+    $type: TSKindId.BlockComment as const,
+    $source: 2 as const,
+    $named: true as const,
+    _doc,
+    $children: children,
+    doc() { return _doc; },
+    children() { return children; },
+    $with: {
+      doc: (value?: T.BlockCommentContent) => blockComment({ ...config, doc: value }),
+      children: (...items: readonly [((T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker))]) => blockComment({ ...config, children: items }),
+    },
+  });
 }
 
 export function booleanLiteral(text: 'true' | 'false') {
-  return {
-    $type: TSKindId.BooleanLiteral as number,
+  return withMethods({
+    $type: TSKindId.BooleanLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.BooleanLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function boundedType(config: ConfigOf<T.BoundedType>) {
-  const fields = {
-    left: config.left,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.BoundedType as number,
+export function boundedType(config: T.BoundedType.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.BoundedType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.Lifetime | T._Type | T.UseBounds) { return _setField(config, boundedType, 'left', value, config?.left); },
-    right(value?: T.Lifetime | T._Type | T.UseBounds) { return _setField(config, boundedType, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BoundedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, left: value }),
+      right: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, right: value }),
+    },
+  });
 }
 
 export function bracketedType(child: (T._Type | T.QualifiedType)) {
   const children = [child];
-  return {
-    $type: TSKindId.BracketedType as number,
+  return withMethods({
+    $type: TSKindId.BracketedType as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BracketedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: (T._Type | T.QualifiedType)) => bracketedType(v) },
+  });
 }
 
-export function breakExpression(config?: ConfigOf<T.BreakExpression>) {
-  const fields = {
-    label: config?.label,
-  };
+export function breakExpression(config?: T.BreakExpression.Config) {
   const children = config?.children ?? [];
-  return {
-    $type: TSKindId.BreakExpression as number,
+  const _label = config?.label;
+  return withMethods({
+    $type: TSKindId.BreakExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _label,
     $children: children,
-    label(value?: T.Label | undefined) { return _setField(config, breakExpression, 'label', value, config?.label); },
-    child(value?: T.Expression) {
-      if (value === undefined) return children[0];
-      return breakExpression({ ...config, children: [value] });
+    label() { return _label; },
+    children() { return children; },
+    $with: {
+      label: (value?: T.Label) => breakExpression({ ...config, label: value }),
+      children: (...items: readonly [T.Expression]) => breakExpression({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.BreakExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function callExpression(config: ConfigOf<T.CallExpression>) {
-  const fields = {
-    function: config.function,
-    arguments: config.arguments,
-  };
-  return {
-    $type: TSKindId.CallExpression as number,
+export function callExpression(config: T.CallExpression.Config) {
+  const _function = config.function;
+  const _arguments = config.arguments;
+  return withMethods({
+    $type: TSKindId.CallExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    function(value?: T.ExpressionExceptRange) { return _setField(config, callExpression, 'function', value, config?.function); },
-    arguments(value?: T.Arguments) { return _setField(config, callExpression, 'arguments', value, config?.arguments); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.CallExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _function,
+    _arguments,
+    function() { return _function; },
+    arguments() { return _arguments; },
+    $with: {
+      function: (value: T.ExpressionExceptRange) => callExpression({ ...config, function: value }),
+      arguments: (value: T.Arguments) => callExpression({ ...config, arguments: value }),
+    },
+  });
 }
 
-export function capturedPattern(config: ConfigOf<T.CapturedPattern>) {
-  const fields = {
-    identifier: config.identifier,
-  };
+export function capturedPattern(config: T.CapturedPattern.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.CapturedPattern as number,
+  const _identifier = config.identifier.$text;
+  return withMethods({
+    $type: TSKindId.CapturedPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _identifier,
     $children: children,
-    identifier(value?: T.Identifier) { return _setField(config, capturedPattern, 'identifier', value, config?.identifier); },
-    child(value?: T.Pattern) {
-      if (value === undefined) return children[0];
-      return capturedPattern({ ...config, children: [value] });
+    identifier() { return _identifier; },
+    children() { return children; },
+    $with: {
+      identifier: (value: T.Identifier) => capturedPattern({ ...config, identifier: value }),
+      children: (...items: readonly [T.Pattern]) => capturedPattern({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.CapturedPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function charLiteral(text: string) {
-  if (text.length === 0) throw new Error(`char_literal: text must be non-empty`);
-  return {
-    $type: TSKindId.CharLiteral as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`char_literal: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.CharLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.CharLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function closureExpressionExpr(config: ConfigOf<T.ClosureExpressionExpr>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ClosureExpressionExpr as number,
+export function closureExpressionExpr(config: T.ClosureExpressionExpr.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ClosureExpressionExpr as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.Expression | "_") { return _setField(config, closureExpressionExpr, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ClosureExpressionExprTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.Expression | "_") => closureExpressionExpr({ ...config, body: value }),
+    },
+  });
 }
 
 export function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock>): ReturnType<typeof closureExpressionUFormBlock>;
@@ -1147,243 +1097,230 @@ export function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock
   throw new Error(`closureExpression: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'block' | 'expr'.`);
 }
 export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpressionUFormBlock>, '$variant'>) {
-  const fields = {
-    static_marker: config.staticMarker,
-    async_marker: config.asyncMarker,
-    move_marker: config.moveMarker,
-    parameters: config.parameters,
-  };
   const inner = _closureExpressionBlock(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ClosureExpression as number,
+  const _static_marker = config.staticMarker?.$text;
+  const _async_marker = config.asyncMarker?.$text;
+  const _move_marker = config.moveMarker?.$text;
+  const _parameters = config.parameters;
+  return withMethods({
+    $type: TSKindId.ClosureExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'block' as const,
-    $fields: fields,
+    _static_marker,
+    _async_marker,
+    _move_marker,
+    _parameters,
     $children: children,
-    staticMarker(value?: T.ClosureExpressionStaticMarker | undefined) {
-      if (value === undefined) return fields.static_marker;
-      return closureExpressionUFormBlock({ asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, staticMarker: value });
+    staticMarker() { return _static_marker; },
+    asyncMarker() { return _async_marker; },
+    moveMarker() { return _move_marker; },
+    parameters() { return _parameters; },
+    returnType() { return inner.returnType(); },
+    body() { return inner.body(); },
+    $with: {
+      staticMarker: (value?: BooleanKeyword<T.ClosureExpressionStaticMarker>) => closureExpressionUFormBlock({ ...config, staticMarker: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
+      asyncMarker: (value?: BooleanKeyword<T.ClosureExpressionAsyncMarker>) => closureExpressionUFormBlock({ ...config, asyncMarker: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
+      moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => closureExpressionUFormBlock({ ...config, moveMarker: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
+      parameters: (value: T.ClosureParameters) => closureExpressionUFormBlock({ ...config, parameters: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
+      returnType: (value?: T._Type) => closureExpressionUFormBlock({ ...config, returnType: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
+      body: (value: T.Block) => closureExpressionUFormBlock({ ...config, body: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
     },
-    asyncMarker(value?: T.ClosureExpressionAsyncMarker | undefined) {
-      if (value === undefined) return fields.async_marker;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, asyncMarker: value });
-    },
-    moveMarker(value?: T.MoveMarker | undefined) {
-      if (value === undefined) return fields.move_marker;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: inner.$fields.body, moveMarker: value });
-    },
-    parameters(value?: T.ClosureParameters) {
-      if (value === undefined) return fields.parameters;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, returnType: inner.$fields.return_type, body: inner.$fields.body, parameters: value });
-    },
-    returnType(value?: T._Type | undefined) {
-      if (value === undefined) return inner.$fields.return_type;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, returnType: value });
-    },
-    body(value?: T.Block) {
-      if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormBlock({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, returnType: inner.$fields.return_type, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ClosureExpressionUFormBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
-  const fields = {
-    static_marker: config.staticMarker,
-    async_marker: config.asyncMarker,
-    move_marker: config.moveMarker,
-    parameters: config.parameters,
-  };
   const inner = _closureExpressionExpr(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ClosureExpression as number,
+  const _static_marker = config.staticMarker?.$text;
+  const _async_marker = config.asyncMarker?.$text;
+  const _move_marker = config.moveMarker?.$text;
+  const _parameters = config.parameters;
+  return withMethods({
+    $type: TSKindId.ClosureExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'expr' as const,
-    $fields: fields,
+    _static_marker,
+    _async_marker,
+    _move_marker,
+    _parameters,
     $children: children,
-    staticMarker(value?: T.ClosureExpressionStaticMarker | undefined) {
-      if (value === undefined) return fields.static_marker;
-      return closureExpressionUFormExpr({ asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, staticMarker: value });
+    staticMarker() { return _static_marker; },
+    asyncMarker() { return _async_marker; },
+    moveMarker() { return _move_marker; },
+    parameters() { return _parameters; },
+    body() { return inner.body(); },
+    $with: {
+      staticMarker: (value?: BooleanKeyword<T.ClosureExpressionStaticMarker>) => closureExpressionUFormExpr({ ...config, staticMarker: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
+      asyncMarker: (value?: BooleanKeyword<T.ClosureExpressionAsyncMarker>) => closureExpressionUFormExpr({ ...config, asyncMarker: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
+      moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => closureExpressionUFormExpr({ ...config, moveMarker: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
+      parameters: (value: T.ClosureParameters) => closureExpressionUFormExpr({ ...config, parameters: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
+      body: (value: T.Expression | "_") => closureExpressionUFormExpr({ ...config, body: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
     },
-    asyncMarker(value?: T.ClosureExpressionAsyncMarker | undefined) {
-      if (value === undefined) return fields.async_marker;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: inner.$fields.body, asyncMarker: value });
-    },
-    moveMarker(value?: T.MoveMarker | undefined) {
-      if (value === undefined) return fields.move_marker;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, parameters: config.parameters, body: inner.$fields.body, moveMarker: value });
-    },
-    parameters(value?: T.ClosureParameters) {
-      if (value === undefined) return fields.parameters;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, body: inner.$fields.body, parameters: value });
-    },
-    body(value?: T.Expression | "_") {
-      if (value === undefined) return inner.$fields.body;
-      return closureExpressionUFormExpr({ staticMarker: config.staticMarker, asyncMarker: config.asyncMarker, moveMarker: config.moveMarker, parameters: config.parameters, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ClosureExpressionUFormExprTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
-  return {
-    $type: TSKindId.ClosureParameters as number,
+  return withMethods({
+    $type: TSKindId.ClosureParameters as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ClosureParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => closureParameters(...vs) },
+  });
 }
 
-export function compoundAssignmentExpr(config: ConfigOf<T.CompoundAssignmentExpr>) {
-  const fields = {
-    left: config.left,
-    operator: config.operator,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.CompoundAssignmentExpr as number,
+export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
+  const _left = config.left;
+  const _operator = config.operator.$text;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.CompoundAssignmentExpr as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.Expression) { return _setField(config, compoundAssignmentExpr, 'left', value, config?.left); },
-    operator(value?: T.CompoundAssignmentExprOperator) { return _setField(config, compoundAssignmentExpr, 'operator', value, config?.operator); },
-    right(value?: T.Expression) { return _setField(config, compoundAssignmentExpr, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.CompoundAssignmentExprTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    _operator,
+    _right,
+    left() { return _left; },
+    operator() { return _operator; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.Expression) => compoundAssignmentExpr({ ...config, left: value }),
+      operator: (value: T.CompoundAssignmentExprOperator) => compoundAssignmentExpr({ ...config, operator: value }),
+      right: (value: T.Expression) => compoundAssignmentExpr({ ...config, right: value }),
+    },
+  });
 }
 
-export function constBlock(config: ConfigOf<T.ConstBlock>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.ConstBlock as number,
+export function constBlock(config: T.ConstBlock.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.ConstBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.Block) { return _setField(config, constBlock, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ConstBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.Block) => constBlock({ ...config, body: value }),
+    },
+  });
 }
 
-export function constItem(config: ConfigOf<T.ConstItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type: config.type,
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.ConstItem as number,
+export function constItem(config: T.ConstItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name.$text;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.ConstItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, constItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.Identifier) { return _setField(config, constItem, 'name', value, config?.name); },
-    typeField(value?: T._Type) { return _setField(config, constItem, 'type', value, config?.type); },
-    value(value?: T.Expression | undefined) { return _setField(config, constItem, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ConstItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _type,
+    _value,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeField() { return _type; },
+    value() { return _value; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => constItem({ ...config, visibilityModifier: value }),
+      name: (value: T.Identifier) => constItem({ ...config, name: value }),
+      typeField: (value: T._Type) => constItem({ ...config, type: value }),
+      value: (value?: T.Expression) => constItem({ ...config, value: value }),
+    },
+  });
 }
 
-export function constParameter(config: ConfigOf<T.ConstParameter>) {
-  const fields = {
-    name: config.name,
-    type: config.type,
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.ConstParameter as number,
+export function constParameter(config: T.ConstParameter.Config) {
+  const _name = config.name.$text;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.ConstParameter as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier) { return _setField(config, constParameter, 'name', value, config?.name); },
-    typeField(value?: T._Type) { return _setField(config, constParameter, 'type', value, config?.type); },
-    value(value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined) { return _setField(config, constParameter, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ConstParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _type,
+    _value,
+    name() { return _name; },
+    typeField() { return _type; },
+    value() { return _value; },
+    $with: {
+      name: (value: T.Identifier) => constParameter({ ...config, name: value }),
+      typeField: (value: T._Type) => constParameter({ ...config, type: value }),
+      value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => constParameter({ ...config, value: value }),
+    },
+  });
 }
 
-export function continueExpression(config?: ConfigOf<T.ContinueExpression>) {
-  const fields = {
-    label: config?.label,
-  };
-  return {
-    $type: TSKindId.ContinueExpression as number,
+export function continueExpression(config?: T.ContinueExpression.Config) {
+  const _label = config?.label;
+  return withMethods({
+    $type: TSKindId.ContinueExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    label(value?: T.Label | undefined) { return _setField(config, continueExpression, 'label', value, config?.label); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ContinueExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _label,
+    label() { return _label; },
+    $with: {
+      label: (value?: T.Label) => continueExpression({ ...config, label: value }),
+    },
+  });
 }
 
 export function crate() {
-  return {
-    $type: TSKindId.Crate as number,
+  return withMethods({
+    $type: TSKindId.Crate as const,
     $source: 2 as const,
     $named: true as const,
     $text: 'crate' as const,
-    ..._leafMethods('crate' as const),
-    replace: (t: T.CrateTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'crate' as const }; },
-  };
+  });
 }
 
 export function declarationList(...children: T.DeclarationStatement[]) {
-  return {
-    $type: TSKindId.DeclarationList as number,
+  return withMethods({
+    $type: TSKindId.DeclarationList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DeclarationListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DeclarationStatement[]) => declarationList(...vs) },
+  });
 }
 
 export function delimTokenTreeParen(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeParen as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeParen(...vs) },
+  });
 }
 
 export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeBracket as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBracket(...vs) },
+  });
 }
 
 export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
-  return {
-    $type: TSKindId._DelimTokenTreeBrace as number,
+  return withMethods({
+    $type: TSKindId._DelimTokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBrace(...vs) },
+  });
 }
 
 export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen>): ReturnType<typeof delimTokenTreeUFormParen>;
@@ -1400,159 +1337,172 @@ export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen> | Co
 export function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimTokenTreeUFormParen>, '$variant'>) {
   const inner = _delimTokenTreeParen(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.DelimTokenTree as number,
+  return withMethods({
+    $type: TSKindId.DelimTokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'paren' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBracket>, '$variant'>) {
   const inner = _delimTokenTreeBracket(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.DelimTokenTree as number,
+  return withMethods({
+    $type: TSKindId.DelimTokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'bracket' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBrace>, '$variant'>) {
   const inner = _delimTokenTreeBrace(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.DelimTokenTree as number,
+  return withMethods({
+    $type: TSKindId.DelimTokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'brace' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DelimTokenTreeUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 
-export function dynamicType(config: ConfigOf<T.DynamicType>) {
-  const fields = {
-    trait: config.trait,
-  };
-  return {
-    $type: TSKindId.DynamicType as number,
+export function dynamicType(config: T.DynamicType.Config) {
+  const _trait = config.trait;
+  return withMethods({
+    $type: TSKindId.DynamicType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    trait(value?: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) { return _setField(config, dynamicType, 'trait', value, config?.trait); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.DynamicTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _trait,
+    trait() { return _trait; },
+    $with: {
+      trait: (value: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType) => dynamicType({ ...config, trait: value }),
+    },
+  });
 }
 
 export function elseClause(child: (T.Block | T.IfExpression)) {
   const children = [child];
-  return {
-    $type: TSKindId.ElseClause as number,
+  return withMethods({
+    $type: TSKindId.ElseClause as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ElseClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: (T.Block | T.IfExpression)) => elseClause(v) },
+  });
 }
 
-export function enumItem(config: ConfigOf<T.EnumItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    where_clause: config.whereClause,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.EnumItem as number,
+export function enumItem(config: T.EnumItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _where_clause = config.whereClause;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.EnumItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, enumItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.TypeIdentifier) { return _setField(config, enumItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, enumItem, 'typeParameters', value, config?.typeParameters); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, enumItem, 'whereClause', value, config?.whereClause); },
-    body(value?: T.EnumVariantList) { return _setField(config, enumItem, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.EnumItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _type_parameters,
+    _where_clause,
+    _body,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    whereClause() { return _where_clause; },
+    body() { return _body; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => enumItem({ ...config, visibilityModifier: value }),
+      name: (value: T.TypeIdentifier) => enumItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => enumItem({ ...config, typeParameters: value }),
+      whereClause: (value?: T.WhereClause) => enumItem({ ...config, whereClause: value }),
+      body: (value: T.EnumVariantList) => enumItem({ ...config, body: value }),
+    },
+  });
 }
 
-export function enumVariant(config: ConfigOf<T.EnumVariant>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    body: config.body,
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.EnumVariant as number,
+export function enumVariant(config: T.EnumVariant.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name.$text;
+  const _body = config.body;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.EnumVariant as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, enumVariant, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.Identifier) { return _setField(config, enumVariant, 'name', value, config?.name); },
-    body(value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList | undefined) { return _setField(config, enumVariant, 'body', value, config?.body); },
-    value(value?: T.Expression | undefined) { return _setField(config, enumVariant, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.EnumVariantTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _body,
+    _value,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    body() { return _body; },
+    value() { return _value; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => enumVariant({ ...config, visibilityModifier: value }),
+      name: (value: T.Identifier) => enumVariant({ ...config, name: value }),
+      body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) => enumVariant({ ...config, body: value }),
+      value: (value?: T.Expression) => enumVariant({ ...config, value: value }),
+    },
+  });
 }
 
-export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
-  return {
-    $type: TSKindId.EnumVariantList as number,
+export function enumVariantList(config: T.EnumVariantList.Config) {
+  const children = config.children ?? [];
+  const _enum_variant = config.enumVariant;
+  return withMethods({
+    $type: TSKindId.EnumVariantList as const,
     $source: 2 as const,
     $named: true as const,
+    _enum_variant,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.EnumVariantListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    enumVariant() { return _enum_variant; },
+    children() { return children; },
+    $with: {
+      enumVariant: (...values: T.EnumVariant[]) => enumVariantList({ ...config, enumVariant: values }),
+      children: (...items: T.AttributeItem[]) => enumVariantList({ ...config, children: items }),
+    },
+  });
 }
 
 export function escapeSequence(text: string) {
-  if (text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
-  return {
-    $type: TSKindId.EscapeSequence as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`escape_sequence: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.EscapeSequence as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.EscapeSequenceTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function expressionStatementWithSemi(child: T.Expression) {
   const children = [child];
-  return {
-    $type: TSKindId._ExpressionStatementWithSemi as number,
+  return withMethods({
+    $type: TSKindId._ExpressionStatementWithSemi as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExpressionStatementWithSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => expressionStatementWithSemi(v) },
+  });
 }
 
 export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
   const children = [child];
-  return {
-    $type: TSKindId._ExpressionStatementBlockEnding as number,
+  return withMethods({
+    $type: TSKindId._ExpressionStatementBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExpressionStatementBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.ExpressionEndingWithBlock) => expressionStatementBlockEnding(v) },
+  });
 }
 
 export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormWithSemi>): ReturnType<typeof expressionStatementUFormWithSemi>;
@@ -1567,160 +1517,170 @@ export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormW
 export function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<T.ExpressionStatementUFormWithSemi>, '$variant'>) {
   const inner = _expressionStatementWithSemi((config?.children ?? [])[0] as Parameters<typeof _expressionStatementWithSemi>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ExpressionStatement as number,
+  return withMethods({
+    $type: TSKindId.ExpressionStatement as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'with_semi' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExpressionStatementUFormWithSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
   const inner = _expressionStatementBlockEnding((config?.children ?? [])[0] as Parameters<typeof _expressionStatementBlockEnding>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ExpressionStatement as number,
+  return withMethods({
+    $type: TSKindId.ExpressionStatement as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'block_ending' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExpressionStatementUFormBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 
-export function externCrateDeclaration(config: ConfigOf<T.ExternCrateDeclaration>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    crate: "crate" as const,
-    name: config.name,
-    alias: config.alias,
-  };
-  return {
-    $type: TSKindId.ExternCrateDeclaration as number,
+export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _crate = "crate" as const;
+  const _name = config.name.$text;
+  const _alias = config.alias?.$text;
+  return withMethods({
+    $type: TSKindId.ExternCrateDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, externCrateDeclaration, 'visibilityModifier', value, config?.visibilityModifier); },
-    get crate() { return fields.crate; },
-    name(value?: T.Identifier) { return _setField(config, externCrateDeclaration, 'name', value, config?.name); },
-    alias(value?: T.Identifier | undefined) { return _setField(config, externCrateDeclaration, 'alias', value, config?.alias); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExternCrateDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function externModifier(config?: ConfigOf<T.ExternModifier>) {
-  const fields = {
-    string_literal: config?.stringLiteral,
-  };
-  return {
-    $type: TSKindId.ExternModifier as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    stringLiteral(value?: T.StringLiteral | undefined) { return _setField(config, externModifier, 'stringLiteral', value, config?.stringLiteral); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ExternModifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function fieldDeclaration(config: ConfigOf<T.FieldDeclaration>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.FieldDeclaration as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, fieldDeclaration, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.FieldIdentifier) { return _setField(config, fieldDeclaration, 'name', value, config?.name); },
-    typeField(value?: T._Type) { return _setField(config, fieldDeclaration, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
-  return {
-    $type: TSKindId.FieldDeclarationList as number,
-    $source: 2 as const,
-    $named: true as const,
-    $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldDeclarationListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function fieldExpression(config: ConfigOf<T.FieldExpression>) {
-  const fields = {
-    value: config.value,
-    field: config.field,
-  };
-  return {
-    $type: TSKindId.FieldExpression as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _setField(config, fieldExpression, 'value', value, config?.value); },
-    field(value?: T.FieldIdentifier | T.IntegerLiteral) { return _setField(config, fieldExpression, 'field', value, config?.field); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function fieldInitializer(config: ConfigOf<T.FieldInitializer>) {
-  const fields = {
-    field: config.field,
-    value: config.value,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.FieldInitializer as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    field(value?: T.FieldIdentifier | T.IntegerLiteral) { return _setField(config, fieldInitializer, 'field', value, config?.field); },
-    value(value?: T.Expression) { return _setField(config, fieldInitializer, 'value', value, config?.value); },
-    children(...items: T.AttributeItem[]) {
-      if (items.length === 0) return children;
-      return fieldInitializer({ ...config, children: items });
+    _visibility_modifier,
+    _crate,
+    _name,
+    _alias,
+    visibilityModifier() { return _visibility_modifier; },
+    crate() { return _crate; },
+    name() { return _name; },
+    alias() { return _alias; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => externCrateDeclaration({ ...config, visibilityModifier: value }),
+      name: (value: T.Identifier) => externCrateDeclaration({ ...config, name: value }),
+      alias: (value?: T.Identifier) => externCrateDeclaration({ ...config, alias: value }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldInitializerTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
+}
+
+export function externModifier(config?: T.ExternModifier.Config) {
+  const _string_literal = config?.stringLiteral;
+  return withMethods({
+    $type: TSKindId.ExternModifier as const,
+    $source: 2 as const,
+    $named: true as const,
+    _string_literal,
+    stringLiteral() { return _string_literal; },
+    $with: {
+      stringLiteral: (value?: T.StringLiteral) => externModifier({ ...config, stringLiteral: value }),
+    },
+  });
+}
+
+export function fieldDeclaration(config: T.FieldDeclaration.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.FieldDeclaration as const,
+    $source: 2 as const,
+    $named: true as const,
+    _visibility_modifier,
+    _name,
+    _type,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeField() { return _type; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => fieldDeclaration({ ...config, visibilityModifier: value }),
+      name: (value: T.FieldIdentifier) => fieldDeclaration({ ...config, name: value }),
+      typeField: (value: T._Type) => fieldDeclaration({ ...config, type: value }),
+    },
+  });
+}
+
+export function fieldDeclarationList(config: T.FieldDeclarationList.Config) {
+  const children = config.children ?? [];
+  const _field_declaration = config.fieldDeclaration;
+  return withMethods({
+    $type: TSKindId.FieldDeclarationList as const,
+    $source: 2 as const,
+    $named: true as const,
+    _field_declaration,
+    $children: children,
+    fieldDeclaration() { return _field_declaration; },
+    children() { return children; },
+    $with: {
+      fieldDeclaration: (...values: T.FieldDeclaration[]) => fieldDeclarationList({ ...config, fieldDeclaration: values }),
+      children: (...items: T.AttributeItem[]) => fieldDeclarationList({ ...config, children: items }),
+    },
+  });
+}
+
+export function fieldExpression(config: T.FieldExpression.Config) {
+  const _value = config.value;
+  const _field = config.field;
+  return withMethods({
+    $type: TSKindId.FieldExpression as const,
+    $source: 2 as const,
+    $named: true as const,
+    _value,
+    _field,
+    value() { return _value; },
+    field() { return _field; },
+    $with: {
+      value: (value: T.Expression) => fieldExpression({ ...config, value: value }),
+      field: (value: T.FieldIdentifier | T.IntegerLiteral) => fieldExpression({ ...config, field: value }),
+    },
+  });
+}
+
+export function fieldInitializer(config: T.FieldInitializer.Config) {
+  const children = config.children ?? [];
+  const _field = config.field;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.FieldInitializer as const,
+    $source: 2 as const,
+    $named: true as const,
+    _field,
+    _value,
+    $children: children,
+    field() { return _field; },
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      field: (value: T.FieldIdentifier | T.IntegerLiteral) => fieldInitializer({ ...config, field: value }),
+      value: (value: T.Expression) => fieldInitializer({ ...config, value: value }),
+      children: (...items: T.AttributeItem[]) => fieldInitializer({ ...config, children: items }),
+    },
+  });
 }
 
 export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
-  return {
-    $type: TSKindId.FieldInitializerList as number,
+  return withMethods({
+    $type: TSKindId.FieldInitializerList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldInitializerListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList(...vs) },
+  });
 }
 
-export function fieldPatternShorthand(config: ConfigOf<T.FieldPatternShorthand>) {
-  const fields = {
-    name: config.name,
-  };
-  return {
-    $type: TSKindId._FieldPatternShorthand as number,
+export function fieldPatternShorthand(config: T.FieldPatternShorthand.Config) {
+  const _name = config.name.$text;
+  return withMethods({
+    $type: TSKindId._FieldPatternShorthand as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.Identifier) { return _setField(config, fieldPatternShorthand, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldPatternShorthandTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    name() { return _name; },
+    $with: {
+      name: (value: T.Identifier) => fieldPatternShorthand({ ...config, name: value }),
+    },
+  });
 }
 
 export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand>): ReturnType<typeof fieldPatternUFormShorthand>;
@@ -1733,116 +1693,104 @@ export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand> | Co
   throw new Error(`fieldPattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'shorthand' | 'named'.`);
 }
 export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternUFormShorthand>, '$variant'>) {
-  const fields = {
-    ref_marker: config.refMarker,
-    mutable_specifier: config.mutableSpecifier,
-  };
   const inner = _fieldPatternShorthand(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.FieldPattern as number,
+  const _ref_marker = config.refMarker?.$text;
+  const _mutable_specifier = config.mutableSpecifier?.$text;
+  return withMethods({
+    $type: TSKindId.FieldPattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'shorthand' as const,
-    $fields: fields,
+    _ref_marker,
+    _mutable_specifier,
     $children: children,
-    refMarker(value?: T.RefMarker | undefined) {
-      if (value === undefined) return fields.ref_marker;
-      return fieldPatternUFormShorthand({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, refMarker: value });
+    refMarker() { return _ref_marker; },
+    mutableSpecifier() { return _mutable_specifier; },
+    name() { return inner.name(); },
+    $with: {
+      refMarker: (value?: BooleanKeyword<T.RefMarker>) => fieldPatternUFormShorthand({ ...config, refMarker: value } as Parameters<typeof fieldPatternUFormShorthand>[0]),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => fieldPatternUFormShorthand({ ...config, mutableSpecifier: value } as Parameters<typeof fieldPatternUFormShorthand>[0]),
+      name: (value: T.Identifier) => fieldPatternUFormShorthand({ ...config, name: value } as Parameters<typeof fieldPatternUFormShorthand>[0]),
     },
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) {
-      if (value === undefined) return fields.mutable_specifier;
-      return fieldPatternUFormShorthand({ refMarker: config.refMarker, name: inner.$fields.name, mutableSpecifier: value });
-    },
-    name(value?: T.Identifier) {
-      if (value === undefined) return inner.$fields.name;
-      return fieldPatternUFormShorthand({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldPatternUFormShorthandTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>) {
-  const fields = {
-    ref_marker: config.refMarker,
-    mutable_specifier: config.mutableSpecifier,
-  };
   const inner = _fieldPatternNamed(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.FieldPattern as number,
+  const _ref_marker = config.refMarker?.$text;
+  const _mutable_specifier = config.mutableSpecifier?.$text;
+  return withMethods({
+    $type: TSKindId.FieldPattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'named' as const,
-    $fields: fields,
+    _ref_marker,
+    _mutable_specifier,
     $children: children,
-    refMarker(value?: T.RefMarker | undefined) {
-      if (value === undefined) return fields.ref_marker;
-      return fieldPatternUFormNamed({ mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: inner.$fields.pattern, refMarker: value });
+    refMarker() { return _ref_marker; },
+    mutableSpecifier() { return _mutable_specifier; },
+    name() { return inner.name(); },
+    pattern() { return inner.pattern(); },
+    $with: {
+      refMarker: (value?: BooleanKeyword<T.RefMarker>) => fieldPatternUFormNamed({ ...config, refMarker: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => fieldPatternUFormNamed({ ...config, mutableSpecifier: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
+      name: (value: T.FieldIdentifier) => fieldPatternUFormNamed({ ...config, name: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
+      pattern: (value: T.Pattern) => fieldPatternUFormNamed({ ...config, pattern: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
     },
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) {
-      if (value === undefined) return fields.mutable_specifier;
-      return fieldPatternUFormNamed({ refMarker: config.refMarker, name: inner.$fields.name, pattern: inner.$fields.pattern, mutableSpecifier: value });
-    },
-    name(value?: T.FieldIdentifier) {
-      if (value === undefined) return inner.$fields.name;
-      return fieldPatternUFormNamed({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, pattern: inner.$fields.pattern, name: value });
-    },
-    pattern(value?: T.Pattern) {
-      if (value === undefined) return inner.$fields.pattern;
-      return fieldPatternUFormNamed({ refMarker: config.refMarker, mutableSpecifier: config.mutableSpecifier, name: inner.$fields.name, pattern: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FieldPatternUFormNamedTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function forExpression(config: ConfigOf<T.ForExpression>) {
-  const fields = {
-    label: config.label,
-    pattern: config.pattern,
-    value: config.value,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.ForExpression as number,
+export function forExpression(config: T.ForExpression.Config) {
+  const _label = config.label;
+  const _pattern = config.pattern;
+  const _value = config.value;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.ForExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    label(value?: T.Label | undefined) { return _setField(config, forExpression, 'label', value, config?.label); },
-    pattern(value?: T.Pattern) { return _setField(config, forExpression, 'pattern', value, config?.pattern); },
-    value(value?: T.Expression) { return _setField(config, forExpression, 'value', value, config?.value); },
-    body(value?: T.Block) { return _setField(config, forExpression, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ForExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _label,
+    _pattern,
+    _value,
+    _body,
+    label() { return _label; },
+    pattern() { return _pattern; },
+    value() { return _value; },
+    body() { return _body; },
+    $with: {
+      label: (value?: T.Label) => forExpression({ ...config, label: value }),
+      pattern: (value: T.Pattern) => forExpression({ ...config, pattern: value }),
+      value: (value: T.Expression) => forExpression({ ...config, value: value }),
+      body: (value: T.Block) => forExpression({ ...config, body: value }),
+    },
+  });
 }
 
 export function forLifetimes(...children: T.Lifetime[]) {
   _assertNonEmpty(children, 'for_lifetimes.children');
-  return {
-    $type: TSKindId.ForLifetimes as number,
+  return withMethods({
+    $type: TSKindId.ForLifetimes as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ForLifetimesTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Lifetime[]) => forLifetimes(...vs) },
+  });
 }
 
-export function foreignModItemBody(config: ConfigOf<T.ForeignModItemBody>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ForeignModItemBody as number,
+export function foreignModItemBody(config: T.ForeignModItemBody.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ForeignModItemBody as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, foreignModItemBody, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ForeignModItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => foreignModItemBody({ ...config, body: value }),
+    },
+  });
 }
 
 export function foreignModItem(config: ConfigOf<T.ForeignModItemUFormSemi>): ReturnType<typeof foreignModItemUFormSemi>;
@@ -1855,312 +1803,331 @@ export function foreignModItem(config: ConfigOf<T.ForeignModItemUFormSemi> | Con
   throw new Error(`foreignModItem: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'semi' | 'body'.`);
 }
 export function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignModItemUFormSemi>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    extern_modifier: config.externModifier,
-  };
-  return {
-    $type: TSKindId.ForeignModItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _extern_modifier = config.externModifier;
+  return withMethods({
+    $type: TSKindId.ForeignModItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'semi' as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, foreignModItemUFormSemi, 'visibilityModifier', value, config?.visibilityModifier); },
-    externModifier(value?: T.ExternModifier) { return _setField(config, foreignModItemUFormSemi, 'externModifier', value, config?.externModifier); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ForeignModItemUFormSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _extern_modifier,
+    visibilityModifier() { return _visibility_modifier; },
+    externModifier() { return _extern_modifier; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => foreignModItemUFormSemi({ ...config, visibilityModifier: value }),
+      externModifier: (value: T.ExternModifier) => foreignModItemUFormSemi({ ...config, externModifier: value }),
+    },
+  });
 }
 export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    extern_modifier: config.externModifier,
-  };
   const inner = _foreignModItemBody(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ForeignModItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _extern_modifier = config.externModifier;
+  return withMethods({
+    $type: TSKindId.ForeignModItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'body' as const,
-    $fields: fields,
+    _visibility_modifier,
+    _extern_modifier,
     $children: children,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) {
-      if (value === undefined) return fields.visibility_modifier;
-      return foreignModItemUFormBody({ externModifier: config.externModifier, body: inner.$fields.body, visibilityModifier: value });
+    visibilityModifier() { return _visibility_modifier; },
+    externModifier() { return _extern_modifier; },
+    body() { return inner.body(); },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => foreignModItemUFormBody({ ...config, visibilityModifier: value } as Parameters<typeof foreignModItemUFormBody>[0]),
+      externModifier: (value: T.ExternModifier) => foreignModItemUFormBody({ ...config, externModifier: value } as Parameters<typeof foreignModItemUFormBody>[0]),
+      body: (value: T.DeclarationList) => foreignModItemUFormBody({ ...config, body: value } as Parameters<typeof foreignModItemUFormBody>[0]),
     },
-    externModifier(value?: T.ExternModifier) {
-      if (value === undefined) return fields.extern_modifier;
-      return foreignModItemUFormBody({ visibilityModifier: config.visibilityModifier, body: inner.$fields.body, externModifier: value });
-    },
-    body(value?: T.DeclarationList) {
-      if (value === undefined) return inner.$fields.body;
-      return foreignModItemUFormBody({ visibilityModifier: config.visibilityModifier, externModifier: config.externModifier, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ForeignModItemUFormBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
-  return {
-    $type: TSKindId.FragmentSpecifier as number,
+  return withMethods({
+    $type: TSKindId.FragmentSpecifier as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.FragmentSpecifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function functionItem(config: ConfigOf<T.FunctionItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    function_modifiers: config.functionModifiers,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    parameters: config.parameters,
-    return_type: config.returnType,
-    where_clause: config.whereClause,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.FunctionItem as number,
+export function functionItem(config: T.FunctionItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _function_modifiers = config.functionModifiers;
+  const _name = config.name.$text;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _where_clause = config.whereClause;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.FunctionItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, functionItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    functionModifiers(value?: T.FunctionModifiers | undefined) { return _setField(config, functionItem, 'functionModifiers', value, config?.functionModifiers); },
-    name(value?: T.Identifier | T.Metavariable) { return _setField(config, functionItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, functionItem, 'typeParameters', value, config?.typeParameters); },
-    parameters(value?: T.Parameters) { return _setField(config, functionItem, 'parameters', value, config?.parameters); },
-    returnType(value?: T._Type | undefined) { return _setField(config, functionItem, 'returnType', value, config?.returnType); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, functionItem, 'whereClause', value, config?.whereClause); },
-    body(value?: T.Block) { return _setField(config, functionItem, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function functionModifiers(config: ConfigOf<T.FunctionModifiers>) {
-  const fields = {
-    modifier: config.modifier,
-  };
-  return {
-    $type: TSKindId.FunctionModifiers as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    modifier(...values: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) { return _setFields(config, functionModifiers, 'modifier', values, config?.modifier); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionModifiersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function functionSignatureItem(config: ConfigOf<T.FunctionSignatureItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    function_modifiers: config.functionModifiers,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    parameters: config.parameters,
-    return_type: config.returnType,
-    where_clause: config.whereClause,
-  };
-  return {
-    $type: TSKindId.FunctionSignatureItem as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, functionSignatureItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    functionModifiers(value?: T.FunctionModifiers | undefined) { return _setField(config, functionSignatureItem, 'functionModifiers', value, config?.functionModifiers); },
-    name(value?: T.Identifier | T.Metavariable) { return _setField(config, functionSignatureItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, functionSignatureItem, 'typeParameters', value, config?.typeParameters); },
-    parameters(value?: T.Parameters) { return _setField(config, functionSignatureItem, 'parameters', value, config?.parameters); },
-    returnType(value?: T._Type | undefined) { return _setField(config, functionSignatureItem, 'returnType', value, config?.returnType); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, functionSignatureItem, 'whereClause', value, config?.whereClause); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionSignatureItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function functionType(config: ConfigOf<T.FunctionType>) {
-  const fields = {
-    for_lifetimes: config.forLifetimes,
-    parameters: config.parameters,
-    return_type: config.returnType,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.FunctionType as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    forLifetimes(value?: T.ForLifetimes | undefined) { return _setField(config, functionType, 'forLifetimes', value, config?.forLifetimes); },
-    parameters(value?: T.Parameters) { return _setField(config, functionType, 'parameters', value, config?.parameters); },
-    returnType(value?: T._Type | undefined) { return _setField(config, functionType, 'returnType', value, config?.returnType); },
-    child(value?: (T.FunctionTypeTraitForm | T.FunctionTypeFnForm)) {
-      if (value === undefined) return children[0];
-      return functionType({ ...config, children: [value] });
+    _visibility_modifier,
+    _function_modifiers,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _where_clause,
+    _body,
+    visibilityModifier() { return _visibility_modifier; },
+    functionModifiers() { return _function_modifiers; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    whereClause() { return _where_clause; },
+    body() { return _body; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => functionItem({ ...config, visibilityModifier: value }),
+      functionModifiers: (value?: T.FunctionModifiers) => functionItem({ ...config, functionModifiers: value }),
+      name: (value: T.Identifier | T.Metavariable) => functionItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => functionItem({ ...config, typeParameters: value }),
+      parameters: (value: T.Parameters) => functionItem({ ...config, parameters: value }),
+      returnType: (value?: T._Type) => functionItem({ ...config, returnType: value }),
+      whereClause: (value?: T.WhereClause) => functionItem({ ...config, whereClause: value }),
+      body: (value: T.Block) => functionItem({ ...config, body: value }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.FunctionTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function genBlock(config: ConfigOf<T.GenBlock>) {
-  const fields = {
-    move_marker: config.moveMarker ? "move" as const : undefined,
-    block: config.block,
-  };
-  return {
-    $type: TSKindId.GenBlock as number,
+export function functionModifiers(config: T.FunctionModifiers.Config) {
+  const _modifier = config.modifier;
+  return withMethods({
+    $type: TSKindId.FunctionModifiers as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    moveMarker(value?: T.MoveMarker | undefined) { return _setField(config, genBlock, 'moveMarker', value, config?.moveMarker); },
-    block(value?: T.Block) { return _setField(config, genBlock, 'block', value, config?.block); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.GenBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function genericFunction(config: ConfigOf<T.GenericFunction>) {
-  const fields = {
-    function: config.function,
-    type_arguments: config.typeArguments,
-  };
-  return {
-    $type: TSKindId.GenericFunction as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    function(value?: T.Identifier | T.ScopedIdentifier | T.FieldExpression) { return _setField(config, genericFunction, 'function', value, config?.function); },
-    typeArguments(value?: T.TypeArguments) { return _setField(config, genericFunction, 'typeArguments', value, config?.typeArguments); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.GenericFunctionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function genericPattern(config: ConfigOf<T.GenericPattern>) {
-  const fields = {
-    type_arguments: config.typeArguments,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.GenericPattern as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    typeArguments(value?: T.TypeArguments) { return _setField(config, genericPattern, 'typeArguments', value, config?.typeArguments); },
-    child(value?: (T.Identifier | T.ScopedIdentifier)) {
-      if (value === undefined) return children[0];
-      return genericPattern({ ...config, children: [value] });
+    _modifier,
+    modifier() { return _modifier; },
+    $with: {
+      modifier: (...values: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => functionModifiers({ ...config, modifier: values }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.GenericPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function genericType(config: ConfigOf<T.GenericType>) {
-  const fields = {
-    type: config.type,
-    type_arguments: config.typeArguments,
-  };
-  return {
-    $type: TSKindId.GenericType as number,
+export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _function_modifiers = config.functionModifiers;
+  const _name = config.name.$text;
+  const _type_parameters = config.typeParameters;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  const _where_clause = config.whereClause;
+  return withMethods({
+    $type: TSKindId.FunctionSignatureItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeField(value?: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) { return _setField(config, genericType, 'type', value, config?.type); },
-    typeArguments(value?: T.TypeArguments) { return _setField(config, genericType, 'typeArguments', value, config?.typeArguments); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.GenericTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _function_modifiers,
+    _name,
+    _type_parameters,
+    _parameters,
+    _return_type,
+    _where_clause,
+    visibilityModifier() { return _visibility_modifier; },
+    functionModifiers() { return _function_modifiers; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    whereClause() { return _where_clause; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => functionSignatureItem({ ...config, visibilityModifier: value }),
+      functionModifiers: (value?: T.FunctionModifiers) => functionSignatureItem({ ...config, functionModifiers: value }),
+      name: (value: T.Identifier | T.Metavariable) => functionSignatureItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => functionSignatureItem({ ...config, typeParameters: value }),
+      parameters: (value: T.Parameters) => functionSignatureItem({ ...config, parameters: value }),
+      returnType: (value?: T._Type) => functionSignatureItem({ ...config, returnType: value }),
+      whereClause: (value?: T.WhereClause) => functionSignatureItem({ ...config, whereClause: value }),
+    },
+  });
 }
 
-export function genericTypeWithTurbofish(config: ConfigOf<T.GenericTypeWithTurbofish>) {
-  const fields = {
-    type: config.type,
-    turbofish: "::" as const,
-    type_arguments: config.typeArguments,
-  };
-  return {
-    $type: TSKindId.GenericTypeWithTurbofish as number,
+export function functionType(config: T.FunctionType.Config) {
+  const children = config.children ?? [];
+  const _for_lifetimes = config.forLifetimes;
+  const _parameters = config.parameters;
+  const _return_type = config.returnType;
+  return withMethods({
+    $type: TSKindId.FunctionType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeField(value?: T.TypeIdentifier | T.ScopedIdentifier) { return _setField(config, genericTypeWithTurbofish, 'type', value, config?.type); },
-    get turbofish() { return fields.turbofish; },
-    typeArguments(value?: T.TypeArguments) { return _setField(config, genericTypeWithTurbofish, 'typeArguments', value, config?.typeArguments); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.GenericTypeWithTurbofishTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _for_lifetimes,
+    _parameters,
+    _return_type,
+    $children: children,
+    forLifetimes() { return _for_lifetimes; },
+    parameters() { return _parameters; },
+    returnType() { return _return_type; },
+    children() { return children; },
+    $with: {
+      forLifetimes: (value?: T.ForLifetimes) => functionType({ ...config, forLifetimes: value }),
+      parameters: (value: T.Parameters) => functionType({ ...config, parameters: value }),
+      returnType: (value?: T._Type) => functionType({ ...config, returnType: value }),
+      children: (...items: readonly [((T.FunctionTypeTraitForm | T.FunctionTypeFnForm))]) => functionType({ ...config, children: items }),
+    },
+  });
 }
 
-export function higherRankedTraitBound(config: ConfigOf<T.HigherRankedTraitBound>) {
-  const fields = {
-    type_parameters: config.typeParameters,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.HigherRankedTraitBound as number,
+export function genBlock(config: T.GenBlock.Config) {
+  const _move_marker = config.moveMarker ? "move" as const : undefined;
+  const _block = config.block;
+  return withMethods({
+    $type: TSKindId.GenBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeParameters(value?: T.TypeParameters) { return _setField(config, higherRankedTraitBound, 'typeParameters', value, config?.typeParameters); },
-    typeField(value?: T._Type) { return _setField(config, higherRankedTraitBound, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.HigherRankedTraitBoundTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _move_marker,
+    _block,
+    moveMarker() { return _move_marker; },
+    block() { return _block; },
+    $with: {
+      moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => genBlock({ ...config, moveMarker: value }),
+      block: (value: T.Block) => genBlock({ ...config, block: value }),
+    },
+  });
+}
+
+export function genericFunction(config: T.GenericFunction.Config) {
+  const _function = config.function;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
+    $type: TSKindId.GenericFunction as const,
+    $source: 2 as const,
+    $named: true as const,
+    _function,
+    _type_arguments,
+    function() { return _function; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      function: (value: T.Identifier | T.ScopedIdentifier | T.FieldExpression) => genericFunction({ ...config, function: value }),
+      typeArguments: (value: T.TypeArguments) => genericFunction({ ...config, typeArguments: value }),
+    },
+  });
+}
+
+export function genericPattern(config: T.GenericPattern.Config) {
+  const children = config.children ?? [];
+  const _type_arguments = config.typeArguments;
+  return withMethods({
+    $type: TSKindId.GenericPattern as const,
+    $source: 2 as const,
+    $named: true as const,
+    _type_arguments,
+    $children: children,
+    typeArguments() { return _type_arguments; },
+    children() { return children; },
+    $with: {
+      typeArguments: (value: T.TypeArguments) => genericPattern({ ...config, typeArguments: value }),
+      children: (...items: readonly [((T.Identifier | T.ScopedIdentifier))]) => genericPattern({ ...config, children: items }),
+    },
+  });
+}
+
+export function genericType(config: T.GenericType.Config) {
+  const _type = config.type;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
+    $type: TSKindId.GenericType as const,
+    $source: 2 as const,
+    $named: true as const,
+    _type,
+    _type_arguments,
+    typeField() { return _type; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      typeField: (value: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
+      typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
+    },
+  });
+}
+
+export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
+  const _type = config.type;
+  const _turbofish = "::" as const;
+  const _type_arguments = config.typeArguments;
+  return withMethods({
+    $type: TSKindId.GenericTypeWithTurbofish as const,
+    $source: 2 as const,
+    $named: true as const,
+    _type,
+    _turbofish,
+    _type_arguments,
+    typeField() { return _type; },
+    turbofish() { return _turbofish; },
+    typeArguments() { return _type_arguments; },
+    $with: {
+      typeField: (value: T.TypeIdentifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
+      typeArguments: (value: T.TypeArguments) => genericTypeWithTurbofish({ ...config, typeArguments: value }),
+    },
+  });
+}
+
+export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
+  const _type_parameters = config.typeParameters;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.HigherRankedTraitBound as const,
+    $source: 2 as const,
+    $named: true as const,
+    _type_parameters,
+    _type,
+    typeParameters() { return _type_parameters; },
+    typeField() { return _type; },
+    $with: {
+      typeParameters: (value: T.TypeParameters) => higherRankedTraitBound({ ...config, typeParameters: value }),
+      typeField: (value: T._Type) => higherRankedTraitBound({ ...config, type: value }),
+    },
+  });
 }
 
 export function identifier(text: string) {
-  if (text.length === 0) throw new Error(`identifier: text must be non-empty`); if (!_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
-  return {
-    $type: TSKindId.Identifier as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`identifier: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_identifier.test(text)) throw new Error(`identifier: text does not match pattern: ${text}`);
+  return withMethods({
+    $type: TSKindId.Identifier as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.IdentifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function ifExpression(config: ConfigOf<T.IfExpression>) {
-  const fields = {
-    condition: config.condition,
-    consequence: config.consequence,
-    alternative: config.alternative,
-  };
-  return {
-    $type: TSKindId.IfExpression as number,
+export function ifExpression(config: T.IfExpression.Config) {
+  const _condition = config.condition;
+  const _consequence = config.consequence;
+  const _alternative = config.alternative;
+  return withMethods({
+    $type: TSKindId.IfExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    condition(value?: T.Condition) { return _setField(config, ifExpression, 'condition', value, config?.condition); },
-    consequence(value?: T.Block) { return _setField(config, ifExpression, 'consequence', value, config?.consequence); },
-    alternative(value?: T.ElseClause | undefined) { return _setField(config, ifExpression, 'alternative', value, config?.alternative); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.IfExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _condition,
+    _consequence,
+    _alternative,
+    condition() { return _condition; },
+    consequence() { return _consequence; },
+    alternative() { return _alternative; },
+    $with: {
+      condition: (value: T.Condition) => ifExpression({ ...config, condition: value }),
+      consequence: (value: T.Block) => ifExpression({ ...config, consequence: value }),
+      alternative: (value?: T.ElseClause) => ifExpression({ ...config, alternative: value }),
+    },
+  });
 }
 
-export function implItemBody(config: ConfigOf<T.ImplItemBody>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ImplItemBody as number,
+export function implItemBody(config: T.ImplItemBody.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ImplItemBody as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, implItemBody, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ImplItemBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => implItemBody({ ...config, body: value }),
+    },
+  });
 }
 
 export function implItem(config: ConfigOf<T.ImplItemUFormBody>): ReturnType<typeof implItemUFormBody>;
@@ -2173,233 +2140,235 @@ export function implItem(config: ConfigOf<T.ImplItemUFormBody> | ConfigOf<T.Impl
   throw new Error(`implItem: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'body' | 'semi'.`);
 }
 export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$variant'>) {
-  const fields = {
-    unsafe_marker: config.unsafeMarker,
-    type_parameters: config.typeParameters,
-    negative: config.negative,
-    trait: config.trait,
-    type: config.type,
-    where_clause: config.whereClause,
-  };
   const inner = _implItemBody(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ImplItem as number,
+  const _unsafe_marker = config.unsafeMarker?.$text;
+  const _type_parameters = config.typeParameters;
+  const _negative = config.negative?.$text;
+  const _trait = config.trait;
+  const _type = config.type;
+  const _where_clause = config.whereClause;
+  return withMethods({
+    $type: TSKindId.ImplItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'body' as const,
-    $fields: fields,
+    _unsafe_marker,
+    _type_parameters,
+    _negative,
+    _trait,
+    _type,
+    _where_clause,
     $children: children,
-    unsafeMarker(value?: T.UnsafeMarker | undefined) {
-      if (value === undefined) return fields.unsafe_marker;
-      return implItemUFormBody({ typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, unsafeMarker: value });
+    unsafeMarker() { return _unsafe_marker; },
+    typeParameters() { return _type_parameters; },
+    negative() { return _negative; },
+    trait() { return _trait; },
+    typeField() { return _type; },
+    whereClause() { return _where_clause; },
+    body() { return inner.body(); },
+    $with: {
+      unsafeMarker: (value?: BooleanKeyword<T.UnsafeMarker>) => implItemUFormBody({ ...config, unsafeMarker: value } as Parameters<typeof implItemUFormBody>[0]),
+      typeParameters: (value?: T.TypeParameters) => implItemUFormBody({ ...config, typeParameters: value } as Parameters<typeof implItemUFormBody>[0]),
+      negative: (value?: BooleanKeyword<T.ImplItemNegative>) => implItemUFormBody({ ...config, negative: value } as Parameters<typeof implItemUFormBody>[0]),
+      trait: (value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => implItemUFormBody({ ...config, trait: value } as Parameters<typeof implItemUFormBody>[0]),
+      type: (value: T._Type) => implItemUFormBody({ ...config, type: value } as Parameters<typeof implItemUFormBody>[0]),
+      whereClause: (value?: T.WhereClause) => implItemUFormBody({ ...config, whereClause: value } as Parameters<typeof implItemUFormBody>[0]),
+      body: (value: T.DeclarationList) => implItemUFormBody({ ...config, body: value } as Parameters<typeof implItemUFormBody>[0]),
     },
-    typeParameters(value?: T.TypeParameters | undefined) {
-      if (value === undefined) return fields.type_parameters;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, typeParameters: value });
-    },
-    negative(value?: T.ImplItemNegative | undefined) {
-      if (value === undefined) return fields.negative;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, trait: config.trait, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, negative: value });
-    },
-    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) {
-      if (value === undefined) return fields.trait;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, type: config.type, whereClause: config.whereClause, body: inner.$fields.body, trait: value });
-    },
-    typeField(value?: T._Type) {
-      if (value === undefined) return fields.type;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, whereClause: config.whereClause, body: inner.$fields.body, type: value });
-    },
-    whereClause(value?: T.WhereClause | undefined) {
-      if (value === undefined) return fields.where_clause;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, body: inner.$fields.body, whereClause: value });
-    },
-    body(value?: T.DeclarationList) {
-      if (value === undefined) return inner.$fields.body;
-      return implItemUFormBody({ unsafeMarker: config.unsafeMarker, typeParameters: config.typeParameters, negative: config.negative, trait: config.trait, type: config.type, whereClause: config.whereClause, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ImplItemUFormBodyTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
-  const fields = {
-    unsafe_marker: config.unsafeMarker ? "unsafe" as const : undefined,
-    type_parameters: config.typeParameters,
-    negative: config.negative ? "!" as const : undefined,
-    trait: config.trait,
-    type: config.type,
-    where_clause: config.whereClause,
-  };
-  return {
-    $type: TSKindId.ImplItem as number,
+  const _unsafe_marker = config.unsafeMarker ? "unsafe" as const : undefined;
+  const _type_parameters = config.typeParameters;
+  const _negative = config.negative ? "!" as const : undefined;
+  const _trait = config.trait;
+  const _type = config.type;
+  const _where_clause = config.whereClause;
+  return withMethods({
+    $type: TSKindId.ImplItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'semi' as const,
-    $fields: fields,
-    unsafeMarker(value?: T.UnsafeMarker | undefined) { return _setField(config, implItemUFormSemi, 'unsafeMarker', value, config?.unsafeMarker); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, implItemUFormSemi, 'typeParameters', value, config?.typeParameters); },
-    negative(value?: T.ImplItemNegative | undefined) { return _setField(config, implItemUFormSemi, 'negative', value, config?.negative); },
-    trait(value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined) { return _setField(config, implItemUFormSemi, 'trait', value, config?.trait); },
-    typeField(value?: T._Type) { return _setField(config, implItemUFormSemi, 'type', value, config?.type); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, implItemUFormSemi, 'whereClause', value, config?.whereClause); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ImplItemUFormSemiTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _unsafe_marker,
+    _type_parameters,
+    _negative,
+    _trait,
+    _type,
+    _where_clause,
+    unsafeMarker() { return _unsafe_marker; },
+    typeParameters() { return _type_parameters; },
+    negative() { return _negative; },
+    trait() { return _trait; },
+    typeField() { return _type; },
+    whereClause() { return _where_clause; },
+    $with: {
+      unsafeMarker: (value?: BooleanKeyword<T.UnsafeMarker>) => implItemUFormSemi({ ...config, unsafeMarker: value }),
+      typeParameters: (value?: T.TypeParameters) => implItemUFormSemi({ ...config, typeParameters: value }),
+      negative: (value?: BooleanKeyword<T.ImplItemNegative>) => implItemUFormSemi({ ...config, negative: value }),
+      trait: (value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => implItemUFormSemi({ ...config, trait: value }),
+      typeField: (value: T._Type) => implItemUFormSemi({ ...config, type: value }),
+      whereClause: (value?: T.WhereClause) => implItemUFormSemi({ ...config, whereClause: value }),
+    },
+  });
 }
 
-export function indexExpression(config: ConfigOf<T.IndexExpression>) {
-  const fields = {
-    object: config.object,
-    index: config.index,
-  };
-  return {
-    $type: TSKindId.IndexExpression as number,
+export function indexExpression(config: T.IndexExpression.Config) {
+  const _object = config.object;
+  const _index = config.index;
+  return withMethods({
+    $type: TSKindId.IndexExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    object(value?: T.Expression) { return _setField(config, indexExpression, 'object', value, config?.object); },
-    index(value?: T.Expression) { return _setField(config, indexExpression, 'index', value, config?.index); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.IndexExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _object,
+    _index,
+    object() { return _object; },
+    index() { return _index; },
+    $with: {
+      object: (value: T.Expression) => indexExpression({ ...config, object: value }),
+      index: (value: T.Expression) => indexExpression({ ...config, index: value }),
+    },
+  });
 }
 
-export function innerAttributeItem(config: ConfigOf<T.InnerAttributeItem>) {
-  const fields = {
-    attribute: config.attribute,
-  };
-  return {
-    $type: TSKindId.InnerAttributeItem as number,
+export function innerAttributeItem(config: T.InnerAttributeItem.Config) {
+  const _attribute = config.attribute;
+  return withMethods({
+    $type: TSKindId.InnerAttributeItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    attribute(value?: T.Attribute) { return _setField(config, innerAttributeItem, 'attribute', value, config?.attribute); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.InnerAttributeItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attribute,
+    attribute() { return _attribute; },
+    $with: {
+      attribute: (value: T.Attribute) => innerAttributeItem({ ...config, attribute: value }),
+    },
+  });
 }
 
 export function integerLiteral(text: string) {
-  if (text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
-  return {
-    $type: TSKindId.IntegerLiteral as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`integer_literal: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.IntegerLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.IntegerLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function label(config: ConfigOf<T.Label>) {
-  const fields = {
-    identifier: config.identifier,
-  };
-  return {
-    $type: TSKindId.Label as number,
+export function label(config: T.Label.Config) {
+  const _identifier = config.identifier.$text;
+  return withMethods({
+    $type: TSKindId.Label as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    identifier(value?: T.Identifier) { return _setField(config, label, 'identifier', value, config?.identifier); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LabelTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function lastMatchArm(config: ConfigOf<T.LastMatchArm>) {
-  const fields = {
-    pattern: config.pattern,
-    value: config.value,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.LastMatchArm as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    pattern(value?: T.MatchPattern) { return _setField(config, lastMatchArm, 'pattern', value, config?.pattern); },
-    value(value?: T.Expression) { return _setField(config, lastMatchArm, 'value', value, config?.value); },
-    children(...items: (T.AttributeItem | T.InnerAttributeItem)[]) {
-      if (items.length === 0) return children;
-      return lastMatchArm({ ...config, children: items });
+    _identifier,
+    identifier() { return _identifier; },
+    $with: {
+      identifier: (value: T.Identifier) => label({ ...config, identifier: value }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LastMatchArmTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function letCondition(config: ConfigOf<T.LetCondition>) {
-  const fields = {
-    pattern: config.pattern,
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.LetCondition as number,
+export function lastMatchArm(config: T.LastMatchArm.Config) {
+  const children = config.children ?? [];
+  const _pattern = config.pattern;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.LastMatchArm as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    pattern(value?: T.Pattern) { return _setField(config, letCondition, 'pattern', value, config?.pattern); },
-    value(value?: T.Expression) { return _setField(config, letCondition, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LetConditionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _pattern,
+    _value,
+    $children: children,
+    pattern() { return _pattern; },
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      pattern: (value: T.MatchPattern) => lastMatchArm({ ...config, pattern: value }),
+      value: (value: T.Expression) => lastMatchArm({ ...config, value: value }),
+      children: (...items: ((T.AttributeItem | T.InnerAttributeItem))[]) => lastMatchArm({ ...config, children: items }),
+    },
+  });
 }
 
-export function letDeclaration(config: ConfigOf<T.LetDeclaration>) {
-  const fields = {
-    mutable_specifier: config.mutableSpecifier ? "mut" as const : undefined,
-    pattern: config.pattern,
-    type: config.type,
-    value: config.value,
-    alternative: config.alternative,
-  };
-  return {
-    $type: TSKindId.LetDeclaration as number,
+export function letCondition(config: T.LetCondition.Config) {
+  const _pattern = config.pattern;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.LetCondition as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, letDeclaration, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    pattern(value?: T.Pattern) { return _setField(config, letDeclaration, 'pattern', value, config?.pattern); },
-    typeField(value?: T._Type | undefined) { return _setField(config, letDeclaration, 'type', value, config?.type); },
-    value(value?: T.Expression | undefined) { return _setField(config, letDeclaration, 'value', value, config?.value); },
-    alternative(value?: T.Block | undefined) { return _setField(config, letDeclaration, 'alternative', value, config?.alternative); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LetDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _pattern,
+    _value,
+    pattern() { return _pattern; },
+    value() { return _value; },
+    $with: {
+      pattern: (value: T.Pattern) => letCondition({ ...config, pattern: value }),
+      value: (value: T.Expression) => letCondition({ ...config, value: value }),
+    },
+  });
 }
 
-export function lifetime(config: ConfigOf<T.Lifetime>) {
-  const fields = {
-    identifier: config.identifier,
-  };
-  return {
-    $type: TSKindId.Lifetime as number,
+export function letDeclaration(config: T.LetDeclaration.Config) {
+  const _mutable_specifier = config.mutableSpecifier ? "mut" as const : undefined;
+  const _pattern = config.pattern;
+  const _type = config.type;
+  const _value = config.value;
+  const _alternative = config.alternative;
+  return withMethods({
+    $type: TSKindId.LetDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    identifier(value?: T.Identifier) { return _setField(config, lifetime, 'identifier', value, config?.identifier); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LifetimeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _mutable_specifier,
+    _pattern,
+    _type,
+    _value,
+    _alternative,
+    mutableSpecifier() { return _mutable_specifier; },
+    pattern() { return _pattern; },
+    typeField() { return _type; },
+    value() { return _value; },
+    alternative() { return _alternative; },
+    $with: {
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => letDeclaration({ ...config, mutableSpecifier: value }),
+      pattern: (value: T.Pattern) => letDeclaration({ ...config, pattern: value }),
+      typeField: (value?: T._Type) => letDeclaration({ ...config, type: value }),
+      value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
+      alternative: (value?: T.Block) => letDeclaration({ ...config, alternative: value }),
+    },
+  });
 }
 
-export function lifetimeParameter(config: ConfigOf<T.LifetimeParameter>) {
-  const fields = {
-    name: config.name,
-    bounds: config.bounds,
-  };
-  return {
-    $type: TSKindId.LifetimeParameter as number,
+export function lifetime(config: T.Lifetime.Config) {
+  const _identifier = config.identifier.$text;
+  return withMethods({
+    $type: TSKindId.Lifetime as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.Lifetime) { return _setField(config, lifetimeParameter, 'name', value, config?.name); },
-    bounds(value?: T.TraitBounds | undefined) { return _setField(config, lifetimeParameter, 'bounds', value, config?.bounds); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LifetimeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _identifier,
+    identifier() { return _identifier; },
+    $with: {
+      identifier: (value: T.Identifier) => lifetime({ ...config, identifier: value }),
+    },
+  });
+}
+
+export function lifetimeParameter(config: T.LifetimeParameter.Config) {
+  const _name = config.name;
+  const _bounds = config.bounds;
+  return withMethods({
+    $type: TSKindId.LifetimeParameter as const,
+    $source: 2 as const,
+    $named: true as const,
+    _name,
+    _bounds,
+    name() { return _name; },
+    bounds() { return _bounds; },
+    $with: {
+      name: (value: T.Lifetime) => lifetimeParameter({ ...config, name: value }),
+      bounds: (value?: T.TraitBounds) => lifetimeParameter({ ...config, bounds: value }),
+    },
+  });
 }
 
 export function lineComment(config: ConfigOf<T.LineCommentUFormRegularDslash>): ReturnType<typeof lineCommentUFormRegularDslash>;
@@ -2415,102 +2384,97 @@ export function lineComment(config: ConfigOf<T.LineCommentUFormRegularDslash> | 
 }
 export function lineCommentUFormRegularDslash(config: Omit<ConfigOf<T.LineCommentUFormRegularDslash>, '$variant'>) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.LineComment as number,
+  return withMethods({
+    $type: TSKindId.LineComment as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'regular_dslash' as const,
     $children: children,
-    child(value?: T.LineCommentRegularDslash) {
-      if (value === undefined) return children[0];
-      return lineCommentUFormRegularDslash({ ...config, children: [value] });
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [T.LineCommentRegularDslash]) => lineCommentUFormRegularDslash({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LineCommentUFormRegularDslashTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
   const inner = _lineCommentDoc(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.LineComment as number,
+  return withMethods({
+    $type: TSKindId.LineComment as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'doc' as const,
     $children: children,
-    doc(value?: T.LineDocContent) {
-      if (value === undefined) return inner.$fields.doc;
-      return lineCommentUFormDoc({ doc: value });
+    doc() { return inner.doc(); },
+    $with: {
+      doc: (value: T.LineDocContent) => lineCommentUFormDoc({ ...config, doc: value } as Parameters<typeof lineCommentUFormDoc>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LineCommentUFormDocTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUFormContent>, '$variant'>) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.LineComment as number,
+  return withMethods({
+    $type: TSKindId.LineComment as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'content' as const,
     $children: children,
-    child(value?: T.LineCommentContent) {
-      if (value === undefined) return children[0];
-      return lineCommentUFormContent({ ...config, children: [value] });
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [T.LineCommentContent]) => lineCommentUFormContent({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LineCommentUFormContentTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function loopExpression(config: ConfigOf<T.LoopExpression>) {
-  const fields = {
-    label: config.label,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.LoopExpression as number,
+export function loopExpression(config: T.LoopExpression.Config) {
+  const _label = config.label;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.LoopExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    label(value?: T.Label | undefined) { return _setField(config, loopExpression, 'label', value, config?.label); },
-    body(value?: T.Block) { return _setField(config, loopExpression, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.LoopExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _label,
+    _body,
+    label() { return _label; },
+    body() { return _body; },
+    $with: {
+      label: (value?: T.Label) => loopExpression({ ...config, label: value }),
+      body: (value: T.Block) => loopExpression({ ...config, body: value }),
+    },
+  });
 }
 
 export function macroDefinitionParen(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionParen as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionParen(...vs) },
+  });
 }
 
 export function macroDefinitionBracket(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionBracket as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBracket(...vs) },
+  });
 }
 
 export function macroDefinitionBrace(...children: T.MacroRule[]) {
-  return {
-    $type: TSKindId._MacroDefinitionBrace as number,
+  return withMethods({
+    $type: TSKindId._MacroDefinitionBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.MacroRule[]) => macroDefinitionBrace(...vs) },
+  });
 }
 
 export function macroDefinition(config: ConfigOf<T.MacroDefinitionUFormParen>): ReturnType<typeof macroDefinitionUFormParen>;
@@ -2525,116 +2489,105 @@ export function macroDefinition(config: ConfigOf<T.MacroDefinitionUFormParen> | 
   throw new Error(`macroDefinition: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'paren' | 'bracket' | 'brace'.`);
 }
 export function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroDefinitionUFormParen>, '$variant'>) {
-  const fields = {
-    name: config.name,
-  };
   const inner = _macroDefinitionParen(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.MacroDefinition as number,
+  const _name = config.name;
+  return withMethods({
+    $type: TSKindId.MacroDefinition as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'paren' as const,
-    $fields: fields,
+    _name,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) {
-      if (value === undefined) return fields.name;
-      return macroDefinitionUFormParen({ name: value });
+    name() { return _name; },
+    $with: {
+      name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormParen({ ...config, name: value } as Parameters<typeof macroDefinitionUFormParen>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinitionUFormBracket>, '$variant'>) {
-  const fields = {
-    name: config.name,
-  };
   const inner = _macroDefinitionBracket(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.MacroDefinition as number,
+  const _name = config.name;
+  return withMethods({
+    $type: TSKindId.MacroDefinition as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'bracket' as const,
-    $fields: fields,
+    _name,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) {
-      if (value === undefined) return fields.name;
-      return macroDefinitionUFormBracket({ name: value });
+    name() { return _name; },
+    $with: {
+      name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormBracket({ ...config, name: value } as Parameters<typeof macroDefinitionUFormBracket>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitionUFormBrace>, '$variant'>) {
-  const fields = {
-    name: config.name,
-  };
   const inner = _macroDefinitionBrace(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.MacroDefinition as number,
+  const _name = config.name;
+  return withMethods({
+    $type: TSKindId.MacroDefinition as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'brace' as const,
-    $fields: fields,
+    _name,
     $children: children,
-    name(value?: T.Identifier | T.ReservedIdentifier) {
-      if (value === undefined) return fields.name;
-      return macroDefinitionUFormBrace({ name: value });
+    name() { return _name; },
+    $with: {
+      name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormBrace({ ...config, name: value } as Parameters<typeof macroDefinitionUFormBrace>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroDefinitionUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function macroInvocation(config: ConfigOf<T.MacroInvocation>) {
-  const fields = {
-    macro: config.macro,
-    token_tree: config.tokenTree,
-  };
-  return {
-    $type: TSKindId.MacroInvocation as number,
+export function macroInvocation(config: T.MacroInvocation.Config) {
+  const _macro = config.macro;
+  const _token_tree = config.tokenTree;
+  return withMethods({
+    $type: TSKindId.MacroInvocation as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    macro(value?: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) { return _setField(config, macroInvocation, 'macro', value, config?.macro); },
-    tokenTree(value?: T.DelimTokenTree) { return _setField(config, macroInvocation, 'tokenTree', value, config?.tokenTree); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroInvocationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _macro,
+    _token_tree,
+    macro() { return _macro; },
+    tokenTree() { return _token_tree; },
+    $with: {
+      macro: (value: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) => macroInvocation({ ...config, macro: value }),
+      tokenTree: (value: T.DelimTokenTree) => macroInvocation({ ...config, tokenTree: value }),
+    },
+  });
 }
 
-export function macroRule(config: ConfigOf<T.MacroRule>) {
-  const fields = {
-    left: config.left,
-    right: config.right,
-  };
-  return {
-    $type: TSKindId.MacroRule as number,
+export function macroRule(config: T.MacroRule.Config) {
+  const _left = config.left;
+  const _right = config.right;
+  return withMethods({
+    $type: TSKindId.MacroRule as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.TokenTreePattern) { return _setField(config, macroRule, 'left', value, config?.left); },
-    right(value?: T.TokenTree) { return _setField(config, macroRule, 'right', value, config?.right); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MacroRuleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    _right,
+    left() { return _left; },
+    right() { return _right; },
+    $with: {
+      left: (value: T.TokenTreePattern) => macroRule({ ...config, left: value }),
+      right: (value: T.TokenTree) => macroRule({ ...config, right: value }),
+    },
+  });
 }
 
-export function matchArmBlockEnding(config: ConfigOf<T.MatchArmBlockEnding>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: TSKindId._MatchArmBlockEnding as number,
+export function matchArmBlockEnding(config: T.MatchArmBlockEnding.Config) {
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId._MatchArmBlockEnding as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.ExpressionEndingWithBlock) { return _setField(config, matchArmBlockEnding, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchArmBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value: T.ExpressionEndingWithBlock) => matchArmBlockEnding({ ...config, value: value }),
+    },
+  });
 }
 
 export function matchArm(config: ConfigOf<T.MatchArmUFormWithComma>): ReturnType<typeof matchArmUFormWithComma>;
@@ -2647,122 +2600,121 @@ export function matchArm(config: ConfigOf<T.MatchArmUFormWithComma> | ConfigOf<T
   throw new Error(`matchArm: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'with_comma' | 'block_ending'.`);
 }
 export function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmUFormWithComma>, '$variant'>) {
-  const fields = {
-    pattern: config.pattern,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.MatchArm as number,
+  const inner = _matchArmWithComma(config);
+  const children = [inner] as const;
+  const _attributes = config.attributes;
+  const _pattern = config.pattern;
+  return withMethods({
+    $type: TSKindId.MatchArm as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'with_comma' as const,
-    $fields: fields,
+    _attributes,
+    _pattern,
     $children: children,
-    pattern(value?: T.MatchPattern) { return _setField(config, matchArmUFormWithComma, 'pattern', value, config?.pattern); },
-    children(...items: (T.AttributeItem | T.InnerAttributeItem | T.MatchArmWithComma)[]) {
-      if (items.length === 0) return children;
-      return matchArmUFormWithComma({ ...config, children: items });
+    attributes() { return _attributes; },
+    pattern() { return _pattern; },
+    value() { return inner.value(); },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => matchArmUFormWithComma({ ...config, attributes: values } as Parameters<typeof matchArmUFormWithComma>[0]),
+      pattern: (value: T.MatchPattern) => matchArmUFormWithComma({ ...config, pattern: value } as Parameters<typeof matchArmUFormWithComma>[0]),
+      value: (value: T.Expression) => matchArmUFormWithComma({ ...config, value: value } as Parameters<typeof matchArmUFormWithComma>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchArmUFormWithCommaTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>) {
-  const fields = {
-    pattern: config.pattern,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.MatchArm as number,
+  const inner = _matchArmBlockEnding(config);
+  const children = [inner] as const;
+  const _attributes = config.attributes;
+  const _pattern = config.pattern;
+  return withMethods({
+    $type: TSKindId.MatchArm as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'block_ending' as const,
-    $fields: fields,
+    _attributes,
+    _pattern,
     $children: children,
-    pattern(value?: T.MatchPattern) { return _setField(config, matchArmUFormBlockEnding, 'pattern', value, config?.pattern); },
-    children(...items: (T.AttributeItem | T.InnerAttributeItem | T._MatchArmBlockEnding)[]) {
-      if (items.length === 0) return children;
-      return matchArmUFormBlockEnding({ ...config, children: items });
+    attributes() { return _attributes; },
+    pattern() { return _pattern; },
+    value() { return inner.value(); },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.InnerAttributeItem)[]) => matchArmUFormBlockEnding({ ...config, attributes: values } as Parameters<typeof matchArmUFormBlockEnding>[0]),
+      pattern: (value: T.MatchPattern) => matchArmUFormBlockEnding({ ...config, pattern: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
+      value: (value: T.ExpressionEndingWithBlock) => matchArmUFormBlockEnding({ ...config, value: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchArmUFormBlockEndingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[]) {
-  return {
-    $type: TSKindId.MatchBlock as number,
+  return withMethods({
+    $type: TSKindId.MatchBlock as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.MatchArm | T.LastMatchArm)[]) => matchBlock(...vs) },
+  });
 }
 
-export function matchExpression(config: ConfigOf<T.MatchExpression>) {
-  const fields = {
-    value: config.value,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.MatchExpression as number,
+export function matchExpression(config: T.MatchExpression.Config) {
+  const _value = config.value;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.MatchExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _setField(config, matchExpression, 'value', value, config?.value); },
-    body(value?: T.MatchBlock) { return _setField(config, matchExpression, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function matchPattern(config: ConfigOf<T.MatchPattern>) {
-  const fields = {
-    condition: config.condition,
-  };
-  const children = config.children ?? [];
-  return {
-    $type: TSKindId.MatchPattern as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    $children: children,
-    condition(value?: T.Condition | undefined) { return _setField(config, matchPattern, 'condition', value, config?.condition); },
-    child(value?: T.Pattern) {
-      if (value === undefined) return children[0];
-      return matchPattern({ ...config, children: [value] });
+    _value,
+    _body,
+    value() { return _value; },
+    body() { return _body; },
+    $with: {
+      value: (value: T.Expression) => matchExpression({ ...config, value: value }),
+      body: (value: T.MatchBlock) => matchExpression({ ...config, body: value }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MatchPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
+}
+
+export function matchPattern(config: T.MatchPattern.Config) {
+  const children = config.children ?? [];
+  const _condition = config.condition;
+  return withMethods({
+    $type: TSKindId.MatchPattern as const,
+    $source: 2 as const,
+    $named: true as const,
+    _condition,
+    $children: children,
+    condition() { return _condition; },
+    children() { return children; },
+    $with: {
+      condition: (value?: T.Condition) => matchPattern({ ...config, condition: value }),
+      children: (...items: readonly [T.Pattern]) => matchPattern({ ...config, children: items }),
+    },
+  });
 }
 
 export function metavariable(text: string) {
-  if (text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (!_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
-  return {
-    $type: TSKindId.Metavariable as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`metavariable: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_metavariable.test(text)) throw new Error(`metavariable: text does not match pattern: ${text}`);
+  return withMethods({
+    $type: TSKindId.Metavariable as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.MetavariableTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function modItemInline(config: ConfigOf<T.ModItemInline>) {
-  const fields = {
-    body: config.body,
-  };
-  return {
-    $type: TSKindId._ModItemInline as number,
+export function modItemInline(config: T.ModItemInline.Config) {
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId._ModItemInline as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    body(value?: T.DeclarationList) { return _setField(config, modItemInline, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ModItemInlineTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _body,
+    body() { return _body; },
+    $with: {
+      body: (value: T.DeclarationList) => modItemInline({ ...config, body: value }),
+    },
+  });
 }
 
 export function modItem(config: ConfigOf<T.ModItemUFormExternal>): ReturnType<typeof modItemUFormExternal>;
@@ -2775,98 +2727,85 @@ export function modItem(config: ConfigOf<T.ModItemUFormExternal> | ConfigOf<T.Mo
   throw new Error(`modItem: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'external' | 'inline'.`);
 }
 export function modItemUFormExternal(config: Omit<ConfigOf<T.ModItemUFormExternal>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-  };
-  return {
-    $type: TSKindId.ModItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name.$text;
+  return withMethods({
+    $type: TSKindId.ModItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'external' as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, modItemUFormExternal, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.Identifier) { return _setField(config, modItemUFormExternal, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ModItemUFormExternalTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => modItemUFormExternal({ ...config, visibilityModifier: value }),
+      name: (value: T.Identifier) => modItemUFormExternal({ ...config, name: value }),
+    },
+  });
 }
 export function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-  };
   const inner = _modItemInline(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.ModItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name.$text;
+  return withMethods({
+    $type: TSKindId.ModItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'inline' as const,
-    $fields: fields,
+    _visibility_modifier,
+    _name,
     $children: children,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) {
-      if (value === undefined) return fields.visibility_modifier;
-      return modItemUFormInline({ name: config.name, body: inner.$fields.body, visibilityModifier: value });
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    body() { return inner.body(); },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => modItemUFormInline({ ...config, visibilityModifier: value } as Parameters<typeof modItemUFormInline>[0]),
+      name: (value: T.Identifier) => modItemUFormInline({ ...config, name: value } as Parameters<typeof modItemUFormInline>[0]),
+      body: (value: T.DeclarationList) => modItemUFormInline({ ...config, body: value } as Parameters<typeof modItemUFormInline>[0]),
     },
-    name(value?: T.Identifier) {
-      if (value === undefined) return fields.name;
-      return modItemUFormInline({ visibilityModifier: config.visibilityModifier, body: inner.$fields.body, name: value });
-    },
-    body(value?: T.DeclarationList) {
-      if (value === undefined) return inner.$fields.body;
-      return modItemUFormInline({ visibilityModifier: config.visibilityModifier, name: config.name, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ModItemUFormInlineTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function mutPattern(config: ConfigOf<T.MutPattern>) {
-  const fields = {
-    mutable_specifier: "mut" as const,
-  };
+export function mutPattern(config: T.MutPattern.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.MutPattern as number,
+  const _mutable_specifier = "mut" as const;
+  return withMethods({
+    $type: TSKindId.MutPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _mutable_specifier,
     $children: children,
-    get mutableSpecifier() { return fields.mutable_specifier; },
-    child(value?: T.Pattern) {
-      if (value === undefined) return children[0];
-      return mutPattern({ ...config, children: [value] });
+    mutableSpecifier() { return _mutable_specifier; },
+    children() { return children; },
+    $with: {
+      children: (...items: readonly [T.Pattern]) => mutPattern({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.MutPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function mutableSpecifier() {
-  return {
-    $type: TSKindId.MutableSpecifier as number,
+  return withMethods({
+    $type: TSKindId.MutableSpecifier as const,
     $source: 2 as const,
     $named: true as const,
     $text: 'mut' as const,
-    ..._leafMethods('mut' as const),
-    replace: (t: T.MutableSpecifierTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'mut' as const }; },
-  };
+  });
 }
 
-export function negativeLiteral(config: ConfigOf<T.NegativeLiteral>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.NegativeLiteral as number,
+export function negativeLiteral(config: T.NegativeLiteral.Config) {
+  const _value = config.value.$text;
+  return withMethods({
+    $type: TSKindId.NegativeLiteral as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.IntegerLiteral | T.FloatLiteral) { return _setField(config, negativeLiteral, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.NegativeLiteralTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value: T.IntegerLiteral | T.FloatLiteral) => negativeLiteral({ ...config, value: value }),
+    },
+  });
 }
 
 export function orPattern(config: ConfigOf<T.OrPatternUFormBinary>): ReturnType<typeof orPatternUFormBinary>;
@@ -2881,109 +2820,120 @@ export function orPattern(config: ConfigOf<T.OrPatternUFormBinary> | ConfigOf<T.
 export function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUFormBinary>, '$variant'>) {
   const inner = _orPatternBinary(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.OrPattern as number,
+  return withMethods({
+    $type: TSKindId.OrPattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'binary' as const,
     $children: children,
-    left(value?: T.Pattern) {
-      if (value === undefined) return inner.$fields.left;
-      return orPatternUFormBinary({ right: inner.$fields.right, left: value });
+    left() { return inner.left(); },
+    right() { return inner.right(); },
+    $with: {
+      left: (value: T.Pattern) => orPatternUFormBinary({ ...config, left: value } as Parameters<typeof orPatternUFormBinary>[0]),
+      right: (value: T.Pattern) => orPatternUFormBinary({ ...config, right: value } as Parameters<typeof orPatternUFormBinary>[0]),
     },
-    right(value?: T.Pattern) {
-      if (value === undefined) return inner.$fields.right;
-      return orPatternUFormBinary({ left: inner.$fields.left, right: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.OrPatternUFormBinaryTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>) {
   const inner = _orPatternPrefix(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.OrPattern as number,
+  return withMethods({
+    $type: TSKindId.OrPattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    right(value?: T.Pattern) {
-      if (value === undefined) return inner.$fields.right;
-      return orPatternUFormPrefix({ right: value });
+    right() { return inner.right(); },
+    $with: {
+      right: (value: T.Pattern) => orPatternUFormPrefix({ ...config, right: value } as Parameters<typeof orPatternUFormPrefix>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.OrPatternUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function orderedFieldDeclarationList(config: ConfigOf<T.OrderedFieldDeclarationList>) {
-  const fields = {
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.OrderedFieldDeclarationList as number,
+export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
+  const children = config.children ?? [];
+  const _visibility_modifier = config.visibilityModifier;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.OrderedFieldDeclarationList as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeField(...values: T._Type[]) { return _setFields(config, orderedFieldDeclarationList, 'type', values, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.OrderedFieldDeclarationListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function parameter(config: ConfigOf<T.Parameter>) {
-  const fields = {
-    mutable_specifier: config.mutableSpecifier ? "mut" as const : undefined,
-    pattern: config.pattern,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.Parameter as number,
-    $source: 2 as const,
-    $named: true as const,
-    $fields: fields,
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, parameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    pattern(value?: T.Pattern | T.Self) { return _setField(config, parameter, 'pattern', value, config?.pattern); },
-    typeField(value?: T._Type) { return _setField(config, parameter, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
-}
-
-export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
-  return {
-    $type: TSKindId.Parameters as number,
-    $source: 2 as const,
-    $named: true as const,
+    _visibility_modifier,
+    _type,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    visibilityModifier() { return _visibility_modifier; },
+    typeField() { return _type; },
+    children() { return children; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => orderedFieldDeclarationList({ ...config, visibilityModifier: value }),
+      typeField: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
+      children: (...items: T.AttributeItem[]) => orderedFieldDeclarationList({ ...config, children: items }),
+    },
+  });
+}
+
+export function parameter(config: T.Parameter.Config) {
+  const _mutable_specifier = config.mutableSpecifier ? "mut" as const : undefined;
+  const _pattern = config.pattern;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.Parameter as const,
+    $source: 2 as const,
+    $named: true as const,
+    _mutable_specifier,
+    _pattern,
+    _type,
+    mutableSpecifier() { return _mutable_specifier; },
+    pattern() { return _pattern; },
+    typeField() { return _type; },
+    $with: {
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => parameter({ ...config, mutableSpecifier: value }),
+      pattern: (value: T.Pattern | T.Self) => parameter({ ...config, pattern: value }),
+      typeField: (value: T._Type) => parameter({ ...config, type: value }),
+    },
+  });
+}
+
+export function parameters(config: T.Parameters.Config) {
+  const children = config.children ?? [];
+  const _attribute_item = config.attributeItem;
+  return withMethods({
+    $type: TSKindId.Parameters as const,
+    $source: 2 as const,
+    $named: true as const,
+    _attribute_item,
+    $children: children,
+    attributeItem() { return _attribute_item; },
+    children() { return children; },
+    $with: {
+      attributeItem: (value?: T.AttributeItem) => parameters({ ...config, attributeItem: value }),
+      children: (...items: ((T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => parameters({ ...config, children: items }),
+    },
+  });
 }
 
 export function parenthesizedExpression(child: T.Expression) {
   const children = [child];
-  return {
-    $type: TSKindId.ParenthesizedExpression as number,
+  return withMethods({
+    $type: TSKindId.ParenthesizedExpression as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ParenthesizedExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => parenthesizedExpression(v) },
+  });
 }
 
 export function pointerTypeMut(child: T.MutableSpecifier) {
   const children = [child];
-  return {
-    $type: TSKindId._PointerTypeMut as number,
+  return withMethods({
+    $type: TSKindId._PointerTypeMut as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.PointerTypeMutTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.MutableSpecifier) => pointerTypeMut(v) },
+  });
 }
 
 export function pointerType(config: ConfigOf<T.PointerTypeUFormConst>): ReturnType<typeof pointerTypeUFormConst>;
@@ -2996,72 +2946,66 @@ export function pointerType(config: ConfigOf<T.PointerTypeUFormConst> | ConfigOf
   throw new Error(`pointerType: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'const' | 'mut'.`);
 }
 export function pointerTypeUFormConst(config: Omit<ConfigOf<T.PointerTypeUFormConst>, '$variant'>) {
-  const fields = {
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.PointerType as number,
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.PointerType as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'const' as const,
-    $fields: fields,
-    typeField(value?: T._Type) { return _setField(config, pointerTypeUFormConst, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.PointerTypeUFormConstTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _type,
+    typeField() { return _type; },
+    $with: {
+      typeField: (value: T._Type) => pointerTypeUFormConst({ ...config, type: value }),
+    },
+  });
 }
 export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>, '$variant'>) {
-  const fields = {
-    type: config.type,
-  };
   const inner = _pointerTypeMut((config?.children ?? [])[0] as Parameters<typeof _pointerTypeMut>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.PointerType as number,
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.PointerType as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'mut' as const,
-    $fields: fields,
+    _type,
     $children: children,
-    typeField(value?: T._Type) {
-      if (value === undefined) return fields.type;
-      return pointerTypeUFormMut({ type: value });
+    typeField() { return _type; },
+    $with: {
+      type: (value: T._Type) => pointerTypeUFormMut({ ...config, type: value } as Parameters<typeof pointerTypeUFormMut>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.PointerTypeUFormMutTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function qualifiedType(config: ConfigOf<T.QualifiedType>) {
-  const fields = {
-    type: config.type,
-    alias: config.alias,
-  };
-  return {
-    $type: TSKindId.QualifiedType as number,
+export function qualifiedType(config: T.QualifiedType.Config) {
+  const _type = config.type;
+  const _alias = config.alias;
+  return withMethods({
+    $type: TSKindId.QualifiedType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    typeField(value?: T._Type) { return _setField(config, qualifiedType, 'type', value, config?.type); },
-    alias(value?: T._Type) { return _setField(config, qualifiedType, 'alias', value, config?.alias); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.QualifiedTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _type,
+    _alias,
+    typeField() { return _type; },
+    alias() { return _alias; },
+    $with: {
+      typeField: (value: T._Type) => qualifiedType({ ...config, type: value }),
+      alias: (value: T._Type) => qualifiedType({ ...config, alias: value }),
+    },
+  });
 }
 
-export function rangeExpressionBare(_config?: ConfigOf<T.RangeExpressionBare>) {
-  const fields = {
-    operator: ".." as const,
-  };
-  return {
-    $type: TSKindId._RangeExpressionBare as number,
+export function rangeExpressionBare(_config?: T.RangeExpressionBare.Config) {
+  const _operator = ".." as const;
+  return withMethods({
+    $type: TSKindId._RangeExpressionBare as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    get operator() { return fields.operator; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _operator,
+    operator() { return _operator; },
+    $with: {
+    },
+  });
 }
 
 export function rangeExpression(config: ConfigOf<T.RangeExpressionUFormBinary>): ReturnType<typeof rangeExpressionUFormBinary>;
@@ -3080,77 +3024,66 @@ export function rangeExpression(config: ConfigOf<T.RangeExpressionUFormBinary> |
 export function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.RangeExpressionUFormBinary>, '$variant'>) {
   const inner = _rangeExpressionBinary(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangeExpression as number,
+  return withMethods({
+    $type: TSKindId.RangeExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'binary' as const,
     $children: children,
-    start(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.start;
-      return rangeExpressionUFormBinary({ operator: inner.$fields.operator, end: inner.$fields.end, start: value });
+    start() { return inner.start(); },
+    operator() { return inner.operator(); },
+    end() { return inner.end(); },
+    $with: {
+      start: (value: T.Expression) => rangeExpressionUFormBinary({ ...config, start: value } as Parameters<typeof rangeExpressionUFormBinary>[0]),
+      operator: (value: T.RangeExpressionBinaryOperator) => rangeExpressionUFormBinary({ ...config, operator: value } as Parameters<typeof rangeExpressionUFormBinary>[0]),
+      end: (value: T.Expression) => rangeExpressionUFormBinary({ ...config, end: value } as Parameters<typeof rangeExpressionUFormBinary>[0]),
     },
-    operator(value?: T.RangeExpressionBinaryOperator) {
-      if (value === undefined) return inner.$fields.operator;
-      return rangeExpressionUFormBinary({ start: inner.$fields.start, end: inner.$fields.end, operator: value });
-    },
-    end(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.end;
-      return rangeExpressionUFormBinary({ start: inner.$fields.start, operator: inner.$fields.operator, end: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionUFormBinaryTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   const inner = _rangeExpressionPostfix(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangeExpression as number,
+  return withMethods({
+    $type: TSKindId.RangeExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'postfix' as const,
     $children: children,
-    start(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.start;
-      return rangeExpressionUFormPostfix({ start: value });
+    start() { return inner.start(); },
+    operator() { return inner.operator(); },
+    $with: {
+      start: (value: T.Expression) => rangeExpressionUFormPostfix({ ...config, start: value } as Parameters<typeof rangeExpressionUFormPostfix>[0]),
     },
-    get operator() { return inner.$fields.operator; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionUFormPostfixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   const inner = _rangeExpressionPrefix(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangeExpression as number,
+  return withMethods({
+    $type: TSKindId.RangeExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    get operator() { return inner.$fields.operator; },
-    end(value?: T.Expression) {
-      if (value === undefined) return inner.$fields.end;
-      return rangeExpressionUFormPrefix({ end: value });
+    operator() { return inner.operator(); },
+    end() { return inner.end(); },
+    $with: {
+      end: (value: T.Expression) => rangeExpressionUFormPrefix({ ...config, end: value } as Parameters<typeof rangeExpressionUFormPrefix>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   const inner = _rangeExpressionBare(config as Parameters<typeof _rangeExpressionBare>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangeExpression as number,
+  return withMethods({
+    $type: TSKindId.RangeExpression as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'bare' as const,
     $children: children,
-    get operator() { return inner.$fields.operator; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangeExpressionUFormBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    operator() { return inner.operator(); },
+    $with: {},
+  });
 }
 
 export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight>): ReturnType<typeof rangePatternUFormLeftWithRight>;
@@ -3165,373 +3098,377 @@ export function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight> 
   throw new Error(`rangePattern: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'left_with_right' | 'left_bare' | 'prefix'.`);
 }
 export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
-  const fields = {
-    left: config.left,
-  };
   const inner = _rangePatternLeftWithRight(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangePattern as number,
+  const _left = config.left;
+  return withMethods({
+    $type: TSKindId.RangePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'left_with_right' as const,
-    $fields: fields,
+    _left,
     $children: children,
-    left(value?: T.LiteralPattern | T.Path) {
-      if (value === undefined) return fields.left;
-      return rangePatternUFormLeftWithRight({ right: inner.$fields.right, left: value });
+    left() { return _left; },
+    right() { return inner.right(); },
+    $with: {
+      left: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftWithRight({ ...config, left: value } as Parameters<typeof rangePatternUFormLeftWithRight>[0]),
+      right: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftWithRight({ ...config, right: value } as Parameters<typeof rangePatternUFormLeftWithRight>[0]),
     },
-    right(value?: T.LiteralPattern | T.Path) {
-      if (value === undefined) return inner.$fields.right;
-      return rangePatternUFormLeftWithRight({ left: config.left, right: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangePatternUFormLeftWithRightTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
-  const fields = {
-    left: config.left,
-  };
-  return {
-    $type: TSKindId.RangePattern as number,
+  const _left = config.left;
+  return withMethods({
+    $type: TSKindId.RangePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'left_bare' as const,
-    $fields: fields,
-    left(value?: T.LiteralPattern | T.Path) { return _setField(config, rangePatternUFormLeftBare, 'left', value, config?.left); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangePatternUFormLeftBareTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    left() { return _left; },
+    $with: {
+      left: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftBare({ ...config, left: value }),
+    },
+  });
 }
 export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
   const inner = _rangePatternPrefix(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.RangePattern as number,
+  return withMethods({
+    $type: TSKindId.RangePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'prefix' as const,
     $children: children,
-    right(value?: T.LiteralPattern | T.Path) {
-      if (value === undefined) return inner.$fields.right;
-      return rangePatternUFormPrefix({ right: value });
+    right() { return inner.right(); },
+    $with: {
+      right: (value: T.LiteralPattern | T.Path) => rangePatternUFormPrefix({ ...config, right: value } as Parameters<typeof rangePatternUFormPrefix>[0]),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RangePatternUFormPrefixTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function rawStringLiteral(text: string) {
-  return {
-    $type: TSKindId.RawStringLiteral as number,
+  return withMethods({
+    $type: TSKindId.RawStringLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.RawStringLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function refPattern(child: T.Pattern) {
   const children = [child];
-  return {
-    $type: TSKindId.RefPattern as number,
+  return withMethods({
+    $type: TSKindId.RefPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RefPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Pattern) => refPattern(v) },
+  });
 }
 
-export function referenceExpression(config: ConfigOf<T.ReferenceExpression>) {
-  const fields = {
-    value: config.value,
-  };
+export function referenceExpression(config: T.ReferenceExpression.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.ReferenceExpression as number,
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.ReferenceExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _value,
     $children: children,
-    value(value?: T.Expression) { return _setField(config, referenceExpression, 'value', value, config?.value); },
-    child(value?: (T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier)) {
-      if (value === undefined) return children[0];
-      return referenceExpression({ ...config, children: [value] });
+    value() { return _value; },
+    children() { return children; },
+    $with: {
+      value: (value: T.Expression) => referenceExpression({ ...config, value: value }),
+      children: (...items: readonly [((T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier))]) => referenceExpression({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ReferenceExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
-export function referencePattern(config: ConfigOf<T.ReferencePattern>) {
-  const fields = {
-    mutable_specifier: config.mutableSpecifier ? "mut" as const : undefined,
-    pattern: config.pattern,
-  };
-  return {
-    $type: TSKindId.ReferencePattern as number,
+export function referencePattern(config: T.ReferencePattern.Config) {
+  const _mutable_specifier = config.mutableSpecifier ? "mut" as const : undefined;
+  const _pattern = config.pattern;
+  return withMethods({
+    $type: TSKindId.ReferencePattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, referencePattern, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    pattern(value?: T.Pattern) { return _setField(config, referencePattern, 'pattern', value, config?.pattern); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ReferencePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _mutable_specifier,
+    _pattern,
+    mutableSpecifier() { return _mutable_specifier; },
+    pattern() { return _pattern; },
+    $with: {
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => referencePattern({ ...config, mutableSpecifier: value }),
+      pattern: (value: T.Pattern) => referencePattern({ ...config, pattern: value }),
+    },
+  });
 }
 
-export function referenceType(config: ConfigOf<T.ReferenceType>) {
-  const fields = {
-    lifetime: config.lifetime,
-    mutable_specifier: config.mutableSpecifier ? "mut" as const : undefined,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.ReferenceType as number,
+export function referenceType(config: T.ReferenceType.Config) {
+  const _lifetime = config.lifetime;
+  const _mutable_specifier = config.mutableSpecifier ? "mut" as const : undefined;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.ReferenceType as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    lifetime(value?: T.Lifetime | undefined) { return _setField(config, referenceType, 'lifetime', value, config?.lifetime); },
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, referenceType, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    typeField(value?: T._Type) { return _setField(config, referenceType, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ReferenceTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _lifetime,
+    _mutable_specifier,
+    _type,
+    lifetime() { return _lifetime; },
+    mutableSpecifier() { return _mutable_specifier; },
+    typeField() { return _type; },
+    $with: {
+      lifetime: (value?: T.Lifetime) => referenceType({ ...config, lifetime: value }),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => referenceType({ ...config, mutableSpecifier: value }),
+      typeField: (value: T._Type) => referenceType({ ...config, type: value }),
+    },
+  });
 }
 
 export function removedTraitBound(child: T._Type) {
   const children = [child];
-  return {
-    $type: TSKindId.RemovedTraitBound as number,
+  return withMethods({
+    $type: TSKindId.RemovedTraitBound as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.RemovedTraitBoundTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T._Type) => removedTraitBound(v) },
+  });
 }
 
 export function returnExpression(child?: T.Expression) {
   const children = child != null ? [child] : [];
-  return {
-    $type: TSKindId.ReturnExpression as number,
+  return withMethods({
+    $type: TSKindId.ReturnExpression as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ReturnExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => returnExpression(v) },
+  });
 }
 
-export function scopedIdentifier(config: ConfigOf<T.ScopedIdentifier>) {
-  const fields = {
-    path: config.path,
-    name: config.name,
-  };
-  return {
-    $type: TSKindId.ScopedIdentifier as number,
+export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
+  const _path = config.path;
+  const _name = config.name.$text;
+  return withMethods({
+    $type: TSKindId.ScopedIdentifier as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path | T.BracketedType | T.GenericTypeWithTurbofish | undefined) { return _setField(config, scopedIdentifier, 'path', value, config?.path); },
-    name(value?: T.Identifier | T.Super) { return _setField(config, scopedIdentifier, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ScopedIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    _name,
+    path() { return _path; },
+    name() { return _name; },
+    $with: {
+      path: (value?: T.Path | T.BracketedType | T.GenericTypeWithTurbofish) => scopedIdentifier({ ...config, path: value }),
+      name: (value: T.Identifier | T.Super) => scopedIdentifier({ ...config, name: value }),
+    },
+  });
 }
 
-export function scopedTypeIdentifier(config: ConfigOf<T.ScopedTypeIdentifier>) {
-  const fields = {
-    path: config.path,
-    name: config.name,
-  };
-  return {
-    $type: TSKindId.ScopedTypeIdentifier as number,
+export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
+  const _path = config.path;
+  const _name = config.name;
+  return withMethods({
+    $type: TSKindId.ScopedTypeIdentifier as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType | undefined) { return _setField(config, scopedTypeIdentifier, 'path', value, config?.path); },
-    name(value?: T.TypeIdentifier) { return _setField(config, scopedTypeIdentifier, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ScopedTypeIdentifierTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    _name,
+    path() { return _path; },
+    name() { return _name; },
+    $with: {
+      path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType) => scopedTypeIdentifier({ ...config, path: value }),
+      name: (value: T.TypeIdentifier) => scopedTypeIdentifier({ ...config, name: value }),
+    },
+  });
 }
 
-export function scopedTypeIdentifierInExpressionPosition(config: ConfigOf<T.ScopedTypeIdentifierInExpressionPosition>) {
-  const fields = {
-    path: config.path,
-    name: config.name,
-  };
-  return {
-    $type: TSKindId.ScopedTypeIdentifierInExpressionPosition as number,
+export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIdentifierInExpressionPosition.Config) {
+  const _path = config.path;
+  const _name = config.name;
+  return withMethods({
+    $type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path | T.GenericTypeWithTurbofish | undefined) { return _setField(config, scopedTypeIdentifierInExpressionPosition, 'path', value, config?.path); },
-    name(value?: T.TypeIdentifier) { return _setField(config, scopedTypeIdentifierInExpressionPosition, 'name', value, config?.name); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ScopedTypeIdentifierInExpressionPositionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    _name,
+    path() { return _path; },
+    name() { return _name; },
+    $with: {
+      path: (value?: T.Path | T.GenericTypeWithTurbofish) => scopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
+      name: (value: T.TypeIdentifier) => scopedTypeIdentifierInExpressionPosition({ ...config, name: value }),
+    },
+  });
 }
 
-export function scopedUseList(config: ConfigOf<T.ScopedUseList>) {
-  const fields = {
-    path: config.path,
-    list: config.list,
-  };
-  return {
-    $type: TSKindId.ScopedUseList as number,
+export function scopedUseList(config: T.ScopedUseList.Config) {
+  const _path = config.path;
+  const _list = config.list;
+  return withMethods({
+    $type: TSKindId.ScopedUseList as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path | undefined) { return _setField(config, scopedUseList, 'path', value, config?.path); },
-    list(value?: T.UseList) { return _setField(config, scopedUseList, 'list', value, config?.list); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ScopedUseListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    _list,
+    path() { return _path; },
+    list() { return _list; },
+    $with: {
+      path: (value?: T.Path) => scopedUseList({ ...config, path: value }),
+      list: (value: T.UseList) => scopedUseList({ ...config, list: value }),
+    },
+  });
 }
 
 export function self() {
-  return {
-    $type: TSKindId.Self as number,
+  return withMethods({
+    $type: TSKindId.Self as const,
     $source: 2 as const,
     $named: true as const,
     $text: 'self' as const,
-    ..._leafMethods('self' as const),
-    replace: (t: T.SelfTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'self' as const }; },
-  };
+  });
 }
 
-export function selfParameter(config?: ConfigOf<T.SelfParameter>) {
-  const fields = {
-    reference: config?.reference ? "&" as const : undefined,
-    lifetime: config?.lifetime,
-    mutable_specifier: config?.mutableSpecifier ? "mut" as const : undefined,
-    self: "self" as const,
-  };
-  return {
-    $type: TSKindId.SelfParameter as number,
+export function selfParameter(config?: T.SelfParameter.Config) {
+  const _reference = config?.reference ? "&" as const : undefined;
+  const _lifetime = config?.lifetime;
+  const _mutable_specifier = config?.mutableSpecifier ? "mut" as const : undefined;
+  const _self = "self" as const;
+  return withMethods({
+    $type: TSKindId.SelfParameter as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    reference(value?: "&" | undefined) { return _setField(config, selfParameter, 'reference', value, config?.reference); },
-    lifetime(value?: T.Lifetime | undefined) { return _setField(config, selfParameter, 'lifetime', value, config?.lifetime); },
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, selfParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    get self() { return fields.self; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.SelfParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _reference,
+    _lifetime,
+    _mutable_specifier,
+    _self,
+    reference() { return _reference; },
+    lifetime() { return _lifetime; },
+    mutableSpecifier() { return _mutable_specifier; },
+    self() { return _self; },
+    $with: {
+      reference: (value?: BooleanKeyword<"&">) => selfParameter({ ...config, reference: value }),
+      lifetime: (value?: T.Lifetime) => selfParameter({ ...config, lifetime: value }),
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => selfParameter({ ...config, mutableSpecifier: value }),
+    },
+  });
 }
 
 export function shebang(text: string) {
-  if (text.length === 0) throw new Error(`shebang: text must be non-empty`); if (!_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
-  return {
-    $type: TSKindId.Shebang as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`shebang: text must be non-empty`); if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !_leafRe_shebang.test(text)) throw new Error(`shebang: text does not match pattern: ${text}`);
+  return withMethods({
+    $type: TSKindId.Shebang as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.ShebangTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function shorthandFieldInitializer(config: ConfigOf<T.ShorthandFieldInitializer>) {
-  const fields = {
-    attributes: config.attributes,
-    identifier: config.identifier,
-  };
-  return {
-    $type: TSKindId.ShorthandFieldInitializer as number,
+export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
+  const _attributes = config.attributes;
+  const _identifier = config.identifier.$text;
+  return withMethods({
+    $type: TSKindId.ShorthandFieldInitializer as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    attributes(...values: T.AttributeItem[]) { return _setFields(config, shorthandFieldInitializer, 'attributes', values, config?.attributes); },
-    identifier(value?: T.Identifier) { return _setField(config, shorthandFieldInitializer, 'identifier', value, config?.identifier); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.ShorthandFieldInitializerTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attributes,
+    _identifier,
+    attributes() { return _attributes; },
+    identifier() { return _identifier; },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => shorthandFieldInitializer({ ...config, attributes: values }),
+      identifier: (value: T.Identifier) => shorthandFieldInitializer({ ...config, identifier: value }),
+    },
+  });
 }
 
 export function slicePattern(...children: T.Pattern[]) {
-  return {
-    $type: TSKindId.SlicePattern as number,
+  return withMethods({
+    $type: TSKindId.SlicePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.SlicePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Pattern[]) => slicePattern(...vs) },
+  });
 }
 
-export function sourceFile(config: ConfigOf<T.SourceFile>) {
-  const fields = {
-    shebang: config.shebang,
-    statements: config.statements,
-  };
-  return {
-    $type: TSKindId.SourceFile as number,
+export function sourceFile(config: T.SourceFile.Config) {
+  const _shebang = config.shebang?.$text;
+  const _statements = config.statements;
+  return withMethods({
+    $type: TSKindId.SourceFile as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    shebang(value?: T.Shebang | undefined) { return _setField(config, sourceFile, 'shebang', value, config?.shebang); },
-    statements(...values: T.Statement[]) { return _setFields(config, sourceFile, 'statements', values, config?.statements); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.SourceFileTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _shebang,
+    _statements,
+    shebang() { return _shebang; },
+    statements() { return _statements; },
+    $with: {
+      shebang: (value?: T.Shebang) => sourceFile({ ...config, shebang: value }),
+      statements: (...values: T.Statement[]) => sourceFile({ ...config, statements: values }),
+    },
+  });
 }
 
-export function staticItem(config: ConfigOf<T.StaticItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    mutable_specifier: config.mutableSpecifier,
-    name: config.name,
-    type: config.type,
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.StaticItem as number,
+export function staticItem(config: T.StaticItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _mutable_specifier = config.mutableSpecifier?.$text;
+  const _name = config.name.$text;
+  const _type = config.type;
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.StaticItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, staticItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    mutableSpecifier(value?: T.RefMarker | T._MutableSpecifier | undefined) { return _setField(config, staticItem, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    name(value?: T.Identifier) { return _setField(config, staticItem, 'name', value, config?.name); },
-    typeField(value?: T._Type) { return _setField(config, staticItem, 'type', value, config?.type); },
-    value(value?: T.Expression | undefined) { return _setField(config, staticItem, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StaticItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _mutable_specifier,
+    _name,
+    _type,
+    _value,
+    visibilityModifier() { return _visibility_modifier; },
+    mutableSpecifier() { return _mutable_specifier; },
+    name() { return _name; },
+    typeField() { return _type; },
+    value() { return _value; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => staticItem({ ...config, visibilityModifier: value }),
+      mutableSpecifier: (value?: T.RefMarker | T._MutableSpecifier) => staticItem({ ...config, mutableSpecifier: value }),
+      name: (value: T.Identifier) => staticItem({ ...config, name: value }),
+      typeField: (value: T._Type) => staticItem({ ...config, type: value }),
+      value: (value?: T.Expression) => staticItem({ ...config, value: value }),
+    },
+  });
 }
 
 export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
-  return {
-    $type: TSKindId.StringLiteral as number,
+  return withMethods({
+    $type: TSKindId.StringLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StringLiteralTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => stringLiteral(...vs) },
+  });
 }
 
-export function structExpression(config: ConfigOf<T.StructExpression>) {
-  const fields = {
-    name: config.name,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.StructExpression as number,
+export function structExpression(config: T.StructExpression.Config) {
+  const _name = config.name;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.StructExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) { return _setField(config, structExpression, 'name', value, config?.name); },
-    body(value?: T.FieldInitializerList) { return _setField(config, structExpression, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _body,
+    name() { return _name; },
+    body() { return _body; },
+    $with: {
+      name: (value: T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) => structExpression({ ...config, name: value }),
+      body: (value: T.FieldInitializerList) => structExpression({ ...config, body: value }),
+    },
+  });
 }
 
 export function structItem(config: ConfigOf<T.StructItemUFormBrace>): ReturnType<typeof structItemUFormBrace>;
@@ -3546,197 +3483,180 @@ export function structItem(config: ConfigOf<T.StructItemUFormBrace> | ConfigOf<T
   throw new Error(`structItem: unknown $variant '${(config as { $variant?: string }).$variant}' — expected one of 'brace' | 'tuple' | 'unit'.`);
 }
 export function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemUFormBrace>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-  };
   const inner = _structItemBrace(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.StructItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  return withMethods({
+    $type: TSKindId.StructItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'brace' as const,
-    $fields: fields,
+    _visibility_modifier,
+    _name,
+    _type_parameters,
     $children: children,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) {
-      if (value === undefined) return fields.visibility_modifier;
-      return structItemUFormBrace({ name: config.name, typeParameters: config.typeParameters, body: inner.$fields.body, visibilityModifier: value });
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    body() { return inner.body(); },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => structItemUFormBrace({ ...config, visibilityModifier: value } as Parameters<typeof structItemUFormBrace>[0]),
+      name: (value: T.TypeIdentifier) => structItemUFormBrace({ ...config, name: value } as Parameters<typeof structItemUFormBrace>[0]),
+      typeParameters: (value?: T.TypeParameters) => structItemUFormBrace({ ...config, typeParameters: value } as Parameters<typeof structItemUFormBrace>[0]),
+      body: (value: T.FieldDeclarationList) => structItemUFormBrace({ ...config, body: value } as Parameters<typeof structItemUFormBrace>[0]),
     },
-    name(value?: T.TypeIdentifier) {
-      if (value === undefined) return fields.name;
-      return structItemUFormBrace({ visibilityModifier: config.visibilityModifier, typeParameters: config.typeParameters, body: inner.$fields.body, name: value });
-    },
-    typeParameters(value?: T.TypeParameters | undefined) {
-      if (value === undefined) return fields.type_parameters;
-      return structItemUFormBrace({ visibilityModifier: config.visibilityModifier, name: config.name, body: inner.$fields.body, typeParameters: value });
-    },
-    body(value?: T.FieldDeclarationList) {
-      if (value === undefined) return inner.$fields.body;
-      return structItemUFormBrace({ visibilityModifier: config.visibilityModifier, name: config.name, typeParameters: config.typeParameters, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructItemUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemUFormTuple>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-  };
   const inner = _structItemTuple(config);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.StructItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  return withMethods({
+    $type: TSKindId.StructItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'tuple' as const,
-    $fields: fields,
+    _visibility_modifier,
+    _name,
+    _type_parameters,
     $children: children,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) {
-      if (value === undefined) return fields.visibility_modifier;
-      return structItemUFormTuple({ name: config.name, typeParameters: config.typeParameters, body: inner.$fields.body, visibilityModifier: value });
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    body() { return inner.body(); },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => structItemUFormTuple({ ...config, visibilityModifier: value } as Parameters<typeof structItemUFormTuple>[0]),
+      name: (value: T.TypeIdentifier) => structItemUFormTuple({ ...config, name: value } as Parameters<typeof structItemUFormTuple>[0]),
+      typeParameters: (value?: T.TypeParameters) => structItemUFormTuple({ ...config, typeParameters: value } as Parameters<typeof structItemUFormTuple>[0]),
+      body: (value: T.OrderedFieldDeclarationList) => structItemUFormTuple({ ...config, body: value } as Parameters<typeof structItemUFormTuple>[0]),
     },
-    name(value?: T.TypeIdentifier) {
-      if (value === undefined) return fields.name;
-      return structItemUFormTuple({ visibilityModifier: config.visibilityModifier, typeParameters: config.typeParameters, body: inner.$fields.body, name: value });
-    },
-    typeParameters(value?: T.TypeParameters | undefined) {
-      if (value === undefined) return fields.type_parameters;
-      return structItemUFormTuple({ visibilityModifier: config.visibilityModifier, name: config.name, body: inner.$fields.body, typeParameters: value });
-    },
-    body(value?: T.OrderedFieldDeclarationList) {
-      if (value === undefined) return inner.$fields.body;
-      return structItemUFormTuple({ visibilityModifier: config.visibilityModifier, name: config.name, typeParameters: config.typeParameters, body: value });
-    },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructItemUFormTupleTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 export function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUFormUnit>, '$variant'>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-  };
-  return {
-    $type: TSKindId.StructItem as number,
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  return withMethods({
+    $type: TSKindId.StructItem as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'unit' as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, structItemUFormUnit, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.TypeIdentifier) { return _setField(config, structItemUFormUnit, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, structItemUFormUnit, 'typeParameters', value, config?.typeParameters); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructItemUFormUnitTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _type_parameters,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => structItemUFormUnit({ ...config, visibilityModifier: value }),
+      name: (value: T.TypeIdentifier) => structItemUFormUnit({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => structItemUFormUnit({ ...config, typeParameters: value }),
+    },
+  });
 }
 
-export function structPattern(config: ConfigOf<T.StructPattern>) {
-  const fields = {
-    type: config.type,
-  };
+export function structPattern(config: T.StructPattern.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.StructPattern as number,
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.StructPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _type,
     $children: children,
-    typeField(value?: T.TypeIdentifier | T.ScopedTypeIdentifier) { return _setField(config, structPattern, 'type', value, config?.type); },
-    children(...items: T.FieldPattern[]) {
-      if (items.length === 0) return children;
-      return structPattern({ ...config, children: items });
+    typeField() { return _type; },
+    children() { return children; },
+    $with: {
+      typeField: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
+      children: (...items: ((T.FieldPattern | T.RemainingFieldPattern))[]) => structPattern({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.StructPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function super_() {
-  return {
-    $type: TSKindId.Super as number,
+  return withMethods({
+    $type: TSKindId.Super as const,
     $source: 2 as const,
     $named: true as const,
     $text: 'super' as const,
-    ..._leafMethods('super' as const),
-    replace: (t: T.SuperTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: 'super' as const }; },
-  };
+  });
 }
 
-export function tokenBindingPattern(config: ConfigOf<T.TokenBindingPattern>) {
-  const fields = {
-    name: config.name,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.TokenBindingPattern as number,
+export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
+  const _name = config.name.$text;
+  const _type = config.type.$text;
+  return withMethods({
+    $type: TSKindId.TokenBindingPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.Metavariable) { return _setField(config, tokenBindingPattern, 'name', value, config?.name); },
-    typeField(value?: T.TokenBindingPatternType) { return _setField(config, tokenBindingPattern, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenBindingPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _type,
+    name() { return _name; },
+    typeField() { return _type; },
+    $with: {
+      name: (value: T.Metavariable) => tokenBindingPattern({ ...config, name: value }),
+      typeField: (value: T.TokenBindingPatternType) => tokenBindingPattern({ ...config, type: value }),
+    },
+  });
 }
 
 export function tokenRepetition(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId.TokenRepetition as number,
+  return withMethods({
+    $type: TSKindId.TokenRepetition as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenRepetitionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenRepetition(...vs) },
+  });
 }
 
 export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId.TokenRepetitionPattern as number,
+  return withMethods({
+    $type: TSKindId.TokenRepetitionPattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenRepetitionPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenRepetitionPattern(...vs) },
+  });
 }
 
 export function tokenTreeParen(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeParen as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeParen(...vs) },
+  });
 }
 
 export function tokenTreeBracket(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeBracket as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBracket(...vs) },
+  });
 }
 
 export function tokenTreeBrace(...children: T.Tokens[]) {
-  return {
-    $type: TSKindId._TokenTreeBrace as number,
+  return withMethods({
+    $type: TSKindId._TokenTreeBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.Tokens[]) => tokenTreeBrace(...vs) },
+  });
 }
 
 export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen>): ReturnType<typeof tokenTreeUFormParen>;
@@ -3753,74 +3673,71 @@ export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen> | ConfigOf<T.T
 export function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUFormParen>, '$variant'>) {
   const inner = _tokenTreeParen(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTree as number,
+  return withMethods({
+    $type: TSKindId.TokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'paren' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTreeUFormBracket>, '$variant'>) {
   const inner = _tokenTreeBracket(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTree as number,
+  return withMethods({
+    $type: TSKindId.TokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'bracket' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace>, '$variant'>) {
   const inner = _tokenTreeBrace(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTree as number,
+  return withMethods({
+    $type: TSKindId.TokenTree as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'brace' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreeUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 
 export function tokenTreePatternParen(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternParen as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternParen as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternParen(...vs) },
+  });
 }
 
 export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternBracket as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternBracket as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBracket(...vs) },
+  });
 }
 
 export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
-  return {
-    $type: TSKindId._TokenTreePatternBrace as number,
+  return withMethods({
+    $type: TSKindId._TokenTreePatternBrace as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBrace(...vs) },
+  });
 }
 
 export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen>): ReturnType<typeof tokenTreePatternUFormParen>;
@@ -3837,454 +3754,487 @@ export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen> 
 export function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.TokenTreePatternUFormParen>, '$variant'>) {
   const inner = _tokenTreePatternParen(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTreePattern as number,
+  return withMethods({
+    $type: TSKindId.TokenTreePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'paren' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternUFormParenTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.TokenTreePatternUFormBracket>, '$variant'>) {
   const inner = _tokenTreePatternBracket(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTreePattern as number,
+  return withMethods({
+    $type: TSKindId.TokenTreePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'bracket' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternUFormBracketTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.TokenTreePatternUFormBrace>, '$variant'>) {
   const inner = _tokenTreePatternBrace(...(config?.children ?? []));
   const children = [inner] as const;
-  return {
-    $type: TSKindId.TokenTreePattern as number,
+  return withMethods({
+    $type: TSKindId.TokenTreePattern as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'brace' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TokenTreePatternUFormBraceTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 
 export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
   _assertNonEmpty(children, 'trait_bounds.children');
-  return {
-    $type: TSKindId.TraitBounds as number,
+  return withMethods({
+    $type: TSKindId.TraitBounds as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TraitBoundsTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => traitBounds(...vs) },
+  });
 }
 
-export function traitItem(config: ConfigOf<T.TraitItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    unsafe_marker: config.unsafeMarker ? "unsafe" as const : undefined,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    bounds: config.bounds,
-    where_clause: config.whereClause,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.TraitItem as number,
+export function traitItem(config: T.TraitItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _unsafe_marker = config.unsafeMarker ? "unsafe" as const : undefined;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _bounds = config.bounds;
+  const _where_clause = config.whereClause;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.TraitItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, traitItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    unsafeMarker(value?: T.UnsafeMarker | undefined) { return _setField(config, traitItem, 'unsafeMarker', value, config?.unsafeMarker); },
-    name(value?: T.TypeIdentifier) { return _setField(config, traitItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, traitItem, 'typeParameters', value, config?.typeParameters); },
-    bounds(value?: T.TraitBounds | undefined) { return _setField(config, traitItem, 'bounds', value, config?.bounds); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, traitItem, 'whereClause', value, config?.whereClause); },
-    body(value?: T.DeclarationList) { return _setField(config, traitItem, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TraitItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _unsafe_marker,
+    _name,
+    _type_parameters,
+    _bounds,
+    _where_clause,
+    _body,
+    visibilityModifier() { return _visibility_modifier; },
+    unsafeMarker() { return _unsafe_marker; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    bounds() { return _bounds; },
+    whereClause() { return _where_clause; },
+    body() { return _body; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => traitItem({ ...config, visibilityModifier: value }),
+      unsafeMarker: (value?: BooleanKeyword<T.UnsafeMarker>) => traitItem({ ...config, unsafeMarker: value }),
+      name: (value: T.TypeIdentifier) => traitItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => traitItem({ ...config, typeParameters: value }),
+      bounds: (value?: T.TraitBounds) => traitItem({ ...config, bounds: value }),
+      whereClause: (value?: T.WhereClause) => traitItem({ ...config, whereClause: value }),
+      body: (value: T.DeclarationList) => traitItem({ ...config, body: value }),
+    },
+  });
 }
 
-export function tryBlock(config: ConfigOf<T.TryBlock>) {
-  const fields = {
-    block: config.block,
-  };
-  return {
-    $type: TSKindId.TryBlock as number,
+export function tryBlock(config: T.TryBlock.Config) {
+  const _block = config.block;
+  return withMethods({
+    $type: TSKindId.TryBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    block(value?: T.Block) { return _setField(config, tryBlock, 'block', value, config?.block); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TryBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _block,
+    block() { return _block; },
+    $with: {
+      block: (value: T.Block) => tryBlock({ ...config, block: value }),
+    },
+  });
 }
 
-export function tryExpression(config: ConfigOf<T.TryExpression>) {
-  const fields = {
-    value: config.value,
-  };
-  return {
-    $type: TSKindId.TryExpression as number,
+export function tryExpression(config: T.TryExpression.Config) {
+  const _value = config.value;
+  return withMethods({
+    $type: TSKindId.TryExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _setField(config, tryExpression, 'value', value, config?.value); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    value() { return _value; },
+    $with: {
+      value: (value: T.Expression) => tryExpression({ ...config, value: value }),
+    },
+  });
 }
 
-export function tupleExpression(config: ConfigOf<T.TupleExpression>) {
-  const fields = {
-    attributes: config.attributes,
-    elements: config.elements,
-  };
-  return {
-    $type: TSKindId.TupleExpression as number,
+export function tupleExpression(config: T.TupleExpression.Config) {
+  const _attributes = config.attributes;
+  const _elements = config.elements;
+  return withMethods({
+    $type: TSKindId.TupleExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    attributes(...values: T.AttributeItem[]) { return _setFields(config, tupleExpression, 'attributes', values, config?.attributes); },
-    elements(...values: T.Expression[]) { return _setFields(config, tupleExpression, 'elements', values, config?.elements); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TupleExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attributes,
+    _elements,
+    attributes() { return _attributes; },
+    elements() { return _elements; },
+    $with: {
+      attributes: (...values: T.AttributeItem[]) => tupleExpression({ ...config, attributes: values }),
+      elements: (...values: T.Expression[]) => tupleExpression({ ...config, elements: values }),
+    },
+  });
 }
 
 export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
-  return {
-    $type: TSKindId.TuplePattern as number,
+  return withMethods({
+    $type: TSKindId.TuplePattern as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TuplePatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.Pattern | T.ClosureExpression)[]) => tuplePattern(...vs) },
+  });
 }
 
-export function tupleStructPattern(config: ConfigOf<T.TupleStructPattern>) {
-  const fields = {
-    type: config.type,
-  };
+export function tupleStructPattern(config: T.TupleStructPattern.Config) {
   const children = config.children ?? [];
-  return {
-    $type: TSKindId.TupleStructPattern as number,
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.TupleStructPattern as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
+    _type,
     $children: children,
-    typeField(value?: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) { return _setField(config, tupleStructPattern, 'type', value, config?.type); },
-    children(...items: T.Pattern[]) {
-      if (items.length === 0) return children;
-      return tupleStructPattern({ ...config, children: items });
+    typeField() { return _type; },
+    children() { return children; },
+    $with: {
+      typeField: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => tupleStructPattern({ ...config, type: value }),
+      children: (...items: T.Pattern[]) => tupleStructPattern({ ...config, children: items }),
     },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TupleStructPatternTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+  });
 }
 
 export function tupleType(...children: T._Type[]) {
   _assertNonEmpty(children, 'tuple_type.children');
-  return {
-    $type: TSKindId.TupleType as number,
+  return withMethods({
+    $type: TSKindId.TupleType as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TupleTypeTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T._Type[]) => tupleType(...vs) },
+  });
 }
 
-export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
-  _assertNonEmpty(children, 'type_arguments.children');
-  return {
-    $type: TSKindId.TypeArguments as number,
+export function typeArguments(config: T.TypeArguments.Config) {
+  const children = config.children ?? [];
+  const _trait_bounds = config.traitBounds;
+  return withMethods({
+    $type: TSKindId.TypeArguments as const,
     $source: 2 as const,
     $named: true as const,
+    _trait_bounds,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeArgumentsTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    traitBounds() { return _trait_bounds; },
+    children() { return children; },
+    $with: {
+      traitBounds: (value?: T.TraitBounds) => typeArguments({ ...config, traitBounds: value }),
+      children: (...items: NonEmptyArray<(T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)>) => typeArguments({ ...config, children: items }),
+    },
+  });
 }
 
-export function typeBinding(config: ConfigOf<T.TypeBinding>) {
-  const fields = {
-    name: config.name,
-    type_arguments: config.typeArguments,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.TypeBinding as number,
+export function typeBinding(config: T.TypeBinding.Config) {
+  const _name = config.name;
+  const _type_arguments = config.typeArguments;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.TypeBinding as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.TypeIdentifier) { return _setField(config, typeBinding, 'name', value, config?.name); },
-    typeArguments(value?: T.TypeArguments | undefined) { return _setField(config, typeBinding, 'typeArguments', value, config?.typeArguments); },
-    typeField(value?: T._Type) { return _setField(config, typeBinding, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeBindingTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _type_arguments,
+    _type,
+    name() { return _name; },
+    typeArguments() { return _type_arguments; },
+    typeField() { return _type; },
+    $with: {
+      name: (value: T.TypeIdentifier) => typeBinding({ ...config, name: value }),
+      typeArguments: (value?: T.TypeArguments) => typeBinding({ ...config, typeArguments: value }),
+      typeField: (value: T._Type) => typeBinding({ ...config, type: value }),
+    },
+  });
 }
 
-export function typeCastExpression(config: ConfigOf<T.TypeCastExpression>) {
-  const fields = {
-    value: config.value,
-    type: config.type,
-  };
-  return {
-    $type: TSKindId.TypeCastExpression as number,
+export function typeCastExpression(config: T.TypeCastExpression.Config) {
+  const _value = config.value;
+  const _type = config.type;
+  return withMethods({
+    $type: TSKindId.TypeCastExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    value(value?: T.Expression) { return _setField(config, typeCastExpression, 'value', value, config?.value); },
-    typeField(value?: T._Type) { return _setField(config, typeCastExpression, 'type', value, config?.type); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeCastExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _value,
+    _type,
+    value() { return _value; },
+    typeField() { return _type; },
+    $with: {
+      value: (value: T.Expression) => typeCastExpression({ ...config, value: value }),
+      typeField: (value: T._Type) => typeCastExpression({ ...config, type: value }),
+    },
+  });
 }
 
-export function typeItem(config: ConfigOf<T.TypeItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    where_clause: config.whereClause,
-    type: config.type,
-    trailing_where_clause: config.trailingWhereClause,
-  };
-  return {
-    $type: TSKindId.TypeItem as number,
+export function typeItem(config: T.TypeItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _where_clause = config.whereClause;
+  const _type = config.type;
+  const _trailing_where_clause = config.trailingWhereClause;
+  return withMethods({
+    $type: TSKindId.TypeItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, typeItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.TypeIdentifier) { return _setField(config, typeItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, typeItem, 'typeParameters', value, config?.typeParameters); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, typeItem, 'whereClause', value, config?.whereClause); },
-    typeField(value?: T._Type) { return _setField(config, typeItem, 'type', value, config?.type); },
-    trailingWhereClause(value?: T.WhereClause | undefined) { return _setField(config, typeItem, 'trailingWhereClause', value, config?.trailingWhereClause); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _type_parameters,
+    _where_clause,
+    _type,
+    _trailing_where_clause,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    whereClause() { return _where_clause; },
+    typeField() { return _type; },
+    trailingWhereClause() { return _trailing_where_clause; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => typeItem({ ...config, visibilityModifier: value }),
+      name: (value: T.TypeIdentifier) => typeItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => typeItem({ ...config, typeParameters: value }),
+      whereClause: (value?: T.WhereClause) => typeItem({ ...config, whereClause: value }),
+      typeField: (value: T._Type) => typeItem({ ...config, type: value }),
+      trailingWhereClause: (value?: T.WhereClause) => typeItem({ ...config, trailingWhereClause: value }),
+    },
+  });
 }
 
-export function typeParameter(config: ConfigOf<T.TypeParameter>) {
-  const fields = {
-    name: config.name,
-    bounds: config.bounds,
-    default_type: config.defaultType,
-  };
-  return {
-    $type: TSKindId.TypeParameter as number,
+export function typeParameter(config: T.TypeParameter.Config) {
+  const _name = config.name;
+  const _bounds = config.bounds;
+  const _default_type = config.defaultType;
+  return withMethods({
+    $type: TSKindId.TypeParameter as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    name(value?: T.TypeIdentifier) { return _setField(config, typeParameter, 'name', value, config?.name); },
-    bounds(value?: T.TraitBounds | undefined) { return _setField(config, typeParameter, 'bounds', value, config?.bounds); },
-    defaultType(value?: T._Type | undefined) { return _setField(config, typeParameter, 'defaultType', value, config?.defaultType); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _name,
+    _bounds,
+    _default_type,
+    name() { return _name; },
+    bounds() { return _bounds; },
+    defaultType() { return _default_type; },
+    $with: {
+      name: (value: T.TypeIdentifier) => typeParameter({ ...config, name: value }),
+      bounds: (value?: T.TraitBounds) => typeParameter({ ...config, bounds: value }),
+      defaultType: (value?: T._Type) => typeParameter({ ...config, defaultType: value }),
+    },
+  });
 }
 
-export function typeParameters(...children: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) {
-  _assertNonEmpty(children, 'type_parameters.children');
-  return {
-    $type: TSKindId.TypeParameters as number,
+export function typeParameters(config: T.TypeParameters.Config) {
+  const _attributes = config.attributes;
+  return withMethods({
+    $type: TSKindId.TypeParameters as const,
     $source: 2 as const,
     $named: true as const,
-    $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.TypeParametersTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _attributes,
+    attributes() { return _attributes; },
+    $with: {
+      attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ...config, attributes: values }),
+    },
+  });
 }
 
-export function unaryExpression(config: ConfigOf<T.UnaryExpression>) {
-  const fields = {
-    operator: config.operator,
-    operand: config.operand,
-  };
-  return {
-    $type: TSKindId.UnaryExpression as number,
+export function unaryExpression(config: T.UnaryExpression.Config) {
+  const _operator = config.operator.$text;
+  const _operand = config.operand;
+  return withMethods({
+    $type: TSKindId.UnaryExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    operator(value?: T.UnaryExpressionOperator) { return _setField(config, unaryExpression, 'operator', value, config?.operator); },
-    operand(value?: T.Expression) { return _setField(config, unaryExpression, 'operand', value, config?.operand); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UnaryExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _operator,
+    _operand,
+    operator() { return _operator; },
+    operand() { return _operand; },
+    $with: {
+      operator: (value: T.UnaryExpressionOperator) => unaryExpression({ ...config, operator: value }),
+      operand: (value: T.Expression) => unaryExpression({ ...config, operand: value }),
+    },
+  });
 }
 
-export function unionItem(config: ConfigOf<T.UnionItem>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    name: config.name,
-    type_parameters: config.typeParameters,
-    where_clause: config.whereClause,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.UnionItem as number,
+export function unionItem(config: T.UnionItem.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _name = config.name;
+  const _type_parameters = config.typeParameters;
+  const _where_clause = config.whereClause;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.UnionItem as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, unionItem, 'visibilityModifier', value, config?.visibilityModifier); },
-    name(value?: T.TypeIdentifier) { return _setField(config, unionItem, 'name', value, config?.name); },
-    typeParameters(value?: T.TypeParameters | undefined) { return _setField(config, unionItem, 'typeParameters', value, config?.typeParameters); },
-    whereClause(value?: T.WhereClause | undefined) { return _setField(config, unionItem, 'whereClause', value, config?.whereClause); },
-    body(value?: T.FieldDeclarationList) { return _setField(config, unionItem, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UnionItemTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _name,
+    _type_parameters,
+    _where_clause,
+    _body,
+    visibilityModifier() { return _visibility_modifier; },
+    name() { return _name; },
+    typeParameters() { return _type_parameters; },
+    whereClause() { return _where_clause; },
+    body() { return _body; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => unionItem({ ...config, visibilityModifier: value }),
+      name: (value: T.TypeIdentifier) => unionItem({ ...config, name: value }),
+      typeParameters: (value?: T.TypeParameters) => unionItem({ ...config, typeParameters: value }),
+      whereClause: (value?: T.WhereClause) => unionItem({ ...config, whereClause: value }),
+      body: (value: T.FieldDeclarationList) => unionItem({ ...config, body: value }),
+    },
+  });
 }
 
 export function unitExpression(text: string) {
-  if (text.length === 0) throw new Error(`unit_expression: text must be non-empty`);
-  return {
-    $type: TSKindId.UnitExpression as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`unit_expression: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.UnitExpression as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.UnitExpressionTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function unitType(text: string) {
-  if (text.length === 0) throw new Error(`unit_type: text must be non-empty`);
-  return {
-    $type: TSKindId.UnitType as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`unit_type: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.UnitType as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.UnitTypeTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
-export function unsafeBlock(config: ConfigOf<T.UnsafeBlock>) {
-  const fields = {
-    block: config.block,
-  };
-  return {
-    $type: TSKindId.UnsafeBlock as number,
+export function unsafeBlock(config: T.UnsafeBlock.Config) {
+  const _block = config.block;
+  return withMethods({
+    $type: TSKindId.UnsafeBlock as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    block(value?: T.Block) { return _setField(config, unsafeBlock, 'block', value, config?.block); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UnsafeBlockTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _block,
+    block() { return _block; },
+    $with: {
+      block: (value: T.Block) => unsafeBlock({ ...config, block: value }),
+    },
+  });
 }
 
-export function useAsClause(config: ConfigOf<T.UseAsClause>) {
-  const fields = {
-    path: config.path,
-    alias: config.alias,
-  };
-  return {
-    $type: TSKindId.UseAsClause as number,
+export function useAsClause(config: T.UseAsClause.Config) {
+  const _path = config.path;
+  const _alias = config.alias.$text;
+  return withMethods({
+    $type: TSKindId.UseAsClause as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path) { return _setField(config, useAsClause, 'path', value, config?.path); },
-    alias(value?: T.Identifier) { return _setField(config, useAsClause, 'alias', value, config?.alias); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UseAsClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    _alias,
+    path() { return _path; },
+    alias() { return _alias; },
+    $with: {
+      path: (value: T.Path) => useAsClause({ ...config, path: value }),
+      alias: (value: T.Identifier) => useAsClause({ ...config, alias: value }),
+    },
+  });
 }
 
 export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
-  return {
-    $type: TSKindId.UseBounds as number,
+  return withMethods({
+    $type: TSKindId.UseBounds as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UseBoundsTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: (T.Lifetime | T.TypeIdentifier)[]) => useBounds(...vs) },
+  });
 }
 
-export function useDeclaration(config: ConfigOf<T.UseDeclaration>) {
-  const fields = {
-    visibility_modifier: config.visibilityModifier,
-    argument: config.argument,
-  };
-  return {
-    $type: TSKindId.UseDeclaration as number,
+export function useDeclaration(config: T.UseDeclaration.Config) {
+  const _visibility_modifier = config.visibilityModifier;
+  const _argument = config.argument;
+  return withMethods({
+    $type: TSKindId.UseDeclaration as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    visibilityModifier(value?: T.VisibilityModifier | undefined) { return _setField(config, useDeclaration, 'visibilityModifier', value, config?.visibilityModifier); },
-    argument(value?: T.UseClause) { return _setField(config, useDeclaration, 'argument', value, config?.argument); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UseDeclarationTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _visibility_modifier,
+    _argument,
+    visibilityModifier() { return _visibility_modifier; },
+    argument() { return _argument; },
+    $with: {
+      visibilityModifier: (value?: T.VisibilityModifier) => useDeclaration({ ...config, visibilityModifier: value }),
+      argument: (value: T.UseClause) => useDeclaration({ ...config, argument: value }),
+    },
+  });
 }
 
 export function useList(...children: T.UseClause[]) {
-  return {
-    $type: TSKindId.UseList as number,
+  return withMethods({
+    $type: TSKindId.UseList as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UseListTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.UseClause[]) => useList(...vs) },
+  });
 }
 
-export function useWildcard(config?: ConfigOf<T.UseWildcard>) {
-  const fields = {
-    path: config?.path,
-  };
-  return {
-    $type: TSKindId.UseWildcard as number,
+export function useWildcard(config?: T.UseWildcard.Config) {
+  const _path = config?.path;
+  return withMethods({
+    $type: TSKindId.UseWildcard as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    path(value?: T.Path | undefined) { return _setField(config, useWildcard, 'path', value, config?.path); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.UseWildcardTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _path,
+    path() { return _path; },
+    $with: {
+      path: (value?: T.Path) => useWildcard({ ...config, path: value }),
+    },
+  });
 }
 
-export function variadicParameter(config?: ConfigOf<T.VariadicParameter>) {
-  const fields = {
-    mutable_specifier: config?.mutableSpecifier ? "mut" as const : undefined,
-    pattern: config?.pattern,
-  };
-  return {
-    $type: TSKindId.VariadicParameter as number,
+export function variadicParameter(config?: T.VariadicParameter.Config) {
+  const _mutable_specifier = config?.mutableSpecifier ? "mut" as const : undefined;
+  const _pattern = config?.pattern;
+  return withMethods({
+    $type: TSKindId.VariadicParameter as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    mutableSpecifier(value?: T._MutableSpecifier | undefined) { return _setField(config, variadicParameter, 'mutableSpecifier', value, config?.mutableSpecifier); },
-    pattern(value?: T.Pattern | undefined) { return _setField(config, variadicParameter, 'pattern', value, config?.pattern); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VariadicParameterTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _mutable_specifier,
+    _pattern,
+    mutableSpecifier() { return _mutable_specifier; },
+    pattern() { return _pattern; },
+    $with: {
+      mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => variadicParameter({ ...config, mutableSpecifier: value }),
+      pattern: (value?: T.Pattern) => variadicParameter({ ...config, pattern: value }),
+    },
+  });
 }
 
 export function visibilityModifierCrate(child: T.Crate) {
   const children = [child];
-  return {
-    $type: TSKindId._VisibilityModifierCrate as number,
+  return withMethods({
+    $type: TSKindId._VisibilityModifierCrate as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Crate) => visibilityModifierCrate(v) },
+  });
 }
 
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInPath>): ReturnType<typeof visibilityModifierUFormInPath>;
@@ -4301,186 +4251,173 @@ export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInP
 export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
   const inner = _visibilityModifierInPath(config as Parameters<typeof _visibilityModifierInPath>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.VisibilityModifier as number,
+  return withMethods({
+    $type: TSKindId.VisibilityModifier as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'in_path' as const,
     $children: children,
-    get in() { return inner.$fields.in; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierUFormInPathTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    in() { return inner.in(); },
+    $with: {},
+  });
 }
 export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
   const inner = _visibilityModifierCrate((config?.children ?? [])[0] as Parameters<typeof _visibilityModifierCrate>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.VisibilityModifier as number,
+  return withMethods({
+    $type: TSKindId.VisibilityModifier as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'crate' as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierUFormCrateTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    $with: {},
+  });
 }
 export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   const inner = _visibilityModifierPub(config as Parameters<typeof _visibilityModifierPub>[0]);
   const children = [inner] as const;
-  return {
-    $type: TSKindId.VisibilityModifier as number,
+  return withMethods({
+    $type: TSKindId.VisibilityModifier as const,
     $source: 2 as const,
     $named: true as const,
     $variant: 'pub' as const,
     $children: children,
-    get pub() { return inner.$fields.pub; },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.VisibilityModifierUFormPubTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    pub() { return inner.pub(); },
+    $with: {},
+  });
 }
 
 export function whereClause(...children: T.WherePredicate[]) {
-  return {
-    $type: TSKindId.WhereClause as number,
+  return withMethods({
+    $type: TSKindId.WhereClause as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.WhereClauseTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $children: (...vs: T.WherePredicate[]) => whereClause(...vs) },
+  });
 }
 
-export function wherePredicate(config: ConfigOf<T.WherePredicate>) {
-  const fields = {
-    left: config.left,
-    bounds: config.bounds,
-  };
-  return {
-    $type: TSKindId.WherePredicate as number,
+export function wherePredicate(config: T.WherePredicate.Config) {
+  const _left = config.left;
+  const _bounds = config.bounds;
+  return withMethods({
+    $type: TSKindId.WherePredicate as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    left(value?: T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) { return _setField(config, wherePredicate, 'left', value, config?.left); },
-    bounds(value?: T.TraitBounds) { return _setField(config, wherePredicate, 'bounds', value, config?.bounds); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.WherePredicateTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _left,
+    _bounds,
+    left() { return _left; },
+    bounds() { return _bounds; },
+    $with: {
+      left: (value: T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) => wherePredicate({ ...config, left: value }),
+      bounds: (value: T.TraitBounds) => wherePredicate({ ...config, bounds: value }),
+    },
+  });
 }
 
-export function whileExpression(config: ConfigOf<T.WhileExpression>) {
-  const fields = {
-    label: config.label,
-    condition: config.condition,
-    body: config.body,
-  };
-  return {
-    $type: TSKindId.WhileExpression as number,
+export function whileExpression(config: T.WhileExpression.Config) {
+  const _label = config.label;
+  const _condition = config.condition;
+  const _body = config.body;
+  return withMethods({
+    $type: TSKindId.WhileExpression as const,
     $source: 2 as const,
     $named: true as const,
-    $fields: fields,
-    label(value?: T.Label | undefined) { return _setField(config, whileExpression, 'label', value, config?.label); },
-    condition(value?: T.Condition) { return _setField(config, whileExpression, 'condition', value, config?.condition); },
-    body(value?: T.Block) { return _setField(config, whileExpression, 'body', value, config?.body); },
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.WhileExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    _label,
+    _condition,
+    _body,
+    label() { return _label; },
+    condition() { return _condition; },
+    body() { return _body; },
+    $with: {
+      label: (value?: T.Label) => whileExpression({ ...config, label: value }),
+      condition: (value: T.Condition) => whileExpression({ ...config, condition: value }),
+      body: (value: T.Block) => whileExpression({ ...config, body: value }),
+    },
+  });
 }
 
 export function yieldExpression(child?: T.Expression) {
   const children = child != null ? [child] : [];
-  return {
-    $type: TSKindId.YieldExpression as number,
+  return withMethods({
+    $type: TSKindId.YieldExpression as const,
     $source: 2 as const,
     $named: true as const,
     $children: children,
-    ..._branchMethods,
-    replace(this: AnyNodeData, target: T.YieldExpressionTree): Edit { const r = target.range(); return toEdit(this, r); },
-  };
+    children() { return children; },
+    $with: { $child: (v: T.Expression) => yieldExpression(v) },
+  });
 }
 
 export function stringContent(text: string) {
-  if (text.length === 0) throw new Error(`string_content: text must be non-empty`);
-  return {
-    $type: TSKindId.StringContent as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`string_content: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.StringContent as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.StringContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function rawStringLiteralContent(text: string) {
-  if (text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
-  return {
-    $type: TSKindId.RawStringLiteralContent as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`raw_string_literal_content: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.RawStringLiteralContent as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.RawStringLiteralContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function floatLiteral(text: string) {
-  if (text.length === 0) throw new Error(`float_literal: text must be non-empty`);
-  return {
-    $type: TSKindId.FloatLiteral as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`float_literal: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.FloatLiteral as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.FloatLiteralTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function outerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: TSKindId.OuterBlockDocCommentMarker as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_outer_block_doc_comment_marker: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.OuterBlockDocCommentMarker as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.OuterBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function innerBlockDocCommentMarker(text: string) {
-  if (text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
-  return {
-    $type: TSKindId.InnerBlockDocCommentMarker as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_inner_block_doc_comment_marker: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.InnerBlockDocCommentMarker as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.InnerBlockDocCommentMarkerTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function lineDocContent(text: string) {
-  if (text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
-  return {
-    $type: TSKindId.LineDocContent as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_line_doc_content: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.LineDocContent as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.LineDocContentTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export function errorSentinel(text: string) {
-  if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
-  return {
-    $type: TSKindId.ErrorSentinel as number,
+  if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
+  return withMethods({
+    $type: TSKindId.ErrorSentinel as const,
     $source: 2 as const,
     $named: true as const,
     $text: text,
-    ..._leafMethods(text),
-    replace: (t: T.ErrorSentinelTree) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: text }; },
-  };
+  });
 }
 
 export type FluentKindMap = {

@@ -16,7 +16,7 @@ import type { AssembledNode } from '../compiler/node-map.ts';
 /**
  * Classification of how a kind reaches a rendered output string.
  *
- *   `template` — the kind has an entry in `templates.yaml` that
+ *   `template` — the kind has an entry in `templates directory` that
  *     render() substitutes into. Branches, containers, groups,
  *     polymorphs.
  *   `text`     — the kind is a pure leaf (string/pattern/keyword/
@@ -74,7 +74,6 @@ export function buildRuleLookup(nodeMap: NodeMap): RuleLookup {
 function classify(node: AssembledNode): RenderKindPath {
 	switch (node.modelType) {
 		case 'branch':
-		case 'container':
 		case 'group':
 		case 'polymorph':
 			return 'template';

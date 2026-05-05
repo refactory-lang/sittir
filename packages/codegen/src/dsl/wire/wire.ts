@@ -77,7 +77,7 @@ export interface WireContext {
  * A single named form declared via `refine(original, { name: selections })`.
  * `selections` maps a path (into `original`) to a chosen branch — either
  * a numeric branch index or a literal string matching one of the choice
- * arm's string values. See ADR-0010 phase 2 for the full design.
+ * arm's string values. See the refine() DSL primitive for the full design.
  */
 export interface RefineForm {
 	readonly name: string;

@@ -1031,8 +1031,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "_path"
+          "type": "FIELD",
+          "name": "path",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_path"
+          },
+          "source": "override"
         },
         {
           "type": "CHOICE",
@@ -3134,37 +3139,42 @@
             "type": "SEQ",
             "members": [
               {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "attribute_item"
-                    }
-                  },
-                  {
-                    "type": "CHOICE",
-                    "members": [
-                      {
+                "type": "FIELD",
+                "name": "attributes",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "REPEAT",
+                      "content": {
                         "type": "SYMBOL",
-                        "name": "metavariable"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "type_parameter"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "lifetime_parameter"
-                      },
-                      {
-                        "type": "SYMBOL",
-                        "name": "const_parameter"
+                        "name": "attribute_item"
                       }
-                    ]
-                  }
-                ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "metavariable"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "type_parameter"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "lifetime_parameter"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "const_parameter"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "source": "override"
               },
               {
                 "type": "REPEAT",
@@ -6526,53 +6536,58 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "REPEAT",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "attribute_item"
-                      }
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_expression"
-                    }
-                  ]
-                },
-                {
-                  "type": "REPEAT",
-                  "content": {
+              "type": "FIELD",
+              "name": "attributes",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
                     "type": "SEQ",
                     "members": [
                       {
-                        "type": "STRING",
-                        "value": ","
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "attribute_item"
+                        }
                       },
                       {
-                        "type": "SEQ",
-                        "members": [
-                          {
-                            "type": "REPEAT",
-                            "content": {
-                              "type": "SYMBOL",
-                              "name": "attribute_item"
-                            }
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "_expression"
-                          }
-                        ]
+                        "type": "SYMBOL",
+                        "name": "_expression"
                       }
                     ]
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": ","
+                        },
+                        {
+                          "type": "SEQ",
+                          "members": [
+                            {
+                              "type": "REPEAT",
+                              "content": {
+                                "type": "SYMBOL",
+                                "name": "attribute_item"
+                              }
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "_expression"
+                            }
+                          ]
+                        }
+                      ]
+                    }
                   }
-                }
-              ]
+                ]
+              },
+              "source": "override"
             },
             {
               "type": "BLANK"
@@ -7224,20 +7239,25 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "REPEAT",
+            "type": "FIELD",
+            "name": "attributes",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "attribute_item"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "inner_attribute_item"
-                }
-              ]
-            }
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attribute_item"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "inner_attribute_item"
+                  }
+                ]
+              }
+            },
+            "source": "override"
           },
           {
             "type": "FIELD",
@@ -8024,16 +8044,21 @@
           }
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_expression"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "FIELD",
+          "name": "trailing_expression",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          "source": "override"
         },
         {
           "type": "STRING",
@@ -10423,6 +10448,12 @@
     "_kw_elements": {
       "type": "BLANK"
     },
+    "_kw_path": {
+      "type": "BLANK"
+    },
+    "_kw_trailing_expression": {
+      "type": "BLANK"
+    },
     "_kw_left": {
       "type": "BLANK"
     },
@@ -10588,9 +10619,6 @@
       "type": "BLANK"
     },
     "_kw_operand": {
-      "type": "BLANK"
-    },
-    "_kw_path": {
       "type": "BLANK"
     },
     "_expression_statement_with_semi": {

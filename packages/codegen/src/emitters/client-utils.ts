@@ -5,9 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type {
-	AssembledNode,
-	AssembledChild,
-	AssembledField,
+	AssembledNonterminal,
 	NodeOrTerminal
 } from '../compiler/node-map.ts';
 import {
@@ -15,7 +13,9 @@ import {
 	isRequired,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	structuralFieldsOf,
+	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
@@ -23,7 +23,6 @@ import {
 	resolveHiddenKeywordLiteral
 } from './shared.ts';
 import {
-	collectTransportProjection,
 	resolveTransportReferenceKind
 } from './transport-projection.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
@@ -47,11 +46,103 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	);
 	lines.push('');
 	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf } from '@sittir/types';"
+		"import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';"
 	);
 	lines.push("import type { AnyTransport, NamespaceMap } from './types.js';");
 	lines.push("import { KIND_NAMES, kindIdFromName } from './types.js';");
+	lines.push("import { render, toEdit } from './boundary.ts';");
 	lines.push('');
+
+	// Emit grammar-agnostic NodeData helpers directly into this per-grammar
+	// utils.ts. Generated factories.ts / wrap.ts only ever import from
+	// `./utils.js`. DRY at the codegen-source layer (one emitter, one set
+	// of bodies); per-grammar duplication of generated text is intentional
+	// locality.
+	lines.push('/**');
+	lines.push(' * Freeze a NodeData object and all its array-valued `_*` storage slots.');
+	lines.push(' *');
+	lines.push(' * Generic on `T` so the caller\'s concrete factory-output type flows');
+	lines.push(' * through to the `Readonly<T> & AnyNodeData` return. Hygiene rule 4:');
+	lines.push(' * preserve type information.');
+	lines.push(' */');
+	lines.push('export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {');
+	lines.push('  const rec = node as unknown as Record<string, unknown>;');
+	lines.push('  for (const key of Object.keys(rec)) {');
+	lines.push("    if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {");
+	lines.push('      Object.freeze(rec[key]);');
+	lines.push('    }');
+	lines.push('  }');
+	lines.push('  return Object.freeze(node) as Readonly<T> & AnyNodeData;');
+	lines.push('}');
+	lines.push('');
+
+	lines.push('/**');
+	lines.push(' * Build the `$with` updater namespace for a NodeData.');
+	lines.push(' *');
+	lines.push(' * Each `[storageKey, configKey]` pair becomes a `$with.<configKey>(v)`');
+	lines.push(' * updater that calls `factory({ ...config, <configKey>: v })`. Generic on');
+	lines.push(' * the caller\'s `Config` and per-kind `NodeData` return so updater');
+	lines.push(' * signatures preserve grammar-specific types.');
+	lines.push(' */');
+	lines.push('export function buildWithNamespace<C extends object, R extends AnyNodeData>(');
+	lines.push('  config: C,');
+	lines.push('  factory: (cfg: C) => R,');
+	lines.push('  slotKeys: readonly [storageKey: string, configKey: string][]');
+	lines.push('): { readonly [k: string]: (v: unknown) => R } {');
+	lines.push('  const withNs: Record<string, (v: unknown) => R> = {};');
+	lines.push('  for (const [, configKey] of slotKeys) {');
+	lines.push('    withNs[configKey] = function(v: unknown): R {');
+	lines.push('      return factory({ ...config, [configKey]: v });');
+	lines.push('    };');
+	lines.push('  }');
+	lines.push('  return withNs;');
+	lines.push('}');
+	lines.push('');
+
+	// Codegen-hygiene helpers: consolidate the
+	// `Object.defineProperty` boilerplate that previously appeared
+	// thousands of times across generated factories.ts. Generated factories
+	// now use inline-object-literal method shorthand + spread `_sharedMethods`.
+
+	lines.push('/**');
+	lines.push(' * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)');
+	lines.push(' * that every factory-produced NodeData carries. Spread into each factory');
+	lines.push(' * literal via `..._sharedMethods` — no post-construction `defineProperty`');
+	lines.push(' * boilerplate. Methods are enumerable; functions are dropped by');
+	lines.push(' * `JSON.stringify` regardless, so the only visible difference is');
+	lines.push(' * `Object.keys(node)` includes them.');
+	lines.push(' */');
+	lines.push('/**');
+	lines.push(' * Wrap a factory-built node literal with the four `$`-prefixed shared');
+	lines.push(' * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).');
+	lines.push(' *');
+	lines.push(' * Generic on `T` so the literal type flows through unchanged — the');
+	lines.push(' * return type is `T & { ... methods ... }` so callers retain narrow');
+	lines.push(' * per-kind property types. No spread (rule 6), no `defineProperty`');
+	lines.push(' * (rule 1) — methods are merged via `Object.assign` and become');
+	lines.push(' * enumerable members of the returned object.');
+	lines.push(' */');
+	lines.push('export function withMethods<T extends object>(');
+	lines.push('  node: T');
+	lines.push('): T & {');
+	lines.push('  $render(): string;');
+	lines.push('  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;');
+	lines.push('  $replace(target: { range(): ByteRange }): Edit;');
+	lines.push('  $trivia(): AnyNodeData;');
+	lines.push('} {');
+	lines.push('  return Object.assign(node, {');
+	lines.push('    $render(this: AnyNodeData): string { return render(this); },');
+	lines.push('    $toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {');
+	lines.push('      return toEdit(this, startOrRange, endPos);');
+	lines.push('    },');
+	lines.push('    $replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {');
+	lines.push('      return toEdit(this, target.range());');
+	lines.push('    },');
+	lines.push('    $trivia(this: AnyNodeData): AnyNodeData { return this; },');
+	lines.push('  });');
+	lines.push('}');
+	lines.push('');
+
 
 	// isNodeData
 	lines.push('/**');
@@ -61,7 +152,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		' * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished'
 	);
 	lines.push(' * from loose config bags by the presence of any of:');
-	lines.push(' *   - `$fields` (branch nodes with named children),');
+	lines.push(' *   - `_*` storage keys (branch nodes with named fields, de-hoisted),');
 	lines.push(
 		' *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),'
 	);
@@ -70,13 +161,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	);
 	lines.push(
 		' *   - `$source` (provenance tag stamped by `readNode` and every factory).'
-	);
-	lines.push(' *');
-	lines.push(
-		' * The `$source` discriminant covers container-style branch nodes (e.g. `match_pattern`)'
-	);
-	lines.push(
-		' * that carry neither `$fields` nor `$text` when `SITTIR_DEBUG_TEXT` is unset.'
 	);
 	lines.push(' */');
 	lines.push('export function isNodeData<K extends keyof NamespaceMap>(');
@@ -89,8 +173,13 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push("  if (v === null || typeof v !== 'object') return false;");
 	lines.push('  const o = v as Record<string, unknown>;');
 	lines.push("  if (typeof o['$type'] !== 'number') return false;");
+	// Factory/wrap nodes use `_<name>` storage keys (de-hoisted surface).
+	// Any top-level `_*` key indicates a branch node with named fields.
 	lines.push(
-		"  return (o['$fields'] !== null && typeof o['$fields'] === 'object')"
+		"  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));"
+	);
+	lines.push(
+		"  return hasDehoistedFields"
 	);
 	lines.push("    || typeof o['$text'] === 'string'");
 	lines.push("    || Array.isArray(o['$children'])");
@@ -162,41 +251,8 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		: undefined;
 
 	emitNativeTransportProjection(lines, nodeMap, kindEntries);
-	// Build a symbolName→id lookup from generatedIdTables so that
-	// anonymous-token literals (e.g. ">>=", "not in") can be resolved to
-	// numeric IDs. Their kind strings match the ts_symbol_names[] symbol
-	// values, not the prefix-stripped cName keys in kindIdByKind.
-	const symbolNameToId = generatedIdTables
-		? buildSymbolNameToIdMap(generatedIdTables)
-		: undefined;
-	emitNativeTransportAssertions(lines, nodeMap, kindEntries, symbolNameToId);
 
 	return lines.join('\n');
-}
-
-/**
- * Build a map from ts_symbol_names[] symbol values to parser IDs.
- * Used to resolve anonymous-token literals (e.g. `">>="`  → 81) that
- * don't appear as named rule kinds in the nodeMap but DO have parser symbols.
- */
-function buildSymbolNameToIdMap(generatedIdTables: GeneratedIdTables): Map<string, number> {
-	const result = new Map<string, number>();
-	const ids = generatedIdTables.kindIds;
-	if (!ids) return result;
-	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
-	for (const [, value] of entries) {
-		if (typeof value === 'number') continue; // legacy number-only entry — no symbolName
-		const entry = value as { id?: number; parser?: { symbolName?: string } };
-		if (entry.id === undefined) continue;
-		if (entry.parser?.symbolName) {
-			// Only add if not already mapped (prefer named rules over anonymous tokens
-			// when symbol names collide, but anonymous tokens are usually unique).
-			if (!result.has(entry.parser.symbolName)) {
-				result.set(entry.parser.symbolName, entry.id);
-			}
-		}
-	}
-	return result;
 }
 
 function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): void {
@@ -209,8 +265,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 		'export function toNativeRenderTransport(node: unknown): AnyTransport {'
 	);
 	lines.push("  const projected = projectTransportValue(node, 'node');");
-	lines.push('  assertNativeRenderTransport(projected);');
-	lines.push('  return projected;');
+	lines.push('  return projected as AnyTransport;');
 	lines.push('}');
 	lines.push('');
 	lines.push(
@@ -231,7 +286,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('    return { $type: value, $text: value };');
 	lines.push('  }');
 	lines.push('  if (!isRecord(value)) return value;');
-	lines.push('  // Phase D: $type must be numeric (TSKindId). However, factory-constructed');
+	lines.push('  // $type must be numeric (TSKindId). However, factory-constructed');
 	lines.push('  // children can carry a string kind name when kindIdFromName was not invoked');
 	lines.push('  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution');
 	lines.push('  // via kindIdFromName so the full projection pipeline runs.');
@@ -249,7 +304,7 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  if (numericType === undefined) return value;');
 	lines.push('');
 	lines.push('  // Resolve the wire kind name (including alias rewriting) for internal');
-	lines.push('  // routing. $type is always numeric in Phase D.');
+	lines.push('  // routing. $type is always numeric after projection.');
 	lines.push('  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));');
 	lines.push('');
 	lines.push('  const projected: Record<string, unknown> = {};');
@@ -262,23 +317,19 @@ function emitNativeTransportProjection(lines: string[], nodeMap: NodeMap, kindEn
 	lines.push('  // Temporarily store string kind for routing; converted to numeric below.');
 	lines.push('  projected.$type = resolvedKind;');
 	lines.push('');
-	lines.push('  const fields = value.$fields;');
-	lines.push('  if (isRecord(fields)) {');
-	lines.push('    for (const [key, child] of Object.entries(fields)) {');
-	lines.push(
-		'      projected[key] = projectTransportValue(child, `${path}.${key}`);'
-	);
-	lines.push('    }');
-	lines.push('  }');
-	lines.push('');
+	// Factory/wrap nodes store fields under `_<name>` keys (de-hoisted surface).
+	// Iterate all enumerable keys; strip the leading `_`
+	// when projecting to native transport so the transport receives the plain
+	// snake_case field name (e.g. `_name` → `name` field in Rust struct).
 	lines.push('  for (const [key, child] of Object.entries(value)) {');
-	lines.push('    if (transportMetadataKeys.has(key) || key === "$fields") continue;');
+	lines.push('    if (transportMetadataKeys.has(key)) continue;');
 	lines.push(
 		"    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;"
 	);
 	lines.push('    if (typeof child === "function") continue;');
-	lines.push('    if (key in projected) continue;');
-	lines.push('    projected[key] = projectTransportValue(child, `${path}.${key}`);');
+	lines.push("    const projKey = key.startsWith('_') ? key.slice(1) : key;");
+	lines.push('    if (projKey in projected) continue;');
+	lines.push('    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);');
 	lines.push('  }');
 	lines.push('');
 	lines.push('  projectRawChildrenIntoFields(projected, resolvedKind);');
@@ -528,6 +579,14 @@ function emitNativeTransportProjectionRules(
 	lines.push('  }');
 	lines.push('  return value;');
 	lines.push('}');
+	lines.push('');
+	lines.push(
+		'function isRecord(value: unknown): value is Record<string, unknown> {'
+	);
+	lines.push(
+		"  return value !== null && typeof value === 'object' && !Array.isArray(value);"
+	);
+	lines.push('}');
 }
 
 /**
@@ -558,7 +617,7 @@ function collectTerminalTransportKinds(nodeMap: NodeMap): string[] {
  * @returns true if every alternative in the field resolves to a terminal
  * kind (leaf/keyword/token/enum) or an inline literal.
  */
-function isFieldTerminalOnly(field: AssembledField, nodeMap: NodeMap): boolean {
+function isFieldTerminalOnly(field: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	const components = fieldTypeComponents(field, nodeMap);
 	if (components.length === 0) return false;
 	for (const component of components) {
@@ -591,14 +650,13 @@ function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> 
 	for (const [, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'group':
 				break;
 			case 'polymorph':
 				// For polymorphs, check each form's fields
 				if (node.forms.length > 0) {
 					for (const form of node.forms) {
-						const terminalFields = form.structuralFields
+						const terminalFields = form.fields
 							.filter((field) => isFieldTerminalOnly(field, nodeMap))
 							.map((field) => field.name);
 						if (terminalFields.length > 0) {
@@ -612,7 +670,9 @@ function collectTerminalCollapseFields(nodeMap: NodeMap): Map<string, string[]> 
 			default:
 				continue;
 		}
-		const terminalFields = node.structuralFields
+		// node is narrowed to 'branch' | 'group' here (polymorph + default
+		// continued out of the switch above).
+		const terminalFields = node.fields
 			.filter((field) => isFieldTerminalOnly(field, nodeMap))
 			.map((field) => field.name);
 		if (terminalFields.length > 0) {
@@ -639,9 +699,11 @@ function nativeTransportRawChildRuleEntries(
 ): NativeTransportRawChildRuleEntry[] {
 	const entries: NativeTransportRawChildRuleEntry[] = [];
 	for (const [, node] of nodeMap.nodes) {
-		const fields = node.structuralFields.filter((field) => isMultiple(field));
+		const fields = structuralFieldsOf(node).filter((field) =>
+			isMultiple(field)
+		);
 		if (fields.length === 0) continue;
-		const children = node.structuralChildren;
+		const children = structuralChildrenOf(node);
 		entries.push({
 			kind: node.kind,
 			childrenRequired: children.some((child) => isRequired(child)),
@@ -687,10 +749,10 @@ function nativeTransportVariantRuleEntries(
 		entries.push({
 			kind: node.kind,
 			rules: node.forms.map((form) => {
-				const children = form.structuralChildren;
+				const children = form.children;
 				return {
 					variant: form.name,
-					fields: form.structuralFields.map((field) => ({
+					fields: form.fields.map((field) => ({
 						name: field.name,
 						multiple: isMultiple(field),
 						required: isRequired(field),
@@ -714,489 +776,13 @@ function nativeTransportVariantRuleEntries(
 	return entries.sort((a, b) => a.kind.localeCompare(b.kind));
 }
 
-function emitNativeTransportAssertions(
-	lines: string[],
-	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[],
-	symbolNameToId?: Map<string, number>
-): void {
-	const projection = collectTransportProjection(nodeMap);
-	const validators = projection.nodes;
-
-	// Build kind→id lookup for numeric switch when kindEntries available.
-	// Includes both the catalog key (e.g. `_expression_statement_tuple`)
-	// and the symbol name (e.g. `expression_statement_tuple`) so nodeMap
-	// kinds that use the symbol spelling resolve correctly.
-	const kindIdByKind = kindEntries
-		? (() => {
-				const m = new Map<string, number>();
-				for (const e of kindEntries) {
-					m.set(e.kind, e.id);
-					if (e.symbolName !== undefined) m.set(e.symbolName, e.id);
-				}
-				return m;
-			})()
-		: undefined;
-
-	lines.push('/**');
-	lines.push(
-		' * Assert that a value is a grammar-local native render transport object.'
-	);
-	lines.push(' *');
-	lines.push(
-		' * This intentionally validates the generated transport shape here instead of'
-	);
-	lines.push(
-		' * routing through the generic @sittir/core assertRenderableNodeData validator.'
-	);
-	lines.push(' */');
-	lines.push(
-		'export function assertNativeRenderTransport(node: unknown): asserts node is AnyTransport {'
-	);
-	lines.push(
-		"  if (!isRecord(node)) throw new TypeError('node must be an object');"
-	);
-	// $type must be numeric — TSGrammar-only kinds (inlined by tree-sitter,
-	// no parser symbol) are filtered out at emission time and can never reach
-	// the wire. Hard-throw on any non-numeric $type.
-	lines.push(
-		"  if (typeof node.$type !== 'number') {",
-		"    throw new TypeError('node.$type must be a KindId (number)');",
-		"  }"
-	);
-	lines.push("  assertDataOnlyObject(node, 'node');");
-
-	// Build case expressions. Only kinds with a numeric parser ID are emitted.
-	// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) are skipped:
-	// they can never reach the wire, so validator switch arms for them are dead code.
-	const nodeCaseEntries: Array<{ caseExpr: string; kind: string; typeName: string }> = [];
-	for (const node of validators) {
-		const id = kindIdByKind?.get(node.kind);
-		if (id === undefined) {
-			// TSGrammar-only kind — cannot reach the wire. Skip emission.
-			continue;
-		}
-		nodeCaseEntries.push({ caseExpr: String(id), kind: node.kind, typeName: node.typeName });
-	}
-	const literalCaseEntries: Array<{ caseExpr: string; kind: string; text: string }> = [];
-	for (const literal of projection.literals) {
-		// First try nodeMap-scoped kind lookup, then fall back to display-name
-		// lookup (for anonymous-token literals like ">>=", "not in" whose
-		// literal.kind is the display text rather than a grammar rule name).
-		const id = kindIdByKind?.get(literal.kind) ?? symbolNameToId?.get(literal.kind);
-		if (id === undefined) {
-			// TSGrammar-only kind — cannot reach the wire. Skip emission.
-			continue;
-		}
-		literalCaseEntries.push({ caseExpr: String(id), kind: literal.kind, text: literal.text });
-	}
-
-	lines.push(`  switch (node.$type) {`);
-	for (const { caseExpr, kind, typeName } of nodeCaseEntries) {
-		lines.push(`    case ${caseExpr}: // ${kind}`);
-		lines.push(`      assert${typeName}Transport(node, 'node');`);
-		lines.push('      return;');
-	}
-	for (const { caseExpr, kind, text } of literalCaseEntries) {
-		lines.push(`    case ${caseExpr}: // ${kind}`);
-		lines.push(
-			`      assertLiteralTransport(node, 'node', ${JSON.stringify(kind)}, ${JSON.stringify(text)});`
-		);
-		lines.push('      return;');
-	}
-	lines.push('    default:');
-	lines.push(
-		'      throw new TypeError(`unsupported native transport kind: ${String(node.$type)}`);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-
-	lines.push(
-		'function isRecord(value: unknown): value is Record<string, unknown> {'
-	);
-	lines.push(
-		"  return value !== null && typeof value === 'object' && !Array.isArray(value);"
-	);
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertDataOnlyObject(value: unknown, path: string): void {'
-	);
-	lines.push("  if (typeof value === 'function') {");
-	lines.push(
-		'    throw new TypeError(`${path} must be data-only; found function`);'
-	);
-	lines.push('  }');
-	lines.push('  if (value === null || typeof value !== "object") return;');
-	lines.push('  if (Array.isArray(value)) {');
-	lines.push('    for (let i = 0; i < value.length; i++) {');
-	lines.push('      assertDataOnlyObject(value[i], `${path}[${i}]`);');
-	lines.push('    }');
-	lines.push('    return;');
-	lines.push('  }');
-	lines.push('  for (const [key, child] of Object.entries(value)) {');
-	lines.push("    if (key === '$format') {");
-	lines.push(
-		'      throw new TypeError(`${path}.$format is not supported by the native render boundary; pass format separately`);'
-	);
-	lines.push('    }');
-	lines.push(
-		"    if (key === 'render' || key === 'toEdit' || key === 'replace') {"
-	);
-	lines.push(
-		'      throw new TypeError(`${path}.${key} is not allowed on native render transport`);'
-	);
-	lines.push('    }');
-	lines.push('    if (typeof child === "function") {');
-	lines.push(
-		'      throw new TypeError(`${path}.${key} must be data-only; found function`);'
-	);
-	lines.push('    }');
-	lines.push('    assertDataOnlyObject(child, `${path}.${key}`);');
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertTransportKind(node: Record<string, unknown>, path: string, kind: string): void {'
-	);
-	// Phase D: $type is always numeric.
-	lines.push('  if (node.$type !== kindIdFromName(kind)) {');
-	lines.push(
-		'    throw new TypeError(`${path}.$type must be the KindId for ${JSON.stringify(kind)}`);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertTransportVariant(node: Record<string, unknown>, path: string, variant: string): void {'
-	);
-	lines.push('  if (node.$variant !== variant) {');
-	lines.push(
-		'    throw new TypeError(`${path}.$variant must be ${JSON.stringify(variant)}`);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertLiteralTransport(node: Record<string, unknown>, path: string, kind: string, text: string): void {'
-	);
-	lines.push('  assertTransportKind(node, path, kind);');
-	lines.push('  assertOptionalMetadata(node, path);');
-	lines.push('  assertTextIn(node.$text, `${path}.$text`, [text] as const);');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertOptionalString(value: unknown, path: string): void {'
-	);
-	lines.push(
-		"  if (value !== undefined && typeof value !== 'string') throw new TypeError(`${path} must be a string`);"
-	);
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertOptionalBoolean(value: unknown, path: string): void {'
-	);
-	lines.push(
-		"  if (value !== undefined && typeof value !== 'boolean') throw new TypeError(`${path} must be a boolean`);"
-	);
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertOptionalSpan(value: unknown, path: string): void {'
-	);
-	lines.push('  if (value === undefined) return;');
-	lines.push(
-		'  if (!isRecord(value)) throw new TypeError(`${path} must be an object`);'
-	);
-	lines.push(
-		"  if (typeof value.start !== 'number') throw new TypeError(`${path}.start must be a number`);"
-	);
-	lines.push(
-		"  if (typeof value.end !== 'number') throw new TypeError(`${path}.end must be a number`);"
-	);
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertOptionalMetadata(node: Record<string, unknown>, path: string): void {'
-	);
-	lines.push('  const source = node.$source;');
-	lines.push(
-		"  if (source !== undefined && source !== 0 && source !== 1 && source !== 2) {"
-	);
-	lines.push(
-		'    throw new TypeError(`${path}.$source must be 0 (ts), 1 (sg), or 2 (factory)`);'
-	);
-	lines.push('  }');
-	lines.push('  assertOptionalBoolean(node.$named, `${path}.$named`);');
-	lines.push('  assertOptionalString(node.$text, `${path}.$text`);');
-	lines.push('  assertOptionalSpan(node.$span, `${path}.$span`);');
-	lines.push(
-		"  if (node.$nodeHandle !== undefined && typeof node.$nodeHandle !== 'number') {"
-	);
-	lines.push('    throw new TypeError(`${path}.$nodeHandle must be a number`);');
-	lines.push('  }');
-	lines.push(
-		"  if (node.$childIndex !== undefined && typeof node.$childIndex !== 'number') {"
-	);
-	lines.push('    throw new TypeError(`${path}.$childIndex must be a number`);');
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertTransportValue(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {'
-	);
-	// Terminal kinds are collapsed to plain strings by projectTransportValue.
-	// Accept strings here — they match any alternative whose text matches the value
-	// (or any alternative without a text constraint, since we can't verify the kind
-	// from a bare string).
-	lines.push("  if (typeof value === 'string') {");
-	lines.push('    const textMatch = alternatives.some((candidate) => candidate.text === undefined || candidate.text === value);');
-	lines.push('    if (!textMatch) {');
-	lines.push('      const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");');
-	lines.push('      throw new TypeError(`${path} must be one of: ${allowed}`);');
-	lines.push('    }');
-	lines.push('    return;');
-	lines.push('  }');
-	lines.push(
-		'  if (!isRecord(value)) throw new TypeError(`${path} must be a transport node or terminal value`);'
-	);
-	// Phase D: structured nodes have numeric $type; anonymous-token terminals
-	// (e.g., bare ";" converted to { $type: ";", $text: ";" }) keep a string $type.
-	// Accept both at the child level; only recurse into assertNativeRenderTransport
-	// for structured (numeric) nodes.
-	lines.push(
-		"  if (typeof value.$type !== 'number' && typeof value.$type !== 'string') throw new TypeError(`${path}.$type must be a number or string`);"
-	);
-	lines.push('  const accepted = alternatives.some((candidate) => {');
-	// `kindIdFromName` only resolves by canonical catalog key, not by
-	// symbolName (e.g. '+', ';'). For symbolName-typed alternatives
-	// (anonymous-token terminals), the candidate.type won't be in the catalog
-	// so kindIdFromName throws. Wrap in a try/catch and fall back to false:
-	// if the alternative can't be resolved to a numeric id, it simply doesn't
-	// match a numeric $type (the string-$type branch below handles those cases).
-	lines.push('    const typeMatch = typeof value.$type === "number"');
-	lines.push('      ? (() => { try { return value.$type === kindIdFromName(candidate.type); } catch { return false; } })()');
-	lines.push('      : value.$type === candidate.type;');
-	lines.push('    if (!typeMatch) return false;');
-	lines.push(
-		'    return candidate.text === undefined || value.$text === candidate.text;'
-	);
-	lines.push('  });');
-	lines.push('  if (!accepted) {');
-	lines.push(
-		'    const allowed = alternatives.map((candidate) => candidate.text === undefined ? candidate.type : `${candidate.type}:${candidate.text}`).join(", ");'
-	);
-	lines.push('    throw new TypeError(`${path} must be one of: ${allowed}`);');
-	lines.push('  }');
-	// Only recurse into assertNativeRenderTransport for structured (numeric $type) nodes.
-	// String-$type values are anonymous-token terminals — kind+text match above is sufficient.
-	lines.push('  if (typeof value.$type === "number") assertNativeRenderTransport(value);');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertTransportArray(value: unknown, path: string, alternatives: readonly { readonly type: string; readonly text?: string }[]): void {'
-	);
-	lines.push(
-		'  if (!Array.isArray(value)) throw new TypeError(`${path} must be an array`);'
-	);
-	lines.push('  for (let i = 0; i < value.length; i++) {');
-	lines.push(
-		'    assertTransportValue(value[i], `${path}[${i}]`, alternatives);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'function assertTextIn(value: unknown, path: string, accepted: readonly string[]): void {'
-	);
-	lines.push(
-		"  if (typeof value !== 'string') throw new TypeError(`${path} must be a string`);"
-	);
-	lines.push('  if (!accepted.includes(value)) {');
-	lines.push(
-		'    throw new TypeError(`${path} must be one of: ${accepted.join(", ")}`);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-
-	for (const node of validators) {
-		emitPerKindTransportValidator(lines, node, nodeMap);
-	}
-}
-
-function emitPerKindTransportValidator(
-	lines: string[],
-	node: AssembledNode,
-	nodeMap: NodeMap
-): void {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		emitPolymorphTransportValidator(lines, node, nodeMap);
-		return;
-	}
-	lines.push(
-		`function assert${node.typeName}Transport(node: Record<string, unknown>, path: string): void {`
-	);
-	lines.push(
-		`  assertTransportKind(node, path, ${JSON.stringify(node.kind)});`
-	);
-	lines.push('  assertOptionalMetadata(node, path);');
-	switch (node.modelType) {
-		case 'branch':
-		case 'container':
-		case 'group':
-		case 'polymorph':
-			emitStructuralValidatorBody(lines, node, nodeMap);
-			break;
-		case 'leaf':
-		case 'keyword':
-		case 'token':
-		case 'enum':
-			emitTerminalTextValidator(lines, node);
-			break;
-	}
-	lines.push('}');
-	lines.push('');
-}
-
-function emitPolymorphTransportValidator(
-	lines: string[],
-	node: Extract<AssembledNode, { modelType: 'polymorph' }>,
-	nodeMap: NodeMap
-): void {
-	lines.push(
-		`function assert${node.typeName}Transport(node: Record<string, unknown>, path: string): void {`
-	);
-	lines.push(
-		`  assertTransportKind(node, path, ${JSON.stringify(node.kind)});`
-	);
-	lines.push('  assertOptionalMetadata(node, path);');
-	lines.push("  if (typeof node.$variant !== 'string') {");
-	lines.push('    throw new TypeError(`${path}.$variant must be a string`);');
-	lines.push('  }');
-	lines.push('  switch (node.$variant) {');
-	for (const form of node.forms) {
-		lines.push(`    case ${JSON.stringify(form.name)}:`);
-		lines.push(`      assert${form.typeName}Transport(node, path);`);
-		lines.push('      return;');
-	}
-	lines.push('    default:');
-	lines.push(
-		'      throw new TypeError(`unsupported native transport variant for ${path}: ${String(node.$variant)}`);'
-	);
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-
-	for (const form of node.forms) {
-		lines.push(
-			`function assert${form.typeName}Transport(node: Record<string, unknown>, path: string): void {`
-		);
-		lines.push(
-			`  assertTransportVariant(node, path, ${JSON.stringify(form.name)});`
-		);
-		emitStructuralValidatorBody(lines, form, nodeMap);
-		lines.push('}');
-		lines.push('');
-	}
-}
-
-function emitStructuralValidatorBody(
-	lines: string[],
-	node: Extract<
-		AssembledNode,
-		{ modelType: 'branch' | 'container' | 'group' | 'polymorph' }
-	>,
-	nodeMap: NodeMap
-): void {
-	const fields = node.structuralFields;
-	if (fields.length > 0) {
-		for (const field of fields) {
-			const access = `node[${JSON.stringify(field.name)}]`;
-			const fieldPath = `\`${'${path}'}.${field.name}\``;
-			const alternatives = transportAlternativesExpr(
-				fieldTransportAlternatives(field, nodeMap)
-			);
-			if (isRequired(field)) {
-				lines.push(
-					`  if (${access} === undefined) throw new TypeError(${fieldPath} + ' is required');`
-				);
-			}
-			if (isMultiple(field)) {
-				lines.push(
-					`  if (${access} !== undefined) assertTransportArray(${access}, ${fieldPath}, ${alternatives});`
-				);
-			} else {
-				lines.push(
-					`  if (${access} !== undefined) assertTransportValue(${access}, ${fieldPath}, ${alternatives});`
-				);
-			}
-		}
-	}
-	const children = node.structuralChildren;
-	if (children.length > 0) {
-		const alternatives = transportAlternativesExpr(
-			children.flatMap((child) =>
-				child.values.flatMap((value) =>
-					transportAlternativesForSlotValue(value, nodeMap)
-				)
-			)
-		);
-		const required = children.some((child: AssembledChild) =>
-			isRequired(child)
-		);
-		if (required) {
-			lines.push(
-				'  if (node.$children === undefined) throw new TypeError(`${path}.$children is required`);'
-			);
-		}
-		lines.push('  if (node.$children !== undefined) {');
-		lines.push(
-			'    if (!Array.isArray(node.$children)) throw new TypeError(`${path}.$children must be an array`);'
-		);
-		lines.push('    for (let i = 0; i < node.$children.length; i++) {');
-		lines.push(
-			`      assertTransportValue(node.$children[i], \`${'${path}'}.$children[\${i}]\`, ${alternatives});`
-		);
-		lines.push('    }');
-		lines.push('  }');
-	}
-}
-
-function emitTerminalTextValidator(lines: string[], node: AssembledNode): void {
-	const accepted = terminalAcceptedTexts(node);
-	if (accepted.length === 0) {
-		lines.push(
-			"  if (typeof node.$text !== 'string') throw new TypeError(`${path}.$text must be a string`);"
-		);
-		return;
-	}
-	lines.push(
-		`  assertTextIn(node.$text, \`${'${path}'}.$text\`, ${JSON.stringify(accepted)} as const);`
-	);
-}
-
-function terminalAcceptedTexts(node: AssembledNode): string[] {
-	switch (node.modelType) {
-		case 'keyword':
-			return [node.text];
-		case 'token':
-			return node.text === undefined ? [] : [node.text];
-		case 'enum':
-			return node.values;
-		default:
-			return [];
-	}
-}
-
 interface TransportAlternative {
 	readonly type: string;
 	readonly text?: string;
 }
 
 function fieldTransportAlternatives(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): TransportAlternative[] {
 	return fieldTypeComponents(field, nodeMap).flatMap((component) => {

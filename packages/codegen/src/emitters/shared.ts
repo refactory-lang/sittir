@@ -5,8 +5,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type {
-	AssembledField,
-	AssembledChild,
+	AssembledNonterminal,
 	NodeOrTerminal,
 	AssembledNode
 } from '../compiler/node-map.ts';
@@ -15,14 +14,14 @@ import {
 	AssembledToken,
 	AssembledEnum,
 	AssembledBranch,
-	AssembledContainer,
 	AssembledGroup,
 	isNodeRef,
 	isTerminalValue,
 	isUnresolvedRef,
 	isRequired,
 	isMultiple,
-	isNonEmpty
+	isNonEmpty,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 
 // Re-export derived helpers so emitters can import from one place.
@@ -57,19 +56,7 @@ export { isRequired, isMultiple, isNonEmpty };
 export function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = new Set<string>();
 	for (const [, n] of nodeMap.nodes) {
-		const fieldSlots =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
-					: [];
-		const childSlots =
-			n.modelType === 'branch' ||
-			n.modelType === 'container' ||
-			n.modelType === 'group'
-				? (n.children ?? [])
-				: [];
-		for (const slot of [...fieldSlots, ...childSlots]) {
+		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
@@ -110,22 +97,13 @@ export function referencedKinds(nodeMap: NodeMap): Set<string> {
 		switch (node.modelType) {
 			case 'branch':
 			case 'group':
-				for (const f of node.fields)
-					for (const t of slotKindNames(f)) referenced.add(t);
-				for (const c of node.children ?? [])
-					for (const t of slotKindNames(c)) referenced.add(t);
-				break;
-			case 'container':
-				for (const c of node.children)
-					for (const t of slotKindNames(c)) referenced.add(t);
+				for (const s of Object.values(node.slots))
+					for (const t of slotKindNames(s)) referenced.add(t);
 				break;
 			case 'polymorph':
-				for (const form of node.forms) {
-					for (const f of form.fields)
-						for (const t of slotKindNames(f)) referenced.add(t);
-					for (const c of form.children)
-						for (const t of slotKindNames(c)) referenced.add(t);
-				}
+				for (const form of node.forms)
+					for (const s of Object.values(form.slots))
+						for (const t of slotKindNames(s)) referenced.add(t);
 				break;
 			case 'supertype':
 				for (const t of node.subtypes) referenced.add(t);
@@ -206,7 +184,7 @@ function _identOrQuoted(name: string): string {
  * output shape is unchanged and round-trips with readNode remain identical.
  */
 export function resolveEffectiveLiteral(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): string | undefined {
 	// Only required fields are auto-stamped — optional fields control
@@ -252,7 +230,7 @@ export function resolveEffectiveLiteral(
  * i.e., the field is auto-stamp-eligible per ADR-0010 phase 1.
  */
 export function isAutoStampField(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): boolean {
 	return resolveEffectiveLiteral(field, nodeMap) !== undefined;
@@ -300,8 +278,7 @@ export function resolveHiddenKeywordLiteral(
 }
 
 // ---------------------------------------------------------------------------
-// Generic slot helpers — work on AssembledChild (the base shared by both
-// AssembledField and the plain child slot descriptors).
+// Generic slot helpers — work on AssembledNonterminal (unified slot type).
 // ---------------------------------------------------------------------------
 
 /**
@@ -320,12 +297,12 @@ export function resolveHiddenKeywordLiteral(
  * is user-determined.
  *
  * @remarks
- * This function works on any `AssembledChild` (base type), meaning it
- * applies equally to fields and children. The `isParameterless` property
- * on `AssembledNodeBase` must already be populated before calling this.
+ * This function works on any `AssembledNonterminal`, applying equally to
+ * named-field slots and inferred-positional slots. The `isParameterless`
+ * property on `AssembledNodeBase` must already be populated before calling.
  */
 export function isAutoStampSlot(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodeMap: NodeMap
 ): boolean {
 	if (!isRequired(slot)) return true; // optional → does not block
@@ -381,7 +358,7 @@ export function isAutoStampSlot(
  * children slots too.
  */
 export function stampExpressionFor(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodeMap: NodeMap,
 	context: 'field' | 'child' = 'field'
 ): string | undefined {
@@ -482,7 +459,7 @@ export type TypeComponent =
  *   in `field.values`). Callers deduplicate at emission time.
  */
 export function fieldTypeComponents(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): TypeComponent[] {
 	const out: TypeComponent[] = [];
@@ -551,7 +528,7 @@ export interface HoistedForm {
 	 * factory.
 	 */
 	readonly innerFactoryName: string | undefined;
-	readonly innerFields: readonly AssembledField[];
+	readonly innerFields: readonly AssembledNonterminal[];
 }
 
 /**
@@ -570,7 +547,7 @@ export interface HoistedForm {
  * - That slot is required AND not multiple.
  * - That slot's `values` resolve to exactly one kind (no choice / union).
  * - The inner kind resolves to a field-carrying node (AssembledBranch,
- *   AssembledContainer, or AssembledGroup) whose `fields.length > 0`.
+ *   or AssembledGroup) whose `fields.length > 0`.
  * - The inner node has a `rawFactoryName` (we need a factory call to
  *   reconstruct the child).
  * - Form-level and inner-level field names must not collide (same property
@@ -605,22 +582,21 @@ export function resolveHoistedForm(
 	const inner = nodeMap.nodes.get(innerKind);
 	if (!inner) return undefined;
 
+	// Phase 1d.vii (spec 022): `AssembledBranch` now covers both the
+	// former branch (has fields) and former container (children-only)
+	// shapes. The hoisted-path emitter still distinguishes them via the
+	// inner-fields count below.
 	const isFieldCarrier =
-		inner instanceof AssembledBranch ||
-		inner instanceof AssembledContainer ||
-		inner instanceof AssembledGroup;
+		inner instanceof AssembledBranch || inner instanceof AssembledGroup;
 	if (!isFieldCarrier) return undefined;
 
-	// Inner fields (Branch / Group with fields). Containers have no
-	// fields — their Config surface is `{ children?: [...] }` which
-	// is picked up via ChildSlotsOf hoisting. `innerFields` is empty
+	// Inner fields (Branch / Group with fields). Container-shape branches
+	// have no fields — their Config surface is `{ children?: [...] }`
+	// which is picked up via ChildSlotsOf hoisting. `innerFields` is empty
 	// in that case; the hoisted-path emitter detects it and emits a
 	// `config.children`-based inner construction call instead of a
 	// Config-forwarding one.
-	const innerFields =
-		inner instanceof AssembledBranch || inner instanceof AssembledGroup
-			? (inner.fields ?? [])
-			: [];
+	const innerFields = inner.fields;
 
 	// Collision check: a property name on the form AND the inner child
 	// would produce an ambiguous hoisted Config surface. Bail out —
@@ -718,7 +694,7 @@ function resolveEntryLiteral(
  * @see ADR-0012 for the motivation and the three-row taxonomy.
  */
 export function keywordPresenceKind(
-	field: AssembledChild,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): 'boolean' | 'bitflag' | null {
 	if (field.values.length === 0) return null;
@@ -755,7 +731,7 @@ export function keywordPresenceKind(
  * the field is not a boolean-keyword field.
  */
 export function keywordPresenceValue(
-	field: AssembledChild,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): string | undefined {
 	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
@@ -775,7 +751,7 @@ export function keywordPresenceValue(
  * the canonical render / enum-declaration order.
  */
 export function keywordPresenceValues(
-	field: AssembledChild,
+	field: AssembledNonterminal,
 	nodeMap: NodeMap
 ): readonly string[] {
 	if (keywordPresenceKind(field, nodeMap) !== 'bitflag') return [];
@@ -797,7 +773,7 @@ export function keywordPresenceValues(
  * enum needs a `None = 0` member (repeat allows zero → yes, repeat1 no).
  */
 export function keywordPresenceIsNonEmptyRepeat(
-	field: AssembledChild
+	field: AssembledNonterminal
 ): boolean {
 	if (field.values.length === 0) return false;
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');

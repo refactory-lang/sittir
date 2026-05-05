@@ -14,7 +14,7 @@ import {
 } from '../emitters/templates.ts';
 import {
 	AssembledBranch,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword
 } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -35,7 +35,7 @@ function makeMinimalNodeMap(): NodeMap {
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
 		[
 			'identifier',
-			new AssembledLeaf('identifier', { type: 'pattern', value: '[a-z]+' })
+			new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
 		],
 		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
 	]);

@@ -266,7 +266,7 @@ export interface SymbolRule {
 	 * whose shape the parse tree body follows (while tree-sitter emits
 	 * the node with `$type === name`, the alias target). Preserved so
 	 * the wrap emitter can rewrite \$type at drill-in via drillAs().
-	 * See ADR-0006.
+	 * Used by the wrap emitter for alias-target rewrites.
 	 */
 	readonly aliasedFrom?: string;
 }

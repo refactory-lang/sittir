@@ -23,3 +23,8 @@ export {
 	isNativeNodeData
 } from './native-boundary.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
+export {
+	freezeNodeData,
+	buildWithNamespace,
+	materializeStub
+} from './nodeData.ts';

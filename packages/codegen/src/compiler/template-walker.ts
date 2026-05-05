@@ -7,7 +7,7 @@
  *   sibling helpers call {@link renderRuleTemplate} to produce the
  *   `{ template, clauses, joinByField }` triple stored on the node model.
  * - `emitters/templates.ts` — the YAML emitter reads the same triple
- *   when serialising per-rule entries into `templates.yaml`.
+ *   when serialising per-rule entries into `templates directory`.
  *
  * The walker only consumes the Rule model — it has no coupling to
  * AssembledNode. That keeps the template surface pure-rule-driven:
@@ -497,7 +497,7 @@ function walkRuleForTemplate(
 					}
 				}
 			}
-			// Cluster H (016): string-template detection. When the seq is
+			// String-template detection. When the seq is
 			// wrapped in matching string-quote delimiters (`` ` ``, `"`,
 			// `'`) and the body is a separator-less repeat over visible
 			// children (e.g. `seq("`", repeat(choice(string_fragment,
@@ -624,7 +624,7 @@ function walkRuleForTemplate(
 					// literal for spacing rather than the placeholder's own
 					// identifier characters.
 					//
-					// Cluster F step 3 (016): the walker now emits
+					// The walker now emits
 					// Jinja-inline conditionals (`{% if x | isPresent %}…{% endif %}`)
 					// directly for synthesized optional emissions, so a
 					// part can begin/end with `{%`. For spacing decisions
@@ -644,7 +644,7 @@ function walkRuleForTemplate(
 							' '
 						);
 						if (!moved) {
-							// Cluster H (016): conversely, when the tail
+							// Conversely, when the tail
 							// of out is a Jinja conditional, route the
 							// separator INSIDE that conditional's body
 							// (so it vanishes alongside an absent optional)
@@ -784,7 +784,7 @@ function walkRuleForTemplate(
 					optionalFields
 				)
 			];
-			// Cluster H (016): placeholders coming from non-primary
+			// Placeholders coming from non-primary
 			// branches in a heterogeneous-literal choice are conditional
 			// on those branches firing at parse time. Wrap each `$NAME`
 			// placeholder in a Jinja `{% if name | isPresent %}…{% endif %}`
@@ -826,8 +826,8 @@ function walkRuleForTemplate(
 		}
 
 		case 'optional': {
-			// Cluster F step 3 (016): emit Jinja inline directly for
-			// every synthesized optional case. No `clauses` map writes,
+			// Emit Jinja inline directly for every synthesized optional
+			// case. No `clauses` map writes,
 			// no `$NAME_CLAUSE` placeholder indirection — the walker
 			// produces the final `{% if X | isPresent %}body{% endif %}`
 			// wrapper here so downstream `inlineJinjaClauses` only
@@ -1018,8 +1018,8 @@ function walkRuleForTemplate(
 				const inner = rule.content.content;
 				const optFlank = extractFlankingLiterals(inner);
 				if (optFlank.leading || optFlank.trailing) {
-					// Cluster F step 3 (016): emit Jinja inline directly
-					// — no synthesized `<field>_clause` companion. The
+					// Emit Jinja inline directly — no synthesized
+					// `<field>_clause` companion. The
 					// flanking literals belong INSIDE the conditional so
 					// they only render when the field is populated.
 					const body = `${optFlank.leading}${slot}${optFlank.trailing}`;
@@ -1154,7 +1154,7 @@ function walkRuleForTemplate(
 			);
 
 		case 'clause': {
-			// Cluster F step 3 (016): emit Jinja-inline directly using
+			// Emit Jinja-inline directly using
 			// the clause's name as the conditional predicate and its
 			// content's walked output as the body. The `clause(name, ...)`
 			// node was minted by Link's `detectClause` from a flanking-
@@ -1304,7 +1304,7 @@ function extractSingleKeywordString(rule: Rule): string | null {
  * (string/pattern/symbol literals, punctuation-only branches, or
  * branches with multiple named fields). Falls back to default walk.
  *
- * Cluster F step 3 (016) replaces the older `liftChoiceBranchesToClauses`
+ * Replaces the older `liftChoiceBranchesToClauses`
  * — emits Jinja inline so no synthesized `<field>_clause` companion
  * variable enters the template. The body's `$NAME` placeholder gets
  * translated to `{{ name }}` by the downstream `translateToJinja`
@@ -1545,7 +1545,7 @@ function collectFieldsWithRepeatFlag(
 }
 
 /**
- * Cluster F step 3 (016): for a Jinja-inline optional emission whose
+ * For a Jinja-inline optional emission whose
  * head fragment opens with `{% if X | isPresent %}`, route the leading
  * `separator` INSIDE the conditional body so it disappears alongside
  * an absent value.
@@ -1599,7 +1599,7 @@ const JINJA_CONDITIONAL_FULL = /^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/;
 const JINJA_IF_HEAD = /^\{%-? if [^%]+-?%\}/;
 
 /**
- * Cluster F step 3.5 (016): leading-space-at-template-head fix.
+ * Leading-space-at-template-head fix.
  *
  * When a seq's emission starts with a run of consecutive Jinja
  * conditionals followed by an unconditional separator and required

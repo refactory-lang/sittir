@@ -151,7 +151,6 @@ export function emitIs(config: EmitIsConfig): string {
 	for (const [kind, node] of nodeMap.nodes) {
 		switch (node.modelType) {
 			case 'branch':
-			case 'container':
 			case 'polymorph': {
 				const numericId = kindIdByKind.get(kind);
 				// TSGrammar-only skip: when kindEntries is available and this kind
@@ -183,9 +182,9 @@ export function emitIs(config: EmitIsConfig): string {
 			case 'multi':
 			case 'supertype':
 				// Per-kind guards exist only for structural kinds (branch /
-				// container / polymorph). Leaves / keywords / enums use shape
-				// guards (isNode / isTree) instead; tokens, groups, multi,
-				// and supertypes have no per-kind guard surface. Supertypes
+				// polymorph). Leaves / keywords / enums use shape guards
+				// (isNode / isTree) instead; tokens, groups, multi, and
+				// supertypes have no per-kind guard surface. Supertypes
 				// get their own guards in a separate pass below.
 				break;
 			default:
@@ -514,12 +513,14 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push(
 		'export function isNode(v: { readonly $type: string | number }): boolean {'
 	);
-	lines.push('    const o = v as { $fields?: unknown; $text?: unknown };');
-	// `typeof null === 'object'` — explicitly exclude null before accepting
-	// the object-shape (matches the stricter isNodeData guard in from.ts).
+	lines.push('    const o = v as Record<string, unknown>;');
+	// ADR-0018 Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
+	// surface). Any top-level `_*` key indicates a branch node with named fields.
+	// Leaf nodes have `$text` instead.
 	lines.push(
-		`    return (o.$fields !== undefined && o.$fields !== null && typeof o.$fields === 'object') || typeof o.$text === 'string';`
+		`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`
 	);
+	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);
 	lines.push('}');
 	lines.push('');
 

@@ -389,42 +389,10 @@ function reportSkip(pass: string, ruleName: string, reason: string): void {
 // ---------------------------------------------------------------------------
 // Pass 1+3: symbol-to-field promotion
 // ---------------------------------------------------------------------------
-//
-// Walks TOP-LEVEL seq members of every non-hidden rule (after peeling
-// prec wrappers). For each member that targets exactly one SYMBOL, wraps
-// the inner symbol with a `field('<symbol-name>', SYMBOL)`. Three
-// member shapes are recognised:
-//
-//   1. bare SYMBOL                       → `field(name, SYMBOL)` replaces it
-//   2. `optional(SYMBOL)`                → `optional(field(name, SYMBOL))`
-//   3. `optional(seq(SYMBOL, <anon…>))`  → `optional(seq(field(name, SYMBOL), <anon…>))`
-//      (the seq must contain exactly one SYMBOL; all other members must
-//       be anonymous STRING / PATTERN literals)
-//
-// Both runtime shapes of optional are handled (sittir lowercase + tree-
-// sitter normalised `CHOICE(X, BLANK)`) via `peelOptional`.
-//
-// Guards (uniform across all three shapes):
-//   - Hidden helper rules (ruleName starts with `_`) are skipped — tree-
-//     sitter inlines their bodies into every call site, so adding fields
-//     here would propagate silently into multiple parents.
-//   - Symbols starting with `_` are accepted ONLY when declared in
-//     `supertypes:` (e.g. `$._expression`); the field name drops the
-//     leading underscore to match how the kind surfaces in
-//     `node-types.json`.
-//   - The targeted SYMBOL must appear at most once across the top-level
-//     seq members (counted across all three shapes — a bare $.foo and
-//     an optional($.foo) on the same parent collide).
-//   - The field name must not already be claimed on the seq (some other
-//     member, override, or earlier-iteration promotion).
-//
-// Bare leading-keyword pass (pass 2 in earlier numbering) is
-// intentionally absent — wrapping bare leading literals as FIELD(SYM)
-// with a hidden `_kw_<name>` rule shifts tree-sitter's parser-
-// generator tables in a way that breaks unrelated rules' reparse
-// (validated empirically: rust corpus goes 132/136 → 84/136 with that
-// pass on). readNode's `promoteAnonymousKeyword` picks up bare leading
-// literals at runtime without grammar-side wrapping.
+// Wraps unique bare symbols as field(name, symbol) on non-hidden rules.
+// Handles bare, optional(symbol), optional(seq(symbol, anon...)) shapes.
+// Guards: skip hidden rules, duplicate symbols, claimed names, _-prefix
+// (except supertypes). See compiler-phase-glossary.md for full details.
 
 interface SymbolTarget {
 	/** Raw symbol name (preserves any leading underscore for supertype detection). */
@@ -501,20 +469,9 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 }
 
 /**
- * @internal — walk `node` looking for SYMBOL references nested inside
- * REPEAT/REPEAT1 wrappers, incrementing `kindCounts[name]` for each one
- * found. Used by `applySymbolToField` to disqualify bare top-level
- * symbols whose kind ALSO appears under a repeat (the repeated copies
- * surface as un-fielded `$children`, so promoting the bare one to a
- * field splits the same kind across `$fields[name]` and `$children`).
- *
- * Descent rules:
- * - SEQ / CHOICE / OPTIONAL / PREC{,_LEFT,_RIGHT,_DYNAMIC} → recurse
- * - REPEAT / REPEAT1 → mark `inRepeat=true` for descent
- * - FIELD / ALIAS → STOP (these carve out their own surface; the
- *   referenced symbol becomes a named field/alias kind, not a sibling
- *   bare child of the parent rule)
- * - SYMBOL → if `inRepeat`, increment count
+ * @internal Count symbols inside repeat/repeat1 wrappers. Used to
+ * disqualify bare symbols whose kind also appears under a repeat.
+ * Stops at field/alias boundaries.
  */
 function countSymbolsInRepeat(
 	node: Rule | undefined | null,
@@ -559,45 +516,28 @@ function applySymbolToField(
 	rule: Rule,
 	supertypeNames: ReadonlySet<string>
 ): Rule {
-	// Skip hidden helpers — tree-sitter inlines their bodies into each
-	// call site, so field wrappers added here would propagate silently
-	// to every parent. The earlier two-pass split applied this guard
-	// only to pass 3; pass 1 relied on pass 1's per-symbol underscore
-	// check, which doesn't catch the parent-rule-is-hidden case. Move
-	// the guard up.
-	if (ruleName.startsWith('_')) return rule;
-	// Peel prec wrappers so prec-wrapped rules (rust `lifetime: prec(1,
-	// seq('\'', $.identifier))`, `break_expression: prec.left(seq(...))`)
-	// are reachable. The prec stack rides back on top after rebuild.
+	if (ruleName.startsWith('_')) return rule; // skip hidden helpers
+	// Peel prec wrappers; rebuild on top after field-wrapping.
 	const precStack: Rule[] = [];
 	let cursor: Rule = rule;
 	while (isPrecWrapper(cursor as { type: string })) {
 		precStack.push(cursor);
 		cursor = (cursor as unknown as { content: Rule }).content;
 	}
-	if (!isSeqType(cursor.type)) return rule;
+	if (!isSeqType(cursor.type)) {
+		// Not a top-level seq — check for repeat/repeat1 wrapping a seq.
+		return tryPromoteInRepeatSeq(
+			ruleName, rule, cursor, precStack, supertypeNames
+		);
+	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
-	// Pre-scan: count target symbols across ALL three shapes so a
-	// collision between (e.g.) a bare $.foo and an optional($.foo) on
-	// the same parent prevents both from getting field-wrapped.
+	// Count symbols across all shapes + inside repeats to prevent collisions.
 	const kindCounts = new Map<string, number>();
 	const targetByIdx: Array<SymbolTarget | null> =
 		members.map(detectSymbolTarget);
 	for (const t of targetByIdx) {
 		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
 	}
-	// Also count SYMBOL refs that appear inside REPEAT/REPEAT1 wrappers
-	// at any depth in the parent's body (e.g. `sep1($.identifier, '.')`
-	// expands to `seq($.identifier, repeat(seq('.', $.identifier)))` —
-	// the bare top-level $.identifier and the repeated $.identifier are
-	// the same kind, but the latter renders as an unfielded child).
-	// Wrapping the bare one as field('identifier', $.identifier) would
-	// make readNode produce `$fields.identifier` for the leading match
-	// and `$children: [Identifier...]` for the repeated tail — a split
-	// surface that the factory's `(...children: Identifier[])` shape
-	// can't reconstruct (the factory has no leading-field slot). Stop
-	// descent at FIELD/ALIAS boundaries since those carve out their own
-	// scope.
 	for (const m of members) {
 		countSymbolsInRepeat(m, kindCounts);
 	}
@@ -625,10 +565,224 @@ function applySymbolToField(
 		const fieldNode = makeField(cursor, fieldName, t.symbolRule);
 		return t.wrap(fieldNode);
 	});
-	if (!changed) return rule;
-	let result: Rule = { ...cursor, members: newMembers } as Rule;
+	// Second pass: descend into repeat/repeat1 members whose content is a
+	// seq. Promotes bare symbols inside the inner seq to field() wrappers.
+	// Pattern: seq("(", repeat(seq($.attr, $.content)), ")")
+	// → the repeat member's inner seq gets its bare symbols field-wrapped.
+	const finalMembers = promoteInsideRepeatMembers(
+		ruleName, newMembers, supertypeNames, existing, kindCounts
+	);
+	if (finalMembers === newMembers && !changed) return rule;
+	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
 		result = { ...precStack[i]!, content: result } as Rule;
+	}
+	return result;
+}
+
+/**
+ * @internal — iterate outer-seq members and descend into any that are
+ * `repeat(seq(...))` / `repeat1(seq(...))` (possibly prec-wrapped).
+ * Applies the same field-promotion logic to bare symbols in the inner
+ * seq. Returns the original array unchanged when no promotions fire.
+ *
+ * @param ruleName       - the parent rule name (for diagnostics)
+ * @param members        - the outer seq's (possibly already-enriched) members
+ * @param supertypeNames - declared supertype names for `_prefix` handling
+ * @param existing       - mutable set of field names already claimed on
+ *                         the parent seq (checked to prevent collisions)
+ * @returns the same `members` array if nothing changed, or a new array
+ *   with rebuilt repeat members
+ */
+function promoteInsideRepeatMembers(
+	ruleName: string,
+	members: Rule[],
+	supertypeNames: ReadonlySet<string>,
+	existing: Set<string>,
+	outerKindCounts: Map<string, number>
+): Rule[] {
+	let anyRepeatChanged = false;
+	const result = members.map((m) => {
+		const rebuilt = tryPromoteInRepeatMember(
+			ruleName, m, supertypeNames, existing, outerKindCounts
+		);
+		if (rebuilt === null) return m;
+		anyRepeatChanged = true;
+		return rebuilt;
+	});
+	if (!anyRepeatChanged) return members;
+	return result;
+}
+
+/**
+ * @internal — given a single outer-seq member, check whether it is a
+ * `repeat`/`repeat1` (possibly prec-wrapped) whose content is a `seq`.
+ * If so, apply field-promotion to the inner seq's bare symbols.
+ *
+ * @returns the rebuilt member if any promotions fired, or `null` if
+ *   the member was left unchanged.
+ */
+function tryPromoteInRepeatMember(
+	ruleName: string,
+	member: Rule,
+	supertypeNames: ReadonlySet<string>,
+	existing: Set<string>,
+	outerKindCounts: Map<string, number>
+): Rule | null {
+	// Peel prec wrappers on the member itself.
+	let cursor: Rule = member;
+	const memberPrecStack: Rule[] = [];
+	while (isPrecWrapper(cursor as { type: string })) {
+		memberPrecStack.push(cursor);
+		cursor = (cursor as unknown as { content: Rule }).content;
+	}
+	if (!isRepeatType(cursor.type)) return null;
+
+	// Peel prec wrappers on the repeat's content.
+	let inner = (cursor as unknown as { content: Rule }).content;
+	const innerPrecStack: Rule[] = [];
+	while (isPrecWrapper(inner as { type: string })) {
+		innerPrecStack.push(inner);
+		inner = (inner as unknown as { content: Rule }).content;
+	}
+	if (!isSeqType(inner.type)) return null;
+
+	const innerMembers = (inner as unknown as { members: Rule[] }).members;
+	const innerTargets = innerMembers.map(detectSymbolTarget);
+
+	// Count symbols within the inner seq for uniqueness check.
+	const innerKindCounts = new Map<string, number>();
+	for (const t of innerTargets) {
+		if (t) innerKindCounts.set(t.name, (innerKindCounts.get(t.name) ?? 0) + 1);
+	}
+	const nestedRepeatCounts = new Map<string, number>();
+	for (const im of innerMembers) {
+		countSymbolsInRepeat(im, nestedRepeatCounts);
+	}
+
+	const innerExisting = collectFieldNamesRuntime(inner);
+
+	let innerChanged = false;
+	const newInnerMembers = innerMembers.map((im, i) => {
+		const t = innerTargets[i];
+		if (!t) return im;
+		let fieldName = t.name;
+		if (t.name.startsWith('_')) {
+			if (!supertypeNames.has(t.name)) return im;
+			fieldName = t.name.slice(1);
+		}
+		if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
+		if (innerExisting.has(fieldName)) return im;
+		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+		// Skip when the same symbol kind appears in the outer seq — promoting
+		// it here would split the kind across $fields (inner) and $children
+		// (outer bare symbol), which variadic factories can't reconstruct.
+		if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
+		if (existing.has(fieldName)) {
+			reportSkip(
+				'symbol-to-field',
+				ruleName,
+				`field '${fieldName}' already exists (outer seq)`
+			);
+			return im;
+		}
+		innerExisting.add(fieldName);
+		innerChanged = true;
+		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		return t.wrap(fieldNode);
+	});
+
+	if (!innerChanged) return null;
+
+	// Rebuild: inner seq → inner prec stack → repeat → member prec stack.
+	let rebuilt: Rule = { ...inner, members: newInnerMembers } as Rule;
+	for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+		rebuilt = { ...innerPrecStack[i]!, content: rebuilt } as Rule;
+	}
+	rebuilt = { ...cursor, content: rebuilt } as Rule;
+	for (let i = memberPrecStack.length - 1; i >= 0; i--) {
+		rebuilt = { ...memberPrecStack[i]!, content: rebuilt } as Rule;
+	}
+	return rebuilt;
+}
+
+/**
+ * @internal — handle `repeat(seq(...))` / `repeat1(seq(...))` patterns
+ * (possibly prec-wrapped) when the top-level rule is NOT itself a seq.
+ *
+ * Descends into the repeat's content, peeling any prec wrappers on
+ * the inner rule. If the inner content is a seq, applies the same
+ * per-member field-promotion logic as the top-level seq path:
+ * `detectSymbolTarget` + uniqueness via `kindCounts` + claimed-name
+ * via `collectFieldNamesRuntime` + `countSymbolsInRepeat` for further
+ * nested repeats.
+ *
+ * @returns The rebuilt rule if any promotions fired; the original rule
+ *   unchanged otherwise.
+ */
+function tryPromoteInRepeatSeq(
+	ruleName: string,
+	rule: Rule,
+	cursor: Rule,
+	outerPrecStack: Rule[],
+	supertypeNames: ReadonlySet<string>
+): Rule {
+	if (!isRepeatType(cursor.type)) return rule;
+	let inner = (cursor as unknown as { content: Rule }).content;
+	// Peel prec wrappers on the inner content (e.g.
+	// `repeat(prec.left(seq($.a, $.b)))`).
+	const innerPrecStack: Rule[] = [];
+	while (isPrecWrapper(inner as { type: string })) {
+		innerPrecStack.push(inner);
+		inner = (inner as unknown as { content: Rule }).content;
+	}
+	if (!isSeqType(inner.type)) return rule;
+	const members = (inner as unknown as { members: Rule[] }).members;
+	const kindCounts = new Map<string, number>();
+	const targetByIdx: Array<SymbolTarget | null> =
+		members.map(detectSymbolTarget);
+	for (const t of targetByIdx) {
+		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
+	}
+	// Count symbols in further-nested repeats within the inner seq so
+	// a symbol appearing both as a direct seq member and inside a
+	// nested repeat is disqualified.
+	for (const m of members) {
+		countSymbolsInRepeat(m, kindCounts);
+	}
+	const existing = collectFieldNamesRuntime(inner);
+	let changed = false;
+	const newMembers = members.map((m, i) => {
+		const t = targetByIdx[i];
+		if (!t) return m;
+		let fieldName = t.name;
+		if (t.name.startsWith('_')) {
+			if (!supertypeNames.has(t.name)) return m;
+			fieldName = t.name.slice(1);
+		}
+		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
+		if (existing.has(fieldName)) {
+			reportSkip(
+				'symbol-to-field',
+				ruleName,
+				`field '${fieldName}' already exists`
+			);
+			return m;
+		}
+		existing.add(fieldName);
+		changed = true;
+		const fieldNode = makeField(inner, fieldName, t.symbolRule);
+		return t.wrap(fieldNode);
+	});
+	if (!changed) return rule;
+	// Rebuild: inner seq → inner prec stack → repeat → outer prec stack
+	let result: Rule = { ...inner, members: newMembers } as Rule;
+	for (let i = innerPrecStack.length - 1; i >= 0; i--) {
+		result = { ...innerPrecStack[i]!, content: result } as Rule;
+	}
+	result = { ...cursor, content: result } as Rule;
+	for (let i = outerPrecStack.length - 1; i >= 0; i--) {
+		result = { ...outerPrecStack[i]!, content: result } as Rule;
 	}
 	return result;
 }
@@ -642,16 +796,7 @@ function applyOptionalKeyword(
 	rule: Rule,
 	kwRules: Record<string, Rule>
 ): Rule {
-	// Peel prec wrappers transparently when computing the seq-level
-	// claimed-name set, so prec-wrapped seqs (rust `closure_expression:
-	// prec(closure, seq(...))`, python `for_in_clause: prec.left(seq(...))`,
-	// ts `function_expression: prec('literal', seq(...))`) get the same
-	// claimed-name view as a bare top-level seq. Without this the
-	// top-level test `isSeqType(rule.type)` is false on a prec wrapper
-	// so existing field names inside the inner seq don't shadow new
-	// promotions — but more importantly, `walkOptionalKeyword`'s descent
-	// through prec wrappers (added below) would then walk the inner seq
-	// with an EMPTY claimed-set, mis-handling collisions.
+	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
 	const claimed = isSeqType(inner.type)
 		? collectFieldNamesRuntime(inner)
@@ -730,18 +875,7 @@ function walkOptionalKeyword(
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
-	// Descend through prec / prec.left / prec.right / prec.dynamic. The
-	// wrapper has no semantic effect on field promotion — it only
-	// adjusts LR(1) precedence at parser-generation time. Preserves the
-	// wrapper around the rewritten content so prec metadata isn't
-	// dropped (that's a different optimization). Without this case, prec-
-	// wrapped seqs (rust `closure_expression: prec(closure, seq(optional(
-	// 'static'), ...))`, python `for_in_clause: prec.left(seq(optional(
-	// 'async'), ...))`, ts `function_expression: prec('literal',
-	// seq(optional('async'), ...))`) silently miss auto-promotion at the
-	// in-memory codegen surface (the parser-level field-promotion via
-	// override is independent — this only affects what enrich exposes
-	// to types.ts / factories.ts emitters).
+	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
 		const out = walkOptionalKeyword(
@@ -767,15 +901,7 @@ function tryPromoteInnerKeyword(
 	if (!isStringType(innerNorm.type)) return null;
 	const kw = innerNorm.value;
 	if (typeof kw !== 'string' || !isIdentifierShaped(kw)) return null;
-	// Auto-name promoted optional keywords as `<token>_marker` rather
-	// than the bare token name. The semantic suffix conveys
-	// "presence-indicator slot for this literal" and avoids JS-reserved-
-	// keyword collisions (`async`, `static`, `const`) at the
-	// factory/config surface — these names projected as bare property
-	// keys would clash with reserved identifiers in some emitter
-	// contexts. Manual overrides only need to fire for genuinely
-	// context-specific cases (e.g. `negative` for `!`,
-	// `accessor_kind`/`optionality_marker` for choice-of-strings).
+	// `_marker` suffix avoids JS-reserved-keyword collisions.
 	const fieldName = `${kw}_marker`;
 	if (claimed.has(fieldName)) {
 		reportSkip(

@@ -854,11 +854,12 @@
     },
     {
       "kind": "_delim_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeBrace",
       "factoryName": "_delimTokenTreeBrace",
       "irKey": "_delimTokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -879,11 +880,12 @@
     },
     {
       "kind": "_delim_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeBracket",
       "factoryName": "_delimTokenTreeBracket",
       "irKey": "_delimTokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -904,11 +906,12 @@
     },
     {
       "kind": "_delim_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_DelimTokenTreeParen",
       "factoryName": "_delimTokenTreeParen",
       "irKey": "_delimTokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -1085,11 +1088,12 @@
     },
     {
       "kind": "_expression_statement_block_ending",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExpressionStatementBlockEnding",
       "factoryName": "_expressionStatementBlockEnding",
       "irKey": "_expressionStatementBlockEnding",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression_ending_with_block",
@@ -1110,11 +1114,12 @@
     },
     {
       "kind": "_expression_statement_with_semi",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ExpressionStatementWithSemi",
       "factoryName": "_expressionStatementWithSemi",
       "irKey": "_expressionStatementWithSemi",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1135,11 +1140,12 @@
     },
     {
       "kind": "_field_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldIdentifier",
       "factoryName": "fieldIdentifier",
       "irKey": "fieldIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "field_identifier",
@@ -1299,11 +1305,12 @@
     },
     {
       "kind": "_function_type_fn_form",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FunctionTypeFnForm",
       "factoryName": "functionTypeFnForm",
       "irKey": "functionTypeFnForm",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "function_modifiers",
@@ -1560,11 +1567,12 @@
     },
     {
       "kind": "_let_chain",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LetChain",
       "factoryName": "letChain",
       "irKey": "letChain",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "let_chain",
@@ -1578,31 +1586,13 @@
               "multiplicity": "single",
               "name": "_let_chain",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "let_condition",
-          "propertyName": "letCondition",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "let_condition",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1658,7 +1648,29 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "outer_line_doc_comment_marker",
+          "propertyName": "outerLineDocCommentMarker",
+          "required": true,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_outer_line_doc_comment_marker",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "_inner_line_doc_comment_marker",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "_line_comment_regular_dslash",
@@ -1709,11 +1721,12 @@
     },
     {
       "kind": "_macro_definition_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionBrace",
       "factoryName": "_macroDefinitionBrace",
       "irKey": "_macroDefinitionBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1740,11 +1753,12 @@
     },
     {
       "kind": "_macro_definition_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionBracket",
       "factoryName": "_macroDefinitionBracket",
       "irKey": "_macroDefinitionBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1771,11 +1785,12 @@
     },
     {
       "kind": "_macro_definition_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_MacroDefinitionParen",
       "factoryName": "_macroDefinitionParen",
       "irKey": "_macroDefinitionParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -1961,114 +1976,426 @@
     },
     {
       "kind": "_non_special_token",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NonSpecialToken",
       "factoryName": "nonSpecialToken",
       "irKey": "nonSpecialToken",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "literal",
           "propertyName": "literal",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_literal",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "mutable_specifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "self",
-          "propertyName": "self",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "self",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "super",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "crate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "primitive_type",
-          "propertyName": "primitiveType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_primitive_type",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "+"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "-"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "*"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "/"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "%"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "^"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "!"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "|"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&&"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "||"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "+="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "-="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "*="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "/="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "%="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "^="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "&="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "|="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">>="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "=="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "!="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ">="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "<="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "@"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "_"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ".."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "..."
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "..="
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ","
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ";"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": ":"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "::"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "->"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "=>"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "#"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "nonEmptyArray",
+              "value": "?"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "'"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "as"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "async"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "await"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "break"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "const"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "continue"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "default"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "enum"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "fn"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "for"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "gen"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "if"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "impl"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "let"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "loop"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "match"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "mod"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "pub"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "return"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "static"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "struct"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "trait"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "type"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "union"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "unsafe"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "use"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "where"
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "while"
             }
           ]
         }
@@ -2259,13 +2586,14 @@
     },
     {
       "kind": "_pointer_type_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_PointerTypeMut",
       "factoryName": "_pointerTypeMut",
       "irKey": "_pointerTypeMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "_pointerTypeMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -2661,13 +2989,14 @@
     },
     {
       "kind": "_reference_expression_raw_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReferenceExpressionRawMut",
       "factoryName": "referenceExpressionRawMut",
       "irKey": "referenceExpressionRawMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "referenceExpressionRawMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -2688,11 +3017,12 @@
     },
     {
       "kind": "_reserved_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReservedIdentifier",
       "factoryName": "reservedIdentifier",
       "irKey": "reservedIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -2918,11 +3248,12 @@
     },
     {
       "kind": "_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeBrace",
       "factoryName": "_tokenTreeBrace",
       "irKey": "_tokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -2943,11 +3274,12 @@
     },
     {
       "kind": "_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeBracket",
       "factoryName": "_tokenTreeBracket",
       "irKey": "_tokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -2968,11 +3300,12 @@
     },
     {
       "kind": "_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreeParen",
       "factoryName": "_tokenTreeParen",
       "irKey": "_tokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -2993,11 +3326,12 @@
     },
     {
       "kind": "_token_tree_pattern_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternBrace",
       "factoryName": "_tokenTreePatternBrace",
       "irKey": "_tokenTreePatternBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3018,11 +3352,12 @@
     },
     {
       "kind": "_token_tree_pattern_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternBracket",
       "factoryName": "_tokenTreePatternBracket",
       "irKey": "_tokenTreePatternBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3043,11 +3378,12 @@
     },
     {
       "kind": "_token_tree_pattern_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TokenTreePatternParen",
       "factoryName": "_tokenTreePatternParen",
       "irKey": "_tokenTreePatternParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -3117,11 +3453,12 @@
     },
     {
       "kind": "_type_identifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeIdentifier",
       "factoryName": "typeIdentifier",
       "irKey": "typeIdentifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type_identifier",
@@ -3187,13 +3524,14 @@
     },
     {
       "kind": "_visibility_modifier_crate",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_VisibilityModifierCrate",
       "factoryName": "_visibilityModifierCrate",
       "irKey": "_visibilityModifierCrate",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "_visibilityModifierCrate()",
+      "fields": [],
       "children": [
         {
           "name": "crate",
@@ -3311,46 +3649,19 @@
               "multiplicity": "optional",
               "name": "self",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "super",
-          "propertyName": "super",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "super",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "crate",
-          "propertyName": "crate",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "crate",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "visibility_modifier_in_path",
-          "propertyName": "visibilityModifierInPath",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -3473,15 +3784,16 @@
     },
     {
       "kind": "arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Arguments",
       "factoryName": "arguments_",
       "irKey": "arguments",
       "hidden": false,
-      "children": [
+      "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3491,26 +3803,25 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_expression",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item",
+              "_expression"
+            ]
+          }
         }
       ],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "array_expression",
@@ -3881,11 +4192,11 @@
       "factoryName": "attribute",
       "irKey": "attribute",
       "hidden": false,
-      "fields": [],
-      "children": [
+      "fields": [
         {
           "name": "path",
           "propertyName": "path",
+          "paramName": "path",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -3894,6 +4205,36 @@
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_path",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_path"
+            ]
+          }
+        }
+      ],
+      "children": [
+        {
+          "name": "expression",
+          "propertyName": "expression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "delim_token_tree",
               "unresolved": true
             }
           ]
@@ -3946,11 +4287,12 @@
     },
     {
       "kind": "await_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
       "irKey": "awaitExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -3971,11 +4313,12 @@
     },
     {
       "kind": "base_field_initializer",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "BaseFieldInitializer",
       "factoryName": "baseFieldInitializer",
       "irKey": "baseFieldInitializer",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -4104,6 +4447,29 @@
               "label"
             ]
           }
+        },
+        {
+          "name": "trailing_expression",
+          "propertyName": "trailingExpression",
+          "paramName": "trailingExpression",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "_expression"
+            ]
+          }
         }
       ],
       "children": [
@@ -4118,21 +4484,6 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "_statement",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expression",
-          "propertyName": "expression",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "_expression",
               "unresolved": true
             }
           ]
@@ -4174,7 +4525,29 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "outer_block_doc_comment_marker",
+          "propertyName": "outerBlockDocCommentMarker",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_outer_block_doc_comment_marker",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "_inner_block_doc_comment_marker",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "boolean_literal",
@@ -4275,11 +4648,12 @@
     },
     {
       "kind": "bracketed_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "BracketedType",
       "factoryName": "bracketedType",
       "irKey": "bracketedType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -4293,16 +4667,7 @@
               "multiplicity": "single",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "qualified_type",
-          "propertyName": "qualifiedType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -4783,11 +5148,12 @@
     },
     {
       "kind": "closure_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ClosureParameters",
       "factoryName": "closureParameters",
       "irKey": "closureParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -4801,16 +5167,7 @@
               "multiplicity": "array",
               "name": "_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parameter",
-          "propertyName": "parameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -4824,11 +5181,12 @@
     },
     {
       "kind": "comment",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Comment",
       "factoryName": "comment",
       "irKey": "comment",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "line_comment",
@@ -4842,16 +5200,7 @@
               "multiplicity": "single",
               "name": "line_comment",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "block_comment",
-          "propertyName": "blockComment",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5247,11 +5596,12 @@
     },
     {
       "kind": "declaration_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DeclarationList",
       "factoryName": "declarationList",
       "irKey": "declarationList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "declaration_statement",
@@ -5377,11 +5727,12 @@
     },
     {
       "kind": "delim_token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeBrace",
       "factoryName": "delimTokenTreeBrace",
       "irKey": "delimTokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5402,11 +5753,12 @@
     },
     {
       "kind": "delim_token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeBracket",
       "factoryName": "delimTokenTreeBracket",
       "irKey": "delimTokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5427,11 +5779,12 @@
     },
     {
       "kind": "delim_token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DelimTokenTreeParen",
       "factoryName": "delimTokenTreeParen",
       "irKey": "delimTokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "delim_tokens",
@@ -5541,11 +5894,12 @@
     },
     {
       "kind": "else_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ElseClause",
       "factoryName": "elseClause",
       "irKey": "elseClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "block",
@@ -5559,16 +5913,7 @@
               "multiplicity": "single",
               "name": "block",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_expression",
-          "propertyName": "ifExpression",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5837,11 +6182,36 @@
     },
     {
       "kind": "enum_variant_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "EnumVariantList",
       "factoryName": "enumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
+      "fields": [
+        {
+          "name": "enum_variant",
+          "propertyName": "enumVariant",
+          "paramName": "enumVariant",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "enum_variant",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "enum_variant"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "attribute_item",
@@ -5854,21 +6224,6 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "enum_variant",
-          "propertyName": "enumVariant",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_variant",
               "unresolved": true
             }
           ]
@@ -5954,11 +6309,12 @@
     },
     {
       "kind": "expression_statement_block_ending",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionStatementBlockEnding",
       "factoryName": "expressionStatementBlockEnding",
       "irKey": "expressionStatementBlockEnding",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression_ending_with_block",
@@ -5979,11 +6335,12 @@
     },
     {
       "kind": "expression_statement_with_semi",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionStatementWithSemi",
       "factoryName": "expressionStatementWithSemi",
       "irKey": "expressionStatementWithSemi",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -6231,11 +6588,36 @@
     },
     {
       "kind": "field_declaration_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldDeclarationList",
       "factoryName": "fieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
+      "fields": [
+        {
+          "name": "field_declaration",
+          "propertyName": "fieldDeclaration",
+          "paramName": "fieldDeclaration",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "field_declaration",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "field_declaration"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "attribute_item",
@@ -6248,21 +6630,6 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "field_declaration",
-          "propertyName": "fieldDeclaration",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_declaration",
               "unresolved": true
             }
           ]
@@ -6416,11 +6783,12 @@
     },
     {
       "kind": "field_initializer_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FieldInitializerList",
       "factoryName": "fieldInitializerList",
       "irKey": "fieldInitializerList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "shorthand_field_initializer",
@@ -6434,31 +6802,13 @@
               "multiplicity": "array",
               "name": "shorthand_field_initializer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "field_initializer",
-          "propertyName": "fieldInitializer",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "field_initializer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "base_field_initializer",
-          "propertyName": "baseFieldInitializer",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -6802,11 +7152,12 @@
     },
     {
       "kind": "for_lifetimes",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ForLifetimes",
       "factoryName": "forLifetimes",
       "irKey": "forLifetimes",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lifetime",
@@ -7572,16 +7923,7 @@
               "multiplicity": "single",
               "name": "_function_type_trait_form",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "function_type_fn_form",
-          "propertyName": "functionTypeFnForm",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7775,16 +8117,7 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "scoped_identifier",
-          "propertyName": "scopedIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -8738,16 +9071,7 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "inner_attribute_item",
-          "propertyName": "innerAttributeItem",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -9394,11 +9718,12 @@
     },
     {
       "kind": "macro_definition_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBrace",
       "factoryName": "macroDefinitionBrace",
       "irKey": "macroDefinitionBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -9425,11 +9750,12 @@
     },
     {
       "kind": "macro_definition_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionBracket",
       "factoryName": "macroDefinitionBracket",
       "irKey": "macroDefinitionBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -9456,11 +9782,12 @@
     },
     {
       "kind": "macro_definition_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MacroDefinitionParen",
       "factoryName": "macroDefinitionParen",
       "irKey": "macroDefinitionParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "macro_rule",
@@ -9649,6 +9976,36 @@
           "parentKind": "match_arm",
           "fields": [
             {
+              "name": "attributes",
+              "propertyName": "attributes",
+              "paramName": "attributes",
+              "required": true,
+              "multiple": true,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "attribute_item",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "inner_attribute_item",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "attribute_item",
+                  "inner_attribute_item"
+                ]
+              }
+            },
+            {
               "name": "pattern",
               "propertyName": "pattern",
               "paramName": "pattern",
@@ -9673,36 +10030,6 @@
             }
           ],
           "children": [
-            {
-              "name": "attribute_item",
-              "propertyName": "attributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "inner_attribute_item",
-              "propertyName": "innerAttributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "inner_attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "match_arm_with_comma",
               "propertyName": "matchArmWithComma",
@@ -9729,6 +10056,36 @@
           "parentKind": "match_arm",
           "fields": [
             {
+              "name": "attributes",
+              "propertyName": "attributes",
+              "paramName": "attributes",
+              "required": true,
+              "multiple": true,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "attribute_item",
+                  "unresolved": true
+                },
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "array",
+                  "name": "inner_attribute_item",
+                  "unresolved": true
+                }
+              ],
+              "source": "override",
+              "projection": {
+                "typeName": "",
+                "kinds": [
+                  "attribute_item",
+                  "inner_attribute_item"
+                ]
+              }
+            },
+            {
               "name": "pattern",
               "propertyName": "pattern",
               "paramName": "pattern",
@@ -9753,36 +10110,6 @@
             }
           ],
           "children": [
-            {
-              "name": "attribute_item",
-              "propertyName": "attributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
-            {
-              "name": "inner_attribute_item",
-              "propertyName": "innerAttributeItem",
-              "required": true,
-              "multiple": true,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "array",
-                  "name": "inner_attribute_item",
-                  "unresolved": true
-                }
-              ]
-            },
             {
               "name": "match_arm_block_ending",
               "propertyName": "matchArmBlockEnding",
@@ -9838,11 +10165,12 @@
     },
     {
       "kind": "match_block",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "match_arm",
@@ -10398,6 +10726,29 @@
       "hidden": false,
       "fields": [
         {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "paramName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "visibility_modifier"
+            ]
+          }
+        },
+        {
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
@@ -10421,7 +10772,23 @@
           }
         }
       ],
-      "children": []
+      "children": [
+        {
+          "name": "attribute_item",
+          "propertyName": "attributeItem",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        }
+      ]
     },
     {
       "kind": "parameter",
@@ -10512,15 +10879,16 @@
     },
     {
       "kind": "parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Parameters",
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
-      "children": [
+      "fields": [
         {
           "name": "attribute_item",
           "propertyName": "attributeItem",
+          "paramName": "attributeItem",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10531,8 +10899,17 @@
               "name": "attribute_item",
               "unresolved": true
             }
-          ]
-        },
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item"
+            ]
+          }
+        }
+      ],
+      "children": [
         {
           "name": "parameter",
           "propertyName": "parameter",
@@ -10545,46 +10922,24 @@
               "multiplicity": "array",
               "name": "parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "self_parameter",
-          "propertyName": "selfParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "self_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "variadic_parameter",
-          "propertyName": "variadicParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "variadic_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type",
-          "propertyName": "type",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "array",
+              "value": "_"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -10598,11 +10953,12 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesized",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -10739,13 +11095,14 @@
     },
     {
       "kind": "pointer_type_mut",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "PointerTypeMut",
       "factoryName": "pointerTypeMut",
       "irKey": "pointerTypeMut",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "pointerTypeMut()",
+      "fields": [],
       "children": [
         {
           "name": "mutable_specifier",
@@ -11241,11 +11598,12 @@
     },
     {
       "kind": "ref_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RefPattern",
       "factoryName": "refPattern",
       "irKey": "refPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -11300,7 +11658,7 @@
         {
           "name": "reference_expression_raw_const",
           "propertyName": "referenceExpressionRawConst",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
@@ -11309,31 +11667,13 @@
               "multiplicity": "single",
               "name": "_reference_expression_raw_const",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "reference_expression_raw_mut",
-          "propertyName": "referenceExpressionRawMut",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "_reference_expression_raw_mut",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "mutable_specifier",
-          "propertyName": "mutableSpecifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -11493,11 +11833,12 @@
     },
     {
       "kind": "removed_trait_bound",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "RemovedTraitBound",
       "factoryName": "removedTraitBound",
       "irKey": "removedTraitBound",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -11528,11 +11869,12 @@
     },
     {
       "kind": "return_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReturnExpression",
       "factoryName": "returnExpression",
       "irKey": "returnExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -12018,11 +12360,12 @@
     },
     {
       "kind": "slice_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SlicePattern",
       "factoryName": "slicePattern",
       "irKey": "slicePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -12252,11 +12595,12 @@
     },
     {
       "kind": "string_literal",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringLiteral",
       "factoryName": "stringLiteral",
       "irKey": "stringLiteral",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "escape_sequence",
@@ -12270,16 +12614,7 @@
               "multiplicity": "array",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string_content",
-          "propertyName": "stringContent",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -12731,16 +13066,7 @@
               "multiplicity": "array",
               "name": "field_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "remaining_field_pattern",
-          "propertyName": "remainingFieldPattern",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -12821,11 +13147,12 @@
     },
     {
       "kind": "token_repetition",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenRepetition",
       "factoryName": "tokenRepetition",
       "irKey": "tokenRepetition",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -12846,11 +13173,12 @@
     },
     {
       "kind": "token_repetition_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenRepetitionPattern",
       "factoryName": "tokenRepetitionPattern",
       "irKey": "tokenRepetitionPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -12966,11 +13294,12 @@
     },
     {
       "kind": "token_tree_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeBrace",
       "factoryName": "tokenTreeBrace",
       "irKey": "tokenTreeBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -12991,11 +13320,12 @@
     },
     {
       "kind": "token_tree_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeBracket",
       "factoryName": "tokenTreeBracket",
       "irKey": "tokenTreeBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13016,11 +13346,12 @@
     },
     {
       "kind": "token_tree_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreeParen",
       "factoryName": "tokenTreeParen",
       "irKey": "tokenTreeParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "tokens",
@@ -13136,11 +13467,12 @@
     },
     {
       "kind": "token_tree_pattern_brace",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternBrace",
       "factoryName": "tokenTreePatternBrace",
       "irKey": "tokenTreePatternBrace",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13161,11 +13493,12 @@
     },
     {
       "kind": "token_tree_pattern_bracket",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternBracket",
       "factoryName": "tokenTreePatternBracket",
       "irKey": "tokenTreePatternBracket",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13186,11 +13519,12 @@
     },
     {
       "kind": "token_tree_pattern_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TokenTreePatternParen",
       "factoryName": "tokenTreePatternParen",
       "irKey": "tokenTreePatternParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "token_pattern",
@@ -13221,11 +13555,12 @@
     },
     {
       "kind": "trait_bounds",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TraitBounds",
       "factoryName": "traitBounds",
       "irKey": "traitBounds",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -13239,31 +13574,13 @@
               "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime",
-          "propertyName": "lifetime",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "higher_ranked_trait_bound",
-          "propertyName": "higherRankedTraitBound",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -13596,11 +13913,12 @@
     },
     {
       "kind": "tuple_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TuplePattern",
       "factoryName": "tuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -13614,16 +13932,7 @@
               "multiplicity": "array",
               "name": "_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "closure_expression",
-          "propertyName": "closureExpression",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -13704,11 +14013,12 @@
     },
     {
       "kind": "tuple_type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TupleType",
       "factoryName": "tupleType",
       "irKey": "tupleType",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -13740,11 +14050,36 @@
     },
     {
       "kind": "type_arguments",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeArguments",
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
+      "fields": [
+        {
+          "name": "trait_bounds",
+          "propertyName": "traitBounds",
+          "paramName": "traitBounds",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "trait_bounds",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "trait_bounds"
+            ]
+          }
+        }
+      ],
       "children": [
         {
           "name": "type",
@@ -13758,80 +14093,29 @@
               "multiplicity": "nonEmptyArray",
               "name": "_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_binding",
-          "propertyName": "typeBinding",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "type_binding",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime",
-          "propertyName": "lifetime",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "literal",
-          "propertyName": "literal",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_literal",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "block",
-          "propertyName": "block",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "block",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "trait_bounds",
-          "propertyName": "traitBounds",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "trait_bounds",
               "unresolved": true
             }
           ]
@@ -14207,15 +14491,16 @@
     },
     {
       "kind": "type_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeParameters",
       "factoryName": "typeParameters",
       "irKey": "typeParameters",
       "hidden": false,
-      "children": [
+      "fields": [
         {
-          "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "name": "attributes",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -14225,71 +14510,46 @@
               "multiplicity": "array",
               "name": "attribute_item",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "metavariable",
-          "propertyName": "metavariable",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "metavariable",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_parameter",
-          "propertyName": "typeParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "type_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "lifetime_parameter",
-          "propertyName": "lifetimeParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "lifetime_parameter",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "const_parameter",
-          "propertyName": "constParameter",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "const_parameter",
               "unresolved": true
             }
-          ]
+          ],
+          "source": "override",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "attribute_item",
+              "metavariable",
+              "type_parameter",
+              "lifetime_parameter",
+              "const_parameter"
+            ]
+          }
         }
       ],
-      "separator": ","
+      "children": []
     },
     {
       "kind": "unary_expression",
@@ -14613,11 +14873,12 @@
     },
     {
       "kind": "use_bounds",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "UseBounds",
       "factoryName": "useBounds",
       "irKey": "useBounds",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "lifetime",
@@ -14631,16 +14892,7 @@
               "multiplicity": "array",
               "name": "lifetime",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "type_identifier",
-          "propertyName": "typeIdentifier",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -14710,11 +14962,12 @@
     },
     {
       "kind": "use_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "UseList",
       "factoryName": "useList",
       "irKey": "useList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "use_clause",
@@ -14922,13 +15175,14 @@
     },
     {
       "kind": "visibility_modifier_crate",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "VisibilityModifierCrate",
       "factoryName": "visibilityModifierCrate",
       "irKey": "visibilityModifierCrate",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "visibilityModifierCrate()",
+      "fields": [],
       "children": [
         {
           "name": "crate",
@@ -14959,11 +15213,12 @@
     },
     {
       "kind": "where_clause",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "WhereClause",
       "factoryName": "whereClause",
       "irKey": "whereClause",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "where_predicate",
@@ -15207,11 +15462,12 @@
     },
     {
       "kind": "yield_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
       "irKey": "yieldExpression",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",

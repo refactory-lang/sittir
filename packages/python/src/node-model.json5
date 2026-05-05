@@ -271,11 +271,12 @@
     },
     {
       "kind": "_as_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_AsPattern",
       "factoryName": "_asPattern",
       "irKey": "_asPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "case_pattern",
@@ -535,11 +536,12 @@
     },
     {
       "kind": "_comprehension_clauses",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ComprehensionClauses",
       "factoryName": "comprehensionClauses",
       "irKey": "comprehensionClauses",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "for_in_clause",
@@ -559,16 +561,7 @@
               "multiplicity": "array",
               "name": "for_in_clause",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "if_clause",
-          "propertyName": "ifClause",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -809,11 +802,12 @@
     },
     {
       "kind": "_list_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_ListPattern",
       "factoryName": "_listPattern",
       "irKey": "_listPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "case_pattern",
@@ -834,11 +828,12 @@
     },
     {
       "kind": "_match_block",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "MatchBlock",
       "factoryName": "matchBlock",
       "irKey": "matchBlock",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "match_block_block",
@@ -995,11 +990,12 @@
     },
     {
       "kind": "_simple_pattern_negative",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SimplePatternNegative",
       "factoryName": "simplePatternNegative",
       "irKey": "simplePatternNegative",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "integer",
@@ -1013,16 +1009,7 @@
               "multiplicity": "single",
               "name": "integer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "float",
-          "propertyName": "float",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -1060,11 +1047,12 @@
     },
     {
       "kind": "_simple_statements",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "SimpleStatements",
       "factoryName": "simpleStatements",
       "irKey": "simpleStatements",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "simple_statement",
@@ -1112,15 +1100,16 @@
     },
     {
       "kind": "_suite",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Suite",
       "factoryName": "suite",
       "irKey": "suite",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "block",
-          "propertyName": "block",
+          "name": "simple_statements",
+          "propertyName": "simpleStatements",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -1149,11 +1138,12 @@
     },
     {
       "kind": "_tuple_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_TuplePattern",
       "factoryName": "_tuplePattern",
       "irKey": "_tuplePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "case_pattern",
@@ -1213,11 +1203,12 @@
     },
     {
       "kind": "_with_clause_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "_WithClauseParen",
       "factoryName": "_withClauseParen",
       "irKey": "_withClauseParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "with_item",
@@ -1296,11 +1287,12 @@
     },
     {
       "kind": "argument_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ArgumentList",
       "factoryName": "argumentList",
       "irKey": "argumentList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1317,40 +1309,10 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "expression",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "list_splat",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "list_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat",
-          "propertyName": "dictionarySplat",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
@@ -1359,44 +1321,38 @@
             },
             {
               "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "dictionary_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
               "multiplicity": "optional",
               "name": "parenthesized_list_splat",
               "unresolved": true
             },
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "parenthesized_list_splat",
-              "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_argument",
-          "propertyName": "keywordArgument",
-          "required": false,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
             {
               "kind": "node-ref",
               "multiplicity": "optional",
               "name": "keyword_argument",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "expression",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "list_splat",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "dictionary_splat",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "parenthesized_list_splat",
               "unresolved": true
             },
             {
@@ -1488,11 +1444,12 @@
     },
     {
       "kind": "assert_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "AssertStatement",
       "factoryName": "assertStatement",
       "irKey": "assert",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -1941,11 +1898,12 @@
     },
     {
       "kind": "block",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Block",
       "factoryName": "block",
       "irKey": "block",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "statement",
@@ -2214,11 +2172,12 @@
     },
     {
       "kind": "case_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "CasePattern",
       "factoryName": "casePattern",
       "irKey": "casePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "as_pattern",
@@ -2232,31 +2191,13 @@
               "multiplicity": "single",
               "name": "_as_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_pattern",
-          "propertyName": "keywordPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "simple_pattern",
-          "propertyName": "simplePattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -2579,6 +2520,29 @@
             "typeName": "",
             "kinds": []
           }
+        },
+        {
+          "name": "primary_expression",
+          "propertyName": "primaryExpression",
+          "paramName": "primaryExpression",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": true,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "primary_expression",
+              "unresolved": true
+            }
+          ],
+          "source": "enriched",
+          "projection": {
+            "typeName": "",
+            "kinds": [
+              "primary_expression"
+            ]
+          }
         }
       ],
       "children": []
@@ -2655,16 +2619,7 @@
               "multiplicity": "single",
               "name": "integer",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "float",
-          "propertyName": "float",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -2677,11 +2632,12 @@
     },
     {
       "kind": "concatenated_string",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ConcatenatedString",
       "factoryName": "concatenatedString",
       "irKey": "concatenatedString",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "string",
@@ -3055,11 +3011,12 @@
     },
     {
       "kind": "delete_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
       "irKey": "deleteStatement",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expressions",
@@ -3080,11 +3037,12 @@
     },
     {
       "kind": "dict_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DictPattern",
       "factoryName": "dictPattern",
       "irKey": "dictPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "dict_pattern_kv",
@@ -3106,11 +3064,12 @@
     },
     {
       "kind": "dictionary",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Dictionary",
       "factoryName": "dictionary",
       "irKey": "dictionary",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pair",
@@ -3124,16 +3083,7 @@
               "multiplicity": "array",
               "name": "pair",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat",
-          "propertyName": "dictionarySplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -3231,11 +3181,12 @@
     },
     {
       "kind": "dictionary_splat_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DictionarySplatPattern",
       "factoryName": "dictionarySplatPattern",
       "irKey": "dictionarySplatPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -3249,46 +3200,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_identifier",
-          "propertyName": "keywordIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript",
-          "propertyName": "subscript",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attribute",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -3301,11 +3225,12 @@
     },
     {
       "kind": "dotted_name",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "DottedName",
       "factoryName": "dottedName",
       "irKey": "dottedName",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -3647,11 +3572,12 @@
     },
     {
       "kind": "expression_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionList",
       "factoryName": "expressionList",
       "irKey": "expressionList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -3665,6 +3591,11 @@
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             },
             {
               "kind": "node-ref",
@@ -3719,11 +3650,12 @@
     },
     {
       "kind": "expression_statement_tuple",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ExpressionStatementTuple",
       "factoryName": "expressionStatementTuple",
       "irKey": "expressionStatementTuple",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -4024,15 +3956,16 @@
     },
     {
       "kind": "format_specifier",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "FormatSpecifier",
       "factoryName": "formatSpecifier",
       "irKey": "formatSpecifier",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "format_expression",
-          "propertyName": "formatExpression",
+          "name": "interpolation",
+          "propertyName": "interpolation",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -4366,11 +4299,12 @@
     },
     {
       "kind": "global_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "GlobalStatement",
       "factoryName": "globalStatement",
       "irKey": "global",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -4583,13 +4517,25 @@
           "name": "wildcard_import",
           "propertyName": "wildcardImport",
           "required": true,
-          "multiple": false,
-          "nonEmpty": false,
+          "multiple": true,
+          "nonEmpty": true,
           "values": [
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "wildcard_import",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "dotted_name",
+              "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "nonEmptyArray",
+              "name": "aliased_import",
               "unresolved": true
             }
           ]
@@ -4943,11 +4889,12 @@
     },
     {
       "kind": "lambda_parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "LambdaParameters",
       "factoryName": "lambdaParameters",
       "irKey": "lambdaParameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "parameter",
@@ -5034,11 +4981,12 @@
     },
     {
       "kind": "list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "List",
       "factoryName": "list",
       "irKey": "list",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5052,46 +5000,19 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -5154,11 +5075,12 @@
     },
     {
       "kind": "list_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ListPattern",
       "factoryName": "listPattern",
       "irKey": "listPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -5213,11 +5135,12 @@
     },
     {
       "kind": "list_splat_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ListSplatPattern",
       "factoryName": "listSplatPattern",
       "irKey": "listSplatPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -5231,46 +5154,19 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "keyword_identifier",
-          "propertyName": "keywordIdentifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "keyword_identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "subscript",
-          "propertyName": "subscript",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "subscript",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "attribute",
-          "propertyName": "attribute",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5410,11 +5306,12 @@
     },
     {
       "kind": "module",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Module",
       "factoryName": "module",
       "irKey": "module",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "statement",
@@ -5513,11 +5410,12 @@
     },
     {
       "kind": "nonlocal_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "NonlocalStatement",
       "factoryName": "nonlocalStatement",
       "irKey": "nonlocal",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "identifier",
@@ -5657,11 +5555,12 @@
     },
     {
       "kind": "parameters",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Parameters",
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "parameter",
@@ -5682,11 +5581,12 @@
     },
     {
       "kind": "parenthesized_expression",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
       "irKey": "parenthesized",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -5700,16 +5600,7 @@
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5722,15 +5613,16 @@
     },
     {
       "kind": "parenthesized_list_splat",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ParenthesizedListSplat",
       "factoryName": "parenthesizedListSplat",
       "irKey": "parenthesizedListSplat",
       "hidden": false,
+      "fields": [],
       "children": [
         {
-          "name": "parenthesized_expression",
-          "propertyName": "parenthesizedExpression",
+          "name": "parenthesized_list_splat",
+          "propertyName": "parenthesizedListSplat",
           "required": true,
           "multiple": false,
           "nonEmpty": false,
@@ -5740,16 +5632,7 @@
               "multiplicity": "single",
               "name": "parenthesized_list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -5799,11 +5682,12 @@
     },
     {
       "kind": "pattern_list",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "PatternList",
       "factoryName": "patternList",
       "irKey": "patternList",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -5817,6 +5701,11 @@
               "multiplicity": "single",
               "name": "pattern",
               "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": ","
             },
             {
               "kind": "node-ref",
@@ -6068,11 +5957,12 @@
     },
     {
       "kind": "return_statement",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
       "irKey": "returnStatement",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expressions",
@@ -6093,11 +5983,12 @@
     },
     {
       "kind": "set",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Set",
       "factoryName": "set",
       "irKey": "set",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -6111,46 +6002,19 @@
               "multiplicity": "nonEmptyArray",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -6313,34 +6177,30 @@
               "multiplicity": "single",
               "name": "_identifier",
               "unresolved": true
+            },
+            {
+              "kind": "node-ref",
+              "multiplicity": "single",
+              "name": "identifier",
+              "unresolved": true
+            },
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "_"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
             "kinds": [
-              "_identifier"
+              "_identifier",
+              "identifier"
             ]
           }
         }
       ],
-      "children": [
-        {
-          "name": "identifier",
-          "propertyName": "identifier",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "single",
-              "name": "identifier",
-              "unresolved": true
-            }
-          ]
-        }
-      ]
+      "children": []
     },
     {
       "kind": "splat_type",
@@ -6472,11 +6332,12 @@
     },
     {
       "kind": "string_content",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "StringContent",
       "factoryName": "stringContent",
       "irKey": "stringContent",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "escape_interpolation",
@@ -6490,46 +6351,19 @@
               "multiplicity": "nonEmptyArray",
               "name": "escape_interpolation",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "escape_sequence",
-          "propertyName": "escapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "not_escape_sequence",
-          "propertyName": "notEscapeSequence",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "_not_escape_sequence",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "string_content",
-          "propertyName": "stringContent",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": true,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
@@ -6746,11 +6580,12 @@
     },
     {
       "kind": "tuple",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Tuple",
       "factoryName": "tuple",
       "irKey": "tuple",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -6764,46 +6599,19 @@
               "multiplicity": "array",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "yield",
-          "propertyName": "yield",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "yield",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat",
-          "propertyName": "listSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "list_splat",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "parenthesized_list_splat",
-          "propertyName": "parenthesizedListSplat",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "array",
@@ -6816,11 +6624,12 @@
     },
     {
       "kind": "tuple_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TuplePattern",
       "factoryName": "tuplePattern",
       "irKey": "tuplePattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "pattern",
@@ -6841,11 +6650,12 @@
     },
     {
       "kind": "type",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Type",
       "factoryName": "type",
       "irKey": "type",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
@@ -6859,76 +6669,31 @@
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "splat_type",
-          "propertyName": "splatType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "splat_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "generic_type",
-          "propertyName": "genericType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "generic_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "union_type",
-          "propertyName": "unionType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "union_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "constrained_type",
-          "propertyName": "constrainedType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "constrained_type",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "member_type",
-          "propertyName": "memberType",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7030,11 +6795,12 @@
     },
     {
       "kind": "type_parameter",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "TypeParameter",
       "factoryName": "typeParameter",
       "irKey": "typeParameter",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -7179,31 +6945,13 @@
               "multiplicity": "single",
               "name": "identifier",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "list_splat_pattern",
-          "propertyName": "listSplatPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "list_splat_pattern",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "dictionary_splat_pattern",
-          "propertyName": "dictionarySplatPattern",
-          "required": true,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
@@ -7273,11 +7021,12 @@
     },
     {
       "kind": "union_pattern",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "UnionPattern",
       "factoryName": "unionPattern",
       "irKey": "unionPattern",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "simple_pattern",
@@ -7539,11 +7288,12 @@
     },
     {
       "kind": "with_clause_bare",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "WithClauseBare",
       "factoryName": "withClauseBare",
       "irKey": "withClauseBare",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "with_item",
@@ -7565,11 +7315,12 @@
     },
     {
       "kind": "with_clause_paren",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "WithClauseParen",
       "factoryName": "withClauseParen",
       "irKey": "withClauseParen",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "with_item",
@@ -7705,34 +7456,31 @@
     },
     {
       "kind": "yield",
-      "modelType": "container",
+      "modelType": "branch",
       "typeName": "Yield",
       "factoryName": "yield_",
       "irKey": "yield_",
       "hidden": false,
+      "fields": [],
       "children": [
         {
           "name": "expression",
           "propertyName": "expression",
-          "required": true,
+          "required": false,
           "multiple": false,
           "nonEmpty": false,
           "values": [
+            {
+              "kind": "terminal",
+              "multiplicity": "single",
+              "value": "from"
+            },
             {
               "kind": "node-ref",
               "multiplicity": "single",
               "name": "expression",
               "unresolved": true
-            }
-          ]
-        },
-        {
-          "name": "expressions",
-          "propertyName": "expressions",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
+            },
             {
               "kind": "node-ref",
               "multiplicity": "optional",

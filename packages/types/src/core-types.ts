@@ -37,6 +37,19 @@ export type NodeFieldValue =
 export type NodeChildValue = AnyNodeData | string | number;
 
 /**
+ * Unified named-member value type (ADR-0018 Phase 2).
+ *
+ * Replaces the split `NodeFieldValue` / `NodeChildValue` types on the
+ * de-hoisted NodeData surface. A named slot's `_<name>` storage and its
+ * accessor return type both resolve to `NodeMemberValue`.
+ *
+ * Note: unlike `NodeFieldValue`, this type does NOT include `undefined` or
+ * arrays — the per-slot type annotations on generated interfaces carry those
+ * modifiers directly (optional `?` for absent, `readonly T[]` for repeated).
+ */
+export type NodeMemberValue = AnyNodeData | string | number;
+
+/**
  * @deprecated NodeId branded type removed in ADR-0017. Use plain `number` instead.
  * Kept as a simple alias during migration so downstream imports resolve without error.
  */
@@ -96,6 +109,21 @@ export interface AnyNodeData {
 	 *  (ctx.format) for this specific node. Never set by inference — inferred format
 	 *  lives on TreeHandle.format. Absent on all factory and readNode output. */
 	$format?: FormatRecord;
+
+	// -------------------------------------------------------------------------
+	// ADR-0018 non-enumerable methods — present on factory/wrap output only.
+	// These are attached via Object.defineProperty(enumerable: false) at
+	// factory construction time; absent on readNode / native JSON transport.
+	// -------------------------------------------------------------------------
+
+	/** Render this node to source text. Non-enumerable on factory/wrap output. */
+	$render?: () => string;
+	/** Create an Edit replacing a byte range with this node's rendered text. */
+	$toEdit?: (startOrRange: number | ByteRange, endPos?: number) => Edit;
+	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
+	$replace?: (target: { range(): ByteRange }) => Edit;
+	/** Return a new frozen node with per-field trivia updates applied. */
+	$trivia?: (...args: unknown[]) => AnyNodeData;
 }
 
 // ---------------------------------------------------------------------------

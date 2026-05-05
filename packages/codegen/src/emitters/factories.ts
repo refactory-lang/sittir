@@ -19,14 +19,14 @@ import {
 } from './kind-discriminant.ts';
 import {
 	type AssembledNode,
-	type AssembledField,
-	type AssembledChild,
+	type AssembledNonterminal,
 	AssembledGroup
 } from '../compiler/node-map.ts';
 import {
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	allSlotsOf
 } from '../compiler/node-map.ts';
 import {
 	resolveEffectiveLiteral,
@@ -57,7 +57,7 @@ import {
 export interface EmitFactoriesConfig {
 	grammar: string;
 	nodeMap: NodeMap;
-	/** Emit runtime leaf pattern validation — see T067. Default `false`. */
+	/** Emit runtime leaf pattern validation. Default `false`. */
 	strict?: boolean;
 	/**
 	 * Parser-symbol ID tables (from `loadGeneratedIdTables`). When present,
@@ -83,7 +83,7 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	const { nodeMap, strict = false, generatedIdTables, inlineKinds, synthesizedKinds } = config;
 
 	// Collect KindEnumEntry table for numeric $type emission when
-	// generatedIdTables is present (Phase A KindID migration). Undefined
+	// generatedIdTables is present for numeric $type emission. Undefined
 	// for legacy callers / unit tests — those fall back to string literals.
 	// Source from the catalog superset so factory bodies for catalog-only
 	// kinds (children-only, anon tokens) can resolve TSKindId.X members.
@@ -108,21 +108,22 @@ export function emitFactories(config: EmitFactoriesConfig): string {
 	}
 	const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 	const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-	// `AnyNodeData` and `Edit` are always needed by the common factory
-	// suffix (render / toEdit / replace — see `factorySuffix`).
-	// `ByteRange` + `FluentNode` are the other ubiquitous imports.
-	const utilImports = ['AnyNodeData', 'ByteRange', 'Edit', 'FluentNode'];
+	const usesBooleanKeyword = collectUsesBooleanKeyword(nodeMap);
+	// `AnyNodeData` is needed for method signatures. `FluentNode` is used
+	// in FluentKindMap. `BooleanKeyword<T>` wraps boolean-keyword setter
+	// param types so the API matches the storage brand.
+	const utilImports = ['AnyNodeData', 'FluentNode'];
 	if (usesConfigOf) utilImports.push('ConfigOf');
 	if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
+	if (usesBooleanKeyword) utilImports.push('BooleanKeyword');
 	lines.push(
 		`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`
 	);
-	// Spec 012 boundary shim — `render` / `toEdit` dispatch through
-	// `getActiveBackend()` so factory-method `node.render()` /
-	// `node.toEdit()` honor the active backend (native napi vs TS
-	// Nunjucks). Was: `import { createRenderer } from '@sittir/core'`
-	// + lazily-bound renderer pinned to the package's `templates/`.
-	lines.push("import { render, toEdit } from './boundary.ts';");
+	// Factories import only from per-grammar utils.ts.
+	// `withMethods<T>` adds the four `$`-prefixed methods at the factory
+	// boundary. Setters call the factory directly with a patched config —
+	// no `_setField` / `_setFields` indirection.
+	lines.push("import { withMethods } from './utils.js';");
 	lines.push('');
 	lines.push(...emitFluentSetterHelpers());
 	lines.push(...emitNonEmptyAssertHelper());
@@ -172,15 +173,21 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  *   imported but no emitted body references it — dropped.
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
-	return [...nodeMap.nodes.values()].some((n) => {
-		const fs =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch'
-					? n.fields
-					: [];
-		return fs.some((f) => isNonEmpty(f));
-	});
+	return [...nodeMap.nodes.values()].some((n) =>
+		allSlotsOf(n).some((f) => isNonEmpty(f))
+	);
+}
+
+/**
+ * Whether any factory's `$with` setter has a boolean-keyword field — when
+ * true, the generated `factories.ts` needs the `BooleanKeyword` type
+ * import from `@sittir/types`. Mirrors the gating pattern of
+ * `collectUsesNonEmptyArray` / `collectUsesHoistedPolymorphForm`.
+ */
+function collectUsesBooleanKeyword(nodeMap: NodeMap): boolean {
+	return [...nodeMap.nodes.values()].some((n) =>
+		allSlotsOf(n).some((f) => keywordPresenceKind(f, nodeMap) === 'boolean')
+	);
 }
 
 /**
@@ -207,65 +214,14 @@ function collectUsesHoistedPolymorphForm(nodeMap: NodeMap): boolean {
 }
 
 /**
- * Emit the `_setField` and `_setFields` fluent setter helper function source lines,
- * plus the `_branchMethods` shared branch-methods constant and the `_leafMethods` helper.
+ * The old `_setField`, `_setFields`, `_branchMethods`, and
+ * `_leafMethods` helpers are replaced by the `withMethods`/`freezeNodeData`/
+ * `buildWithNamespace` runtime helpers from `@sittir/core`. Nothing to emit here.
  *
- * @returns Array of source lines for all shared helpers (without trailing blank line).
- * @remarks
- *   Shared by every factory's per-field getter/setter methods so the generated
- *   bodies are one function call instead of a hand-inlined ternary.
- *
- *   - `_setField` — singular-valued fields. Setter branch calls the factory
- *     with the new field; getter branch returns the current value.
- *   - `_setFields` — repeated-valued fields. Setter is rest-params —
- *     empty array → return current, otherwise rebuild with the new array.
- *   - `_branchMethods` — shared `render` + `toEdit` methods spread into every branch factory.
- *     Only `replace` varies per factory (the target tree type).
- *   - `_leafMethods` — shared `render` + `toEdit` for leaf/keyword/enum factories
- *     where the output is a fixed text value.
- *
- *   The generics are intentionally loose: `T[K] | R` is the narrowest useful
- *   return type (a field value OR a rebuilt fluent node). Call sites cast at
- *   the method boundary via their explicit parameter / return annotations so
- *   consumer IntelliSense still sees the concrete per-field shape.
+ * @returns Empty array — kept for call-site symmetry with `emitNonEmptyAssertHelper`.
  */
 function emitFluentSetterHelpers(): string[] {
-	return [
-		'function _setField<T, R, K extends keyof T>(',
-		'  cfg: T | undefined,',
-		'  fn: (c: T) => R,',
-		'  key: K,',
-		'  v: T[K] | undefined,',
-		'  cur: T[K] | undefined,',
-		'): T[K] | R | undefined {',
-		'  return v !== undefined ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
-		'}',
-		'function _setFields<T, R, K extends keyof T>(',
-		'  cfg: T | undefined,',
-		'  fn: (c: T) => R,',
-		'  key: K,',
-		'  v: readonly unknown[],',
-		'  cur: T[K] | undefined,',
-		'): T[K] | R | undefined {',
-		'  return v.length ? fn({ ...((cfg ?? {}) as T), [key]: v } as T) : cur;',
-		'}',
-		'const _branchMethods = {',
-		'  render(this: AnyNodeData): string { return render(this); },',
-		'  toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {',
-		'    if (typeof startOrRange === \'number\') return toEdit(this, startOrRange, endPos!);',
-		'    return toEdit(this, startOrRange);',
-		'  },',
-		'};',
-		'function _leafMethods(text: string) {',
-		'  return {',
-		'    render: () => text,',
-		'    toEdit: (s: number | ByteRange, e?: number): Edit =>',
-		'      typeof s === \'number\'',
-		'        ? { startPos: s, endPos: e!, insertedText: text }',
-		'        : { startPos: s.start.index, endPos: s.end.index, insertedText: text },',
-		'  };',
-		'}',
-	];
+	return [];
 }
 
 /**
@@ -280,7 +236,7 @@ function emitFluentSetterHelpers(): string[] {
  *   spread type-checks without a cast.
  */
 /**
- * Emit the ADR-0012 keyword-presence runtime helpers.
+ * Emit the keyword-presence runtime helpers.
  *
  * - `_bf` — bitflag field. Accepts a number (const-enum OR) and emits
  *   the underlying NodeData container. (Only emitted when at least one
@@ -324,13 +280,7 @@ function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
 function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
 	let bitflag = false;
 	for (const [, node] of nodeMap.nodes) {
-		const fields =
-			node.modelType === 'polymorph'
-				? node.allFormFields
-				: node.modelType === 'branch' || node.modelType === 'group'
-					? node.fields
-					: [];
-		for (const f of fields) {
+		for (const f of allSlotsOf(node)) {
 			if (keywordPresenceKind(f, nodeMap) === 'bitflag') bitflag = true;
 		}
 	}
@@ -356,7 +306,7 @@ function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
  * defensively).
  */
 function resolveKeywordPresenceTriple(
-	field: AssembledField,
+	field: AssembledNonterminal,
 	literal: string,
 	nodeMap: NodeMap
 ): { kind: string; text: string; named: boolean } | undefined {
@@ -399,6 +349,7 @@ function emitNonEmptyAssertHelper(): string[] {
 		'  arr: readonly T[],',
 		'  label: string,',
 		'): asserts arr is readonly [T, ...(readonly T[])] {',
+		"  if (typeof process !== 'undefined' && !process.env.SITTIR_DEBUG) return;",
 		'  if (arr.length === 0) {',
 		'    throw new Error(`${label}: requires at least one element`);',
 		'  }',
@@ -430,7 +381,7 @@ function buildLeafReConsts(
 	for (const [kind, node] of nodeMap.nodes) {
 		// Token modelType hidden kinds (e.g. `_range_pattern_left_bare` = '..') have
 		// no standalone factory — skip their regex consts. Non-token hidden kinds
-		// (groups, branches) get fragment factories (T046) and may carry patterns.
+		// (groups, branches) get fragment factories and may carry patterns.
 		if (kind.startsWith('_') && node.modelType === 'token') continue;
 		if (node.modelType !== 'leaf' || !node.pattern) continue;
 		const fn = node.rawFactoryName!;
@@ -481,7 +432,7 @@ function buildLeafReConsts(
  *   not user-facing kinds. The exception: hidden rules that appear as alias sources.
  *   `alias($._match_block, $.block)` means the body's canonical shape is
  *   `_match_block`; validators drilling into an aliased field need a factory that
- *   accepts the source kind so ADR-0006-symmetric dispatch works through the
+ *   accepts the source kind so alias-symmetric dispatch works through the
  *   `_fieldAliasMap`.
  */
 // Re-export the shared helper under the existing name used throughout
@@ -490,16 +441,10 @@ function buildLeafReConsts(
 import { collectAliasSourceKinds as collectAliasSourceKindsShared } from './shared.ts';
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 	const out = collectAliasSourceKindsShared(nodeMap);
-	// Also include field-level aliasSources (the legacy channel —
+	// Also include slot-level aliasSources (the legacy channel —
 	// some paths populate this without a hidden-ref value slot).
 	for (const [, n] of nodeMap.nodes) {
-		const fs =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
-					: [];
-		for (const f of fs) {
+		for (const f of allSlotsOf(n)) {
 			if (!f.aliasSources) continue;
 			for (const source of Object.values(f.aliasSources))
 				out.add(source as string);
@@ -511,7 +456,7 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 /**
  * Produce the `$type` line for a factory return object literal.
  *
- * When `kindEntries` is present (Phase A KindID migration), emits the
+ * When `kindEntries` is present, emits the
  * numeric `TSKindId.X` discriminant. Without it (legacy callers / unit
  * tests), falls back to `'kind' as const` so the emitter is backward-
  * compatible.
@@ -532,12 +477,14 @@ function factoryTypeDiscriminant(
 				`Filter this kind at the emitter entry point before calling factoryTypeDiscriminant.`
 		);
 	}
-	// Cast to number: TypeScript infers const-enum members as the enum type
-	// (e.g. `TSKindId`), not as `number`. The factory return object literal
-	// needs `$type: number` for compatibility with `AnyNodeData.$type: number`
-	// in the `render(this: AnyNodeData)` / `toEdit(this: AnyNodeData)` methods.
-	// This is a widening-safe cast: const enum values ARE numbers at runtime.
-	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as number`;
+	// `as const` narrows the literal type to the specific TSKindId member
+	// (e.g. `TSKindId.RangeExpressionBinary`), keeping `$type` discriminable
+	// for kind-narrowing in consumers — `is.functionItem(node)` etc. all
+	// match against the const-enum value, not the widened `number` type.
+	// Factory output remains structurally compatible with `AnyNodeData`
+	// because const-enum members ARE numeric at runtime; the $type read
+	// path doesn't widen.
+	return `${kindDiscriminantExpr(kind, nodeMap, kindEntries)} as const`;
 }
 
 /**
@@ -567,7 +514,7 @@ function emitPerNodeFactories(
 	const refineByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
 	for (const [kind, node] of nodeMap.nodes) {
-		// T046: hidden non-token kinds (groups, branches) emit fragment factories
+		// Hidden non-token kinds (groups, branches) emit fragment factories
 		// even when not `userFacing` — they are composition inputs, not standalone
 		// consumer-facing kinds. Token modelType hidden kinds have no factory surface
 		// (they're bare anon tokens) and stay excluded.
@@ -660,7 +607,7 @@ function buildFactoryMapEntries(
 ): MapEntry[] {
 	const mapEntries: MapEntry[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		// T046: include hidden non-token groups even when not userFacing — same
+		// Include hidden non-token groups even when not userFacing — same
 		// predicate as emitPerNodeFactories so the map and emission stay in sync.
 		const isHiddenGroup =
 			kind.startsWith('_') &&
@@ -683,12 +630,16 @@ function buildFactoryMapEntries(
 		// entry either. Lockstep with emitPerNodeFactories.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		const fluent =
-			node.modelType === 'branch' ||
-			node.modelType === 'container' ||
-			node.modelType === 'polymorph';
+			node.modelType === 'branch' || node.modelType === 'polymorph';
+		// Container-shape branches (former `AssembledContainer`)
+		// — no `field()` declarations on the rule; their factory takes a
+		// `children` rest-param and the validator dispatches on
+		// `shape === 'children'`. See `AssembledBranch.isContainerShape`.
+		const isContainerShape =
+			node.modelType === 'branch' && node.isContainerShape;
 		let shape: 'config' | 'children' | 'text';
 		if (node.isTextTemplate(nodeMap.externals)) shape = 'text';
-		else if (node.modelType === 'container') shape = 'children';
+		else if (isContainerShape) shape = 'children';
 		else if (
 			node.modelType === 'leaf' ||
 			node.modelType === 'keyword' ||
@@ -773,11 +724,7 @@ function renderFactoryForNode(
 	const isTextTemplate = detectTextTemplateNode(node, nodeMap);
 	if (isTextTemplate) {
 		return emitTextFactory(
-			node as unknown as {
-				kind: string;
-				treeTypeName: string;
-				rawFactoryName?: string;
-			},
+			node,
 			'(text: string)',
 			'text',
 			undefined,
@@ -787,10 +734,28 @@ function renderFactoryForNode(
 	}
 	switch (node.modelType) {
 		case 'branch':
+			// The former `AssembledContainer`
+			// shape (no `field()` on the rule) is now an `AssembledBranch`
+			// with `isContainerShape === true`. Route to
+			// `emitContainerFactory` so the rest-param signature and
+			// `$children` shape are preserved byte-identically.
+			if (node.isContainerShape) {
+				return emitContainerFactory(
+					{
+						kind: node.kind,
+						typeName: node.typeName,
+						treeTypeName: node.treeTypeName,
+						rawFactoryName: node.rawFactoryName,
+						children: node.children
+					},
+					nodeMap,
+					kindEntries
+				);
+			}
 			return emitFieldCarryingFactory(
 				node,
 				node.fields,
-				node.children ?? [],
+				node.children,
 				nodeMap,
 				false,
 				kindEntries
@@ -804,8 +769,6 @@ function renderFactoryForNode(
 				false,
 				kindEntries
 			);
-		case 'container':
-			return emitContainerFactory(node, nodeMap, kindEntries);
 		case 'polymorph':
 			return emitPolymorphFactory(node, nodeMap, kindEntries);
 		case 'leaf': {
@@ -888,11 +851,11 @@ function buildLeafGuards(
 	const reConst = leafReConsts.get(node.kind);
 	if (reConst) {
 		guards.push(
-			`if (!${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
+			`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && !${reConst}.test(text)) throw new Error(\`${node.kind}: text does not match pattern: \${text}\`);`
 		);
 	}
 	guards.unshift(
-		`if (text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
+		`if (typeof process !== 'undefined' && process.env.SITTIR_DEBUG && text.length === 0) throw new Error(\`${node.kind}: text must be non-empty\`);`
 	);
 	return guards;
 }
@@ -922,8 +885,8 @@ type FieldCarryingNode = Extract<
 >;
 
 /** Resolve a container node's children element type to a concrete TS type expression. */
-function childElementType(
-	node: { children: readonly AssembledChild[] },
+export function childElementType(
+	node: { children: readonly AssembledNonterminal[] },
 	nodeMap: NodeMap
 ): string {
 	const parts = new Set<string>();
@@ -938,10 +901,25 @@ function childElementType(
 				parts.add(JSON.stringify(lit));
 				continue;
 			}
-			const ref = nodeMap.nodes.get(t);
+			let ref = nodeMap.nodes.get(t);
 			if (!ref) {
 				parts.add(JSON.stringify(t));
 				continue;
+			}
+			// Hidden kinds with `multi` or `token` modelType don't get
+			// exported interfaces (types.ts excludes them from emission).
+			// When their typeName was collision-renamed (e.g.,
+			// `_expression_statement_tuple` → `_ExpressionStatementTuple`),
+			// the `T._X` reference is dangling. Redirect to the visible
+			// counterpart (strip leading `_`) which has a standalone
+			// exported interface. The runtime shapes are structurally
+			// compatible (same fields/children).
+			if (
+				t.startsWith('_') &&
+				(ref.modelType === 'multi' || ref.modelType === 'token')
+			) {
+				const visible = nodeMap.nodes.get(t.slice(1));
+				if (visible) ref = visible;
 			}
 			const name = ref.typeName;
 			parts.add(
@@ -972,7 +950,7 @@ function childElementType(
  * Returns `undefined` when the field is NOT auto-stamp-eligible.
  */
 function autoStampExpression(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	nodeMap: NodeMap
 ): string | undefined {
 	// Delegates to the shared stampExpressionFor which uses the new values model.
@@ -981,7 +959,7 @@ function autoStampExpression(
 
 /**
  * Build the RHS expression for a factory field assignment when the
- * field classifies as keyword-presence (ADR-0012).
+ * field classifies as keyword-presence.
  *
  * Scalar boolean:   `config?.propertyName ? '<text>' : undefined`
  * Array  boolean:   `config?.propertyName ? ['<text>'] : undefined`
@@ -1000,7 +978,7 @@ function autoStampExpression(
  * Returns `undefined` when the field doesn't classify as keyword-presence.
  */
 function keywordPresenceAssignmentExpr(
-	f: AssembledField,
+	f: AssembledNonterminal,
 	opt: string,
 	nodeMap: NodeMap
 ): string | undefined {
@@ -1046,7 +1024,7 @@ function keywordPresenceAssignmentExpr(
 }
 
 /**
- * Resolve an AssembledField's element type to a concrete TS type expression
+ * Resolve an AssembledNonterminal's element type to a concrete TS type expression
  * for the factory surface — each resolved node kind is prefixed with `T.` so
  * the reference resolves against the `import * as T from './types.js'` import.
  *
@@ -1054,7 +1032,101 @@ function keywordPresenceAssignmentExpr(
  * / literal / alias-source / hidden-keyword / missing-kind logic stays in one
  * place (types.ts::fieldTypeExpr is the same walk with no prefix).
  */
-function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
+/**
+ * Whether every value of a slot resolves to a leaf-shaped kind whose only
+ * meaningful state is `$text` — the four "terminal" model types (`leaf`,
+ * `keyword`, `token`, `enum`) plus inline `TerminalValue`s.
+ *
+ * When true, factory storage hoists `config.<name>.$text` directly into the
+ * `_<name>` slot instead of holding the wrapped NodeData. The wrapper carries
+ * no information beyond `$text` for these kinds, so storing the string is
+ * lossless and avoids an allocation per node.
+ *
+ * Returns false when any value resolves to a structural kind (branch, group,
+ * polymorph, multi, supertype) because those carry sub-state the wrapper is
+ * needed to preserve. UnresolvedRef values also force false — without
+ * resolution we cannot prove leaf-shape.
+ */
+/**
+ * Storage expression for a slot: `config<opt>.<propertyName>` plus a
+ * trailing `.$text` access when the slot is all-leaf. Optional fields
+ * read through `?.$text` to short-circuit when the field is absent.
+ *
+ * Used by every factory emit path (branch, refine-form, container,
+ * polymorph stub, hoisted form, leaf) so the leaf-hoist optimization
+ * is applied uniformly.
+ */
+function slotStorageExpr(
+	f: AssembledNonterminal,
+	opt: '' | '?',
+	nodeMap: NodeMap
+): string {
+	const base = `config${opt}.${f.propertyName}`;
+	if (!isAllLeafSlot(f, nodeMap)) return base;
+	// Optional field → optional chaining on `.$text` so absent values stay
+	// undefined rather than throwing on the property access.
+	const sep = isRequired(f) && opt === '' ? '.' : '?.';
+	return `${base}${sep}$text`;
+}
+
+/**
+ * `$with.<name>` setter parameter signature for a single-valued field.
+ * Required fields take `(value: T)`; optional fields take `(value?: T)`.
+ * Previously the emitter unconditionally used `(value?: T)` — the new shape
+ * matches the field's actual required/optional contract so callers can't
+ * accidentally clear a required field by calling `$with.foo()` with no arg.
+ */
+function setterValueSignature(
+	f: AssembledNonterminal,
+	elemType: string
+): string {
+	if (isRequired(f)) return `value: ${elemType}`;
+	return `value?: ${elemType}`;
+}
+
+/**
+ * Param type for a single-valued setter:
+ *   - boolean-keyword: `BooleanKeyword<elemType>` to match the storage brand.
+ *   - bitflag: derive from the factory's own param via
+ *     `Parameters<typeof <fn>>[0]['<propName>']` so the param matches the
+ *     ConfigOf-derived flattened enum type without the emitter having to
+ *     compute the enum name itself.
+ *   - default: plain `elemType`.
+ */
+function setterElemType(
+	f: AssembledNonterminal,
+	elemType: string,
+	fn: string,
+	nodeMap: NodeMap
+): string {
+	const kw = keywordPresenceKind(f, nodeMap);
+	if (kw === 'boolean') return `BooleanKeyword<${elemType}>`;
+	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.propertyName}']`;
+	return elemType;
+}
+
+function isAllLeafSlot(f: AssembledNonterminal, _nodeMap: NodeMap): boolean {
+	if (f.values.length === 0) return false;
+	for (const v of f.values) {
+		// Mixed terminal + node-ref slots fail the hoist because the runtime
+		// value can be a bare string (no `.$text`). Hoist applies ONLY when
+		// every value is a NodeRef pointing to a leaf-shaped kind so the
+		// runtime value is always a NodeData wrapper carrying `$text`.
+		if (v.kind !== 'node-ref') return false;
+		// Post-hydrate (assemble.ts hydrateSlotRefs runs before emit phase),
+		// `v.node` is always a resolved AssembledNode. UnresolvedRef would
+		// have thrown at hydrate time. External-token refs (which legitimately
+		// remain unresolved) are not leaf-shaped here either.
+		if (isUnresolvedRef(v.node)) return false;
+		const m = v.node.modelType;
+		if (m === 'leaf' || m === 'keyword' || m === 'token' || m === 'enum')
+			continue;
+		return false;
+	}
+	return true;
+}
+
+export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
 	const literals = slotLiteralValues(f);
 	const kindNames = slotKindNames(f);
 
@@ -1087,8 +1159,8 @@ function fieldElementType(f: AssembledField, nodeMap: NodeMap): string {
 
 function emitFieldCarryingFactory(
 	node: FieldCarryingNode,
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	isPolymorphForm = false,
 	kindEntries: readonly KindEnumEntry[] | undefined = undefined
@@ -1108,16 +1180,14 @@ function emitFieldCarryingFactory(
 		slotKindNames(c).some((t) => {
 			const n = nodeMap.nodes.get(t);
 			if (!n) return false;
-			// T046: hidden non-token groups have fragment factories and are constructible —
+			// Hidden non-token groups have fragment factories and are constructible —
 			// include them. Token modelType hidden kinds (bare anon tokens) stay excluded.
 			const isHiddenGroup =
 				t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
 			if (!n.userFacing && !isHiddenGroup) return false;
 			if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 			if (n.modelType === 'branch' || n.modelType === 'group') {
-				const fs = (n as unknown as { fields: readonly unknown[] }).fields;
-				const cs = (n as unknown as { children?: readonly unknown[] }).children;
-				if ((fs?.length ?? 0) === 0 && (cs?.length ?? 0) === 0) return false;
+				if (Object.values(n.slots).length === 0) return false;
 			}
 			return true;
 		})
@@ -1131,26 +1201,6 @@ function emitFieldCarryingFactory(
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
 
-	if (hasFields) {
-		lines.push('  const fields = {');
-		for (const f of fields) {
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				// Auto-stamp: field has a single fixed literal value — stamp it
-				// directly without reading from config. The field is omitted from
-				// Config so the caller cannot (and need not) supply it.
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-			if (kwExpr !== undefined) {
-				lines.push(`    ${f.name}: ${kwExpr},`);
-				continue;
-			}
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
 	// `childrenUserConfigurable` is false when every required child
 	// auto-stamps AND there are no optional children. In that case
 	// the Config (post-ConfigOf) has no `children` slot — ConfigOf
@@ -1170,6 +1220,8 @@ function emitFieldCarryingFactory(
 		requiredChildren.every((c) => isAutoStampSlot(c, nodeMap));
 	const childrenUserConfigurable =
 		hasChildren && !(allRequiredAutoStamp && optionalChildren.length === 0);
+
+	// Build children local variable.
 	if (hasChildren) {
 		// Stamp expressions use child-context (NodeData wrapper) so
 		// the resulting `$children` array matches the parent's
@@ -1195,43 +1247,122 @@ function emitFieldCarryingFactory(
 		node.modelType == 'group'
 			? resolvePolymorphFormVariantName(node)
 			: undefined;
-	lines.push('  return {');
+
+	// Shape A — closure-based locals + property shorthand storage +
+	// pure-getter methods reading the local consts + `$with` block with
+	// setter wiring. No `Object.defineProperty`. No `..._sharedMethods`
+	// spread. No freeze.
+	//
+	// Step 1: hoist each field's storage value to a local `_<name>` const so
+	// the getter method can `return _<name>;` directly via lexical closure.
+	// All-leaf fields hoist `.$text` so storage holds the string directly
+	// (the wrapper carries no info beyond `$text` for leaf kinds).
+	for (const f of fields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`  const _${f.name} = ${stamp};`);
+			continue;
+		}
+		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		if (kwExpr !== undefined) {
+			lines.push(`  const _${f.name} = ${kwExpr};`);
+			continue;
+		}
+		lines.push(
+			`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`
+		);
+	}
+
+	// Step 2: emit the literal. Storage uses property shorthand so the local
+	// const flows in by name. Getters are method shorthand that read the
+	// local const via closure. `withMethods<T>` adds the four `$`-prefixed
+	// methods at the boundary — generic on T preserves the literal's type.
+	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(typeKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	if (variantName) lines.push(`    $variant: '${variantName}' as const,`);
-	if (hasFields) lines.push('    $fields: fields,');
+	for (const f of fields) {
+		lines.push(`    _${f.name},`);
+	}
 	if (hasChildren) lines.push('    $children: children,');
 
-	lines.push(...emitFluentFieldMethods(fn, fields, nodeMap));
-
-	if (childrenUserConfigurable) {
-		const childElem = childElementType({ children }, nodeMap);
-		if (childrenMultiple) {
-			// Unified fluent `children()` — no-arg getter, varargs setter.
-			// `$`-prefix on NodeData metadata (`$children`) freed the bare
-			// `children` identifier on the factory surface, matching the
-			// existing `value()` / `values()` fluent pattern for fields.
-			const childrenNonEmpty = children.some((c) => isNonEmpty(c));
-			lines.push(`    children(...items: ${childElem}[]) {`);
-			lines.push('      if (items.length === 0) return children;');
-			if (childrenNonEmpty) {
-				lines.push(`      _assertNonEmpty(items, '${node.kind}.children');`);
-			}
-			lines.push(`      return ${fn}({ ...config, children: items });`);
-			lines.push('    },');
-		} else {
-			lines.push(`    child(value?: ${childElem}) {`);
-			lines.push('      if (value === undefined) return children[0];');
-			lines.push(`      return ${fn}({ ...config, children: [value] });`);
-			lines.push('    },');
-		}
+	// Pure getters — method shorthand, body returns the local const.
+	for (const f of fields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(`    ${propName}() { return _${f.name}; },`);
+	}
+	if (hasChildren) {
+		lines.push('    children() { return children; },');
 	}
 
-	lines.push(...factorySuffix(node.treeTypeName));
-	lines.push('  };');
+	// $with: setters call the factory directly with a patched config —
+	// `(value) => factory({ ...config, <key>: value })`. No `_setField` /
+	// `_setFields` indirection (those were old helpers serving
+	// the combined getter/setter method; under shape A getters are pure and
+	// the setter is purely a rebuild). Auto-stamp fields are skipped — no
+	// setter exposed because the value is fixed.
+	lines.push('    $with: {');
+	for (const f of fields) {
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		// Bitflag fields: even though storage is `NonEmptyArray<...>`, the
+		// Config (per ConfigOf) flattens to a single bitflag enum value, so
+		// the setter takes ONE value — not a rest-array.
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		if (isMultiple(f) && !isBitflag) {
+			const elemType = fieldElementType(f, nodeMap);
+			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+			const restType = isNonEmpty(f)
+				? `NonEmptyArray<${elemType}>`
+				: `${elemForArray}[]`;
+			lines.push(
+				`      ${method}: (...values: ${restType}) => ${fn}({ ...config, ${f.propertyName}: values }),`
+			);
+		} else {
+			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
+			lines.push(
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...config, ${f.propertyName}: value }),`
+			);
+		}
+	}
+	if (childrenUserConfigurable) {
+		const childElem = childElementType({ children }, nodeMap);
+		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
+		const restType = childrenSetterRestType(children, childElem, childRest);
+		lines.push(
+			`      children: (...items: ${restType}) => ${fn}({ ...config, children: items }),`
+		);
+	}
+	lines.push('    },');
+	lines.push('  });');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
+}
+
+/**
+ * Resolve the rest-param type for a `$with.children` setter so it matches
+ * the config's `children` slot shape. Three cases mirror the three shapes
+ * `emitInterface` produces for `$children`:
+ *
+ *   - `anyMultiple && anyNonEmpty` → `NonEmptyArray<T>` (= `readonly [T, ...T[]]`).
+ *   - `anyMultiple && !anyNonEmpty` → `T[]` (regular array).
+ *   - `!anyMultiple` → `readonly [T]` (single-element tuple, exactly one arg).
+ *
+ * The TS rest-parameter type system accepts all three shapes; declaring
+ * the right one means `factory({ ...config, children: items })` type-checks
+ * without a runtime narrowing helper.
+ */
+export function childrenSetterRestType(
+	children: readonly AssembledNonterminal[],
+	childElem: string,
+	childRest: string
+): string {
+	const anyMultiple = children.some((c) => isMultiple(c));
+	const anyNonEmpty = children.some((c) => isNonEmpty(c));
+	if (!anyMultiple) return `readonly [${childRest}]`;
+	if (anyNonEmpty) return `NonEmptyArray<${childElem}>`;
+	return `${childRest}[]`;
 }
 
 /**
@@ -1253,7 +1384,7 @@ function renameUnusedConfigParam(lines: string[]): string {
 }
 
 // ---------------------------------------------------------------------------
-// refine() per-form factory emission (ADR-0010 phase 2)
+// refine() per-form factory emission
 // ---------------------------------------------------------------------------
 
 /**
@@ -1288,9 +1419,8 @@ function emitRefineFormFactory(
 	const formFn = refineFormFactoryName(baseFn, form.name);
 	const narrowed = new Map<string, string>();
 	for (const n of form.narrowedFields) narrowed.set(n.fieldName, n.literal);
-	const fields = node.modelType === 'branch' ? node.fields : node.fields;
-	const children =
-		node.modelType === 'branch' ? (node.children ?? []) : node.children;
+	const fields = node.fields;
+	const children = node.children;
 	const hasFields = fields.length > 0;
 	const hasChildren = children.length > 0;
 	const opt = resolveRefineFormConfigOptional(
@@ -1308,39 +1438,77 @@ function emitRefineFormFactory(
 	lines.push(
 		`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`
 	);
-	if (hasFields) {
-		lines.push('  const fields = {');
-		for (const f of fields) {
-			const narrowedLit = narrowed.get(f.name);
-			if (narrowedLit !== undefined) {
-				lines.push(`    ${f.name}: ${JSON.stringify(narrowedLit)} as const,`);
-				continue;
-			}
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-			if (kwExpr !== undefined) {
-				lines.push(`    ${f.name}: ${kwExpr},`);
-				continue;
-			}
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
 	if (hasChildren) {
 		lines.push(`  const children = config${opt}.children ?? [];`);
 	}
-	lines.push('  return {');
+	// Shape A: storage hoist + property shorthand + pure getters + $with.
+	for (const f of fields) {
+		const narrowedLit = narrowed.get(f.name);
+		if (narrowedLit !== undefined) {
+			lines.push(`  const _${f.name} = ${JSON.stringify(narrowedLit)} as const;`);
+			continue;
+		}
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`  const _${f.name} = ${stamp};`);
+			continue;
+		}
+		const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+		if (kwExpr !== undefined) {
+			lines.push(`  const _${f.name} = ${kwExpr};`);
+			continue;
+		}
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+	}
+	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
-	if (hasFields) lines.push('    $fields: fields,');
+	for (const f of fields) {
+		lines.push(`    _${f.name},`);
+	}
 	if (hasChildren) lines.push('    $children: children,');
-	lines.push(...factorySuffix(node.treeTypeName));
-	lines.push('  };');
+	for (const f of fields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(`    ${propName}() { return _${f.name}; },`);
+	}
+	if (hasChildren) {
+		lines.push('    children() { return children; },');
+	}
+	lines.push('    $with: {');
+	for (const f of fields) {
+		// Narrowed-literal fields and auto-stamp fields are read-only —
+		// their value is fixed by the form, no setter is exposed.
+		if (narrowed.has(f.name)) continue;
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		if (isMultiple(f) && !isBitflag) {
+			const elemType = fieldElementType(f, nodeMap);
+			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
+			const restType = isNonEmpty(f)
+				? `NonEmptyArray<${elemType}>`
+				: `${elemForArray}[]`;
+			lines.push(
+				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.propertyName}: values }),`
+			);
+		} else {
+			const elemType = setterElemType(f, fieldElementType(f, nodeMap), formFn, nodeMap);
+			lines.push(
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.propertyName}: value }),`
+			);
+		}
+	}
+	if (hasChildren) {
+		const childElem = childElementType({ children: node.children }, nodeMap);
+		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
+		const restType = childrenSetterRestType(node.children, childElem, childRest);
+		lines.push(
+			`      children: (...items: ${restType}) => ${formFn}({ ...config, children: items }),`
+		);
+	}
+	lines.push('    },');
+	lines.push('  });');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1351,11 +1519,11 @@ function emitRefineFormFactory(
  * never come from Config input).
  */
 function resolveRefineFormConfigOptional(
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap,
 	narrowed: ReadonlyMap<string, string>
-): string {
+): '' | '?' {
 	const hasRequired =
 		fields.some(
 			(f) =>
@@ -1372,10 +1540,10 @@ function resolveRefineFormConfigOptional(
  * @param children - The assembled child descriptors for the node.
  * @returns `true` when at least one child entry is repeated.
  * @remarks
- *   A single `children[0]` check misses the repeated signal when inlining (T063)
+ *   A single `children[0]` check misses the repeated signal when inlining
  *   flattens a choice of hidden helpers into a mixed list of single + repeated entries.
  */
-function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
+function resolveChildrenMultiple(children: readonly AssembledNonterminal[]): boolean {
 	return children.some((c) => isMultiple(c));
 }
 
@@ -1393,10 +1561,10 @@ function resolveChildrenMultiple(children: readonly AssembledChild[]): boolean {
  *   Only fields that remain in Config can make config required.
  */
 function resolveConfigOptional(
-	fields: readonly AssembledField[],
-	children: readonly AssembledChild[],
+	fields: readonly AssembledNonterminal[],
+	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
-): string {
+): '' | '?' {
 	// Auto-stamp-eligible fields are excluded from the "required" check —
 	// they never appear in Config. Auto-stamp-eligible children are also
 	// excluded: when all required children are parameterless, they are
@@ -1435,11 +1603,17 @@ function resolveConfigType(
 	// first-declared form's narrowed Config (per emitRefineFormSubNamespaces),
 	// dropping the narrowed-out fields. The parent factory still references
 	// those fields directly, so route through `ConfigOf<T.<TypeName>>` here
-	// to get the full Config — same shape as the spec 008 generic indirection
+	// to get the full Config — same shape as the generic indirection
 	// for polymorph dispatchers, just minus the `$variant` Omit.
+	// Hygiene rule 5 — prefer concrete per-kind namespace alias over the
+	// `ConfigOf<T>` generic indirection. `T.${typeName}.Config` is emitted
+	// by the types.ts namespace-sugar pass and resolves to the same
+	// `ConfigFor<kind>` shape, so this is a pure typing-surface improvement
+	// with no runtime change. Polymorph forms keep `ConfigOf<T.X>` because
+	// synthetic UForm names don't carry a `.Config` namespace member.
 	return isPolymorphForm
 		? `Omit<ConfigOf<T.${node.typeName}>, '$variant'>`
-		: `ConfigOf<T.${node.typeName}>`;
+		: `T.${node.typeName}.Config`;
 }
 
 /**
@@ -1467,76 +1641,6 @@ function resolvePolymorphFormVariantName(
 	return node.parentKind ? node.name : undefined;
 }
 
-/**
- * Emit fluent getter/setter method source lines for all fields of a factory.
- *
- * @param fn - The factory function name (used in setter body to rebuild the node).
- * @param fields - The assembled field descriptors to generate methods for.
- * @param nodeMap - The assembled node map (used for type resolution).
- * @returns Array of source lines for the getter/setter methods (ready to splice into
- *   the `return { ... }` object literal).
- * @remarks
- *   Bodies delegate to `_setField` / `_setFields` helpers (T042j) so each line is one call
- *   instead of a hand-inlined ternary. The explicit parameter / return type
- *   annotations keep consumer IntelliSense seeing the exact per-field shape.
- *
- *   The fluent getter/setter parameter name is always `value` / `values`:
- *   not field-derived — the field name is already the method name, and a derived
- *   param ends up identical to the method (shadowing) or collides with reserved
- *   words. `value`/`values` is unambiguous and keeps signatures uniform.
- */
-function emitFluentFieldMethods(
-	fn: string,
-	fields: readonly AssembledField[],
-	nodeMap: NodeMap
-): string[] {
-	const lines: string[] = [];
-	for (const f of fields) {
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-		const stamp = autoStampExpression(f, nodeMap);
-		if (stamp !== undefined) {
-			// Auto-stamp: field value is a fixed constant — emit a getter-only
-			// method that returns the constant. No setter parameter.
-			lines.push(`    get ${method}() { return fields.${f.name}; },`);
-			continue;
-		}
-		const fMultiple = isMultiple(f);
-		const param = fMultiple ? 'values' : 'value';
-		// Pass `config?.<propertyName>` (Config-surface type) as the
-		// "current value" to _setField / _setFields — NOT `fields.<name>` (internal
-		// storage). For boolean-keyword fields the two differ:
-		// Config exposes `boolean`, storage holds the literal string
-		// array ("async"[]). Using the Config form keeps the setter's
-		// T[K] inference consistent across the v + cur args. The
-		// optional-chain covers factories where `config` itself is
-		// optional (`config?: ConfigOf<…>`).
-		const curExpr = `config?.${f.propertyName}`;
-		if (fMultiple) {
-			const elemType = fieldElementType(f, nodeMap);
-			// Rest params can't be `readonly T[]` (TS2370) so plain mutable arrays
-			// are used. NonEmptyArray<T> is a tuple alias `readonly [T, ...(readonly T[])]`
-			// which TS does accept as a valid rest type.
-			// When elemType is a union (`A | B`), wrap in parens to avoid
-			// `A | B[]` being parsed as `A | (B[])`.
-			const elemForArray = elemType.includes(' | ')
-				? `(${elemType})`
-				: elemType;
-			const restType = isNonEmpty(f)
-				? `NonEmptyArray<${elemType}>`
-				: `${elemForArray}[]`;
-			lines.push(
-				`    ${method}(...${param}: ${restType}) { return _setFields(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
-			);
-		} else {
-			const elemType = fieldElementType(f, nodeMap);
-			const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
-			lines.push(
-				`    ${method}(${param}?: ${paramType}) { return _setField(config, ${fn}, '${f.propertyName}', ${param}, ${curExpr}); },`
-			);
-		}
-	}
-	return lines;
-}
 
 // ---------------------------------------------------------------------------
 // Container factory (children only, no fields)
@@ -1547,7 +1651,7 @@ interface ContainerNode {
 	readonly typeName: string;
 	readonly treeTypeName: string;
 	readonly rawFactoryName?: string;
-	readonly children: readonly AssembledChild[];
+	readonly children: readonly AssembledNonterminal[];
 }
 
 function emitContainerFactory(
@@ -1578,13 +1682,26 @@ function emitContainerFactory(
 				: `  const children = child != null ? [child] : [];`
 		);
 	}
-	lines.push('  return {');
+	// Inline literal wrapped by withMethods<T>. No defineProperty,
+	// no spread, no Record cast.
+	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push('    $children: children,');
-	lines.push(...factorySuffix(node.treeTypeName));
-	lines.push('  };');
+	lines.push('    children() { return children; },');
+	// Container $with: unnamed slot updater. Multiple → `$children`; single → `$child`.
+	// Both call the factory directly (no config object).
+	if (anyMultiple) {
+		lines.push(
+			`    $with: { $children: (...vs: ${elementType}[]) => ${fn}(...vs) },`
+		);
+	} else {
+		lines.push(
+			`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`
+		);
+	}
+	lines.push('  });');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1596,7 +1713,7 @@ function emitContainerFactory(
  * @returns `true` when any child entry is repeated.
  * @remarks
  *   Containers are "multiple-shaped" when ANY child entry is repeated. Inlining
- *   (T063) can flatten a choice of hidden helpers into a mixed list of single +
+ *   Inlining can flatten a choice of hidden helpers into a mixed list of single +
  *   repeated entries, so checking only `children[0]` misses the repeated signal.
  */
 function resolveContainerMultiple(node: ContainerNode): boolean {
@@ -1645,8 +1762,18 @@ function emitPolymorphFactory(
 
 	if (forms.length === 0) {
 		// Defensive stub — shouldn't happen after classifier fix.
+		// Inline literal + withMethods<T> wrap.
 		const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
-		return `export function ${fn}(_config?: unknown) { return { $type: ${typeExpr}, $source: 2 as const, $named: true as const, ..._branchMethods, replace(this: AnyNodeData, t: T.${node.treeTypeName}): Edit { const r = t.range(); return toEdit(this, r); } }; }`;
+		return [
+			`export function ${fn}(_config?: unknown) {`,
+			`  return withMethods({`,
+			`    $type: ${typeExpr},`,
+			`    $source: 2 as const,`,
+			`    $named: true as const,`,
+			`    $with: {},`,
+			`  });`,
+			`}`,
+		].join('\n');
 	}
 
 	const parts: string[] = [];
@@ -1700,34 +1827,19 @@ function emitPolymorphFactory(
  *   - inner-level patch: `{ left: config.left, right: value }`.
  */
 function buildHoistedRebuildExpr(
-	formFields: readonly AssembledField[],
-	innerFields: readonly AssembledField[],
+	_formFields: readonly AssembledNonterminal[],
+	_innerFields: readonly AssembledNonterminal[],
 	patchKey: string,
 	patchVar: string,
-	patchSource: 'form' | 'inner',
-	nodeMap: NodeMap
+	_patchSource: 'form' | 'inner',
+	_nodeMap: NodeMap
 ): string {
-	const parts: string[] = [];
-	// Form-level fields come from `config.<propName>` (already camelCase on
-	// the hoisted Config surface). Skip the patched key if this setter is
-	// patching a form-level field.
-	for (const f of formFields) {
-		if (patchSource === 'form' && f.propertyName === patchKey) continue;
-		parts.push(`${f.propertyName}: config.${f.propertyName}`);
-	}
-	// Inner-level fields come from the materialized inner node's `$fields`
-	// map (snake_case). Skip the patched key if this setter is patching an
-	// inner-level field. Also skip auto-stamped fields — they are excluded
-	// from ConfigOf<T> so passing them in the rebuild config is a type error.
-	for (const f of innerFields) {
-		if (patchSource === 'inner' && f.propertyName === patchKey) continue;
-		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		parts.push(`${f.propertyName}: inner.$fields.${f.name}`);
-	}
-	// Patched key appended last so its value is authoritative in the
-	// emitted object literal (shadows any earlier identical key).
-	parts.push(`${patchKey}: ${patchVar}`);
-	return `{ ${parts.join(', ')} }`;
+	// Hoisted-form Config flattens BOTH form-level fields AND the inner
+	// child's Config fields onto the surface (see `ConfigOf` in
+	// `@sittir/types`). Spreading `...config` carries every preserved
+	// field — form-level (`refMarker`) and inner-hoisted (`name`) alike —
+	// in a single token. Patched key shadows the original.
+	return `{ ...config, ${patchKey}: ${patchVar} }`;
 }
 
 /**
@@ -1776,22 +1888,6 @@ function emitHoistedPolymorphFormFactory(
 	const lines: string[] = [];
 	lines.push(`export function ${fn}(config${opt}: ${configType}) {`);
 
-	if (formFields.length > 0) {
-		lines.push('  const fields = {');
-		for (const f of formFields) {
-			const stamp = autoStampExpression(f, nodeMap);
-			if (stamp !== undefined) {
-				lines.push(`    ${f.name}: ${stamp},`);
-				continue;
-			}
-			// Match the optional-config marker — when `config?:` was used
-			// (no required field anywhere), reads need optional chaining
-			// so TS doesn't complain about `config` possibly being undefined.
-			lines.push(`    ${f.name}: config${opt}.${f.propertyName},`);
-		}
-		lines.push('  };');
-	}
-
 	// Inner child construction. Three paths:
 	//
 	//   - **Field-carrier + factory available** (branches/groups with
@@ -1816,13 +1912,19 @@ function emitHoistedPolymorphFormFactory(
 	//     inner kind is a hidden field-carrying group without
 	//     retrofitting factory emission onto every hidden group.
 	//     Example: python's `_assignment_eq`.
+	// The former `AssembledContainer` shape is
+	// now an `AssembledBranch`. Distinguish via the structural
+	// `isContainerShape` getter (no `field()` on the rule). The
+	// `hoist.innerFields.length === 0` clause keeps the prior behavior
+	// for hoisted forms whose inner has empty derived fields too.
 	const innerIsContainer =
-		hoist.innerNode.modelType === 'container' && hoist.innerFields.length === 0;
+		hoist.innerNode.modelType === 'branch' &&
+		hoist.innerNode.isContainerShape &&
+		hoist.innerFields.length === 0;
 	if (innerIsContainer && hoist.innerFactoryName !== undefined) {
-		const container = hoist.innerNode as unknown as {
-			children: readonly AssembledChild[];
-		};
-		const innerChildren = container.children;
+		// innerNode is AssembledBranch (checked via isContainerShape above)
+		const innerNode = hoist.innerNode as { slots: Readonly<Record<string, AssembledNonterminal>> };
+		const innerChildren = Object.values(innerNode.slots);
 		const anyMultiple = innerChildren.some((c) => isMultiple(c));
 		if (anyMultiple) {
 			// Spread coalesces missing children to an empty list — varargs
@@ -1862,128 +1964,123 @@ function emitHoistedPolymorphFormFactory(
 		// kind. Templates, interfaces, factories all key on the same
 		// hidden name; wrap canonicalizes parser output (visible →
 		// hidden) so consumers always see the canonical hidden form.
-		lines.push('  const inner = {');
+		// Inner node — local consts + property shorthand +
+		// pure getters + withMethods<T> wrap. No freeze on the inner —
+		// the outer does the rebuild.
+		for (const f of hoist.innerFields) {
+			const stamp = autoStampExpression(f, nodeMap);
+			if (stamp !== undefined) {
+				lines.push(`  const _${f.name} = ${stamp};`);
+				continue;
+			}
+			const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
+			if (kwExpr !== undefined) {
+				lines.push(`  const _${f.name} = ${kwExpr};`);
+				continue;
+			}
+			lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+		}
+		lines.push('  const inner = withMethods({');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
 		lines.push(`    $source: 2 as const,`);
 		lines.push('    $named: true as const,');
-		if (hoist.innerFields.length > 0) {
-			lines.push('    $fields: {');
-			for (const f of hoist.innerFields) {
-				const stamp = autoStampExpression(f, nodeMap);
-				if (stamp !== undefined) {
-					lines.push(`      ${f.name}: ${stamp},`);
-					continue;
-				}
-				const kwExpr = keywordPresenceAssignmentExpr(f, opt, nodeMap);
-				if (kwExpr !== undefined) {
-					lines.push(`      ${f.name}: ${kwExpr},`);
-					continue;
-				}
-				lines.push(`      ${f.name}: config${opt}.${f.propertyName},`);
-			}
-			lines.push('    },');
+		for (const f of hoist.innerFields) {
+			lines.push(`    _${f.name},`);
 		}
-		lines.push('  };');
+		for (const f of hoist.innerFields) {
+			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			lines.push(`    ${propName}() { return _${f.name}; },`);
+		}
+		lines.push('  });');
 	}
 	lines.push(`  const children = [inner] as const;`);
 
-	lines.push('  return {');
+	// Form-level node — form-field locals + property
+	// shorthand + form-field getters from local consts. Inner-field getters
+	// close over the `inner` reference and read its storage via property
+	// access (not readRawField; the closure has the typed reference).
+	for (const f of formFields) {
+		const stamp = autoStampExpression(f, nodeMap);
+		if (stamp !== undefined) {
+			lines.push(`  const _${f.name} = ${stamp};`);
+			continue;
+		}
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, opt, nodeMap)};`);
+	}
+	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
 	lines.push(`    $source: 2 as const,`);
 	lines.push('    $named: true as const,');
 	lines.push(`    $variant: '${variantName}' as const,`);
-	if (formFields.length > 0) lines.push('    $fields: fields,');
-	lines.push('    $children: children,');
-
 	for (const f of formFields) {
-		lines.push(
-			...emitHoistedSetter(f, {
-				fn,
-				formFields,
-				innerFields: hoist.innerFields,
-				nodeMap,
-				getterExpr: `fields.${f.name}`,
-				patchSource: 'form'
-			})
+		lines.push(`    _${f.name},`);
+	}
+	lines.push('    $children: children,');
+	// Form-field getters: read the local const directly.
+	for (const f of formFields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(`    ${propName}() { return _${f.name}; },`);
+	}
+	// Inner-field getters: close over `inner` and read via the inner node's
+	// own getter (which delegates to inner's local const). `inner` is the
+	// withMethods<T>-wrapped object literal, so `inner.<propName>()`
+	// resolves through the getter method emitted on inner.
+	for (const f of hoist.innerFields) {
+		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		lines.push(`    ${propName}() { return inner.${propName}(); },`);
+	}
+
+	// $with: updater namespace for hoisted form. Build a custom $with that
+	// handles both form-level and inner-level field updates via rebuild expr.
+	// Each entry calls fn(rebuildConfig) which returns a new wrapped node.
+	// Setter parameter types match the field's required/optional/multi shape
+	// — same rules as non-hoisted setters (rule 3, consistent across paths).
+	const withEntries: string[] = [];
+	const buildHoistedSetter = (
+		f: AssembledNonterminal,
+		patchSource: 'form' | 'inner'
+	): string => {
+		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
+		const fMultiple = isMultiple(f) && !isBitflag;
+		const rawElem = fieldElementType(f, nodeMap);
+		const elemType = setterElemType(f, rawElem, fn, nodeMap);
+		const param = fMultiple
+			? `...values: ${
+				isNonEmpty(f)
+					? `NonEmptyArray<${elemType}>`
+					: `${elemType.includes(' | ') ? `(${elemType})` : elemType}[]`
+			}`
+			: setterValueSignature(f, elemType);
+		const rebuild = buildHoistedRebuildExpr(
+			formFields,
+			hoist.innerFields,
+			f.propertyName,
+			fMultiple ? 'values' : 'value',
+			patchSource,
+			nodeMap
 		);
+		return `      ${f.propertyName}: (${param}) => ${fn}(${rebuild} as Parameters<typeof ${fn}>[0]),`;
+	};
+	for (const f of formFields) {
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		withEntries.push(buildHoistedSetter(f, 'form'));
 	}
 	for (const f of hoist.innerFields) {
-		lines.push(
-			...emitHoistedSetter(f, {
-				fn,
-				formFields,
-				innerFields: hoist.innerFields,
-				nodeMap,
-				getterExpr: `inner.$fields.${f.name}`,
-				patchSource: 'inner'
-			})
-		);
+		if (autoStampExpression(f, nodeMap) !== undefined) continue;
+		withEntries.push(buildHoistedSetter(f, 'inner'));
 	}
-
-	lines.push(...factorySuffix(form.treeTypeName));
-	lines.push('  };');
+	if (withEntries.length > 0) {
+		lines.push(`    $with: {`);
+		lines.push(...withEntries);
+		lines.push(`    },`);
+	} else {
+		lines.push(`    $with: {},`);
+	}
+	lines.push('  });');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
 
-interface HoistedSetterContext {
-	readonly fn: string;
-	readonly formFields: readonly AssembledField[];
-	readonly innerFields: readonly AssembledField[];
-	readonly nodeMap: NodeMap;
-	/** Source expression for the getter / auto-stamp read (e.g. `fields.x`). */
-	readonly getterExpr: string;
-	/** Which group this field lives in — steers the rebuild-expr skip. */
-	readonly patchSource: 'form' | 'inner';
-}
-
-/**
- * Emit the fluent get/set lines for a single hoisted-form field.
- *
- * @remarks
- *   Auto-stamp fields emit a read-only getter; everything else emits a
- *   no-arg-getter / with-arg-setter combo that rebuilds the form via
- *   {@link buildHoistedRebuildExpr}. Rebuild preserves fields from the OTHER
- *   group (inner vs form) so the setter round-trips through the same factory.
- */
-function emitHoistedSetter(
-	f: AssembledField,
-	ctx: HoistedSetterContext
-): string[] {
-	const { fn, formFields, innerFields, nodeMap, getterExpr, patchSource } = ctx;
-	const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
-	const stamp = autoStampExpression(f, nodeMap);
-	if (stamp !== undefined) {
-		return [`    get ${method}() { return ${getterExpr}; },`];
-	}
-	const fMultiple = isMultiple(f);
-	const param = fMultiple ? 'values' : 'value';
-	const rebuild = buildHoistedRebuildExpr(
-		formFields,
-		innerFields,
-		f.propertyName,
-		param,
-		patchSource,
-		nodeMap
-	);
-	const elemType = fieldElementType(f, nodeMap);
-	if (fMultiple) {
-		const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-		const restType = isNonEmpty(f)
-			? `NonEmptyArray<${elemType}>`
-			: `${elemForArray}[]`;
-		return [
-			`    ${method}(...${param}: ${restType}) { return ${fn}(${rebuild}); },`
-		];
-	}
-	const paramType = isRequired(f) ? elemType : `${elemType} | undefined`;
-	return [
-		`    ${method}(${param}?: ${paramType}) {`,
-		`      if (${param} === undefined) return ${getterExpr};`,
-		`      return ${fn}(${rebuild});`,
-		`    },`
-	];
-}
 
 /**
  * Emit the polymorph dispatcher function: overloaded signatures (one per
@@ -2055,10 +2152,8 @@ function buildPolymorphConfigUnion(forms: AssembledGroup[]): string {
  * @returns `''` when any form has a required field or child, `'?'` otherwise.
  */
 function resolvePolymorphConfigOptional(forms: AssembledGroup[]): string {
-	const anyFormHasRequired = forms.some(
-		(f) =>
-			f.fields.some((fd) => isRequired(fd)) ||
-			f.children.some((c) => isRequired(c))
+	const anyFormHasRequired = forms.some((f) =>
+		Object.values(f.slots).some((s) => isRequired(s))
 	);
 	return anyFormHasRequired ? '' : '?';
 }
@@ -2133,23 +2228,24 @@ function emitTextFactory(
 	nodeMap?: NodeMap
 ): string {
 	const fn = node.rawFactoryName!;
-	// Phase B-inverse: emit numeric TSKindId discriminant for leaf / keyword /
+	// Emit numeric TSKindId discriminant for leaf / keyword /
 	// enum nodes, matching the AnyNodeData.$type: number contract. Falls back to
 	// string literal for kinds not yet in kindEntries (TSGrammar-only or no
 	// parser.c available).
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap!, kindEntries);
+	// Leaf/keyword/enum factories — inline literal +
+	// `withMethods<T>` wrap. No `_<name>` storage (text nodes carry only
+	// `$text`); no `$with` (no updatable slots).
 	const body: string[] = [`export function ${fn}${sig} {`];
 	if (guard) body.push(`  ${guard}`);
 	body.push(
-		'  return {',
+		'  return withMethods({',
 		`    $type: ${typeExpr},`,
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		`    ..._leafMethods(${textExpr}),`,
-		`    replace: (t: T.${node.treeTypeName}) => { const r = t.range(); return { startPos: r.start.index, endPos: r.end.index, insertedText: ${textExpr} }; },`,
-		'  };',
-		'}'
+		'  });'
+		,'}'
 	);
 	return body.join('\n');
 }
@@ -2233,18 +2329,18 @@ function stripUselessEscapes(pattern: string): string {
 }
 
 /**
- * Common suffix every user-addressable factory returns — render(),
- * toEdit(...), replace(target).
+ * `$render`, `$toEdit`, `$replace`, `$trivia` are now
+ * attached by `withMethods(node, { render, toEdit })` from `@sittir/core`
+ * after the mutable node object is constructed and `$with` is attached.
+ * `factorySuffix` no longer emits into the return-object literal; callers
+ * that used it are updated to call `emitWithMethodsAndFreeze` instead.
+ *
+ * @deprecated Replaced by `emitWithMethodsAndFreeze` in every factory body.
  */
-function factorySuffix(treeTypeName: string): string[] {
-	// `_branchMethods` carries the shared `render` + `toEdit` methods (typed via
-	// `this: AnyNodeData` to short-circuit TS assignability expansion).
-	// Only `replace` is per-factory (varies by tree type).
-	return [
-		`    ..._branchMethods,`,
-		`    replace(this: AnyNodeData, target: T.${treeTypeName}): Edit { const r = target.range(); return toEdit(this, r); },`
-	];
+function factorySuffix(_treeTypeName: string): string[] {
+	return [];
 }
+
 
 // ---------------------------------------------------------------------------
 // Internal interfaces

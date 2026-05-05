@@ -1,225 +1,366 @@
-# Feature Specification: Binding, Simplify, and Assemble Re-architecture
+# Feature Specification: De-hoisted NodeData Surface
+
+> ⚠️ **Status:** Phase 1–3 of this spec landed with naming
+> divergence from the design below (e.g. `AssembledContainer` →
+> `AssembledBranch`, `AssembledField`/`Child` → `AssembledNonterminal`,
+> `$fields` envelope → `_<name>` storage). Read
+> [`IMPLEMENTATION-STATUS.md`](./IMPLEMENTATION-STATUS.md) **first** for the planned-→shipped
+> mapping; this file remains as design rationale.
 
 **Feature Branch**: `022-binding-simplify-assemble`
 **Created**: 2026-04-29
+**Revised**: 2026-05-03
 **Status**: Draft
-**Input**: Follow-on architectural work extracted from refined spec 021. Spec 021 now defines the rule-first identity/classification model (`RuleId`, rule-level `terminal` / `nonterminal`, field and alias semantics, and late KindID / FieldID metadata). This spec owns the compiler rewrite that consumes that model: Binding, Simplify, and Assemble.
+**ADR**: `docs/adr/0018-dehoist-nodedata-surface.md`
 
 ## Background
 
-Even with a stable rule-first ontology, the compiler still reasons about many structures through a
-wrapper-heavy tree and an old `fields` / `children` / slot mental model. That makes assembled
-representation drift from the clarified model in 021.
+The current NodeData surface has accumulated complexity that impedes consumers and
+blocks further runtime evolution:
 
-The new direction is:
+- `$fields` wrapper adds indirection for named member access
+- Per-field fluent getter/setter methods duplicate ~1,500 lines per grammar
+- Factory and wrap output have different APIs (fluent vs raw)
+- `readNode` serializes through JSON (`serde_json::to_string` then `JSON.parse`)
+- The old `fields` / `children` / slot mental model drifts from the clarified
+  rule-first ontology established by spec 021
 
-- **Binding** first binds terminals to the nonterminals they belong with.
-- **Simplify** then pushes wrapper behavior down onto those constituent rules.
-- **Assemble** materializes kinds from normalized constituent rules instead of treating wrappers as
-  primary assembled members.
+ADR-0018 establishes a new runtime surface: three namespaces (`$`, `_`, unprefixed),
+frozen objects, function-call accessors with cursor/value duality, `$with` updaters,
+and napi direct property access.
 
-This spec owns that rewrite. It deliberately starts **after** 021 has settled identity and rule
-classification, so this pipeline change does not need to redefine ontology while it rewires the
-compiler.
+This spec owns the migration to that surface **and** the internal pipeline rewrite
+(Binding, Simplify, Assemble) that produces it.
+
+**Implementation order**: surface-first, internals later.
 
 ## User Scenarios & Testing _(mandatory)_
 
-### User Story 1 — Binding attaches terminals to the nonterminals they belong with (Priority: P1)
+### User Story 0 — Assembled model taxonomy collapse (Priority: P1)
 
-A maintainer needs an early phase that can bind terminal rules to the nonterminal constituents they
-belong with, so later phases stop reasoning over raw wrapper shape and instead reason over the
-constituent-oriented model.
+A maintainer collapses the 10 assembled-model types into a smaller, more
+coherent set: `AssembledNonterminal` (one slot, named or unnamed) replaces
+`AssembledField` + `AssembledChild` + `AssembledMulti`; `AssembledLeaf` becomes
+the base for `Pattern`/`Keyword`/`Token`/`Enum`; `AssembledGroup` is absorbed
+into `AssembledPolymorph`. This is a pure rename — every emitter, validator,
+and walker that reads the model is updated to consume the new types, but the
+emitted output is byte-identical.
 
-**Why this priority**: Without Binding, Simplify has to guess constituent boundaries from the raw
-wrapper tree and the new model immediately becomes under-specified.
+**Why this priority**: This precedes the surface change so emitters consume the
+final taxonomy from day one. Doing the surface change first would force a
+transient adapter layer in the emitters (read old types, emit new shape).
+Landing taxonomy first means every later phase reads one coherent model.
 
-**Independent Test**: For representative rule shapes that currently mix terminals and wrappers,
-assert that Binding produces a stable constituent-oriented association that later phases can consume
-without re-walking the raw tree for ownership.
+**Independent Test**: After taxonomy phase commits, regenerate all three grammar
+packages and compare diffs against pre-phase output. Diff MUST be empty
+(byte-identical). All RT modes pass at exactly the same counts as before.
 
 **Acceptance Scenarios**:
 
-1. **Given** a kind whose raw rule contains terminals interleaved with nonterminals, **When** Binding runs, **Then** the terminals are associated with the nonterminal constituents they belong with instead of remaining detached primary members.
-2. **Given** field-wrapped terminal-only content, **When** Binding runs after 021 classification, **Then** that content respects the already-forced nonterminal classification instead of falling back to a terminal-only view.
-3. **Given** named alias over terminal-like content, **When** Binding runs, **Then** the result respects 021's nonterminal-forcing alias semantics.
+1. **Given** the codebase before Phase 1, **When** taxonomy types are renamed and emitters updated, **Then** regenerated grammar package output is byte-identical to before.
+2. **Given** the new taxonomy, **When** any reader (emitter, validator, walker) inspects an assembled kind, **Then** it sees `AssembledNonterminal`/`AssembledLeaf`/`AssembledPolymorph`/`AssembledSupertype`/`AssembledBranch` only — no `AssembledField`/`AssembledChild`/`AssembledMulti`/`AssembledGroup` references remain.
+3. **Given** an `AssembledNonterminal` with `edgeName` set, **When** consumed by the factory emitter, **Then** it produces a named storage slot. **Given** `edgeName` absent, **Then** it produces `$child` or `$children` based on multiplicity in `values`.
+4. **Given** any `AssembledLeaf` subtype (Pattern/Keyword/Token/Enum), **When** consumed by the factory emitter, **Then** it produces a leaf factory with the appropriate validation (regex / fixed text / enum membership).
 
 ---
 
-### User Story 2 — Simplify pushes wrapper behavior down onto constituent rules (Priority: P1)
+### User Story 1 — De-hoisted storage replaces `$fields` (Priority: P1)
 
-A maintainer needs Simplify to normalize wrapper-heavy rule trees by pushing behavior down onto
-constituent rules so wrappers no longer behave like primary assembled members.
+A consumer accesses named members directly on the node without the `$fields` wrapper.
+Values are stored with `_`-prefix and accessed via function-call accessors. The
+consumer never touches `$fields` again.
 
-**Why this priority**: This is the heart of the re-architecture. If wrappers remain primary members
-in the assembled model, the compiler will continue to drift from the clarified ontology.
+**Why this priority**: This is the fundamental shape change. Every other surface
+improvement builds on it. Without de-hoisting, the cursor pattern, `$with`, and
+napi direct all lack a foundation.
 
-**Independent Test**: For representative `seq`, `choice`, `optional`, `repeat`, `repeat1`, and
-`prec*` shapes, assert that Simplify produces a normalized constituent view where ordering,
-multiplicity, alternatives, and precedence are carried by constituents rather than by surviving
-wrapper nodes.
+**Independent Test**: Given any factory-produced or wrap-produced node, named member
+values are accessible via `node._name` (storage) and `node.name()` (accessor), and
+`node.$fields` does not exist.
 
 **Acceptance Scenarios**:
 
-1. **Given** a `seq(...)` wrapper, **When** Simplify runs, **Then** ordering is represented on the resulting constituent rules rather than by treating the sequence wrapper as a primary assembled member.
-2. **Given** `optional(rule)` or `repeat(rule)`, **When** Simplify runs, **Then** optionality and multiplicity become properties of the constituent rule(s) rather than surviving as primary wrapper members.
-3. **Given** `choice(...)` with mixed wrapper-heavy alternatives, **When** Simplify runs, **Then** the result is classified by its frontier outcome after Binding + Simplify, even if Simplify must synthesize a normalized constituent form to make that coherent.
+1. **Given** a factory-produced node with named fields, **When** a consumer reads `node._name`, **Then** the stored value is returned directly (string for terminals, NodeData for nonterminals).
+2. **Given** a wrap-produced node (from readNode), **When** a consumer calls `node.name()`, **Then** the accessor resolves the value (materializing drill-in stubs if necessary).
+3. **Given** any node, **When** a consumer accesses `node.$fields`, **Then** the property is undefined — it does not exist on the object.
+4. **Given** a node with an unnamed positional member, **When** the consumer reads `node.$child` or `node.$children`, **Then** the unnamed slot is accessible without any wrapper.
 
 ---
 
-### User Story 3 — Assemble materializes kinds from normalized constituent rules (Priority: P2)
+### User Story 2 — Function-call accessors with cursor/value duality (Priority: P1)
 
-A maintainer needs Assemble to stop thinking in the old `fields` / `children` / slot ontology and
-instead materialize kinds from normalized constituent rules, with parent-edge naming attached where
-present.
+A consumer calls `node.name()` to get the resolved value, or holds a reference to
+`node.name` as a traversal cursor handle. Accessors are non-enumerable functions —
+they don't appear in `Object.keys` or `JSON.stringify`.
 
-**Why this priority**: This is the downstream payoff of Binding + Simplify. If Assemble keeps the
-old primary-storage model, the rewrite remains incomplete.
+**Why this priority**: The cursor/value duality is the ergonomic unlock that
+justifies function-call syntax over plain property access. It enables lazy drill-in,
+future navigation methods, and memoization without API changes.
 
-**Independent Test**: For representative kinds with field names, aliases, literals, and wrapper
-forms, assert that Assemble produces a kind surface derived from normalized constituent rules and
-preserves the naming/provenance semantics established earlier in the pipeline.
+**Independent Test**: Given a factory node, `typeof node.name === 'function'`,
+`node.name()` returns the stored value, `Object.keys(node)` does not include
+`'name'`, and `JSON.stringify(node)` serializes only `$`-metadata and `_`-storage.
 
 **Acceptance Scenarios**:
 
-1. **Given** a kind with named and unnamed constituents, **When** Assemble runs after Binding + Simplify, **Then** it materializes that kind from normalized constituent rules with parent-edge naming attached where present.
-2. **Given** a kind whose current implementation would split data across `fields` and `children`, **When** Assemble runs under the new model, **Then** its primary assembled representation is based on constituent rules rather than on the old split ontology.
-3. **Given** a compatibility view still needs `fields` or `children`, **When** that view is produced, **Then** it is derived from the normalized constituent-rule model rather than by maintaining a second independent discovery pass.
+1. **Given** a factory node, **When** `node.name()` is called, **Then** the stored value from `node._name` is returned.
+2. **Given** a wrap node with a drill-in stub in `_name`, **When** `node.name()` is called, **Then** the stub is materialized via readNode and the resolved NodeData is returned.
+3. **Given** any node, **When** `Object.keys(node)` is called, **Then** accessor function names are NOT included (non-enumerable).
+4. **Given** a node reference `const cursor = node.name`, **When** the cursor is inspected, **Then** it is a callable function. In the future it may carry navigation methods.
+
+---
+
+### User Story 3 — Frozen immutable nodes with `$with` updaters (Priority: P1)
+
+A consumer modifies a node by calling `node.$with.name(newValue)` which returns a
+new frozen node. The original node is never mutated. All nodes are frozen at
+construction.
+
+**Why this priority**: Immutability makes node identity reliable and enables safe
+structural sharing. It replaces the mutable fluent-setter pattern that led to
+~1,500 lines of duplicated methods per grammar.
+
+**Independent Test**: Given a factory node, `Object.isFrozen(node) === true`, and
+calling `node.$with.name(v)` returns a new frozen node where `newNode._name === v`
+and `node._name` is unchanged.
+
+**Acceptance Scenarios**:
+
+1. **Given** a factory-produced node, **When** `Object.isFrozen(node)` is checked, **Then** it returns `true`.
+2. **Given** any node, **When** `node.$with.name(newValue)` is called, **Then** a NEW frozen node is returned with the updated value, and the original node is unchanged.
+3. **Given** a consumer tries `node._name = 'x'`, **When** the assignment executes, **Then** it throws in strict mode (or silently fails in sloppy mode) because the object is frozen.
+4. **Given** a `$with` call on a wrap-produced node, **When** the new node is returned, **Then** it has the same shape (accessors, methods, metadata) as the original.
+
+---
+
+### User Story 4 — `$`-prefixed methods replace unprefixed methods (Priority: P2)
+
+A consumer calls `node.$render()`, `node.$toEdit()`, `node.$replace()` instead of
+the old `node.render()`, `node.toEdit()`, `node.replace()`. All sittir-owned
+methods use `$`-prefix to eliminate collisions with grammar field names.
+
+**Why this priority**: Without `$`-prefix, method names can collide with grammar
+field accessors (e.g., a grammar could have a `type` field). The `$` convention
+makes the namespace collision-free by construction.
+
+**Independent Test**: Given any node, `node.$render()` produces rendered source
+text, and `node.render` is undefined (or is a grammar field accessor if the grammar
+has a `render` field).
+
+**Acceptance Scenarios**:
+
+1. **Given** any branch node with a valid template, **When** `node.$render()` is called, **Then** it produces the rendered source text.
+2. **Given** any node, **When** `node.$toEdit(range)` is called, **Then** it creates an Edit object for the given byte range.
+3. **Given** a grammar with a field named `type`, **When** a consumer accesses `node.type()`, **Then** it resolves the grammar field value (not metadata). `$type` is the sittir metadata.
+
+---
+
+### User Story 5 — Unified factory and wrap surface (Priority: P2)
+
+A consumer gets the same API whether a node came from a factory or from wrap
+(readNode). Both have `_`-storage, unprefixed accessors, `$with`, and `$`-prefixed
+methods. The only behavioral difference: wrap accessors may perform lazy drill-in.
+
+**Why this priority**: Consumers should not need to know or care about the
+provenance of a node. A unified surface enables generic utilities that work on any
+NodeData regardless of source.
+
+**Independent Test**: Given a factory node and a wrap node of the same kind, both
+have identical `Object.keys()`, identical accessor names, and calling `$with` on
+either returns a valid new node.
+
+**Acceptance Scenarios**:
+
+1. **Given** a factory node and a wrap node of kind `function_item`, **When** `Object.keys()` is compared, **Then** both return the same set of `$`-metadata keys and `_`-storage keys.
+2. **Given** either node type, **When** `node.name()` is called, **Then** the resolved value is returned (factory: direct; wrap: via drill-in if stub).
+3. **Given** either node type, **When** `node.$with.name(v)` is called, **Then** a new frozen node with the updated value is returned.
+
+---
+
+### User Story 6 — napi direct property access (Priority: P2)
+
+The native render path reads NodeData fields by name from the JS object, without
+JSON serialization. Transport becomes identity: the stored shape IS the transport
+shape. No `serde_json::to_string` then `JSON.parse` round-trip.
+
+**Why this priority**: The JSON round-trip adds measurable latency and allocates
+intermediate strings. With de-hoisted storage, `_name` on the JS object IS the
+value the native engine needs — direct property access eliminates the translation.
+
+**Independent Test**: Given a factory node passed to the native render engine, the
+engine reads `_name` directly via napi `Object::get_named_property`. No JSON
+appears in the call path.
+
+**Acceptance Scenarios**:
+
+1. **Given** a factory node, **When** passed to native render, **Then** the engine reads `_name`, `_body` etc. as JS object properties via napi — no JSON serialization.
+2. **Given** terminal slot values stored as plain strings, **When** native render reads them, **Then** no NodeData-to-string conversion is needed — transport is identity.
+3. **Given** the node carries `$with` and accessor functions, **When** passed to native render, **Then** those non-enumerable properties are ignored — only `$`-metadata and `_`-storage are read.
+
+---
+
+### User Story 7 — Internal pipeline produces the new surface (Priority: P3)
+
+The Binding, Simplify, and Assemble phases are rewritten to produce the de-hoisted
+surface directly. Binding attaches terminals to nonterminals. Simplify pushes wrapper
+behavior down to constituents. Assemble materializes kinds from normalized
+constituent rules.
+
+**Why this priority**: The internal pipeline rewrite is invisible to consumers. It
+can land AFTER the surface is stable because the current pipeline can emit the new
+shape through adapter projections.
+
+**Independent Test**: After the internal pipeline rewrite, the same RT baselines
+pass and the assembled model directly produces `_`-storage + accessors without any
+compatibility shim.
+
+**Acceptance Scenarios**:
+
+1. **Given** a kind whose raw rule contains terminals interleaved with nonterminals, **When** Binding runs, **Then** the terminals are associated with the nonterminal constituents they belong with.
+2. **Given** `optional(rule)` or `repeat(rule)`, **When** Simplify runs, **Then** optionality and multiplicity become properties of the constituent rule(s).
+3. **Given** normalized constituent rules, **When** Assemble runs, **Then** it materializes the kind with `_`-prefixed storage keys and accessor function definitions ready for emission.
 
 ---
 
 ### Edge Cases
 
-- **Mixed `choice` frontier**: choices whose arms start terminal-like in some cases and nonterminal-like in others must resolve by frontier result after Binding + Simplify, even if normalization requires synthesis.
-- **Field-wrapped literals**: field semantics from 021 still force nonterminal treatment even when the CST surface stays anonymous.
-- **Named alias over terminal-like content**: Binding and Simplify must honor 021's rule that named alias forces nonterminal treatment.
-- **Anonymous alias**: anonymous alias may still change anonymous CST labeling, but it must not reintroduce a second ontology during Binding / Simplify / Assemble.
-- **Wrapper-only structure**: `seq`, `optional`, `repeat`, `repeat1`, `choice`, and `prec*` must not survive as primary assembled members just because the old implementation made that convenient.
-- **Provenance**: Binding, Simplify, and Assemble must preserve `RuleId` lineage back to 021 rather than re-discovering structure through fresh walkers.
-
-## Architectural Design
-
-### 1. Binding comes before Simplify
-
-Binding is the first step toward the constituent-oriented model. Its job is to bind terminals to
-the nonterminals they belong with so that Simplify can normalize constituent behavior instead of
-guessing ownership from raw tree shape.
-
-Representative direction:
-
-```ts
-export interface BindingResult {
-	readonly ownerKind: string;
-	readonly members: readonly {
-		readonly ruleIds: readonly RuleId[];
-		readonly terminality: 'terminal' | 'nonterminal';
-		readonly edgeName?: string;
-	}[];
-}
-```
-
-The important point is not this exact type name, but the phase boundary:
-
-> Binding establishes constituent ownership before wrapper normalization.
-
-### 2. Simplify pushes wrapper behavior down
-
-Simplify becomes the normalization phase. It consumes bound constituents and pushes wrapper behavior
-down onto them.
-
-Under this design:
-
-- ordering belongs to constituents
-- multiplicity belongs to constituents
-- alternative structure belongs to constituents
-- precedence metadata belongs to constituents
-
-This applies to wrappers such as:
-
-- `seq`
-- `choice`
-- `optional`
-- `repeat`
-- `repeat1`
-- `prec*`
-
-### 3. Choice resolves by frontier result
-
-`choice(...)` is the hardest wrapper case, so this spec makes it explicit:
-
-- `choice(...)` resolves by its **frontier result after Binding + Simplify**
-- if needed, Simplify may synthesize a normalized constituent form so Assemble sees one coherent
-  result instead of a split terminal/nonterminal ambiguity
-
-### 4. Assemble materializes kinds from normalized constituent rules
-
-Assemble should no longer think in the old `fields` / `children` / slot ontology.
-
-Instead, it materializes a kind from normalized constituent rules, with parent-edge naming attached
-where present and `RuleId` provenance carried forward from 021.
-
-Representative direction:
-
-```ts
-export interface AssembledKindSurface {
-	readonly kind: string;
-	readonly members: readonly {
-		readonly ruleIds: readonly RuleId[];
-		readonly terminality: 'terminal' | 'nonterminal';
-		readonly edgeName?: string;
-		readonly optional?: boolean;
-		readonly repeated?: boolean;
-		readonly order: number;
-	}[];
-}
-```
-
-Again, the architectural rule matters more than the exact spelling:
-
-> Assemble is built from normalized constituent rules, not from surviving wrapper nodes and not from the old `fields` / `children` split as a primary ontology.
+- **Grammar fields named with `$` or `_` prefix**: Tree-sitter field names cannot start with `$` or `_`, so namespace collisions are impossible by construction.
+- **Unnamed slots**: A kind with only named members has no `$child` or `$children`. A kind with unnamed members has exactly ONE unnamed slot (`$child` for singular, `$children` for array).
+- **Drill-in resolution failure**: If a wrap accessor tries to materialize a stub but the underlying tree has been freed, it must throw a clear error rather than returning undefined.
+- **Multiple `$with` chains**: `node.$with.a(x).$with.b(y)` must produce a correct node with both updates applied (each intermediate is a valid frozen node).
+- **Empty nodes**: A node with zero named members and no unnamed slot (e.g., a keyword node like `fn`) still has `$type`, `$source`, `$named`, `$text` — it's a valid leaf.
+- **Serialization**: `JSON.stringify(node)` produces only `$`-metadata and `_`-storage (no accessor functions, no `$with`, no methods). This must round-trip cleanly for persistence.
 
 ## Requirements _(mandatory)_
 
 ### Functional Requirements
 
-- **FR-001**: Binding MUST precede Simplify.
-- **FR-002**: Binding MUST attach terminals to the nonterminal constituents they belong with so later phases stop reasoning over raw wrapper shape as the primary model.
-- **FR-003**: Binding MUST respect the rule classifications and field/alias semantics established by 021 rather than reclassifying them from scratch.
-- **FR-004**: Simplify MUST push wrapper behavior down onto constituent rules instead of preserving wrappers as primary assembled members.
-- **FR-005**: For `seq(...)`, ordering MUST be represented on the resulting constituent rules rather than by treating the sequence wrapper as a primary assembled member.
-- **FR-006**: For `optional(rule)`, `repeat(rule)`, and `repeat1(rule)`, optionality and multiplicity MUST be represented on the constituent rule(s) produced from `rule`.
-- **FR-007**: `choice(...)` MUST resolve by its frontier result after Binding + Simplify. If necessary, Simplify MAY synthesize a normalized constituent form so Assemble sees one coherent result.
-- **FR-008**: `prec*` wrappers MUST remain parse-behavior metadata and MUST NOT survive as primary assembled members solely because of historical implementation shape.
-- **FR-009**: Assemble MUST materialize kinds from normalized constituent rules with parent-edge naming attached where present.
-- **FR-010**: Assemble MUST preserve `RuleId` provenance from 021 for every normalized constituent it materializes.
-- **FR-011**: Any retained compatibility `fields` / `children` views MUST be derived from the normalized constituent-rule model rather than maintained as a second independent discovery pass.
-- **FR-012**: Binding, Simplify, and Assemble MUST share one coherent constituent-oriented model; partial migration that leaves wrappers half-pushed-down while assembled storage has already changed is not acceptable.
+**Taxonomy — pure-rename sub-phases (Phase 1) and architectural sub-phases (Phase 4)**
 
-### Key Entities _(include if feature involves data)_
+Code survey (2026-05-03) showed that taxonomy work splits naturally into two
+classes:
+- **Renames** (Phase 1): touch type/class names, keep runtime behavior and
+  emitted output byte-identical. Safe, fast, gateable on `git diff` empty.
+- **Architectural changes** (Phase 4, alongside pipeline rewrite): change which
+  classes the assembler instantiates; require Binding/Simplify to produce the
+  new model. NOT byte-identical — they change emitted output by definition,
+  so they ride with the pipeline rewrite that produces the new model from
+  scratch.
 
-- **`BindingResult`** — phase output that associates terminals with the nonterminal constituents they belong with before normalization.
-- **Simplified constituent rule** — normalized rule member after wrapper behavior has been pushed down.
-- **`AssembledKindSurface`** — assembled representation of a kind built from normalized constituent rules with naming/provenance attached.
-- **Frontier result** — the resolved constituent outcome of a wrapper-heavy form, especially `choice(...)`, after Binding + Simplify.
+Phase 1 (renames + Branch/Container merge — primary taxonomy goal):
+- **FR-T01a**: `AssembledChild` and `AssembledField` slot interfaces MUST be retained as a refinement hierarchy. An `isField(slot: AssembledChild): slot is AssembledField` type guard MUST be added to provide canonical narrowing where named-slot metadata (`name`, `paramName`) is needed. The existing `extends` relationship is preserved.
+- **FR-T02**: The current open-text class named `AssembledLeaf` MUST be renamed to `AssembledPattern`. A new abstract `AssembledLeaf` base class MUST be introduced. `AssembledPattern`, `AssembledKeyword`, `AssembledToken`, `AssembledEnum` MUST extend the new `AssembledLeaf` base instead of `AssembledNodeBase` directly. `modelType` string values MUST remain unchanged (`'leaf'`, `'keyword'`, `'token'`, `'enum'`) to preserve byte-identity.
+- **FR-T04**: `AssembledContainer` MUST be eliminated. `AssembledBranch` MUST absorb its responsibilities — one structural type for all kinds with nonterminal slots, regardless of whether they have named fields. Emitters that previously discriminated on `modelType === 'container'` vs `modelType === 'branch'` MUST switch to discriminating on slot shape (`node.fields.length === 0` for the "container-shaped" case). This is **partition-equivalent**: every kind emits the same artifacts as before; only the internal classification mechanism changes.
+- **FR-T06**: After Phase 1 commits, the regenerated grammar packages MUST diff cleanly against pre-Phase-1 output. (Sub-phases 1a/1b/1c are byte-identical renames; sub-phase 1d is partition-equivalent — the merged AssembledBranch produces the same emitted output as the previous Branch+Container pair, verified by `git diff` empty.)
+
+Phase 4 (architectural — **DEFERRED to a separate spec**):
+> Phase 4 is officially out of scope for spec 022. See
+> `IMPLEMENTATION-STATUS.md` "Phase 4 — officially deferred" for the
+> full itemized list. Provisional spec: 023-children-naming.
+
+- ~~**FR-T01b**: `AssembledMulti` MUST be removed.~~
+- ~~**FR-T03**: `AssembledGroup` MUST be absorbed into `AssembledPolymorph`.~~
+- ~~**FR-T05**: At most ONE unnamed slot per `AssembledBranch`.~~
+
+**Surface (de-hoist + accessors + freeze)**
+
+- **FR-001**: `$fields` wrapper MUST be removed. Named members MUST be stored as `_`-prefixed top-level keys on the NodeData object.
+- **FR-002**: Each named member MUST have a non-enumerable accessor function (unprefixed) that returns the stored value when called.
+- **FR-003**: Accessor functions on wrap-produced nodes MUST perform lazy drill-in materialization when the stored value is a stub.
+- **FR-004**: All NodeData objects MUST be frozen at construction (`Object.isFrozen(node) === true`).
+- **FR-005**: `NodeFieldValue` and `NodeChildValue` MUST be unified into `NodeMemberValue = AnyNodeData | string | number`.
+- **FR-006**: Unnamed positional members MUST use `$child` (singular) or `$children` (array). At most ONE unnamed slot per kind.
+
+**`$with` namespace**
+
+- **FR-007**: Per-field fluent getter/setter methods MUST be replaced by a `$with` namespace of immutable updaters.
+- **FR-008**: Each `$with.field(v)` MUST return a NEW frozen node via the factory with the specified field updated.
+- **FR-009**: `$with` MUST be an inline property on the node object (enumerable). Non-enumerability is NOT required — `JSON.stringify` drops function-valued keys regardless, and `Object.defineProperty` is banned per hygiene rule 1.
+- **FR-009a**: `$with` MUST include updaters for unnamed slots when present: `$with.$child(value)` for singular unnamed slots and `$with.$children(values)` for array unnamed slots. The `$`-prefix on the updater name mirrors the `$`-prefix on the storage key (`$child`/`$children`), keeping the namespace coherent. (See research R6 for rationale.)
+
+**`$`-prefixed methods**
+
+- **FR-010**: All sittir-owned methods MUST use `$`-prefix: `$render()`, `$toEdit()`, `$replace()`, `$trivia()`.
+- **FR-011**: A shared `withMethods<T>` helper in per-grammar `utils.ts` MUST attach all `$`-prefixed methods via `Object.assign`, preserving the caller's literal type `T` through the generic return type. The helper MUST NOT live in `@sittir/core` (hygiene rule 3: shared boilerplate in per-grammar utils.ts, not core).
+- **FR-012**: `$`-prefixed methods are enumerable (attached via `Object.assign` inside `withMethods<T>`). Non-enumerability is NOT required — `JSON.stringify` drops function-valued keys regardless, and `Object.defineProperty` is banned per hygiene rule 1.
+
+**Unified surface**
+
+- **FR-013**: Wrap output MUST expose the same accessor functions, `$with` namespace, and `$`-prefixed methods as factory output.
+- **FR-014**: The only behavioral difference between factory and wrap accessors MUST be drill-in — wrap accessors MAY materialize stubs; factory accessors return values directly.
+
+**napi direct**
+
+- **FR-015**: Rust NodeData MUST cross napi via direct `FromNapiValue`/`ToNapiValue` reading/writing JS object properties. No JSON serialization round-trip.
+- **FR-016**: `$with` and `$`-prefixed methods are JS-side only and MUST NOT cross the napi boundary.
+- **FR-017**: Terminal slot values stored as plain strings MUST be readable directly by native render — transport is identity (no NodeData-to-string conversion at runtime).
+
+**Internal pipeline (Binding / Simplify / Assemble)**
+
+- **FR-018**: Binding MUST precede Simplify and MUST attach terminals to the nonterminal constituents they belong with.
+- **FR-019**: Simplify MUST push wrapper behavior (`seq`, `choice`, `optional`, `repeat`, `repeat1`, `prec*`) down onto constituent rules.
+- **FR-020**: Assemble MUST materialize kinds from normalized constituent rules with parent-edge naming attached where present.
+- **FR-021**: Assemble MUST preserve `RuleId` provenance from spec 021 for every constituent it materializes.
+- **FR-022**: Any retained compatibility views MUST be derived from the normalized constituent-rule model — not maintained as a second independent discovery pass.
+
+**Migration safety**
+
+- **FR-023**: Each commit MUST pass native RT baselines (python >= 114, rust >= 124, typescript >= 108) and type-check with zero errors.
+
+### Key Entities
+
+- **NodeData** — frozen plain object with three namespaces. The consumer-facing unit of the tree.
+- **NodeMemberValue** — `AnyNodeData | string | number`. Unified member value type.
+- **`$with` namespace** — non-enumerable object on each node providing per-field immutable updaters.
+- **Accessor function** — non-enumerable function per named member. Call = value. Reference = cursor.
+- **Stub** — minimal `{ $type, $nodeHandle, $childIndex }` stored in wrap nodes, materialized on access.
 
 ## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
-- **SC-001**: Representative Binding tests show terminals attaching to the correct nonterminal constituents for Rust, TypeScript, and Python samples.
-- **SC-002**: Representative Simplify tests show `seq`, `choice`, `optional`, `repeat`, `repeat1`, and `prec*` behavior pushed down onto constituent rules rather than preserved as primary assembled members.
-- **SC-003**: Mixed `choice` cases can be normalized into one coherent frontier result after Binding + Simplify.
-- **SC-004**: Assemble materializes kinds from normalized constituent rules while preserving `RuleId` provenance and parent-edge naming.
-- **SC-005**: Any compatibility `fields` / `children` views remaining after the first landing are provably derived from the normalized constituent model rather than from separate private walkers.
+- **SC-T01**: After Phase 1 commit, `git diff` of regenerated `packages/{rust,typescript,python}/src/` produces zero changed lines (taxonomy rename is byte-identical). _Operationalizes FR-T06._
+- **SC-T02**: Zero references to `AssembledField`, `AssembledChild`, `AssembledMulti`, `AssembledGroup` remain after Phase 1 (grep returns empty across `packages/codegen/src/`).
+- **SC-001**: Zero references to `$fields` remain in generated output or core runtime.
+- **SC-002**: Per-field fluent setter emission removed. Pure getter methods (closure-based, read local `_<name>` const) remain. Setters live exclusively in `$with`. Net reduction smaller than originally projected (~-500 lines vs -1,500) because getters are retained as useful read-access API.
+- **SC-003**: `withMethods<T>` generic helper in per-grammar `utils.ts` replaces per-factory inline method emission. Uses `Object.assign` (not `defineProperty`). Generic `<T>` preserves per-kind literal type through the boundary.
+- **SC-004**: `Object.keys(node)` returns `$`-metadata keys, `_`-storage keys, getter method names, `$with`, and `$`-prefixed method names. Getter methods and `$with` are enumerable because `Object.defineProperty` is banned (hygiene rule 1). This is acceptable — `JSON.stringify` is the serialization boundary (drops functions), not `Object.keys`.
+- **SC-005**: Native RT pass rates do not regress below baseline: python >= 114, rust >= 124, typescript >= 108.
+- **SC-006**: Factory round-trip failure ceilings drop to zero (from rust 15, typescript 25, python 70).
+- **SC-007**: `JSON.stringify(anyNode)` produces a clean serialization with no function artifacts.
+- **SC-008**: No JSON serialization appears in the native render call path (napi direct verified).
+- **SC-009**: All generated factories produce frozen objects (`Object.isFrozen` assertion in tests).
+- **SC-010**: `$with` chain produces correct nodes: `node.$with.a(x).$with.b(y)` verified in tests.
+
+## Glossary
+
+- **Compatibility shim** — temporary code introduced during Phases 1-3 that
+  bridges old assembled-model accessors or old NodeData shape to the new one
+  so each phase can pass the RT gate without requiring downstream phases to
+  land first. Phase 4 (FR-022) drops every shim. Concrete examples expected
+  to be shims: any `assembleField` / `assembleChild` legacy function paths in
+  `assemble.ts`, any `$fields`-shaped fallback in factory or wrap, any
+  JSON-serialization fallback in the napi boundary. If a piece of code's
+  sole purpose is to keep the previous shape working while the new one is
+  introduced, it is a shim.
 
 ## Out of Scope
 
-- Defining foundational identity or rule classification from scratch; that is owned by 021.
-- Replacing `RuleId` with KindID / FieldID or any other tree-sitter-generated metadata.
-- Implementing the eventual enum-backed wire format itself.
+- Defining foundational identity or rule classification (owned by spec 021).
+- Replacing `RuleId` with KindID / FieldID metadata.
+- Implementing the eventual enum-backed wire format.
 - Changing tree-sitter CST semantics for named vs anonymous nodes.
+- Cursor navigation methods beyond `.name` reference (`parent()`, `next()`, `children()`, `kind`) — future spec.
 
 ## Dependencies & Assumptions
 
-- **Depends on** refined 021 for `RuleId`, rule classification, field semantics, alias semantics, and late KindID / FieldID metadata.
-- **Depends on** the five-phase compiler contract from spec 005 remaining intact, with this work expressed as a Binding / Simplify / Assemble rewrite inside that broader pipeline.
-- **Assumes** the current assembled representation can evolve in stages, with compatibility projections allowed temporarily as long as they derive from the normalized constituent model.
+- **Depends on** refined spec 021 for `RuleId`, rule classification, field semantics, alias semantics.
+- **Depends on** the five-phase compiler contract from spec 005.
+- **Depends on** ADR-0017 (merged): `$nodeHandle` + `$childIndex`, numeric `$source`, ParsedTree/Engine split.
+- **Assumes** incremental staged migration with each commit passing all RT gates.
+- **Assumes** surface changes land BEFORE internal pipeline rewrite (surface-first order).
+- **Migration phases**:
+  - **Phase 1** — Taxonomy: collapse `AssembledField`+`AssembledChild`+`AssembledMulti` into `AssembledNonterminal`; introduce `AssembledLeaf` base with `Pattern`/`Keyword`/`Token`/`Enum` subtypes; absorb `AssembledGroup` into `AssembledPolymorph`. Pure rename — RT byte-identical.
+  - **Phase 2** — Surface: de-hoist `$fields` to `_`-prefix storage, add accessor functions, freeze nodes, add `$with`, `$`-prefix methods, unified factory/wrap surface.
+  - **Phase 3** — Transport: napi direct property access, terminal value identity projection.
+  - **Phase 4** — Internals: Binding/Simplify/Assemble rewrite producing the new taxonomy from scratch; remove compatibility shims from earlier phases.

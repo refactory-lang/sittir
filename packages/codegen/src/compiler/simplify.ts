@@ -76,22 +76,7 @@ export function simplifyRule(
 ): Rule {
 	switch (rule.type) {
 		case 'seq': {
-			// Remove string nodes that don't lex as words under the
-			// grammar's `word` rule (anonymous delimiters / operators)
-			// and empty-seq sentinels left behind by collapsed
-			// `optional` wrappers whose inner content vanished (e.g.
-			// `optional(',')` — the trailing-comma hint — becomes an
-			// empty seq after the string is stripped). Word-shaped
-			// strings like 'pub' / 'return' stay — they carry identity
-			// that downstream paths key on.
-			//
-			// Flatten nested-seq members (`seq(a, seq(b, c), d)` →
-			// `seq(a, b, c, d)`). Grammar authors occasionally wrap
-			// a sub-sequence inline — canonical form has a flat
-			// top-level seq so derivation can filter-and-project
-			// without descending. Canonical example from rust:
-			// `_array_expression_semi` wraps `seq(elements, ';',
-			// length)` inside the outer bracketed-seq.
+			// Strip non-keyword strings, remove empty-seq sentinels, flatten nested seqs.
 			const members = rule.members
 				.map((m) => simplifyRule(m, wordMatcher, inField))
 				.filter((m) => {
@@ -106,23 +91,11 @@ export function simplifyRule(
 			return { type: 'seq', members };
 		}
 		case 'choice': {
-			// Preserve variant wrappers — `mergeChoiceBranches` relies
-			// on them to detect polymorph surfaces (if any branch is
-			// variant-wrapped, the choice is intentionally
-			// heterogeneous and must NOT be merged into a flat seq).
-			// The `variant` case below recurses into variant content
-			// normally, so wrappers survive without blocking inner
-			// simplification.
+			// Variant wrappers preserved for polymorph surface detection.
 			const members = rule.members.map((m) =>
 				simplifyRule(m, wordMatcher, inField)
 			);
-			// Fold empty-matching members out of the choice and wrap the
-			// remainder in `optional`. Tree-sitter's external-token
-			// placeholder surfaces as `pattern("")`, which matches the
-			// empty string — structurally equivalent to BLANK. Leaving
-			// it as a choice branch makes downstream derivation see a
-			// heterogeneous shape; moving it to `optional` matches the
-			// semantics exactly and keeps the rule canonical.
+			// Fold empty-match members (pattern(""), empty seq) into optional.
 			const empty = members.findIndex(isEmptyMatchMember);
 			if (empty >= 0 && members.length > 1) {
 				const nonEmpty = members.filter((_, i) => i !== empty);
@@ -139,7 +112,7 @@ export function simplifyRule(
 			if (members.length === 1) return members[0]!;
 			// Merge structurally-equivalent choice branches so same-
 			// named fields across branches fuse into a single field
-			// with union content (spec 013). Closes `BinaryExpression.
+			// with union content. Closes `BinaryExpression.
 			// operator: AutoStamp<"&&">`-style bugs where derivation
 			// walked an uncanonical tree and silently dropped
 			// duplicate-named field occurrences across choice branches.
@@ -157,19 +130,8 @@ export function simplifyRule(
 		}
 		case 'optional': {
 			const inner = simplifyRule(rule.content, wordMatcher, inField);
-			// If the body vanished after simplification — either an
-			// empty seq sentinel OR a bare non-word-shaped string
-			// literal left behind (`optional(',')` for trailing-separator
-			// hints, `optional(';')` for statement terminators) — the
-			// whole optional contributes nothing derivation cares
-			// about. Fold to the empty-seq sentinel so enclosing seqs
-			// filter it out.
-			//
-			// Exception: inside a FIELD, a bare anonymous string is
-			// structural content the field explicitly labels (e.g.
-			// `field('lifetime', optional('&'))` in rust's
-			// self_parameter). Preserve the optional(string) so the
-			// field slot sees the `&` terminal in its values.
+			// Fold to empty-seq when body vanished. Exception: inside
+			// a field, anonymous strings are structural content.
 			if (inner.type === 'seq' && inner.members.length === 0) {
 				return { type: 'seq', members: [] };
 			}
@@ -180,19 +142,12 @@ export function simplifyRule(
 			) {
 				return { type: 'seq', members: [] };
 			}
-			// Hoist a nested field out — `optional(field(n, X))` is
-			// equivalent to `field(n, optional(X))` for derivation, and
-			// fields belong at the top so the walker's trivial form
-			// applies. See `hoistFieldOutOfSingleContentWrapper`.
 			return hoistFieldOutOfSingleContentWrapper({
 				type: 'optional',
 				content: inner
 			});
 		}
 		case 'repeat': {
-			// Preserve the repeat wrapper AND its metadata
-			// (separator / trailing / leading) — derivation reads them
-			// to stamp `multiple: true` and attach joinBy hints.
 			const next = {
 				...rule,
 				content: simplifyRule(rule.content, wordMatcher, inField)
@@ -207,24 +162,11 @@ export function simplifyRule(
 			return hoistFieldOutOfSingleContentWrapper(next);
 		}
 		case 'field': {
-			// Recurse into the field's content so inner anonymous
-			// delimiters get stripped. The field wrapper itself stays
-			// intact — its `name` is the derivation anchor. Thread
-			// `inField=true` so `optional(anonymous-string)` inside
-			// the field survives (it's labelled content, not a hint).
+			// Recurse with inField=true so optional(anon-string) survives.
 			const recursed: Rule = {
 				...rule,
 				content: simplifyRule(rule.content, wordMatcher, true)
 			};
-			// Drop the OUTER field wrapper when its content contains a
-			// top-level inner field. Tree-sitter flattens nested-field-
-			// paths so the inner field IS already a top-level field of
-			// the parent kind at parse time. Keeping the outer wrapper
-			// makes the template walker emit a placeholder for the
-			// outer field (whose runtime value is just a structural
-			// literal like `extends` or `,`) and SKIP the inner field
-			// entirely. See `hoistInnerFieldOutOfFieldWrapper` JSDoc
-			// for the canonical example (`infer_type`).
 			return hoistInnerFieldOutOfFieldWrapper(recursed);
 		}
 		case 'group':
@@ -233,8 +175,6 @@ export function simplifyRule(
 				content: simplifyRule(rule.content, wordMatcher, inField)
 			};
 		case 'variant':
-			// Variants carry a name that polymorph promotion reads.
-			// Preserve the wrapper around the simplified content.
 			return {
 				...rule,
 				content: simplifyRule(rule.content, wordMatcher, inField)
@@ -245,9 +185,6 @@ export function simplifyRule(
 				content: simplifyRule(rule.content, wordMatcher, inField)
 			};
 		default:
-			// string / pattern / enum / symbol / supertype / token /
-			// terminal / polymorph / indent / dedent / newline all
-			// pass through unchanged: atomic leaves or opaque text.
 			return rule;
 	}
 }
@@ -255,7 +192,7 @@ export function simplifyRule(
 /**
  * Simplify every rule in an OptimizedGrammar's rules map.
  *
- * Pipeline per rule (spec 013):
+ * Pipeline per rule:
  *   1. `simplifyRule` — strip anon delimiters, collapse single-member
  *      wrappers (legacy behavior).
  *   2. `canonicalize` — merge structurally-equivalent choice branches
@@ -332,74 +269,18 @@ function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Canonicalization (spec 013)
+// Canonicalization — merges structurally-equivalent choice
+// branches so same-named fields fuse into field(name, choice(v1, v2, ...)).
+// Bottom-up, idempotent. See compiler-phase-glossary.md for details.
 // ---------------------------------------------------------------------------
-//
-// After `simplifyRule`'s strip-and-collapse, a rule may still sit in a
-// shape that mixes structural ambiguity into the top-level surface — most
-// notably `choice(seq(field('a', x1), ...), seq(field('a', x2), ...))`
-// where every branch carries the same field names but DIFFERENT contents.
-// Derivation today handles this with per-case merge logic in
-// `deriveFieldsRaw`, and gets it subtly wrong (drops duplicates, misses
-// nested choice coverage, silently auto-stamps constants that should be
-// literal unions).
-//
-// `canonicalize(rule)` — the 013 normalization — transforms the rule into
-// a canonical flat form whose TOP-LEVEL members map 1:1 to the node's
-// surface (fields + unnamed children). Derivation post-canonicalization
-// reduces to a filter-and-project over the top-level seq members.
-//
-// The pipeline is bottom-up: each transformation recurses into
-// content/members first, then applies at the current level. Composition
-// is deterministic; running canonicalize twice is a no-op (idempotent).
-//
-// Additive: Phase 1 lands this function without wiring it into the main
-// simplify pipeline — callers that want the canonical form invoke it
-// explicitly. Phase 2 (separate commit) flips `simplifyRules` to apply
-// canonicalize after simplifyRule, at which point downstream derivation
-// gets the bug fixes automatically.
-//
-// Shape example (after canonicalize, a rule's top-level seq directly
-// reflects its fields + unnamed children; derivation becomes a
-// filter/project over members):
-//
-//   before (post-simplifyRule, still ambiguous):
-//     choice(
-//       seq(field('left', E), field('operator', '&&'), field('right', E)),
-//       seq(field('left', E), field('operator', '||'), field('right', E)),
-//       seq(field('left', E), field('operator', '+'),  field('right', E)),
-//     )
-//
-//   after (canonicalize):
-//     seq(
-//       field('left', E),
-//       field('operator', choice('&&', '||', '+')),
-//       field('right', E),
-//     )
 /**
- * Pull a `field()` wrapper OUT of a single-content structural wrapper
- * (`repeat` / `repeat1` / `optional`), so the field's name ends up at
- * the outer structural level:
+ * Hoist `field()` out of `repeat`/`repeat1`/`optional`:
+ * `repeat(field('n', X))` -> `field('n', repeat(X))`.
  *
- *   repeat(field('name', X))   → field('name', repeat(X))
- *   repeat1(field('name', X))  → field('name', repeat1(X))
- *   optional(field('name', X)) → field('name', optional(X))
- *
- * Rationale: the derive walker's trivial form wants fields directly
- * under a seq (or as the top-level rule). Keeping fields buried under
- * structural wrappers forces the walker to thread multiplicity down
- * through each wrapper and unwrap on the way back up. Tree-sitter's
- * field semantics are insensitive to this rewrite — a field can match
- * zero, one, or many children either way — so it's a non-lossy
- * canonicalization.
- *
- * Interplay: after this fires, adjacent fields with the same name are
- * still distinct entries; `mergeChoiceBranches` + the fixpoint loop
- * further collapse `choice(field('n', X), field('n', Y))` into
- * `field('n', choice(X, Y))`, and eventually into unified top-level
- * field seqs. Preserves the repeat's `separator` / `trailing` /
- * `leading` metadata — the walker reads those when stamping joinBy
- * hints.
+ * @remarks
+ * Non-lossy -- tree-sitter field semantics are insensitive to this swap.
+ * Keeps the derive walker's trivial form (fields directly under seq).
+ * Preserves separator/trailing/leading metadata on the repeat.
  */
 function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
 	if (
@@ -415,112 +296,30 @@ function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
 }
 
 /**
- * Drop an OUTER `field('outer', X)` wrapper when X (after walking
- * through `optional` / `repeat` / `repeat1` / `clause` / `group` /
- * `variant` / `seq` / `choice` wrappers) contains an inner `field()`
- * directly reachable without crossing a `symbol` / `supertype` /
- * `enum` / `pattern` / nested `field` boundary.
+ * Drop an outer `field('outer', ...)` wrapper when its content contains
+ * an inner `field()` at exposable depth. Tree-sitter flattens nested
+ * field paths, so the inner field IS a top-level field of the parent
+ * kind -- keeping the outer wrapper makes the template walker miss it.
  *
- * Tree-sitter's `field()` declarations propagate to the nearest named-
- * rule ancestor: a `field('inner', X)` nested inside `field('outer',
- * wrapper(seq(literals?, field('inner', X), ...)))` shows up as a
- * TOP-LEVEL field on the parent kind in `node-types.json`. Two failure
- * modes follow when the outer wrapper survives into the template:
- *
- *   1. The template-walker emits `{{ outer }}` and stops — the inner
- *      field never gets a placeholder, so its runtime value drops on
- *      the floor. (Example: `infer_type` template
- *      `infer {{ type_identifier }} {{ constraint }}` renders
- *      `infer U extends`, dropping the `string` after `extends`.)
- *
- *   2. The coverage validator declares the inner field "missing" from
- *      the template (it IS missing) — the cluster D `grammar-fields.ts`
- *      walker side-stepped this by computing a separate "transitively
- *      covered" allow-list. Hoisting eliminates the divergence at the
- *      source.
- *
- * Canonical example (typescript `infer_type`):
- *
- *   before:
- *     field('constraint', clause('type', seq('extends', field('type', X))))
- *   after:
- *     clause('type', seq('extends', field('type', X)))
- *
- * The structural literals (`extends`) and conditional gating (`clause`
- * / `optional`) are preserved — the walker's `clause` case emits
- * `{% if type %}extends {{ type }}{% endif %}` from the hoisted shape.
- *
- * Safety bails (return the input unchanged):
- *   - Outer is not a `field`. Nothing to hoist.
- *   - Outer's content has no exposable inner `field()` — the outer
- *     field is the only field, and dropping it would destroy data.
- *   - Outer's content is a bare `field()` (no surrounding wrapper) —
- *     that's a `field('outer', field('inner', ...))` shape that the
- *     pre-existing `hoistFieldOutOfSingleContentWrapper` and friends
- *     handle differently.
+ * @remarks
+ * Bails when: content is a bare field (handled by hoistField...), no
+ * inner field at exposable depth, or a named-symbol sibling would lose
+ * its label from the outer field.
  */
 export function hoistInnerFieldOutOfFieldWrapper(rule: Rule): Rule {
 	if (rule.type !== 'field') return rule;
 	const content = rule.content;
-	// A `field('outer', field('inner', ...))` direct nesting is left
-	// for the existing hoist passes. We're targeting the case where
-	// the inner field sits inside a STRUCTURAL wrapper (optional /
-	// repeat / clause / group / variant / seq / choice).
-	if (content.type === 'field') return rule;
+	if (content.type === 'field') return rule; // direct nesting handled elsewhere
 	if (!hasInnerFieldAtExposableDepth(content)) return rule;
-	// Conservative bail: any seq sibling of the inner field that is a
-	// NAMED reference (symbol / supertype) carries a meaningful runtime
-	// label from the OUTER field name (tree-sitter labels every direct
-	// child of `field('outer', seq(...))` with `outer` unless an inner
-	// field re-labels it). Dropping the outer wrapper would strip that
-	// label and force the walker to render the named sibling via the
-	// generic `$$$CHILDREN` slot — losing the per-slot semantics.
-	//
-	// The hoist target is shapes where the inner field's siblings are
-	// STRUCTURAL ONLY (anonymous strings like `extends` / `,`, plus
-	// other inner fields whose names already speak for themselves).
+	// Bail if a named-symbol sibling would lose its outer-field label.
 	if (hasNamedSiblingOfInnerField(content)) return rule;
 	return content;
 }
 
 /**
- * Does `rule` contain a `field()` reachable at "exposable depth" —
- * i.e., reachable while traversing only structural / metadata wrappers
- * (`optional` / `repeat` / `repeat1` / `clause` / `group` / `variant` /
- * `seq` / `choice`) and WITHOUT crossing into another `field()`'s
- * content, a `symbol` reference, a `supertype`, an `enum`, a `pattern`,
- * a `string`, a `terminal`, or a `token`?
- *
- * @remarks
- * This is the predicate {@link hoistInnerFieldOutOfFieldWrapper} uses
- * to decide whether the OUTER field wrapper can be safely dropped. The
- * structural wrappers we recurse through are exactly those tree-sitter
- * propagates field declarations through — once we hit a `field` boundary
- * or an opaque reference (symbol / supertype / leaf), the field
- * propagation stops at the runtime parse tree, so an inner field nested
- * past such a boundary is NOT exposed as a top-level field on the
- * containing kind. Dropping the outer wrapper in those cases would lose
- * structural information without recovering the inner field.
- */
-/**
- * Does any `seq` somewhere inside `rule` (reached through optional /
- * repeat / repeat1 / clause / group / variant / choice wrappers) carry
- * BOTH (a) a `field()` member AND (b) a NAMED member (symbol /
- * supertype) that is NOT itself a field?
- *
- * @remarks
- * The hoist guard. If the outer `field('outer', ...)` wraps a seq with
- * a mix of (inner fields) + (bare named symbols), tree-sitter labels
- * every bare named symbol with the OUTER field name (and the inner
- * fields with their inner names). Dropping the outer wrapper strips
- * the label from the bare named symbols — they become unlabeled
- * children rendered via the generic `$$$CHILDREN` slot, losing the
- * per-slot semantics the outer field provided. We bail in that case.
- *
- * Permitted siblings of an inner field — inside a sibling-bearing seq —
- * are anonymous strings (literal punctuation / keywords like `extends`,
- * `,`) and other fields. Both round-trip cleanly: anonymous strings
- * surface verbatim in the template, fields keep their own names.
+ * Hoist guard: true when any seq inside `rule` mixes field() members
+ * with named-symbol siblings. Dropping the outer field wrapper would
+ * strip labels from those named siblings.
  */
 function hasNamedSiblingOfInnerField(rule: Rule): boolean {
 	switch (rule.type) {
@@ -532,9 +331,6 @@ function hasNamedSiblingOfInnerField(rule: Rule): boolean {
 					if (isNamedReference(m)) return true;
 				}
 			}
-			// Even when this seq itself is fine, a NESTED seq deeper
-			// in the tree might mix fields with named refs — keep
-			// walking. Same reasoning for choice arms.
 			return rule.members.some(hasNamedSiblingOfInnerField);
 		}
 		case 'choice':
@@ -551,21 +347,7 @@ function hasNamedSiblingOfInnerField(rule: Rule): boolean {
 	}
 }
 
-/**
- * Is `rule` a NAMED reference that a tree-sitter `field()` declaration
- * would attach a label to at parse time? Symbols (visible parse-tree
- * kinds) and supertypes (union dispatch points) qualify. Strings,
- * patterns, enums, literals do NOT — anonymous tokens are unlabeled
- * regardless of any enclosing `field()`.
- *
- * @remarks
- * Walks through structural passthroughs (optional / clause / group /
- * variant / token / terminal / repeat / repeat1) so a wrapped reference
- * (`optional(symbol(x))`, `clause('y', symbol(x))`) is still detected.
- * Stops at `field` (those are inner fields, handled separately) and at
- * `seq` / `choice` (compound shapes — the caller walks into their
- * members).
- */
+/** True when `rule` is (or wraps) a symbol/supertype that tree-sitter would label. */
 function isNamedReference(rule: Rule): boolean {
 	switch (rule.type) {
 		case 'symbol':
@@ -610,54 +392,15 @@ function hasInnerFieldAtExposableDepth(rule: Rule): boolean {
 }
 
 /**
- * Cross-branch field hoist — lift a field name shared by every choice
- * branch out to an enclosing seq, unioning the field contents across
- * branches and keeping branch-specific residuals as a side choice:
+ * Lift a field name shared by every choice branch into an enclosing seq,
+ * unioning field contents across branches. Residuals become optional choice.
  *
- *   choice(
- *     field(A, X1),
- *     seq(field(B, Y), field(A, X2)),
- *     seq(field(A, X3), field(C, Z)),
- *   )
- *   →
- *   seq(
- *     field(A, choice(X1, X2, X3)),
- *     optional(choice(field(B, Y), field(C, Z))),
- *   )
- *
- * Covers the `for_in_statement` / `jsx_opening_element` /
- * `except_clause` family of shapes: branches differ in length or
- * extra fields but share a field name. `mergeChoiceBranches` bails on
- * these (it requires same-length same-kind seq branches);
- * `hoistFieldOutOfSingleContentWrapper` doesn't see them (not a single-
- * content wrapper). This pass closes the gap.
- *
- * Position is canonical (hoisted field first in the resulting seq).
- * Template emission reads the RAW rule, not the simplified rule, so
- * reordering field positions here doesn't affect rendering — only
- * downstream derivation, which filter-and-projects over seq members
- * and doesn't care about member order.
- *
- * Safety bails:
- *   - Bails on any variant-wrapped branch (polymorph identity must
- *     be preserved).
- *   - Requires the shared field name to appear EXACTLY ONCE per
- *     branch (multiple same-named fields in one branch could lose
- *     sibling-duplicate semantics).
- *   - One field at a time — the fixpoint loop re-runs simplifyRule
- *     and picks up additional shared fields on subsequent iterations.
+ * @remarks
+ * Bails on variant-wrapped branches. Requires the shared field to appear
+ * exactly once per branch. One field per iteration; fixpoint picks up more.
  */
 function hoistSharedFieldAcrossChoiceBranches(rule: ChoiceRule): Rule {
 	if (rule.members.length < 2) return rule;
-	// Bail on variant-wrapped branches — those are polymorph surfaces
-	// and must preserve their identity for the walker's `$variant`
-	// dispatch. Caveat: `tagVariants` auto-wraps many un-promoted
-	// choices (`_for_header`, `_export_statement_default_form1`, …)
-	// with heuristic `variant(form_N)` tags. Those tags block this
-	// hoist from running even though no downstream polymorph
-	// classification consumes them — leaving the choice non-canonical
-	// at derivation. A follow-up (spec 013, unfinished) should strip
-	// auto-tagged variants that didn't survive polymorph promotion.
 	if (rule.members.some((m) => m.type === 'variant')) return rule;
 	const perBranch = rule.members.map(normalizeBranchToMembers);
 	const fieldNameCounts = perBranch.map(countFieldNames);
@@ -940,63 +683,18 @@ function dedupeByJson(rules: readonly Rule[]): Rule[] {
 	return out;
 }
 
-/**
- * Compile the grammar's `word` rule into a full-string matcher.
- * Tree-sitter's `word:` declaration points at the lexer production
- * used for word recognition (typically an identifier pattern). Any
- * string whose text fully matches this pattern lexes as a word at
- * parse time; everything else is a delimiter or operator token.
- *
- * Handles the common word-rule shapes:
- *   - direct pattern rule — an identifier with a regex value
- *   - token(seq(alpha, repeat(alphanumeric))) — js/ts style
- *   - any composition of seq, choice, optional, repeat, repeat1,
- *     string, pattern, token, terminal
- *
- * Returns `undefined` when the grammar has no `word` rule or when
- * the rule contains shapes this walker doesn't understand (e.g.
- * symbol references into other rules). Callers fall back to a
- * generic `/^\w+$/` heuristic in that case.
- */
-// compileWordMatcher moved to ./common.ts — it is consumed by assemble,
-// optimize, and emitters/templates.ts, so it belongs in a shared utility
-// module rather than in the "simplify" phase file.
+// compileWordMatcher moved to ./common.ts (shared by assemble, optimize, emitters).
 
 // ---------------------------------------------------------------------------
-// Template-side hoist — applies the same nested-field hoist used inside
-// `simplifyRule`'s field case, but DOES NOT strip anonymous delimiters or
-// collapse seq/choice members. The template-walker reads the rule
-// produced by this pass via `assemble.ts → AssembledBranch.rule`, so the
-// literals (`,`, `(`, `;`, …) survive into template emission while the
-// hoist still flattens `field('outer', wrapper(... field('inner') ...))`
-// shapes that tree-sitter flattens at parse time.
-//
-// Without this pass the template-walker would walk the un-hoisted raw
-// rule and emit a `{{ outer }}` placeholder that drops the inner field
-// entirely (typescript `infer_type` rendered `infer U extends`, missing
-// the `string` after `extends`). With this pass the walker sees the
-// hoisted shape and emits the inner field's placeholder + the structural
-// literals as template text. See
-// `project_simplify_template_walker_divergence.md` for the full
-// architectural context.
+// Template-side hoist — inner-field hoist WITHOUT stripping anonymous
+// delimiters. Templates need literals to survive; only outer field
+// wrappers with inner fields at exposable depth are dropped.
 // ---------------------------------------------------------------------------
 
 /**
- * Apply the inner-field hoist throughout the rule tree, without doing
- * any other simplify-pipeline work. Preserves literals, anonymous
- * tokens, single-member wrappers, and overall structure — the only
- * change is dropping outer `field('outer', ...)` wrappers when their
- * content carries an inner field at exposable depth (and no named-
- * symbol siblings of that inner field).
- *
- * Bottom-up walk: recurse into content/members first so a nested
- * `field('outer', ...)` is hoisted before its enclosing field is
- * considered.
- *
- * Idempotent — running the pass twice returns the same shape.
- *
- * @see hoistInnerFieldOutOfFieldWrapper for the underlying transformation.
- * @see project_simplify_template_walker_divergence.md for the architectural rationale.
+ * Bottom-up inner-field hoist for template emission. Preserves all
+ * literals and structure; only drops outer field wrappers with exposable
+ * inner fields. Idempotent.
  */
 export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 	switch (rule.type) {
@@ -1042,25 +740,9 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 // ---------------------------------------------------------------------------
 
 /**
- * Inline symbol references to GROUP-classified hidden rules by
- * substituting each `symbol` ref with the group's content. Matches
- * tree-sitter's parse-time behavior: groups are "hidden seq with
- * fields" helpers (e.g. python's `_import_list`) whose fields surface
- * on the referencer's parse tree. Preserving the symbol reference
- * would force the NodeMap to claim a child slot that tree-sitter
- * never produces.
- *
- * Scope limited to GROUPS + MULTI helpers specifically (not all hidden
- * rules):
- *   - Supertypes — polymorph dispatch points; the reference IS the
- *     structural child slot. Stay as-is.
- *   - Other hidden rules (helpers that classify as branch/container
- *     because they lack fields, or leaves/tokens) — no field data
- *     to inline. Stay as-is.
- *   - Visible symbols — distinct parse-tree nodes with their own
- *     $type. Stay as-is.
- *
- * Cycles: visited set prevents infinite loops across chained groups.
+ * Inline hidden GROUP and MULTI symbol references by substituting
+ * their content. Matches tree-sitter's parse-time inlining of hidden
+ * seq-with-fields helpers. Cycle-safe via visited set.
  */
 export function inlineGroupRefs(
 	rule: Rule,

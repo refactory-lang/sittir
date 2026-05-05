@@ -717,7 +717,7 @@ export interface EnumBodyTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<EnumAssignmentTransport>
+  '$children': Array<EnumBodyChildTransport>
 }
 
 export interface EnumDeclarationTransport {
@@ -761,7 +761,7 @@ export interface ExportStatementDefaultDeclArmDefaultKwTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': ExportStatementDefaultDeclArmDefaultKwValueTransport
+  '$children': ExportStatementDefaultDeclArmDefaultKwChildTransport
 }
 
 export interface ExportStatementDefaultDeclArmDefaultKwValueTransport {
@@ -783,7 +783,7 @@ export interface ExportStatementDefaultDeclArmTransport {
   '$nodeHandle'?: number
   '$childIndex'?: number
   decorator: Array<DecoratorTransport>
-  '$children': ExportStatementDefaultDeclArmDefaultKwTransport
+  '$children': ExportStatementDefaultDeclArmChildTransport
 }
 
 export interface ExportStatementDefaultFromArmClauseFromTransport {
@@ -1591,7 +1591,7 @@ export interface JsxNamespaceNameTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
-  '$children': Array<_JsxIdentifierTransport>
+  '$children': _JsxIdentifierTransport
 }
 
 export interface JsxOpeningElementTransport {
@@ -1715,6 +1715,7 @@ export interface MemberExpressionTransport {
   '$childIndex'?: number
   object: Box<AnyTransport>
   property: PropertyNameTransport
+  '$children': boolean
 }
 
 export interface MethodDefinitionTransport {

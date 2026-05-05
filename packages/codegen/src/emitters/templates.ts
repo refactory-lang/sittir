@@ -1,7 +1,7 @@
 /**
  * Emits per-rule `.jinja` files for the render pipeline (feature 011).
  *
- * The YAML template format (`templates.yaml`) was retired in favor of
+ * The YAML template format (`templates directory`) was retired in favor of
  * per-rule `.jinja` files — see ADR-0013 / spec 011 for design notes.
  * This file owns the two functions that drive that emission:
  *

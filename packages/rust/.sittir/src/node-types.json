@@ -524,20 +524,25 @@
   {
     "type": "arguments",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        },
-        {
-          "type": "attribute_item",
-          "named": true
-        }
-      ]
+    "fields": {
+      "attributes": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ",",
+            "named": false
+          },
+          {
+            "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "attribute_item",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -769,6 +774,36 @@
           }
         ]
       },
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "scoped_identifier",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": false,
@@ -779,36 +814,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "crate",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "metavariable",
-          "named": true
-        },
-        {
-          "type": "scoped_identifier",
-          "named": true
-        },
-        {
-          "type": "self",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -974,6 +979,16 @@
             "named": true
           }
         ]
+      },
+      "trailing_expression": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
       }
     },
     "children": {
@@ -982,10 +997,6 @@
       "types": [
         {
           "type": "_declaration_statement",
-          "named": true
-        },
-        {
-          "type": "_expression",
           "named": true
         },
         {
@@ -3558,6 +3569,20 @@
     "type": "match_arm",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "inner_attribute_item",
+            "named": true
+          }
+        ]
+      },
       "pattern": {
         "multiple": false,
         "required": true,
@@ -6060,10 +6085,37 @@
   {
     "type": "type_parameters",
     "named": true,
-    "fields": {},
+    "fields": {
+      "attributes": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "const_parameter",
+            "named": true
+          },
+          {
+            "type": "lifetime_parameter",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "type_parameter",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "attribute_item",

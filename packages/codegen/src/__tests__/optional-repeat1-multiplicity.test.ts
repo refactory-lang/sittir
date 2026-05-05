@@ -1,10 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import {
-	deriveChildren,
+	deriveSlots,
 	isNonEmpty,
 	isMultiple
 } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
+
+// Helper — children-equivalent view over deriveSlots: kind-derived
+// positional slots (source='inferred'). This regression test predates
+// the Phase 1d.iv unification and was scoped to the children walker;
+// the same expectations hold over the unified slots view.
+function deriveChildren(rule: Rule) {
+	return deriveSlots(rule).filter((s) => s.source === 'inferred');
+}
 
 /**
  * Regression: `seq(LIT, optional(repeat1(symbol, sep)), LIT)` (the canonical

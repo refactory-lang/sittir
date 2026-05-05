@@ -1,5 +1,5 @@
 /**
- * compiler/assemble.ts — Phase 4: Assemble
+ * compiler/assemble.ts — Assemble phase.
  *
  * First time nodes appear. All metadata (required, multiple, contentTypes,
  * detectToken, modelType) derived from the rule tree — not carried on Rule nodes.
@@ -23,20 +23,18 @@ import type {
 	OptimizedGrammar,
 	NodeMap,
 	SignaturePool,
-	ProjectionContext,
 	PolymorphVariant
 } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
 import type {
 	AssembledNode,
-	AssembledField,
-	AssembledChild
+	AssembledNonterminal,
+	UnresolvedRef
 } from './node-map.ts';
 import {
 	AssembledBranch,
-	AssembledContainer,
 	AssembledPolymorph,
-	AssembledLeaf,
+	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
@@ -50,7 +48,8 @@ import {
 	isMultiple,
 	isNodeRef,
 	isTerminalValue,
-	isUnresolvedRef
+	isUnresolvedRef,
+	allSlotsOf
 } from './node-map.ts';
 import {
 	simplifyRule,
@@ -67,7 +66,7 @@ import { compileWordMatcher } from './common.ts';
 export function assemble(optimized: OptimizedGrammar): NodeMap {
 	const nodes = new Map<string, AssembledNode>();
 	// Parents that went through Link's variant() push-down keep their
-	// original rule shape but should NOT T065-promote to polymorph —
+	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
 	const variantParents = new Set(
 		optimized.polymorphVariants?.map((v) => v.parent) ?? []
@@ -108,19 +107,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 					kind,
 					new AssembledBranch(
 						kind,
-						inlinedRule as SeqRule | ChoiceRule,
-						simplifiedRule,
-						variantChildKinds ? { variantChildKinds } : undefined
-					)
-				);
-				break;
-			}
-			case 'container': {
-				nodes.set(
-					kind,
-					new AssembledContainer(
-						kind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+						inlinedRule as
+							| SeqRule
+							| ChoiceRule
+							| RepeatRule
+							| Repeat1Rule,
 						simplifiedRule,
 						variantChildKinds ? { variantChildKinds } : undefined
 					)
@@ -168,7 +159,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 			case 'leaf': {
 				nodes.set(
 					kind,
-					new AssembledLeaf(kind, rule as PatternRule | TerminalRule)
+					new AssembledPattern(kind, rule as PatternRule | TerminalRule)
 				);
 				break;
 			}
@@ -226,12 +217,15 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	markParameterlessKinds(nodes);
 	markUserFacing(nodes);
 	markVariantChildrenUserFacing(nodes, optimized.polymorphVariants ?? []);
+	// Slot-ref hydration is NOT done here — `hydrateSlotRefs(nodes)` is
+	// exported separately so the caller can serialize the unhydrated NodeMap
+	// (e.g. node-model.json5) BEFORE wiring up cyclic AssembledNode refs.
+	// Post-hydration the slot graph is cyclic and JSON.stringify breaks.
 
 	return {
 		name: optimized.name,
 		nodes,
 		signatures: computeSignatures(nodes),
-		projections: buildProjections(nodes),
 		derivations: optimized.derivations,
 		rules: optimized.rules,
 		word: optimized.word,
@@ -252,11 +246,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  * @param rule - The rule as it appears in `optimized.rules` (pre-inlining).
  * @returns The array of `{ name, content }` form descriptors from the
  *   `PolymorphRule`, or synthesised entries when the rule is a raw `choice`
- *   (T065 fallback path).
+ *   (terminal fallback path).
  * @throws {Error} When the rule is neither a `polymorph` nor a `choice`.
  * @remarks
  *   `PolymorphRule` is Link/Optimize's output — normally already has forms in
- *   declaration order. Under T065 the classifier may tag a raw `choice` as
+ *   declaration order. The classifier may tag a raw `choice` as
  *   `polymorph` when promotion was held back (strict debug mode). In that case
  *   synthetic forms are created from the choice members with numerical names
  *   (`'form0'`, `'form1'`, …) rather than any variant label that might have
@@ -389,16 +383,11 @@ function buildVisibleVariantChildGroups(
 				groups.push(
 					new AssembledBranch(
 						visibleKind,
-						inlinedRule as SeqRule | ChoiceRule,
-						simplifiedRule
-					)
-				);
-				break;
-			case 'container':
-				groups.push(
-					new AssembledContainer(
-						visibleKind,
-						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
+						inlinedRule as
+							| SeqRule
+							| ChoiceRule
+							| RepeatRule
+							| Repeat1Rule,
 						simplifiedRule
 					)
 				);
@@ -424,7 +413,7 @@ function buildVisibleVariantChildGroups(
  * @remarks
  *   Sources in priority order:
  *   1. `SupertypeRule.subtypes` — Link's pre-computed list.
- *   2. `choice` members — each `symbol` child's name (T065 fallback).
+ *   2. `choice` members — each `symbol` child's name (fallback).
  *   3. Empty list — for any other rule shape (best-effort).
  *
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
@@ -464,7 +453,7 @@ function resolveSupertypeSubtypes(
  *   the outer group wrapper; we want the inner content's simplified view to match
  *   what we're passing as `rule`. For the wrapper case the inner content's
  *   simplified view is computed on-the-fly. Non-group rules pass through as-is
- *   (the T065 fallback path — groups that didn't get the GroupRule wrapper).
+ *   (the fallback path — groups that didn't get the GroupRule wrapper).
  */
 function unwrapGroupRuleAndSimplified(
 	rule: Rule,
@@ -503,7 +492,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
 }
 
 // ---------------------------------------------------------------------------
-// markParameterlessKinds — fixpoint pass (ADR-0010 Task 1.5)
+// markParameterlessKinds — fixpoint pass
 // ---------------------------------------------------------------------------
 
 /**
@@ -520,7 +509,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * user-determined.
  */
 function isAutoStampSlot(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodes: Map<string, AssembledNode>
 ): boolean {
 	if (!isRequired(slot)) return true; // optional slots never block parameterless
@@ -544,24 +533,17 @@ function isAutoStampSlot(
 }
 
 /**
- * Get all slots (fields + children) for compound-like nodes that support
- * the parameterless fixpoint. Returns `undefined` for nodes that have no
- * slot model (supertypes, tokens, multis — these are never parameterless
- * compounds).
+ * Get all slots for compound-like nodes that support the parameterless
+ * fixpoint. Returns `undefined` for nodes that have no slot model
+ * (supertypes, tokens, multis — these are never parameterless compounds).
  */
 function getSlotsForParameterless(
 	node: AssembledNode
-):
-	| { fields: readonly AssembledField[]; children: readonly AssembledChild[] }
-	| undefined {
+): readonly AssembledNonterminal[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
-			return { fields: node.fields, children: node.children ?? [] };
 		case 'group':
-			return { fields: node.fields, children: node.children ?? [] };
-		case 'container':
-			// Containers have children but no fields
-			return { fields: [], children: node.children };
+			return Object.values(node.slots);
 		default:
 			return undefined;
 	}
@@ -575,7 +557,7 @@ function getSlotsForParameterless(
  * compounds).
  */
 function _stampExpressionForSlot(
-	slot: AssembledChild,
+	slot: AssembledNonterminal,
 	nodes: Map<string, AssembledNode>
 ): string | undefined {
 	if (!isRequired(slot)) return undefined; // optional — no stamp needed
@@ -610,11 +592,11 @@ function markNode(node: AssembledNode, stamp: string): void {
 /**
  * Fixpoint pass: propagate parameterless status from terminals up to compounds.
  *
- * Phase 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
+ * Step 1: mark AssembledKeyword nodes. These are the "roots" — a keyword
  * factory already takes `()` and emits a fixed text. Their stamp expression
  * (as seen by parent factories) is the JSON literal of their text.
  *
- * Phase 2 (fixpoint): iteratively mark any compound whose every required
+ * Step 2 (fixpoint): iteratively mark any compound whose every required
  * slot auto-stamps. Converges in ≤ O(depth) passes — for real grammars
  * typically 2–3 passes. Safety cap at 20 iterations.
  *
@@ -623,12 +605,12 @@ function markNode(node: AssembledNode, stamp: string): void {
  * a parent factory emits to produce a value for a slot pointing at this kind.
  */
 function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
-	// Phase 1: single-literal terminals self-initialize `isParameterless`
+	// Step 1: single-literal terminals self-initialize `isParameterless`
 	// and `stampExpression` in their constructors — see
 	// `AssembledKeyword` and `AssembledToken` in node-map.ts. No work
 	// needed here.
 
-	// Phase 2: fixpoint over compounds.
+	// Step 2: fixpoint over compounds.
 	const MAX_ITERS = 20;
 	let changed = true;
 	let iters = 0;
@@ -643,10 +625,8 @@ function markParameterlessKinds(nodes: Map<string, AssembledNode>): void {
 		for (const [kind, node] of nodes) {
 			if (node.isParameterless) continue; // already marked
 
-			const slots = getSlotsForParameterless(node);
-			if (!slots) continue; // not a compound with fields/children
-
-			const allSlots = [...slots.fields, ...slots.children];
+			const allSlots = getSlotsForParameterless(node);
+			if (!allSlots) continue; // not a compound with slots
 
 			// A compound is parameterless iff it has at least ONE required slot AND
 			// every required slot auto-stamps. Vacuous truth (no required slots at
@@ -824,22 +804,110 @@ function resolveHiddenRuleContent(
  * `walkForChildren` / `deriveValuesForRule` stamped the source
  * (`aliasedFrom`) rather than the visible target.
  */
+/**
+ * Hydrate every slot value's `node` reference from `UnresolvedRef` to the
+ * concrete `AssembledNode` produced during assembly.
+ *
+ * Called by the codegen pipeline AFTER `assemble()` returns AND AFTER the
+ * raw NodeMap has been serialized (e.g. `node-model.json5` emit) but
+ * BEFORE the in-memory consumers (factories, types, render, etc.) read
+ * slot graphs. Once hydrated, `slot.values[*].node` carries the full
+ * `AssembledNode` reference — the consumer-side
+ * `isUnresolvedRef(v.node) ? v.node.name : v.node.kind` ternary becomes
+ * unnecessary; emitters can read `v.node.kind` (or `.modelType`) directly.
+ *
+ * THROWS on any reference that points to a kind absent from `nodes` —
+ * unresolvable refs are codegen bugs, not runtime data, and must surface
+ * loudly. The error names source kind, slot, and unresolved target.
+ *
+ * Mutation: rewrites `NodeRef.node` in place via a single justified
+ * `readonly` cast. Slot `values` array identity is preserved; only the
+ * `.node` field updates. Constitution VIII exception — this IS the
+ * legitimate boundary turning the `T | UnresolvedRef` placeholder into
+ * the resolved `T`. After hydration the node graph is CYCLIC, so the
+ * NodeMap is no longer JSON-serializable — call this only after any
+ * serialization passes.
+ */
+export function hydrateSlotRefs(nodeMap: NodeMap): void {
+	const externals = nodeMap.externals ?? new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType === 'branch' || node.modelType === 'group') {
+			hydrateSlots(kind, node.slots, nodeMap.nodes, externals);
+		} else if (node.modelType === 'polymorph') {
+			for (const form of node.forms) {
+				hydrateSlots(form.kind, form.slots, nodeMap.nodes, externals);
+			}
+		}
+	}
+}
+
+function hydrateSlots(
+	parentKind: string,
+	slots: Readonly<Record<string, AssembledNonterminal>>,
+	nodes: Map<string, AssembledNode>,
+	externals: ReadonlySet<string>
+): void {
+	for (const slot of Object.values(slots)) {
+		for (const v of slot.values) {
+			if (v.kind !== 'node-ref') continue;
+			if (!isUnresolvedRef(v.node)) continue;
+			const targetName = v.node.name;
+			const target = nodes.get(targetName);
+			if (target) {
+				(v as { node: AssembledNode | UnresolvedRef }).node = target;
+				continue;
+			}
+			// Canonical-hidden architecture: alias-target names like
+			// `as_pattern_target` are the VISIBLE names; the assembled node
+			// map registers the hidden source `_as_pattern_target`. When the
+			// visible name isn't found, retry with `_<name>` — that's the
+			// canonical form per the alias-target → hidden-source convention.
+			if (!targetName.startsWith('_')) {
+				const hiddenSource = nodes.get(`_${targetName}`);
+				if (hiddenSource) {
+					(v as { node: AssembledNode | UnresolvedRef }).node = hiddenSource;
+					continue;
+				}
+			}
+			// Three legitimate categories where the target ISN'T in the
+			// assembled NodeMap and we leave the `UnresolvedRef` in place:
+			//
+			//   1. External tokens (lexer-callback symbols) — no rule body,
+			//      just a name. Tracked in `nodeMap.externals`.
+			//   2. Parser-only leaf kinds — the parser symbol table knows
+			//      them but codegen has no rule body to assemble (e.g.
+			//      `_as_pattern_target` in python). These behave like
+			//      externals from the consumer's POV.
+			//   3. Inlined-before-assemble kinds referenced by overrides —
+			//      a known deferred case (see e.g. `_block_comment_content`
+			//      in rust). Should be cleaned up at the override layer.
+			//
+			// Distinguishing (1) from (2)/(3) without threading the parser
+			// kind catalog isn't possible here. Logging a single line per
+			// occurrence surfaces the (3) cases for follow-up; (1) and (2)
+			// are expected and harmless. Consumers that walk
+			// `slot.values[*]` already handle `isUnresolvedRef` defensively,
+			// so leaving these as `UnresolvedRef` matches prior
+			// behavior.
+			if (externals.has(targetName)) continue;
+			if (!process.env.SITTIR_QUIET) {
+				process.stderr.write(
+					`hydrateSlotRefs: unresolved slot reference — kind ` +
+						`'${parentKind}' slot '${slot.name}' references kind ` +
+						`'${targetName}' which is absent from the assembled ` +
+						`node map (likely parser-only leaf kind, alias collapse, ` +
+						`or override referencing an inlined kind). Leaving as ` +
+						`UnresolvedRef.\n`
+				);
+			}
+		}
+	}
+}
+
 function markUserFacing(nodes: Map<string, AssembledNode>): void {
 	const aliasSourceKinds = new Set<string>();
 	for (const [, n] of nodes) {
-		const fieldSlots =
-			n.modelType === 'polymorph'
-				? n.allFormFields
-				: n.modelType === 'branch' || n.modelType === 'group'
-					? n.fields
-					: [];
-		const childSlots =
-			n.modelType === 'branch' ||
-			n.modelType === 'container' ||
-			n.modelType === 'group'
-				? (n.children ?? [])
-				: [];
-		for (const slot of [...fieldSlots, ...childSlots]) {
+		for (const slot of allSlotsOf(n)) {
 			for (const v of slot.values) {
 				if (!isNodeRef(v)) continue;
 				const name = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
@@ -1042,12 +1110,12 @@ function preclaimSupertypeIrKeys(
  *   a longer factoryName to fall back to on collision). Within each phase, hidden
  *   kinds sort after non-hidden so visible kinds claim the short key first.
  * @remarks
- *   Phase 1 — "short form is the full name". Any node whose short irKey equals its
+ *   Priority 1 — "short form is the full name". Any node whose short irKey equals its
  *   own factoryName gets first dibs (it has nothing to fall back to that wouldn't
  *   also collide). Examples: `expression`, `as_pattern` (→ `asPattern`), `module`
  *   (→ `module`). This forces suffix-stripped collisions (e.g. `expression_statement`
  *   → `expression`) to lose to the genuinely-short kind.
- *   Phase 2 — "short form is a strip of the full name". These have a distinct
+ *   Priority 2 — "short form is a strip of the full name". These have a distinct
  *   factoryName fallback (e.g. `expression_statement` → `expressionStatement`).
  */
 function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
@@ -1322,7 +1390,7 @@ export function classifyNode(
 			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
 
-	// T065 auto-polymorph promotion removed (spec 013 cleanup).
+	// Auto-polymorph promotion removed.
 	// Grammar authors declare polymorph shapes explicitly via
 	// `polymorphs: { parent: { 'path': 'name' } }` in overrides.ts.
 	// Kinds without an adoption classify as plain branches /
@@ -1333,7 +1401,7 @@ export function classifyNode(
 	if (isHiddenRepeatHelper(kind, rule)) return 'multi';
 	const branchOrContainer = classifyBranchOrContainer(rule);
 	if (branchOrContainer !== null) return branchOrContainer;
-	return classifyT065TerminalFallback(kind, rule);
+	return classifyTerminalFallback(kind, rule);
 }
 
 /**
@@ -1353,25 +1421,31 @@ function isHiddenRepeatHelper(kind: string, rule: Rule): boolean {
 }
 
 /**
- * Classify a rule as `branch` or `container` based on presence of fields or children,
+ * Classify a rule as `branch` based on presence of fields or children,
  * or return `null` when neither applies.
  *
+ * The prior `'container'` model was collapsed into
+ * `'branch'`: nodes that carry only unnamed children (no `field()` on
+ * the rule) are still `AssembledBranch` instances, distinguishable at
+ * the call site via `AssembledBranch.isContainerShape`. The single
+ * classification arm reflects that there is one runtime class for
+ * both shapes.
+ *
  * @param rule - The rule to inspect.
- * @returns `'branch'` if the rule has any named field, `'container'` if it has any
- *   unnamed child, or `null` when the rule contains neither.
+ * @returns `'branch'` if the rule has any named field or unnamed child,
+ *   or `null` when neither applies.
  * @remarks
- *   Only existence checks are performed — not full extraction. The class getters
- *   (`AssembledBranch.fields`, `AssembledContainer.children`) do the full walk
- *   later, once.
+ *   Only existence checks are performed — not full extraction. The class
+ *   getters (`AssembledBranch.fields`, `AssembledBranch.children`) do
+ *   the full walk later, once.
  */
 function classifyBranchOrContainer(rule: Rule): ModelType | null {
-	if (hasAnyField(rule)) return 'branch';
-	if (hasAnyChild(rule)) return 'container';
+	if (hasAnyField(rule) || hasAnyChild(rule)) return 'branch';
 	return null;
 }
 
 /**
- * Apply the T065 terminal fallback classification after all structural checks
+ * Apply the terminal fallback classification after all structural checks
  * have failed to assign a model type.
  *
  * @param kind - The rule kind name, used in the error message.
@@ -1383,7 +1457,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   All-text subtree → leaf; pure choice-of-strings → enum. Anything still
  *   unclassifiable after this is a real pipeline error.
  */
-function classifyT065TerminalFallback(kind: string, rule: Rule): ModelType {
+function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
 	if (isAllTextShape(rule)) return 'leaf';
 	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string'))
 		return 'enum';
@@ -1542,8 +1616,3 @@ function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
 
-function buildProjections(
-	_nodes: Map<string, AssembledNode>
-): ProjectionContext {
-	return { projections: new Map() };
-}

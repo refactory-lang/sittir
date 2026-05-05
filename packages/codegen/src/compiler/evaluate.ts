@@ -1,5 +1,5 @@
 /**
- * compiler/evaluate.ts — Phase 1: Evaluate
+ * compiler/evaluate.ts — Evaluate phase.
  *
  * Executes grammar.js DSL and produces a RawGrammar.
  * When overrides.ts exists, it uses tree-sitter's native grammar(base, { rules })
@@ -1983,7 +1983,7 @@ function inheritBaseGrammarMetadata(
  * Append `value` to `sink` only when it is not already present.
  *
  * @remarks
- * Spec FR-019a: when an override callback does `[...prev, $._foo]` and
+ * When an override callback does `[...prev, $._foo]` and
  * the base grammar already has `$._foo`, we must collapse to a single
  * entry. Symbol refs from `$.foo` are fresh objects on every proxy access
  * (`createProxy` does not cache), so reference equality always fails —

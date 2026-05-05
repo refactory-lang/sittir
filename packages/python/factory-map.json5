@@ -5,6 +5,9 @@
 {
   "factoryShapes": {
     "_as_pattern": "children",
+    "_assignment_eq": "config",
+    "_assignment_type": "config",
+    "_assignment_typed": "config",
     "_async_marker": "text",
     "_augmented_assignment_operator": "text",
     "_binary_operator_operator": "text",
@@ -18,6 +21,7 @@
     "_suite": "children",
     "_type_alias_statement_type": "text",
     "_unary_operator_operator": "text",
+    "_with_clause_paren": "children",
     "aliased_import": "config",
     "argument_list": "children",
     "as_pattern": "config",
@@ -184,6 +188,16 @@
     }
   },
   "factoryFields": {
+    "_assignment_eq": [
+      "right"
+    ],
+    "_assignment_type": [
+      "type"
+    ],
+    "_assignment_typed": [
+      "type",
+      "right"
+    ],
     "_match_block_block": [
       "alternative"
     ],
@@ -236,7 +250,8 @@
     ],
     "comparison_operator": [
       "left",
-      "operators"
+      "operators",
+      "primary_expression"
     ],
     "conditional_expression": [
       "body",
@@ -361,6 +376,9 @@
       "start",
       "stop",
       "step"
+    ],
+    "splat_pattern": [
+      "identifier"
     ],
     "splat_type": [
       "identifier"
