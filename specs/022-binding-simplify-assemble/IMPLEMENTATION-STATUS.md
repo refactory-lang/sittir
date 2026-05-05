@@ -122,19 +122,29 @@ Provisional spec number: 023 (or next available). Branch convention:
 
 ## Remaining work (in scope for 022)
 
-- **Owner A migration** — explicit names on inferred-position slots.
-- **Slot-key remap** (`'child'` / `'children'` for unnamed slots).
-- **Eager validation** — collision / mixed-arity throws at `slots`
-  construction.
 - **`factory-map.ts` orphan-promotion gate relaxation** — 73
   mixed-shape kinds (see memory: `project_factory_map_orphan_gate`).
-- **`drillIn<T>` typed helpers** — wrap accessors return per-field
-  types (type-erasure audit finding #1; in progress via subagent).
-- **5 python typeName collision edge cases** —
-  `_ExpressionStatementTuple`, `_WithClauseBare`, polymorph-form
-  `$children` interface shape issues.
-- **`freezeNodeData`** — re-enable freeze at construction (deferred
-  during shape A iteration; ready to wire back in).
+  Requires consumer-side `nodeToConfig` to distinguish label-elision
+  from genuine `children`. Blocked on Owner A migration (Phase 4).
+
+## Completed (previously listed as remaining)
+
+- ~~**Owner A migration**~~ — partially addressed: `storageName` on
+  `AssembledNonterminal` + enrich descent into `repeat(seq(...))` +
+  rust overrides for 6 collision kinds → all 3 grammars at zero
+  storageName collisions.
+- ~~**Slot-key remap**~~ — superseded by `storageName`. Named slots
+  use the field name; unnamed slots use `'children'`. No separate
+  remap pass needed.
+- ~~**Eager validation**~~ — upgraded from warn → throw. Zero
+  collisions across all grammars, so the throw is never hit; it
+  guards against regressions from future grammar changes.
+- ~~**`drillIn<T>` typed helpers**~~ — shipped (1d.xx). Wrap
+  accessors return per-field types.
+- ~~**5 python typeName collision edge cases**~~ — fixed (f95318b6).
+  `_wrapTable` narrowing + polymorph union casts + `childElementType`
+  collision-rename redirect.
+- ~~**`freezeNodeData`**~~ — descoped per user direction.
 
 ## Out-of-scope-for-022 follow-ups
 

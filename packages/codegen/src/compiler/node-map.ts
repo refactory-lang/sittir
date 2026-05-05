@@ -2343,37 +2343,36 @@ function buildSlotsRecord(
 		out[slot.name] = slot;
 	}
 
-	// Check for storageName collisions — surfaces kinds that have multiple
-	// slots sharing the same NodeData storage key. These need override
-	// curation (promote inferred slots to named fields) before emitters
-	// can use storageName for storage emission.
-	if (!process.env.SITTIR_QUIET) {
-		const byStorageName = new Map<string, AssembledNonterminal[]>();
-		for (const slot of Object.values(out)) {
-			const list = byStorageName.get(slot.storageName) ?? [];
-			list.push(slot);
-			byStorageName.set(slot.storageName, list);
-		}
-		for (const [storageName, slots] of byStorageName) {
-			if (slots.length > 1) {
-				const details = slots.map((s) => {
-					const kinds = s.values.map((v) =>
-						v.kind === 'terminal'
-							? `"${v.value}"`
-							: isUnresolvedRef(v.node)
-								? v.node.name
-								: (v.node as AssembledNode).kind
-					);
-					const mult = s.values.length > 0
-						? s.values[0]!.multiplicity
-						: 'single';
-					return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
-				});
-				process.stderr.write(
-					`[assemble] storageName collision: kind '${kind}' has ${slots.length} slots ` +
-						`with storageName '${storageName}':\n${details.join('\n')}\n`
+	// Eager validation: throw on storageName collisions. Multiple slots
+	// sharing the same NodeData storage key means the emitters can't
+	// distinguish them — the override layer must name N-1 children to
+	// eliminate the collision before codegen proceeds.
+	const byStorageName = new Map<string, AssembledNonterminal[]>();
+	for (const slot of Object.values(out)) {
+		const list = byStorageName.get(slot.storageName) ?? [];
+		list.push(slot);
+		byStorageName.set(slot.storageName, list);
+	}
+	for (const [storageName, slots] of byStorageName) {
+		if (slots.length > 1) {
+			const details = slots.map((s) => {
+				const kinds = s.values.map((v) =>
+					v.kind === 'terminal'
+						? `"${v.value}"`
+						: isUnresolvedRef(v.node)
+							? v.node.name
+							: (v.node as AssembledNode).kind
 				);
-			}
+				const mult = s.values.length > 0
+					? s.values[0]!.multiplicity
+					: 'single';
+				return `    ${s.name} (source: ${s.source}, multiplicity: ${mult}, values: [${kinds.join(', ')}])`;
+			});
+			throw new Error(
+				`storageName collision: kind '${kind}' has ${slots.length} slots ` +
+					`with storageName '${storageName}':\n${details.join('\n')}\n` +
+					`Fix: add field() overrides to name N-1 of the unnamed children.`
+			);
 		}
 	}
 
