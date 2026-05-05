@@ -353,7 +353,7 @@
     },
     {
       "kind": "__error_recovery",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ErrorRecovery",
       "factoryName": "errorRecovery",
       "irKey": "errorRecovery",
@@ -665,7 +665,7 @@
     },
     {
       "kind": "_automatic_semicolon",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "AutomaticSemicolon",
       "factoryName": "automaticSemicolon",
       "irKey": "automaticSemicolon",
@@ -2216,7 +2216,7 @@
     },
     {
       "kind": "_function_signature_automatic_semicolon",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "FunctionSignatureAutomaticSemicolon",
       "factoryName": "functionSignatureAutomaticSemicolon",
       "irKey": "functionSignatureAutomaticSemicolon",
@@ -3780,7 +3780,7 @@
     },
     {
       "kind": "_reserved_identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ReservedIdentifier",
       "factoryName": "reservedIdentifier",
       "irKey": "reservedIdentifier",
@@ -3908,7 +3908,7 @@
     },
     {
       "kind": "_template_chars",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "TemplateChars",
       "factoryName": "templateChars",
       "irKey": "templateChars",
@@ -3916,7 +3916,7 @@
     },
     {
       "kind": "_ternary_qmark",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "TernaryQmark",
       "factoryName": "ternaryQmark",
       "irKey": "ternaryQmark",
@@ -6986,7 +6986,7 @@
     },
     {
       "kind": "comment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Comment",
       "factoryName": "comment",
       "irKey": "comment",
@@ -8132,7 +8132,7 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
@@ -10257,7 +10257,7 @@
     },
     {
       "kind": "hash_bang_line",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "HashBangLine",
       "factoryName": "hashBangLine",
       "irKey": "hashBangLine",
@@ -10266,7 +10266,7 @@
     },
     {
       "kind": "html_character_reference",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "HtmlCharacterReference",
       "factoryName": "htmlCharacterReference",
       "irKey": "htmlCharacterReference",
@@ -10275,7 +10275,7 @@
     },
     {
       "kind": "html_comment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "HtmlComment",
       "factoryName": "htmlComment",
       "irKey": "htmlComment",
@@ -10283,7 +10283,7 @@
     },
     {
       "kind": "identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
       "irKey": "identifier2",
@@ -11923,7 +11923,7 @@
     },
     {
       "kind": "jsx_identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "JsxIdentifier",
       "factoryName": "jsxIdentifier",
       "irKey": "jsxIdentifier2",
@@ -12166,7 +12166,7 @@
     },
     {
       "kind": "jsx_text",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "JsxText",
       "factoryName": "jsxText",
       "irKey": "jsxText",
@@ -12625,7 +12625,7 @@
     },
     {
       "kind": "meta_property",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "MetaProperty",
       "factoryName": "metaProperty",
       "irKey": "metaProperty",
@@ -13649,7 +13649,7 @@
     },
     {
       "kind": "number",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Number",
       "factoryName": "number",
       "irKey": "number",
@@ -14612,7 +14612,7 @@
     },
     {
       "kind": "predefined_type",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "PredefinedType",
       "factoryName": "predefinedType",
       "irKey": "predefinedType",
@@ -14658,7 +14658,7 @@
     },
     {
       "kind": "private_property_identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "PrivatePropertyIdentifier",
       "factoryName": "privatePropertyIdentifier",
       "irKey": "privatePropertyIdentifier",
@@ -15177,7 +15177,7 @@
     },
     {
       "kind": "regex_flags",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "RegexFlags",
       "factoryName": "regexFlags",
       "irKey": "regexFlags",
@@ -15186,7 +15186,7 @@
     },
     {
       "kind": "regex_pattern",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "RegexPattern",
       "factoryName": "regexPattern",
       "irKey": "regexPattern",
@@ -17219,7 +17219,7 @@
     },
     {
       "kind": "unescaped_double_jsx_string_fragment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnescapedDoubleJsxStringFragment",
       "factoryName": "unescapedDoubleJsxStringFragment",
       "irKey": "unescapedDoubleJsxStringFragment",
@@ -17228,7 +17228,7 @@
     },
     {
       "kind": "unescaped_double_string_fragment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnescapedDoubleStringFragment",
       "factoryName": "unescapedDoubleStringFragment",
       "irKey": "unescapedDoubleStringFragment",
@@ -17237,7 +17237,7 @@
     },
     {
       "kind": "unescaped_single_jsx_string_fragment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnescapedSingleJsxStringFragment",
       "factoryName": "unescapedSingleJsxStringFragment",
       "irKey": "unescapedSingleJsxStringFragment",
@@ -17246,7 +17246,7 @@
     },
     {
       "kind": "unescaped_single_string_fragment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnescapedSingleStringFragment",
       "factoryName": "unescapedSingleStringFragment",
       "irKey": "unescapedSingleStringFragment",
@@ -17754,7 +17754,7 @@
     },
     {
       "kind": "||",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Oror",
       "factoryName": "oror",
       "irKey": "||",

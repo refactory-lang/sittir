@@ -132,7 +132,7 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'polymorph':
 				emitPolymorphTest(lines, node, kind, key, nodeMap, kindEntries);
 				break;
-			case 'leaf':
+			case 'pattern':
 				emitLeafTest(lines, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'keyword':
@@ -402,7 +402,7 @@ function emitLeafTest(
 	// pattern and pick the first match; if none match, the leaf has
 	// an exotic shape and we skip the construction test (the regex
 	// check itself is the test).
-	const pattern = node.modelType === 'leaf' ? node.pattern : undefined;
+	const pattern = node.modelType === 'pattern' ? node.pattern : undefined;
 	const sample = pickSampleForPattern(pattern);
 	if (sample === null) {
 		// No working sample found — skip this leaf's construction
@@ -572,7 +572,7 @@ function resolveConcreteKind(
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
 		// Prefer text-only-compatible kinds — safe as `$text`-only stubs.
 		if (
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
 			node.modelType === 'enum' ||
 			node.modelType === 'token'

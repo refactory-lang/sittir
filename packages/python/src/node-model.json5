@@ -55,7 +55,7 @@
     },
     {
       "kind": ")",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "CloseParen",
       "factoryName": "closeParen",
       "irKey": ")",
@@ -243,7 +243,7 @@
     },
     {
       "kind": "]",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "CloseBracket",
       "factoryName": "closeBracket",
       "irKey": "]",
@@ -574,7 +574,7 @@
     },
     {
       "kind": "_dedent",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Dedent",
       "factoryName": "dedent",
       "irKey": "dedent",
@@ -695,7 +695,7 @@
     },
     {
       "kind": "_indent",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Indent",
       "factoryName": "indent",
       "irKey": "indent",
@@ -703,7 +703,7 @@
     },
     {
       "kind": "_is_not",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "IsNot",
       "factoryName": "isNot",
       "irKey": "isNot",
@@ -900,7 +900,7 @@
     },
     {
       "kind": "_newline",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Newline",
       "factoryName": "newline",
       "irKey": "newline",
@@ -918,7 +918,7 @@
     },
     {
       "kind": "_not_in",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "NotIn",
       "factoryName": "notIn",
       "irKey": "notIn",
@@ -1092,7 +1092,7 @@
     },
     {
       "kind": "_string_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "_StringContent",
       "factoryName": "_stringContent",
       "irKey": "_stringContent",
@@ -2414,7 +2414,7 @@
     },
     {
       "kind": "comment",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Comment",
       "factoryName": "comment",
       "irKey": "comment",
@@ -3366,7 +3366,7 @@
     },
     {
       "kind": "escape_interpolation",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "EscapeInterpolation",
       "factoryName": "escapeInterpolation",
       "irKey": "escapeInterpolation",
@@ -3374,7 +3374,7 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
@@ -3382,7 +3382,7 @@
     },
     {
       "kind": "except",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Except",
       "factoryName": "except",
       "irKey": "except",
@@ -3725,7 +3725,7 @@
     },
     {
       "kind": "float",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Float",
       "factoryName": "float",
       "irKey": "float",
@@ -4318,7 +4318,7 @@
     },
     {
       "kind": "identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
       "irKey": "identifier",
@@ -4537,7 +4537,7 @@
     },
     {
       "kind": "import_prefix",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ImportPrefix",
       "factoryName": "importPrefix",
       "irKey": "importPrefix",
@@ -4596,7 +4596,7 @@
     },
     {
       "kind": "integer",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Integer",
       "factoryName": "integer",
       "irKey": "integer",
@@ -4966,7 +4966,7 @@
     },
     {
       "kind": "line_continuation",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineContinuation",
       "factoryName": "lineContinuation",
       "irKey": "lineContinuation",
@@ -6369,7 +6369,7 @@
     },
     {
       "kind": "string_end",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "StringEnd",
       "factoryName": "stringEnd",
       "irKey": "stringEnd",
@@ -6377,7 +6377,7 @@
     },
     {
       "kind": "string_start",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "StringStart",
       "factoryName": "stringStart",
       "irKey": "stringStart",
@@ -6779,7 +6779,7 @@
     },
     {
       "kind": "type_conversion",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "TypeConversion",
       "factoryName": "typeConversion",
       "irKey": "typeConversion",
@@ -7506,7 +7506,7 @@
     },
     {
       "kind": "}",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "CloseBrace",
       "factoryName": "closeBrace",
       "irKey": "}",

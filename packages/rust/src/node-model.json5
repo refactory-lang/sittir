@@ -953,7 +953,7 @@
     },
     {
       "kind": "_error_sentinel",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ErrorSentinel",
       "factoryName": "errorSentinel",
       "irKey": "errorSentinel",
@@ -1442,7 +1442,7 @@
     },
     {
       "kind": "_inner_block_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "InnerBlockDocCommentMarker",
       "factoryName": "innerBlockDocCommentMarker",
       "irKey": "innerBlockDocCommentMarker",
@@ -1605,7 +1605,7 @@
     },
     {
       "kind": "_line_comment_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineCommentContent",
       "factoryName": "lineCommentContent",
       "irKey": "lineCommentContent",
@@ -1674,7 +1674,7 @@
     },
     {
       "kind": "_line_comment_regular_dslash",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineCommentRegularDslash",
       "factoryName": "lineCommentRegularDslash",
       "irKey": "lineCommentRegularDslash",
@@ -1682,7 +1682,7 @@
     },
     {
       "kind": "_line_doc_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineDocContent",
       "factoryName": "lineDocContent",
       "irKey": "lineDocContent",
@@ -2509,7 +2509,7 @@
     },
     {
       "kind": "_outer_block_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "OuterBlockDocCommentMarker",
       "factoryName": "outerBlockDocCommentMarker",
       "irKey": "outerBlockDocCommentMarker",
@@ -2981,7 +2981,7 @@
     },
     {
       "kind": "_reference_expression_raw_const",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ReferenceExpressionRawConst",
       "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
@@ -4847,7 +4847,7 @@
     },
     {
       "kind": "char_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "CharLiteral",
       "factoryName": "charLiteral",
       "irKey": "charLiteral",
@@ -6224,7 +6224,7 @@
     },
     {
       "kind": "escape_sequence",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
@@ -7003,7 +7003,7 @@
     },
     {
       "kind": "float_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "FloatLiteral",
       "factoryName": "floatLiteral",
       "irKey": "floatLiteral",
@@ -8327,7 +8327,7 @@
     },
     {
       "kind": "identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
       "irKey": "identifier",
@@ -8945,7 +8945,7 @@
     },
     {
       "kind": "integer_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "IntegerLiteral",
       "factoryName": "integerLiteral",
       "irKey": "integerLiteral",
@@ -10286,7 +10286,7 @@
     },
     {
       "kind": "metavariable",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Metavariable",
       "factoryName": "metavariable",
       "irKey": "metavariable",
@@ -11545,7 +11545,7 @@
     },
     {
       "kind": "raw_string_literal_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralContent",
       "factoryName": "rawStringLiteralContent",
       "irKey": "rawStringLiteralContent",
@@ -12259,7 +12259,7 @@
     },
     {
       "kind": "shebang",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Shebang",
       "factoryName": "shebang",
       "irKey": "shebang",
@@ -12552,7 +12552,7 @@
     },
     {
       "kind": "string_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "StringContent",
       "factoryName": "stringContent",
       "irKey": "stringContent",
@@ -14702,7 +14702,7 @@
     },
     {
       "kind": "unit_expression",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnitExpression",
       "factoryName": "unitExpression",
       "irKey": "unit",
@@ -14710,7 +14710,7 @@
     },
     {
       "kind": "unit_type",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnitType",
       "factoryName": "unitType",
       "irKey": "unitType",

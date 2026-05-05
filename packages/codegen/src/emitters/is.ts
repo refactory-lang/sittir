@@ -174,7 +174,7 @@ export function emitIs(config: EmitIsConfig): string {
 				structuralKinds.push({ kind, typeName: node.typeName, guardKey, member, numericId });
 				break;
 			}
-			case 'leaf':
+			case 'pattern':
 			case 'keyword':
 			case 'enum':
 			case 'token':

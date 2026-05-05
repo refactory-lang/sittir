@@ -384,7 +384,7 @@ function buildLeafReConsts(
 		// no standalone factory — skip their regex consts. Non-token hidden kinds
 		// (groups, branches) get fragment factories and may carry patterns.
 		if (kind.startsWith('_') && node.modelType === 'token') continue;
-		if (node.modelType !== 'leaf' || !node.pattern) continue;
+		if (node.modelType !== 'pattern' || !node.pattern) continue;
 		const fn = node.rawFactoryName!;
 		const constName = `_leafRe_${fn}`;
 		const cleaned = stripUselessEscapes(node.pattern);
@@ -642,7 +642,7 @@ function buildFactoryMapEntries(
 		if (node.isTextTemplate(nodeMap.externals)) shape = 'text';
 		else if (isContainerShape) shape = 'children';
 		else if (
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
 			node.modelType === 'token' ||
 			node.modelType === 'enum'
@@ -772,7 +772,7 @@ function renderFactoryForNode(
 			);
 		case 'polymorph':
 			return emitPolymorphFactory(node, nodeMap, kindEntries);
-		case 'leaf': {
+		case 'pattern': {
 			const guards = buildLeafGuards(node, leafReConsts);
 			const guard = guards.join(' ');
 			return emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
@@ -1120,7 +1120,7 @@ function isAllLeafSlot(f: AssembledNonterminal, _nodeMap: NodeMap): boolean {
 		// remain unresolved) are not leaf-shaped here either.
 		if (isUnresolvedRef(v.node)) return false;
 		const m = v.node.modelType;
-		if (m === 'leaf' || m === 'keyword' || m === 'token' || m === 'enum')
+		if (m === 'pattern' || m === 'keyword' || m === 'token' || m === 'enum')
 			continue;
 		return false;
 	}

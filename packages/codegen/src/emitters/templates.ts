@@ -136,7 +136,7 @@ function emitBodyForNode(
 	externals: ReadonlySet<string> | undefined
 ): string | null {
 	if (
-		node.modelType === 'leaf' ||
+		node.modelType === 'pattern' ||
 		node.modelType === 'keyword' ||
 		node.modelType === 'token' ||
 		node.modelType === 'supertype' ||

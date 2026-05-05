@@ -71,7 +71,7 @@ function isConcreteTransportNode(
 	switch (node.modelType) {
 		case 'branch':
 		case 'polymorph':
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':

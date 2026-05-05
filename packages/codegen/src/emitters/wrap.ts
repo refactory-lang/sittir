@@ -213,7 +213,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		if (node.modelType === 'branch' || node.modelType === 'polymorph') {
 			lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
 		} else if (
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'enum' ||
 			node.modelType === 'keyword'
 		) {

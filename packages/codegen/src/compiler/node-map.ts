@@ -3144,7 +3144,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
  *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
  *
  * The base intentionally has no `modelType` — each concrete subclass
- * keeps its own discriminant string (`'leaf'` for Pattern, `'keyword'`,
+ * keeps its own discriminant string (`'pattern'` for Pattern, `'keyword'`,
  * `'token'`, `'enum'`) so byte-identity of generated output is preserved
  * during the taxonomy refactor.
  *
@@ -3159,15 +3159,15 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * Examples: `identifier`, `integer_literal`, `string_content`.
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
- * discriminant remains `'leaf'` to preserve
- * byte-identity in emitted output — only the TypeScript class identifier
- * changed. The new `AssembledLeaf` is now an abstract base (above);
- * `AssembledPattern` is one of its four concrete subclasses.
+ * discriminant is `'pattern'` (renamed from `'leaf'` during the
+ * taxonomy-driven emitter dispatch refactor). The new `AssembledLeaf`
+ * is now an abstract base (above); `AssembledPattern` is one of its
+ * four concrete subclasses.
  */
 export class AssembledPattern extends AssembledLeaf<
 	PatternRule | TerminalRule
 > {
-	readonly modelType = 'leaf' as const;
+	readonly modelType = 'pattern' as const;
 
 	constructor(
 		kind: string,

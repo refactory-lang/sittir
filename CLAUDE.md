@@ -118,6 +118,20 @@ npx tsx packages/codegen/src/cli.ts --grammar python --all --output packages/pyt
 - oxlint / oxfmt for linting / formatting
 - tsgo for type checking
 
+### Prefer ast-grep for structural edits
+
+For bulk renames, pattern-based transformations, and multi-site edits,
+use `sg` (ast-grep) instead of serial `Edit` tool calls. Load the
+`ast-grep` skill for pattern syntax. Examples:
+
+```bash
+# Rename a modelType string across all switch/case sites
+sg --pattern "case 'leaf':" --rewrite "case 'pattern':" --lang typescript packages/codegen/src/
+
+# Find all isContainerShape checks
+sg --pattern '$NODE.isContainerShape' --lang typescript packages/codegen/src/
+```
+
 ### Rule type discrimination
 
 The compiler pipeline's `Rule` union (`compiler/rule.ts`) is a discriminated

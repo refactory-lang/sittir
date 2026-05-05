@@ -46,7 +46,7 @@ describe('emitConsts', () => {
 					kind: 'identifier',
 					typeName: 'Identifier',
 					factoryName: 'identifier',
-					modelType: 'leaf'
+					modelType: 'pattern'
 				} as unknown as AssembledPattern
 			],
 			[

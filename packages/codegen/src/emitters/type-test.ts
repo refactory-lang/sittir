@@ -127,7 +127,7 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 					hasVariants: node.forms.length > 1
 				});
 				break;
-			case 'leaf':
+			case 'pattern':
 			case 'keyword':
 			case 'enum':
 				// Only test leaves that actually made it into types.ts.

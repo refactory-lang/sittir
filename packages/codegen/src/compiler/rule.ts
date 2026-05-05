@@ -194,7 +194,7 @@ export interface GroupRule {
  * `node.text` directly without ever consulting templates.
  *
  * Added by Link (see `promoteTerminals`). Not present after Evaluate.
- * Assemble routes this to `modelType: 'leaf'` without inspecting content.
+ * Assemble routes this to `modelType: 'pattern'` without inspecting content.
  */
 export interface TerminalRule {
 	readonly type: 'terminal';

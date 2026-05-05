@@ -156,7 +156,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 				);
 				break;
 			}
-			case 'leaf': {
+			case 'pattern': {
 				nodes.set(
 					kind,
 					new AssembledPattern(kind, rule as PatternRule | TerminalRule)
@@ -1381,11 +1381,11 @@ export function classifyNode(
 		case 'group':
 			return 'group';
 		case 'terminal':
-			return 'leaf';
+			return 'pattern';
 		case 'polymorph':
 			return 'polymorph';
 		case 'pattern':
-			return 'leaf';
+			return 'pattern';
 		case 'string':
 			return /^\w+$/.test(rule.value) ? 'keyword' : 'token';
 	}
@@ -1450,7 +1450,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *
  * @param kind - The rule kind name, used in the error message.
  * @param rule - The rule body for that kind.
- * @returns `'leaf'` for all-text subtrees, `'enum'` for pure choice-of-strings.
+ * @returns `'pattern'` for all-text subtrees, `'enum'` for pure choice-of-strings.
  * @throws {Error} When the rule cannot be classified by any heuristic — indicates
  *   that Link should have wrapped it as a `TerminalRule`.
  * @remarks
@@ -1458,7 +1458,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  *   unclassifiable after this is a real pipeline error.
  */
 function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
-	if (isAllTextShape(rule)) return 'leaf';
+	if (isAllTextShape(rule)) return 'pattern';
 	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string'))
 		return 'enum';
 	throw new Error(

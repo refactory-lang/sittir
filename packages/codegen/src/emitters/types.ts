@@ -541,7 +541,7 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 					structNodes.push(node);
 				}
 				break;
-			case 'leaf':
+			case 'pattern':
 				leafKinds.push(kind);
 				break;
 			case 'keyword':
@@ -646,7 +646,7 @@ function emitTransportDeclarations(
 					kindEntries
 				);
 				break;
-			case 'leaf':
+			case 'pattern':
 			case 'keyword':
 			case 'token':
 			case 'enum':
@@ -1032,7 +1032,7 @@ function transportTypeForKind(
 
 function isTerminalTransportNode(node: AssembledNode): node is TerminalNode {
 	switch (node.modelType) {
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':

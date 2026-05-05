@@ -179,7 +179,7 @@ function shapeOf(
 ): FactoryShape | null {
 	if (node.isTextTemplate(nodeMap.externals)) return 'text';
 	switch (node.modelType) {
-		case 'leaf':
+		case 'pattern':
 		case 'enum':
 		case 'keyword':
 			return 'text';

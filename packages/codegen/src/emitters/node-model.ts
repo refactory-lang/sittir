@@ -123,7 +123,7 @@ interface SerializedPolymorph extends SerializedNodeBase {
 }
 
 interface SerializedLeaf extends SerializedNodeBase {
-	modelType: 'leaf';
+	modelType: 'pattern';
 	pattern?: string;
 }
 
@@ -257,10 +257,10 @@ function serializeNode(node: AssembledNode): SerializedNode {
 				variantChildKinds: [...node.variantChildKinds],
 				forms: node.forms.map(serializeForm)
 			};
-		case 'leaf':
+		case 'pattern':
 			return {
 				...base,
-				modelType: 'leaf',
+				modelType: 'pattern',
 				pattern: node.pattern
 			};
 		case 'keyword':

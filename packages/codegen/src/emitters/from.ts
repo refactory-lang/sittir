@@ -436,7 +436,7 @@ function renderFromForNode(
 			return emitBranchFrom(node, nodeMap, intern);
 		case 'polymorph':
 			return emitPolymorphFrom(node, nodeMap, intern);
-		case 'leaf':
+		case 'pattern':
 			return emitStringLikeFrom(node);
 		case 'enum':
 			return emitStringLikeFrom({
@@ -1476,7 +1476,7 @@ function classifyKindsForResolver(
 			continue;
 		}
 		switch (n.modelType) {
-			case 'leaf':
+			case 'pattern':
 			case 'enum':
 			case 'keyword':
 				leafKinds.push(t);
@@ -1696,7 +1696,7 @@ function buildLeafRegistryEntries(
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
-		} else if (node.modelType === 'leaf') {
+		} else if (node.modelType === 'pattern') {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { factory: ${factory} },`
 			);

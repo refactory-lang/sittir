@@ -130,7 +130,7 @@ export function emitIr(config: EmitIrConfig): string {
 				memberEntries.push(`  ${memberKey}: ${bundleExpr(sub)},`);
 			} else if (
 				sub.modelType === 'keyword' ||
-				sub.modelType === 'leaf' ||
+				sub.modelType === 'pattern' ||
 				sub.modelType === 'enum'
 			) {
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
@@ -189,7 +189,7 @@ export function emitIr(config: EmitIrConfig): string {
 	lines.push('  // Leaf node factories');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
-		if (node.modelType !== 'leaf' && node.modelType !== 'enum') continue;
+		if (node.modelType !== 'pattern' && node.modelType !== 'enum') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
