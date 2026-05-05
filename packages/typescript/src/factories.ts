@@ -1765,8 +1765,8 @@ export function continueStatement(config: T.ContinueStatement.Config) {
   });
 }
 
-export function debuggerStatement(semicolon: T.Semicolon) {
-  const _semicolon = semicolon;
+export function debuggerStatement(config: T.DebuggerStatement.Config) {
+  const _semicolon = config.semicolon;
   return withMethods({
     $type: TSKindId.DebuggerStatement as const,
     $source: 2 as const,
@@ -1774,7 +1774,7 @@ export function debuggerStatement(semicolon: T.Semicolon) {
     _semicolon,
     semicolon() { return _semicolon; },
     $with: {
-      semicolon: (value: T.Semicolon) => debuggerStatement(value),
+      semicolon: (value: T.Semicolon) => debuggerStatement({ ...config, semicolon: value }),
     },
   });
 }

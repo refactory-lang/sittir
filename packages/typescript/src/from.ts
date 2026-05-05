@@ -941,7 +941,9 @@ export function continueStatementFrom(input: T.ContinueStatement.Loose | T.Conti
 
 export function debuggerStatementFrom(input: T.DebuggerStatement.Loose | T.DebuggerStatement): ReturnType<typeof F.debuggerStatement> | T.DebuggerStatement {
   if (isNodeData(input)) return input;
-  return F.debuggerStatement(_resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"));
+  return F.debuggerStatement({
+    semicolon: _resolveOneLeaf<T.Semicolon>(input.semicolon, "_automatic_semicolon"),
+  });
 }
 
 export function decoratorFrom(input?: NonNullable<T.Decorator.Config['children']>[number] | T.Decorator) {

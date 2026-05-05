@@ -21,7 +21,8 @@ import { allSlotsOf } from '../compiler/node-map.ts';
 import {
 	isAutoStampField,
 	isMultiple,
-	keywordPresenceKind
+	keywordPresenceKind,
+	isHiddenInfraSlot
 } from './shared.ts';
 import type {
 	PolymorphVariantDescriptor,
@@ -222,7 +223,7 @@ function isSingleFieldDirect(
 	const nonStamp = node.fields.filter((f) => !isAutoStampField(f, nodeMap));
 	if (nonStamp.length !== 1) return false;
 	const sole = nonStamp[0]!;
-	return !isMultiple(sole) && keywordPresenceKind(sole, nodeMap) === null;
+	return !isMultiple(sole) && keywordPresenceKind(sole, nodeMap) === null && !isHiddenInfraSlot(sole, nodeMap);
 }
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {

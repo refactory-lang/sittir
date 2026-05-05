@@ -36,7 +36,8 @@ import {
 	isValidIdent,
 	keywordPresenceKind,
 	resolveHoistedForm,
-	stampExpressionFor
+	stampExpressionFor,
+	isHiddenInfraSlot
 } from './shared.ts';
 import {
 	isNodeRef,
@@ -862,7 +863,8 @@ function emitBranchFrom(
 			childSlots.length === 0 &&
 			!node.kind.startsWith('_') &&
 			!isMultiple(nonStampFields[0]!) &&
-			keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+			keywordPresenceKind(nonStampFields[0]!, nodeMap) === null &&
+			!isHiddenInfraSlot(nonStampFields[0]!, nodeMap);
 		if (soleFieldDirect) {
 			const soleField = nonStampFields[0]!;
 			const call = resolveFieldFromTypedInput(

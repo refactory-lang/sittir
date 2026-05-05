@@ -44,7 +44,8 @@ import {
 	keywordPresenceKind,
 	keywordPresenceValue,
 	keywordPresenceValues,
-	resolveHiddenKeywordLiteral
+	resolveHiddenKeywordLiteral,
+	isHiddenInfraSlot
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -1216,7 +1217,8 @@ function emitFieldCarryingFactory(
 		!isPolymorphForm &&
 		!node.kind.startsWith('_') &&
 		!isMultiple(nonStampFields[0]!) &&
-		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null &&
+		!isHiddenInfraSlot(nonStampFields[0]!, nodeMap);
 	if (isSingleFieldDirect) {
 		return emitSingleFieldFactory(node, fields, nonStampFields[0]!, nodeMap, kindEntries);
 	}

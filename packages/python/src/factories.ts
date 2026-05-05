@@ -862,8 +862,8 @@ export function elifClause(config: T.ElifClause.Config) {
   });
 }
 
-export function elseClause(body: T.Suite) {
-  const _body = body;
+export function elseClause(config: T.ElseClause.Config) {
+  const _body = config.body;
   return withMethods({
     $type: TSKindId.ElseClause as const,
     $source: 2 as const,
@@ -871,7 +871,7 @@ export function elseClause(body: T.Suite) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.Suite) => elseClause(value),
+      body: (value: T.Suite) => elseClause({ ...config, body: value }),
     },
   });
 }
@@ -973,8 +973,8 @@ export function false_() {
   });
 }
 
-export function finallyClause(block: T.Suite) {
-  const _block = block;
+export function finallyClause(config: T.FinallyClause.Config) {
+  const _block = config.block;
   return withMethods({
     $type: TSKindId.FinallyClause as const,
     $source: 2 as const,
@@ -982,7 +982,7 @@ export function finallyClause(block: T.Suite) {
     _block,
     block() { return _block; },
     $with: {
-      block: (value: T.Suite) => finallyClause(value),
+      block: (value: T.Suite) => finallyClause({ ...config, block: value }),
     },
   });
 }

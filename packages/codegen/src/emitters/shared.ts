@@ -13,6 +13,7 @@ import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
+	AssembledSupertype,
 	AssembledBranch,
 	AssembledGroup,
 	isNodeRef,
@@ -274,7 +275,37 @@ export function resolveHiddenKeywordLiteral(
 	// functionally identical to keywords for inlining purposes — a
 	// single literal text the field accepts.
 	if (node instanceof AssembledToken) return node.text;
+	// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
+	// — follow the chain so fields whose value is the supertype inherit the
+	// leaf/keyword/token literal for auto-stamp detection.
+	if (node instanceof AssembledSupertype && node.subtypes.length === 1) {
+		return resolveHiddenKeywordLiteral(node.subtypes[0]!, nodeMap);
+	}
 	return undefined;
+}
+
+/**
+ * Returns `true` when every kind a slot resolves to is hidden (`_`-prefixed).
+ * Such fields represent parser-inserted infrastructure (e.g. `_semicolon` →
+ * `_automatic_semicolon`) that shouldn't be exposed as a required user-facing
+ * factory parameter.
+ */
+export function isHiddenInfraSlot(
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): boolean {
+	const kinds = slotKindNames(slot);
+	if (kinds.length === 0) return false;
+	for (const k of kinds) {
+		if (!k.startsWith('_')) return false;
+		const node = nodeMap.nodes.get(k);
+		if (!node) return false;
+		if (node.modelType === 'supertype') {
+			const st = node as InstanceType<typeof AssembledSupertype>;
+			if (st.subtypes.some((s) => !s.startsWith('_'))) return false;
+		}
+	}
+	return true;
 }
 
 // ---------------------------------------------------------------------------

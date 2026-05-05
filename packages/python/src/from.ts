@@ -795,7 +795,9 @@ export function elifClauseFrom(input: T.ElifClause.Loose | T.ElifClause): Return
 
 export function elseClauseFrom(input: T.ElseClause.Loose | T.ElseClause): ReturnType<typeof F.elseClause> | T.ElseClause {
   if (isNodeData(input)) return input;
-  return F.elseClause(_resolveOneBranch<T.Suite>(input.body, "_suite"));
+  return F.elseClause({
+    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
+  });
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
@@ -852,7 +854,9 @@ export function false_From(input?: T.False) {
 
 export function finallyClauseFrom(input: T.FinallyClause.Loose | T.FinallyClause): ReturnType<typeof F.finallyClause> | T.FinallyClause {
   if (isNodeData(input)) return input;
-  return F.finallyClause(_resolveOneBranch<T.Suite>(input.block, "_suite"));
+  return F.finallyClause({
+    block: _resolveOneBranch<T.Suite>(input.block, "_suite"),
+  });
 }
 
 export function floatFrom(input: string | T.Float) {

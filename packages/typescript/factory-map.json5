@@ -124,7 +124,7 @@
     "construct_signature": "config",
     "constructor_type": "config",
     "continue_statement": "config",
-    "debugger_statement": "single-field",
+    "debugger_statement": "config",
     "decorator": "children",
     "decorator_call_expression": "config",
     "decorator_member_expression": "config",
