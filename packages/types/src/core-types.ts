@@ -83,7 +83,7 @@ export interface AnyNodeData {
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.
-	// Attached via withMethods<T> (Object.assign); enumerable.
+	// Attached via per-grammar withMethods<T> (non-enumerable defineProperty).
 	// Absent on readNode / native JSON transport.
 	// -------------------------------------------------------------------------
 

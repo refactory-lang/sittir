@@ -1120,7 +1120,7 @@ export interface PolymorphCandidateLocation {
  *
  * Shared with `promotePolymorph` — same core predicate, different scope.
  */
-export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
+function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
 	if (choice.members.length < 2) return false;
 	const contents = choice.members.map((m) =>
 		m.type === 'variant' ? m.content : m
@@ -1197,7 +1197,7 @@ export function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
  * suggester mirrors that (all arms become variant() calls or none do).
  * Choices where every arm is a symbol reference are skipped entirely.
  */
-export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
+function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
 	const armNeedsVariant = (c: Rule): boolean => {
 		// Any symbol reference — render dispatches on the resolved
 		// NodeData's $type, not on which arm produced it. Hidden symbols
@@ -1236,13 +1236,6 @@ export function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
 		m.type === 'variant' ? m.content : m
 	);
 	return contents.some(armNeedsVariant);
-}
-
-export function findPolymorphCandidate(
-	rule: Rule
-): PolymorphCandidateLocation | null {
-	const all = findAllPolymorphCandidates(rule);
-	return all.length > 0 ? all[0]! : null;
 }
 
 /**

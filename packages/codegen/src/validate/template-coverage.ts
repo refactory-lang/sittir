@@ -30,7 +30,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadRawEntries } from './node-types-loader.ts';
-import type { RawNodeEntry, RawFieldEntry } from './node-types-loader.ts';
+import type { RawNodeEntry } from './node-types-loader.ts';
 import { loadRulesFromPath as loadRulesFromTemplatesPath } from './templates-path.ts';
 
 /**
@@ -475,34 +475,6 @@ function isFieldReferenced(
 
 	return false;
 }
-
-// ---------------------------------------------------------------------------
-// Formatting
-// ---------------------------------------------------------------------------
-
-export function formatTemplateCoverageReport(
-	result: TemplateCoverageResult
-): string {
-	const lines: string[] = [];
-	const icon = result.fail === 0 ? 'v' : 'x';
-	lines.push(
-		`  ${icon} ${result.pass}/${result.total} kinds have full template coverage` +
-			` (${result.fail} failing, ${result.issues.length} issues)`
-	);
-	const shown = result.issues.slice(0, 20);
-	for (const i of shown) {
-		lines.push(
-			`    ${i.type === 'literal-leak' ? '!' : 'x'} ${i.kind}: ${i.message}`
-		);
-	}
-	if (result.issues.length > shown.length) {
-		lines.push(`    ... and ${result.issues.length - shown.length} more`);
-	}
-	return lines.join('\n');
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type _FieldUse = RawFieldEntry; // keep import alive for docs
 
 // ---------------------------------------------------------------------------
 // Hoisted-outer-field detection — the validator's complement to

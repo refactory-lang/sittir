@@ -4471,7 +4471,7 @@ const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
  *
  * @param literal - The grammar literal string (e.g. `"+"`, `"mut"`, `"u8"`).
  */
-export function literalToVariantName(literal: string): string {
+function literalToVariantName(literal: string): string {
 	const known = LITERAL_TO_VARIANT_NAME.get(literal);
 	if (known !== undefined) return known;
 
