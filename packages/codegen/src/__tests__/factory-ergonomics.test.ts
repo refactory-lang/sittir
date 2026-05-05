@@ -32,6 +32,56 @@ describe('factory ergonomics', () => {
 		});
 	});
 
+	describe('Gap 3: array at wrapper position auto-wraps', () => {
+		it('emits _wrapWithChildren dispatch table', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/from.ts'),
+				'utf-8'
+			);
+			expect(content).toContain('function _wrapWithChildren');
+			// Container kind: dispatches with rest-params spread
+			expect(content).toMatch(/case "parameters".*F\.parameters\(/);
+			// Mixed kind: dispatches with config object
+			expect(content).toMatch(/case "block".*F\.block\(\{/);
+		});
+
+		it('emits _wrapKindIds lookup table', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/from.ts'),
+				'utf-8'
+			);
+			expect(content).toContain('const _wrapKindIds');
+			expect(content).toMatch(/"block":\s*TSKindId\./);
+			expect(content).toMatch(/"parameters":\s*TSKindId\./);
+		});
+
+		it('_resolveOneBranch handles arrays by wrapping with children', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/from.ts'),
+				'utf-8'
+			);
+			expect(content).toMatch(/Array\.isArray\(v\).*_wrapWithChildren/s);
+		});
+	});
+
+	describe('Gap 4: single value at wrapper position auto-wraps', () => {
+		it('_resolveOneBranch wraps non-matching NodeData as single child', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/from.ts'),
+				'utf-8'
+			);
+			expect(content).toMatch(/isNodeData\(v\).*\$type.*_wrapWithChildren/s);
+		});
+	});
+
 	describe('Gap 5: single-field factory signatures', () => {
 		it('emits direct-value signature for single-field-no-children factories', async () => {
 			const { readFileSync } = await import('node:fs');

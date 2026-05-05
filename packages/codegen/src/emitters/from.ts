@@ -14,6 +14,7 @@ import {
 	collectCatalogKinds,
 	kindDiscriminantExpr,
 	hasCatalogEntry,
+	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type {
@@ -1928,6 +1929,107 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('}');
 }
 
+// ---------------------------------------------------------------------------
+// Gap 3 + 4: _wrapWithChildren dispatch table
+// ---------------------------------------------------------------------------
+
+interface WrapChildrenEntry {
+	readonly kind: string;
+	readonly factoryName: string;
+	readonly isContainer: boolean;
+	readonly kindIdExpr: string;
+}
+
+/**
+ * Collects all branch kinds that accept `$children` — used by the
+ * `_wrapWithChildren` runtime dispatch table in generated from.ts.
+ *
+ * @remarks
+ * Container-shaped branches (rest-param factories) wrap as
+ * `F.parameters(...children)`. Mixed branches (config + children)
+ * wrap as `F.block({ children } as any)`. Hidden kinds (`_`-prefixed
+ * and non-userFacing) are excluded unless explicitly marked `userFacing`.
+ *
+ * @param nodeMap - The assembled node map.
+ * @param kindEntries - Kind enum entries for TSKindId emission.
+ * @returns Array of wrap-children descriptors.
+ */
+function collectWrapChildrenEntries(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): WrapChildrenEntry[] {
+	const entries: WrapChildrenEntry[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'branch') continue;
+		if (!node.rawFactoryName) continue;
+		if (node.children.length === 0) continue;
+		// Skip hidden kinds unless explicitly userFacing
+		if (kind.startsWith('_') && !node.userFacing) continue;
+		// Need a catalog entry for the TSKindId comparison
+		if (!kindEntries) continue;
+		const entry = findKindEntry(kindEntries, kind);
+		if (!entry) continue;
+		entries.push({
+			kind,
+			factoryName: node.rawFactoryName,
+			isContainer: node.isContainerShape,
+			kindIdExpr: `TSKindId.${entry.member}`
+		});
+	}
+	return entries;
+}
+
+/**
+ * Emits the `_wrapKindIds` map, `_wrapWithChildren` dispatcher, and the
+ * `_wrapKinds` set into generated from.ts.
+ *
+ * @remarks
+ * Gap 3 (array auto-wrap): when `_resolveOneBranch` receives an array and
+ * the target kind is in `_wrapKinds`, each element is resolved and the
+ * array is forwarded to the factory via `_wrapWithChildren`.
+ *
+ * Gap 4 (single-value auto-wrap): when `_resolveOneBranch` receives a
+ * NodeData whose `$type` differs from the target kind, it wraps the value
+ * as a single child if the target kind accepts children.
+ *
+ * @param lines - Output lines array to push into.
+ * @param nodeMap - The assembled node map.
+ * @param kindEntries - Kind enum entries for TSKindId emission.
+ */
+function emitWrapWithChildrenTable(
+	lines: string[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const entries = collectWrapChildrenEntries(nodeMap, kindEntries);
+	if (entries.length === 0) return;
+
+	// Emit _wrapKindIds map: kind string → TSKindId numeric value
+	lines.push('const _wrapKindIds: { readonly [kind: string]: number } = {');
+	for (const e of entries) {
+		lines.push(`  ${JSON.stringify(e.kind)}: ${e.kindIdExpr},`);
+	}
+	lines.push('};');
+	lines.push('');
+
+	// Emit _wrapWithChildren dispatcher
+	lines.push('function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {');
+	lines.push('  switch (kind) {');
+	for (const e of entries) {
+		if (e.isContainer) {
+			// Container factories use rest-params: F.parameters(...children)
+			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`);
+		} else {
+			// Mixed factories use config with children key: F.block({ children } as any)
+			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}({ children } as any);`);
+		}
+	}
+	lines.push('    default: return undefined;');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+}
+
 function emitResolverHelpers(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -2057,11 +2159,41 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
+	// Gap 3+4: emit _wrapWithChildren table before _resolveOneBranch
+	// since _resolveOneBranch references _wrapKindIds and _wrapWithChildren.
+	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
+
 	lines.push(
 		'function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {'
 	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	// Gap 4: NodeData pass-through if $type matches; wrap as single child
+	// when it doesn't and target kind supports children.
+	lines.push('  if (isNodeData(v)) {');
+	lines.push('    const wrapId = _wrapKindIds[kind];');
+	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
+	lines.push('      return _wrapWithChildren(kind, [v]) as T;');
+	lines.push('    }');
+	lines.push('    return v as T;');
+	lines.push('  }');
+	// Gap 3: Array at wrapper position — resolve each element, wrap in
+	// target kind via _wrapWithChildren.
+	lines.push('  if (Array.isArray(v) && kind in _wrapKindIds) {');
+	lines.push('    const resolved = v.map(e => {');
+	lines.push('      if (typeof e === "string" || typeof e === "number") return e;');
+	lines.push('      if (isNodeData(e)) return e;');
+	lines.push('      if (typeof e === "object" && e !== null && !Array.isArray(e)) {');
+	lines.push('        if ("kind" in e) {');
+	lines.push('          const { kind: k, ...rest } = e;');
+	lines.push('          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);');
+	lines.push('        }');
+	lines.push('        if (_isFromKind(kind)) return _resolveByKind(kind, e);');
+	lines.push('      }');
+	lines.push('      return e;');
+	lines.push('    });');
+	lines.push('    return _wrapWithChildren(kind, resolved) as T;');
+	lines.push('  }');
+	// Existing object handling
 	lines.push('  if (typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    if ("kind" in v) {');
 	lines.push('      const { kind: k, ...rest } = v;');

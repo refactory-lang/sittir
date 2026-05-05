@@ -327,9 +327,177 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
   return v as T;
 }
 
+const _wrapKindIds: { readonly [kind: string]: number } = {
+  "_class_body_member": TSKindId.ClassBodyMember,
+  "_class_body_method_sig": TSKindId.ClassBodyMethodSig,
+  "_class_heritage_extends_clause": TSKindId._ClassHeritageExtendsClause,
+  "_class_heritage_implements_clause": TSKindId._ClassHeritageImplementsClause,
+  "_export_statement_default_from_arm": TSKindId.ExportStatementDefaultFromArm,
+  "_export_statement_default_from_arm_clause_from": TSKindId.ExportStatementDefaultFromArmClauseFrom,
+  "_export_statement_default_from_arm_ns_from": TSKindId.ExportStatementDefaultFromArmNsFrom,
+  "_export_statement_equals_export": TSKindId._ExportStatementEqualsExport,
+  "_export_statement_namespace_export": TSKindId._ExportStatementNamespaceExport,
+  "_export_statement_type_export": TSKindId._ExportStatementTypeExport,
+  "_import_clause_default_import": TSKindId._ImportClauseDefaultImport,
+  "_import_clause_named_imports": TSKindId._ImportClauseNamedImports,
+  "_import_clause_namespace_import": TSKindId._ImportClauseNamespaceImport,
+  "_index_signature_mapped_type_clause": TSKindId._IndexSignatureMappedTypeClause,
+  "_parenthesized_expression_sequence": TSKindId._ParenthesizedExpressionSequence,
+  "_public_field_definition_declare_first": TSKindId.PublicFieldDefinitionDeclareFirst,
+  "_string_double": TSKindId._StringDouble,
+  "_string_single": TSKindId._StringSingle,
+  "_type_identifier": TSKindId.TypeIdentifier,
+  "arguments": TSKindId.Arguments,
+  "array": TSKindId.Array,
+  "array_pattern": TSKindId.ArrayPattern,
+  "asserts": TSKindId.Asserts,
+  "class_body": TSKindId.ClassBody,
+  "class_heritage_extends_clause": TSKindId._ClassHeritageExtendsClause,
+  "class_heritage_implements_clause": TSKindId._ClassHeritageImplementsClause,
+  "class_static_block": TSKindId.ClassStaticBlock,
+  "decorator": TSKindId.Decorator,
+  "decorator_parenthesized_expression": TSKindId.DecoratorParenthesizedExpression,
+  "enum_body": TSKindId.EnumBody,
+  "export_clause": TSKindId.ExportClause,
+  "export_statement_type_export": TSKindId._ExportStatementTypeExport,
+  "export_statement_equals_export": TSKindId._ExportStatementEqualsExport,
+  "export_statement_namespace_export": TSKindId._ExportStatementNamespaceExport,
+  "expression_statement": TSKindId.ExpressionStatement,
+  "for_in_statement": TSKindId.ForInStatement,
+  "formal_parameters": TSKindId.FormalParameters,
+  "function_declaration": TSKindId.FunctionDeclaration,
+  "generator_function_declaration": TSKindId.GeneratorFunctionDeclaration,
+  "implements_clause": TSKindId.ImplementsClause,
+  "import_clause_namespace_import": TSKindId._ImportClauseNamespaceImport,
+  "import_clause_named_imports": TSKindId._ImportClauseNamedImports,
+  "import_clause_default_import": TSKindId._ImportClauseDefaultImport,
+  "index_signature_mapped_type_clause": TSKindId._IndexSignatureMappedTypeClause,
+  "literal_type": TSKindId.LiteralType,
+  "member_expression": TSKindId.MemberExpression,
+  "named_imports": TSKindId.NamedImports,
+  "namespace_export": TSKindId.NamespaceExport,
+  "object": TSKindId.Object,
+  "object_pattern": TSKindId.ObjectPattern,
+  "optional_parameter": TSKindId.OptionalParameter,
+  "parenthesized_expression_sequence": TSKindId._ParenthesizedExpressionSequence,
+  "public_field_definition": TSKindId.PublicFieldDefinition,
+  "required_parameter": TSKindId.RequiredParameter,
+  "rest_pattern": TSKindId.RestPattern,
+  "return_statement": TSKindId.ReturnStatement,
+  "sequence_expression": TSKindId.SequenceExpression,
+  "string_double": TSKindId._StringDouble,
+  "string_single": TSKindId._StringSingle,
+  "switch_body": TSKindId.SwitchBody,
+  "template_literal_type": TSKindId.TemplateLiteralType,
+  "template_string": TSKindId.TemplateString,
+  "template_substitution": TSKindId.TemplateSubstitution,
+  "template_type": TSKindId.TemplateType,
+  "throw_statement": TSKindId.ThrowStatement,
+  "tuple_type": TSKindId.TupleType,
+  "type_arguments": TSKindId.TypeArguments,
+  "type_parameters": TSKindId.TypeParameters,
+  "type_query": TSKindId.TypeQuery,
+};
+
+function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
+  switch (kind) {
+    case "_class_body_member": return F.classBodyMember(...(children as Parameters<typeof F.classBodyMember>));
+    case "_class_body_method_sig": return F.classBodyMethodSig(...(children as Parameters<typeof F.classBodyMethodSig>));
+    case "_class_heritage_extends_clause": return F._classHeritageExtendsClause(...(children as Parameters<typeof F._classHeritageExtendsClause>));
+    case "_class_heritage_implements_clause": return F._classHeritageImplementsClause(...(children as Parameters<typeof F._classHeritageImplementsClause>));
+    case "_export_statement_default_from_arm": return F.exportStatementDefaultFromArm(...(children as Parameters<typeof F.exportStatementDefaultFromArm>));
+    case "_export_statement_default_from_arm_clause_from": return F.exportStatementDefaultFromArmClauseFrom({ children } as any);
+    case "_export_statement_default_from_arm_ns_from": return F.exportStatementDefaultFromArmNsFrom({ children } as any);
+    case "_export_statement_equals_export": return F._exportStatementEqualsExport(...(children as Parameters<typeof F._exportStatementEqualsExport>));
+    case "_export_statement_namespace_export": return F._exportStatementNamespaceExport(...(children as Parameters<typeof F._exportStatementNamespaceExport>));
+    case "_export_statement_type_export": return F._exportStatementTypeExport({ children } as any);
+    case "_import_clause_default_import": return F._importClauseDefaultImport(...(children as Parameters<typeof F._importClauseDefaultImport>));
+    case "_import_clause_named_imports": return F._importClauseNamedImports(...(children as Parameters<typeof F._importClauseNamedImports>));
+    case "_import_clause_namespace_import": return F._importClauseNamespaceImport(...(children as Parameters<typeof F._importClauseNamespaceImport>));
+    case "_index_signature_mapped_type_clause": return F._indexSignatureMappedTypeClause(...(children as Parameters<typeof F._indexSignatureMappedTypeClause>));
+    case "_parenthesized_expression_sequence": return F._parenthesizedExpressionSequence(...(children as Parameters<typeof F._parenthesizedExpressionSequence>));
+    case "_public_field_definition_declare_first": return F.publicFieldDefinitionDeclareFirst(...(children as Parameters<typeof F.publicFieldDefinitionDeclareFirst>));
+    case "_string_double": return F._stringDouble(...(children as Parameters<typeof F._stringDouble>));
+    case "_string_single": return F._stringSingle(...(children as Parameters<typeof F._stringSingle>));
+    case "_type_identifier": return F.typeIdentifier(...(children as Parameters<typeof F.typeIdentifier>));
+    case "arguments": return F.arguments_(...(children as Parameters<typeof F.arguments_>));
+    case "array": return F.array(...(children as Parameters<typeof F.array>));
+    case "array_pattern": return F.arrayPattern(...(children as Parameters<typeof F.arrayPattern>));
+    case "asserts": return F.asserts(...(children as Parameters<typeof F.asserts>));
+    case "class_body": return F.classBody(...(children as Parameters<typeof F.classBody>));
+    case "class_heritage_extends_clause": return F.classHeritageExtendsClause(...(children as Parameters<typeof F.classHeritageExtendsClause>));
+    case "class_heritage_implements_clause": return F.classHeritageImplementsClause(...(children as Parameters<typeof F.classHeritageImplementsClause>));
+    case "class_static_block": return F.classStaticBlock({ children } as any);
+    case "decorator": return F.decorator(...(children as Parameters<typeof F.decorator>));
+    case "decorator_parenthesized_expression": return F.decoratorParenthesizedExpression(...(children as Parameters<typeof F.decoratorParenthesizedExpression>));
+    case "enum_body": return F.enumBody({ children } as any);
+    case "export_clause": return F.exportClause(...(children as Parameters<typeof F.exportClause>));
+    case "export_statement_type_export": return F.exportStatementTypeExport({ children } as any);
+    case "export_statement_equals_export": return F.exportStatementEqualsExport(...(children as Parameters<typeof F.exportStatementEqualsExport>));
+    case "export_statement_namespace_export": return F.exportStatementNamespaceExport(...(children as Parameters<typeof F.exportStatementNamespaceExport>));
+    case "expression_statement": return F.expressionStatement({ children } as any);
+    case "for_in_statement": return F.forInStatement({ children } as any);
+    case "formal_parameters": return F.formalParameters(...(children as Parameters<typeof F.formalParameters>));
+    case "function_declaration": return F.functionDeclaration({ children } as any);
+    case "generator_function_declaration": return F.generatorFunctionDeclaration({ children } as any);
+    case "implements_clause": return F.implementsClause(...(children as Parameters<typeof F.implementsClause>));
+    case "import_clause_namespace_import": return F.importClauseNamespaceImport(...(children as Parameters<typeof F.importClauseNamespaceImport>));
+    case "import_clause_named_imports": return F.importClauseNamedImports(...(children as Parameters<typeof F.importClauseNamedImports>));
+    case "import_clause_default_import": return F.importClauseDefaultImport(...(children as Parameters<typeof F.importClauseDefaultImport>));
+    case "index_signature_mapped_type_clause": return F.indexSignatureMappedTypeClause(...(children as Parameters<typeof F.indexSignatureMappedTypeClause>));
+    case "literal_type": return F.literalType(...(children as Parameters<typeof F.literalType>));
+    case "member_expression": return F.memberExpression({ children } as any);
+    case "named_imports": return F.namedImports(...(children as Parameters<typeof F.namedImports>));
+    case "namespace_export": return F.namespaceExport(...(children as Parameters<typeof F.namespaceExport>));
+    case "object": return F.object(...(children as Parameters<typeof F.object>));
+    case "object_pattern": return F.objectPattern(...(children as Parameters<typeof F.objectPattern>));
+    case "optional_parameter": return F.optionalParameter({ children } as any);
+    case "parenthesized_expression_sequence": return F.parenthesizedExpressionSequence(...(children as Parameters<typeof F.parenthesizedExpressionSequence>));
+    case "public_field_definition": return F.publicFieldDefinition({ children } as any);
+    case "required_parameter": return F.requiredParameter({ children } as any);
+    case "rest_pattern": return F.restPattern(...(children as Parameters<typeof F.restPattern>));
+    case "return_statement": return F.returnStatement({ children } as any);
+    case "sequence_expression": return F.sequenceExpression(...(children as Parameters<typeof F.sequenceExpression>));
+    case "string_double": return F.stringDouble(...(children as Parameters<typeof F.stringDouble>));
+    case "string_single": return F.stringSingle(...(children as Parameters<typeof F.stringSingle>));
+    case "switch_body": return F.switchBody(...(children as Parameters<typeof F.switchBody>));
+    case "template_literal_type": return F.templateLiteralType(...(children as Parameters<typeof F.templateLiteralType>));
+    case "template_string": return F.templateString(...(children as Parameters<typeof F.templateString>));
+    case "template_substitution": return F.templateSubstitution(...(children as Parameters<typeof F.templateSubstitution>));
+    case "template_type": return F.templateType(...(children as Parameters<typeof F.templateType>));
+    case "throw_statement": return F.throwStatement({ children } as any);
+    case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
+    case "type_arguments": return F.typeArguments(...(children as Parameters<typeof F.typeArguments>));
+    case "type_parameters": return F.typeParameters(...(children as Parameters<typeof F.typeParameters>));
+    case "type_query": return F.typeQuery(...(children as Parameters<typeof F.typeQuery>));
+    default: return undefined;
+  }
+}
+
 function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
   if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (isNodeData(v)) {
+    const wrapId = _wrapKindIds[kind];
+    if (wrapId !== undefined && v.$type !== wrapId) {
+      return _wrapWithChildren(kind, [v]) as T;
+    }
+    return v as T;
+  }
+  if (Array.isArray(v) && kind in _wrapKindIds) {
+    const resolved = v.map(e => {
+      if (typeof e === "string" || typeof e === "number") return e;
+      if (isNodeData(e)) return e;
+      if (typeof e === "object" && e !== null && !Array.isArray(e)) {
+        if ("kind" in e) {
+          const { kind: k, ...rest } = e;
+          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);
+        }
+        if (_isFromKind(kind)) return _resolveByKind(kind, e);
+      }
+      return e;
+    });
+    return _wrapWithChildren(kind, resolved) as T;
+  }
   if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
       const { kind: k, ...rest } = v;

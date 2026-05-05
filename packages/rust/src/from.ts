@@ -322,9 +322,199 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
   return v as T;
 }
 
+const _wrapKindIds: { readonly [kind: string]: number } = {
+  "_delim_token_tree_brace": TSKindId._DelimTokenTreeBrace,
+  "_delim_token_tree_bracket": TSKindId._DelimTokenTreeBracket,
+  "_delim_token_tree_paren": TSKindId._DelimTokenTreeParen,
+  "_expression_statement_block_ending": TSKindId._ExpressionStatementBlockEnding,
+  "_expression_statement_with_semi": TSKindId._ExpressionStatementWithSemi,
+  "_field_identifier": TSKindId.FieldIdentifier,
+  "_function_type_fn_form": TSKindId.FunctionTypeFnForm,
+  "_let_chain": TSKindId.LetChain,
+  "_macro_definition_brace": TSKindId._MacroDefinitionBrace,
+  "_macro_definition_bracket": TSKindId._MacroDefinitionBracket,
+  "_macro_definition_paren": TSKindId._MacroDefinitionParen,
+  "_pointer_type_mut": TSKindId._PointerTypeMut,
+  "_reference_expression_raw_mut": TSKindId.ReferenceExpressionRawMut,
+  "_token_tree_brace": TSKindId._TokenTreeBrace,
+  "_token_tree_bracket": TSKindId._TokenTreeBracket,
+  "_token_tree_paren": TSKindId._TokenTreeParen,
+  "_token_tree_pattern_brace": TSKindId._TokenTreePatternBrace,
+  "_token_tree_pattern_bracket": TSKindId._TokenTreePatternBracket,
+  "_token_tree_pattern_paren": TSKindId._TokenTreePatternParen,
+  "_type_identifier": TSKindId.TypeIdentifier,
+  "_visibility_modifier_crate": TSKindId._VisibilityModifierCrate,
+  "attribute": TSKindId.Attribute,
+  "await_expression": TSKindId.AwaitExpression,
+  "base_field_initializer": TSKindId.BaseFieldInitializer,
+  "block": TSKindId.Block,
+  "block_comment": TSKindId.BlockComment,
+  "bracketed_type": TSKindId.BracketedType,
+  "break_expression": TSKindId.BreakExpression,
+  "captured_pattern": TSKindId.CapturedPattern,
+  "closure_parameters": TSKindId.ClosureParameters,
+  "declaration_list": TSKindId.DeclarationList,
+  "delim_token_tree_paren": TSKindId._DelimTokenTreeParen,
+  "delim_token_tree_bracket": TSKindId._DelimTokenTreeBracket,
+  "delim_token_tree_brace": TSKindId._DelimTokenTreeBrace,
+  "else_clause": TSKindId.ElseClause,
+  "enum_variant_list": TSKindId.EnumVariantList,
+  "expression_statement_with_semi": TSKindId._ExpressionStatementWithSemi,
+  "expression_statement_block_ending": TSKindId._ExpressionStatementBlockEnding,
+  "field_declaration_list": TSKindId.FieldDeclarationList,
+  "field_initializer": TSKindId.FieldInitializer,
+  "field_initializer_list": TSKindId.FieldInitializerList,
+  "for_lifetimes": TSKindId.ForLifetimes,
+  "function_type": TSKindId.FunctionType,
+  "generic_pattern": TSKindId.GenericPattern,
+  "last_match_arm": TSKindId.LastMatchArm,
+  "macro_definition_paren": TSKindId._MacroDefinitionParen,
+  "macro_definition_bracket": TSKindId._MacroDefinitionBracket,
+  "macro_definition_brace": TSKindId._MacroDefinitionBrace,
+  "match_block": TSKindId.MatchBlock,
+  "match_pattern": TSKindId.MatchPattern,
+  "mut_pattern": TSKindId.MutPattern,
+  "ordered_field_declaration_list": TSKindId.OrderedFieldDeclarationList,
+  "parameters": TSKindId.Parameters,
+  "parenthesized_expression": TSKindId.ParenthesizedExpression,
+  "pointer_type_mut": TSKindId._PointerTypeMut,
+  "ref_pattern": TSKindId.RefPattern,
+  "reference_expression": TSKindId.ReferenceExpression,
+  "removed_trait_bound": TSKindId.RemovedTraitBound,
+  "return_expression": TSKindId.ReturnExpression,
+  "slice_pattern": TSKindId.SlicePattern,
+  "string_literal": TSKindId.StringLiteral,
+  "struct_pattern": TSKindId.StructPattern,
+  "token_repetition": TSKindId.TokenRepetition,
+  "token_repetition_pattern": TSKindId.TokenRepetitionPattern,
+  "token_tree_paren": TSKindId._TokenTreeParen,
+  "token_tree_bracket": TSKindId._TokenTreeBracket,
+  "token_tree_brace": TSKindId._TokenTreeBrace,
+  "token_tree_pattern_paren": TSKindId._TokenTreePatternParen,
+  "token_tree_pattern_bracket": TSKindId._TokenTreePatternBracket,
+  "token_tree_pattern_brace": TSKindId._TokenTreePatternBrace,
+  "trait_bounds": TSKindId.TraitBounds,
+  "tuple_pattern": TSKindId.TuplePattern,
+  "tuple_struct_pattern": TSKindId.TupleStructPattern,
+  "tuple_type": TSKindId.TupleType,
+  "type_arguments": TSKindId.TypeArguments,
+  "use_bounds": TSKindId.UseBounds,
+  "use_list": TSKindId.UseList,
+  "visibility_modifier_crate": TSKindId._VisibilityModifierCrate,
+  "where_clause": TSKindId.WhereClause,
+  "yield_expression": TSKindId.YieldExpression,
+};
+
+function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
+  switch (kind) {
+    case "_delim_token_tree_brace": return F._delimTokenTreeBrace(...(children as Parameters<typeof F._delimTokenTreeBrace>));
+    case "_delim_token_tree_bracket": return F._delimTokenTreeBracket(...(children as Parameters<typeof F._delimTokenTreeBracket>));
+    case "_delim_token_tree_paren": return F._delimTokenTreeParen(...(children as Parameters<typeof F._delimTokenTreeParen>));
+    case "_expression_statement_block_ending": return F._expressionStatementBlockEnding(...(children as Parameters<typeof F._expressionStatementBlockEnding>));
+    case "_expression_statement_with_semi": return F._expressionStatementWithSemi(...(children as Parameters<typeof F._expressionStatementWithSemi>));
+    case "_field_identifier": return F.fieldIdentifier(...(children as Parameters<typeof F.fieldIdentifier>));
+    case "_function_type_fn_form": return F.functionTypeFnForm(...(children as Parameters<typeof F.functionTypeFnForm>));
+    case "_let_chain": return F.letChain(...(children as Parameters<typeof F.letChain>));
+    case "_macro_definition_brace": return F._macroDefinitionBrace(...(children as Parameters<typeof F._macroDefinitionBrace>));
+    case "_macro_definition_bracket": return F._macroDefinitionBracket(...(children as Parameters<typeof F._macroDefinitionBracket>));
+    case "_macro_definition_paren": return F._macroDefinitionParen(...(children as Parameters<typeof F._macroDefinitionParen>));
+    case "_pointer_type_mut": return F._pointerTypeMut(...(children as Parameters<typeof F._pointerTypeMut>));
+    case "_reference_expression_raw_mut": return F.referenceExpressionRawMut(...(children as Parameters<typeof F.referenceExpressionRawMut>));
+    case "_token_tree_brace": return F._tokenTreeBrace(...(children as Parameters<typeof F._tokenTreeBrace>));
+    case "_token_tree_bracket": return F._tokenTreeBracket(...(children as Parameters<typeof F._tokenTreeBracket>));
+    case "_token_tree_paren": return F._tokenTreeParen(...(children as Parameters<typeof F._tokenTreeParen>));
+    case "_token_tree_pattern_brace": return F._tokenTreePatternBrace(...(children as Parameters<typeof F._tokenTreePatternBrace>));
+    case "_token_tree_pattern_bracket": return F._tokenTreePatternBracket(...(children as Parameters<typeof F._tokenTreePatternBracket>));
+    case "_token_tree_pattern_paren": return F._tokenTreePatternParen(...(children as Parameters<typeof F._tokenTreePatternParen>));
+    case "_type_identifier": return F.typeIdentifier(...(children as Parameters<typeof F.typeIdentifier>));
+    case "_visibility_modifier_crate": return F._visibilityModifierCrate(...(children as Parameters<typeof F._visibilityModifierCrate>));
+    case "attribute": return F.attribute({ children } as any);
+    case "await_expression": return F.awaitExpression(...(children as Parameters<typeof F.awaitExpression>));
+    case "base_field_initializer": return F.baseFieldInitializer(...(children as Parameters<typeof F.baseFieldInitializer>));
+    case "block": return F.block({ children } as any);
+    case "block_comment": return F.blockComment({ children } as any);
+    case "bracketed_type": return F.bracketedType(...(children as Parameters<typeof F.bracketedType>));
+    case "break_expression": return F.breakExpression({ children } as any);
+    case "captured_pattern": return F.capturedPattern({ children } as any);
+    case "closure_parameters": return F.closureParameters(...(children as Parameters<typeof F.closureParameters>));
+    case "declaration_list": return F.declarationList(...(children as Parameters<typeof F.declarationList>));
+    case "delim_token_tree_paren": return F.delimTokenTreeParen(...(children as Parameters<typeof F.delimTokenTreeParen>));
+    case "delim_token_tree_bracket": return F.delimTokenTreeBracket(...(children as Parameters<typeof F.delimTokenTreeBracket>));
+    case "delim_token_tree_brace": return F.delimTokenTreeBrace(...(children as Parameters<typeof F.delimTokenTreeBrace>));
+    case "else_clause": return F.elseClause(...(children as Parameters<typeof F.elseClause>));
+    case "enum_variant_list": return F.enumVariantList(...(children as Parameters<typeof F.enumVariantList>));
+    case "expression_statement_with_semi": return F.expressionStatementWithSemi(...(children as Parameters<typeof F.expressionStatementWithSemi>));
+    case "expression_statement_block_ending": return F.expressionStatementBlockEnding(...(children as Parameters<typeof F.expressionStatementBlockEnding>));
+    case "field_declaration_list": return F.fieldDeclarationList(...(children as Parameters<typeof F.fieldDeclarationList>));
+    case "field_initializer": return F.fieldInitializer({ children } as any);
+    case "field_initializer_list": return F.fieldInitializerList(...(children as Parameters<typeof F.fieldInitializerList>));
+    case "for_lifetimes": return F.forLifetimes(...(children as Parameters<typeof F.forLifetimes>));
+    case "function_type": return F.functionType({ children } as any);
+    case "generic_pattern": return F.genericPattern({ children } as any);
+    case "last_match_arm": return F.lastMatchArm({ children } as any);
+    case "macro_definition_paren": return F.macroDefinitionParen(...(children as Parameters<typeof F.macroDefinitionParen>));
+    case "macro_definition_bracket": return F.macroDefinitionBracket(...(children as Parameters<typeof F.macroDefinitionBracket>));
+    case "macro_definition_brace": return F.macroDefinitionBrace(...(children as Parameters<typeof F.macroDefinitionBrace>));
+    case "match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
+    case "match_pattern": return F.matchPattern({ children } as any);
+    case "mut_pattern": return F.mutPattern({ children } as any);
+    case "ordered_field_declaration_list": return F.orderedFieldDeclarationList({ children } as any);
+    case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
+    case "parenthesized_expression": return F.parenthesizedExpression(...(children as Parameters<typeof F.parenthesizedExpression>));
+    case "pointer_type_mut": return F.pointerTypeMut(...(children as Parameters<typeof F.pointerTypeMut>));
+    case "ref_pattern": return F.refPattern(...(children as Parameters<typeof F.refPattern>));
+    case "reference_expression": return F.referenceExpression({ children } as any);
+    case "removed_trait_bound": return F.removedTraitBound(...(children as Parameters<typeof F.removedTraitBound>));
+    case "return_expression": return F.returnExpression(...(children as Parameters<typeof F.returnExpression>));
+    case "slice_pattern": return F.slicePattern(...(children as Parameters<typeof F.slicePattern>));
+    case "string_literal": return F.stringLiteral(...(children as Parameters<typeof F.stringLiteral>));
+    case "struct_pattern": return F.structPattern({ children } as any);
+    case "token_repetition": return F.tokenRepetition(...(children as Parameters<typeof F.tokenRepetition>));
+    case "token_repetition_pattern": return F.tokenRepetitionPattern(...(children as Parameters<typeof F.tokenRepetitionPattern>));
+    case "token_tree_paren": return F.tokenTreeParen(...(children as Parameters<typeof F.tokenTreeParen>));
+    case "token_tree_bracket": return F.tokenTreeBracket(...(children as Parameters<typeof F.tokenTreeBracket>));
+    case "token_tree_brace": return F.tokenTreeBrace(...(children as Parameters<typeof F.tokenTreeBrace>));
+    case "token_tree_pattern_paren": return F.tokenTreePatternParen(...(children as Parameters<typeof F.tokenTreePatternParen>));
+    case "token_tree_pattern_bracket": return F.tokenTreePatternBracket(...(children as Parameters<typeof F.tokenTreePatternBracket>));
+    case "token_tree_pattern_brace": return F.tokenTreePatternBrace(...(children as Parameters<typeof F.tokenTreePatternBrace>));
+    case "trait_bounds": return F.traitBounds(...(children as Parameters<typeof F.traitBounds>));
+    case "tuple_pattern": return F.tuplePattern(...(children as Parameters<typeof F.tuplePattern>));
+    case "tuple_struct_pattern": return F.tupleStructPattern({ children } as any);
+    case "tuple_type": return F.tupleType(...(children as Parameters<typeof F.tupleType>));
+    case "type_arguments": return F.typeArguments(...(children as Parameters<typeof F.typeArguments>));
+    case "use_bounds": return F.useBounds(...(children as Parameters<typeof F.useBounds>));
+    case "use_list": return F.useList(...(children as Parameters<typeof F.useList>));
+    case "visibility_modifier_crate": return F.visibilityModifierCrate(...(children as Parameters<typeof F.visibilityModifierCrate>));
+    case "where_clause": return F.whereClause(...(children as Parameters<typeof F.whereClause>));
+    case "yield_expression": return F.yieldExpression(...(children as Parameters<typeof F.yieldExpression>));
+    default: return undefined;
+  }
+}
+
 function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
   if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (isNodeData(v)) {
+    const wrapId = _wrapKindIds[kind];
+    if (wrapId !== undefined && v.$type !== wrapId) {
+      return _wrapWithChildren(kind, [v]) as T;
+    }
+    return v as T;
+  }
+  if (Array.isArray(v) && kind in _wrapKindIds) {
+    const resolved = v.map(e => {
+      if (typeof e === "string" || typeof e === "number") return e;
+      if (isNodeData(e)) return e;
+      if (typeof e === "object" && e !== null && !Array.isArray(e)) {
+        if ("kind" in e) {
+          const { kind: k, ...rest } = e;
+          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);
+        }
+        if (_isFromKind(kind)) return _resolveByKind(kind, e);
+      }
+      return e;
+    });
+    return _wrapWithChildren(kind, resolved) as T;
+  }
   if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
       const { kind: k, ...rest } = v;

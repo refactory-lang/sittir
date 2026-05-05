@@ -268,9 +268,147 @@ function _resolveOneLeaf<T>(v: _FromFieldInput, kind: string): T {
   return v as T;
 }
 
+const _wrapKindIds: { readonly [kind: string]: number } = {
+  "_as_pattern": TSKindId._AsPattern,
+  "_comprehension_clauses": TSKindId.ComprehensionClauses,
+  "_match_block": TSKindId.MatchBlock,
+  "_simple_pattern_negative": TSKindId.SimplePatternNegative,
+  "_simple_statements": TSKindId.SimpleStatements,
+  "_with_clause_paren": TSKindId._WithClauseParen,
+  "argument_list": TSKindId.ArgumentList,
+  "assert_statement": TSKindId.AssertStatement,
+  "block": TSKindId.Block,
+  "case_clause": TSKindId.CaseClause,
+  "case_pattern": TSKindId.CasePattern,
+  "comparison_operator": TSKindId.ComparisonOperator,
+  "complex_pattern": TSKindId.ComplexPattern,
+  "concatenated_string": TSKindId.ConcatenatedString,
+  "decorated_definition": TSKindId.DecoratedDefinition,
+  "delete_statement": TSKindId.DeleteStatement,
+  "dict_pattern": TSKindId.DictPattern,
+  "dictionary": TSKindId.Dictionary,
+  "dictionary_comprehension": TSKindId.DictionaryComprehension,
+  "dictionary_splat_pattern": TSKindId.DictionarySplatPattern,
+  "dotted_name": TSKindId.DottedName,
+  "except_clause": TSKindId.ExceptClause,
+  "expression_list": TSKindId.ExpressionList,
+  "expression_statement_tuple": TSKindId._ExpressionStatementTuple,
+  "format_specifier": TSKindId.FormatSpecifier,
+  "generator_expression": TSKindId.GeneratorExpression,
+  "global_statement": TSKindId.GlobalStatement,
+  "import_from_statement": TSKindId.ImportFromStatement,
+  "lambda_parameters": TSKindId.LambdaParameters,
+  "list": TSKindId.List,
+  "list_comprehension": TSKindId.ListComprehension,
+  "list_pattern": TSKindId.ListPattern,
+  "list_splat_pattern": TSKindId.ListSplatPattern,
+  "module": TSKindId.Module,
+  "nonlocal_statement": TSKindId.NonlocalStatement,
+  "parameters": TSKindId.Parameters,
+  "parenthesized_expression": TSKindId.ParenthesizedExpression,
+  "parenthesized_list_splat": TSKindId.ParenthesizedListSplat,
+  "pattern_list": TSKindId.PatternList,
+  "print_statement": TSKindId.PrintStatement,
+  "raise_statement": TSKindId.RaiseStatement,
+  "return_statement": TSKindId.ReturnStatement,
+  "set": TSKindId.Set,
+  "set_comprehension": TSKindId.SetComprehension,
+  "string_content": TSKindId.StringContent,
+  "tuple": TSKindId.Tuple,
+  "tuple_pattern": TSKindId.TuplePattern,
+  "type": TSKindId.Type,
+  "type_parameter": TSKindId.TypeParameter,
+  "typed_parameter": TSKindId.TypedParameter,
+  "union_pattern": TSKindId.UnionPattern,
+  "with_clause_bare": TSKindId._WithClauseBare,
+  "with_clause_paren": TSKindId._WithClauseParen,
+  "yield": TSKindId.Yield,
+};
+
+function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {
+  switch (kind) {
+    case "_as_pattern": return F._asPattern(...(children as Parameters<typeof F._asPattern>));
+    case "_comprehension_clauses": return F.comprehensionClauses(...(children as Parameters<typeof F.comprehensionClauses>));
+    case "_match_block": return F.matchBlock(...(children as Parameters<typeof F.matchBlock>));
+    case "_simple_pattern_negative": return F.simplePatternNegative(...(children as Parameters<typeof F.simplePatternNegative>));
+    case "_simple_statements": return F.simpleStatements(...(children as Parameters<typeof F.simpleStatements>));
+    case "_with_clause_paren": return F._withClauseParen(...(children as Parameters<typeof F._withClauseParen>));
+    case "argument_list": return F.argumentList(...(children as Parameters<typeof F.argumentList>));
+    case "assert_statement": return F.assertStatement(...(children as Parameters<typeof F.assertStatement>));
+    case "block": return F.block(...(children as Parameters<typeof F.block>));
+    case "case_clause": return F.caseClause({ children } as any);
+    case "case_pattern": return F.casePattern(...(children as Parameters<typeof F.casePattern>));
+    case "comparison_operator": return F.comparisonOperator({ children } as any);
+    case "complex_pattern": return F.complexPattern({ children } as any);
+    case "concatenated_string": return F.concatenatedString(...(children as Parameters<typeof F.concatenatedString>));
+    case "decorated_definition": return F.decoratedDefinition({ children } as any);
+    case "delete_statement": return F.deleteStatement(...(children as Parameters<typeof F.deleteStatement>));
+    case "dict_pattern": return F.dictPattern(...(children as Parameters<typeof F.dictPattern>));
+    case "dictionary": return F.dictionary(...(children as Parameters<typeof F.dictionary>));
+    case "dictionary_comprehension": return F.dictionaryComprehension({ children } as any);
+    case "dictionary_splat_pattern": return F.dictionarySplatPattern(...(children as Parameters<typeof F.dictionarySplatPattern>));
+    case "dotted_name": return F.dottedName(...(children as Parameters<typeof F.dottedName>));
+    case "except_clause": return F.exceptClause({ children } as any);
+    case "expression_list": return F.expressionList(...(children as Parameters<typeof F.expressionList>));
+    case "expression_statement_tuple": return F.expressionStatementTuple(...(children as Parameters<typeof F.expressionStatementTuple>));
+    case "format_specifier": return F.formatSpecifier(...(children as Parameters<typeof F.formatSpecifier>));
+    case "generator_expression": return F.generatorExpression({ children } as any);
+    case "global_statement": return F.globalStatement(...(children as Parameters<typeof F.globalStatement>));
+    case "import_from_statement": return F.importFromStatement({ children } as any);
+    case "lambda_parameters": return F.lambdaParameters(...(children as Parameters<typeof F.lambdaParameters>));
+    case "list": return F.list(...(children as Parameters<typeof F.list>));
+    case "list_comprehension": return F.listComprehension({ children } as any);
+    case "list_pattern": return F.listPattern(...(children as Parameters<typeof F.listPattern>));
+    case "list_splat_pattern": return F.listSplatPattern(...(children as Parameters<typeof F.listSplatPattern>));
+    case "module": return F.module(...(children as Parameters<typeof F.module>));
+    case "nonlocal_statement": return F.nonlocalStatement(...(children as Parameters<typeof F.nonlocalStatement>));
+    case "parameters": return F.parameters(...(children as Parameters<typeof F.parameters>));
+    case "parenthesized_expression": return F.parenthesizedExpression(...(children as Parameters<typeof F.parenthesizedExpression>));
+    case "parenthesized_list_splat": return F.parenthesizedListSplat(...(children as Parameters<typeof F.parenthesizedListSplat>));
+    case "pattern_list": return F.patternList(...(children as Parameters<typeof F.patternList>));
+    case "print_statement": return F.printStatement({ children } as any);
+    case "raise_statement": return F.raiseStatement({ children } as any);
+    case "return_statement": return F.returnStatement(...(children as Parameters<typeof F.returnStatement>));
+    case "set": return F.set(...(children as Parameters<typeof F.set>));
+    case "set_comprehension": return F.setComprehension({ children } as any);
+    case "string_content": return F.stringContent(...(children as Parameters<typeof F.stringContent>));
+    case "tuple": return F.tuple(...(children as Parameters<typeof F.tuple>));
+    case "tuple_pattern": return F.tuplePattern(...(children as Parameters<typeof F.tuplePattern>));
+    case "type": return F.type(...(children as Parameters<typeof F.type>));
+    case "type_parameter": return F.typeParameter(...(children as Parameters<typeof F.typeParameter>));
+    case "typed_parameter": return F.typedParameter({ children } as any);
+    case "union_pattern": return F.unionPattern(...(children as Parameters<typeof F.unionPattern>));
+    case "with_clause_bare": return F.withClauseBare(...(children as Parameters<typeof F.withClauseBare>));
+    case "with_clause_paren": return F.withClauseParen(...(children as Parameters<typeof F.withClauseParen>));
+    case "yield": return F.yield_(...(children as Parameters<typeof F.yield_>));
+    default: return undefined;
+  }
+}
+
 function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {
   if (v === undefined || v === null) return v as T;
-  if (isNodeData(v)) return v as T;
+  if (isNodeData(v)) {
+    const wrapId = _wrapKindIds[kind];
+    if (wrapId !== undefined && v.$type !== wrapId) {
+      return _wrapWithChildren(kind, [v]) as T;
+    }
+    return v as T;
+  }
+  if (Array.isArray(v) && kind in _wrapKindIds) {
+    const resolved = v.map(e => {
+      if (typeof e === "string" || typeof e === "number") return e;
+      if (isNodeData(e)) return e;
+      if (typeof e === "object" && e !== null && !Array.isArray(e)) {
+        if ("kind" in e) {
+          const { kind: k, ...rest } = e;
+          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);
+        }
+        if (_isFromKind(kind)) return _resolveByKind(kind, e);
+      }
+      return e;
+    });
+    return _wrapWithChildren(kind, resolved) as T;
+  }
   if (typeof v === "object" && !Array.isArray(v)) {
     if ("kind" in v) {
       const { kind: k, ...rest } = v;
