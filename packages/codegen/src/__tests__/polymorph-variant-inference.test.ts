@@ -111,10 +111,8 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	it('stamps the form whose every listed field appears on the derived config', () => {
 		const data = {
 			$type: KIND.range_expression,
-			$fields: {
-				start: { $type: KIND.integer_literal, $text: '0', $named: true },
-				end: { $type: KIND.integer_literal, $text: '10', $named: true }
-			}
+			_start: { $type: KIND.integer_literal, $text: '0', $named: true },
+			_end: { $type: KIND.integer_literal, $text: '10', $named: true }
 		};
 		const cfg = nodeToConfig(
 			data,
@@ -129,11 +127,9 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	it('picks the MOST-SPECIFIC form when one fields set is a superset of another', () => {
 		const data = {
 			$type: KIND.range_expression,
-			$fields: {
-				start: { $type: KIND.integer_literal, $text: '0', $named: true },
-				end: { $type: KIND.integer_literal, $text: '10', $named: true },
-				operator: { $type: KIND.dotdot, $named: false }
-			}
+			_start: { $type: KIND.integer_literal, $text: '0', $named: true },
+			_end: { $type: KIND.integer_literal, $text: '10', $named: true },
+			_operator: { $type: KIND.dotdot, $named: false }
 		};
 		// Both `binary` (2 fields) and `ternary` (3 fields) match; ternary wins.
 		const cfg = nodeToConfig(
@@ -149,9 +145,7 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	it('falls back to the zero-field form when no other form matches', () => {
 		const data = {
 			$type: KIND.range_expression,
-			$fields: {
-				nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
-			}
+			_nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
 		};
 		const cfg = nodeToConfig(
 			data,
@@ -166,9 +160,7 @@ describe('nodeToConfig — polymorph $variant (promoted source)', () => {
 	it('does NOT stamp $variant when no form matches and no zero-field fallback exists', () => {
 		const data = {
 			$type: KIND.range_expression,
-			$fields: {
-				nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
-			}
+			_nomatch: { $type: KIND.integer_literal, $text: '1', $named: true }
 		};
 		const cfg = nodeToConfig(
 			data,
@@ -198,7 +190,7 @@ describe('nodeToConfig — polymorph $variant (no descriptor)', () => {
 	it('does NOT stamp $variant when the parent kind has no descriptor entry', () => {
 		const data = {
 			$type: KIND.plain_kind,
-			$fields: { x: { $type: KIND.x, $text: 'x', $named: true } }
+			_x: { $type: KIND.x, $text: 'x', $named: true }
 		};
 		const cfg = nodeToConfig(data, {
 			polymorphVariants: {
