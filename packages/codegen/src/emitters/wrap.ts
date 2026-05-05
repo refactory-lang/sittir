@@ -211,7 +211,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		// never appear in a parsed tree; no wrap entry is needed.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		if (node.modelType === 'branch' || node.modelType === 'polymorph') {
-			lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d, t),`);
+			lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
 		} else if (
 			node.modelType === 'leaf' ||
 			node.modelType === 'enum' ||
@@ -432,7 +432,8 @@ function renderWrapForNode(
 					kind: node.kind,
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
-					isContainerShape: false
+					isContainerShape: false,
+					isPolymorph: true
 				},
 				fields,
 				children,
@@ -492,6 +493,13 @@ interface WrapNode {
 	readonly rawFactoryName?: string;
 	/** True when this is a container-shaped node (rest-param factory, no named fields). */
 	readonly isContainerShape?: boolean;
+	/**
+	 * True when the node is a polymorph — the parent type is a union of UForm
+	 * interfaces where not all members may declare `$children`. Callers use
+	 * this to emit casts at boundaries where the union type is too narrow for
+	 * the runtime shape (e.g., `data.$children` and children setter spreads).
+	 */
+	readonly isPolymorph?: boolean;
 }
 
 /**
@@ -587,16 +595,26 @@ function emitFieldCarryingWrap(
 		}
 	}
 	// Named fields -> `_<name>` storage (enumerable).
+	// Polymorph parent types are unions of UForm interfaces — not all members
+	// declare every field, but merged fields are a superset. Cast through
+	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
 		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap);
-		lines.push(`    _${f.name}: ${storeExpr},`);
+		const expr = node.isPolymorph
+			? storeExpr.replace(/^data\./, '(data as any).')
+			: storeExpr;
+		lines.push(`    _${f.name}: ${expr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
 	// $children doesn't have the `_` prefix convention — access via data.$children
 	// which AnyNodeData declares as `readonly NodeChildValue[] | undefined`.
+	// Polymorph parent types are unions of UForm interfaces — not all members
+	// may declare `$children`, but it is always present at runtime. Cast
+	// through `(data as any)` to access the property without type errors.
 	if (children.length > 0) {
-		lines.push('    $children: data.$children,');
+		const dataExpr = node.isPolymorph ? '(data as any).$children' : 'data.$children';
+		lines.push(`    $children: ${dataExpr},`);
 	}
 	lines.push('');
 
@@ -641,6 +659,14 @@ function emitInlineWithProperty(
 
 	const wrapFn = `wrap${node.typeName}`;
 
+	// Polymorph parent types are unions of UForm interfaces. Spread-and-
+	// override (`{ ...data, $children: items }`) does not distribute over
+	// union types — TypeScript rejects the assignment. Cast `data` to `any`
+	// in the spread expression so the setter compiles. The cast is sound:
+	// the runtime object always has the right shape (dispatcher matches
+	// `$type` before calling the wrap function).
+	const spreadData = node.isPolymorph ? '...(data as any)' : '...data';
+
 	if (node.isContainerShape) {
 		const childElem = childElementType({ children }, nodeMap);
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
@@ -648,11 +674,11 @@ function emitInlineWithProperty(
 		if (anyMultiple) {
 			const restType = childrenSetterRestType(children, childElem, childRest);
 			lines.push(
-				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ...data, $children: vs }, tree) },`
+				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
 			);
 		} else {
 			lines.push(
-				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ...data, $children: [v] }, tree) },`
+				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: [v] }, tree) },`
 			);
 		}
 		return;
@@ -677,11 +703,11 @@ function emitInlineWithProperty(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ...data, _${f.name}: v }, tree),`
+				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`
 			);
 		} else {
 			lines.push(
-				`      ${method}: (v: ${elemType}) => ${wrapFn}({ ...data, _${f.name}: v }, tree),`
+				`      ${method}: (v: ${elemType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`
 			);
 		}
 	}
@@ -690,7 +716,7 @@ function emitInlineWithProperty(
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const restType = childrenSetterRestType(children, childElem, childRest);
 		lines.push(
-			`      children: (...items: ${restType}) => ${wrapFn}({ ...data, $children: items }, tree),`
+			`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`
 		);
 	}
 	lines.push('    },');

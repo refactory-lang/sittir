@@ -90,7 +90,7 @@ export function withMethods<T extends object>(
  * from loose config bags by the presence of any of:
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
  * from loose config bags by the presence of any of:
- *   - `_*` storage keys (branch nodes with named fields, ADR-0018 de-hoisted),
+ *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
  *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
  *   - `$children` (container nodes whose children arrive without field names),
  *   - `$source` (provenance tag stamped by `readNode` and every factory).
@@ -914,7 +914,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
     return { $type: value, $text: value };
   }
   if (!isRecord(value)) return value;
-  // Phase D: $type must be numeric (TSKindId). However, factory-constructed
+  // $type must be numeric (TSKindId). However, factory-constructed
   // children can carry a string kind name when kindIdFromName was not invoked
   // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution
   // via kindIdFromName so the full projection pipeline runs.
@@ -932,7 +932,7 @@ function projectTransportValue(value: unknown, path: string): unknown {
   if (numericType === undefined) return value;
 
   // Resolve the wire kind name (including alias rewriting) for internal
-  // routing. $type is always numeric in Phase D.
+  // routing. $type is always numeric after projection.
   const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
 
   const projected: Record<string, unknown> = {};

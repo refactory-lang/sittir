@@ -901,10 +901,25 @@ export function childElementType(
 				parts.add(JSON.stringify(lit));
 				continue;
 			}
-			const ref = nodeMap.nodes.get(t);
+			let ref = nodeMap.nodes.get(t);
 			if (!ref) {
 				parts.add(JSON.stringify(t));
 				continue;
+			}
+			// Hidden kinds with `multi` or `token` modelType don't get
+			// exported interfaces (types.ts excludes them from emission).
+			// When their typeName was collision-renamed (e.g.,
+			// `_expression_statement_tuple` → `_ExpressionStatementTuple`),
+			// the `T._X` reference is dangling. Redirect to the visible
+			// counterpart (strip leading `_`) which has a standalone
+			// exported interface. The runtime shapes are structurally
+			// compatible (same fields/children).
+			if (
+				t.startsWith('_') &&
+				(ref.modelType === 'multi' || ref.modelType === 'token')
+			) {
+				const visible = nodeMap.nodes.get(t.slice(1));
+				if (visible) ref = visible;
 			}
 			const name = ref.typeName;
 			parts.add(

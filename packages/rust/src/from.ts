@@ -373,7 +373,7 @@ function _assertNonEmpty<T>(
   }
 }
 
-// Interned resolver kind lists (T042i dedup)
+// Interned resolver kind lists (dedup)
 const _super_expression_ending_with_block: readonly string[] = ["unsafe_block","async_block","gen_block","try_block","block","if_expression","match_expression","while_expression","loop_expression","for_expression","const_block"];
 const _K0: readonly string[] = [];
 const _K1: readonly string[] = ["_type_identifier","scoped_type_identifier","removed_trait_bound","generic_type","function_type","tuple_type","bounded_type"];

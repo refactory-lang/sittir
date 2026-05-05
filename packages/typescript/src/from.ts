@@ -378,7 +378,7 @@ function _assertNonEmpty<T>(
   }
 }
 
-// Interned resolver kind lists (T042i dedup)
+// Interned resolver kind lists (dedup)
 const _super_type: readonly string[] = ["primary_type","function_type","readonly_type","constructor_type","infer_type","_type_query_member_expression_in_type_annotation","_type_query_call_expression_in_type_annotation"];
 const _super_property_identifier: readonly string[] = ["_reserved_identifier","identifier"];
 const _super_expression: readonly string[] = ["as_expression","satisfies_expression","instantiation_expression","internal_module","type_assertion","primary_expression","assignment_expression","augmented_assignment_expression","await_expression","unary_expression","binary_expression","ternary_expression","update_expression","new_expression","yield_expression"];

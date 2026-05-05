@@ -319,7 +319,7 @@ function _assertNonEmpty<T>(
   }
 }
 
-// Interned resolver kind lists (T042i dedup)
+// Interned resolver kind lists (dedup)
 const _super_expression: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"];
 const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
 const _super_right_hand_side: readonly string[] = ["expression","expression_list","assignment","augmented_assignment","pattern_list","yield"];
