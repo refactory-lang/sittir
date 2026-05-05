@@ -379,9 +379,9 @@ export function prepare(
 	if (node.$text !== undefined && !nodeHasStructure(node))
 		return { kind: 'text', text: node.$text };
 
-	if (!nodeHasStructure(node) && !node.$children) {
+	if (!nodeHasStructure(node)) {
 		throw new Error(
-			`Node '${node.$type}' has no 'fields' or 'children' — did you mean to set 'text' for a leaf node?`
+			`Node '${node.$type}' has no structure — did you mean to set '$text' for a leaf node?`
 		);
 	}
 

@@ -24,9 +24,7 @@ export {
 } from './native-boundary.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
 export {
-	withMethods,
 	freezeNodeData,
 	buildWithNamespace,
 	materializeStub
 } from './nodeData.ts';
-export type { NodeDataMethods } from './nodeData.ts';

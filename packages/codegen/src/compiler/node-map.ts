@@ -6,8 +6,9 @@
  * the Rule union itself. The classes here represent what an assembled
  * grammar node looks like after the full pipeline has classified and
  * enriched the Rule — each subclass corresponds to one ModelType
- * (`branch`, `container`, `polymorph`, `leaf`, `keyword`, `token`,
- * `enum`, `supertype`, `group`, `multi`).
+ * (`branch`, `polymorph`, `leaf`, `keyword`, `token`, `enum`,
+ * `supertype`, `group`, `multi`). `container` was merged into
+ * `branch` (discriminated by `isContainerShape`).
  *
  * Exports:
  *
