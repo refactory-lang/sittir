@@ -22,6 +22,10 @@
  * Union-typed so downstream consumers don't have to cast through `unknown`
  * to reach a NodeData shape. `AnyNodeData` is recursive via this alias.
  */
+/**
+ * @deprecated Use `NodeMemberValue` instead. Retained as an alias for
+ * backward compatibility with validators that haven't migrated yet.
+ */
 export type NodeFieldValue =
 	| AnyNodeData
 	| string
@@ -30,9 +34,8 @@ export type NodeFieldValue =
 	| undefined;
 
 /**
- * A child slot entry — same shape as a field value but without the
- * optional/array wrappers (children are already listed in a readonly array
- * on the parent).
+ * @deprecated Use `NodeMemberValue` instead. Retained as an alias for
+ * backward compatibility with validators that haven't migrated yet.
  */
 export type NodeChildValue = AnyNodeData | string | number;
 
@@ -75,16 +78,17 @@ export interface AnyNodeData {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
+	/** @deprecated Legacy storage wrapper. New code uses `_<name>` top-level keys. */
 	$fields?: { readonly [key: string]: NodeFieldValue };
-	$children?: readonly NodeChildValue[];
+	$children?: readonly NodeMemberValue[];
 	/**
 	 * Source text for this node.
 	 *
-	 * **Leaf nodes** (`$fields` and `$children` both absent): always
+	 * **Leaf nodes** (no `_<name>` storage and no `$children`): always
 	 * populated — the render fast-path short-circuits to `$text` without
 	 * walking children.
 	 *
-	 * **Branch nodes** (`$fields` and/or `$children` present): omitted by
+	 * **Branch nodes** (`_<name>` storage and/or `$children` present): omitted by
 	 * default. Branches reconstruct their text via the render template,
 	 * so carrying `$text` is redundant and confusing. Set the environment
 	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to
@@ -111,9 +115,9 @@ export interface AnyNodeData {
 	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
-	// ADR-0018 non-enumerable methods — present on factory/wrap output only.
-	// These are attached via Object.defineProperty(enumerable: false) at
-	// factory construction time; absent on readNode / native JSON transport.
+	// $-prefixed methods — present on factory/wrap output only.
+	// Attached via withMethods<T> (Object.assign); enumerable.
+	// Absent on readNode / native JSON transport.
 	// -------------------------------------------------------------------------
 
 	/** Render this node to source text. Non-enumerable on factory/wrap output. */
