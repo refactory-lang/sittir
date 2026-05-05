@@ -570,7 +570,7 @@ function applySymbolToField(
 	// Pattern: seq("(", repeat(seq($.attr, $.content)), ")")
 	// → the repeat member's inner seq gets its bare symbols field-wrapped.
 	const finalMembers = promoteInsideRepeatMembers(
-		ruleName, newMembers, supertypeNames, existing
+		ruleName, newMembers, supertypeNames, existing, kindCounts
 	);
 	if (finalMembers === newMembers && !changed) return rule;
 	let result: Rule = { ...cursor, members: finalMembers } as Rule;
@@ -598,12 +598,13 @@ function promoteInsideRepeatMembers(
 	ruleName: string,
 	members: Rule[],
 	supertypeNames: ReadonlySet<string>,
-	existing: Set<string>
+	existing: Set<string>,
+	outerKindCounts: Map<string, number>
 ): Rule[] {
 	let anyRepeatChanged = false;
 	const result = members.map((m) => {
 		const rebuilt = tryPromoteInRepeatMember(
-			ruleName, m, supertypeNames, existing
+			ruleName, m, supertypeNames, existing, outerKindCounts
 		);
 		if (rebuilt === null) return m;
 		anyRepeatChanged = true;
@@ -625,7 +626,8 @@ function tryPromoteInRepeatMember(
 	ruleName: string,
 	member: Rule,
 	supertypeNames: ReadonlySet<string>,
-	existing: Set<string>
+	existing: Set<string>,
+	outerKindCounts: Map<string, number>
 ): Rule | null {
 	// Peel prec wrappers on the member itself.
 	let cursor: Rule = member;
@@ -672,6 +674,10 @@ function tryPromoteInRepeatMember(
 		if ((innerKindCounts.get(t.name) ?? 0) > 1) return im;
 		if (innerExisting.has(fieldName)) return im;
 		if ((nestedRepeatCounts.get(t.name) ?? 0) > 0) return im;
+		// Skip when the same symbol kind appears in the outer seq — promoting
+		// it here would split the kind across $fields (inner) and $children
+		// (outer bare symbol), which variadic factories can't reconstruct.
+		if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
 		if (existing.has(fieldName)) {
 			reportSkip(
 				'symbol-to-field',
