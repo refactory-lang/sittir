@@ -319,6 +319,11 @@ function _assertNonEmpty<T>(
   }
 }
 
+/** @internal — call an overloaded factory bypassing overload resolution. */
+function _applyFactory<F extends (...args: never[]) => unknown>(fn: F, ...args: unknown[]): ReturnType<F> {
+  return Reflect.apply(fn, undefined, args);
+}
+
 // Interned resolver kind lists (dedup)
 const _super_expression: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern"];
 const _super_left_hand_side: readonly string[] = ["pattern","pattern_list"];
@@ -348,7 +353,7 @@ const _K16: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"
 export function aliasedImportFrom(input: T.AliasedImport.Loose | T.AliasedImport): ReturnType<typeof F.aliasedImport> | T.AliasedImport {
   if (isNodeData(input)) return input;
   return F.aliasedImport({
-    name: _resolveOneBranch<T.DottedName>(input.name, "dotted_name"),
+    name: _resolveOneBranch<T.DottedName>(input.name, "dotted_name") ?? F.dottedName(),
     alias: _resolveOneLeaf<T.Identifier>(input.alias, "identifier"),
   });
 }
@@ -379,7 +384,7 @@ export function assertStatementFrom(...input: readonly (NonNullable<T.AssertStat
 
 export function assignmentFrom(input?: T.Assignment.Loose | T.Assignment): ReturnType<typeof F.assignment> | T.Assignment {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.assignment(input as Parameters<typeof F.assignment>[0]);
+  return _applyFactory(F.assignment, input);
 }
 
 export function assignmentUFormEqFrom(input: Omit<ConfigOf<T.AssignmentUFormEq>, '$variant'>) {
@@ -423,9 +428,7 @@ export function augmentedAssignmentFrom(input: T.AugmentedAssignment.Loose | T.A
 
 export function await_From(input: T.Await.Loose | T.Await): ReturnType<typeof F.await_> | T.Await {
   if (isNodeData(input)) return input;
-  return F.await_({
-    primaryExpression: _resolveOne<T.PrimaryExpression>(input.primaryExpression, _K1, _K2),
-  });
+  return F.await_(_resolveOne<T.PrimaryExpression>(input.primaryExpression, _K1, _K2));
 }
 
 export function binaryOperatorFrom(input: T.BinaryOperator.Loose | T.BinaryOperator): ReturnType<typeof F.binaryOperator> | T.BinaryOperator {
@@ -487,9 +490,7 @@ export function casePatternFrom(input?: NonNullable<T.CasePattern.Config['childr
 
 export function chevronFrom(input: T.Chevron.Loose | T.Chevron): ReturnType<typeof F.chevron> | T.Chevron {
   if (isNodeData(input)) return input;
-  return F.chevron({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
+  return F.chevron(_resolveOne<T.Expression>(input.expression, _K0, _super_expression));
 }
 
 export function classDefinitionFrom(input: T.ClassDefinition.Loose | T.ClassDefinition): ReturnType<typeof F.classDefinition> | T.ClassDefinition {
@@ -505,7 +506,7 @@ export function classDefinitionFrom(input: T.ClassDefinition.Loose | T.ClassDefi
 export function classPatternFrom(input: T.ClassPattern.Loose | T.ClassPattern): ReturnType<typeof F.classPattern> | T.ClassPattern {
   if (isNodeData(input)) return input;
   return F.classPattern({
-    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name"),
+    dottedName: _resolveOneBranch<T.DottedName>(input.dottedName, "dotted_name") ?? F.dottedName(),
     arguments: _resolveManyBranch<T.CasePattern>(input.arguments, "case_pattern"),
   });
 }
@@ -517,12 +518,12 @@ export function commentFrom(input: string | T.Comment) {
 
 export function comparisonOperatorFrom(input: T.ComparisonOperator.Loose | T.ComparisonOperator): ReturnType<typeof F.comparisonOperator> | T.ComparisonOperator {
   if (isNodeData(input)) return input;
-  const _ne_primaryExpression = _resolveMany<T.PrimaryExpression>(input.primaryExpression, _K1, _K2);
-  _assertNonEmpty(_ne_primaryExpression, 'comparison_operator.primaryExpression');
+  const _ne_children: readonly (T.PrimaryExpression)[] = _resolveMany(input.children, _K1, _K2);
+  _assertNonEmpty(_ne_children, 'comparison_operator.children');
   return F.comparisonOperator({
     left: _resolveOne<T.PrimaryExpression>(input.left, _K1, _K2),
     operators: _resolveBitflag(input.operators),
-    primaryExpression: _ne_primaryExpression,
+    children: _ne_children,
   });
 }
 
@@ -626,9 +627,7 @@ export function dictionaryComprehensionFrom(input: T.DictionaryComprehension.Loo
 
 export function dictionarySplatFrom(input: T.DictionarySplat.Loose | T.DictionarySplat): ReturnType<typeof F.dictionarySplat> | T.DictionarySplat {
   if (isNodeData(input)) return input;
-  return F.dictionarySplat({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
+  return F.dictionarySplat(_resolveOne<T.Expression>(input.expression, _K0, _super_expression));
 }
 
 export function dictionarySplatPatternFrom(input?: NonNullable<T.DictionarySplatPattern.Config['children']>[number] | T.DictionarySplatPattern) {
@@ -658,9 +657,7 @@ export function elifClauseFrom(input: T.ElifClause.Loose | T.ElifClause): Return
 
 export function elseClauseFrom(input: T.ElseClause.Loose | T.ElseClause): ReturnType<typeof F.elseClause> | T.ElseClause {
   if (isNodeData(input)) return input;
-  return F.elseClause({
-    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
-  });
+  return F.elseClause(_resolveOneBranch<T.Suite>(input.body, "_suite"));
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
@@ -703,7 +700,7 @@ export function expressionStatementTupleFrom(...input: readonly (NonNullable<T.E
 
 export function expressionStatementFrom(input?: T.ExpressionStatement.Loose | T.ExpressionStatement): ReturnType<typeof F.expressionStatement> | T.ExpressionStatement {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.expressionStatement(input as Parameters<typeof F.expressionStatement>[0]);
+  return _applyFactory(F.expressionStatement, input);
 }
 
 export function expressionStatementUFormTupleFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
@@ -717,9 +714,7 @@ export function false_From(input?: T.False) {
 
 export function finallyClauseFrom(input: T.FinallyClause.Loose | T.FinallyClause): ReturnType<typeof F.finallyClause> | T.FinallyClause {
   if (isNodeData(input)) return input;
-  return F.finallyClause({
-    block: _resolveOneBranch<T.Suite>(input.block, "_suite"),
-  });
+  return F.finallyClause(_resolveOneBranch<T.Suite>(input.block, "_suite"));
 }
 
 export function floatFrom(input: string | T.Float) {
@@ -763,7 +758,7 @@ export function functionDefinitionFrom(input: T.FunctionDefinition.Loose | T.Fun
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     name: _resolveOneLeaf<T.Identifier>(input.name, "identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameter>(input.typeParameters, "type_parameter"),
-    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
     returnType: _resolveOneBranch<T.Type>(input.returnType, "type"),
     body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
   });
@@ -790,7 +785,7 @@ export function genericTypeFrom(input: T.GenericType.Loose | T.GenericType): Ret
   if (isNodeData(input)) return input;
   return F.genericType({
     identifier: _resolveOneLeaf<T.Identifier>(input.identifier, "identifier"),
-    typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, "type_parameter"),
+    typeParameter: _resolveOneBranch<T.TypeParameter>(input.typeParameter, "type_parameter") ?? F.typeParameter(),
   });
 }
 
@@ -809,9 +804,7 @@ export function identifierFrom(input: string | T.Identifier) {
 
 export function ifClauseFrom(input: T.IfClause.Loose | T.IfClause): ReturnType<typeof F.ifClause> | T.IfClause {
   if (isNodeData(input)) return input;
-  return F.ifClause({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
+  return F.ifClause(_resolveOne<T.Expression>(input.expression, _K0, _super_expression));
 }
 
 export function ifStatementFrom(input: T.IfStatement.Loose | T.IfStatement): ReturnType<typeof F.ifStatement> | T.IfStatement {
@@ -932,9 +925,7 @@ export function listPatternFrom(...input: readonly (NonNullable<T.ListPattern.Co
 
 export function listSplatFrom(input: T.ListSplat.Loose | T.ListSplat): ReturnType<typeof F.listSplat> | T.ListSplat {
   if (isNodeData(input)) return input;
-  return F.listSplat({
-    expression: _resolveOne<T.Expression>(input.expression, _K0, _super_expression),
-  });
+  return F.listSplat(_resolveOne<T.Expression>(input.expression, _K0, _super_expression));
 }
 
 export function listSplatPatternFrom(input?: NonNullable<T.ListSplatPattern.Config['children']>[number] | T.ListSplatPattern) {
@@ -995,9 +986,7 @@ export function nonlocalStatementFrom(...input: readonly (NonNullable<T.Nonlocal
 
 export function notOperatorFrom(input: T.NotOperator.Loose | T.NotOperator): ReturnType<typeof F.notOperator> | T.NotOperator {
   if (isNodeData(input)) return input;
-  return F.notOperator({
-    argument: _resolveOne<T.Expression>(input.argument, _K0, _super_expression),
-  });
+  return F.notOperator(_resolveOne<T.Expression>(input.argument, _K0, _super_expression));
 }
 
 export function pairFrom(input: T.Pair.Loose | T.Pair): ReturnType<typeof F.pair> | T.Pair {
@@ -1107,16 +1096,12 @@ export function sliceFrom(input?: T.Slice.Loose | T.Slice): ReturnType<typeof F.
 
 export function splatPatternFrom(input: T.SplatPattern.Loose | T.SplatPattern): ReturnType<typeof F.splatPattern> | T.SplatPattern {
   if (isNodeData(input)) return input;
-  return F.splatPattern({
-    identifier: _resolveOne<T._Identifier | T.Identifier | "_">(input.identifier, _K14, _K0),
-  });
+  return F.splatPattern(_resolveOne<T._Identifier | T.Identifier | "_">(input.identifier, _K14, _K0));
 }
 
 export function splatTypeFrom(input: T.SplatType.Loose | T.SplatType): ReturnType<typeof F.splatType> | T.SplatType {
   if (isNodeData(input)) return input;
-  return F.splatType({
-    identifier: _resolveOne<T._Identifier | T.Identifier>(input.identifier, _K14, _K0),
-  });
+  return F.splatType(_resolveOne<T._Identifier | T.Identifier>(input.identifier, _K14, _K0));
 }
 
 export function stringFrom(input: string | T.String) {
@@ -1263,7 +1248,7 @@ export function withClauseParenFrom(...input: readonly (NonNullable<T.WithClause
 
 export function withClauseFrom(input?: T.WithClause.Loose | T.WithClause): ReturnType<typeof F.withClause> | T.WithClause {
   if (input !== undefined && isNodeData(input)) return input;
-  return F.withClause(input as Parameters<typeof F.withClause>[0]);
+  return _applyFactory(F.withClause, input);
 }
 
 export function withClauseUFormBareFrom(input: Omit<ConfigOf<T.WithClauseUFormBare>, '$variant'>) {
@@ -1276,9 +1261,7 @@ export function withClauseUFormParenFrom(input: Omit<ConfigOf<T.WithClauseUFormP
 
 export function withItemFrom(input: T.WithItem.Loose | T.WithItem): ReturnType<typeof F.withItem> | T.WithItem {
   if (isNodeData(input)) return input;
-  return F.withItem({
-    value: _resolveOne<T.Expression>(input.value, _K0, _super_expression),
-  });
+  return F.withItem(_resolveOne<T.Expression>(input.value, _K0, _super_expression));
 }
 
 export function withStatementFrom(input: T.WithStatement.Loose | T.WithStatement): ReturnType<typeof F.withStatement> | T.WithStatement {

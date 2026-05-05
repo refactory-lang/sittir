@@ -1688,10 +1688,19 @@ function resolveConfigOptional(
 	// they never appear in Config. Auto-stamp-eligible children are also
 	// excluded: when all required children are parameterless, they are
 	// stamped directly in the factory body rather than read from config.
+	// Repeat-0+ children (isMultiple && !isNonEmpty) are also excluded:
+	// the factory body defaults them to `[]` via `config.children ?? []`,
+	// so they never require user input at the Config surface.
 	const hasRequired =
 		fields.some(
 			(f) => isRequired(f) && autoStampExpression(f, nodeMap) === undefined
-		) || children.some((c) => isRequired(c) && !isAutoStampSlot(c, nodeMap));
+		) ||
+		children.some(
+			(c) =>
+				isRequired(c) &&
+				!isAutoStampSlot(c, nodeMap) &&
+				!(isMultiple(c) && !isNonEmpty(c))
+		);
 	return hasRequired ? '' : '?';
 }
 

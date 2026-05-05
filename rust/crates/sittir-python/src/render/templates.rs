@@ -5111,7 +5111,8 @@ pub struct ComparisonOperatorTransport {
     pub transport_child_index: Option<f64>,
     pub left: PrimaryExpressionTransport,
     pub operators: Vec<AnyTransport>,
-    pub primary_expression: Vec<PrimaryExpressionTransport>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: Vec<PrimaryExpressionTransport>,
 }
 
 impl ::sittir_core::types::RenderableTransport for ComparisonOperatorTransport {
@@ -13832,22 +13833,22 @@ fn render_comment_transport(t: &CommentTransport) -> Result<String, ::askama::Er
 }
 
 fn render_comparison_operator_transport(node: &ComparisonOperatorTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let operators_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.operators.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
         .collect();
-    let primary_expression_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.primary_expression.iter()
-        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
-        .collect();
     let template = ComparisonOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
-        operators: ::sittir_core::filters::ListNonterminalView {
-            items: operators_buf.as_slice(),
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        primary_expression: ::sittir_core::filters::ListNonterminalView {
-            items: primary_expression_buf.as_slice(),
+        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left as &dyn ::sittir_core::types::RenderableTransport)),
+        operators: ::sittir_core::filters::ListNonterminalView {
+            items: operators_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
@@ -16940,9 +16941,8 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
     let mut fields = TransportHashMap::new();
     fields.insert("left".to_string(), transport_field_value(primary_expression_transport_to_any(transport.left))?);
     fields.insert("operators".to_string(), transport_field_values(transport.operators)?);
-    fields.insert("primary_expression".to_string(), transport_field_values(transport.primary_expression.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = None;
+    let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
     Ok(transport_node_data(
         TransportKindId(195) /* "comparison_operator" */,
         transport.transport_source,
@@ -20096,9 +20096,9 @@ pub struct ClassPatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "comparison_operator.jinja", escape = "none")]
 pub struct ComparisonOperatorTemplate<'a> {
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
     pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
     pub operators: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub primary_expression: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -21435,25 +21435,24 @@ fn render_class_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_comparison_operator(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &["left", "operators", "primary_expression"])?;
+    let children = resolve_children(node, &["left", "operators"])?;
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "operators", true)?;
-    let field_2 = resolve_field(node, "primary_expression", true)?;
+    let children_renderables = children.renderable_items();
     let field_1_renderables = field_1.renderable_items();
-    let field_2_renderables = field_2.renderable_items();
     let template = ComparisonOperatorTemplate {
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
         left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         operators: ::sittir_core::filters::ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
             trailing: field_1.trailing_sep,
-        },
-        primary_expression: ::sittir_core::filters::ListNonterminalView {
-            items: field_2_renderables.as_slice(),
-            separator: field_2.separator,
-            leading: field_2.leading_sep,
-            trailing: field_2.trailing_sep,
         },
     };
     template.render()

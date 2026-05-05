@@ -87,12 +87,12 @@ describe('augmented_assignment', () => {
 
 describe('await', () => {
   it('factory produces correct type', () => {
-    const node = ir.await_({ primaryExpression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.await_({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.Await);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.await_({ primaryExpression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.await_({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -172,12 +172,12 @@ describe('case_pattern', () => {
 
 describe('chevron', () => {
   it('factory produces correct type', () => {
-    const node = ir.chevron({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.chevron({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.Chevron);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.chevron({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.chevron({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -217,12 +217,12 @@ describe('comment', () => {
 
 describe('comparison_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, primaryExpression: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.$type).toBe(TSKindId.ComparisonOperator);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, primaryExpression: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.comparisonOperator({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, operators: 0 as never, children: [{ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any] as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -354,12 +354,12 @@ describe('dictionary_comprehension', () => {
 
 describe('dictionary_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.dictionarySplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.dictionarySplat({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.DictionarySplat);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.dictionarySplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.dictionarySplat({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -394,12 +394,12 @@ describe('elif_clause', () => {
 
 describe('else_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.elseClause({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.elseClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.ElseClause);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.elseClause({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.elseClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -472,12 +472,12 @@ describe("false", () => {
 
 describe('finally_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.finallyClause({ block: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.finallyClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.FinallyClause);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.finallyClause({ block: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.finallyClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -590,12 +590,12 @@ describe('identifier', () => {
 
 describe('if_clause', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifClause({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.ifClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.IfClause);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifClause({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.ifClause({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -761,12 +761,12 @@ describe('list_pattern', () => {
 
 describe('list_splat', () => {
   it('factory produces correct type', () => {
-    const node = ir.listSplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.listSplat({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.ListSplat);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.listSplat({ expression: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.listSplat({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -842,12 +842,12 @@ describe('nonlocal_statement', () => {
 
 describe('not_operator', () => {
   it('factory produces correct type', () => {
-    const node = ir.notOperator({ argument: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.notOperator({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.NotOperator);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.notOperator({ argument: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.notOperator({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -983,24 +983,24 @@ describe('slice', () => {
 
 describe('splat_pattern', () => {
   it('factory produces correct type', () => {
-    const node = ir.splatPattern({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatPattern({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.SplatPattern);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.splatPattern({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatPattern({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
 
 describe('splat_type', () => {
   it('factory produces correct type', () => {
-    const node = ir.splatType({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatType({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.SplatType);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.splatType({ identifier: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.splatType({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1201,12 +1201,12 @@ describe('with_clause', () => {
 
 describe('with_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.withItem({ value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.withItem({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.WithItem);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.withItem({ value: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.withItem({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

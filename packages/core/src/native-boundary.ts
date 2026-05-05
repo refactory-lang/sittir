@@ -1,5 +1,9 @@
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 
+const ASSERT_ENABLED =
+	typeof process !== 'undefined' &&
+	process.env?.NODE_ENV !== 'production';
+
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -106,7 +110,9 @@ function assertNativeNodeDataInternal(
 	}
 	// Phase D: $type must be a numeric KindId. String $type is no longer accepted.
 	if (typeof value.$type !== 'number') {
-		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
+		throw new TypeError(
+			`${path}.$type must be a number, got ${describe(value.$type)}`
+		);
 	}
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
@@ -118,12 +124,14 @@ function assertNativeNodeDataInternal(
 	// Validate `_<name>` storage keys (de-hoisted surface).
 	for (const key of Object.keys(value)) {
 		if (!key.startsWith('_')) continue;
+		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
 	if (value.$children !== undefined)
 		assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
-	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
+	if (value.$span !== undefined)
+		assertNativeSpan(value.$span, `${path}.$span`);
 	if (value.$nodeHandle !== undefined)
 		assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
 	if (value.$childIndex !== undefined)
@@ -137,6 +145,7 @@ function assertNativeNodeDataInternal(
  * @see {@link assertRenderableNodeData} for the throwing variant.
  */
 export function isRenderableNodeData(node: AnyNodeData): boolean {
+	if (!ASSERT_ENABLED) return true;
 	try {
 		assertRenderableNodeData(node);
 		return true;
@@ -162,6 +171,7 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
 export function assertRenderableNodeData(
 	node: AnyNodeData
 ): asserts node is AnyNodeData {
+	if (!ASSERT_ENABLED) return;
 	assertNativeNodeDataInternal(node, 'node');
 }
 

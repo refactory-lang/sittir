@@ -299,7 +299,7 @@ export interface ComparisonOperatorTransport {
   '$childIndex'?: number
   left: PrimaryExpressionTransport
   operators: Array<AnyTransport>
-  primaryExpression: Array<PrimaryExpressionTransport>
+  '$children': Array<PrimaryExpressionTransport>
 }
 
 export interface ComplexPatternTransport {

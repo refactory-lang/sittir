@@ -931,10 +931,11 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
   });
 }
 
-export function block(config: T.Block.Config) {
-  const children = config.children ?? [];
-  const _label = config.label;
-  const _trailing_expression = config.trailingExpression;
+export function block(config?: T.Block.Config) {
+  const _config = config ?? {};
+  const children = _config.children ?? [];
+  const _label = _config.label;
+  const _trailing_expression = _config.trailingExpression;
   return withMethods({
     $type: TSKindId.Block as const,
     $source: 2 as const,
@@ -946,9 +947,9 @@ export function block(config: T.Block.Config) {
     trailingExpression() { return _trailing_expression; },
     children() { return children; },
     $with: {
-      label: (value?: T.Label) => block({ ...config, label: value }),
-      trailingExpression: (value?: T.Expression) => block({ ...config, trailingExpression: value }),
-      children: (...items: T.Statement[]) => block({ ...config, children: items }),
+      label: (value?: T.Label) => block({ ..._config, label: value }),
+      trailingExpression: (value?: T.Expression) => block({ ..._config, trailingExpression: value }),
+      children: (...items: T.Statement[]) => block({ ..._config, children: items }),
     },
   });
 }

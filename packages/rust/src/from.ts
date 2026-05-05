@@ -498,7 +498,7 @@ export function asyncBlockFrom(input: T.AsyncBlock.Loose | T.AsyncBlock): Return
   if (isNodeData(input)) return input;
   return F.asyncBlock({
     moveMarker: _resolveBooleanKeyword(input.moveMarker),
-    block: _resolveOneBranch<T.Block>(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block") ?? F.block(),
   });
 }
 
@@ -749,7 +749,7 @@ export function enumItemFrom(input: T.EnumItem.Loose | T.EnumItem): ReturnType<t
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
-    body: _resolveOneBranch<T.EnumVariantList>(input.body, "enum_variant_list"),
+    body: _resolveOneBranch<T.EnumVariantList>(input.body, "enum_variant_list") ?? F.enumVariantList(),
   });
 }
 
@@ -886,7 +886,7 @@ export function forExpressionFrom(input: T.ForExpression.Loose | T.ForExpression
     label: _resolveOneBranch<T.Label>(input.label, "label"),
     pattern: _resolveOne<T.Pattern>(input.pattern, _K14, _K15),
     value: _resolveOne<T.Expression>(input.value, _K2, _K4),
-    body: _resolveOneBranch<T.Block>(input.body, "block"),
+    body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
   });
 }
 
@@ -935,10 +935,10 @@ export function functionItemFrom(input: T.FunctionItem.Loose | T.FunctionItem): 
     functionModifiers: _resolveOneBranch<T.FunctionModifiers>(input.functionModifiers, "function_modifiers"),
     name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K22, _K0),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
-    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
     returnType: _resolveOne<T._Type>(input.returnType, _K5, _K6),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
-    body: _resolveOneBranch<T.Block>(input.body, "block"),
+    body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
   });
 }
 
@@ -958,7 +958,7 @@ export function functionSignatureItemFrom(input: T.FunctionSignatureItem.Loose |
     functionModifiers: _resolveOneBranch<T.FunctionModifiers>(input.functionModifiers, "function_modifiers"),
     name: _resolveOne<T.Identifier | T.Metavariable>(input.name, _K22, _K0),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
-    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
     returnType: _resolveOne<T._Type>(input.returnType, _K5, _K6),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
   });
@@ -968,7 +968,7 @@ export function functionTypeFrom(input: T.FunctionType.Loose | T.FunctionType): 
   if (isNodeData(input)) return input;
   return F.functionType({
     forLifetimes: _resolveOneBranch<T.ForLifetimes>(input.forLifetimes, "for_lifetimes"),
-    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters"),
+    parameters: _resolveOneBranch<T.Parameters>(input.parameters, "parameters") ?? F.parameters(),
     returnType: _resolveOne<T._Type>(input.returnType, _K5, _K6),
     children: _resolveOne(input.children, _K0, _K23),
   });
@@ -978,7 +978,7 @@ export function genBlockFrom(input: T.GenBlock.Loose | T.GenBlock): ReturnType<t
   if (isNodeData(input)) return input;
   return F.genBlock({
     moveMarker: _resolveBooleanKeyword(input.moveMarker),
-    block: _resolveOneBranch<T.Block>(input.block, "block"),
+    block: _resolveOneBranch<T.Block>(input.block, "block") ?? F.block(),
   });
 }
 
@@ -986,14 +986,14 @@ export function genericFunctionFrom(input: T.GenericFunction.Loose | T.GenericFu
   if (isNodeData(input)) return input;
   return F.genericFunction({
     function: _resolveOne<T.Identifier | T.ScopedIdentifier | T.FieldExpression>(input.function, _K24, _K25),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
   });
 }
 
 export function genericPatternFrom(input: T.GenericPattern.Loose | T.GenericPattern): ReturnType<typeof F.genericPattern> | T.GenericPattern {
   if (isNodeData(input)) return input;
   return F.genericPattern({
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
     children: _resolveOne(input.children, _K24, _K8),
   });
 }
@@ -1002,7 +1002,7 @@ export function genericTypeFrom(input: T.GenericType.Loose | T.GenericType): Ret
   if (isNodeData(input)) return input;
   return F.genericType({
     type: _resolveOne<T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier>(input.type, _K0, _K26),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
   });
 }
 
@@ -1010,7 +1010,7 @@ export function genericTypeWithTurbofishFrom(input: T.GenericTypeWithTurbofish.L
   if (isNodeData(input)) return input;
   return F.genericTypeWithTurbofish({
     type: _resolveOne<T.TypeIdentifier | T.ScopedIdentifier>(input.type, _K0, _K27),
-    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
+    typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments") ?? F.typeArguments(),
   });
 }
 
@@ -1031,7 +1031,7 @@ export function ifExpressionFrom(input: T.IfExpression.Loose | T.IfExpression): 
   if (isNodeData(input)) return input;
   return F.ifExpression({
     condition: _resolveOne<T.Condition>(input.condition, _K2, _K28),
-    consequence: _resolveOneBranch<T.Block>(input.consequence, "block"),
+    consequence: _resolveOneBranch<T.Block>(input.consequence, "block") ?? F.block(),
     alternative: _resolveOneBranch<T.ElseClause>(input.alternative, "else_clause"),
   });
 }
@@ -1156,7 +1156,7 @@ export function loopExpressionFrom(input: T.LoopExpression.Loose | T.LoopExpress
   if (isNodeData(input)) return input;
   return F.loopExpression({
     label: _resolveOneBranch<T.Label>(input.label, "label"),
-    body: _resolveOneBranch<T.Block>(input.body, "block"),
+    body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
   });
 }
 
@@ -1249,7 +1249,7 @@ export function matchExpressionFrom(input: T.MatchExpression.Loose | T.MatchExpr
   if (isNodeData(input)) return input;
   return F.matchExpression({
     value: _resolveOne<T.Expression>(input.value, _K2, _K4),
-    body: _resolveOneBranch<T.MatchBlock>(input.body, "match_block"),
+    body: _resolveOneBranch<T.MatchBlock>(input.body, "match_block") ?? F.matchBlock(),
   });
 }
 
@@ -1534,7 +1534,7 @@ export function scopedUseListFrom(input: T.ScopedUseList.Loose | T.ScopedUseList
   if (isNodeData(input)) return input;
   return F.scopedUseList({
     path: _resolveOne<T.Path>(input.path, _K7, _K8),
-    list: _resolveOneBranch<T.UseList>(input.list, "use_list"),
+    list: _resolveOneBranch<T.UseList>(input.list, "use_list") ?? F.useList(),
   });
 }
 
@@ -1604,7 +1604,7 @@ export function structExpressionFrom(input: T.StructExpression.Loose | T.StructE
   if (isNodeData(input)) return input;
   return F.structExpression({
     name: _resolveOne<T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish>(input.name, _K0, _K45),
-    body: _resolveOneBranch<T.FieldInitializerList>(input.body, "field_initializer_list"),
+    body: _resolveOneBranch<T.FieldInitializerList>(input.body, "field_initializer_list") ?? F.fieldInitializerList(),
   });
 }
 
@@ -1751,7 +1751,7 @@ export function traitItemFrom(input: T.TraitItem.Loose | T.TraitItem): ReturnTyp
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
-    body: _resolveOneBranch<T.DeclarationList>(input.body, "declaration_list"),
+    body: _resolveOneBranch<T.DeclarationList>(input.body, "declaration_list") ?? F.declarationList(),
   });
 }
 
@@ -1865,7 +1865,7 @@ export function unionItemFrom(input: T.UnionItem.Loose | T.UnionItem): ReturnTyp
     name: _resolveOneBranch<T.TypeIdentifier>(input.name, "_type_identifier"),
     typeParameters: _resolveOneBranch<T.TypeParameters>(input.typeParameters, "type_parameters"),
     whereClause: _resolveOneBranch<T.WhereClause>(input.whereClause, "where_clause"),
-    body: _resolveOneBranch<T.FieldDeclarationList>(input.body, "field_declaration_list"),
+    body: _resolveOneBranch<T.FieldDeclarationList>(input.body, "field_declaration_list") ?? F.fieldDeclarationList(),
   });
 }
 
@@ -1964,7 +1964,7 @@ export function wherePredicateFrom(input: T.WherePredicate.Loose | T.WherePredic
   if (isNodeData(input)) return input;
   return F.wherePredicate({
     left: _resolveOne<T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType>(input.left, _K50, _K51),
-    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds"),
+    bounds: _resolveOneBranch<T.TraitBounds>(input.bounds, "trait_bounds") ?? F.traitBounds(),
   });
 }
 
@@ -1973,7 +1973,7 @@ export function whileExpressionFrom(input: T.WhileExpression.Loose | T.WhileExpr
   return F.whileExpression({
     label: _resolveOneBranch<T.Label>(input.label, "label"),
     condition: _resolveOne<T.Condition>(input.condition, _K2, _K28),
-    body: _resolveOneBranch<T.Block>(input.body, "block"),
+    body: _resolveOneBranch<T.Block>(input.body, "block") ?? F.block(),
   });
 }
 

@@ -1,6 +1,21 @@
 import { describe, it, expect } from 'vitest';
 
 describe('factory ergonomics', () => {
+	describe('Gap 2: omitted required fields default to empty', () => {
+		it('emits ?? F.block() fallback for required single-kind container fields', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(
+				resolve(import.meta.dirname, '../../../rust/src/from.ts'),
+				'utf-8'
+			);
+			// functionItemFrom should default body to F.block()
+			expect(content).toMatch(/body:.*\?\? F\.block\(\)/);
+			// functionItemFrom should default parameters to F.parameters()
+			expect(content).toMatch(/parameters:.*\?\? F\.parameters\(\)/);
+		});
+	});
+
 	describe('Gap 1: optional config on all-optional-field factories', () => {
 		it('emits config?: when all fields are optional and children default to []', async () => {
 			// Use rust's `blockComment` — all fields optional, has $children

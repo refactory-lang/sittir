@@ -21,6 +21,7 @@ import type {
 	AssembledNonterminal,
 	AssembledGroup
 } from '../compiler/node-map.ts';
+import { AssembledBranch } from '../compiler/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
@@ -33,7 +34,8 @@ import {
 	fieldTypeComponents,
 	isValidIdent,
 	keywordPresenceKind,
-	resolveHoistedForm
+	resolveHoistedForm,
+	stampExpressionFor
 } from './shared.ts';
 import {
 	isNodeRef,
@@ -717,6 +719,69 @@ function emitBranchChildrenEntry(
 	}
 }
 
+/**
+ * Returns the target factory name when a required field can default to an
+ * empty factory call, or `null` when it cannot.
+ *
+ * A field qualifies for default-empty when:
+ * 1. `isRequired(field)` is true.
+ * 2. Its `values` resolve to exactly ONE kind (not a union).
+ * 3. That kind's factory can be called with zero arguments:
+ *    - Container shape with rest-params (multiple children) — always callable.
+ *    - Container shape with optional singular child — callable.
+ *    - Config-based factory where every non-auto-stamp field is optional and
+ *      every non-auto-stamp child is either auto-stamp-eligible or repeat-0+.
+ *
+ * @param field - The field slot to check.
+ * @param nodeMap - The assembled node map.
+ * @returns The target factory's `rawFactoryName` if it qualifies, or `null`.
+ */
+function canDefaultToEmpty(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): string | null {
+	if (!isRequired(field)) return null;
+	const kinds = slotKindNames(field);
+	if (kinds.length !== 1) return null;
+	const targetKind = kinds[0]!;
+	const targetNode = nodeMap.nodes.get(targetKind);
+	if (!targetNode) return null;
+	if (!targetNode.rawFactoryName) return null;
+
+	// Container-shaped branches: rest-param signature can always be called
+	// with zero args. Single-child containers need the child to be optional.
+	if (targetNode instanceof AssembledBranch && targetNode.isContainerShape) {
+		const anyMultiple = targetNode.children.some((c) => isMultiple(c));
+		if (anyMultiple) return targetNode.rawFactoryName;
+		// Singular child — callable only when the child is not required.
+		const firstChild = targetNode.children[0];
+		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
+		return null;
+	}
+
+	// Branch / group with fields: check if the factory config is all-optional.
+	if (
+		targetNode.modelType !== 'branch' &&
+		targetNode.modelType !== 'group'
+	) {
+		return null;
+	}
+	const targetFields = targetNode.fields;
+	const targetChildren = targetNode.children;
+	const hasBlockingField = targetFields.some(
+		(f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined
+	);
+	if (hasBlockingField) return null;
+	const hasBlockingChild = targetChildren.some(
+		(c) =>
+			isRequired(c) &&
+			!isAutoStampSlot(c, nodeMap) &&
+			!(isMultiple(c) && !isNonEmpty(c))
+	);
+	if (hasBlockingChild) return null;
+	return targetNode.rawFactoryName;
+}
+
 function emitBranchFrom(
 	node: BranchLikeNode,
 	nodeMap: NodeMap,
@@ -815,9 +880,13 @@ function emitBranchFrom(
 				if (needsNonEmptyHoist(f)) {
 					lines.push(`    ${f.propertyName}: ${neName(f)},`);
 				} else {
-					lines.push(
-						`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`
-					);
+					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+					const defaultFactory = canDefaultToEmpty(f, nodeMap);
+					if (defaultFactory) {
+						lines.push(`    ${f.propertyName}: ${call} ?? F.${defaultFactory}(),`);
+					} else {
+						lines.push(`    ${f.propertyName}: ${call},`);
+					}
 				}
 			}
 			if (childSlots.length > 0) {
