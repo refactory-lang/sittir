@@ -17,7 +17,13 @@
 
 #![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
 
-use ::sittir_core::types::RenderableTransport as _;
+use ::sittir_core::filters::{
+    SingleNonterminalView, ListNonterminalView,
+    OptionalNonterminalView,
+};
+use ::sittir_core::types::{
+    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia,
+};
 
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
@@ -869,10 +875,6 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             244 => Ok(AnyTransport::WithClauseBare(
                 WithClauseBareTransport::from_napi_value(env, napi_val)?
             )),
-            // kind: with_clause_paren (WITH_CLAUSE_PAREN)
-            245 => Ok(AnyTransport::WithClauseParen(
-                WithClauseParenTransport::from_napi_value(env, napi_val)?
-            )),
             // kind: with_clause (WITH_CLAUSE)
             143 => Ok(AnyTransport::WithClause(
                 WithClauseTransport::from_napi_value(env, napi_val)?
@@ -1139,12 +1141,8 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnyTransport {
             70 => Ok(AnyTransport::Literal5_3e),
             // literal kind: <> → "<>"
             71 => Ok(AnyTransport::Literal6_3c_3e),
-            // literal kind: not in → "not in"
-            193 => Ok(AnyTransport::Literal7_6e_6f_74_20_69_6e),
             // literal kind: is → "is"
             64 => Ok(AnyTransport::Literal8_69_73),
-            // literal kind: is not → "is not"
-            194 => Ok(AnyTransport::Literal9_69_73_20_6e_6f_74),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown kind id {other} in AnyTransport"
             ))),
@@ -1264,7 +1262,7 @@ fn compound_statement_transport_to_any(t: CompoundStatementTransport) -> AnyTran
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for CompoundStatementTransport {
+impl RenderableTransport for CompoundStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1319,7 +1317,7 @@ fn dict_pattern_kv_transport_to_any(t: DictPatternKvTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for DictPatternKvTransport {
+impl RenderableTransport for DictPatternKvTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1374,7 +1372,7 @@ fn expression_within_for_in_clause_transport_to_any(t: ExpressionWithinForInClau
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionWithinForInClauseTransport {
+impl RenderableTransport for ExpressionWithinForInClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1429,7 +1427,7 @@ fn expressions_transport_to_any(t: ExpressionsTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionsTransport {
+impl RenderableTransport for ExpressionsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1494,7 +1492,7 @@ fn fexpression_transport_to_any(t: FExpressionTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for FExpressionTransport {
+impl RenderableTransport for FExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1549,7 +1547,7 @@ fn left_hand_side_transport_to_any(t: LeftHandSideTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for LeftHandSideTransport {
+impl RenderableTransport for LeftHandSideTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1601,7 +1599,7 @@ fn named_expression_lhs_transport_to_any(t: NamedExpressionLhsTransport) -> AnyT
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for NamedExpressionLhsTransport {
+impl RenderableTransport for NamedExpressionLhsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1676,7 +1674,7 @@ fn right_hand_side_transport_to_any(t: RightHandSideTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for RightHandSideTransport {
+impl RenderableTransport for RightHandSideTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1791,7 +1789,7 @@ fn simple_pattern_transport_to_any(t: SimplePatternTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for SimplePatternTransport {
+impl RenderableTransport for SimplePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -1916,7 +1914,7 @@ fn simple_statement_transport_to_any(t: SimpleStatementTransport) -> AnyTranspor
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for SimpleStatementTransport {
+impl RenderableTransport for SimpleStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2011,7 +2009,7 @@ fn statement_transport_to_any(t: StatementTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for StatementTransport {
+impl RenderableTransport for StatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2096,7 +2094,7 @@ fn expression_transport_to_any(t: ExpressionTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionTransport {
+impl RenderableTransport for ExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2146,7 +2144,7 @@ fn keyword_identifier_transport_to_any(t: KeywordIdentifierTransport) -> AnyTran
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for KeywordIdentifierTransport {
+impl RenderableTransport for KeywordIdentifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2236,7 +2234,7 @@ fn parameter_transport_to_any(t: ParameterTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ParameterTransport {
+impl RenderableTransport for ParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2313,7 +2311,7 @@ fn pattern_transport_to_any(t: PatternTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for PatternTransport {
+impl RenderableTransport for PatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2485,7 +2483,7 @@ fn primary_expression_transport_to_any(t: PrimaryExpressionTransport) -> AnyTran
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for PrimaryExpressionTransport {
+impl RenderableTransport for PrimaryExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2541,7 +2539,7 @@ fn _as_pattern_child_transport_to_any(t: _AsPatternChildTransport) -> AnyTranspo
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for _AsPatternChildTransport {
+impl RenderableTransport for _AsPatternChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2599,7 +2597,7 @@ fn comprehension_clauses_child_transport_to_any(t: ComprehensionClausesChildTran
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ComprehensionClausesChildTransport {
+impl RenderableTransport for ComprehensionClausesChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2662,7 +2660,7 @@ fn suite_child_transport_to_any(t: SuiteChildTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for SuiteChildTransport {
+impl RenderableTransport for SuiteChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2731,7 +2729,7 @@ fn argument_list_child_transport_to_any(t: ArgumentListChildTransport) -> AnyTra
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ArgumentListChildTransport {
+impl RenderableTransport for ArgumentListChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2791,7 +2789,7 @@ fn case_pattern_child_transport_to_any(t: CasePatternChildTransport) -> AnyTrans
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for CasePatternChildTransport {
+impl RenderableTransport for CasePatternChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2849,7 +2847,7 @@ fn dictionary_child_transport_to_any(t: DictionaryChildTransport) -> AnyTranspor
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for DictionaryChildTransport {
+impl RenderableTransport for DictionaryChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2912,7 +2910,7 @@ fn import_from_statement_child_transport_to_any(t: ImportFromStatementChildTrans
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportFromStatementChildTransport {
+impl RenderableTransport for ImportFromStatementChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -2976,7 +2974,7 @@ fn list_child_transport_to_any(t: ListChildTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ListChildTransport {
+impl RenderableTransport for ListChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3035,7 +3033,7 @@ fn parenthesized_list_splat_child_transport_to_any(t: ParenthesizedListSplatChil
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ParenthesizedListSplatChildTransport {
+impl RenderableTransport for ParenthesizedListSplatChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3098,7 +3096,7 @@ fn set_child_transport_to_any(t: SetChildTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for SetChildTransport {
+impl RenderableTransport for SetChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3167,7 +3165,7 @@ fn string_content_child_transport_to_any(t: StringContentChildTransport) -> AnyT
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for StringContentChildTransport {
+impl RenderableTransport for StringContentChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3232,7 +3230,7 @@ fn tuple_child_transport_to_any(t: TupleChildTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for TupleChildTransport {
+impl RenderableTransport for TupleChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3306,7 +3304,7 @@ fn type_child_transport_to_any(t: TypeChildTransport) -> AnyTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for TypeChildTransport {
+impl RenderableTransport for TypeChildTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3326,13 +3324,13 @@ impl ::sittir_core::types::RenderableTransport for TypeChildTransport {
 #[derive(Debug, Clone)]
 pub struct _AsPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3343,7 +3341,7 @@ pub struct _AsPatternTransport {
     pub children: _AsPatternChildTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for _AsPatternTransport {
+impl RenderableTransport for _AsPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3356,13 +3354,13 @@ impl ::sittir_core::types::RenderableTransport for _AsPatternTransport {
 #[derive(Debug, Clone)]
 pub struct AssignmentEqTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3372,7 +3370,7 @@ pub struct AssignmentEqTransport {
     pub right: RightHandSideTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentEqTransport {
+impl RenderableTransport for AssignmentEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3385,13 +3383,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentEqTransport {
 #[derive(Debug, Clone)]
 pub struct AssignmentTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3402,7 +3400,7 @@ pub struct AssignmentTypeTransport {
     pub r#type: TypeTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentTypeTransport {
+impl RenderableTransport for AssignmentTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3415,13 +3413,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentTypeTransport {
 #[derive(Debug, Clone)]
 pub struct AssignmentTypedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3433,7 +3431,7 @@ pub struct AssignmentTypedTransport {
     pub right: RightHandSideTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentTypedTransport {
+impl RenderableTransport for AssignmentTypedTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3517,7 +3515,7 @@ impl ::std::fmt::Display for AugmentedAssignmentOperatorEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentOperatorEnum {
+impl RenderableTransport for AugmentedAssignmentOperatorEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3544,13 +3542,13 @@ impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentOperatorEn
 #[derive(Debug, Clone)]
 pub struct ComprehensionClausesTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3561,7 +3559,7 @@ pub struct ComprehensionClausesTransport {
     pub children: Vec<ComprehensionClausesChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ComprehensionClausesTransport {
+impl RenderableTransport for ComprehensionClausesTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3612,7 +3610,7 @@ impl ::std::fmt::Display for _IdentifierEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for _IdentifierEnum {
+impl RenderableTransport for _IdentifierEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3628,13 +3626,13 @@ impl ::sittir_core::types::RenderableTransport for _IdentifierEnum {
 #[derive(Debug, Clone)]
 pub struct ImportListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3644,7 +3642,7 @@ pub struct ImportListTransport {
     pub name: Vec<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportListTransport {
+impl RenderableTransport for ImportListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3655,16 +3653,16 @@ impl ::sittir_core::types::RenderableTransport for ImportListTransport {
 
 #[derive(Debug, Clone)]
 pub struct IsNotTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for IsNotTransport {
+impl RenderableTransport for IsNotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3732,13 +3730,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for IsNotTransport {
 #[derive(Debug, Clone)]
 pub struct KeyValuePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3749,7 +3747,7 @@ pub struct KeyValuePatternTransport {
     pub value: CasePatternTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for KeyValuePatternTransport {
+impl RenderableTransport for KeyValuePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3760,16 +3758,16 @@ impl ::sittir_core::types::RenderableTransport for KeyValuePatternTransport {
 
 #[derive(Debug, Clone)]
 pub struct KwAsyncMarkerTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for KwAsyncMarkerTransport {
+impl RenderableTransport for KwAsyncMarkerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3835,16 +3833,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for KwAsyncMarkerTransport {
 
 #[derive(Debug, Clone)]
 pub struct KwTypeTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for KwTypeTransport {
+impl RenderableTransport for KwTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3912,13 +3910,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for KwTypeTransport {
 #[derive(Debug, Clone)]
 pub struct _ListPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3929,7 +3927,7 @@ pub struct _ListPatternTransport {
     pub children: Vec<CasePatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for _ListPatternTransport {
+impl RenderableTransport for _ListPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3942,13 +3940,13 @@ impl ::sittir_core::types::RenderableTransport for _ListPatternTransport {
 #[derive(Debug, Clone)]
 pub struct MatchBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3959,7 +3957,7 @@ pub struct MatchBlockTransport {
     pub children: MatchBlockBlockTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for MatchBlockTransport {
+impl RenderableTransport for MatchBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3972,13 +3970,13 @@ impl ::sittir_core::types::RenderableTransport for MatchBlockTransport {
 #[derive(Debug, Clone)]
 pub struct MatchBlockBlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -3988,7 +3986,7 @@ pub struct MatchBlockBlockTransport {
     pub alternative: Vec<CaseClauseTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for MatchBlockBlockTransport {
+impl RenderableTransport for MatchBlockBlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -3999,16 +3997,16 @@ impl ::sittir_core::types::RenderableTransport for MatchBlockBlockTransport {
 
 #[derive(Debug, Clone)]
 pub struct NotEscapeSequenceTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NotEscapeSequenceTransport {
+impl RenderableTransport for NotEscapeSequenceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4074,16 +4072,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NotEscapeSequenceTransport {
 
 #[derive(Debug, Clone)]
 pub struct NotInTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NotInTransport {
+impl RenderableTransport for NotInTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4151,13 +4149,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for NotInTransport {
 #[derive(Debug, Clone)]
 pub struct SimplePatternNegativeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4168,7 +4166,7 @@ pub struct SimplePatternNegativeTransport {
     pub children: PrimaryExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for SimplePatternNegativeTransport {
+impl RenderableTransport for SimplePatternNegativeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4181,13 +4179,13 @@ impl ::sittir_core::types::RenderableTransport for SimplePatternNegativeTranspor
 #[derive(Debug, Clone)]
 pub struct SimpleStatementsTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4198,7 +4196,7 @@ pub struct SimpleStatementsTransport {
     pub children: Vec<SimpleStatementTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SimpleStatementsTransport {
+impl RenderableTransport for SimpleStatementsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4211,13 +4209,13 @@ impl ::sittir_core::types::RenderableTransport for SimpleStatementsTransport {
 #[derive(Debug, Clone)]
 pub struct SuiteTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4228,7 +4226,7 @@ pub struct SuiteTransport {
     pub children: SuiteChildTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for SuiteTransport {
+impl RenderableTransport for SuiteTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4241,13 +4239,13 @@ impl ::sittir_core::types::RenderableTransport for SuiteTransport {
 #[derive(Debug, Clone)]
 pub struct _TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4258,7 +4256,7 @@ pub struct _TuplePatternTransport {
     pub children: Vec<CasePatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for _TuplePatternTransport {
+impl RenderableTransport for _TuplePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4312,7 +4310,7 @@ impl ::std::fmt::Display for UnaryOperatorOperatorEnum {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for UnaryOperatorOperatorEnum {
+impl RenderableTransport for UnaryOperatorOperatorEnum {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4329,13 +4327,13 @@ impl ::sittir_core::types::RenderableTransport for UnaryOperatorOperatorEnum {
 #[derive(Debug, Clone)]
 pub struct _WithClauseParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4346,7 +4344,7 @@ pub struct _WithClauseParenTransport {
     pub children: Vec<WithItemTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for _WithClauseParenTransport {
+impl RenderableTransport for _WithClauseParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4359,13 +4357,13 @@ impl ::sittir_core::types::RenderableTransport for _WithClauseParenTransport {
 #[derive(Debug, Clone)]
 pub struct AliasedImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4376,7 +4374,7 @@ pub struct AliasedImportTransport {
     pub alias: IdentifierTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AliasedImportTransport {
+impl RenderableTransport for AliasedImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4389,13 +4387,13 @@ impl ::sittir_core::types::RenderableTransport for AliasedImportTransport {
 #[derive(Debug, Clone)]
 pub struct ArgumentListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4406,7 +4404,7 @@ pub struct ArgumentListTransport {
     pub children: Option<Vec<ArgumentListChildTransport>>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ArgumentListTransport {
+impl RenderableTransport for ArgumentListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4419,13 +4417,13 @@ impl ::sittir_core::types::RenderableTransport for ArgumentListTransport {
 #[derive(Debug, Clone)]
 pub struct AsPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4436,7 +4434,7 @@ pub struct AsPatternTransport {
     pub alias: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for AsPatternTransport {
+impl RenderableTransport for AsPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4449,13 +4447,13 @@ impl ::sittir_core::types::RenderableTransport for AsPatternTransport {
 #[derive(Debug, Clone)]
 pub struct AssertStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4466,7 +4464,7 @@ pub struct AssertStatementTransport {
     pub children: Vec<ExpressionTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssertStatementTransport {
+impl RenderableTransport for AssertStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4509,7 +4507,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AssignmentTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentTransport {
+impl RenderableTransport for AssignmentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4522,13 +4520,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentTransport {
 #[derive(Debug, Clone)]
 pub struct AssignmentUFormEqTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4540,7 +4538,7 @@ pub struct AssignmentUFormEqTransport {
     pub children: AssignmentEqTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentUFormEqTransport {
+impl RenderableTransport for AssignmentUFormEqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4553,13 +4551,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentUFormEqTransport {
 #[derive(Debug, Clone)]
 pub struct AssignmentUFormTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4571,7 +4569,7 @@ pub struct AssignmentUFormTypeTransport {
     pub children: AssignmentTypeTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentUFormTypeTransport {
+impl RenderableTransport for AssignmentUFormTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4584,13 +4582,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentUFormTypeTransport 
 #[derive(Debug, Clone)]
 pub struct AssignmentUFormTypedTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4602,7 +4600,7 @@ pub struct AssignmentUFormTypedTransport {
     pub children: AssignmentTypedTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssignmentUFormTypedTransport {
+impl RenderableTransport for AssignmentUFormTypedTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4615,13 +4613,13 @@ impl ::sittir_core::types::RenderableTransport for AssignmentUFormTypedTransport
 #[derive(Debug, Clone)]
 pub struct AttributeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4632,7 +4630,7 @@ pub struct AttributeTransport {
     pub attribute: IdentifierTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AttributeTransport {
+impl RenderableTransport for AttributeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4645,13 +4643,13 @@ impl ::sittir_core::types::RenderableTransport for AttributeTransport {
 #[derive(Debug, Clone)]
 pub struct AugmentedAssignmentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4663,7 +4661,7 @@ pub struct AugmentedAssignmentTransport {
     pub right: RightHandSideTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentTransport {
+impl RenderableTransport for AugmentedAssignmentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4676,13 +4674,13 @@ impl ::sittir_core::types::RenderableTransport for AugmentedAssignmentTransport 
 #[derive(Debug, Clone)]
 pub struct AwaitTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4692,7 +4690,7 @@ pub struct AwaitTransport {
     pub primary_expression: PrimaryExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for AwaitTransport {
+impl RenderableTransport for AwaitTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4705,13 +4703,13 @@ impl ::sittir_core::types::RenderableTransport for AwaitTransport {
 #[derive(Debug, Clone)]
 pub struct BinaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4723,7 +4721,7 @@ pub struct BinaryOperatorTransport {
     pub right: PrimaryExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for BinaryOperatorTransport {
+impl RenderableTransport for BinaryOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4736,13 +4734,13 @@ impl ::sittir_core::types::RenderableTransport for BinaryOperatorTransport {
 #[derive(Debug, Clone)]
 pub struct BlockTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4753,7 +4751,7 @@ pub struct BlockTransport {
     pub children: Vec<StatementTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for BlockTransport {
+impl RenderableTransport for BlockTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4766,13 +4764,13 @@ impl ::sittir_core::types::RenderableTransport for BlockTransport {
 #[derive(Debug, Clone)]
 pub struct BooleanOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4784,7 +4782,7 @@ pub struct BooleanOperatorTransport {
     pub right: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for BooleanOperatorTransport {
+impl RenderableTransport for BooleanOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4795,16 +4793,16 @@ impl ::sittir_core::types::RenderableTransport for BooleanOperatorTransport {
 
 #[derive(Debug, Clone)]
 pub struct BreakStatementTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for BreakStatementTransport {
+impl RenderableTransport for BreakStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4872,13 +4870,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for BreakStatementTransport {
 #[derive(Debug, Clone)]
 pub struct CallTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4889,7 +4887,7 @@ pub struct CallTransport {
     pub arguments: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for CallTransport {
+impl RenderableTransport for CallTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4902,13 +4900,13 @@ impl ::sittir_core::types::RenderableTransport for CallTransport {
 #[derive(Debug, Clone)]
 pub struct CaseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4921,7 +4919,7 @@ pub struct CaseClauseTransport {
     pub children: Vec<CasePatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for CaseClauseTransport {
+impl RenderableTransport for CaseClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4934,13 +4932,13 @@ impl ::sittir_core::types::RenderableTransport for CaseClauseTransport {
 #[derive(Debug, Clone)]
 pub struct CasePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4951,7 +4949,7 @@ pub struct CasePatternTransport {
     pub children: CasePatternChildTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for CasePatternTransport {
+impl RenderableTransport for CasePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4964,13 +4962,13 @@ impl ::sittir_core::types::RenderableTransport for CasePatternTransport {
 #[derive(Debug, Clone)]
 pub struct ChevronTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -4980,7 +4978,7 @@ pub struct ChevronTransport {
     pub expression: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ChevronTransport {
+impl RenderableTransport for ChevronTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -4993,13 +4991,13 @@ impl ::sittir_core::types::RenderableTransport for ChevronTransport {
 #[derive(Debug, Clone)]
 pub struct ClassDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5012,7 +5010,7 @@ pub struct ClassDefinitionTransport {
     pub body: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ClassDefinitionTransport {
+impl RenderableTransport for ClassDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5025,13 +5023,13 @@ impl ::sittir_core::types::RenderableTransport for ClassDefinitionTransport {
 #[derive(Debug, Clone)]
 pub struct ClassPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5042,7 +5040,7 @@ pub struct ClassPatternTransport {
     pub arguments: Vec<CasePatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ClassPatternTransport {
+impl RenderableTransport for ClassPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5053,16 +5051,16 @@ impl ::sittir_core::types::RenderableTransport for ClassPatternTransport {
 
 #[derive(Debug, Clone)]
 pub struct CommentTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CommentTransport {
+impl RenderableTransport for CommentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5130,13 +5128,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for CommentTransport {
 #[derive(Debug, Clone)]
 pub struct ComparisonOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5149,7 +5147,7 @@ pub struct ComparisonOperatorTransport {
     pub children: Vec<PrimaryExpressionTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ComparisonOperatorTransport {
+impl RenderableTransport for ComparisonOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5162,13 +5160,13 @@ impl ::sittir_core::types::RenderableTransport for ComparisonOperatorTransport {
 #[derive(Debug, Clone)]
 pub struct ComplexPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5181,7 +5179,7 @@ pub struct ComplexPatternTransport {
     pub children: PrimaryExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ComplexPatternTransport {
+impl RenderableTransport for ComplexPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5194,13 +5192,13 @@ impl ::sittir_core::types::RenderableTransport for ComplexPatternTransport {
 #[derive(Debug, Clone)]
 pub struct ConcatenatedStringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5211,7 +5209,7 @@ pub struct ConcatenatedStringTransport {
     pub children: Vec<StringTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ConcatenatedStringTransport {
+impl RenderableTransport for ConcatenatedStringTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5224,13 +5222,13 @@ impl ::sittir_core::types::RenderableTransport for ConcatenatedStringTransport {
 #[derive(Debug, Clone)]
 pub struct ConditionalExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5242,7 +5240,7 @@ pub struct ConditionalExpressionTransport {
     pub alternative: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ConditionalExpressionTransport {
+impl RenderableTransport for ConditionalExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5255,13 +5253,13 @@ impl ::sittir_core::types::RenderableTransport for ConditionalExpressionTranspor
 #[derive(Debug, Clone)]
 pub struct ConstrainedTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5272,7 +5270,7 @@ pub struct ConstrainedTypeTransport {
     pub constraint: TypeTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ConstrainedTypeTransport {
+impl RenderableTransport for ConstrainedTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5283,16 +5281,16 @@ impl ::sittir_core::types::RenderableTransport for ConstrainedTypeTransport {
 
 #[derive(Debug, Clone)]
 pub struct ContinueStatementTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ContinueStatementTransport {
+impl RenderableTransport for ContinueStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5360,13 +5358,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for ContinueStatementTransport {
 #[derive(Debug, Clone)]
 pub struct DecoratedDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5378,7 +5376,7 @@ pub struct DecoratedDefinitionTransport {
     pub children: Vec<DecoratorTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for DecoratedDefinitionTransport {
+impl RenderableTransport for DecoratedDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5391,13 +5389,13 @@ impl ::sittir_core::types::RenderableTransport for DecoratedDefinitionTransport 
 #[derive(Debug, Clone)]
 pub struct DecoratorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5408,7 +5406,7 @@ pub struct DecoratorTransport {
     pub newline: Option<Box<AnyTransport>>,
 }
 
-impl ::sittir_core::types::RenderableTransport for DecoratorTransport {
+impl RenderableTransport for DecoratorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5421,13 +5419,13 @@ impl ::sittir_core::types::RenderableTransport for DecoratorTransport {
 #[derive(Debug, Clone)]
 pub struct DefaultParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5438,7 +5436,7 @@ pub struct DefaultParameterTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for DefaultParameterTransport {
+impl RenderableTransport for DefaultParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5451,13 +5449,13 @@ impl ::sittir_core::types::RenderableTransport for DefaultParameterTransport {
 #[derive(Debug, Clone)]
 pub struct DeleteStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5468,7 +5466,7 @@ pub struct DeleteStatementTransport {
     pub children: ExpressionsTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for DeleteStatementTransport {
+impl RenderableTransport for DeleteStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5481,13 +5479,13 @@ impl ::sittir_core::types::RenderableTransport for DeleteStatementTransport {
 #[derive(Debug, Clone)]
 pub struct DictPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5498,7 +5496,7 @@ pub struct DictPatternTransport {
     pub children: Vec<DictPatternKvTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for DictPatternTransport {
+impl RenderableTransport for DictPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5511,13 +5509,13 @@ impl ::sittir_core::types::RenderableTransport for DictPatternTransport {
 #[derive(Debug, Clone)]
 pub struct DictionaryTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5528,7 +5526,7 @@ pub struct DictionaryTransport {
     pub children: Vec<DictionaryChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for DictionaryTransport {
+impl RenderableTransport for DictionaryTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5541,13 +5539,13 @@ impl ::sittir_core::types::RenderableTransport for DictionaryTransport {
 #[derive(Debug, Clone)]
 pub struct DictionaryComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5559,7 +5557,7 @@ pub struct DictionaryComprehensionTransport {
     pub children: ComprehensionClausesTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for DictionaryComprehensionTransport {
+impl RenderableTransport for DictionaryComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5572,13 +5570,13 @@ impl ::sittir_core::types::RenderableTransport for DictionaryComprehensionTransp
 #[derive(Debug, Clone)]
 pub struct DictionarySplatTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5588,7 +5586,7 @@ pub struct DictionarySplatTransport {
     pub expression: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for DictionarySplatTransport {
+impl RenderableTransport for DictionarySplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5601,13 +5599,13 @@ impl ::sittir_core::types::RenderableTransport for DictionarySplatTransport {
 #[derive(Debug, Clone)]
 pub struct DictionarySplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5618,7 +5616,7 @@ pub struct DictionarySplatPatternTransport {
     pub children: PatternTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for DictionarySplatPatternTransport {
+impl RenderableTransport for DictionarySplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5631,13 +5629,13 @@ impl ::sittir_core::types::RenderableTransport for DictionarySplatPatternTranspo
 #[derive(Debug, Clone)]
 pub struct DottedNameTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5648,7 +5646,7 @@ pub struct DottedNameTransport {
     pub children: Vec<IdentifierTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for DottedNameTransport {
+impl RenderableTransport for DottedNameTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5661,13 +5659,13 @@ impl ::sittir_core::types::RenderableTransport for DottedNameTransport {
 #[derive(Debug, Clone)]
 pub struct ElifClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5678,7 +5676,7 @@ pub struct ElifClauseTransport {
     pub consequence: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ElifClauseTransport {
+impl RenderableTransport for ElifClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5689,16 +5687,16 @@ impl ::sittir_core::types::RenderableTransport for ElifClauseTransport {
 
 #[derive(Debug, Clone)]
 pub struct Ellipsis2Transport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for Ellipsis2Transport {
+impl RenderableTransport for Ellipsis2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5766,13 +5764,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for Ellipsis2Transport {
 #[derive(Debug, Clone)]
 pub struct ElseClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5782,7 +5780,7 @@ pub struct ElseClauseTransport {
     pub body: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ElseClauseTransport {
+impl RenderableTransport for ElseClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5793,16 +5791,16 @@ impl ::sittir_core::types::RenderableTransport for ElseClauseTransport {
 
 #[derive(Debug, Clone)]
 pub struct EscapeSequenceTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for EscapeSequenceTransport {
+impl RenderableTransport for EscapeSequenceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5870,13 +5868,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for EscapeSequenceTransport {
 #[derive(Debug, Clone)]
 pub struct ExceptClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5889,7 +5887,7 @@ pub struct ExceptClauseTransport {
     pub children: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExceptClauseTransport {
+impl RenderableTransport for ExceptClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5902,13 +5900,13 @@ impl ::sittir_core::types::RenderableTransport for ExceptClauseTransport {
 #[derive(Debug, Clone)]
 pub struct ExecStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5919,7 +5917,7 @@ pub struct ExecStatementTransport {
     pub in_clause: Option<Vec<ExpressionTransport>>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExecStatementTransport {
+impl RenderableTransport for ExecStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5932,13 +5930,13 @@ impl ::sittir_core::types::RenderableTransport for ExecStatementTransport {
 #[derive(Debug, Clone)]
 pub struct ExpressionListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5949,7 +5947,7 @@ pub struct ExpressionListTransport {
     pub children: Vec<ExpressionTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionListTransport {
+impl RenderableTransport for ExpressionListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -5962,13 +5960,13 @@ impl ::sittir_core::types::RenderableTransport for ExpressionListTransport {
 #[derive(Debug, Clone)]
 pub struct ExpressionStatementTupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -5979,7 +5977,7 @@ pub struct ExpressionStatementTupleTransport {
     pub children: Vec<ExpressionTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionStatementTupleTransport {
+impl RenderableTransport for ExpressionStatementTupleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6014,7 +6012,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExpressionStatementTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionStatementTransport {
+impl RenderableTransport for ExpressionStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6027,13 +6025,13 @@ impl ::sittir_core::types::RenderableTransport for ExpressionStatementTransport 
 #[derive(Debug, Clone)]
 pub struct ExpressionStatementUFormTupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6044,7 +6042,7 @@ pub struct ExpressionStatementUFormTupleTransport {
     pub children: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExpressionStatementUFormTupleTransport {
+impl RenderableTransport for ExpressionStatementUFormTupleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6055,16 +6053,16 @@ impl ::sittir_core::types::RenderableTransport for ExpressionStatementUFormTuple
 
 #[derive(Debug, Clone)]
 pub struct FalseTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for FalseTransport {
+impl RenderableTransport for FalseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6132,13 +6130,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for FalseTransport {
 #[derive(Debug, Clone)]
 pub struct FinallyClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6148,7 +6146,7 @@ pub struct FinallyClauseTransport {
     pub block: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for FinallyClauseTransport {
+impl RenderableTransport for FinallyClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6159,16 +6157,16 @@ impl ::sittir_core::types::RenderableTransport for FinallyClauseTransport {
 
 #[derive(Debug, Clone)]
 pub struct FloatTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for FloatTransport {
+impl RenderableTransport for FloatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6236,13 +6234,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for FloatTransport {
 #[derive(Debug, Clone)]
 pub struct ForInClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6254,7 +6252,7 @@ pub struct ForInClauseTransport {
     pub right: Vec<ExpressionWithinForInClauseTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ForInClauseTransport {
+impl RenderableTransport for ForInClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6267,13 +6265,13 @@ impl ::sittir_core::types::RenderableTransport for ForInClauseTransport {
 #[derive(Debug, Clone)]
 pub struct ForStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6287,7 +6285,7 @@ pub struct ForStatementTransport {
     pub alternative: Option<ElseClauseTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ForStatementTransport {
+impl RenderableTransport for ForStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6300,13 +6298,13 @@ impl ::sittir_core::types::RenderableTransport for ForStatementTransport {
 #[derive(Debug, Clone)]
 pub struct FormatSpecifierTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6317,7 +6315,7 @@ pub struct FormatSpecifierTransport {
     pub children: Vec<InterpolationTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for FormatSpecifierTransport {
+impl RenderableTransport for FormatSpecifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6330,13 +6328,13 @@ impl ::sittir_core::types::RenderableTransport for FormatSpecifierTransport {
 #[derive(Debug, Clone)]
 pub struct FunctionDefinitionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6351,7 +6349,7 @@ pub struct FunctionDefinitionTransport {
     pub body: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for FunctionDefinitionTransport {
+impl RenderableTransport for FunctionDefinitionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6364,13 +6362,13 @@ impl ::sittir_core::types::RenderableTransport for FunctionDefinitionTransport {
 #[derive(Debug, Clone)]
 pub struct FutureImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6380,7 +6378,7 @@ pub struct FutureImportStatementTransport {
     pub name: Vec<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for FutureImportStatementTransport {
+impl RenderableTransport for FutureImportStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6393,13 +6391,13 @@ impl ::sittir_core::types::RenderableTransport for FutureImportStatementTranspor
 #[derive(Debug, Clone)]
 pub struct GeneratorExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6411,7 +6409,7 @@ pub struct GeneratorExpressionTransport {
     pub children: ComprehensionClausesTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for GeneratorExpressionTransport {
+impl RenderableTransport for GeneratorExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6424,13 +6422,13 @@ impl ::sittir_core::types::RenderableTransport for GeneratorExpressionTransport 
 #[derive(Debug, Clone)]
 pub struct GenericTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6441,7 +6439,7 @@ pub struct GenericTypeTransport {
     pub type_parameter: TypeParameterTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for GenericTypeTransport {
+impl RenderableTransport for GenericTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6454,13 +6452,13 @@ impl ::sittir_core::types::RenderableTransport for GenericTypeTransport {
 #[derive(Debug, Clone)]
 pub struct GlobalStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6471,7 +6469,7 @@ pub struct GlobalStatementTransport {
     pub children: Vec<IdentifierTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for GlobalStatementTransport {
+impl RenderableTransport for GlobalStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6482,16 +6480,16 @@ impl ::sittir_core::types::RenderableTransport for GlobalStatementTransport {
 
 #[derive(Debug, Clone)]
 pub struct IdentifierTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for IdentifierTransport {
+impl RenderableTransport for IdentifierTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6559,13 +6557,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for IdentifierTransport {
 #[derive(Debug, Clone)]
 pub struct IfClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6575,7 +6573,7 @@ pub struct IfClauseTransport {
     pub expression: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for IfClauseTransport {
+impl RenderableTransport for IfClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6588,13 +6586,13 @@ impl ::sittir_core::types::RenderableTransport for IfClauseTransport {
 #[derive(Debug, Clone)]
 pub struct IfStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6606,7 +6604,7 @@ pub struct IfStatementTransport {
     pub alternative: Option<Vec<AnyTransport>>,
 }
 
-impl ::sittir_core::types::RenderableTransport for IfStatementTransport {
+impl RenderableTransport for IfStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6619,13 +6617,13 @@ impl ::sittir_core::types::RenderableTransport for IfStatementTransport {
 #[derive(Debug, Clone)]
 pub struct ImportFromStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6637,7 +6635,7 @@ pub struct ImportFromStatementTransport {
     pub children: Vec<ImportFromStatementChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportFromStatementTransport {
+impl RenderableTransport for ImportFromStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6648,16 +6646,16 @@ impl ::sittir_core::types::RenderableTransport for ImportFromStatementTransport 
 
 #[derive(Debug, Clone)]
 pub struct ImportPrefixTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportPrefixTransport {
+impl RenderableTransport for ImportPrefixTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6725,13 +6723,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for ImportPrefixTransport {
 #[derive(Debug, Clone)]
 pub struct ImportStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6741,7 +6739,7 @@ pub struct ImportStatementTransport {
     pub name: Vec<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportStatementTransport {
+impl RenderableTransport for ImportStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6752,16 +6750,16 @@ impl ::sittir_core::types::RenderableTransport for ImportStatementTransport {
 
 #[derive(Debug, Clone)]
 pub struct IntegerTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for IntegerTransport {
+impl RenderableTransport for IntegerTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6829,13 +6827,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for IntegerTransport {
 #[derive(Debug, Clone)]
 pub struct InterpolationTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6847,7 +6845,7 @@ pub struct InterpolationTransport {
     pub format_specifier: Option<FormatSpecifierTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for InterpolationTransport {
+impl RenderableTransport for InterpolationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6860,13 +6858,13 @@ impl ::sittir_core::types::RenderableTransport for InterpolationTransport {
 #[derive(Debug, Clone)]
 pub struct KeywordArgumentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6877,7 +6875,7 @@ pub struct KeywordArgumentTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for KeywordArgumentTransport {
+impl RenderableTransport for KeywordArgumentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6890,13 +6888,13 @@ impl ::sittir_core::types::RenderableTransport for KeywordArgumentTransport {
 #[derive(Debug, Clone)]
 pub struct KeywordPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -6907,7 +6905,7 @@ pub struct KeywordPatternTransport {
     pub simple_pattern: SimplePatternTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for KeywordPatternTransport {
+impl RenderableTransport for KeywordPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6918,16 +6916,16 @@ impl ::sittir_core::types::RenderableTransport for KeywordPatternTransport {
 
 #[derive(Debug, Clone)]
 pub struct KeywordSeparatorTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for KeywordSeparatorTransport {
+impl RenderableTransport for KeywordSeparatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -6995,13 +6993,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for KeywordSeparatorTransport {
 #[derive(Debug, Clone)]
 pub struct LambdaTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7012,7 +7010,7 @@ pub struct LambdaTransport {
     pub body: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for LambdaTransport {
+impl RenderableTransport for LambdaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7025,13 +7023,13 @@ impl ::sittir_core::types::RenderableTransport for LambdaTransport {
 #[derive(Debug, Clone)]
 pub struct LambdaParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7042,7 +7040,7 @@ pub struct LambdaParametersTransport {
     pub children: Vec<ParameterTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for LambdaParametersTransport {
+impl RenderableTransport for LambdaParametersTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7055,13 +7053,13 @@ impl ::sittir_core::types::RenderableTransport for LambdaParametersTransport {
 #[derive(Debug, Clone)]
 pub struct LambdaWithinForInClauseTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7072,7 +7070,7 @@ pub struct LambdaWithinForInClauseTransport {
     pub body: ExpressionWithinForInClauseTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for LambdaWithinForInClauseTransport {
+impl RenderableTransport for LambdaWithinForInClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7083,16 +7081,16 @@ impl ::sittir_core::types::RenderableTransport for LambdaWithinForInClauseTransp
 
 #[derive(Debug, Clone)]
 pub struct LineContinuationTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for LineContinuationTransport {
+impl RenderableTransport for LineContinuationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7160,13 +7158,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for LineContinuationTransport {
 #[derive(Debug, Clone)]
 pub struct ListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7177,7 +7175,7 @@ pub struct ListTransport {
     pub children: Vec<ListChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ListTransport {
+impl RenderableTransport for ListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7190,13 +7188,13 @@ impl ::sittir_core::types::RenderableTransport for ListTransport {
 #[derive(Debug, Clone)]
 pub struct ListComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7208,7 +7206,7 @@ pub struct ListComprehensionTransport {
     pub children: ComprehensionClausesTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ListComprehensionTransport {
+impl RenderableTransport for ListComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7221,13 +7219,13 @@ impl ::sittir_core::types::RenderableTransport for ListComprehensionTransport {
 #[derive(Debug, Clone)]
 pub struct ListPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7238,7 +7236,7 @@ pub struct ListPatternTransport {
     pub children: Vec<PatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ListPatternTransport {
+impl RenderableTransport for ListPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7251,13 +7249,13 @@ impl ::sittir_core::types::RenderableTransport for ListPatternTransport {
 #[derive(Debug, Clone)]
 pub struct ListSplatTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7267,7 +7265,7 @@ pub struct ListSplatTransport {
     pub expression: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ListSplatTransport {
+impl RenderableTransport for ListSplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7280,13 +7278,13 @@ impl ::sittir_core::types::RenderableTransport for ListSplatTransport {
 #[derive(Debug, Clone)]
 pub struct ListSplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7297,7 +7295,7 @@ pub struct ListSplatPatternTransport {
     pub children: PatternTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ListSplatPatternTransport {
+impl RenderableTransport for ListSplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7310,13 +7308,13 @@ impl ::sittir_core::types::RenderableTransport for ListSplatPatternTransport {
 #[derive(Debug, Clone)]
 pub struct MatchStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7327,7 +7325,7 @@ pub struct MatchStatementTransport {
     pub body: MatchBlockTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for MatchStatementTransport {
+impl RenderableTransport for MatchStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7340,13 +7338,13 @@ impl ::sittir_core::types::RenderableTransport for MatchStatementTransport {
 #[derive(Debug, Clone)]
 pub struct MemberTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7357,7 +7355,7 @@ pub struct MemberTypeTransport {
     pub identifier: IdentifierTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for MemberTypeTransport {
+impl RenderableTransport for MemberTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7370,13 +7368,13 @@ impl ::sittir_core::types::RenderableTransport for MemberTypeTransport {
 #[derive(Debug, Clone)]
 pub struct ModuleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7387,7 +7385,7 @@ pub struct ModuleTransport {
     pub children: Vec<StatementTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ModuleTransport {
+impl RenderableTransport for ModuleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7400,13 +7398,13 @@ impl ::sittir_core::types::RenderableTransport for ModuleTransport {
 #[derive(Debug, Clone)]
 pub struct NamedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7417,7 +7415,7 @@ pub struct NamedExpressionTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for NamedExpressionTransport {
+impl RenderableTransport for NamedExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7428,16 +7426,16 @@ impl ::sittir_core::types::RenderableTransport for NamedExpressionTransport {
 
 #[derive(Debug, Clone)]
 pub struct NoneTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NoneTransport {
+impl RenderableTransport for NoneTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7505,13 +7503,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for NoneTransport {
 #[derive(Debug, Clone)]
 pub struct NonlocalStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7522,7 +7520,7 @@ pub struct NonlocalStatementTransport {
     pub children: Vec<IdentifierTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for NonlocalStatementTransport {
+impl RenderableTransport for NonlocalStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7535,13 +7533,13 @@ impl ::sittir_core::types::RenderableTransport for NonlocalStatementTransport {
 #[derive(Debug, Clone)]
 pub struct NotOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7551,7 +7549,7 @@ pub struct NotOperatorTransport {
     pub argument: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for NotOperatorTransport {
+impl RenderableTransport for NotOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7564,13 +7562,13 @@ impl ::sittir_core::types::RenderableTransport for NotOperatorTransport {
 #[derive(Debug, Clone)]
 pub struct PairTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7581,7 +7579,7 @@ pub struct PairTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for PairTransport {
+impl RenderableTransport for PairTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7594,13 +7592,13 @@ impl ::sittir_core::types::RenderableTransport for PairTransport {
 #[derive(Debug, Clone)]
 pub struct ParametersTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7611,7 +7609,7 @@ pub struct ParametersTransport {
     pub children: Vec<ParameterTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ParametersTransport {
+impl RenderableTransport for ParametersTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7624,13 +7622,13 @@ impl ::sittir_core::types::RenderableTransport for ParametersTransport {
 #[derive(Debug, Clone)]
 pub struct ParenthesizedExpressionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7641,7 +7639,7 @@ pub struct ParenthesizedExpressionTransport {
     pub children: FExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTransport {
+impl RenderableTransport for ParenthesizedExpressionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7654,13 +7652,13 @@ impl ::sittir_core::types::RenderableTransport for ParenthesizedExpressionTransp
 #[derive(Debug, Clone)]
 pub struct ParenthesizedListSplatTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7671,7 +7669,7 @@ pub struct ParenthesizedListSplatTransport {
     pub children: ParenthesizedListSplatChildTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for ParenthesizedListSplatTransport {
+impl RenderableTransport for ParenthesizedListSplatTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7682,16 +7680,16 @@ impl ::sittir_core::types::RenderableTransport for ParenthesizedListSplatTranspo
 
 #[derive(Debug, Clone)]
 pub struct PassStatementTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for PassStatementTransport {
+impl RenderableTransport for PassStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7759,13 +7757,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for PassStatementTransport {
 #[derive(Debug, Clone)]
 pub struct PatternListTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7776,7 +7774,7 @@ pub struct PatternListTransport {
     pub children: Vec<PatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for PatternListTransport {
+impl RenderableTransport for PatternListTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7787,16 +7785,16 @@ impl ::sittir_core::types::RenderableTransport for PatternListTransport {
 
 #[derive(Debug, Clone)]
 pub struct PositionalSeparatorTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for PositionalSeparatorTransport {
+impl RenderableTransport for PositionalSeparatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7864,13 +7862,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for PositionalSeparatorTransport {
 #[derive(Debug, Clone)]
 pub struct PrintStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7882,7 +7880,7 @@ pub struct PrintStatementTransport {
     pub children: Option<ChevronTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for PrintStatementTransport {
+impl RenderableTransport for PrintStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7895,13 +7893,13 @@ impl ::sittir_core::types::RenderableTransport for PrintStatementTransport {
 #[derive(Debug, Clone)]
 pub struct RaiseStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7913,7 +7911,7 @@ pub struct RaiseStatementTransport {
     pub children: Option<ExpressionsTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for RaiseStatementTransport {
+impl RenderableTransport for RaiseStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7926,13 +7924,13 @@ impl ::sittir_core::types::RenderableTransport for RaiseStatementTransport {
 #[derive(Debug, Clone)]
 pub struct RelativeImportTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7943,7 +7941,7 @@ pub struct RelativeImportTransport {
     pub dotted_name: Option<DottedNameTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for RelativeImportTransport {
+impl RenderableTransport for RelativeImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7956,13 +7954,13 @@ impl ::sittir_core::types::RenderableTransport for RelativeImportTransport {
 #[derive(Debug, Clone)]
 pub struct ReturnStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -7973,7 +7971,7 @@ pub struct ReturnStatementTransport {
     pub children: Option<ExpressionsTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for ReturnStatementTransport {
+impl RenderableTransport for ReturnStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -7986,13 +7984,13 @@ impl ::sittir_core::types::RenderableTransport for ReturnStatementTransport {
 #[derive(Debug, Clone)]
 pub struct SetTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8003,7 +8001,7 @@ pub struct SetTransport {
     pub children: Vec<SetChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SetTransport {
+impl RenderableTransport for SetTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8016,13 +8014,13 @@ impl ::sittir_core::types::RenderableTransport for SetTransport {
 #[derive(Debug, Clone)]
 pub struct SetComprehensionTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8034,7 +8032,7 @@ pub struct SetComprehensionTransport {
     pub children: ComprehensionClausesTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for SetComprehensionTransport {
+impl RenderableTransport for SetComprehensionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8047,13 +8045,13 @@ impl ::sittir_core::types::RenderableTransport for SetComprehensionTransport {
 #[derive(Debug, Clone)]
 pub struct SliceTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8065,7 +8063,7 @@ pub struct SliceTransport {
     pub step: Option<ExpressionTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SliceTransport {
+impl RenderableTransport for SliceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8078,13 +8076,13 @@ impl ::sittir_core::types::RenderableTransport for SliceTransport {
 #[derive(Debug, Clone)]
 pub struct SplatPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8094,7 +8092,7 @@ pub struct SplatPatternTransport {
     pub identifier: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SplatPatternTransport {
+impl RenderableTransport for SplatPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8107,13 +8105,13 @@ impl ::sittir_core::types::RenderableTransport for SplatPatternTransport {
 #[derive(Debug, Clone)]
 pub struct SplatTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8123,7 +8121,7 @@ pub struct SplatTypeTransport {
     pub identifier: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SplatTypeTransport {
+impl RenderableTransport for SplatTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8136,13 +8134,13 @@ impl ::sittir_core::types::RenderableTransport for SplatTypeTransport {
 #[derive(Debug, Clone)]
 pub struct StringTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8154,7 +8152,7 @@ pub struct StringTransport {
     pub string_end: StringEndTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for StringTransport {
+impl RenderableTransport for StringTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8167,13 +8165,13 @@ impl ::sittir_core::types::RenderableTransport for StringTransport {
 #[derive(Debug, Clone)]
 pub struct StringContentTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8184,7 +8182,7 @@ pub struct StringContentTransport {
     pub children: Vec<StringContentChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for StringContentTransport {
+impl RenderableTransport for StringContentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8197,13 +8195,13 @@ impl ::sittir_core::types::RenderableTransport for StringContentTransport {
 #[derive(Debug, Clone)]
 pub struct SubscriptTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8214,7 +8212,7 @@ pub struct SubscriptTransport {
     pub subscript: Vec<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for SubscriptTransport {
+impl RenderableTransport for SubscriptTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8225,16 +8223,16 @@ impl ::sittir_core::types::RenderableTransport for SubscriptTransport {
 
 #[derive(Debug, Clone)]
 pub struct TrueTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for TrueTransport {
+impl RenderableTransport for TrueTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8302,13 +8300,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for TrueTransport {
 #[derive(Debug, Clone)]
 pub struct TryStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8321,7 +8319,7 @@ pub struct TryStatementTransport {
     pub finally_clause: Option<FinallyClauseTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for TryStatementTransport {
+impl RenderableTransport for TryStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8334,13 +8332,13 @@ impl ::sittir_core::types::RenderableTransport for TryStatementTransport {
 #[derive(Debug, Clone)]
 pub struct TupleTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8351,7 +8349,7 @@ pub struct TupleTransport {
     pub children: Vec<TupleChildTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for TupleTransport {
+impl RenderableTransport for TupleTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8364,13 +8362,13 @@ impl ::sittir_core::types::RenderableTransport for TupleTransport {
 #[derive(Debug, Clone)]
 pub struct TuplePatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8381,7 +8379,7 @@ pub struct TuplePatternTransport {
     pub children: Vec<PatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for TuplePatternTransport {
+impl RenderableTransport for TuplePatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8394,13 +8392,13 @@ impl ::sittir_core::types::RenderableTransport for TuplePatternTransport {
 #[derive(Debug, Clone)]
 pub struct TypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8411,7 +8409,7 @@ pub struct TypeTransport {
     pub children: TypeChildTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypeTransport {
+impl RenderableTransport for TypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8424,13 +8422,13 @@ impl ::sittir_core::types::RenderableTransport for TypeTransport {
 #[derive(Debug, Clone)]
 pub struct TypeAliasStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8443,7 +8441,7 @@ pub struct TypeAliasStatementTransport {
     pub right: TypeTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypeAliasStatementTransport {
+impl RenderableTransport for TypeAliasStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8454,16 +8452,16 @@ impl ::sittir_core::types::RenderableTransport for TypeAliasStatementTransport {
 
 #[derive(Debug, Clone)]
 pub struct TypeConversionTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypeConversionTransport {
+impl RenderableTransport for TypeConversionTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8531,13 +8529,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for TypeConversionTransport {
 #[derive(Debug, Clone)]
 pub struct TypeParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8548,7 +8546,7 @@ pub struct TypeParameterTransport {
     pub children: Vec<TypeTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypeParameterTransport {
+impl RenderableTransport for TypeParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8561,13 +8559,13 @@ impl ::sittir_core::types::RenderableTransport for TypeParameterTransport {
 #[derive(Debug, Clone)]
 pub struct TypedDefaultParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8580,7 +8578,7 @@ pub struct TypedDefaultParameterTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypedDefaultParameterTransport {
+impl RenderableTransport for TypedDefaultParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8593,13 +8591,13 @@ impl ::sittir_core::types::RenderableTransport for TypedDefaultParameterTranspor
 #[derive(Debug, Clone)]
 pub struct TypedParameterTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8612,7 +8610,7 @@ pub struct TypedParameterTransport {
     pub children: ParameterTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for TypedParameterTransport {
+impl RenderableTransport for TypedParameterTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8625,13 +8623,13 @@ impl ::sittir_core::types::RenderableTransport for TypedParameterTransport {
 #[derive(Debug, Clone)]
 pub struct UnaryOperatorTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8642,7 +8640,7 @@ pub struct UnaryOperatorTransport {
     pub argument: PrimaryExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for UnaryOperatorTransport {
+impl RenderableTransport for UnaryOperatorTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8655,13 +8653,13 @@ impl ::sittir_core::types::RenderableTransport for UnaryOperatorTransport {
 #[derive(Debug, Clone)]
 pub struct UnionPatternTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8672,7 +8670,7 @@ pub struct UnionPatternTransport {
     pub children: Vec<SimplePatternTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for UnionPatternTransport {
+impl RenderableTransport for UnionPatternTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8685,13 +8683,13 @@ impl ::sittir_core::types::RenderableTransport for UnionPatternTransport {
 #[derive(Debug, Clone)]
 pub struct UnionTypeTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8702,7 +8700,7 @@ pub struct UnionTypeTransport {
     pub right: TypeTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for UnionTypeTransport {
+impl RenderableTransport for UnionTypeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8715,13 +8713,13 @@ impl ::sittir_core::types::RenderableTransport for UnionTypeTransport {
 #[derive(Debug, Clone)]
 pub struct WhileStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8733,7 +8731,7 @@ pub struct WhileStatementTransport {
     pub alternative: Option<ElseClauseTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for WhileStatementTransport {
+impl RenderableTransport for WhileStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8744,16 +8742,16 @@ impl ::sittir_core::types::RenderableTransport for WhileStatementTransport {
 
 #[derive(Debug, Clone)]
 pub struct WildcardImportTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for WildcardImportTransport {
+impl RenderableTransport for WildcardImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8821,13 +8819,13 @@ impl ::napi::bindgen_prelude::ToNapiValue for WildcardImportTransport {
 #[derive(Debug, Clone)]
 pub struct WithClauseBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8838,7 +8836,7 @@ pub struct WithClauseBareTransport {
     pub children: Vec<WithItemTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithClauseBareTransport {
+impl RenderableTransport for WithClauseBareTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8851,13 +8849,13 @@ impl ::sittir_core::types::RenderableTransport for WithClauseBareTransport {
 #[derive(Debug, Clone)]
 pub struct WithClauseParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8868,7 +8866,7 @@ pub struct WithClauseParenTransport {
     pub children: Vec<WithItemTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithClauseParenTransport {
+impl RenderableTransport for WithClauseParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8907,7 +8905,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WithClauseTransport {
     }
 }
 
-impl ::sittir_core::types::RenderableTransport for WithClauseTransport {
+impl RenderableTransport for WithClauseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8920,13 +8918,13 @@ impl ::sittir_core::types::RenderableTransport for WithClauseTransport {
 #[derive(Debug, Clone)]
 pub struct WithClauseUFormBareTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8937,7 +8935,7 @@ pub struct WithClauseUFormBareTransport {
     pub children: Box<AnyTransport>,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithClauseUFormBareTransport {
+impl RenderableTransport for WithClauseUFormBareTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8950,13 +8948,13 @@ impl ::sittir_core::types::RenderableTransport for WithClauseUFormBareTransport 
 #[derive(Debug, Clone)]
 pub struct WithClauseUFormParenTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8967,7 +8965,7 @@ pub struct WithClauseUFormParenTransport {
     pub children: _WithClauseParenTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithClauseUFormParenTransport {
+impl RenderableTransport for WithClauseUFormParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -8980,13 +8978,13 @@ impl ::sittir_core::types::RenderableTransport for WithClauseUFormParenTransport
 #[derive(Debug, Clone)]
 pub struct WithItemTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -8996,7 +8994,7 @@ pub struct WithItemTransport {
     pub value: ExpressionTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithItemTransport {
+impl RenderableTransport for WithItemTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9009,13 +9007,13 @@ impl ::sittir_core::types::RenderableTransport for WithItemTransport {
 #[derive(Debug, Clone)]
 pub struct WithStatementTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -9027,7 +9025,7 @@ pub struct WithStatementTransport {
     pub body: SuiteTransport,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithStatementTransport {
+impl RenderableTransport for WithStatementTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9040,13 +9038,13 @@ impl ::sittir_core::types::RenderableTransport for WithStatementTransport {
 #[derive(Debug, Clone)]
 pub struct YieldTransport {
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
     pub transport_named: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
     pub transport_text: Option<String>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
@@ -9057,7 +9055,7 @@ pub struct YieldTransport {
     pub children: Option<Box<AnyTransport>>,
 }
 
-impl ::sittir_core::types::RenderableTransport for YieldTransport {
+impl RenderableTransport for YieldTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9068,16 +9066,16 @@ impl ::sittir_core::types::RenderableTransport for YieldTransport {
 
 #[derive(Debug, Clone)]
 pub struct NewlineTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NewlineTransport {
+impl RenderableTransport for NewlineTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9143,16 +9141,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NewlineTransport {
 
 #[derive(Debug, Clone)]
 pub struct IndentTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for IndentTransport {
+impl RenderableTransport for IndentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9218,16 +9216,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for IndentTransport {
 
 #[derive(Debug, Clone)]
 pub struct DedentTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for DedentTransport {
+impl RenderableTransport for DedentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9293,16 +9291,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for DedentTransport {
 
 #[derive(Debug, Clone)]
 pub struct StringStartTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for StringStartTransport {
+impl RenderableTransport for StringStartTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9368,16 +9366,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for StringStartTransport {
 
 #[derive(Debug, Clone)]
 pub struct _StringContentTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for _StringContentTransport {
+impl RenderableTransport for _StringContentTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9443,16 +9441,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for _StringContentTransport {
 
 #[derive(Debug, Clone)]
 pub struct EscapeInterpolationTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for EscapeInterpolationTransport {
+impl RenderableTransport for EscapeInterpolationTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9518,16 +9516,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for EscapeInterpolationTransport {
 
 #[derive(Debug, Clone)]
 pub struct StringEndTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for StringEndTransport {
+impl RenderableTransport for StringEndTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9593,16 +9591,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for StringEndTransport {
 
 #[derive(Debug, Clone)]
 pub struct CloseBracketTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CloseBracketTransport {
+impl RenderableTransport for CloseBracketTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9668,16 +9666,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseBracketTransport {
 
 #[derive(Debug, Clone)]
 pub struct CloseParenTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CloseParenTransport {
+impl RenderableTransport for CloseParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9743,16 +9741,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseParenTransport {
 
 #[derive(Debug, Clone)]
 pub struct CloseBraceTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CloseBraceTransport {
+impl RenderableTransport for CloseBraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9818,16 +9816,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for CloseBraceTransport {
 
 #[derive(Debug, Clone)]
 pub struct ExceptTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExceptTransport {
+impl RenderableTransport for ExceptTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9893,16 +9891,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExceptTransport {
 
 #[derive(Debug, Clone)]
 pub struct AsTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for AsTransport {
+impl RenderableTransport for AsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -9968,16 +9966,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsTransport {
 
 #[derive(Debug, Clone)]
 pub struct EqTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for EqTransport {
+impl RenderableTransport for EqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10043,16 +10041,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for EqTransport {
 
 #[derive(Debug, Clone)]
 pub struct ColonTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ColonTransport {
+impl RenderableTransport for ColonTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10118,16 +10116,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ColonTransport {
 
 #[derive(Debug, Clone)]
 pub struct AsyncTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for AsyncTransport {
+impl RenderableTransport for AsyncTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10193,16 +10191,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for AsyncTransport {
 
 #[derive(Debug, Clone)]
 pub struct BracketTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for BracketTransport {
+impl RenderableTransport for BracketTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10268,16 +10266,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for BracketTransport {
 
 #[derive(Debug, Clone)]
 pub struct TokBsTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for TokBsTransport {
+impl RenderableTransport for TokBsTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10343,16 +10341,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for TokBsTransport {
 
 #[derive(Debug, Clone)]
 pub struct MinusTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for MinusTransport {
+impl RenderableTransport for MinusTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10418,16 +10416,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for MinusTransport {
 
 #[derive(Debug, Clone)]
 pub struct ParenTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ParenTransport {
+impl RenderableTransport for ParenTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10493,16 +10491,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ParenTransport {
 
 #[derive(Debug, Clone)]
 pub struct CommaTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CommaTransport {
+impl RenderableTransport for CommaTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10568,16 +10566,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for CommaTransport {
 
 #[derive(Debug, Clone)]
 pub struct AssertTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for AssertTransport {
+impl RenderableTransport for AssertTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10643,16 +10641,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for AssertTransport {
 
 #[derive(Debug, Clone)]
 pub struct DotTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for DotTransport {
+impl RenderableTransport for DotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10718,16 +10716,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for DotTransport {
 
 #[derive(Debug, Clone)]
 pub struct BreakTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for BreakTransport {
+impl RenderableTransport for BreakTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10793,16 +10791,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for BreakTransport {
 
 #[derive(Debug, Clone)]
 pub struct CaseTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for CaseTransport {
+impl RenderableTransport for CaseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10868,16 +10866,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for CaseTransport {
 
 #[derive(Debug, Clone)]
 pub struct ShrTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ShrTransport {
+impl RenderableTransport for ShrTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -10943,16 +10941,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ShrTransport {
 
 #[derive(Debug, Clone)]
 pub struct ClassTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ClassTransport {
+impl RenderableTransport for ClassTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11018,16 +11016,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ClassTransport {
 
 #[derive(Debug, Clone)]
 pub struct IfTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for IfTransport {
+impl RenderableTransport for IfTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11093,16 +11091,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for IfTransport {
 
 #[derive(Debug, Clone)]
 pub struct ElseTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ElseTransport {
+impl RenderableTransport for ElseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11168,16 +11166,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElseTransport {
 
 #[derive(Debug, Clone)]
 pub struct ContinueTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ContinueTransport {
+impl RenderableTransport for ContinueTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11243,16 +11241,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ContinueTransport {
 
 #[derive(Debug, Clone)]
 pub struct AtTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for AtTransport {
+impl RenderableTransport for AtTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11318,16 +11316,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for AtTransport {
 
 #[derive(Debug, Clone)]
 pub struct DelTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for DelTransport {
+impl RenderableTransport for DelTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11393,16 +11391,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for DelTransport {
 
 #[derive(Debug, Clone)]
 pub struct BraceTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for BraceTransport {
+impl RenderableTransport for BraceTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11468,16 +11466,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for BraceTransport {
 
 #[derive(Debug, Clone)]
 pub struct StarstarTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for StarstarTransport {
+impl RenderableTransport for StarstarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11543,16 +11541,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for StarstarTransport {
 
 #[derive(Debug, Clone)]
 pub struct ElifTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ElifTransport {
+impl RenderableTransport for ElifTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11618,16 +11616,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ElifTransport {
 
 #[derive(Debug, Clone)]
 pub struct EllipsisTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for EllipsisTransport {
+impl RenderableTransport for EllipsisTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11693,16 +11691,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for EllipsisTransport {
 
 #[derive(Debug, Clone)]
 pub struct StarTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for StarTransport {
+impl RenderableTransport for StarTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11768,16 +11766,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for StarTransport {
 
 #[derive(Debug, Clone)]
 pub struct ExecTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ExecTransport {
+impl RenderableTransport for ExecTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11843,16 +11841,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ExecTransport {
 
 #[derive(Debug, Clone)]
 pub struct InTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for InTransport {
+impl RenderableTransport for InTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11918,16 +11916,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for InTransport {
 
 #[derive(Debug, Clone)]
 pub struct False2Transport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for False2Transport {
+impl RenderableTransport for False2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -11993,16 +11991,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for False2Transport {
 
 #[derive(Debug, Clone)]
 pub struct FinallyTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for FinallyTransport {
+impl RenderableTransport for FinallyTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12068,16 +12066,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for FinallyTransport {
 
 #[derive(Debug, Clone)]
 pub struct ForTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ForTransport {
+impl RenderableTransport for ForTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12143,16 +12141,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ForTransport {
 
 #[derive(Debug, Clone)]
 pub struct DefTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for DefTransport {
+impl RenderableTransport for DefTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12218,16 +12216,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for DefTransport {
 
 #[derive(Debug, Clone)]
 pub struct ArrowTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ArrowTransport {
+impl RenderableTransport for ArrowTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12293,16 +12291,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ArrowTransport {
 
 #[derive(Debug, Clone)]
 pub struct FromTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for FromTransport {
+impl RenderableTransport for FromTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12368,16 +12366,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for FromTransport {
 
 #[derive(Debug, Clone)]
 pub struct FutureUTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for FutureUTransport {
+impl RenderableTransport for FutureUTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12443,16 +12441,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for FutureUTransport {
 
 #[derive(Debug, Clone)]
 pub struct ImportTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ImportTransport {
+impl RenderableTransport for ImportTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12518,16 +12516,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ImportTransport {
 
 #[derive(Debug, Clone)]
 pub struct GlobalTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for GlobalTransport {
+impl RenderableTransport for GlobalTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12593,16 +12591,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for GlobalTransport {
 
 #[derive(Debug, Clone)]
 pub struct MatchTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for MatchTransport {
+impl RenderableTransport for MatchTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12668,16 +12666,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for MatchTransport {
 
 #[derive(Debug, Clone)]
 pub struct ColoneqTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ColoneqTransport {
+impl RenderableTransport for ColoneqTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12743,16 +12741,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ColoneqTransport {
 
 #[derive(Debug, Clone)]
 pub struct None2Transport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for None2Transport {
+impl RenderableTransport for None2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12818,16 +12816,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for None2Transport {
 
 #[derive(Debug, Clone)]
 pub struct NonlocalTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NonlocalTransport {
+impl RenderableTransport for NonlocalTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12893,16 +12891,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NonlocalTransport {
 
 #[derive(Debug, Clone)]
 pub struct NotTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for NotTransport {
+impl RenderableTransport for NotTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -12968,16 +12966,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for NotTransport {
 
 #[derive(Debug, Clone)]
 pub struct PassTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for PassTransport {
+impl RenderableTransport for PassTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13043,16 +13041,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for PassTransport {
 
 #[derive(Debug, Clone)]
 pub struct SlashTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for SlashTransport {
+impl RenderableTransport for SlashTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13118,16 +13116,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for SlashTransport {
 
 #[derive(Debug, Clone)]
 pub struct PrintTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for PrintTransport {
+impl RenderableTransport for PrintTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13193,16 +13191,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for PrintTransport {
 
 #[derive(Debug, Clone)]
 pub struct RaiseTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for RaiseTransport {
+impl RenderableTransport for RaiseTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13268,16 +13266,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for RaiseTransport {
 
 #[derive(Debug, Clone)]
 pub struct ReturnTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for ReturnTransport {
+impl RenderableTransport for ReturnTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13343,16 +13341,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for ReturnTransport {
 
 #[derive(Debug, Clone)]
 pub struct AnonymousTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for AnonymousTransport {
+impl RenderableTransport for AnonymousTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13418,16 +13416,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for AnonymousTransport {
 
 #[derive(Debug, Clone)]
 pub struct True2Transport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for True2Transport {
+impl RenderableTransport for True2Transport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13493,16 +13491,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for True2Transport {
 
 #[derive(Debug, Clone)]
 pub struct TryTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for TryTransport {
+impl RenderableTransport for TryTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13568,16 +13566,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for TryTransport {
 
 #[derive(Debug, Clone)]
 pub struct PipeTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for PipeTransport {
+impl RenderableTransport for PipeTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13643,16 +13641,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for PipeTransport {
 
 #[derive(Debug, Clone)]
 pub struct WhileTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for WhileTransport {
+impl RenderableTransport for WhileTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13718,16 +13716,16 @@ impl ::napi::bindgen_prelude::ToNapiValue for WhileTransport {
 
 #[derive(Debug, Clone)]
 pub struct WithTransport {
-    pub transport_source: Option<::sittir_core::types::Source>,
+    pub transport_source: Option<Source>,
     pub transport_named: Option<bool>,
-    pub transport_span: Option<::sittir_core::types::Span>,
+    pub transport_span: Option<Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
     pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
-impl ::sittir_core::types::RenderableTransport for WithTransport {
+impl RenderableTransport for WithTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -13823,7 +13821,7 @@ impl ::askama::FastWritable for Renderable<'_> {
 fn render__as_pattern_transport(node: &_AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = _AsPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -13835,22 +13833,22 @@ fn render__as_pattern_transport(node: &_AsPatternTransport, dest: &mut dyn ::std
 
 fn render_assignment_eq_transport(node: &AssignmentEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AssignmentEqTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
 fn render_assignment_type_transport(node: &AssignmentTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AssignmentTypeTemplate {
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
     };
     template.render_into(dest)
 }
 
 fn render_assignment_typed_transport(node: &AssignmentTypedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AssignmentTypedTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
     };
     template.render_into(dest)
 }
@@ -13876,7 +13874,7 @@ fn render_comprehension_clauses_transport(node: &ComprehensionClausesTransport, 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ComprehensionClausesTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -13920,7 +13918,7 @@ fn render__list_pattern_transport(node: &_ListPatternTransport, dest: &mut dyn :
 fn render_match_block_transport(node: &MatchBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = MatchBlockTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -13935,7 +13933,7 @@ fn render_match_block_block_transport(node: &MatchBlockBlockTransport, dest: &mu
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchBlockBlockTemplate {
-        alternative: ::sittir_core::filters::ListNonterminalView {
+        alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
             separator: "",
             leading: false,
@@ -13965,7 +13963,7 @@ fn render_simple_statements_transport(node: &SimpleStatementsTransport, dest: &m
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SimpleStatementsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -13978,7 +13976,7 @@ fn render_simple_statements_transport(node: &SimpleStatementsTransport, dest: &m
 fn render_suite_transport(node: &SuiteTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = SuiteTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14008,7 +14006,7 @@ fn render__with_clause_paren_transport(node: &_WithClauseParenTransport, dest: &
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = _WithClauseParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -14020,8 +14018,8 @@ fn render__with_clause_paren_transport(node: &_WithClauseParenTransport, dest: &
 
 fn render_aliased_import_transport(node: &AliasedImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AliasedImportTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alias)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
     };
     template.render_into(dest)
 }
@@ -14032,7 +14030,7 @@ fn render_argument_list_transport(node: &ArgumentListTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ArgumentListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14044,8 +14042,8 @@ fn render_argument_list_transport(node: &ArgumentListTransport, dest: &mut dyn :
 
 fn render_as_pattern_transport(node: &AsPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AsPatternTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.alias.as_ref())),
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.alias.as_ref())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -14055,7 +14053,7 @@ fn render_assert_statement_transport(node: &AssertStatementTransport, dest: &mut
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = AssertStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14076,13 +14074,13 @@ fn render_assignment_transport(t: &AssignmentTransport, dest: &mut dyn ::std::fm
 fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = AssignmentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
     template.render_into(dest)
 }
@@ -14090,13 +14088,13 @@ fn render_assignment_uform_eq_transport(node: &AssignmentUFormEqTransport, dest:
 fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = AssignmentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
     template.render_into(dest)
 }
@@ -14104,48 +14102,48 @@ fn render_assignment_uform_type_transport(node: &AssignmentUFormTypeTransport, d
 fn render_assignment_uform_typed_transport(node: &AssignmentUFormTypedTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = AssignmentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
     };
     template.render_into(dest)
 }
 
 fn render_attribute_transport(node: &AttributeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AttributeTemplate {
-        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
-        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
+        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.attribute)),
+        object: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.object)),
     };
     template.render_into(dest)
 }
 
 fn render_augmented_assignment_transport(node: &AugmentedAssignmentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AugmentedAssignmentTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
 
 fn render_await_transport(node: &AwaitTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = AwaitTemplate {
-        primary_expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression)),
+        primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.primary_expression)),
     };
     template.render_into(dest)
 }
 
 fn render_binary_operator_transport(node: &BinaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BinaryOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: ::sittir_core::filters::SingleNonterminalView(
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        operator: SingleNonterminalView(
             if node.operator { ::sittir_core::filters::Renderable::Text("+") } else { ::sittir_core::filters::Renderable::Text("") }
         ),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
@@ -14155,7 +14153,7 @@ fn render_block_transport(node: &BlockTransport, dest: &mut dyn ::std::fmt::Writ
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = BlockTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14167,11 +14165,11 @@ fn render_block_transport(node: &BlockTransport, dest: &mut dyn ::std::fmt::Writ
 
 fn render_boolean_operator_transport(node: &BooleanOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = BooleanOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operator: ::sittir_core::filters::SingleNonterminalView(
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        operator: SingleNonterminalView(
             if node.operator { ::sittir_core::filters::Renderable::Text("and") } else { ::sittir_core::filters::Renderable::Text("") }
         ),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
@@ -14182,8 +14180,8 @@ fn render_break_statement_transport(t: &BreakStatementTransport, dest: &mut dyn 
 
 fn render_call_transport(node: &CallTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = CallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.arguments.as_ref())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
+        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.arguments.as_ref())),
+        function: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.function)),
     };
     template.render_into(dest)
 }
@@ -14193,16 +14191,16 @@ fn render_case_clause_transport(node: &CaseClauseTransport, dest: &mut dyn ::std
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = CaseClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
         guard: match &node.guard {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14211,7 +14209,7 @@ fn render_case_clause_transport(node: &CaseClauseTransport, dest: &mut dyn ::std
 fn render_case_pattern_transport(node: &CasePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = CasePatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14223,22 +14221,22 @@ fn render_case_pattern_transport(node: &CasePatternTransport, dest: &mut dyn ::s
 
 fn render_chevron_transport(node: &ChevronTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ChevronTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
 
 fn render_class_definition_transport(node: &ClassDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ClassDefinitionTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
         superclasses: match &node.superclasses {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         type_parameters: match &node.type_parameters {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14249,13 +14247,13 @@ fn render_class_pattern_transport(node: &ClassPatternTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ClassPatternTemplate {
-        arguments: ::sittir_core::filters::ListNonterminalView {
+        arguments: ListNonterminalView {
             items: arguments_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        dotted_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.dotted_name)),
+        dotted_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.dotted_name)),
     };
     template.render_into(dest)
 }
@@ -14272,14 +14270,14 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport, dest
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ComparisonOperatorTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        operators: ::sittir_core::filters::ListNonterminalView {
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        operators: ListNonterminalView {
             items: operators_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14292,16 +14290,16 @@ fn render_comparison_operator_transport(node: &ComparisonOperatorTransport, dest
 fn render_complex_pattern_transport(node: &ComplexPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = ComplexPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        imaginary: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
+        imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.imaginary)),
         real: match &node.real {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14312,7 +14310,7 @@ fn render_concatenated_string_transport(node: &ConcatenatedStringTransport, dest
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ConcatenatedStringTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14324,17 +14322,17 @@ fn render_concatenated_string_transport(node: &ConcatenatedStringTransport, dest
 
 fn render_conditional_expression_transport(node: &ConditionalExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ConditionalExpressionTemplate {
-        alternative: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.alternative)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
     template.render_into(dest)
 }
 
 fn render_constrained_type_transport(node: &ConstrainedTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ConstrainedTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
-        constraint: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.constraint)),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
+        constraint: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.constraint)),
     };
     template.render_into(dest)
 }
@@ -14348,23 +14346,23 @@ fn render_decorated_definition_transport(node: &DecoratedDefinitionTransport, de
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DecoratedDefinitionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        definition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition)),
+        definition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.definition)),
     };
     template.render_into(dest)
 }
 
 fn render_decorator_transport(node: &DecoratorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DecoratorTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
         newline: match &node.newline {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14372,8 +14370,8 @@ fn render_decorator_transport(node: &DecoratorTransport, dest: &mut dyn ::std::f
 
 fn render_default_parameter_transport(node: &DefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -14381,7 +14379,7 @@ fn render_default_parameter_transport(node: &DefaultParameterTransport, dest: &m
 fn render_delete_statement_transport(node: &DeleteStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = DeleteStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14396,7 +14394,7 @@ fn render_dict_pattern_transport(node: &DictPatternTransport, dest: &mut dyn ::s
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -14411,7 +14409,7 @@ fn render_dictionary_transport(node: &DictionaryTransport, dest: &mut dyn ::std:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DictionaryTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -14424,20 +14422,20 @@ fn render_dictionary_transport(node: &DictionaryTransport, dest: &mut dyn ::std:
 fn render_dictionary_comprehension_transport(node: &DictionaryComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = DictionaryComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
 
 fn render_dictionary_splat_transport(node: &DictionarySplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = DictionarySplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -14445,7 +14443,7 @@ fn render_dictionary_splat_transport(node: &DictionarySplatTransport, dest: &mut
 fn render_dictionary_splat_pattern_transport(node: &DictionarySplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = DictionarySplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14460,7 +14458,7 @@ fn render_dotted_name_transport(node: &DottedNameTransport, dest: &mut dyn ::std
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = DottedNameTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ".",
             leading: false,
@@ -14472,8 +14470,8 @@ fn render_dotted_name_transport(node: &DottedNameTransport, dest: &mut dyn ::std
 
 fn render_elif_clause_transport(node: &ElifClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElifClauseTemplate {
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
     };
     template.render_into(dest)
 }
@@ -14484,7 +14482,7 @@ fn render_ellipsis2_transport(t: &Ellipsis2Transport, dest: &mut dyn ::std::fmt:
 
 fn render_else_clause_transport(node: &ElseClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ElseClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
@@ -14500,17 +14498,17 @@ fn render_except_clause_transport(node: &ExceptClauseTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExceptClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
         alias: match &node.alias {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
-        value: ::sittir_core::filters::ListNonterminalView {
+        value: ListNonterminalView {
             items: value_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14526,8 +14524,8 @@ fn render_exec_statement_transport(node: &ExecStatementTransport, dest: &mut dyn
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExecStatementTemplate {
-        code: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
-        in_clause: ::sittir_core::filters::ListNonterminalView {
+        code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
+        in_clause: ListNonterminalView {
             items: in_clause_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14542,7 +14540,7 @@ fn render_expression_list_transport(node: &ExpressionListTransport, dest: &mut d
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExpressionListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14557,7 +14555,7 @@ fn render_expression_statement_tuple_transport(node: &ExpressionStatementTupleTr
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ExpressionStatementTupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -14576,7 +14574,7 @@ fn render_expression_statement_transport(t: &ExpressionStatementTransport, dest:
 fn render_expression_statement_uform_tuple_transport(node: &ExpressionStatementUFormTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
     let template = ExpressionStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14593,7 +14591,7 @@ fn render_false_transport(t: &FalseTransport, dest: &mut dyn ::std::fmt::Write) 
 
 fn render_finally_clause_transport(node: &FinallyClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FinallyClauseTemplate {
-        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
+        block: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.block)),
     };
     template.render_into(dest)
 }
@@ -14608,11 +14606,11 @@ fn render_for_in_clause_transport(node: &ForInClauseTransport, dest: &mut dyn ::
         .collect();
     let template = ForInClauseTemplate {
         async_marker: match node.async_marker {
-            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
-            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(true) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => OptionalNonterminalView::Missing,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: ::sittir_core::filters::ListNonterminalView {
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        right: ListNonterminalView {
             items: right_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14625,16 +14623,16 @@ fn render_for_in_clause_transport(node: &ForInClauseTransport, dest: &mut dyn ::
 fn render_for_statement_transport(node: &ForStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ForStatementTemplate {
         alternative: match &node.alternative {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         async_marker: match node.async_marker {
-            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
-            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(true) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
@@ -14644,7 +14642,7 @@ fn render_format_specifier_transport(node: &FormatSpecifierTransport, dest: &mut
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FormatSpecifierTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14657,19 +14655,19 @@ fn render_format_specifier_transport(node: &FormatSpecifierTransport, dest: &mut
 fn render_function_definition_transport(node: &FunctionDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = FunctionDefinitionTemplate {
         async_marker: match node.async_marker {
-            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
-            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(true) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.parameters)),
         return_type: match &node.return_type {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         type_parameters: match &node.type_parameters {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14680,7 +14678,7 @@ fn render_future_import_statement_transport(node: &FutureImportStatementTranspor
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = FutureImportStatementTemplate {
-        name: ::sittir_core::filters::ListNonterminalView {
+        name: ListNonterminalView {
             items: name_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14693,21 +14691,21 @@ fn render_future_import_statement_transport(node: &FutureImportStatementTranspor
 fn render_generator_expression_transport(node: &GeneratorExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = GeneratorExpressionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
 
 fn render_generic_type_transport(node: &GenericTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = GenericTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        type_parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameter)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        type_parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.type_parameter)),
     };
     template.render_into(dest)
 }
@@ -14717,7 +14715,7 @@ fn render_global_statement_transport(node: &GlobalStatementTransport, dest: &mut
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = GlobalStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14733,7 +14731,7 @@ fn render_identifier_transport(t: &IdentifierTransport, dest: &mut dyn ::std::fm
 
 fn render_if_clause_transport(node: &IfClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = IfClauseTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -14744,14 +14742,14 @@ fn render_if_statement_transport(node: &IfStatementTransport, dest: &mut dyn ::s
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = IfStatementTemplate {
-        alternative: ::sittir_core::filters::ListNonterminalView {
+        alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.consequence)),
     };
     template.render_into(dest)
 }
@@ -14761,14 +14759,14 @@ fn render_import_from_statement_transport(node: &ImportFromStatementTransport, d
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ImportFromStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        module_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.module_name.as_ref())),
-        name: ::sittir_core::filters::ListNonterminalView {
+        module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.module_name.as_ref())),
+        name: ListNonterminalView {
             items: &[],
             separator: "",
             leading: false,
@@ -14787,7 +14785,7 @@ fn render_import_statement_transport(node: &ImportStatementTransport, dest: &mut
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ImportStatementTemplate {
-        name: ::sittir_core::filters::ListNonterminalView {
+        name: ListNonterminalView {
             items: name_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14803,14 +14801,14 @@ fn render_integer_transport(t: &IntegerTransport, dest: &mut dyn ::std::fmt::Wri
 
 fn render_interpolation_transport(node: &InterpolationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = InterpolationTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
         format_specifier: match &node.format_specifier {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         type_conversion: match &node.type_conversion {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14818,16 +14816,16 @@ fn render_interpolation_transport(node: &InterpolationTransport, dest: &mut dyn 
 
 fn render_keyword_argument_transport(node: &KeywordArgumentTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = KeywordArgumentTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
 
 fn render_keyword_pattern_transport(node: &KeywordPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = KeywordPatternTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
-        simple_pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_pattern)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        simple_pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.simple_pattern)),
     };
     template.render_into(dest)
 }
@@ -14838,10 +14836,10 @@ fn render_keyword_separator_transport(t: &KeywordSeparatorTransport, dest: &mut 
 
 fn render_lambda_transport(node: &LambdaTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LambdaTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14852,7 +14850,7 @@ fn render_lambda_parameters_transport(node: &LambdaParametersTransport, dest: &m
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = LambdaParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -14864,10 +14862,10 @@ fn render_lambda_parameters_transport(node: &LambdaParametersTransport, dest: &m
 
 fn render_lambda_within_for_in_clause_transport(node: &LambdaWithinForInClauseTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = LambdaWithinForInClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         parameters: match &node.parameters {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -14882,7 +14880,7 @@ fn render_list_transport(node: &ListTransport, dest: &mut dyn ::std::fmt::Write)
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14895,13 +14893,13 @@ fn render_list_transport(node: &ListTransport, dest: &mut dyn ::std::fmt::Write)
 fn render_list_comprehension_transport(node: &ListComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = ListComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
@@ -14911,7 +14909,7 @@ fn render_list_pattern_transport(node: &ListPatternTransport, dest: &mut dyn ::s
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ListPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14923,7 +14921,7 @@ fn render_list_pattern_transport(node: &ListPatternTransport, dest: &mut dyn ::s
 
 fn render_list_splat_transport(node: &ListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = ListSplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.expression)),
     };
     template.render_into(dest)
 }
@@ -14931,7 +14929,7 @@ fn render_list_splat_transport(node: &ListSplatTransport, dest: &mut dyn ::std::
 fn render_list_splat_pattern_transport(node: &ListSplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = ListSplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14946,8 +14944,8 @@ fn render_match_statement_transport(node: &MatchStatementTransport, dest: &mut d
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = MatchStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        subject: ::sittir_core::filters::ListNonterminalView {
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        subject: ListNonterminalView {
             items: subject_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14959,8 +14957,8 @@ fn render_match_statement_transport(node: &MatchStatementTransport, dest: &mut d
 
 fn render_member_type_transport(node: &MemberTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = MemberTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.base_type)),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.identifier)),
     };
     template.render_into(dest)
 }
@@ -14970,7 +14968,7 @@ fn render_module_transport(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Wr
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ModuleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -14982,8 +14980,8 @@ fn render_module_transport(node: &ModuleTransport, dest: &mut dyn ::std::fmt::Wr
 
 fn render_named_expression_transport(node: &NamedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = NamedExpressionTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -14997,7 +14995,7 @@ fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport, dest: 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = NonlocalStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15009,15 +15007,15 @@ fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport, dest: 
 
 fn render_not_operator_transport(node: &NotOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = NotOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
     };
     template.render_into(dest)
 }
 
 fn render_pair_transport(node: &PairTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = PairTemplate {
-        key: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key)),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        key: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.key)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -15027,7 +15025,7 @@ fn render_parameters_transport(node: &ParametersTransport, dest: &mut dyn ::std:
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = ParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15040,7 +15038,7 @@ fn render_parameters_transport(node: &ParametersTransport, dest: &mut dyn ::std:
 fn render_parenthesized_expression_transport(node: &ParenthesizedExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = ParenthesizedExpressionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15053,7 +15051,7 @@ fn render_parenthesized_expression_transport(node: &ParenthesizedExpressionTrans
 fn render_parenthesized_list_splat_transport(node: &ParenthesizedListSplatTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = ParenthesizedListSplatTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15072,7 +15070,7 @@ fn render_pattern_list_transport(node: &PatternListTransport, dest: &mut dyn ::s
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PatternListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15092,13 +15090,13 @@ fn render_print_statement_transport(node: &PrintStatementTransport, dest: &mut d
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = PrintStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        argument: ::sittir_core::filters::ListNonterminalView {
+        argument: ListNonterminalView {
             items: argument_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15111,15 +15109,15 @@ fn render_print_statement_transport(node: &PrintStatementTransport, dest: &mut d
 fn render_raise_statement_transport(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
     let template = RaiseStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
         cause: match &node.cause {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -15128,10 +15126,10 @@ fn render_raise_statement_transport(node: &RaiseStatementTransport, dest: &mut d
 fn render_relative_import_transport(node: &RelativeImportTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = RelativeImportTemplate {
         dotted_name: match &node.dotted_name {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
-        import_prefix: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_prefix)),
+        import_prefix: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.import_prefix)),
     };
     template.render_into(dest)
 }
@@ -15139,7 +15137,7 @@ fn render_relative_import_transport(node: &RelativeImportTransport, dest: &mut d
 fn render_return_statement_transport(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
     let template = ReturnStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15154,7 +15152,7 @@ fn render_set_transport(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SetTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -15167,13 +15165,13 @@ fn render_set_transport(node: &SetTransport, dest: &mut dyn ::std::fmt::Write) -
 fn render_set_comprehension_transport(node: &SetComprehensionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = SetComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
     };
     template.render_into(dest)
 }
@@ -15181,16 +15179,16 @@ fn render_set_comprehension_transport(node: &SetComprehensionTransport, dest: &m
 fn render_slice_transport(node: &SliceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SliceTemplate {
         start: match &node.start {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         step: match &node.step {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
         stop: match &node.stop {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -15199,20 +15197,20 @@ fn render_slice_transport(node: &SliceTransport, dest: &mut dyn ::std::fmt::Writ
 fn render_splat_pattern_transport(node: &SplatPatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = Vec::new();
     let template = SplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
     };
     template.render_into(dest)
 }
 
 fn render_splat_type_transport(node: &SplatTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = SplatTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.identifier.as_ref())),
     };
     template.render_into(dest)
 }
@@ -15229,7 +15227,7 @@ fn render_string_content_transport(node: &StringContentTransport, dest: &mut dyn
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = StringContentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15244,13 +15242,13 @@ fn render_subscript_transport(node: &SubscriptTransport, dest: &mut dyn ::std::f
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = SubscriptTemplate {
-        subscript: ::sittir_core::filters::ListNonterminalView {
+        subscript: ListNonterminalView {
             items: subscript_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -15264,20 +15262,20 @@ fn render_try_statement_transport(node: &TryStatementTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TryStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         else_clause: match &node.else_clause {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
-        except_clauses: ::sittir_core::filters::ListNonterminalView {
+        except_clauses: ListNonterminalView {
             items: except_clauses_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
         finally_clause: match &node.finally_clause {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
     };
     template.render_into(dest)
@@ -15288,7 +15286,7 @@ fn render_tuple_transport(node: &TupleTransport, dest: &mut dyn ::std::fmt::Writ
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15303,7 +15301,7 @@ fn render_tuple_pattern_transport(node: &TuplePatternTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15316,7 +15314,7 @@ fn render_tuple_pattern_transport(node: &TuplePatternTransport, dest: &mut dyn :
 fn render_type_transport(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = TypeTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15328,9 +15326,9 @@ fn render_type_transport(node: &TypeTransport, dest: &mut dyn ::std::fmt::Write)
 
 fn render_type_alias_statement_transport(node: &TypeAliasStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypeAliasStatementTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
-        r#type: ::sittir_core::filters::SingleNonterminalView(
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        r#type: SingleNonterminalView(
             if node.r#type { ::sittir_core::filters::Renderable::Text("type") } else { ::sittir_core::filters::Renderable::Text("") }
         ),
     };
@@ -15346,7 +15344,7 @@ fn render_type_parameter_transport(node: &TypeParameterTransport, dest: &mut dyn
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TypeParameterTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -15358,9 +15356,9 @@ fn render_type_parameter_transport(node: &TypeParameterTransport, dest: &mut dyn
 
 fn render_typed_default_parameter_transport(node: &TypedDefaultParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = TypedDefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.name)),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -15368,21 +15366,21 @@ fn render_typed_default_parameter_transport(node: &TypedDefaultParameterTranspor
 fn render_typed_parameter_transport(node: &TypedParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = TypedParameterTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
             trailing: false,
         },
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.r#type)),
     };
     template.render_into(dest)
 }
 
 fn render_unary_operator_transport(node: &UnaryOperatorTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = UnaryOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.argument)),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.operator)),
     };
     template.render_into(dest)
 }
@@ -15392,7 +15390,7 @@ fn render_union_pattern_transport(node: &UnionPatternTransport, dest: &mut dyn :
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = UnionPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15404,8 +15402,8 @@ fn render_union_pattern_transport(node: &UnionPatternTransport, dest: &mut dyn :
 
 fn render_union_type_transport(node: &UnionTypeTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = UnionTypeTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.right)),
     };
     template.render_into(dest)
 }
@@ -15413,11 +15411,11 @@ fn render_union_type_transport(node: &UnionTypeTransport, dest: &mut dyn ::std::
 fn render_while_statement_transport(node: &WhileStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = WhileStatementTemplate {
         alternative: match &node.alternative {
-            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
-            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(v) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v)),
+            None => OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.condition)),
     };
     template.render_into(dest)
 }
@@ -15431,7 +15429,7 @@ fn render_with_clause_bare_transport(node: &WithClauseBareTransport, dest: &mut 
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = WithClauseBareTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -15446,7 +15444,7 @@ fn render_with_clause_paren_transport(node: &WithClauseParenTransport, dest: &mu
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = WithClauseParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: ",",
             leading: false,
@@ -15466,7 +15464,7 @@ fn render_with_clause_transport(t: &WithClauseTransport, dest: &mut dyn ::std::f
 fn render_with_clause_uform_bare_transport(node: &WithClauseUFormBareTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(node.children.as_ref())];
     let template = WithClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15479,7 +15477,7 @@ fn render_with_clause_uform_bare_transport(node: &WithClauseUFormBareTransport, 
 fn render_with_clause_uform_paren_transport(node: &WithClauseUFormParenTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = WithClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15491,7 +15489,7 @@ fn render_with_clause_uform_paren_transport(node: &WithClauseUFormParenTransport
 
 fn render_with_item_transport(node: &WithItemTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = WithItemTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.value)),
     };
     template.render_into(dest)
 }
@@ -15499,11 +15497,11 @@ fn render_with_item_transport(node: &WithItemTransport, dest: &mut dyn ::std::fm
 fn render_with_statement_transport(node: &WithStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let template = WithStatementTemplate {
         async_marker: match node.async_marker {
-            Some(true) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
-            _ => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            Some(true) => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text("async")),
+            _ => OptionalNonterminalView::Missing,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
-        with_clause: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.with_clause.as_ref())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
+        with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.with_clause.as_ref())),
     };
     template.render_into(dest)
 }
@@ -15511,7 +15509,7 @@ fn render_with_statement_transport(node: &WithStatementTransport, dest: &mut dyn
 fn render_yield_transport(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c.as_ref())).collect();
     let template = YieldTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_buf.as_slice(),
             separator: "",
             leading: false,
@@ -15979,7 +15977,7 @@ pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::a
     Ok(s)
 }
 
-impl ::sittir_core::types::RenderableTransport for AnyTransport {
+impl RenderableTransport for AnyTransport {
     fn render_into(
         &self,
         dest: &mut dyn ::std::fmt::Write,
@@ -16216,16 +16214,16 @@ use ::std::collections::HashMap as TransportHashMap;
 
 fn transport_node_data(
     kind: TransportKindId,
-    source: Option<TransportSource>,
+    source: Option<Source>,
     named: Option<bool>,
     default_named: bool,
     text: Option<String>,
-    span: Option<::sittir_core::types::Span>,
+    span: Option<Span>,
     node_handle: Option<u32>,
     child_index: Option<u16>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
-    trivia_data: Option<::sittir_core::types::NodeTrivia>,
+    trivia_data: Option<NodeTrivia>,
 ) -> TransportNodeData {
     TransportNodeData {
         type_: kind,
@@ -16498,7 +16496,7 @@ fn transport_to_node__as_pattern(transport: _AsPatternTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![_as_pattern_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(165) /* "_as_pattern" */,
         transport.transport_source,
@@ -16519,7 +16517,7 @@ fn transport_to_node_assignment_eq(transport: AssignmentEqTransport) -> Result<T
     fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(240) /* "_assignment_eq" */,
         transport.transport_source,
@@ -16540,7 +16538,7 @@ fn transport_to_node_assignment_type(transport: AssignmentTypeTransport) -> Resu
     fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(241) /* "_assignment_type" */,
         transport.transport_source,
@@ -16562,7 +16560,7 @@ fn transport_to_node_assignment_typed(transport: AssignmentTypedTransport) -> Re
     fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(242) /* "_assignment_typed" */,
         transport.transport_source,
@@ -16646,7 +16644,7 @@ fn transport_to_node_comprehension_clauses(transport: ComprehensionClausesTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| comprehension_clauses_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(224) /* "_comprehension_clauses" */,
         transport.transport_source,
@@ -16683,7 +16681,7 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(116) /* "_import_list" */,
         transport.transport_source,
@@ -16700,7 +16698,7 @@ fn transport_to_node_import_list(transport: ImportListTransport) -> Result<Trans
 }
 
 fn transport_to_node_is_not(transport: IsNotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(194) /* "_is_not" */,
         transport.transport_source,
@@ -16722,7 +16720,7 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
     fields.insert("value".to_string(), transport_field_value(AnyTransport::CasePattern(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(170) /* "_key_value_pattern" */,
         transport.transport_source,
@@ -16739,7 +16737,7 @@ fn transport_to_node_key_value_pattern(transport: KeyValuePatternTransport) -> R
 }
 
 fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(250) /* "_kw_async_marker" */,
         transport.transport_source,
@@ -16756,7 +16754,7 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
 }
 
 fn transport_to_node_kw_type(transport: KwTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(251) /* "_kw_type" */,
         transport.transport_source,
@@ -16776,7 +16774,7 @@ fn transport_to_node__list_pattern(transport: _ListPatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(167) /* "_list_pattern" */,
         transport.transport_source,
@@ -16796,7 +16794,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::MatchBlockBlock(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(135) /* "_match_block" */,
         transport.transport_source,
@@ -16817,7 +16815,7 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
     fields.insert("alternative".to_string(), transport_field_values(transport.alternative.into_iter().map(|v| AnyTransport::CaseClause(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(246) /* "_match_block_block" */,
         transport.transport_source,
@@ -16834,7 +16832,7 @@ fn transport_to_node_match_block_block(transport: MatchBlockBlockTransport) -> R
 }
 
 fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(235) /* "_not_escape_sequence" */,
         transport.transport_source,
@@ -16851,7 +16849,7 @@ fn transport_to_node_not_escape_sequence(transport: NotEscapeSequenceTransport) 
 }
 
 fn transport_to_node_not_in(transport: NotInTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(193) /* "_not_in" */,
         transport.transport_source,
@@ -16871,7 +16869,7 @@ fn transport_to_node_simple_pattern_negative(transport: SimplePatternNegativeTra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![primary_expression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(248) /* "_simple_pattern_negative" */,
         transport.transport_source,
@@ -16891,7 +16889,7 @@ fn transport_to_node_simple_statements(transport: SimpleStatementsTransport) -> 
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| simple_statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(110) /* "_simple_statements" */,
         transport.transport_source,
@@ -16911,7 +16909,7 @@ fn transport_to_node_suite(transport: SuiteTransport) -> Result<TransportNodeDat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![suite_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "_suite" — no parser symbol */,
         transport.transport_source,
@@ -16931,7 +16929,7 @@ fn transport_to_node__tuple_pattern(transport: _TuplePatternTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(168) /* "_tuple_pattern" */,
         transport.transport_source,
@@ -16983,7 +16981,7 @@ fn transport_to_node__with_clause_paren(transport: _WithClauseParenTransport) ->
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(245) /* "_with_clause_paren" */,
         transport.transport_source,
@@ -17005,7 +17003,7 @@ fn transport_to_node_aliased_import(transport: AliasedImportTransport) -> Result
     fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(117) /* "aliased_import" */,
         transport.transport_source,
@@ -17028,7 +17026,7 @@ fn transport_to_node_argument_list(transport: ArgumentListTransport) -> Result<T
         Some(c) => Some(transport_children(c.into_iter().map(|v| argument_list_child_transport_to_any(v)).collect::<Vec<_>>())?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(157) /* "argument_list" */,
         transport.transport_source,
@@ -17050,7 +17048,7 @@ fn transport_to_node_as_pattern(transport: AsPatternTransport) -> Result<Transpo
     fields.insert("alias".to_string(), transport_field_value(*transport.alias)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(185) /* "as_pattern" */,
         transport.transport_source,
@@ -17070,7 +17068,7 @@ fn transport_to_node_assert_statement(transport: AssertStatementTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(121) /* "assert_statement" */,
         transport.transport_source,
@@ -17099,7 +17097,7 @@ fn transport_to_node_assignment_uform_eq(transport: AssignmentUFormEqTransport) 
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::AssignmentEq(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -17120,7 +17118,7 @@ fn transport_to_node_assignment_uform_type(transport: AssignmentUFormTypeTranspo
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::AssignmentType(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -17141,7 +17139,7 @@ fn transport_to_node_assignment_uform_typed(transport: AssignmentUFormTypedTrans
     fields.insert("left".to_string(), transport_field_value(left_hand_side_transport_to_any(transport.left))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::AssignmentTyped(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(198) /* "assignment" */,
         transport.transport_source,
@@ -17163,7 +17161,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
     fields.insert("attribute".to_string(), transport_field_value(AnyTransport::Identifier(transport.attribute))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(203) /* "attribute" */,
         transport.transport_source,
@@ -17186,7 +17184,7 @@ fn transport_to_node_augmented_assignment(transport: AugmentedAssignmentTranspor
     fields.insert("right".to_string(), transport_field_value(right_hand_side_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(199) /* "augmented_assignment" */,
         transport.transport_source,
@@ -17207,7 +17205,7 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
     fields.insert("primary_expression".to_string(), transport_field_value(primary_expression_transport_to_any(transport.primary_expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(237) /* "await" */,
         transport.transport_source,
@@ -17230,7 +17228,7 @@ fn transport_to_node_binary_operator(transport: BinaryOperatorTransport) -> Resu
     fields.insert("right".to_string(), transport_field_value(primary_expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(191) /* "binary_operator" */,
         transport.transport_source,
@@ -17250,7 +17248,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(160) /* "block" */,
         transport.transport_source,
@@ -17273,7 +17271,7 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(190) /* "boolean_operator" */,
         transport.transport_source,
@@ -17290,7 +17288,7 @@ fn transport_to_node_boolean_operator(transport: BooleanOperatorTransport) -> Re
 }
 
 fn transport_to_node_break_statement(transport: BreakStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(129) /* "break_statement" */,
         transport.transport_source,
@@ -17312,7 +17310,7 @@ fn transport_to_node_call(transport: CallTransport) -> Result<TransportNodeData,
     fields.insert("arguments".to_string(), transport_field_value(*transport.arguments)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(206) /* "call" */,
         transport.transport_source,
@@ -17336,7 +17334,7 @@ fn transport_to_node_case_clause(transport: CaseClauseTransport) -> Result<Trans
     fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(136) /* "case_clause" */,
         transport.transport_source,
@@ -17356,7 +17354,7 @@ fn transport_to_node_case_pattern(transport: CasePatternTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![case_pattern_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(163) /* "case_pattern" */,
         transport.transport_source,
@@ -17377,7 +17375,7 @@ fn transport_to_node_chevron(transport: ChevronTransport) -> Result<TransportNod
     fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(120) /* "chevron" */,
         transport.transport_source,
@@ -17405,7 +17403,7 @@ fn transport_to_node_class_definition(transport: ClassDefinitionTransport) -> Re
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(154) /* "class_definition" */,
         transport.transport_source,
@@ -17427,7 +17425,7 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
     fields.insert("arguments".to_string(), transport_field_values(transport.arguments.into_iter().map(|v| AnyTransport::CasePattern(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(173) /* "class_pattern" */,
         transport.transport_source,
@@ -17444,7 +17442,7 @@ fn transport_to_node_class_pattern(transport: ClassPatternTransport) -> Result<T
 }
 
 fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(99) /* "comment" */,
         transport.transport_source,
@@ -17466,7 +17464,7 @@ fn transport_to_node_comparison_operator(transport: ComparisonOperatorTransport)
     fields.insert("operators".to_string(), transport_field_values(transport.operators)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| primary_expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(195) /* "comparison_operator" */,
         transport.transport_source,
@@ -17490,7 +17488,7 @@ fn transport_to_node_complex_pattern(transport: ComplexPatternTransport) -> Resu
     fields.insert("imaginary".to_string(), transport_field_value(primary_expression_transport_to_any(transport.imaginary))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![primary_expression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(174) /* "complex_pattern" */,
         transport.transport_source,
@@ -17510,7 +17508,7 @@ fn transport_to_node_concatenated_string(transport: ConcatenatedStringTransport)
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::String(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(230) /* "concatenated_string" */,
         transport.transport_source,
@@ -17533,7 +17531,7 @@ fn transport_to_node_conditional_expression(transport: ConditionalExpressionTran
     fields.insert("alternative".to_string(), transport_field_value(expression_transport_to_any(transport.alternative))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(229) /* "conditional_expression" */,
         transport.transport_source,
@@ -17555,7 +17553,7 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
     fields.insert("constraint".to_string(), transport_field_value(AnyTransport::Type(transport.constraint))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(212) /* "constrained_type" */,
         transport.transport_source,
@@ -17572,7 +17570,7 @@ fn transport_to_node_constrained_type(transport: ConstrainedTypeTransport) -> Re
 }
 
 fn transport_to_node_continue_statement(transport: ContinueStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(130) /* "continue_statement" */,
         transport.transport_source,
@@ -17593,7 +17591,7 @@ fn transport_to_node_decorated_definition(transport: DecoratedDefinitionTranspor
     fields.insert("definition".to_string(), transport_field_value(compound_statement_transport_to_any(transport.definition))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Decorator(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(158) /* "decorated_definition" */,
         transport.transport_source,
@@ -17617,7 +17615,7 @@ fn transport_to_node_decorator(transport: DecoratorTransport) -> Result<Transpor
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(159) /* "decorator" */,
         transport.transport_source,
@@ -17639,7 +17637,7 @@ fn transport_to_node_default_parameter(transport: DefaultParameterTransport) -> 
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(181) /* "default_parameter" */,
         transport.transport_source,
@@ -17659,7 +17657,7 @@ fn transport_to_node_delete_statement(transport: DeleteStatementTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expressions_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(126) /* "delete_statement" */,
         transport.transport_source,
@@ -17679,7 +17677,7 @@ fn transport_to_node_dict_pattern(transport: DictPatternTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| dict_pattern_kv_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(169) /* "dict_pattern" */,
         transport.transport_source,
@@ -17699,7 +17697,7 @@ fn transport_to_node_dictionary(transport: DictionaryTransport) -> Result<Transp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| dictionary_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(218) /* "dictionary" */,
         transport.transport_source,
@@ -17720,7 +17718,7 @@ fn transport_to_node_dictionary_comprehension(transport: DictionaryComprehension
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Pair(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(221) /* "dictionary_comprehension" */,
         transport.transport_source,
@@ -17741,7 +17739,7 @@ fn transport_to_node_dictionary_splat(transport: DictionarySplatTransport) -> Re
     fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(149) /* "dictionary_splat" */,
         transport.transport_source,
@@ -17761,7 +17759,7 @@ fn transport_to_node_dictionary_splat_pattern(transport: DictionarySplatPatternT
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(184) /* "dictionary_splat_pattern" */,
         transport.transport_source,
@@ -17781,7 +17779,7 @@ fn transport_to_node_dotted_name(transport: DottedNameTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(162) /* "dotted_name" */,
         transport.transport_source,
@@ -17803,7 +17801,7 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
     fields.insert("consequence".to_string(), transport_field_value(AnyTransport::Suite(transport.consequence))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(132) /* "elif_clause" */,
         transport.transport_source,
@@ -17820,7 +17818,7 @@ fn transport_to_node_elif_clause(transport: ElifClauseTransport) -> Result<Trans
 }
 
 fn transport_to_node_ellipsis2(transport: Ellipsis2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(87) /* "ellipsis" */,
         transport.transport_source,
@@ -17841,7 +17839,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(133) /* "else_clause" */,
         transport.transport_source,
@@ -17858,7 +17856,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
 }
 
 fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(89) /* "escape_sequence" */,
         transport.transport_source,
@@ -17884,7 +17882,7 @@ fn transport_to_node_except_clause(transport: ExceptClauseTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Suite(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(140) /* "except_clause" */,
         transport.transport_source,
@@ -17908,7 +17906,7 @@ fn transport_to_node_exec_statement(transport: ExecStatementTransport) -> Result
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(152) /* "exec_statement" */,
         transport.transport_source,
@@ -17928,7 +17926,7 @@ fn transport_to_node_expression_list(transport: ExpressionListTransport) -> Resu
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(161) /* "expression_list" */,
         transport.transport_source,
@@ -17948,7 +17946,7 @@ fn transport_to_node_expression_statement_tuple(transport: ExpressionStatementTu
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(243) /* "expression_statement_tuple" */,
         transport.transport_source,
@@ -17974,7 +17972,7 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![*transport.children])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(122) /* "expression_statement" */,
         transport.transport_source,
@@ -17991,7 +17989,7 @@ fn transport_to_node_expression_statement_uform_tuple(transport: ExpressionState
 }
 
 fn transport_to_node_false(transport: FalseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(97) /* "false" */,
         transport.transport_source,
@@ -18012,7 +18010,7 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
     fields.insert("block".to_string(), transport_field_value(AnyTransport::Suite(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(141) /* "finally_clause" */,
         transport.transport_source,
@@ -18029,7 +18027,7 @@ fn transport_to_node_finally_clause(transport: FinallyClauseTransport) -> Result
 }
 
 fn transport_to_node_float(transport: FloatTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(94) /* "float" */,
         transport.transport_source,
@@ -18054,7 +18052,7 @@ fn transport_to_node_for_in_clause(transport: ForInClauseTransport) -> Result<Tr
     fields.insert("right".to_string(), transport_field_values(transport.right.into_iter().map(|v| expression_within_for_in_clause_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(227) /* "for_in_clause" */,
         transport.transport_source,
@@ -18083,7 +18081,7 @@ fn transport_to_node_for_statement(transport: ForStatementTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(137) /* "for_statement" */,
         transport.transport_source,
@@ -18103,7 +18101,7 @@ fn transport_to_node_format_specifier(transport: FormatSpecifierTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Interpolation(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(236) /* "format_specifier" */,
         transport.transport_source,
@@ -18135,7 +18133,7 @@ fn transport_to_node_function_definition(transport: FunctionDefinitionTransport)
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(145) /* "function_definition" */,
         transport.transport_source,
@@ -18156,7 +18154,7 @@ fn transport_to_node_future_import_statement(transport: FutureImportStatementTra
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(114) /* "future_import_statement" */,
         transport.transport_source,
@@ -18177,7 +18175,7 @@ fn transport_to_node_generator_expression(transport: GeneratorExpressionTranspor
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(223) /* "generator_expression" */,
         transport.transport_source,
@@ -18199,7 +18197,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
     fields.insert("type_parameter".to_string(), transport_field_value(AnyTransport::TypeParameter(transport.type_parameter))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(210) /* "generic_type" */,
         transport.transport_source,
@@ -18219,7 +18217,7 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(150) /* "global_statement" */,
         transport.transport_source,
@@ -18236,7 +18234,7 @@ fn transport_to_node_global_statement(transport: GlobalStatementTransport) -> Re
 }
 
 fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(1) /* "identifier" */,
         transport.transport_source,
@@ -18257,7 +18255,7 @@ fn transport_to_node_if_clause(transport: IfClauseTransport) -> Result<Transport
     fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(228) /* "if_clause" */,
         transport.transport_source,
@@ -18282,7 +18280,7 @@ fn transport_to_node_if_statement(transport: IfStatementTransport) -> Result<Tra
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(131) /* "if_statement" */,
         transport.transport_source,
@@ -18303,7 +18301,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
     fields.insert("module_name".to_string(), transport_field_value(*transport.module_name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| import_from_statement_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(115) /* "import_from_statement" */,
         transport.transport_source,
@@ -18320,7 +18318,7 @@ fn transport_to_node_import_from_statement(transport: ImportFromStatementTranspo
 }
 
 fn transport_to_node_import_prefix(transport: ImportPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(112) /* "import_prefix" */,
         transport.transport_source,
@@ -18341,7 +18339,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
     fields.insert("name".to_string(), transport_field_values(transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(111) /* "import_statement" */,
         transport.transport_source,
@@ -18358,7 +18356,7 @@ fn transport_to_node_import_statement(transport: ImportStatementTransport) -> Re
 }
 
 fn transport_to_node_integer(transport: IntegerTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(93) /* "integer" */,
         transport.transport_source,
@@ -18385,7 +18383,7 @@ fn transport_to_node_interpolation(transport: InterpolationTransport) -> Result<
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(233) /* "interpolation" */,
         transport.transport_source,
@@ -18407,7 +18405,7 @@ fn transport_to_node_keyword_argument(transport: KeywordArgumentTransport) -> Re
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(214) /* "keyword_argument" */,
         transport.transport_source,
@@ -18429,7 +18427,7 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
     fields.insert("simple_pattern".to_string(), transport_field_value(simple_pattern_transport_to_any(transport.simple_pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(171) /* "keyword_pattern" */,
         transport.transport_source,
@@ -18446,7 +18444,7 @@ fn transport_to_node_keyword_pattern(transport: KeywordPatternTransport) -> Resu
 }
 
 fn transport_to_node_keyword_separator(transport: KeywordSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(239) /* "keyword_separator" */,
         transport.transport_source,
@@ -18470,7 +18468,7 @@ fn transport_to_node_lambda(transport: LambdaTransport) -> Result<TransportNodeD
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(196) /* "lambda" */,
         transport.transport_source,
@@ -18490,7 +18488,7 @@ fn transport_to_node_lambda_parameters(transport: LambdaParametersTransport) -> 
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(147) /* "lambda_parameters" */,
         transport.transport_source,
@@ -18514,7 +18512,7 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
     fields.insert("body".to_string(), transport_field_value(expression_within_for_in_clause_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(197) /* "lambda_within_for_in_clause" */,
         transport.transport_source,
@@ -18531,7 +18529,7 @@ fn transport_to_node_lambda_within_for_in_clause(transport: LambdaWithinForInCla
 }
 
 fn transport_to_node_line_continuation(transport: LineContinuationTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(100) /* "line_continuation" */,
         transport.transport_source,
@@ -18551,7 +18549,7 @@ fn transport_to_node_list(transport: ListTransport) -> Result<TransportNodeData,
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| list_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(215) /* "list" */,
         transport.transport_source,
@@ -18572,7 +18570,7 @@ fn transport_to_node_list_comprehension(transport: ListComprehensionTransport) -
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(220) /* "list_comprehension" */,
         transport.transport_source,
@@ -18592,7 +18590,7 @@ fn transport_to_node_list_pattern(transport: ListPatternTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(180) /* "list_pattern" */,
         transport.transport_source,
@@ -18613,7 +18611,7 @@ fn transport_to_node_list_splat(transport: ListSplatTransport) -> Result<Transpo
     fields.insert("expression".to_string(), transport_field_value(expression_transport_to_any(transport.expression))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(148) /* "list_splat" */,
         transport.transport_source,
@@ -18633,7 +18631,7 @@ fn transport_to_node_list_splat_pattern(transport: ListSplatPatternTransport) ->
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(183) /* "list_splat_pattern" */,
         transport.transport_source,
@@ -18655,7 +18653,7 @@ fn transport_to_node_match_statement(transport: MatchStatementTransport) -> Resu
     fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(134) /* "match_statement" */,
         transport.transport_source,
@@ -18677,7 +18675,7 @@ fn transport_to_node_member_type(transport: MemberTypeTransport) -> Result<Trans
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(213) /* "member_type" */,
         transport.transport_source,
@@ -18697,7 +18695,7 @@ fn transport_to_node_module(transport: ModuleTransport) -> Result<TransportNodeD
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(108) /* "module" */,
         transport.transport_source,
@@ -18719,7 +18717,7 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(123) /* "named_expression" */,
         transport.transport_source,
@@ -18736,7 +18734,7 @@ fn transport_to_node_named_expression(transport: NamedExpressionTransport) -> Re
 }
 
 fn transport_to_node_none(transport: NoneTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(98) /* "none" */,
         transport.transport_source,
@@ -18756,7 +18754,7 @@ fn transport_to_node_nonlocal_statement(transport: NonlocalStatementTransport) -
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Identifier(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(151) /* "nonlocal_statement" */,
         transport.transport_source,
@@ -18777,7 +18775,7 @@ fn transport_to_node_not_operator(transport: NotOperatorTransport) -> Result<Tra
     fields.insert("argument".to_string(), transport_field_value(expression_transport_to_any(transport.argument))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(189) /* "not_operator" */,
         transport.transport_source,
@@ -18799,7 +18797,7 @@ fn transport_to_node_pair(transport: PairTransport) -> Result<TransportNodeData,
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(219) /* "pair" */,
         transport.transport_source,
@@ -18819,7 +18817,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| parameter_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(146) /* "parameters" */,
         transport.transport_source,
@@ -18839,7 +18837,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![fexpression_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(225) /* "parenthesized_expression" */,
         transport.transport_source,
@@ -18859,7 +18857,7 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![parenthesized_list_splat_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(156) /* "parenthesized_list_splat" */,
         transport.transport_source,
@@ -18876,7 +18874,7 @@ fn transport_to_node_parenthesized_list_splat(transport: ParenthesizedListSplatT
 }
 
 fn transport_to_node_pass_statement(transport: PassStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(128) /* "pass_statement" */,
         transport.transport_source,
@@ -18896,7 +18894,7 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(200) /* "pattern_list" */,
         transport.transport_source,
@@ -18913,7 +18911,7 @@ fn transport_to_node_pattern_list(transport: PatternListTransport) -> Result<Tra
 }
 
 fn transport_to_node_positional_separator(transport: PositionalSeparatorTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(238) /* "positional_separator" */,
         transport.transport_source,
@@ -18937,7 +18935,7 @@ fn transport_to_node_print_statement(transport: PrintStatementTransport) -> Resu
         Some(c) => Some(transport_children(vec![AnyTransport::Chevron(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(119) /* "print_statement" */,
         transport.transport_source,
@@ -18963,7 +18961,7 @@ fn transport_to_node_raise_statement(transport: RaiseStatementTransport) -> Resu
         Some(c) => Some(transport_children(vec![expressions_transport_to_any(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(127) /* "raise_statement" */,
         transport.transport_source,
@@ -18987,7 +18985,7 @@ fn transport_to_node_relative_import(transport: RelativeImportTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(113) /* "relative_import" */,
         transport.transport_source,
@@ -19010,7 +19008,7 @@ fn transport_to_node_return_statement(transport: ReturnStatementTransport) -> Re
         Some(c) => Some(transport_children(vec![expressions_transport_to_any(c)])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(125) /* "return_statement" */,
         transport.transport_source,
@@ -19030,7 +19028,7 @@ fn transport_to_node_set(transport: SetTransport) -> Result<TransportNodeData, :
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| set_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(216) /* "set" */,
         transport.transport_source,
@@ -19051,7 +19049,7 @@ fn transport_to_node_set_comprehension(transport: SetComprehensionTransport) -> 
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ComprehensionClauses(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(222) /* "set_comprehension" */,
         transport.transport_source,
@@ -19080,7 +19078,7 @@ fn transport_to_node_slice(transport: SliceTransport) -> Result<TransportNodeDat
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(205) /* "slice" */,
         transport.transport_source,
@@ -19101,7 +19099,7 @@ fn transport_to_node_splat_pattern(transport: SplatPatternTransport) -> Result<T
     fields.insert("identifier".to_string(), transport_field_value(*transport.identifier)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(172) /* "splat_pattern" */,
         transport.transport_source,
@@ -19122,7 +19120,7 @@ fn transport_to_node_splat_type(transport: SplatTypeTransport) -> Result<Transpo
     fields.insert("identifier".to_string(), transport_field_value(*transport.identifier)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(209) /* "splat_type" */,
         transport.transport_source,
@@ -19145,7 +19143,7 @@ fn transport_to_node_string(transport: StringTransport) -> Result<TransportNodeD
     fields.insert("string_end".to_string(), transport_field_value(AnyTransport::StringEnd(transport.string_end))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(231) /* "string" */,
         transport.transport_source,
@@ -19165,7 +19163,7 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| string_content_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(232) /* "string_content" */,
         transport.transport_source,
@@ -19187,7 +19185,7 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
     fields.insert("subscript".to_string(), transport_field_values(transport.subscript)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(204) /* "subscript" */,
         transport.transport_source,
@@ -19204,7 +19202,7 @@ fn transport_to_node_subscript(transport: SubscriptTransport) -> Result<Transpor
 }
 
 fn transport_to_node_true(transport: TrueTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(96) /* "true" */,
         transport.transport_source,
@@ -19232,7 +19230,7 @@ fn transport_to_node_try_statement(transport: TryStatementTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(139) /* "try_statement" */,
         transport.transport_source,
@@ -19252,7 +19250,7 @@ fn transport_to_node_tuple(transport: TupleTransport) -> Result<TransportNodeDat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tuple_child_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(217) /* "tuple" */,
         transport.transport_source,
@@ -19272,7 +19270,7 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(179) /* "tuple_pattern" */,
         transport.transport_source,
@@ -19292,7 +19290,7 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![type_child_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(208) /* "type" */,
         transport.transport_source,
@@ -19315,7 +19313,7 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
     fields.insert("right".to_string(), transport_field_value(AnyTransport::Type(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(153) /* "type_alias_statement" */,
         transport.transport_source,
@@ -19332,7 +19330,7 @@ fn transport_to_node_type_alias_statement(transport: TypeAliasStatementTransport
 }
 
 fn transport_to_node_type_conversion(transport: TypeConversionTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(92) /* "type_conversion" */,
         transport.transport_source,
@@ -19352,7 +19350,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Type(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(155) /* "type_parameter" */,
         transport.transport_source,
@@ -19375,7 +19373,7 @@ fn transport_to_node_typed_default_parameter(transport: TypedDefaultParameterTra
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(182) /* "typed_default_parameter" */,
         transport.transport_source,
@@ -19396,7 +19394,7 @@ fn transport_to_node_typed_parameter(transport: TypedParameterTransport) -> Resu
     fields.insert("type".to_string(), transport_field_value(AnyTransport::Type(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![parameter_transport_to_any(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(207) /* "typed_parameter" */,
         transport.transport_source,
@@ -19418,7 +19416,7 @@ fn transport_to_node_unary_operator(transport: UnaryOperatorTransport) -> Result
     fields.insert("argument".to_string(), transport_field_value(primary_expression_transport_to_any(transport.argument))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(192) /* "unary_operator" */,
         transport.transport_source,
@@ -19438,7 +19436,7 @@ fn transport_to_node_union_pattern(transport: UnionPatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| simple_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(166) /* "union_pattern" */,
         transport.transport_source,
@@ -19460,7 +19458,7 @@ fn transport_to_node_union_type(transport: UnionTypeTransport) -> Result<Transpo
     fields.insert("right".to_string(), transport_field_value(AnyTransport::Type(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(211) /* "union_type" */,
         transport.transport_source,
@@ -19485,7 +19483,7 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(138) /* "while_statement" */,
         transport.transport_source,
@@ -19502,7 +19500,7 @@ fn transport_to_node_while_statement(transport: WhileStatementTransport) -> Resu
 }
 
 fn transport_to_node_wildcard_import(transport: WildcardImportTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(118) /* "wildcard_import" */,
         transport.transport_source,
@@ -19522,7 +19520,7 @@ fn transport_to_node_with_clause_bare(transport: WithClauseBareTransport) -> Res
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(244) /* "with_clause_bare" */,
         transport.transport_source,
@@ -19542,7 +19540,7 @@ fn transport_to_node_with_clause_paren(transport: WithClauseParenTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WithItem(v)).collect::<Vec<_>>())?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(245) /* "with_clause_paren" */,
         transport.transport_source,
@@ -19569,7 +19567,7 @@ fn transport_to_node_with_clause_uform_bare(transport: WithClauseUFormBareTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![*transport.children])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(143) /* "with_clause" */,
         transport.transport_source,
@@ -19589,7 +19587,7 @@ fn transport_to_node_with_clause_uform_paren(transport: WithClauseUFormParenTran
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_WithClauseParen(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(143) /* "with_clause" */,
         transport.transport_source,
@@ -19610,7 +19608,7 @@ fn transport_to_node_with_item(transport: WithItemTransport) -> Result<Transport
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(144) /* "with_item" */,
         transport.transport_source,
@@ -19635,7 +19633,7 @@ fn transport_to_node_with_statement(transport: WithStatementTransport) -> Result
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Suite(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(142) /* "with_statement" */,
         transport.transport_source,
@@ -19658,7 +19656,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
         Some(c) => Some(transport_children(vec![*c])?),
         None => None,
     };
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(202) /* "yield" */,
         transport.transport_source,
@@ -19675,7 +19673,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(101) /* "_newline" */,
         transport.transport_source,
@@ -19692,7 +19690,7 @@ fn transport_to_node_newline(transport: NewlineTransport) -> Result<TransportNod
 }
 
 fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(102) /* "_indent" */,
         transport.transport_source,
@@ -19709,7 +19707,7 @@ fn transport_to_node_indent(transport: IndentTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(103) /* "_dedent" */,
         transport.transport_source,
@@ -19726,7 +19724,7 @@ fn transport_to_node_dedent(transport: DedentTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_string_start(transport: StringStartTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(104) /* "string_start" */,
         transport.transport_source,
@@ -19743,7 +19741,7 @@ fn transport_to_node_string_start(transport: StringStartTransport) -> Result<Tra
 }
 
 fn transport_to_node__string_content(transport: _StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(105) /* "_string_content" */,
         transport.transport_source,
@@ -19760,7 +19758,7 @@ fn transport_to_node__string_content(transport: _StringContentTransport) -> Resu
 }
 
 fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(106) /* "escape_interpolation" */,
         transport.transport_source,
@@ -19777,7 +19775,7 @@ fn transport_to_node_escape_interpolation(transport: EscapeInterpolationTranspor
 }
 
 fn transport_to_node_string_end(transport: StringEndTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(107) /* "string_end" */,
         transport.transport_source,
@@ -19794,7 +19792,7 @@ fn transport_to_node_string_end(transport: StringEndTransport) -> Result<Transpo
 }
 
 fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(46) /* "]" */,
         transport.transport_source,
@@ -19811,7 +19809,7 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
 }
 
 fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(8) /* ")" */,
         transport.transport_source,
@@ -19828,7 +19826,7 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
 }
 
 fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(51) /* "}" */,
         transport.transport_source,
@@ -19845,7 +19843,7 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
 }
 
 fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(33) /* "except" */,
         transport.transport_source,
@@ -19862,7 +19860,7 @@ fn transport_to_node_except(transport: ExceptTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(10) /* "as" */,
         transport.transport_source,
@@ -19879,7 +19877,7 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(43) /* "=" */,
         transport.transport_source,
@@ -19896,7 +19894,7 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(23) /* ":" */,
         transport.transport_source,
@@ -19913,7 +19911,7 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(28) /* "async" */,
         transport.transport_source,
@@ -19930,7 +19928,7 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(45) /* "[" */,
         transport.transport_source,
@@ -19947,7 +19945,7 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
 }
 
 fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(90) /* "\\" */,
         transport.transport_source,
@@ -19964,7 +19962,7 @@ fn transport_to_node_tok_bs(transport: TokBsTransport) -> Result<TransportNodeDa
 }
 
 fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(53) /* "-" */,
         transport.transport_source,
@@ -19981,7 +19979,7 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(7) /* "(" */,
         transport.transport_source,
@@ -19998,7 +19996,7 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(9) /* "," */,
         transport.transport_source,
@@ -20015,7 +20013,7 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(14) /* "assert" */,
         transport.transport_source,
@@ -20032,7 +20030,7 @@ fn transport_to_node_assert(transport: AssertTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(4) /* "." */,
         transport.transport_source,
@@ -20049,7 +20047,7 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(20) /* "break" */,
         transport.transport_source,
@@ -20066,7 +20064,7 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(27) /* "case" */,
         transport.transport_source,
@@ -20083,7 +20081,7 @@ fn transport_to_node_case(transport: CaseTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(13) /* ">>" */,
         transport.transport_source,
@@ -20100,7 +20098,7 @@ fn transport_to_node_shr(transport: ShrTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(44) /* "class" */,
         transport.transport_source,
@@ -20117,7 +20115,7 @@ fn transport_to_node_class(transport: ClassTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(22) /* "if" */,
         transport.transport_source,
@@ -20134,7 +20132,7 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(25) /* "else" */,
         transport.transport_source,
@@ -20151,7 +20149,7 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(21) /* "continue" */,
         transport.transport_source,
@@ -20168,7 +20166,7 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
 }
 
 fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(47) /* "@" */,
         transport.transport_source,
@@ -20185,7 +20183,7 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(17) /* "del" */,
         transport.transport_source,
@@ -20202,7 +20200,7 @@ fn transport_to_node_del(transport: DelTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(50) /* "{" */,
         transport.transport_source,
@@ -20219,7 +20217,7 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(39) /* "**" */,
         transport.transport_source,
@@ -20236,7 +20234,7 @@ fn transport_to_node_starstar(transport: StarstarTransport) -> Result<TransportN
 }
 
 fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(24) /* "elif" */,
         transport.transport_source,
@@ -20253,7 +20251,7 @@ fn transport_to_node_elif(transport: ElifTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "..." — no parser symbol */,
         transport.transport_source,
@@ -20270,7 +20268,7 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
 }
 
 fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(11) /* "*" */,
         transport.transport_source,
@@ -20287,7 +20285,7 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(42) /* "exec" */,
         transport.transport_source,
@@ -20304,7 +20302,7 @@ fn transport_to_node_exec(transport: ExecTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(30) /* "in" */,
         transport.transport_source,
@@ -20321,7 +20319,7 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
 }
 
 fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "False" — no parser symbol */,
         transport.transport_source,
@@ -20338,7 +20336,7 @@ fn transport_to_node_false2(transport: False2Transport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(35) /* "finally" */,
         transport.transport_source,
@@ -20355,7 +20353,7 @@ fn transport_to_node_finally(transport: FinallyTransport) -> Result<TransportNod
 }
 
 fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(29) /* "for" */,
         transport.transport_source,
@@ -20372,7 +20370,7 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(37) /* "def" */,
         transport.transport_source,
@@ -20389,7 +20387,7 @@ fn transport_to_node_def(transport: DefTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(38) /* "->" */,
         transport.transport_source,
@@ -20406,7 +20404,7 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(5) /* "from" */,
         transport.transport_source,
@@ -20423,7 +20421,7 @@ fn transport_to_node_from(transport: FromTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(6) /* "__future__" */,
         transport.transport_source,
@@ -20440,7 +20438,7 @@ fn transport_to_node_future_u(transport: FutureUTransport) -> Result<TransportNo
 }
 
 fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(3) /* "import" */,
         transport.transport_source,
@@ -20457,7 +20455,7 @@ fn transport_to_node_import(transport: ImportTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(40) /* "global" */,
         transport.transport_source,
@@ -20474,7 +20472,7 @@ fn transport_to_node_global(transport: GlobalTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(26) /* "match" */,
         transport.transport_source,
@@ -20491,7 +20489,7 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(15) /* ":=" */,
         transport.transport_source,
@@ -20508,7 +20506,7 @@ fn transport_to_node_coloneq(transport: ColoneqTransport) -> Result<TransportNod
 }
 
 fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "None" — no parser symbol */,
         transport.transport_source,
@@ -20525,7 +20523,7 @@ fn transport_to_node_none2(transport: None2Transport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(41) /* "nonlocal" */,
         transport.transport_source,
@@ -20542,7 +20540,7 @@ fn transport_to_node_nonlocal(transport: NonlocalTransport) -> Result<TransportN
 }
 
 fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(54) /* "not" */,
         transport.transport_source,
@@ -20559,7 +20557,7 @@ fn transport_to_node_not(transport: NotTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(19) /* "pass" */,
         transport.transport_source,
@@ -20576,7 +20574,7 @@ fn transport_to_node_pass(transport: PassTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(57) /* "/" */,
         transport.transport_source,
@@ -20593,7 +20591,7 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(12) /* "print" */,
         transport.transport_source,
@@ -20610,7 +20608,7 @@ fn transport_to_node_print(transport: PrintTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(18) /* "raise" */,
         transport.transport_source,
@@ -20627,7 +20625,7 @@ fn transport_to_node_raise(transport: RaiseTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(16) /* "return" */,
         transport.transport_source,
@@ -20644,7 +20642,7 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
 }
 
 fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(48) /* "_" */,
         transport.transport_source,
@@ -20661,7 +20659,7 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
 }
 
 fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "True" — no parser symbol */,
         transport.transport_source,
@@ -20678,7 +20676,7 @@ fn transport_to_node_true2(transport: True2Transport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(32) /* "try" */,
         transport.transport_source,
@@ -20695,7 +20693,7 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
 }
 
 fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(49) /* "|" */,
         transport.transport_source,
@@ -20712,7 +20710,7 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
 }
 
 fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(31) /* "while" */,
         transport.transport_source,
@@ -20729,7 +20727,7 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
 }
 
 fn transport_to_node_with(transport: WithTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(36) /* "with" */,
         transport.transport_source,
@@ -20767,44 +20765,44 @@ pub fn render_transport(transport: AnyTransport) -> Result<String, ::askama::Err
 #[derive(::askama::Template)]
 #[template(path = "_as_pattern.jinja", escape = "none")]
 pub struct _AsPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_assignment_eq.jinja", escape = "none")]
 pub struct AssignmentEqTemplate<'a> {
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_assignment_type.jinja", escape = "none")]
 pub struct AssignmentTypeTemplate<'a> {
-    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub r#type: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_assignment_typed.jinja", escape = "none")]
 pub struct AssignmentTypedTemplate<'a> {
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+    pub r#type: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_comprehension_clauses.jinja", escape = "none")]
 pub struct ComprehensionClausesTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_match_block_block.jinja", escape = "none")]
 pub struct MatchBlockBlockTemplate<'a> {
-    pub alternative: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub alternative: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_match_block.jinja", escape = "none")]
 pub struct MatchBlockTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20816,591 +20814,591 @@ pub struct SimplePatternNegativeTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_simple_statements.jinja", escape = "none")]
 pub struct SimpleStatementsTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_suite.jinja", escape = "none")]
 pub struct SuiteTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_with_clause_paren.jinja", escape = "none")]
 pub struct _WithClauseParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "aliased_import.jinja", escape = "none")]
 pub struct AliasedImportTemplate<'a> {
-    pub alias: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alias: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "argument_list.jinja", escape = "none")]
 pub struct ArgumentListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "as_pattern.jinja", escape = "none")]
 pub struct AsPatternTemplate<'a> {
-    pub alias: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alias: SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "assert_statement.jinja", escape = "none")]
 pub struct AssertStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "assignment.jinja", escape = "none")]
 pub struct AssignmentTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "attribute.jinja", escape = "none")]
 pub struct AttributeTemplate<'a> {
-    pub attribute: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub object: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub attribute: SingleNonterminalView<'a>,
+    pub object: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "augmented_assignment.jinja", escape = "none")]
 pub struct AugmentedAssignmentTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "await.jinja", escape = "none")]
 pub struct AwaitTemplate<'a> {
-    pub primary_expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub primary_expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "binary_operator.jinja", escape = "none")]
 pub struct BinaryOperatorTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "block.jinja", escape = "none")]
 pub struct BlockTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "boolean_operator.jinja", escape = "none")]
 pub struct BooleanOperatorTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "call.jinja", escape = "none")]
 pub struct CallTemplate<'a> {
-    pub arguments: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub function: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub arguments: SingleNonterminalView<'a>,
+    pub function: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "case_clause.jinja", escape = "none")]
 pub struct CaseClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub consequence: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub guard: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
+    pub guard: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "case_pattern.jinja", escape = "none")]
 pub struct CasePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "chevron.jinja", escape = "none")]
 pub struct ChevronTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "class_definition.jinja", escape = "none")]
 pub struct ClassDefinitionTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub superclasses: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub superclasses: OptionalNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "class_pattern.jinja", escape = "none")]
 pub struct ClassPatternTemplate<'a> {
-    pub arguments: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub dotted_name: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub arguments: ListNonterminalView<'a>,
+    pub dotted_name: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "comparison_operator.jinja", escape = "none")]
 pub struct ComparisonOperatorTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operators: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub operators: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "complex_pattern.jinja", escape = "none")]
 pub struct ComplexPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub imaginary: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub real: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub imaginary: SingleNonterminalView<'a>,
+    pub real: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "concatenated_string.jinja", escape = "none")]
 pub struct ConcatenatedStringTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "conditional_expression.jinja", escape = "none")]
 pub struct ConditionalExpressionTemplate<'a> {
-    pub alternative: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alternative: SingleNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "constrained_type.jinja", escape = "none")]
 pub struct ConstrainedTypeTemplate<'a> {
-    pub base_type: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub constraint: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub base_type: SingleNonterminalView<'a>,
+    pub constraint: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "decorated_definition.jinja", escape = "none")]
 pub struct DecoratedDefinitionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub definition: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub definition: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "decorator.jinja", escape = "none")]
 pub struct DecoratorTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub newline: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
+    pub newline: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "default_parameter.jinja", escape = "none")]
 pub struct DefaultParameterTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "delete_statement.jinja", escape = "none")]
 pub struct DeleteStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dict_pattern.jinja", escape = "none")]
 pub struct DictPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dictionary_comprehension.jinja", escape = "none")]
 pub struct DictionaryComprehensionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dictionary_splat_pattern.jinja", escape = "none")]
 pub struct DictionarySplatPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dictionary_splat.jinja", escape = "none")]
 pub struct DictionarySplatTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dictionary.jinja", escape = "none")]
 pub struct DictionaryTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "dotted_name.jinja", escape = "none")]
 pub struct DottedNameTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "elif_clause.jinja", escape = "none")]
 pub struct ElifClauseTemplate<'a> {
-    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub consequence: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "else_clause.jinja", escape = "none")]
 pub struct ElseClauseTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "except_clause.jinja", escape = "none")]
 pub struct ExceptClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub alias: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub value: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub alias: OptionalNonterminalView<'a>,
+    pub value: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "exec_statement.jinja", escape = "none")]
 pub struct ExecStatementTemplate<'a> {
-    pub code: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub in_clause: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub code: SingleNonterminalView<'a>,
+    pub in_clause: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_list.jinja", escape = "none")]
 pub struct ExpressionListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement_tuple.jinja", escape = "none")]
 pub struct ExpressionStatementTupleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
     pub variant: &'a str,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "finally_clause.jinja", escape = "none")]
 pub struct FinallyClauseTemplate<'a> {
-    pub block: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub block: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "for_in_clause.jinja", escape = "none")]
 pub struct ForInClauseTemplate<'a> {
-    pub async_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub async_marker: OptionalNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub right: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "for_statement.jinja", escape = "none")]
 pub struct ForStatementTemplate<'a> {
-    pub alternative: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub async_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alternative: OptionalNonterminalView<'a>,
+    pub async_marker: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "format_specifier.jinja", escape = "none")]
 pub struct FormatSpecifierTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "function_definition.jinja", escape = "none")]
 pub struct FunctionDefinitionTemplate<'a> {
-    pub async_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub parameters: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub return_type: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub type_parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub async_marker: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub parameters: SingleNonterminalView<'a>,
+    pub return_type: OptionalNonterminalView<'a>,
+    pub type_parameters: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "future_import_statement.jinja", escape = "none")]
 pub struct FutureImportStatementTemplate<'a> {
-    pub name: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generator_expression.jinja", escape = "none")]
 pub struct GeneratorExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "generic_type.jinja", escape = "none")]
 pub struct GenericTypeTemplate<'a> {
-    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub type_parameter: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub identifier: SingleNonterminalView<'a>,
+    pub type_parameter: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "global_statement.jinja", escape = "none")]
 pub struct GlobalStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "if_clause.jinja", escape = "none")]
 pub struct IfClauseTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "if_statement.jinja", escape = "none")]
 pub struct IfStatementTemplate<'a> {
-    pub alternative: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub consequence: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alternative: ListNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
+    pub consequence: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "import_from_statement.jinja", escape = "none")]
 pub struct ImportFromStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub module_name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub name: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub module_name: SingleNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "import_statement.jinja", escape = "none")]
 pub struct ImportStatementTemplate<'a> {
-    pub name: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub name: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "interpolation.jinja", escape = "none")]
 pub struct InterpolationTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub format_specifier: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub type_conversion: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
+    pub format_specifier: OptionalNonterminalView<'a>,
+    pub type_conversion: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "keyword_argument.jinja", escape = "none")]
 pub struct KeywordArgumentTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "keyword_pattern.jinja", escape = "none")]
 pub struct KeywordPatternTemplate<'a> {
-    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub simple_pattern: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub identifier: SingleNonterminalView<'a>,
+    pub simple_pattern: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "lambda_parameters.jinja", escape = "none")]
 pub struct LambdaParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "lambda_within_for_in_clause.jinja", escape = "none")]
 pub struct LambdaWithinForInClauseTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub parameters: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "lambda.jinja", escape = "none")]
 pub struct LambdaTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub parameters: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub parameters: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "list_comprehension.jinja", escape = "none")]
 pub struct ListComprehensionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "list_pattern.jinja", escape = "none")]
 pub struct ListPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "list_splat_pattern.jinja", escape = "none")]
 pub struct ListSplatPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "list_splat.jinja", escape = "none")]
 pub struct ListSplatTemplate<'a> {
-    pub expression: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub expression: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "list.jinja", escape = "none")]
 pub struct ListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "match_statement.jinja", escape = "none")]
 pub struct MatchStatementTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub subject: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub subject: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "member_type.jinja", escape = "none")]
 pub struct MemberTypeTemplate<'a> {
-    pub base_type: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub base_type: SingleNonterminalView<'a>,
+    pub identifier: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "module.jinja", escape = "none")]
 pub struct ModuleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "named_expression.jinja", escape = "none")]
 pub struct NamedExpressionTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "nonlocal_statement.jinja", escape = "none")]
 pub struct NonlocalStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "not_operator.jinja", escape = "none")]
 pub struct NotOperatorTemplate<'a> {
-    pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub argument: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "pair.jinja", escape = "none")]
 pub struct PairTemplate<'a> {
-    pub key: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub key: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "parameters.jinja", escape = "none")]
 pub struct ParametersTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "parenthesized_expression.jinja", escape = "none")]
 pub struct ParenthesizedExpressionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "parenthesized_list_splat.jinja", escape = "none")]
 pub struct ParenthesizedListSplatTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "pattern_list.jinja", escape = "none")]
 pub struct PatternListTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "print_statement.jinja", escape = "none")]
 pub struct PrintStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub argument: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub argument: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "raise_statement.jinja", escape = "none")]
 pub struct RaiseStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub cause: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub cause: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "relative_import.jinja", escape = "none")]
 pub struct RelativeImportTemplate<'a> {
-    pub dotted_name: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub import_prefix: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub dotted_name: OptionalNonterminalView<'a>,
+    pub import_prefix: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "return_statement.jinja", escape = "none")]
 pub struct ReturnStatementTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "set_comprehension.jinja", escape = "none")]
 pub struct SetComprehensionTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "set.jinja", escape = "none")]
 pub struct SetTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "slice.jinja", escape = "none")]
 pub struct SliceTemplate<'a> {
-    pub start: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub step: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub stop: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub start: OptionalNonterminalView<'a>,
+    pub step: OptionalNonterminalView<'a>,
+    pub stop: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "splat_pattern.jinja", escape = "none")]
 pub struct SplatPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub identifier: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "splat_type.jinja", escape = "none")]
 pub struct SplatTypeTemplate<'a> {
-    pub identifier: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub identifier: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "string_content.jinja", escape = "none")]
 pub struct StringContentTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -21412,134 +21410,133 @@ pub struct StringTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "subscript.jinja", escape = "none")]
 pub struct SubscriptTemplate<'a> {
-    pub subscript: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub subscript: ListNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "try_statement.jinja", escape = "none")]
 pub struct TryStatementTemplate<'a> {
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub else_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub except_clauses: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub finally_clause: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub else_clause: OptionalNonterminalView<'a>,
+    pub except_clauses: ListNonterminalView<'a>,
+    pub finally_clause: OptionalNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple_pattern.jinja", escape = "none")]
 pub struct TuplePatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "tuple.jinja", escape = "none")]
 pub struct TupleTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_alias_statement.jinja", escape = "none")]
 pub struct TypeAliasStatementTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
+    pub r#type: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type_parameter.jinja", escape = "none")]
 pub struct TypeParameterTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "type.jinja", escape = "none")]
 pub struct TypeTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "typed_default_parameter.jinja", escape = "none")]
 pub struct TypedDefaultParameterTemplate<'a> {
-    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub name: SingleNonterminalView<'a>,
+    pub r#type: SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "typed_parameter.jinja", escape = "none")]
 pub struct TypedParameterTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
-    pub r#type: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
+    pub r#type: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "unary_operator.jinja", escape = "none")]
 pub struct UnaryOperatorTemplate<'a> {
-    pub argument: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub operator: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub argument: SingleNonterminalView<'a>,
+    pub operator: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "union_pattern.jinja", escape = "none")]
 pub struct UnionPatternTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "union_type.jinja", escape = "none")]
 pub struct UnionTypeTemplate<'a> {
-    pub left: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub right: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub left: SingleNonterminalView<'a>,
+    pub right: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "while_statement.jinja", escape = "none")]
 pub struct WhileStatementTemplate<'a> {
-    pub alternative: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub condition: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub alternative: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub condition: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_clause_bare.jinja", escape = "none")]
 pub struct WithClauseBareTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_clause_paren.jinja", escape = "none")]
 pub struct WithClauseParenTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_clause.jinja", escape = "none")]
 pub struct WithClauseTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_item.jinja", escape = "none")]
 pub struct WithItemTemplate<'a> {
-    pub value: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub value: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "with_statement.jinja", escape = "none")]
 pub struct WithStatementTemplate<'a> {
-    pub async_marker: ::sittir_core::filters::OptionalNonterminalView<'a>,
-    pub body: ::sittir_core::filters::SingleNonterminalView<'a>,
-    pub with_clause: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub async_marker: OptionalNonterminalView<'a>,
+    pub body: SingleNonterminalView<'a>,
+    pub with_clause: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "yield.jinja", escape = "none")]
 pub struct YieldTemplate<'a> {
-    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub children: ListNonterminalView<'a>,
 }
 
 use ::askama::Template as _AskamaTemplate;
-use ::sittir_core::types::{FieldValue, NodeData};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 enum ResolvedFieldKind {
@@ -21617,7 +21614,6 @@ fn separator_for(kind_id: u16) -> &'static str {
         216 => ",", // "set"
         155 => ",", // "type_parameter"
         244 => ",", // "with_clause_bare"
-        245 => ",", // "with_clause_paren"
         _ => "",
     }
 }
@@ -21926,7 +21922,7 @@ fn render_hidden_as_pattern(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _AsPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21940,7 +21936,7 @@ fn render_hidden_assignment_eq(node: &NodeData) -> Result<String, ::askama::Erro
     let children = resolve_children(node, &["right"])?;
     let field_0 = resolve_field(node, "right", true)?;
     let template = AssignmentEqTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21949,7 +21945,7 @@ fn render_hidden_assignment_type(node: &NodeData) -> Result<String, ::askama::Er
     let children = resolve_children(node, &["type"])?;
     let field_0 = resolve_field(node, "type", true)?;
     let template = AssignmentTypeTemplate {
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -21959,8 +21955,8 @@ fn render_hidden_assignment_typed(node: &NodeData) -> Result<String, ::askama::E
     let field_0 = resolve_field(node, "right", true)?;
     let field_1 = resolve_field(node, "type", true)?;
     let template = AssignmentTypedTemplate {
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -21969,7 +21965,7 @@ fn render_hidden_comprehension_clauses(node: &NodeData) -> Result<String, ::aska
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ComprehensionClausesTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -21984,7 +21980,7 @@ fn render_hidden_match_block_block(node: &NodeData) -> Result<String, ::askama::
     let field_0 = resolve_field(node, "alternative", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = MatchBlockBlockTemplate {
-        alternative: ::sittir_core::filters::ListNonterminalView {
+        alternative: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
@@ -21998,7 +21994,7 @@ fn render_hidden_match_block(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = MatchBlockTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22021,7 +22017,7 @@ fn render_hidden_simple_statements(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = SimpleStatementsTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22035,7 +22031,7 @@ fn render_hidden_suite(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = SuiteTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22049,7 +22045,7 @@ fn render_hidden_with_clause_paren(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = _WithClauseParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22064,8 +22060,8 @@ fn render_aliased_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "alias", true)?;
     let field_1 = resolve_field(node, "name", true)?;
     let template = AliasedImportTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22074,7 +22070,7 @@ fn render_argument_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ArgumentListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22089,8 +22085,8 @@ fn render_as_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "alias", true)?;
     let field_1 = resolve_field(node, "expression", true)?;
     let template = AsPatternTemplate {
-        alias: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        alias: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22099,7 +22095,7 @@ fn render_assert_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = AssertStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22114,13 +22110,13 @@ fn render_assignment(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "left", true)?;
     let children_renderables = children.renderable_items();
     let template = AssignmentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22130,8 +22126,8 @@ fn render_attribute(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "attribute", true)?;
     let field_1 = resolve_field(node, "object", true)?;
     let template = AttributeTemplate {
-        attribute: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        object: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        attribute: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22142,9 +22138,9 @@ fn render_augmented_assignment(node: &NodeData) -> Result<String, ::askama::Erro
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "right", true)?;
     let template = AugmentedAssignmentTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22153,7 +22149,7 @@ fn render_await(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["primary_expression"])?;
     let field_0 = resolve_field(node, "primary_expression", true)?;
     let template = AwaitTemplate {
-        primary_expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        primary_expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22164,9 +22160,9 @@ fn render_binary_operator(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "right", true)?;
     let template = BinaryOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22175,7 +22171,7 @@ fn render_block(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = BlockTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22191,9 +22187,9 @@ fn render_boolean_operator(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "operator", true)?;
     let field_2 = resolve_field(node, "right", true)?;
     let template = BooleanOperatorTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22203,8 +22199,8 @@ fn render_call(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "arguments", true)?;
     let field_1 = resolve_field(node, "function", true)?;
     let template = CallTemplate {
-        arguments: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        function: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22215,16 +22211,16 @@ fn render_case_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "guard", false)?;
     let children_renderables = children.renderable_items();
     let template = CaseClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         guard: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -22234,7 +22230,7 @@ fn render_case_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = CasePatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22248,7 +22244,7 @@ fn render_chevron(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression"])?;
     let field_0 = resolve_field(node, "expression", true)?;
     let template = ChevronTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22260,15 +22256,15 @@ fn render_class_definition(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "superclasses", false)?;
     let field_3 = resolve_field(node, "type_parameters", false)?;
     let template = ClassDefinitionTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         superclasses: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
         },
         type_parameters: match field_3.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
         },
     };
     template.render()
@@ -22280,13 +22276,13 @@ fn render_class_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "dotted_name", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = ClassPatternTemplate {
-        arguments: ::sittir_core::filters::ListNonterminalView {
+        arguments: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
             trailing: field_0.trailing_sep,
         },
-        dotted_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        dotted_name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22298,14 +22294,14 @@ fn render_comparison_operator(node: &NodeData) -> Result<String, ::askama::Error
     let children_renderables = children.renderable_items();
     let field_1_renderables = field_1.renderable_items();
     let template = ComparisonOperatorTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operators: ::sittir_core::filters::ListNonterminalView {
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operators: ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
@@ -22321,16 +22317,16 @@ fn render_complex_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "real", false)?;
     let children_renderables = children.renderable_items();
     let template = ComplexPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        imaginary: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        imaginary: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         real: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -22340,7 +22336,7 @@ fn render_concatenated_string(node: &NodeData) -> Result<String, ::askama::Error
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ConcatenatedStringTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22356,9 +22352,9 @@ fn render_conditional_expression(node: &NodeData) -> Result<String, ::askama::Er
     let field_1 = resolve_field(node, "body", true)?;
     let field_2 = resolve_field(node, "condition", true)?;
     let template = ConditionalExpressionTemplate {
-        alternative: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22368,8 +22364,8 @@ fn render_constrained_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "base_type", true)?;
     let field_1 = resolve_field(node, "constraint", true)?;
     let template = ConstrainedTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        constraint: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        constraint: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22379,13 +22375,13 @@ fn render_decorated_definition(node: &NodeData) -> Result<String, ::askama::Erro
     let field_0 = resolve_field(node, "definition", true)?;
     let children_renderables = children.renderable_items();
     let template = DecoratedDefinitionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        definition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        definition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22395,10 +22391,10 @@ fn render_decorator(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "expression", true)?;
     let field_1 = resolve_field(node, "newline", false)?;
     let template = DecoratorTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         newline: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -22409,8 +22405,8 @@ fn render_default_parameter(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = DefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22419,7 +22415,7 @@ fn render_delete_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DeleteStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22433,7 +22429,7 @@ fn render_dict_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DictPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22448,13 +22444,13 @@ fn render_dictionary_comprehension(node: &NodeData) -> Result<String, ::askama::
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = DictionaryComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22463,7 +22459,7 @@ fn render_dictionary_splat_pattern(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DictionarySplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22477,7 +22473,7 @@ fn render_dictionary_splat(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression"])?;
     let field_0 = resolve_field(node, "expression", true)?;
     let template = DictionarySplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22486,7 +22482,7 @@ fn render_dictionary(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DictionaryTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22500,7 +22496,7 @@ fn render_dotted_name(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = DottedNameTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22515,8 +22511,8 @@ fn render_elif_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "condition", true)?;
     let field_1 = resolve_field(node, "consequence", true)?;
     let template = ElifClauseTemplate {
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22525,7 +22521,7 @@ fn render_else_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["body"])?;
     let field_0 = resolve_field(node, "body", true)?;
     let template = ElseClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22537,17 +22533,17 @@ fn render_except_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children_renderables = children.renderable_items();
     let field_1_renderables = field_1.renderable_items();
     let template = ExceptClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
         alias: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        value: ::sittir_core::filters::ListNonterminalView {
+        value: ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
@@ -22563,8 +22559,8 @@ fn render_exec_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "in_clause", false)?;
     let field_1_renderables = field_1.renderable_items();
     let template = ExecStatementTemplate {
-        code: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        in_clause: ::sittir_core::filters::ListNonterminalView {
+        code: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        in_clause: ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
@@ -22578,7 +22574,7 @@ fn render_expression_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ExpressionListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22592,7 +22588,7 @@ fn render_expression_statement_tuple(node: &NodeData) -> Result<String, ::askama
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ExpressionStatementTupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22607,7 +22603,7 @@ fn render_expression_statement(node: &NodeData) -> Result<String, ::askama::Erro
     let variant = resolve_variant(node);
     let children_renderables = children.renderable_items();
     let template = ExpressionStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22622,7 +22618,7 @@ fn render_finally_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["block"])?;
     let field_0 = resolve_field(node, "block", true)?;
     let template = FinallyClauseTemplate {
-        block: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        block: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22635,11 +22631,11 @@ fn render_for_in_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2_renderables = field_2.renderable_items();
     let template = ForInClauseTemplate {
         async_marker: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        right: ::sittir_core::filters::ListNonterminalView {
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        right: ListNonterminalView {
             items: field_2_renderables.as_slice(),
             separator: field_2.separator,
             leading: field_2.leading_sep,
@@ -22658,16 +22654,16 @@ fn render_for_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_4 = resolve_field(node, "right", true)?;
     let template = ForStatementTemplate {
         alternative: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
         async_marker: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
     };
     template.render()
 }
@@ -22676,7 +22672,7 @@ fn render_format_specifier(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = FormatSpecifierTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22696,19 +22692,19 @@ fn render_function_definition(node: &NodeData) -> Result<String, ::askama::Error
     let field_5 = resolve_field(node, "type_parameters", false)?;
     let template = FunctionDefinitionTemplate {
         async_marker: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-        parameters: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
         return_type: match field_4.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
         },
         type_parameters: match field_5.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
         },
     };
     template.render()
@@ -22719,7 +22715,7 @@ fn render_future_import_statement(node: &NodeData) -> Result<String, ::askama::E
     let field_0 = resolve_field(node, "name", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = FutureImportStatementTemplate {
-        name: ::sittir_core::filters::ListNonterminalView {
+        name: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
@@ -22734,13 +22730,13 @@ fn render_generator_expression(node: &NodeData) -> Result<String, ::askama::Erro
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = GeneratorExpressionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22750,8 +22746,8 @@ fn render_generic_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "identifier", true)?;
     let field_1 = resolve_field(node, "type_parameter", true)?;
     let template = GenericTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        type_parameter: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        type_parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22760,7 +22756,7 @@ fn render_global_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = GlobalStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22774,7 +22770,7 @@ fn render_if_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression"])?;
     let field_0 = resolve_field(node, "expression", true)?;
     let template = IfClauseTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22786,14 +22782,14 @@ fn render_if_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "consequence", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = IfStatementTemplate {
-        alternative: ::sittir_core::filters::ListNonterminalView {
+        alternative: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
             trailing: field_0.trailing_sep,
         },
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        consequence: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -22805,14 +22801,14 @@ fn render_import_from_statement(node: &NodeData) -> Result<String, ::askama::Err
     let children_renderables = children.renderable_items();
     let field_1_renderables = field_1.renderable_items();
     let template = ImportFromStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        module_name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        name: ::sittir_core::filters::ListNonterminalView {
+        module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        name: ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
@@ -22827,7 +22823,7 @@ fn render_import_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = ImportStatementTemplate {
-        name: ::sittir_core::filters::ListNonterminalView {
+        name: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
@@ -22843,14 +22839,14 @@ fn render_interpolation(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "format_specifier", false)?;
     let field_2 = resolve_field(node, "type_conversion", false)?;
     let template = InterpolationTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         format_specifier: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
         type_conversion: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
         },
     };
     template.render()
@@ -22861,8 +22857,8 @@ fn render_keyword_argument(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = KeywordArgumentTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22872,8 +22868,8 @@ fn render_keyword_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "identifier", true)?;
     let field_1 = resolve_field(node, "simple_pattern", true)?;
     let template = KeywordPatternTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        simple_pattern: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        simple_pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -22882,7 +22878,7 @@ fn render_lambda_parameters(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = LambdaParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22897,10 +22893,10 @@ fn render_lambda_within_for_in_clause(node: &NodeData) -> Result<String, ::askam
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "parameters", false)?;
     let template = LambdaWithinForInClauseTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         parameters: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -22911,10 +22907,10 @@ fn render_lambda(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "body", true)?;
     let field_1 = resolve_field(node, "parameters", false)?;
     let template = LambdaTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         parameters: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
     };
     template.render()
@@ -22925,13 +22921,13 @@ fn render_list_comprehension(node: &NodeData) -> Result<String, ::askama::Error>
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = ListComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22940,7 +22936,7 @@ fn render_list_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ListPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22954,7 +22950,7 @@ fn render_list_splat_pattern(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ListSplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22968,7 +22964,7 @@ fn render_list_splat(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["expression"])?;
     let field_0 = resolve_field(node, "expression", true)?;
     let template = ListSplatTemplate {
-        expression: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -22977,7 +22973,7 @@ fn render_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -22993,8 +22989,8 @@ fn render_match_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "subject", true)?;
     let field_1_renderables = field_1.renderable_items();
     let template = MatchStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        subject: ::sittir_core::filters::ListNonterminalView {
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        subject: ListNonterminalView {
             items: field_1_renderables.as_slice(),
             separator: field_1.separator,
             leading: field_1.leading_sep,
@@ -23009,8 +23005,8 @@ fn render_member_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "base_type", true)?;
     let field_1 = resolve_field(node, "identifier", true)?;
     let template = MemberTypeTemplate {
-        base_type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        base_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23019,7 +23015,7 @@ fn render_module(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ModuleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23034,8 +23030,8 @@ fn render_named_expression(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "name", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = NamedExpressionTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23044,7 +23040,7 @@ fn render_nonlocal_statement(node: &NodeData) -> Result<String, ::askama::Error>
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = NonlocalStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23058,7 +23054,7 @@ fn render_not_operator(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["argument"])?;
     let field_0 = resolve_field(node, "argument", true)?;
     let template = NotOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23068,8 +23064,8 @@ fn render_pair(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "key", true)?;
     let field_1 = resolve_field(node, "value", true)?;
     let template = PairTemplate {
-        key: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        key: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23078,7 +23074,7 @@ fn render_parameters(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ParametersTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23092,7 +23088,7 @@ fn render_parenthesized_expression(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ParenthesizedExpressionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23106,7 +23102,7 @@ fn render_parenthesized_list_splat(node: &NodeData) -> Result<String, ::askama::
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ParenthesizedListSplatTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23120,7 +23116,7 @@ fn render_pattern_list(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = PatternListTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23136,13 +23132,13 @@ fn render_print_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children_renderables = children.renderable_items();
     let field_0_renderables = field_0.renderable_items();
     let template = PrintStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        argument: ::sittir_core::filters::ListNonterminalView {
+        argument: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
@@ -23157,15 +23153,15 @@ fn render_raise_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "cause", false)?;
     let children_renderables = children.renderable_items();
     let template = RaiseStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
         cause: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
     };
     template.render()
@@ -23177,10 +23173,10 @@ fn render_relative_import(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "import_prefix", true)?;
     let template = RelativeImportTemplate {
         dotted_name: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        import_prefix: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        import_prefix: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23189,7 +23185,7 @@ fn render_return_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = ReturnStatementTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23204,13 +23200,13 @@ fn render_set_comprehension(node: &NodeData) -> Result<String, ::askama::Error> 
     let field_0 = resolve_field(node, "body", true)?;
     let children_renderables = children.renderable_items();
     let template = SetComprehensionTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23219,7 +23215,7 @@ fn render_set(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = SetTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23236,16 +23232,16 @@ fn render_slice(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "stop", false)?;
     let template = SliceTemplate {
         start: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
         step: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
         stop: match field_2.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
         },
     };
     template.render()
@@ -23256,13 +23252,13 @@ fn render_splat_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "identifier", true)?;
     let children_renderables = children.renderable_items();
     let template = SplatPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23272,7 +23268,7 @@ fn render_splat_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "identifier", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = SplatTypeTemplate {
-        identifier: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23281,7 +23277,7 @@ fn render_string_content(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = StringContentTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23306,13 +23302,13 @@ fn render_subscript(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_1 = resolve_field(node, "value", true)?;
     let field_0_renderables = field_0.renderable_items();
     let template = SubscriptTemplate {
-        subscript: ::sittir_core::filters::ListNonterminalView {
+        subscript: ListNonterminalView {
             items: field_0_renderables.as_slice(),
             separator: field_0.separator,
             leading: field_0.leading_sep,
             trailing: field_0.trailing_sep,
         },
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23325,20 +23321,20 @@ fn render_try_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_3 = resolve_field(node, "finally_clause", false)?;
     let field_2_renderables = field_2.renderable_items();
     let template = TryStatementTemplate {
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         else_clause: match field_1.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
         },
-        except_clauses: ::sittir_core::filters::ListNonterminalView {
+        except_clauses: ListNonterminalView {
             items: field_2_renderables.as_slice(),
             separator: field_2.separator,
             leading: field_2.leading_sep,
             trailing: field_2.trailing_sep,
         },
         finally_clause: match field_3.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
         },
     };
     template.render()
@@ -23348,7 +23344,7 @@ fn render_tuple_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TuplePatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23362,7 +23358,7 @@ fn render_tuple(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TupleTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23378,9 +23374,9 @@ fn render_type_alias_statement(node: &NodeData) -> Result<String, ::askama::Erro
     let field_1 = resolve_field(node, "right", true)?;
     let field_2 = resolve_field(node, "type", true)?;
     let template = TypeAliasStatementTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23389,7 +23385,7 @@ fn render_type_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeParameterTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23403,7 +23399,7 @@ fn render_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = TypeTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23419,9 +23415,9 @@ fn render_typed_default_parameter(node: &NodeData) -> Result<String, ::askama::E
     let field_1 = resolve_field(node, "type", true)?;
     let field_2 = resolve_field(node, "value", true)?;
     let template = TypedDefaultParameterTemplate {
-        name: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23431,13 +23427,13 @@ fn render_typed_parameter(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "type", true)?;
     let children_renderables = children.renderable_items();
     let template = TypedParameterTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
             trailing: children.trailing_sep,
         },
-        r#type: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23447,8 +23443,8 @@ fn render_unary_operator(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "argument", true)?;
     let field_1 = resolve_field(node, "operator", true)?;
     let template = UnaryOperatorTemplate {
-        argument: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        operator: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23457,7 +23453,7 @@ fn render_union_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = UnionPatternTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23472,8 +23468,8 @@ fn render_union_type(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_0 = resolve_field(node, "left", true)?;
     let field_1 = resolve_field(node, "right", true)?;
     let template = UnionTypeTemplate {
-        left: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-        right: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
     };
     template.render()
 }
@@ -23485,11 +23481,11 @@ fn render_while_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "condition", true)?;
     let template = WhileStatementTemplate {
         alternative: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        condition: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23498,7 +23494,7 @@ fn render_with_clause_bare(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = WithClauseBareTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23512,7 +23508,7 @@ fn render_with_clause_paren(node: &NodeData) -> Result<String, ::askama::Error> 
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = WithClauseParenTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23526,7 +23522,7 @@ fn render_with_clause(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = WithClauseTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23540,7 +23536,7 @@ fn render_with_item(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &["value"])?;
     let field_0 = resolve_field(node, "value", true)?;
     let template = WithItemTemplate {
-        value: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
     };
     template.render()
 }
@@ -23552,11 +23548,11 @@ fn render_with_statement(node: &NodeData) -> Result<String, ::askama::Error> {
     let field_2 = resolve_field(node, "with_clause", true)?;
     let template = WithStatementTemplate {
         async_marker: match field_0.kind {
-            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
-            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
         },
-        body: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-        with_clause: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+        body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        with_clause: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }
@@ -23565,7 +23561,7 @@ fn render_yield(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
     let children_renderables = children.renderable_items();
     let template = YieldTemplate {
-        children: ::sittir_core::filters::ListNonterminalView {
+        children: ListNonterminalView {
             items: children_renderables.as_slice(),
             separator: children.separator,
             leading: children.leading_sep,
@@ -23576,7 +23572,7 @@ fn render_yield(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 
-pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, ::askama::Error> {
+pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {
     if node.fields.is_none() && node.children.is_none() {
         if let Some(text) = &node.text {
             return Ok(text.to_owned());
@@ -23595,7 +23591,6 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         245 => render_hidden_with_clause_paren(node), // "_with_clause_paren" | "with_clause_paren"
         117 => render_aliased_import(node), // "aliased_import"
         157 => render_argument_list(node), // "argument_list"
-        185 => render_as_pattern(node), // "as_pattern"
         121 => render_assert_statement(node), // "assert_statement"
         198 => render_assignment(node), // "assignment"
         203 => render_attribute(node), // "attribute"
@@ -23692,7 +23687,6 @@ pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, 
         211 => render_union_type(node), // "union_type"
         138 => render_while_statement(node), // "while_statement"
         244 => render_with_clause_bare(node), // "with_clause_bare"
-        245 => render_with_clause_paren(node), // "with_clause_paren"
         143 => render_with_clause(node), // "with_clause"
         144 => render_with_item(node), // "with_item"
         142 => render_with_statement(node), // "with_statement"

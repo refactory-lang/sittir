@@ -111,13 +111,14 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			"pub struct FunctionItemTemplate<'a> {"
 		);
 		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
+		// T009: module-level `use` imports — short names.
 		expect(emitted.templatesRs.contents).toContain(
-			"    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,"
+			"    pub name: SingleNonterminalView<'a>,"
 		);
 		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain(
-			"    pub children: ::sittir_core::filters::ListView<'a>,"
+			"    pub children: ListView<'a>,"
 		);
 		expect(emitted.templatesRs.contents).not.toContain("    pub name_list: &'a [String],");
 		expect(emitted.templatesRs.contents).not.toContain("    pub name_leading_sep: bool,");
@@ -181,7 +182,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).toContain('fn missing_required_field');
 		expect(emitted.templatesRs.contents).toContain('fn resolve_children');
 		expect(emitted.templatesRs.contents).toContain(
-			'pub fn render_dispatch(node: &::sittir_core::types::NodeData)'
+			'pub fn render_dispatch(node: &NodeData)'
 		);
 		expect(emitted.templatesRs.contents).toContain('fn render_function_item(');
 		// Phase D: dispatch uses numeric KindId (42) not string "function_item".

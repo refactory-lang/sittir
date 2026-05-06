@@ -328,7 +328,7 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 		);
 		lines.push(`pub struct ${s.name}<'a> {`);
 		if (s.hasChildren) {
-			lines.push(`    pub children: ::sittir_core::filters::ListNonterminalView<'a>,`);
+			lines.push(`    pub children: ListNonterminalView<'a>,`);
 		}
 		if (s.hasVariant) {
 			lines.push(`    pub variant: &'a str,`);
@@ -365,14 +365,13 @@ function renderFnName(kind: string): string {
  *   reserved for future cases where the walker can't decide.
  */
 function slotFieldType(f: EmittedField): string {
-	const C = '::sittir_core::filters::';
 	// list view OR field-view-with-multiple → always-list
 	if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
-		return `${C}ListNonterminalView<'a>`;
+		return `ListNonterminalView<'a>`;
 	}
 	// scalar OR field-view-single
-	if (f.required) return `${C}SingleNonterminalView<'a>`;
-	return `${C}OptionalNonterminalView<'a>`;
+	if (f.required) return `SingleNonterminalView<'a>`;
+	return `OptionalNonterminalView<'a>`;
 }
 
 function renderDirectSupport(
@@ -381,7 +380,6 @@ function renderDirectSupport(
 ): string {
 	const lines: string[] = [];
 	lines.push(`use ::askama::Template as _AskamaTemplate;`);
-	lines.push(`use ::sittir_core::types::{FieldValue, NodeData};`);
 	lines.push('');
 	lines.push(`#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]`);
 	lines.push(`enum ResolvedFieldKind {`);
@@ -452,13 +450,18 @@ function renderDirectSupport(
 	lines.push('');
 	if (kindIdByKind !== undefined) {
 		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
+		// T016: Deduplicate match arms — alias-collapsed kinds that share the same
+		// KindId emit only the first arm.
 		lines.push(`fn separator_for(kind_id: u16) -> &'static str {`);
 		lines.push(`    match kind_id {`);
+		const emittedSepIds = new Set<number>();
 		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
 			a.localeCompare(b)
 		)) {
 			const id = kindIdByKind.get(k);
 			if (id !== undefined) {
+				if (emittedSepIds.has(id)) continue; // T016: skip duplicate KindId
+				emittedSepIds.add(id);
 				lines.push(`        ${id} => ${JSON.stringify(s)}, // ${JSON.stringify(k)}`);
 			}
 		}
@@ -478,10 +481,14 @@ function renderDirectSupport(
 		sortedVariants.sort(
 			(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
 		);
+		const emittedVariantPairs = new Set<string>();
 		for (const [parent, child, label] of sortedVariants) {
 			const parentId = kindIdByKind.get(parent);
 			const childId = kindIdByKind.get(child);
 			if (parentId !== undefined && childId !== undefined) {
+				const pairKey = `${parentId},${childId}`;
+				if (emittedVariantPairs.has(pairKey)) continue; // T016: skip duplicate pair
+				emittedVariantPairs.add(pairKey);
 				lines.push(
 					`        (${parentId}, ${childId}) => Some(${JSON.stringify(label)}), // (${JSON.stringify(parent)}, ${JSON.stringify(child)})`
 				);
@@ -927,7 +934,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		}
 		lines.push(`    let template = ${s.name} {`);
 		if (s.hasChildren) {
-			lines.push(`        children: ::sittir_core::filters::ListNonterminalView {`);
+			lines.push(`        children: ListNonterminalView {`);
 			lines.push(`            items: children_renderables.as_slice(),`);
 			lines.push(`            separator: children.separator,`);
 			lines.push(`            leading: children.leading_sep,`);
@@ -944,7 +951,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 			const rIdent = rustFieldIdent(f.name);
 			if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
 				// Always-list slot.
-				lines.push(`        ${rIdent}: ::sittir_core::filters::ListNonterminalView {`);
+				lines.push(`        ${rIdent}: ListNonterminalView {`);
 				lines.push(`            items: field_${index}_renderables.as_slice(),`);
 				lines.push(`            separator: field_${index}.separator,`);
 				lines.push(`            leading: field_${index}.leading_sep,`);
@@ -953,13 +960,13 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 			} else if (f.required) {
 				// Required scalar (view='scalar' or single-valued field-view).
 				lines.push(
-					`        ${rIdent}: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
+					`        ${rIdent}: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
 				);
 			} else {
 				// Optional scalar — use ResolvedField.kind to gate Missing vs Present.
 				lines.push(`        ${rIdent}: match field_${index}.kind {`);
-				lines.push(`            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,`);
-				lines.push(`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
+				lines.push(`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
 				lines.push(`        },`);
 			}
 		}
@@ -977,7 +984,7 @@ function renderDispatchFn(
 ): string {
 	const lines: string[] = [];
 	lines.push(
-		`pub fn render_dispatch(node: &::sittir_core::types::NodeData) -> Result<String, ::askama::Error> {`
+		`pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(`    if node.fields.is_none() && node.children.is_none() {`);
 	lines.push(`        if let Some(text) = &node.text {`);
@@ -986,6 +993,9 @@ function renderDispatchFn(
 	lines.push(`    }`);
 	if (kindIdByKind !== undefined) {
 		// Phase C: NodeData.type_ is KindId — match on numeric id.
+		// T016: Track emitted KindIds to skip duplicate arms from alias-collapsed
+		// kinds (e.g. _closure_expression_expr and closure_expression_expr share 324).
+		const emittedDispatchIds = new Set<number>();
 		lines.push(`    match node.type_.0 {`);
 		for (const s of structs) {
 			// Collect all string aliases for this kind (hidden + visible forms)
@@ -1003,6 +1013,10 @@ function renderDispatchFn(
 					.filter((id): id is number => id !== undefined)
 			);
 			if (ids.size === 0) continue; // no parser symbol — skip
+			// T016: Skip if ALL ids for this struct have already been emitted.
+			const newIds = [...ids].filter((id) => !emittedDispatchIds.has(id));
+			if (newIds.length === 0) continue;
+			for (const id of ids) emittedDispatchIds.add(id);
 			const patternParts = [...ids].map((id) => String(id));
 			const comment = kindAliases.map((k) => JSON.stringify(k)).join(' | ');
 			lines.push(
@@ -1390,7 +1404,7 @@ function renderTypedDispatch(
 	// Per-kind node arms delegate to the per-kind render fn (same as dispatch).
 	// Literal unit variant arms write static text directly via dest.write_str —
 	// no String allocation, no call through render_transport_dispatch.
-	lines.push(`impl ::sittir_core::types::RenderableTransport for AnyTransport {`);
+	lines.push(`impl RenderableTransport for AnyTransport {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
@@ -1805,7 +1819,13 @@ function emitSingleChildBuffer(
 	cls: SlotClass = { tag: 'heterogeneous' }
 ): string[] {
 	const lines: string[] = [];
-	const C = '::sittir_core::filters::';
+	// `R` is the fully-qualified prefix for `Renderable` — this module defines
+	// a local `pub enum Renderable` (Text+Joined) that shadows the
+	// `sittir_core::filters::Renderable` (Text+Joined+Transport). The typed
+	// dispatch path constructs `::sittir_core::filters::Renderable::Transport`
+	// values that feed into `ListNonterminalView.items`, so the full path is
+	// required here to avoid resolving to the wrong local type.
+	const R = '::sittir_core::filters::';
 	// Use Vec<Renderable<'_>> (matching emitListSlotBuffer's output type) to
 	// avoid std::slice::from_ref / Option::as_slice() which trigger the
 	// str_as_str unstable feature (issue #130366) on current stable Rust.
@@ -1817,21 +1837,21 @@ function emitSingleChildBuffer(
 	if (isBox) {
 		if (required) {
 			lines.push(
-				`    let ${ident}_buf: Vec<${C}Renderable<'_>> = vec![${C}Renderable::Transport(node.${ident}.as_ref())];`
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`
 			);
 		} else {
 			lines.push(
-				`    let ${ident}_buf: Vec<${C}Renderable<'_>> = node.${ident}.iter().map(|c| ${C}Renderable::Transport(c.as_ref())).collect();`
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter().map(|c| ${R}Renderable::Transport(c.as_ref())).collect();`
 			);
 		}
 	} else {
 		if (required) {
 			lines.push(
-				`    let ${ident}_buf: Vec<${C}Renderable<'_>> = vec![${C}Renderable::Transport(&node.${ident})];`
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`
 			);
 		} else {
 			lines.push(
-				`    let ${ident}_buf: Vec<${C}Renderable<'_>> = node.${ident}.iter().map(|c| ${C}Renderable::Transport(c)).collect();`
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter().map(|c| ${R}Renderable::Transport(c)).collect();`
 			);
 		}
 	}
@@ -1855,19 +1875,19 @@ function emitSingleChildBuffer(
  */
 function emitListSlotBuffer(ident: string, required: boolean): string[] {
 	const lines: string[] = [];
-	const C = '::sittir_core::filters::';
+	const R = '::sittir_core::filters::';
 
 	// All paths: AnyTransport (sized enum, no Box), per-slot child enum, concrete,
 	// supertype — all implement RenderableTransport. Rust auto-coerces &T to
 	// &dyn RenderableTransport; no explicit cast needed.
 	if (required) {
-		lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = node.${ident}.iter()`);
-		lines.push(`        .map(|t| ${C}Renderable::Transport(t))`);
+		lines.push(`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter()`);
+		lines.push(`        .map(|t| ${R}Renderable::Transport(t))`);
 		lines.push(`        .collect();`);
 	} else {
 		lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
-		lines.push(`    let ${ident}_buf: Vec<${C}Renderable<'_>> = ${ident}_owned.iter()`);
-		lines.push(`        .map(|t| ${C}Renderable::Transport(t))`);
+		lines.push(`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${ident}_owned.iter()`);
+		lines.push(`        .map(|t| ${R}Renderable::Transport(t))`);
 		lines.push(`        .collect();`);
 	}
 	return lines;
@@ -1909,7 +1929,9 @@ function buildTypedTemplateBody(
 	const lines: string[] = [];
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
-	const C = '::sittir_core::filters::';
+	// `R` is the fully-qualified prefix for `Renderable` — see comment in
+	// emitSingleChildBuffer for why the local `Renderable` enum requires this.
+	const R = '::sittir_core::filters::';
 
 	// Classify helper — use classifySlotForEmit when nodeMap is available so
 	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
@@ -1929,7 +1951,7 @@ function buildTypedTemplateBody(
 		} else {
 			// Template uses children but transport has no children field —
 			// emit an empty buffer so the ListNonterminalView slot in the template is empty.
-			lines.push(`    let children_buf: Vec<${C}Renderable<'_>> = Vec::new();`);
+			lines.push(`    let children_buf: Vec<${R}Renderable<'_>> = Vec::new();`);
 		}
 	}
 
@@ -1949,7 +1971,7 @@ function buildTypedTemplateBody(
 	lines.push(`    let template = ${templateName} {`);
 
 	if (struct.hasChildren) {
-		lines.push(`        children: ${C}ListNonterminalView {`);
+		lines.push(`        children: ListNonterminalView {`);
 		lines.push(`            items: children_buf.as_slice(),`);
 		lines.push(`            separator: ${sepLiteral},`);
 		lines.push(`            leading: false,`);
@@ -1974,7 +1996,7 @@ function buildTypedTemplateBody(
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
 			// Always-list slot. Empty list when transport-field absent.
 			const items = f.hasTransportField ? `${rIdent}_buf.as_slice()` : '&[]';
-			lines.push(`        ${rIdent}: ${C}ListNonterminalView {`);
+			lines.push(`        ${rIdent}: ListNonterminalView {`);
 			lines.push(`            items: ${items},`);
 			lines.push(`            separator: ${sepLiteral},`);
 			lines.push(`            leading: false,`);
@@ -1985,13 +2007,13 @@ function buildTypedTemplateBody(
 			if (!f.hasTransportField) {
 				// Virtual presentation slot — no backing transport field.
 				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Text("")),`
+					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Text("")),`
 				);
 			} else if (isErased) {
 				// Heterogeneous single required field — type is Box<AnyTransport>.
 				// Deref through Box to reach &AnyTransport: &dyn RenderableTransport.
 				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(node.${rIdent}.as_ref())),`
+					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`
 				);
 			} else if (
 				cls.tag === 'concrete' &&
@@ -2002,22 +2024,22 @@ function buildTypedTemplateBody(
 				// bool does not implement RenderableTransport; use Renderable::Text directly.
 				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
 				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(`
+					`        ${rIdent}: SingleNonterminalView(`
 				);
 				lines.push(
-					`            if node.${rIdent} { ${C}Renderable::Text(${staticText}) } else { ${C}Renderable::Text("") }`
+					`            if node.${rIdent} { ${R}Renderable::Text(${staticText}) } else { ${R}Renderable::Text("") }`
 				);
 				lines.push(`        ),`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
 				lines.push(
-					`        ${rIdent}: ${C}SingleNonterminalView(${C}Renderable::Transport(&node.${rIdent})),`
+					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(&node.${rIdent})),`
 				);
 			}
 		} else {
 			// Optional single-value slot.
 			if (!f.hasTransportField) {
-				lines.push(`        ${rIdent}: ${C}OptionalNonterminalView::Missing,`);
+				lines.push(`        ${rIdent}: OptionalNonterminalView::Missing,`);
 			} else if (isErased) {
 				// Heterogeneous single optional field — type is Option<Box<AnyTransport>>.
 				// Deref through Box to reach &AnyTransport: &dyn RenderableTransport.
@@ -2025,10 +2047,10 @@ function buildTypedTemplateBody(
 					`        ${rIdent}: match &node.${rIdent} {`
 				);
 				lines.push(
-					`            Some(v) => ${C}OptionalNonterminalView::Present(${C}Renderable::Transport(v.as_ref())),`
+					`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`
 				);
 				lines.push(
-					`            None => ${C}OptionalNonterminalView::Missing,`
+					`            None => OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			} else if (
@@ -2041,20 +2063,20 @@ function buildTypedTemplateBody(
 				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
 				lines.push(`        ${rIdent}: match node.${rIdent} {`);
 				lines.push(
-					`            Some(true) => ${C}OptionalNonterminalView::Present(${C}Renderable::Text(${staticText})),`
+					`            Some(true) => OptionalNonterminalView::Present(${R}Renderable::Text(${staticText})),`
 				);
 				lines.push(
-					`            _ => ${C}OptionalNonterminalView::Missing,`
+					`            _ => OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
 				lines.push(`        ${rIdent}: match &node.${rIdent} {`);
 				lines.push(
-					`            Some(v) => ${C}OptionalNonterminalView::Present(${C}Renderable::Transport(v)),`
+					`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v)),`
 				);
 				lines.push(
-					`            None => ${C}OptionalNonterminalView::Missing,`
+					`            None => OptionalNonterminalView::Missing,`
 				);
 				lines.push(`        },`);
 			}
@@ -2173,10 +2195,21 @@ export function emitRenderModule(
 		'',
 		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]',
 		'',
-		// Bring RenderableTransport into scope so .render_to_string() method calls
-		// resolve on heterogeneous (Box<AnyTransport>) slots. The `as _` form
-		// avoids polluting the name-space while still enabling method dispatch.
-		'use ::sittir_core::types::RenderableTransport as _;',
+		// Module-level `use` imports: bring sittir_core types and filters into
+		// scope so per-kind fns, struct defs, and template bodies use short names
+		// instead of fully-qualified `::sittir_core::filters::X` paths (~3000 refs).
+		//
+		// Note: `Renderable` is deliberately NOT imported here — this module
+		// defines a local `pub enum Renderable<'a> { Text, Joined }` (via
+		// renderGrammarRenderable) that would collide with `sittir_core::filters::Renderable`.
+		// The typed-dispatch path uses `::sittir_core::filters::Renderable` explicitly.
+		'use ::sittir_core::filters::{',
+		'    SingleNonterminalView, ListNonterminalView,',
+		'    OptionalNonterminalView,',
+		'};',
+		'use ::sittir_core::types::{',
+		'    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia,',
+		'};',
 		'',
 		// Phase B: `#[napi(object)]` / `#[napi(js_name)]` proc-macro attrs and the
 		// custom `impl FromNapiValue` blocks are gated behind the napi-bindings
@@ -2692,7 +2725,7 @@ function emitSupertypeTransportEnum(
 	// render helper (declared later by emitSupertypeRenderHelper; forward fn
 	// references are fine at Rust module scope).
 	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}_transport`;
-	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
+	lines.push(`impl RenderableTransport for ${enumName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
@@ -2942,7 +2975,7 @@ function emitPerSlotChildEnum(
 	lines.push(``);
 
 	// RenderableTransport impl — match on variant and delegate to per-kind render fn.
-	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
+	lines.push(`impl RenderableTransport for ${enumName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
@@ -3042,9 +3075,14 @@ function renderAnyTransportWithNapiFromValue(
 
 	// One match arm per node — each arm delegates to the per-kind struct's
 	// FromNapiValue (generated by #[napi(object)]) over the same napi_val.
+	// T016: Deduplicate match arms — alias-collapsed kinds that share the same
+	// KindId emit only the first arm. The second would be unreachable.
+	const emittedNodeIds = new Set<number>();
 	for (const node of nodes) {
 		const id = kindIdByKind.get(node.kind);
 		if (id === undefined) continue; // no parser symbol — skip
+		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
+		emittedNodeIds.add(id);
 		const variant = rustTransportVariantName(node);
 		const structName = rustTransportStructName(node);
 		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
@@ -3064,9 +3102,12 @@ function renderAnyTransportWithNapiFromValue(
 
 	// One match arm per literal kind — unit variants, no payload.
 	// The literal text is a compile-time constant; JS does not need to send it.
+	// Use the same emittedNodeIds set to skip KindIds already claimed by node arms.
 	for (const [index, literal] of literals.entries()) {
 		const id = kindIdByKind.get(literal.kind);
 		if (id === undefined) continue;
+		if (emittedNodeIds.has(id)) continue; // T016: skip duplicate KindId
+		emittedNodeIds.add(id);
 		const variant = rustLiteralTransportVariantName(literal, index);
 		lines.push(`            // literal kind: ${literal.kind} → ${JSON.stringify(literal.text)}`);
 		lines.push(`            ${id} => Ok(AnyTransport::${variant}),`);
@@ -3135,7 +3176,7 @@ function renderGrammarRenderable(): string[] {
 		'#[derive(Debug, Clone, Copy)]',
 		"pub enum Renderable<'a> {",
 		"    Text(&'a str),",
-		"    Joined(::sittir_core::filters::Joined<'a>),",
+		"    Joined(::sittir_core::filters::Joined<'a>),", // keep FQ — inside local enum, not in scope
 		'}',
 		'',
 		"impl ::std::fmt::Display for Renderable<'_> {",
@@ -3174,16 +3215,16 @@ function renderTransportBridge(
 		'',
 		'fn transport_node_data(',
 		'    kind: TransportKindId,',
-		'    source: Option<TransportSource>,',
+		'    source: Option<Source>,',
 		'    named: Option<bool>,',
 		'    default_named: bool,',
 		'    text: Option<String>,',
-		'    span: Option<::sittir_core::types::Span>,',
+		'    span: Option<Span>,',
 		'    node_handle: Option<u32>,',
 		'    child_index: Option<u16>,',
 		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
 		'    children: Option<Vec<TransportNodeData>>,',
-		'    trivia_data: Option<::sittir_core::types::NodeTrivia>,',
+		'    trivia_data: Option<NodeTrivia>,',
 		') -> TransportNodeData {',
 		'    TransportNodeData {',
 		'        type_: kind,',
@@ -3385,7 +3426,7 @@ function renderTransportDataToNodeFn(
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
 	lines.push(...renderTransportChildrenBinding(children, nodeMap, ownerTypeName));
-	lines.push('    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());');
+	lines.push('    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());');
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
 	lines.push('        transport.transport_source,');
@@ -3721,7 +3762,7 @@ function renderTerminalTransportToNodeFn(
 
 	return [
 		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-		'    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());',
+		'    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());',
 		'    Ok(transport_node_data(',
 		`        ${kindArg},`,
 		'        transport.transport_source,',
@@ -3800,7 +3841,7 @@ function renderPolymorphTransportDefs(
 	// render fn which matches on variants and calls each form's render fn.
 	const polymorphStructName = rustTransportStructName(node);
 	const polymorphRenderFn = rustTypedRenderFnName(node.typeName);
-	lines.push(`impl ::sittir_core::types::RenderableTransport for ${polymorphStructName} {`);
+	lines.push(`impl RenderableTransport for ${polymorphStructName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
@@ -3877,7 +3918,7 @@ function renderTransportDataStruct(
 	// Leaf/keyword/token structs write directly to `dest` — no String intermediate.
 	// Branch/container/group nodes delegate to the per-kind render fn which
 	// streams directly into dest via Askama's template.render_into(dest).
-	lines.push(`impl ::sittir_core::types::RenderableTransport for ${structName} {`);
+	lines.push(`impl RenderableTransport for ${structName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
@@ -4021,9 +4062,9 @@ interface TransportMetadataField {
  * conditionally by `renderTransportMetadataFields`.
  */
 const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
-	{ jsName: '$source', rustName: 'transport_source', rustType: 'Option<::sittir_core::types::Source>' },
+	{ jsName: '$source', rustName: 'transport_source', rustType: 'Option<Source>' },
 	{ jsName: '$named', rustName: 'transport_named', rustType: 'Option<bool>' },
-	{ jsName: '$span', rustName: 'transport_span', rustType: 'Option<::sittir_core::types::Span>' },
+	{ jsName: '$span', rustName: 'transport_span', rustType: 'Option<Span>' },
 	// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
 	// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
 	{ jsName: '$nodeHandle', rustName: 'transport_node_handle', rustType: 'Option<f64>', bridgeMap: '.map(|v| v as u32)' },
@@ -4740,7 +4781,7 @@ function renderEnumType(
 	lines.push('');
 
 	// --- impl RenderableTransport ---
-	lines.push(`impl ::sittir_core::types::RenderableTransport for ${enumName} {`);
+	lines.push(`impl RenderableTransport for ${enumName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
