@@ -2076,7 +2076,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \""
+    "expectedOutput": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\""
   },
   {
     "kind": "roundtrip",
@@ -2084,9 +2084,9 @@
     "sourceIn": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
+    "expectedSourceOut": "\"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function())) \"",
+    "wrappedText": "_ = \"print \\\"'%s' has %i characters\\\" % (public_function(), len(public_function()))\"",
     "wrappedOffset": 4
   },
   {
@@ -2138,7 +2138,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\"\"\" exec _code_ in _globs_, _locs_ \"\"\""
+    "expectedOutput": "\"\"\"exec _code_ in _globs_, _locs_\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -2146,9 +2146,9 @@
     "sourceIn": "\"\"\"exec _code_ in _globs_, _locs_\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" exec _code_ in _globs_, _locs_ \"\"\"",
+    "expectedSourceOut": "\"\"\"exec _code_ in _globs_, _locs_\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" exec _code_ in _globs_, _locs_ \"\"\"",
+    "wrappedText": "_ = \"\"\"exec _code_ in _globs_, _locs_\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -2200,7 +2200,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" __builtins__ \""
+    "expectedOutput": "\"__builtins__\""
   },
   {
     "kind": "roundtrip",
@@ -2208,9 +2208,9 @@
     "sourceIn": "\"__builtins__\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" __builtins__ \"",
+    "expectedSourceOut": "\"__builtins__\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" __builtins__ \"",
+    "wrappedText": "_ = \"__builtins__\"",
     "wrappedOffset": 4
   },
   {
@@ -6726,7 +6726,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' vector '"
+    "expectedOutput": "'vector'"
   },
   {
     "kind": "roundtrip",
@@ -6734,9 +6734,9 @@
     "sourceIn": "'vector'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' vector '",
+    "expectedSourceOut": "'vector'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' vector '",
+    "wrappedText": "_ = 'vector'",
     "wrappedOffset": 4
   },
   {
@@ -7374,7 +7374,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" e \""
+    "expectedOutput": "\"e\""
   },
   {
     "kind": "roundtrip",
@@ -7382,9 +7382,9 @@
     "sourceIn": "\"e\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" e \"",
+    "expectedSourceOut": "\"e\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" e \"",
+    "wrappedText": "_ = \"e\"",
     "wrappedOffset": 4
   },
   {
@@ -8952,7 +8952,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" I'm ok \""
+    "expectedOutput": "\"I'm ok\""
   },
   {
     "kind": "roundtrip",
@@ -8960,9 +8960,9 @@
     "sourceIn": "\"I'm ok\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" I'm ok \"",
+    "expectedSourceOut": "\"I'm ok\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" I'm ok \"",
+    "wrappedText": "_ = \"I'm ok\"",
     "wrappedOffset": 4
   },
   {
@@ -9014,7 +9014,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' \"ok\" '"
+    "expectedOutput": "'\"ok\"'"
   },
   {
     "kind": "roundtrip",
@@ -9022,9 +9022,9 @@
     "sourceIn": "'\"ok\"'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' \"ok\" '",
+    "expectedSourceOut": "'\"ok\"'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' \"ok\" '",
+    "wrappedText": "_ = '\"ok\"'",
     "wrappedOffset": 4
   },
   {
@@ -9076,7 +9076,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "UR' bye '"
+    "expectedOutput": "UR'bye'"
   },
   {
     "kind": "roundtrip",
@@ -9084,9 +9084,9 @@
     "sourceIn": "UR'bye'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "UR' bye '",
+    "expectedSourceOut": "UR'bye'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = UR' bye '",
+    "wrappedText": "_ = UR'bye'",
     "wrappedOffset": 4
   },
   {
@@ -9138,7 +9138,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "b' sup '"
+    "expectedOutput": "b'sup'"
   },
   {
     "kind": "roundtrip",
@@ -9146,9 +9146,9 @@
     "sourceIn": "b'sup'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "b' sup '",
+    "expectedSourceOut": "b'sup'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = b' sup '",
+    "wrappedText": "_ = b'sup'",
     "wrappedOffset": 4
   },
   {
@@ -9200,7 +9200,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "B\" sup \""
+    "expectedOutput": "B\"sup\""
   },
   {
     "kind": "roundtrip",
@@ -9208,9 +9208,9 @@
     "sourceIn": "B\"sup\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "B\" sup \"",
+    "expectedSourceOut": "B\"sup\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = B\" sup \"",
+    "wrappedText": "_ = B\"sup\"",
     "wrappedOffset": 4
   },
   {
@@ -9262,7 +9262,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "` 1 `"
+    "expectedOutput": "`1`"
   },
   {
     "kind": "roundtrip",
@@ -9270,9 +9270,9 @@
     "sourceIn": "`1`",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "` 1 `",
+    "expectedSourceOut": "`1`",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ` 1 `",
+    "wrappedText": "_ = `1`",
     "wrappedOffset": 4
   },
   {
@@ -9324,7 +9324,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" \\\\ \""
+    "expectedOutput": "\"\\\\\""
   },
   {
     "kind": "roundtrip",
@@ -9332,9 +9332,9 @@
     "sourceIn": "\"\\\\\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" \\\\ \"",
+    "expectedSourceOut": "\"\\\\\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" \\\\ \"",
+    "wrappedText": "_ = \"\\\\\"",
     "wrappedOffset": 4
   },
   {
@@ -9386,7 +9386,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" / \""
+    "expectedOutput": "\"/\""
   },
   {
     "kind": "roundtrip",
@@ -9394,9 +9394,9 @@
     "sourceIn": "\"/\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" / \"",
+    "expectedSourceOut": "\"/\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" / \"",
+    "wrappedText": "_ = \"/\"",
     "wrappedOffset": 4
   },
   {
@@ -9448,7 +9448,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" multiline \\\nstring \""
+    "expectedOutput": "\"multiline \\\nstring\""
   },
   {
     "kind": "roundtrip",
@@ -9456,9 +9456,9 @@
     "sourceIn": "\"multiline \\\nstring\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" multiline \\\nstring \"",
+    "expectedSourceOut": "\"multiline \\\nstring\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" multiline \\\nstring \"",
+    "wrappedText": "_ = \"multiline \\\nstring\"",
     "wrappedOffset": 4
   },
   {
@@ -9510,7 +9510,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "b\" \\x12\\u12\\U12\\x13\\N{WINKING FACE} \""
+    "expectedOutput": "b\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\""
   },
   {
     "kind": "roundtrip",
@@ -9518,9 +9518,9 @@
     "sourceIn": "b\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "b\" \\x12\\u12\\U12\\x13\\N{WINKING FACE} \"",
+    "expectedSourceOut": "b\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = b\" \\x12\\u12\\U12\\x13\\N{WINKING FACE} \"",
+    "wrappedText": "_ = b\"\\x12\\u12\\U12\\x13\\N{WINKING FACE}\"",
     "wrappedOffset": 4
   },
   {
@@ -9572,7 +9572,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" \\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\ \""
+    "expectedOutput": "\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\""
   },
   {
     "kind": "roundtrip",
@@ -9580,9 +9580,9 @@
     "sourceIn": "\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" \\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\ \"",
+    "expectedSourceOut": "\"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" \\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\ \"",
+    "wrappedText": "_ = \"\\xab\\1\\12\\123\\'\\\"\\a\\b\\f\\r\\n\\t\\v\\\\\"",
     "wrappedOffset": 4
   },
   {
@@ -9634,7 +9634,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" \\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234 \""
+    "expectedOutput": "\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\""
   },
   {
     "kind": "roundtrip",
@@ -9642,9 +9642,9 @@
     "sourceIn": "\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" \\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234 \"",
+    "expectedSourceOut": "\"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" \\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234 \"",
+    "wrappedText": "_ = \"\\xgh\\o123\\p\\q\\c\\d\\e\\u12\\U1234\"",
     "wrappedOffset": 4
   },
   {
@@ -9696,7 +9696,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f' \\N{GREEK CAPITAL LETTER DELTA} '"
+    "expectedOutput": "f'\\N{GREEK CAPITAL LETTER DELTA}'"
   },
   {
     "kind": "roundtrip",
@@ -9704,9 +9704,9 @@
     "sourceIn": "f'\\N{GREEK CAPITAL LETTER DELTA}'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f' \\N{GREEK CAPITAL LETTER DELTA} '",
+    "expectedSourceOut": "f'\\N{GREEK CAPITAL LETTER DELTA}'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = f' \\N{GREEK CAPITAL LETTER DELTA} '",
+    "wrappedText": "_ = f'\\N{GREEK CAPITAL LETTER DELTA}'",
     "wrappedOffset": 4
   },
   {
@@ -9758,7 +9758,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' ab\\x00cd '"
+    "expectedOutput": "'ab\\x00cd'"
   },
   {
     "kind": "roundtrip",
@@ -9766,9 +9766,9 @@
     "sourceIn": "'ab\\x00cd'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' ab\\x00cd '",
+    "expectedSourceOut": "'ab\\x00cd'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = ' ab\\x00cd '",
+    "wrappedText": "_ = 'ab\\x00cd'",
     "wrappedOffset": 4
   },
   {
@@ -9820,7 +9820,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" \\n \""
+    "expectedOutput": "\"\\n\""
   },
   {
     "kind": "roundtrip",
@@ -9828,9 +9828,9 @@
     "sourceIn": "\"\\n\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" \\n \"",
+    "expectedSourceOut": "\"\\n\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \" \\n \"",
+    "wrappedText": "_ = \"\\n\"",
     "wrappedOffset": 4
   },
   {
@@ -9882,7 +9882,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r' ab\\x00cd '"
+    "expectedOutput": "r'ab\\x00cd'"
   },
   {
     "kind": "roundtrip",
@@ -9890,9 +9890,9 @@
     "sourceIn": "r'ab\\x00cd'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r' ab\\x00cd '",
+    "expectedSourceOut": "r'ab\\x00cd'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r' ab\\x00cd '",
+    "wrappedText": "_ = r'ab\\x00cd'",
     "wrappedOffset": 4
   },
   {
@@ -9944,7 +9944,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "ur\" \\n \""
+    "expectedOutput": "ur\"\\n\""
   },
   {
     "kind": "roundtrip",
@@ -9952,9 +9952,135 @@
     "sourceIn": "ur\"\\n\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "ur\" \\n \"",
+    "expectedSourceOut": "ur\"\\n\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ur\" \\n \"",
+    "wrappedText": "_ = ur\"\\n\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 83,
+        "end": 91
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "fr\"",
+        "$span": {
+          "start": 83,
+          "end": 86
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "\\",
+          "$span": {
+            "start": 86,
+            "end": 87
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{0}",
+          "$span": {
+            "start": 87,
+            "end": 90
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 90,
+          "end": 91
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "fr\"\\{0}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "fr\"\\{0}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "fr\"\\{0}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer)) string_end: (string_end))",
+    "wrappedText": "_ = fr\"\\{0}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 93,
+        "end": 98
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "r\"",
+        "$span": {
+          "start": 93,
+          "end": 95
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\\\\\"",
+        "$span": {
+          "start": 95,
+          "end": 98
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      }
+    },
+    "expectedOutput": "r\"\\\\\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "r\"\\\\\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "r\"\\\\\"",
+    "expectedReparseTree": "(string string_start: (string_start) string_end: (string_end))",
+    "wrappedText": "_ = r\"\\\\\"",
     "wrappedOffset": 4
   },
   {
@@ -10006,7 +10132,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r' \"a\\\nde\\\nfg\" '"
+    "expectedOutput": "r'\"a\\\nde\\\nfg\"'"
   },
   {
     "kind": "roundtrip",
@@ -10014,9 +10140,9 @@
     "sourceIn": "r'\"a\\\nde\\\nfg\"'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r' \"a\\\nde\\\nfg\" '",
+    "expectedSourceOut": "r'\"a\\\nde\\\nfg\"'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r' \"a\\\nde\\\nfg\" '",
+    "wrappedText": "_ = r'\"a\\\nde\\\nfg\"'",
     "wrappedOffset": 4
   },
   {
@@ -10182,7 +10308,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r\" (\\n|\\A)#include\\s*['\\\"] \""
+    "expectedOutput": "r\"(\\n|\\A)#include\\s*['\\\"]\""
   },
   {
     "kind": "roundtrip",
@@ -10190,9 +10316,9 @@
     "sourceIn": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" (\\n|\\A)#include\\s*['\\\"] \"",
+    "expectedSourceOut": "r\"(\\n|\\A)#include\\s*['\\\"]\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" (\\n|\\A)#include\\s*['\\\"] \"",
+    "wrappedText": "_ = r\"(\\n|\\A)#include\\s*['\\\"]\"",
     "wrappedOffset": 4
   },
   {
@@ -10244,7 +10370,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r\" (?P<name>[\\w\\d./\\\\]+[.]src)['\\\"] \""
+    "expectedOutput": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\""
   },
   {
     "kind": "roundtrip",
@@ -10252,9 +10378,97 @@
     "sourceIn": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" (?P<name>[\\w\\d./\\\\]+[.]src)['\\\"] \"",
+    "expectedSourceOut": "r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" (?P<name>[\\w\\d./\\\\]+[.]src)['\\\"] \"",
+    "wrappedText": "_ = r\"(?P<name>[\\w\\d./\\\\]+[.]src)['\\\"]\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 10,
+        "end": 32
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 10,
+          "end": 12
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "a ",
+          "$span": {
+            "start": 12,
+            "end": 14
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{b(f'c {e} d')}",
+          "$span": {
+            "start": 14,
+            "end": 29
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": " e",
+          "$span": {
+            "start": 29,
+            "end": 31
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 31,
+          "end": 32
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"a {b(f'c {e} d')} e\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b(f'c {e} d')} e\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {b(f'c {e} d')} e\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (call function: (identifier) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))))) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {b(f'c {e} d')} e\"",
     "wrappedOffset": 4
   },
   {
@@ -10332,7 +10546,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f\"\"\" a\"\n{b}\nc \"\"\""
+    "expectedOutput": "f\"\"\"a\"{b}c\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -10340,9 +10554,9 @@
     "sourceIn": "f\"\"\"a\"{b}c\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"\"\" a\"\n{b}\nc \"\"\"",
+    "expectedSourceOut": "f\"\"\"a\"{b}c\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = f\"\"\" a\"\n{b}\nc \"\"\"",
+    "wrappedText": "_ = f\"\"\"a\"{b}c\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -10420,7 +10634,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f\"\"\" a\"\"\n{b}\nc \"\"\""
+    "expectedOutput": "f\"\"\"a\"\"{b}c\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -10428,9 +10642,9 @@
     "sourceIn": "f\"\"\"a\"\"{b}c\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\"\"\" a\"\"\n{b}\nc \"\"\"",
+    "expectedSourceOut": "f\"\"\"a\"\"{b}c\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = f\"\"\" a\"\"\n{b}\nc \"\"\"",
+    "wrappedText": "_ = f\"\"\"a\"\"{b}c\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -10482,7 +10696,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f\" a {{}} e \""
+    "expectedOutput": "f\"a {{}} e\""
   },
   {
     "kind": "roundtrip",
@@ -10490,9 +10704,173 @@
     "sourceIn": "f\"a {{}} e\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\" a {{}} e \"",
+    "expectedSourceOut": "f\"a {{}} e\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = f\" a {{}} e \"",
+    "wrappedText": "_ = f\"a {{}} e\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 74,
+        "end": 84
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 74,
+          "end": 76
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "a ",
+          "$span": {
+            "start": 76,
+            "end": 78
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{b}",
+          "$span": {
+            "start": 78,
+            "end": 81
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "}}",
+          "$span": {
+            "start": 81,
+            "end": 83
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 83,
+          "end": 84
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"a {b}}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b}}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {b}}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {b}}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 85,
+        "end": 95
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 85,
+          "end": 87
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "a {{",
+          "$span": {
+            "start": 87,
+            "end": 91
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{b}",
+          "$span": {
+            "start": 91,
+            "end": 94
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 94,
+          "end": 95
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"a {{{b}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {{{b}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {{{b}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {{{b}\"",
     "wrappedOffset": 4
   },
   {
@@ -10544,7 +10922,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f\" a {{b}} \""
+    "expectedOutput": "f\"a {{b}}\""
   },
   {
     "kind": "roundtrip",
@@ -10552,9 +10930,9 @@
     "sourceIn": "f\"a {{b}}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\" a {{b}} \"",
+    "expectedSourceOut": "f\"a {{b}}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = f\" a {{b}} \"",
+    "wrappedText": "_ = f\"a {{b}}\"",
     "wrappedOffset": 4
   },
   {
@@ -10632,7 +11010,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "f\" a {{\n{b}\n}} \""
+    "expectedOutput": "f\"a {{{b}}}\""
   },
   {
     "kind": "roundtrip",
@@ -10640,9 +11018,435 @@
     "sourceIn": "f\"a {{{b}}}\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "f\" a {{\n{b}\n}} \"",
+    "expectedSourceOut": "f\"a {{{b}}}\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation)) content: (interpolation expression: (identifier)) content: (string_content (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = f\" a {{\n{b}\n}} \"",
+    "wrappedText": "_ = f\"a {{{b}}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 120,
+        "end": 127
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 120,
+          "end": 122
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{c,}",
+        "$span": {
+          "start": 122,
+          "end": 126
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 126,
+          "end": 127
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{c,}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{c,}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{c,}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (expression_list (identifier))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{c,}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 128,
+        "end": 140
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 128,
+          "end": 130
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{yield d}",
+        "$span": {
+          "start": 130,
+          "end": 139
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 139,
+          "end": 140
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{yield d}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{yield d}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{yield d}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (yield (identifier))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{yield d}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 141,
+        "end": 149
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 141,
+          "end": 143
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{*a,}",
+        "$span": {
+          "start": 143,
+          "end": 148
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 148,
+          "end": 149
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{*a,}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{*a,}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{*a,}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (expression_list (list_splat (identifier)))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{*a,}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 178,
+        "end": 221
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"\"\"",
+        "$span": {
+          "start": 178,
+          "end": 182
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "\n",
+          "$span": {
+            "start": 182,
+            "end": 183
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{\"string1\" if True else\n \"string2\"}",
+          "$span": {
+            "start": 183,
+            "end": 218
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"\"\"",
+        "$span": {
+          "start": 218,
+          "end": 221
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (conditional_expression body: (string string_start: (string_start) content: (string_content) string_end: (string_end)) condition: (true) alternative: (string string_start: (string_start) content: (string_content) string_end: (string_end)))) string_end: (string_end))",
+    "wrappedText": "_ = f\"\"\"\n{\"string1\" if True else\n \"string2\"}\"\"\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 17,
+        "end": 27
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f'",
+        "$span": {
+          "start": 17,
+          "end": 19
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "c ",
+          "$span": {
+            "start": 19,
+            "end": 21
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{e}",
+          "$span": {
+            "start": 21,
+            "end": 24
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": " d",
+          "$span": {
+            "start": 24,
+            "end": 26
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "'",
+        "$span": {
+          "start": 26,
+          "end": 27
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f'c {e} d'"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f'c {e} d'",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f'c {e} d'",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = f'c {e} d'",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 260,
+        "end": 296
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f'''",
+        "$span": {
+          "start": 260,
+          "end": 264
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "A complex trick: ",
+          "$span": {
+            "start": 264,
+            "end": 281
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{\n2  # two\n}",
+          "$span": {
+            "start": 281,
+            "end": 293
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "'''",
+        "$span": {
+          "start": 293,
+          "end": 296
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f'''A complex trick: {\n2  # two\n}'''"
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f'''A complex trick: {\n2  # two\n}'''",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f'''A complex trick: {\n2  # two\n}'''",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer) (comment)) string_end: (string_end))",
+    "wrappedText": "_ = f'''A complex trick: {\n2  # two\n}'''",
     "wrappedOffset": 4
   },
   {
@@ -10694,7 +11498,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' A complex trick: 2 '"
+    "expectedOutput": "'A complex trick: 2'"
   },
   {
     "kind": "roundtrip",
@@ -10702,9 +11506,9 @@
     "sourceIn": "'A complex trick: 2'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' A complex trick: 2 '",
+    "expectedSourceOut": "'A complex trick: 2'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' A complex trick: 2 '",
+    "wrappedText": "_ = 'A complex trick: 2'",
     "wrappedOffset": 4
   },
   {
@@ -10756,7 +11560,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" string1 \""
+    "expectedOutput": "\"string1\""
   },
   {
     "kind": "roundtrip",
@@ -10764,9 +11568,9 @@
     "sourceIn": "\"string1\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" string1 \"",
+    "expectedSourceOut": "\"string1\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" string1 \"",
+    "wrappedText": "_ = \"string1\"",
     "wrappedOffset": 4
   },
   {
@@ -10818,7 +11622,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" string2 \""
+    "expectedOutput": "\"string2\""
   },
   {
     "kind": "roundtrip",
@@ -10826,9 +11630,9 @@
     "sourceIn": "\"string2\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" string2 \"",
+    "expectedSourceOut": "\"string2\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" string2 \"",
+    "wrappedText": "_ = \"string2\"",
     "wrappedOffset": 4
   },
   {
@@ -10929,6 +11733,416 @@
     "expectedSourceOut": "self.assertEqual (f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
     "expectedReparseTree": "(call function: (attribute object: (identifier) attribute: (identifier)) arguments: (argument_list (string string_start: (string_start) content: (string_content) content: (interpolation expression: (integer) (comment)) string_end: (string_end)) (string string_start: (string_start) content: (string_content) string_end: (string_end))))",
     "wrappedText": "_ = self.assertEqual (f'''A complex trick: {\n2  # two\n}''', 'A complex trick: 2')",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 0,
+        "end": 19
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 0,
+          "end": 2
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "a ",
+          "$span": {
+            "start": 2,
+            "end": 4
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{b:2}",
+          "$span": {
+            "start": 4,
+            "end": 9
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": " ",
+          "$span": {
+            "start": 9,
+            "end": 10
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{c:34.5}",
+          "$span": {
+            "start": 10,
+            "end": 18
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 18,
+          "end": 19
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 5,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"a {b:2} {c:34.5}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"a {b:2} {c:34.5}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"a {b:2} {c:34.5}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"a {b:2} {c:34.5}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 20,
+        "end": 38
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 20,
+          "end": 22
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{b:{c.d}.{d.e}}",
+        "$span": {
+          "start": 22,
+          "end": 37
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 37,
+          "end": 38
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{b:{c.d}.{d.e}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{b:{c.d}.{d.e}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{b:{c.d}.{d.e}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (attribute object: (identifier) attribute: (identifier))) (format_expression expression: (attribute object: (identifier) attribute: (identifier))))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{b:{c.d}.{d.e}}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 39,
+        "end": 50
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 39,
+          "end": 41
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{a:#06x}",
+        "$span": {
+          "start": 41,
+          "end": 49
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 49,
+          "end": 50
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{a:#06x}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a:#06x}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{a:#06x}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{a:#06x}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 51,
+        "end": 58
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 51,
+          "end": 53
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{a=}",
+        "$span": {
+          "start": 53,
+          "end": 57
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 57,
+          "end": 58
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{a=}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{a=}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{a=}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 59,
+        "end": 70
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 59,
+          "end": 61
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{a=:.2f}",
+        "$span": {
+          "start": 61,
+          "end": 69
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 69,
+          "end": 70
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{a=:.2f}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{a=:.2f}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{a=:.2f}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"{a=:.2f}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 71,
+        "end": 113
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 71,
+          "end": 73
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": {
+        "$type": 233,
+        "$source": 0,
+        "$text": "{value:{width + padding!r}.{precision}}",
+        "$span": {
+          "start": 73,
+          "end": 112
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 1,
+        "$named": true
+      },
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 112,
+          "end": 113
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 2,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"{value:{width + padding!r}.{precision}}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"{value:{width + padding!r}.{precision}}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"{value:{width + padding!r}.{precision}}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (interpolation expression: (identifier) format_specifier: (format_specifier (format_expression expression: (binary_operator left: (identifier) right: (identifier)) type_conversion: (type_conversion)) (format_expression expression: (identifier)))) string_end: (string_end))",
+    "wrappedText": "_ = f\"{value:{width + padding!r}.{precision}}\"",
     "wrappedOffset": 4
   },
   {
@@ -11124,6 +12338,306 @@
       "$type": 231,
       "$source": 0,
       "$span": {
+        "start": 0,
+        "end": 35
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "t\"",
+        "$span": {
+          "start": 0,
+          "end": 2
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "Hello, ",
+          "$span": {
+            "start": 2,
+            "end": 9
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{first_name}",
+          "$span": {
+            "start": 9,
+            "end": 21
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": " ",
+          "$span": {
+            "start": 21,
+            "end": 22
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{last_name}",
+          "$span": {
+            "start": 22,
+            "end": 33
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "!",
+          "$span": {
+            "start": 33,
+            "end": 34
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 5,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 34,
+          "end": 35
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 6,
+        "$named": true
+      }
+    },
+    "expectedOutput": "t\"Hello, {first_name} {last_name}!\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "t\"Hello, {first_name} {last_name}!\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "t\"Hello, {first_name} {last_name}!\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = t\"Hello, {first_name} {last_name}!\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 36,
+        "end": 55
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "t\"",
+        "$span": {
+          "start": 36,
+          "end": 38
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "a ",
+          "$span": {
+            "start": 38,
+            "end": 40
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{b:2}",
+          "$span": {
+            "start": 40,
+            "end": 45
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": " ",
+          "$span": {
+            "start": 45,
+            "end": 46
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{c:34.5}",
+          "$span": {
+            "start": 46,
+            "end": 54
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 4,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 54,
+          "end": 55
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 5,
+        "$named": true
+      }
+    },
+    "expectedOutput": "t\"a {b:2} {c:34.5}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "t\"a {b:2} {c:34.5}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "t\"a {b:2} {c:34.5}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) content: (string_content) content: (interpolation expression: (identifier) format_specifier: (format_specifier)) string_end: (string_end))",
+    "wrappedText": "_ = t\"a {b:2} {c:34.5}\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 56,
+        "end": 74
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "tr\"",
+        "$span": {
+          "start": 56,
+          "end": 59
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "Path: ",
+          "$span": {
+            "start": 59,
+            "end": 65
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{path}",
+          "$span": {
+            "start": 65,
+            "end": 71
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        },
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "\\n",
+          "$span": {
+            "start": 71,
+            "end": 73
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 3,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 73,
+          "end": 74
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 4,
+        "$named": true
+      }
+    },
+    "expectedOutput": "tr\"Path: {path}\\n\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "tr\"Path: {path}\\n\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "tr\"Path: {path}\\n\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
+    "wrappedText": "_ = tr\"Path: {path}\\n\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
         "start": 75,
         "end": 119
       },
@@ -11192,7 +12706,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "t\"\"\" \nMulti-line template\nwith \n{variable}\n\n \"\"\""
+    "expectedOutput": "t\"\"\"\nMulti-line template\nwith {variable}\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11200,9 +12714,9 @@
     "sourceIn": "t\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "t\"\"\" \nMulti-line template\nwith \n{variable}\n\n \"\"\"",
+    "expectedSourceOut": "t\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = t\"\"\" \nMulti-line template\nwith \n{variable}\n\n \"\"\"",
+    "wrappedText": "_ = t\"\"\"\nMulti-line template\nwith {variable}\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -11254,7 +12768,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "t\" Use {{braces}} to escape \""
+    "expectedOutput": "t\"Use {{braces}} to escape\""
   },
   {
     "kind": "roundtrip",
@@ -11262,9 +12776,85 @@
     "sourceIn": "t\"Use {{braces}} to escape\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "t\" Use {{braces}} to escape \"",
+    "expectedSourceOut": "t\"Use {{braces}} to escape\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_interpolation) (escape_interpolation)) string_end: (string_end))",
-    "wrappedText": "_ = t\" Use {{braces}} to escape \"",
+    "wrappedText": "_ = t\"Use {{braces}} to escape\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 148,
+        "end": 166
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "t\"",
+        "$span": {
+          "start": 148,
+          "end": 150
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "Result: ",
+          "$span": {
+            "start": 150,
+            "end": 158
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{a + b}",
+          "$span": {
+            "start": 158,
+            "end": 165
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 165,
+          "end": 166
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "t\"Result: {a + b}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "t\"Result: {a + b}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "t\"Result: {a + b}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (binary_operator left: (identifier) right: (identifier))) string_end: (string_end))",
+    "wrappedText": "_ = t\"Result: {a + b}\"",
     "wrappedOffset": 4
   },
   {
@@ -11378,7 +12968,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" one \""
+    "expectedOutput": "\"one\""
   },
   {
     "kind": "roundtrip",
@@ -11386,9 +12976,9 @@
     "sourceIn": "\"one\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" one \"",
+    "expectedSourceOut": "\"one\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" one \"",
+    "wrappedText": "_ = \"one\"",
     "wrappedOffset": 4
   },
   {
@@ -11440,7 +13030,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" two \""
+    "expectedOutput": "\"two\""
   },
   {
     "kind": "roundtrip",
@@ -11448,9 +13038,9 @@
     "sourceIn": "\"two\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" two \"",
+    "expectedSourceOut": "\"two\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" two \"",
+    "wrappedText": "_ = \"two\"",
     "wrappedOffset": 4
   },
   {
@@ -11502,7 +13092,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" three \""
+    "expectedOutput": "\"three\""
   },
   {
     "kind": "roundtrip",
@@ -11510,9 +13100,9 @@
     "sourceIn": "\"three\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" three \"",
+    "expectedSourceOut": "\"three\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" three \"",
+    "wrappedText": "_ = \"three\"",
     "wrappedOffset": 4
   },
   {
@@ -11564,7 +13154,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\""
+    "expectedOutput": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11572,9 +13162,9 @@
     "sourceIn": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
+    "expectedSourceOut": "\"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" \nA double quote hello,\nwithout double or single quotes.\n \"\"\"",
+    "wrappedText": "_ = \"\"\"\nA double quote hello,\nwithout double or single quotes.\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -11626,7 +13216,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\"\"\" \nA double quote \"hello\",\nwith double quotes.\n \"\"\""
+    "expectedOutput": "\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11634,9 +13224,9 @@
     "sourceIn": "\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" \nA double quote \"hello\",\nwith double quotes.\n \"\"\"",
+    "expectedSourceOut": "\"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" \nA double quote \"hello\",\nwith double quotes.\n \"\"\"",
+    "wrappedText": "_ = \"\"\"\nA double quote \"hello\",\nwith double quotes.\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -11688,7 +13278,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\"\"\" \nA double quote 'hello',\nwith single quotes.\n \"\"\""
+    "expectedOutput": "\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11696,9 +13286,9 @@
     "sourceIn": "\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" \nA double quote 'hello',\nwith single quotes.\n \"\"\"",
+    "expectedSourceOut": "\"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" \nA double quote 'hello',\nwith single quotes.\n \"\"\"",
+    "wrappedText": "_ = \"\"\"\nA double quote 'hello',\nwith single quotes.\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -11750,7 +13340,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "''' \nA single quote hello,\nwithout double or single quotes.\n '''"
+    "expectedOutput": "'''\nA single quote hello,\nwithout double or single quotes.\n'''"
   },
   {
     "kind": "roundtrip",
@@ -11758,9 +13348,9 @@
     "sourceIn": "'''\nA single quote hello,\nwithout double or single quotes.\n'''",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "''' \nA single quote hello,\nwithout double or single quotes.\n '''",
+    "expectedSourceOut": "'''\nA single quote hello,\nwithout double or single quotes.\n'''",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ''' \nA single quote hello,\nwithout double or single quotes.\n '''",
+    "wrappedText": "_ = '''\nA single quote hello,\nwithout double or single quotes.\n'''",
     "wrappedOffset": 4
   },
   {
@@ -11812,7 +13402,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "''' \nA single quote 'hello',\nwith single quotes.\n '''"
+    "expectedOutput": "'''\nA single quote 'hello',\nwith single quotes.\n'''"
   },
   {
     "kind": "roundtrip",
@@ -11820,9 +13410,9 @@
     "sourceIn": "'''\nA single quote 'hello',\nwith single quotes.\n'''",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "''' \nA single quote 'hello',\nwith single quotes.\n '''",
+    "expectedSourceOut": "'''\nA single quote 'hello',\nwith single quotes.\n'''",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ''' \nA single quote 'hello',\nwith single quotes.\n '''",
+    "wrappedText": "_ = '''\nA single quote 'hello',\nwith single quotes.\n'''",
     "wrappedOffset": 4
   },
   {
@@ -11874,7 +13464,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "''' \nA single quote \"hello\",\nwith double quotes.\n '''"
+    "expectedOutput": "'''\nA single quote \"hello\",\nwith double quotes.\n'''"
   },
   {
     "kind": "roundtrip",
@@ -11882,9 +13472,9 @@
     "sourceIn": "'''\nA single quote \"hello\",\nwith double quotes.\n'''",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "''' \nA single quote \"hello\",\nwith double quotes.\n '''",
+    "expectedSourceOut": "'''\nA single quote \"hello\",\nwith double quotes.\n'''",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ''' \nA single quote \"hello\",\nwith double quotes.\n '''",
+    "wrappedText": "_ = '''\nA single quote \"hello\",\nwith double quotes.\n'''",
     "wrappedOffset": 4
   },
   {
@@ -11936,7 +13526,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\"\"\" \nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n \"\"\""
+    "expectedOutput": "\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\""
   },
   {
     "kind": "roundtrip",
@@ -11944,9 +13534,9 @@
     "sourceIn": "\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\"\"\" \nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n \"\"\"",
+    "expectedSourceOut": "\"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence) (escape_sequence)) string_end: (string_end))",
-    "wrappedText": "_ = \"\"\" \nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n \"\"\"",
+    "wrappedText": "_ = \"\"\"\nA double quote hello\\n\\\nwith an escaped newline\\n\\\nand another escaped newline\\n\\\n\"\"\"",
     "wrappedOffset": 4
   },
   {
@@ -17304,7 +18894,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" quit \""
+    "expectedOutput": "\"quit\""
   },
   {
     "kind": "roundtrip",
@@ -17312,9 +18902,9 @@
     "sourceIn": "\"quit\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" quit \"",
+    "expectedSourceOut": "\"quit\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" quit \"",
+    "wrappedText": "_ = \"quit\"",
     "wrappedOffset": 4
   },
   {
@@ -17366,7 +18956,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" look \""
+    "expectedOutput": "\"look\""
   },
   {
     "kind": "roundtrip",
@@ -17374,9 +18964,9 @@
     "sourceIn": "\"look\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" look \"",
+    "expectedSourceOut": "\"look\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" look \"",
+    "wrappedText": "_ = \"look\"",
     "wrappedOffset": 4
   },
   {
@@ -17428,7 +19018,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" get \""
+    "expectedOutput": "\"get\""
   },
   {
     "kind": "roundtrip",
@@ -17436,9 +19026,9 @@
     "sourceIn": "\"get\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" get \"",
+    "expectedSourceOut": "\"get\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" get \"",
+    "wrappedText": "_ = \"get\"",
     "wrappedOffset": 4
   },
   {
@@ -17490,7 +19080,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" go \""
+    "expectedOutput": "\"go\""
   },
   {
     "kind": "roundtrip",
@@ -17498,9 +19088,9 @@
     "sourceIn": "\"go\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" go \"",
+    "expectedSourceOut": "\"go\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" go \"",
+    "wrappedText": "_ = \"go\"",
     "wrappedOffset": 4
   },
   {
@@ -17552,7 +19142,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" Goodbye! \""
+    "expectedOutput": "\"Goodbye!\""
   },
   {
     "kind": "roundtrip",
@@ -17560,9 +19150,9 @@
     "sourceIn": "\"Goodbye!\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" Goodbye! \"",
+    "expectedSourceOut": "\"Goodbye!\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" Goodbye! \"",
+    "wrappedText": "_ = \"Goodbye!\"",
     "wrappedOffset": 4
   },
   {
@@ -17926,7 +19516,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" drop \""
+    "expectedOutput": "\"drop\""
   },
   {
     "kind": "roundtrip",
@@ -17934,9 +19524,9 @@
     "sourceIn": "\"drop\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" drop \"",
+    "expectedSourceOut": "\"drop\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" drop \"",
+    "wrappedText": "_ = \"drop\"",
     "wrappedOffset": 4
   },
   {
@@ -18390,7 +19980,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" quit \""
+    "expectedOutput": "\"quit\""
   },
   {
     "kind": "roundtrip",
@@ -18398,9 +19988,9 @@
     "sourceIn": "\"quit\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" quit \"",
+    "expectedSourceOut": "\"quit\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" quit \"",
+    "wrappedText": "_ = \"quit\"",
     "wrappedOffset": 4
   },
   {
@@ -18452,7 +20042,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" go \""
+    "expectedOutput": "\"go\""
   },
   {
     "kind": "roundtrip",
@@ -18460,9 +20050,9 @@
     "sourceIn": "\"go\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" go \"",
+    "expectedSourceOut": "\"go\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" go \"",
+    "wrappedText": "_ = \"go\"",
     "wrappedOffset": 4
   },
   {
@@ -18514,7 +20104,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" drop \""
+    "expectedOutput": "\"drop\""
   },
   {
     "kind": "roundtrip",
@@ -18522,9 +20112,85 @@
     "sourceIn": "\"drop\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" drop \"",
+    "expectedSourceOut": "\"drop\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" drop \"",
+    "wrappedText": "_ = \"drop\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 182,
+        "end": 225
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 182,
+          "end": 184
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "Sorry, I couldn't understand ",
+          "$span": {
+            "start": 184,
+            "end": 213
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{command!r}",
+          "$span": {
+            "start": 213,
+            "end": 224
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 224,
+          "end": 225
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"Sorry, I couldn't understand {command!r}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"Sorry, I couldn't understand {command!r}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"Sorry, I couldn't understand {command!r}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier) type_conversion: (type_conversion)) string_end: (string_end))",
+    "wrappedText": "_ = f\"Sorry, I couldn't understand {command!r}\"",
     "wrappedOffset": 4
   },
   {
@@ -19264,7 +20930,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" north \""
+    "expectedOutput": "\"north\""
   },
   {
     "kind": "roundtrip",
@@ -19272,9 +20938,9 @@
     "sourceIn": "\"north\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" north \"",
+    "expectedSourceOut": "\"north\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" north \"",
+    "wrappedText": "_ = \"north\"",
     "wrappedOffset": 4
   },
   {
@@ -19326,7 +20992,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" go \""
+    "expectedOutput": "\"go\""
   },
   {
     "kind": "roundtrip",
@@ -19334,9 +21000,9 @@
     "sourceIn": "\"go\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" go \"",
+    "expectedSourceOut": "\"go\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" go \"",
+    "wrappedText": "_ = \"go\"",
     "wrappedOffset": 4
   },
   {
@@ -19388,7 +21054,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" north \""
+    "expectedOutput": "\"north\""
   },
   {
     "kind": "roundtrip",
@@ -19396,9 +21062,9 @@
     "sourceIn": "\"north\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" north \"",
+    "expectedSourceOut": "\"north\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" north \"",
+    "wrappedText": "_ = \"north\"",
     "wrappedOffset": 4
   },
   {
@@ -19450,7 +21116,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" get \""
+    "expectedOutput": "\"get\""
   },
   {
     "kind": "roundtrip",
@@ -19458,9 +21124,9 @@
     "sourceIn": "\"get\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" get \"",
+    "expectedSourceOut": "\"get\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" get \"",
+    "wrappedText": "_ = \"get\"",
     "wrappedOffset": 4
   },
   {
@@ -19512,7 +21178,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" pick \""
+    "expectedOutput": "\"pick\""
   },
   {
     "kind": "roundtrip",
@@ -19520,9 +21186,9 @@
     "sourceIn": "\"pick\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" pick \"",
+    "expectedSourceOut": "\"pick\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" pick \"",
+    "wrappedText": "_ = \"pick\"",
     "wrappedOffset": 4
   },
   {
@@ -19574,7 +21240,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" up \""
+    "expectedOutput": "\"up\""
   },
   {
     "kind": "roundtrip",
@@ -19582,9 +21248,9 @@
     "sourceIn": "\"up\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" up \"",
+    "expectedSourceOut": "\"up\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" up \"",
+    "wrappedText": "_ = \"up\"",
     "wrappedOffset": 4
   },
   {
@@ -19636,7 +21302,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" pick \""
+    "expectedOutput": "\"pick\""
   },
   {
     "kind": "roundtrip",
@@ -19644,9 +21310,9 @@
     "sourceIn": "\"pick\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" pick \"",
+    "expectedSourceOut": "\"pick\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" pick \"",
+    "wrappedText": "_ = \"pick\"",
     "wrappedOffset": 4
   },
   {
@@ -19698,7 +21364,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" up \""
+    "expectedOutput": "\"up\""
   },
   {
     "kind": "roundtrip",
@@ -19706,9 +21372,9 @@
     "sourceIn": "\"up\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" up \"",
+    "expectedSourceOut": "\"up\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" up \"",
+    "wrappedText": "_ = \"up\"",
     "wrappedOffset": 4
   },
   {
@@ -19760,7 +21426,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" north \""
+    "expectedOutput": "\"north\""
   },
   {
     "kind": "roundtrip",
@@ -19768,9 +21434,9 @@
     "sourceIn": "\"north\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" north \"",
+    "expectedSourceOut": "\"north\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" north \"",
+    "wrappedText": "_ = \"north\"",
     "wrappedOffset": 4
   },
   {
@@ -20134,7 +21800,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" go \""
+    "expectedOutput": "\"go\""
   },
   {
     "kind": "roundtrip",
@@ -20142,9 +21808,9 @@
     "sourceIn": "\"go\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" go \"",
+    "expectedSourceOut": "\"go\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" go \"",
+    "wrappedText": "_ = \"go\"",
     "wrappedOffset": 4
   },
   {
@@ -20196,7 +21862,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" north \""
+    "expectedOutput": "\"north\""
   },
   {
     "kind": "roundtrip",
@@ -20204,9 +21870,9 @@
     "sourceIn": "\"north\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" north \"",
+    "expectedSourceOut": "\"north\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" north \"",
+    "wrappedText": "_ = \"north\"",
     "wrappedOffset": 4
   },
   {
@@ -20258,7 +21924,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" south \""
+    "expectedOutput": "\"south\""
   },
   {
     "kind": "roundtrip",
@@ -20266,9 +21932,9 @@
     "sourceIn": "\"south\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" south \"",
+    "expectedSourceOut": "\"south\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" south \"",
+    "wrappedText": "_ = \"south\"",
     "wrappedOffset": 4
   },
   {
@@ -20320,7 +21986,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" east \""
+    "expectedOutput": "\"east\""
   },
   {
     "kind": "roundtrip",
@@ -20328,9 +21994,9 @@
     "sourceIn": "\"east\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" east \"",
+    "expectedSourceOut": "\"east\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" east \"",
+    "wrappedText": "_ = \"east\"",
     "wrappedOffset": 4
   },
   {
@@ -20382,7 +22048,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" west \""
+    "expectedOutput": "\"west\""
   },
   {
     "kind": "roundtrip",
@@ -20390,9 +22056,9 @@
     "sourceIn": "\"west\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" west \"",
+    "expectedSourceOut": "\"west\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" west \"",
+    "wrappedText": "_ = \"west\"",
     "wrappedOffset": 4
   },
   {
@@ -20484,7 +22150,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" hey, what's up? \""
+    "expectedOutput": "\"hey, what's up?\""
   },
   {
     "kind": "roundtrip",
@@ -20492,9 +22158,9 @@
     "sourceIn": "\"hey, what's up?\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" hey, what's up? \"",
+    "expectedSourceOut": "\"hey, what's up?\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" hey, what's up? \"",
+    "wrappedText": "_ = \"hey, what's up?\"",
     "wrappedOffset": 4
   },
   {
@@ -20888,7 +22554,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r\" .*\\.txt$ \""
+    "expectedOutput": "r\".*\\.txt$\""
   },
   {
     "kind": "roundtrip",
@@ -20896,9 +22562,9 @@
     "sourceIn": "r\".*\\.txt$\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" .*\\.txt$ \"",
+    "expectedSourceOut": "r\".*\\.txt$\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" .*\\.txt$ \"",
+    "wrappedText": "_ = r\".*\\.txt$\"",
     "wrappedOffset": 4
   },
   {
@@ -21178,7 +22844,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" something \""
+    "expectedOutput": "\"something\""
   },
   {
     "kind": "roundtrip",
@@ -21186,9 +22852,9 @@
     "sourceIn": "\"something\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" something \"",
+    "expectedSourceOut": "\"something\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" something \"",
+    "wrappedText": "_ = \"something\"",
     "wrappedOffset": 4
   },
   {
@@ -21240,7 +22906,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" something \""
+    "expectedOutput": "\"something\""
   },
   {
     "kind": "roundtrip",
@@ -21248,9 +22914,9 @@
     "sourceIn": "\"something\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" something \"",
+    "expectedSourceOut": "\"something\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" something \"",
+    "wrappedText": "_ = \"something\"",
     "wrappedOffset": 4
   },
   {
@@ -21302,7 +22968,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" else \""
+    "expectedOutput": "\"else\""
   },
   {
     "kind": "roundtrip",
@@ -21310,9 +22976,9 @@
     "sourceIn": "\"else\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" else \"",
+    "expectedSourceOut": "\"else\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" else \"",
+    "wrappedText": "_ = \"else\"",
     "wrappedOffset": 4
   },
   {
@@ -21814,7 +23480,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \""
+    "expectedOutput": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\""
   },
   {
     "kind": "roundtrip",
@@ -21822,9 +23488,9 @@
     "sourceIn": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
+    "expectedSourceOut": "r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = r\" (-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)? \"",
+    "wrappedText": "_ = r\"(-)?(\\d+:)?\\d?\\d:\\d\\d(\\.\\d*)?\"",
     "wrappedOffset": 4
   },
   {
@@ -22400,7 +24066,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" up arrow \""
+    "expectedOutput": "\"up arrow\""
   },
   {
     "kind": "roundtrip",
@@ -22408,9 +24074,85 @@
     "sourceIn": "\"up arrow\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" up arrow \"",
+    "expectedSourceOut": "\"up arrow\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" up arrow \"",
+    "wrappedText": "_ = \"up arrow\"",
+    "wrappedOffset": 4
+  },
+  {
+    "kind": "render",
+    "grammar": "python",
+    "input": {
+      "$type": 231,
+      "$source": 0,
+      "$span": {
+        "start": 327,
+        "end": 363
+      },
+      "$nodeHandle": 0,
+      "$named": true,
+      "_string_start": {
+        "$type": 104,
+        "$source": 0,
+        "$text": "f\"",
+        "$span": {
+          "start": 327,
+          "end": 329
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 0,
+        "$named": true
+      },
+      "_content": [
+        {
+          "$type": 232,
+          "$source": 0,
+          "$text": "Unrecognized event: ",
+          "$span": {
+            "start": 329,
+            "end": 349
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 1,
+          "$named": true
+        },
+        {
+          "$type": 233,
+          "$source": 0,
+          "$text": "{other_event}",
+          "$span": {
+            "start": 349,
+            "end": 362
+          },
+          "$nodeHandle": 0,
+          "$childIndex": 2,
+          "$named": true
+        }
+      ],
+      "_string_end": {
+        "$type": 107,
+        "$source": 0,
+        "$text": "\"",
+        "$span": {
+          "start": 362,
+          "end": 363
+        },
+        "$nodeHandle": 0,
+        "$childIndex": 3,
+        "$named": true
+      }
+    },
+    "expectedOutput": "f\"Unrecognized event: {other_event}\""
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "python",
+    "sourceIn": "f\"Unrecognized event: {other_event}\"",
+    "pattern": "string",
+    "edits": [],
+    "expectedSourceOut": "f\"Unrecognized event: {other_event}\"",
+    "expectedReparseTree": "(string string_start: (string_start) content: (string_content) content: (interpolation expression: (identifier)) string_end: (string_end))",
+    "wrappedText": "_ = f\"Unrecognized event: {other_event}\"",
     "wrappedOffset": 4
   },
   {
@@ -22462,7 +24204,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" Q \""
+    "expectedOutput": "\"Q\""
   },
   {
     "kind": "roundtrip",
@@ -22470,9 +24212,9 @@
     "sourceIn": "\"Q\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" Q \"",
+    "expectedSourceOut": "\"Q\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" Q \"",
+    "wrappedText": "_ = \"Q\"",
     "wrappedOffset": 4
   },
   {
@@ -23024,7 +24766,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" color \""
+    "expectedOutput": "\"color\""
   },
   {
     "kind": "roundtrip",
@@ -23032,9 +24774,9 @@
     "sourceIn": "\"color\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" color \"",
+    "expectedSourceOut": "\"color\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" color \"",
+    "wrappedText": "_ = \"color\"",
     "wrappedOffset": 4
   },
   {
@@ -23086,7 +24828,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" format \""
+    "expectedOutput": "\"format\""
   },
   {
     "kind": "roundtrip",
@@ -23094,9 +24836,9 @@
     "sourceIn": "\"format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" format \"",
+    "expectedSourceOut": "\"format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" format \"",
+    "wrappedText": "_ = \"format\"",
     "wrappedOffset": 4
   },
   {
@@ -23148,7 +24890,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" format \""
+    "expectedOutput": "\"format\""
   },
   {
     "kind": "roundtrip",
@@ -23156,9 +24898,9 @@
     "sourceIn": "\"format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" format \"",
+    "expectedSourceOut": "\"format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" format \"",
+    "wrappedText": "_ = \"format\"",
     "wrappedOffset": 4
   },
   {
@@ -23210,7 +24952,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" text \""
+    "expectedOutput": "\"text\""
   },
   {
     "kind": "roundtrip",
@@ -23218,9 +24960,9 @@
     "sourceIn": "\"text\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" text \"",
+    "expectedSourceOut": "\"text\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" text \"",
+    "wrappedText": "_ = \"text\"",
     "wrappedOffset": 4
   },
   {
@@ -23272,7 +25014,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sleep \""
+    "expectedOutput": "\"sleep\""
   },
   {
     "kind": "roundtrip",
@@ -23280,9 +25022,9 @@
     "sourceIn": "\"sleep\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sleep \"",
+    "expectedSourceOut": "\"sleep\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sleep \"",
+    "wrappedText": "_ = \"sleep\"",
     "wrappedOffset": 4
   },
   {
@@ -23334,7 +25076,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sound \""
+    "expectedOutput": "\"sound\""
   },
   {
     "kind": "roundtrip",
@@ -23342,9 +25084,9 @@
     "sourceIn": "\"sound\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sound \"",
+    "expectedSourceOut": "\"sound\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sound \"",
+    "wrappedText": "_ = \"sound\"",
     "wrappedOffset": 4
   },
   {
@@ -23396,7 +25138,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" ogg \""
+    "expectedOutput": "\"ogg\""
   },
   {
     "kind": "roundtrip",
@@ -23404,9 +25146,9 @@
     "sourceIn": "\"ogg\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" ogg \"",
+    "expectedSourceOut": "\"ogg\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" ogg \"",
+    "wrappedText": "_ = \"ogg\"",
     "wrappedOffset": 4
   },
   {
@@ -23458,7 +25200,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sound \""
+    "expectedOutput": "\"sound\""
   },
   {
     "kind": "roundtrip",
@@ -23466,9 +25208,9 @@
     "sourceIn": "\"sound\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sound \"",
+    "expectedSourceOut": "\"sound\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sound \"",
+    "wrappedText": "_ = \"sound\"",
     "wrappedOffset": 4
   },
   {
@@ -23520,7 +25262,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" Unsupported audio format \""
+    "expectedOutput": "\"Unsupported audio format\""
   },
   {
     "kind": "roundtrip",
@@ -23528,9 +25270,9 @@
     "sourceIn": "\"Unsupported audio format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" Unsupported audio format \"",
+    "expectedSourceOut": "\"Unsupported audio format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" Unsupported audio format \"",
+    "wrappedText": "_ = \"Unsupported audio format\"",
     "wrappedOffset": 4
   },
   {
@@ -24130,7 +25872,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" color \""
+    "expectedOutput": "\"color\""
   },
   {
     "kind": "roundtrip",
@@ -24138,9 +25880,9 @@
     "sourceIn": "\"color\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" color \"",
+    "expectedSourceOut": "\"color\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" color \"",
+    "wrappedText": "_ = \"color\"",
     "wrappedOffset": 4
   },
   {
@@ -24192,7 +25934,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" format \""
+    "expectedOutput": "\"format\""
   },
   {
     "kind": "roundtrip",
@@ -24200,9 +25942,9 @@
     "sourceIn": "\"format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" format \"",
+    "expectedSourceOut": "\"format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" format \"",
+    "wrappedText": "_ = \"format\"",
     "wrappedOffset": 4
   },
   {
@@ -24254,7 +25996,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" format \""
+    "expectedOutput": "\"format\""
   },
   {
     "kind": "roundtrip",
@@ -24262,9 +26004,9 @@
     "sourceIn": "\"format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" format \"",
+    "expectedSourceOut": "\"format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" format \"",
+    "wrappedText": "_ = \"format\"",
     "wrappedOffset": 4
   },
   {
@@ -24316,7 +26058,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" text \""
+    "expectedOutput": "\"text\""
   },
   {
     "kind": "roundtrip",
@@ -24324,9 +26066,9 @@
     "sourceIn": "\"text\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" text \"",
+    "expectedSourceOut": "\"text\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" text \"",
+    "wrappedText": "_ = \"text\"",
     "wrappedOffset": 4
   },
   {
@@ -24378,7 +26120,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sleep \""
+    "expectedOutput": "\"sleep\""
   },
   {
     "kind": "roundtrip",
@@ -24386,9 +26128,9 @@
     "sourceIn": "\"sleep\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sleep \"",
+    "expectedSourceOut": "\"sleep\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sleep \"",
+    "wrappedText": "_ = \"sleep\"",
     "wrappedOffset": 4
   },
   {
@@ -24440,7 +26182,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sound \""
+    "expectedOutput": "\"sound\""
   },
   {
     "kind": "roundtrip",
@@ -24448,9 +26190,9 @@
     "sourceIn": "\"sound\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sound \"",
+    "expectedSourceOut": "\"sound\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sound \"",
+    "wrappedText": "_ = \"sound\"",
     "wrappedOffset": 4
   },
   {
@@ -24502,7 +26244,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" ogg \""
+    "expectedOutput": "\"ogg\""
   },
   {
     "kind": "roundtrip",
@@ -24510,9 +26252,9 @@
     "sourceIn": "\"ogg\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" ogg \"",
+    "expectedSourceOut": "\"ogg\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" ogg \"",
+    "wrappedText": "_ = \"ogg\"",
     "wrappedOffset": 4
   },
   {
@@ -24564,7 +26306,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" sound \""
+    "expectedOutput": "\"sound\""
   },
   {
     "kind": "roundtrip",
@@ -24572,9 +26314,9 @@
     "sourceIn": "\"sound\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" sound \"",
+    "expectedSourceOut": "\"sound\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" sound \"",
+    "wrappedText": "_ = \"sound\"",
     "wrappedOffset": 4
   },
   {
@@ -24626,7 +26368,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" Unsupported audio format \""
+    "expectedOutput": "\"Unsupported audio format\""
   },
   {
     "kind": "roundtrip",
@@ -24634,9 +26376,9 @@
     "sourceIn": "\"Unsupported audio format\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" Unsupported audio format \"",
+    "expectedSourceOut": "\"Unsupported audio format\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" Unsupported audio format \"",
+    "wrappedText": "_ = \"Unsupported audio format\"",
     "wrappedOffset": 4
   },
   {
@@ -25822,7 +27564,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" b \""
+    "expectedOutput": "\"b\""
   },
   {
     "kind": "roundtrip",
@@ -25830,9 +27572,9 @@
     "sourceIn": "\"b\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" b \"",
+    "expectedSourceOut": "\"b\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" b \"",
+    "wrappedText": "_ = \"b\"",
     "wrappedOffset": 4
   },
   {
@@ -25884,7 +27626,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" c \""
+    "expectedOutput": "\"c\""
   },
   {
     "kind": "roundtrip",
@@ -25892,9 +27634,9 @@
     "sourceIn": "\"c\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" c \"",
+    "expectedSourceOut": "\"c\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" c \"",
+    "wrappedText": "_ = \"c\"",
     "wrappedOffset": 4
   },
   {
@@ -26914,7 +28656,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' d '"
+    "expectedOutput": "'d'"
   },
   {
     "kind": "roundtrip",
@@ -26922,9 +28664,9 @@
     "sourceIn": "'d'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' d '",
+    "expectedSourceOut": "'d'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' d '",
+    "wrappedText": "_ = 'd'",
     "wrappedOffset": 4
   },
   {
@@ -26976,7 +28718,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' e '"
+    "expectedOutput": "'e'"
   },
   {
     "kind": "roundtrip",
@@ -26984,9 +28726,9 @@
     "sourceIn": "'e'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' e '",
+    "expectedSourceOut": "'e'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' e '",
+    "wrappedText": "_ = 'e'",
     "wrappedOffset": 4
   },
   {
@@ -27512,7 +29254,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" default \""
+    "expectedOutput": "\"default\""
   },
   {
     "kind": "roundtrip",
@@ -27520,9 +29262,9 @@
     "sourceIn": "\"default\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" default \"",
+    "expectedSourceOut": "\"default\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" default \"",
+    "wrappedText": "_ = \"default\"",
     "wrappedOffset": 4
   },
   {
@@ -29020,7 +30762,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' NO '"
+    "expectedOutput": "'NO'"
   },
   {
     "kind": "roundtrip",
@@ -29028,9 +30770,9 @@
     "sourceIn": "'NO'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' NO '",
+    "expectedSourceOut": "'NO'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' NO '",
+    "wrappedText": "_ = 'NO'",
     "wrappedOffset": 4
   },
   {
@@ -29082,7 +30824,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' NO '"
+    "expectedOutput": "'NO'"
   },
   {
     "kind": "roundtrip",
@@ -29090,9 +30832,9 @@
     "sourceIn": "'NO'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' NO '",
+    "expectedSourceOut": "'NO'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' NO '",
+    "wrappedText": "_ = 'NO'",
     "wrappedOffset": 4
   },
   {
@@ -29144,7 +30886,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" a \""
+    "expectedOutput": "\"a\""
   },
   {
     "kind": "roundtrip",
@@ -29152,9 +30894,9 @@
     "sourceIn": "\"a\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" a \"",
+    "expectedSourceOut": "\"a\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" a \"",
+    "wrappedText": "_ = \"a\"",
     "wrappedOffset": 4
   },
   {
@@ -29206,7 +30948,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' 1+1 '"
+    "expectedOutput": "'1+1'"
   },
   {
     "kind": "roundtrip",
@@ -29214,9 +30956,9 @@
     "sourceIn": "'1+1'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' 1+1 '",
+    "expectedSourceOut": "'1+1'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' 1+1 '",
+    "wrappedText": "_ = '1+1'",
     "wrappedOffset": 4
   },
   {
@@ -29268,7 +31010,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' x+=1 '"
+    "expectedOutput": "'x+=1'"
   },
   {
     "kind": "roundtrip",
@@ -29276,9 +31018,9 @@
     "sourceIn": "'x+=1'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' x+=1 '",
+    "expectedSourceOut": "'x+=1'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' x+=1 '",
+    "wrappedText": "_ = 'x+=1'",
     "wrappedOffset": 4
   },
   {
@@ -29330,7 +31072,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "' x+=1 '"
+    "expectedOutput": "'x+=1'"
   },
   {
     "kind": "roundtrip",
@@ -29338,9 +31080,9 @@
     "sourceIn": "'x+=1'",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "' x+=1 '",
+    "expectedSourceOut": "'x+=1'",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = ' x+=1 '",
+    "wrappedText": "_ = 'x+=1'",
     "wrappedOffset": 4
   },
   {
@@ -29392,7 +31134,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" print \""
+    "expectedOutput": "\"print\""
   },
   {
     "kind": "roundtrip",
@@ -29400,9 +31142,9 @@
     "sourceIn": "\"print\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" print \"",
+    "expectedSourceOut": "\"print\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" print \"",
+    "wrappedText": "_ = \"print\"",
     "wrappedOffset": 4
   },
   {
@@ -29804,7 +31546,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" a \""
+    "expectedOutput": "\"a\""
   },
   {
     "kind": "roundtrip",
@@ -29812,9 +31554,9 @@
     "sourceIn": "\"a\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" a \"",
+    "expectedSourceOut": "\"a\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" a \"",
+    "wrappedText": "_ = \"a\"",
     "wrappedOffset": 4
   },
   {
@@ -29866,7 +31608,7 @@
         "$named": true
       }
     },
-    "expectedOutput": "\" aa \""
+    "expectedOutput": "\"aa\""
   },
   {
     "kind": "roundtrip",
@@ -29874,9 +31616,9 @@
     "sourceIn": "\"aa\"",
     "pattern": "string",
     "edits": [],
-    "expectedSourceOut": "\" aa \"",
+    "expectedSourceOut": "\"aa\"",
     "expectedReparseTree": "(string string_start: (string_start) content: (string_content) string_end: (string_end))",
-    "wrappedText": "_ = \" aa \"",
+    "wrappedText": "_ = \"aa\"",
     "wrappedOffset": 4
   },
   {
