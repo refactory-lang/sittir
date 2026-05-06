@@ -154,8 +154,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
                     for item in leading {
                         if let Some(ref text) = item.text {
                             buf.push_str(text);
-                            buf.push('\n');
+                        } else {
+                            let rendered = self.grammar.render(item)
+                                .unwrap_or_default();
+                            buf.push_str(&rendered);
                         }
+                        buf.push('\n');
                     }
                     buf.push_str(&result);
                     result = buf;
@@ -164,9 +168,13 @@ impl<G: EngineGrammar> ParsedTree<G> {
             if let Some(ref trailing) = trivia.trailing {
                 if !trailing.is_empty() {
                     for item in trailing {
+                        result.push('\n');
                         if let Some(ref text) = item.text {
-                            result.push('\n');
                             result.push_str(text);
+                        } else {
+                            let rendered = self.grammar.render(item)
+                                .unwrap_or_default();
+                            result.push_str(&rendered);
                         }
                     }
                 }
