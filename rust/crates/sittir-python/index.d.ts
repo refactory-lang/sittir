@@ -47,6 +47,7 @@ export interface AliasedImportTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: DottedNameTransport
   alias: IdentifierTransport
 }
@@ -58,6 +59,7 @@ export interface ArgumentListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children'?: Array<ArgumentListChildTransport>
 }
 
@@ -68,6 +70,7 @@ export interface AsPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': _AsPatternChildTransport
 }
 
@@ -78,6 +81,7 @@ export interface AsPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
   alias: Box<AnyTransport>
 }
@@ -89,6 +93,7 @@ export interface AssertStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ExpressionTransport>
 }
 
@@ -99,6 +104,7 @@ export interface AssignmentEqTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   right: RightHandSideTransport
 }
 
@@ -109,6 +115,7 @@ export interface AssignmentTypedTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   type: TypeTransport
   right: RightHandSideTransport
 }
@@ -120,6 +127,7 @@ export interface AssignmentTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   type: TypeTransport
 }
 
@@ -130,6 +138,7 @@ export interface AssignmentUFormEqTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: LeftHandSideTransport
   '$children': AssignmentEqTransport
 }
@@ -141,6 +150,7 @@ export interface AssignmentUFormTypedTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: LeftHandSideTransport
   '$children': AssignmentTypedTransport
 }
@@ -152,6 +162,7 @@ export interface AssignmentUFormTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: LeftHandSideTransport
   '$children': AssignmentTypeTransport
 }
@@ -163,6 +174,7 @@ export interface AttributeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   object: PrimaryExpressionTransport
   attribute: IdentifierTransport
 }
@@ -174,6 +186,7 @@ export interface AugmentedAssignmentTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: LeftHandSideTransport
   operator: AugmentedAssignmentOperatorEnum
   right: RightHandSideTransport
@@ -186,6 +199,7 @@ export interface AwaitTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   primaryExpression: PrimaryExpressionTransport
 }
 
@@ -196,6 +210,7 @@ export interface BinaryOperatorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: PrimaryExpressionTransport
   operator: boolean
   right: PrimaryExpressionTransport
@@ -208,6 +223,7 @@ export interface BlockTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<StatementTransport>
 }
 
@@ -218,6 +234,7 @@ export interface BooleanOperatorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: ExpressionTransport
   operator: boolean
   right: ExpressionTransport
@@ -230,6 +247,7 @@ export interface CallTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   function: PrimaryExpressionTransport
   arguments: Box<AnyTransport>
 }
@@ -241,6 +259,7 @@ export interface CaseClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   guard?: IfClauseTransport
   consequence: SuiteTransport
   '$children': Array<CasePatternTransport>
@@ -253,6 +272,7 @@ export interface CasePatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': CasePatternChildTransport
 }
 
@@ -263,6 +283,7 @@ export interface ChevronTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
 }
 
@@ -273,6 +294,7 @@ export interface ClassDefinitionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: IdentifierTransport
   typeParameters?: TypeParameterTransport
   superclasses?: ArgumentListTransport
@@ -286,6 +308,7 @@ export interface ClassPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   dottedName: DottedNameTransport
   arguments: Array<CasePatternTransport>
 }
@@ -297,6 +320,7 @@ export interface ComparisonOperatorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: PrimaryExpressionTransport
   operators: Array<AnyTransport>
   '$children': Array<PrimaryExpressionTransport>
@@ -309,6 +333,7 @@ export interface ComplexPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   real?: Box<AnyTransport>
   imaginary: PrimaryExpressionTransport
   '$children': PrimaryExpressionTransport
@@ -321,6 +346,7 @@ export interface ComprehensionClausesTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ComprehensionClausesChildTransport>
 }
 
@@ -331,6 +357,7 @@ export interface ConcatenatedStringTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<StringTransport>
 }
 
@@ -341,6 +368,7 @@ export interface ConditionalExpressionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: ExpressionTransport
   condition: ExpressionTransport
   alternative: ExpressionTransport
@@ -353,6 +381,7 @@ export interface ConstrainedTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   baseType: TypeTransport
   constraint: TypeTransport
 }
@@ -364,6 +393,7 @@ export interface DecoratedDefinitionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   definition: CompoundStatementTransport
   '$children': Array<DecoratorTransport>
 }
@@ -375,6 +405,7 @@ export interface DecoratorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
   newline?: Box<AnyTransport>
 }
@@ -386,6 +417,7 @@ export interface DefaultParameterTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: PatternTransport
   value: ExpressionTransport
 }
@@ -397,6 +429,7 @@ export interface DeleteStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': ExpressionsTransport
 }
 
@@ -407,6 +440,7 @@ export interface DictionaryComprehensionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: PairTransport
   '$children': ComprehensionClausesTransport
 }
@@ -418,6 +452,7 @@ export interface DictionarySplatPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': PatternTransport
 }
 
@@ -428,6 +463,7 @@ export interface DictionarySplatTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
 }
 
@@ -438,6 +474,7 @@ export interface DictionaryTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<DictionaryChildTransport>
 }
 
@@ -448,6 +485,7 @@ export interface DictPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<DictPatternKvTransport>
 }
 
@@ -458,6 +496,7 @@ export interface DottedNameTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<IdentifierTransport>
 }
 
@@ -468,6 +507,7 @@ export interface ElifClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   condition: ExpressionTransport
   consequence: SuiteTransport
 }
@@ -479,6 +519,7 @@ export interface ElseClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: SuiteTransport
 }
 
@@ -493,6 +534,7 @@ export interface ExceptClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   value?: Array<ExpressionTransport>
   alias?: ExpressionTransport
   '$children': SuiteTransport
@@ -505,6 +547,7 @@ export interface ExecStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   code: PrimaryExpressionTransport
   inClause?: Array<ExpressionTransport>
 }
@@ -516,6 +559,7 @@ export interface ExpressionListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ExpressionTransport>
 }
 
@@ -526,6 +570,7 @@ export interface ExpressionStatementTupleTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ExpressionTransport>
 }
 
@@ -536,6 +581,7 @@ export interface ExpressionStatementUFormTupleTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Box<AnyTransport>
 }
 
@@ -546,6 +592,7 @@ export interface FinallyClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   block: SuiteTransport
 }
 
@@ -556,6 +603,7 @@ export interface ForInClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   asyncMarker?: boolean
   left: LeftHandSideTransport
   right: Array<ExpressionWithinForInClauseTransport>
@@ -568,6 +616,7 @@ export interface FormatSpecifierTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<InterpolationTransport>
 }
 
@@ -578,6 +627,7 @@ export interface ForStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   asyncMarker?: boolean
   left: LeftHandSideTransport
   right: ExpressionsTransport
@@ -592,6 +642,7 @@ export interface FunctionDefinitionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   asyncMarker?: boolean
   name: IdentifierTransport
   typeParameters?: TypeParameterTransport
@@ -607,6 +658,7 @@ export interface FutureImportStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: Array<AnyTransport>
 }
 
@@ -617,6 +669,7 @@ export interface GeneratorExpressionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: ExpressionTransport
   '$children': ComprehensionClausesTransport
 }
@@ -628,6 +681,7 @@ export interface GenericTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   identifier: IdentifierTransport
   typeParameter: TypeParameterTransport
 }
@@ -639,6 +693,7 @@ export interface GlobalStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<IdentifierTransport>
 }
 
@@ -649,6 +704,7 @@ export interface IfClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
 }
 
@@ -659,6 +715,7 @@ export interface IfStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   condition: ExpressionTransport
   consequence: SuiteTransport
   alternative?: Array<AnyTransport>
@@ -671,6 +728,7 @@ export interface ImportFromStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   moduleName: Box<AnyTransport>
   '$children': Array<ImportFromStatementChildTransport>
 }
@@ -682,6 +740,7 @@ export interface ImportListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: Array<AnyTransport>
 }
 
@@ -692,6 +751,7 @@ export interface ImportStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: Array<AnyTransport>
 }
 
@@ -702,6 +762,7 @@ export interface InterpolationTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: FExpressionTransport
   typeConversion?: TypeConversionTransport
   formatSpecifier?: FormatSpecifierTransport
@@ -714,6 +775,7 @@ export interface KeyValuePatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   key: SimplePatternTransport
   value: CasePatternTransport
 }
@@ -725,6 +787,7 @@ export interface KeywordArgumentTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: NamedExpressionLhsTransport
   value: ExpressionTransport
 }
@@ -736,6 +799,7 @@ export interface KeywordPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   identifier: IdentifierTransport
   simplePattern: SimplePatternTransport
 }
@@ -747,6 +811,7 @@ export interface LambdaParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ParameterTransport>
 }
 
@@ -757,6 +822,7 @@ export interface LambdaTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   parameters?: LambdaParametersTransport
   body: ExpressionTransport
 }
@@ -768,6 +834,7 @@ export interface LambdaWithinForInClauseTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   parameters?: LambdaParametersTransport
   body: ExpressionWithinForInClauseTransport
 }
@@ -779,6 +846,7 @@ export interface ListComprehensionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: ExpressionTransport
   '$children': ComprehensionClausesTransport
 }
@@ -790,6 +858,7 @@ export interface ListPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<CasePatternTransport>
 }
 
@@ -800,6 +869,7 @@ export interface ListPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<PatternTransport>
 }
 
@@ -810,6 +880,7 @@ export interface ListSplatPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': PatternTransport
 }
 
@@ -820,6 +891,7 @@ export interface ListSplatTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   expression: ExpressionTransport
 }
 
@@ -830,6 +902,7 @@ export interface ListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ListChildTransport>
 }
 
@@ -840,6 +913,7 @@ export interface MatchBlockBlockTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   alternative: Array<CaseClauseTransport>
 }
 
@@ -850,6 +924,7 @@ export interface MatchBlockTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': MatchBlockBlockTransport
 }
 
@@ -860,6 +935,7 @@ export interface MatchStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   subject: Array<ExpressionTransport>
   body: MatchBlockTransport
 }
@@ -871,6 +947,7 @@ export interface MemberTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   baseType: TypeTransport
   identifier: IdentifierTransport
 }
@@ -882,6 +959,7 @@ export interface ModuleTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<StatementTransport>
 }
 
@@ -892,6 +970,7 @@ export interface NamedExpressionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: NamedExpressionLhsTransport
   value: ExpressionTransport
 }
@@ -903,6 +982,7 @@ export interface NonlocalStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<IdentifierTransport>
 }
 
@@ -913,6 +993,7 @@ export interface NotOperatorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   argument: ExpressionTransport
 }
 
@@ -923,6 +1004,7 @@ export interface PairTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   key: ExpressionTransport
   value: ExpressionTransport
 }
@@ -934,6 +1016,7 @@ export interface ParametersTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<ParameterTransport>
 }
 
@@ -944,6 +1027,7 @@ export interface ParenthesizedExpressionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': FExpressionTransport
 }
 
@@ -954,6 +1038,7 @@ export interface ParenthesizedListSplatTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': ParenthesizedListSplatChildTransport
 }
 
@@ -964,6 +1049,7 @@ export interface PatternListTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<PatternTransport>
 }
 
@@ -974,6 +1060,7 @@ export interface PrintStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   argument: Array<ExpressionTransport>
   '$children'?: ChevronTransport
 }
@@ -985,6 +1072,7 @@ export interface RaiseStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   cause?: ExpressionTransport
   '$children'?: ExpressionsTransport
 }
@@ -996,6 +1084,7 @@ export interface RelativeImportTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   importPrefix: ImportPrefixTransport
   dottedName?: DottedNameTransport
 }
@@ -1007,6 +1096,7 @@ export interface ReturnStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children'?: ExpressionsTransport
 }
 
@@ -1017,6 +1107,7 @@ export interface SetComprehensionTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: ExpressionTransport
   '$children': ComprehensionClausesTransport
 }
@@ -1028,6 +1119,7 @@ export interface SetTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<SetChildTransport>
 }
 
@@ -1038,6 +1130,7 @@ export interface SimplePatternNegativeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': PrimaryExpressionTransport
 }
 
@@ -1048,6 +1141,7 @@ export interface SimpleStatementsTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<SimpleStatementTransport>
 }
 
@@ -1058,6 +1152,7 @@ export interface SliceTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   start?: ExpressionTransport
   stop?: ExpressionTransport
   step?: ExpressionTransport
@@ -1070,6 +1165,7 @@ export interface SplatPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   identifier: Box<AnyTransport>
 }
 
@@ -1080,6 +1176,7 @@ export interface SplatTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   identifier: Box<AnyTransport>
 }
 
@@ -1090,6 +1187,7 @@ export interface StringContentTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<StringContentChildTransport>
 }
 
@@ -1100,6 +1198,7 @@ export interface StringTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   stringStart: StringStartTransport
   content: Array<AnyTransport>
   stringEnd: StringEndTransport
@@ -1112,6 +1211,7 @@ export interface SubscriptTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   value: PrimaryExpressionTransport
   subscript: Array<AnyTransport>
 }
@@ -1123,6 +1223,7 @@ export interface SuiteTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': SuiteChildTransport
 }
 
@@ -1133,6 +1234,7 @@ export interface TryStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   body: SuiteTransport
   exceptClauses: Array<ExceptClauseTransport>
   elseClause?: ElseClauseTransport
@@ -1146,6 +1248,7 @@ export interface TuplePatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<CasePatternTransport>
 }
 
@@ -1156,6 +1259,7 @@ export interface TuplePatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<PatternTransport>
 }
 
@@ -1166,6 +1270,7 @@ export interface TupleTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<TupleChildTransport>
 }
 
@@ -1176,6 +1281,7 @@ export interface TypeAliasStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   type: boolean
   left: TypeTransport
   right: TypeTransport
@@ -1188,6 +1294,7 @@ export interface TypedDefaultParameterTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   name: IdentifierTransport
   type: TypeTransport
   value: ExpressionTransport
@@ -1200,6 +1307,7 @@ export interface TypedParameterTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   type: TypeTransport
   '$children': ParameterTransport
 }
@@ -1211,6 +1319,7 @@ export interface TypeParameterTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<TypeTransport>
 }
 
@@ -1221,6 +1330,7 @@ export interface TypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': TypeChildTransport
 }
 
@@ -1231,6 +1341,7 @@ export interface UnaryOperatorTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   operator: UnaryOperatorOperatorEnum
   argument: PrimaryExpressionTransport
 }
@@ -1242,6 +1353,7 @@ export interface UnionPatternTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<SimplePatternTransport>
 }
 
@@ -1252,6 +1364,7 @@ export interface UnionTypeTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   left: TypeTransport
   right: TypeTransport
 }
@@ -1263,6 +1376,7 @@ export interface WhileStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   condition: ExpressionTransport
   body: SuiteTransport
   alternative?: ElseClauseTransport
@@ -1275,6 +1389,7 @@ export interface WithClauseBareTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<WithItemTransport>
 }
 
@@ -1285,6 +1400,7 @@ export interface WithClauseParenTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<WithItemTransport>
 }
 
@@ -1295,6 +1411,7 @@ export interface WithClauseParenTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Array<WithItemTransport>
 }
 
@@ -1305,6 +1422,7 @@ export interface WithClauseUFormBareTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': Box<AnyTransport>
 }
 
@@ -1315,6 +1433,7 @@ export interface WithClauseUFormParenTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children': WithClauseParenTransport
 }
 
@@ -1325,6 +1444,7 @@ export interface WithItemTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   value: ExpressionTransport
 }
 
@@ -1335,6 +1455,7 @@ export interface WithStatementTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   asyncMarker?: boolean
   withClause: Box<AnyTransport>
   body: SuiteTransport
@@ -1347,5 +1468,6 @@ export interface YieldTransport {
   '$span'?: Span
   '$nodeHandle'?: number
   '$childIndex'?: number
+  '$triviaData'?: any
   '$children'?: Box<AnyTransport>
 }

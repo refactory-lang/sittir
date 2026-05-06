@@ -54,6 +54,36 @@ describe('SCM parser', () => {
 		expect(result).toContainEqual({ kindName: 'identifier', captureName: 'function' });
 	});
 
+	it('handles bracket alternation inside predicate group', () => {
+		const result = parseSCMQuery(
+			'([(function_declaration) (arrow_function)] @definition.function (#strip! @definition.function))',
+		);
+		expect(result).toContainEqual({
+			kindName: 'function_declaration',
+			captureName: 'definition.function',
+		});
+		expect(result).toContainEqual({
+			kindName: 'arrow_function',
+			captureName: 'definition.function',
+		});
+	});
+
+	it('handles bracket alternation inside predicate group with multiple predicates', () => {
+		const result = parseSCMQuery(`
+			([(class_declaration) (function_declaration)] @definition.type
+				(#set! role "type")
+				(#strip! @definition.type))
+		`);
+		expect(result).toContainEqual({
+			kindName: 'class_declaration',
+			captureName: 'definition.type',
+		});
+		expect(result).toContainEqual({
+			kindName: 'function_declaration',
+			captureName: 'definition.type',
+		});
+	});
+
 	it('handles field-colon syntax', () => {
 		const result = parseSCMQuery(`
 			(call_expression

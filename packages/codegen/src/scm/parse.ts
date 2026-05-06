@@ -339,6 +339,48 @@ export function parseSCMQuery(source: string): SCMCapture[] {
 				continue;
 			}
 
+			// Bracket alternation inside predicate group: ([ ... ] @cap (#pred? ...))
+			if (c.is(TokenKind.LBracket)) {
+				c.advance(); // consume [
+				const bracketKinds: string[] = [];
+
+				while (!c.done && !c.is(TokenKind.RBracket)) {
+					if (c.is(TokenKind.LParen)) {
+						c.advance(); // consume (
+						const inner = c.peek();
+						if (inner && inner.kind === TokenKind.Identifier) {
+							bracketKinds.push(inner.value);
+							c.advance(); // consume kind name
+						}
+						// Skip to )
+						while (!c.done && !c.is(TokenKind.RParen)) c.advance();
+						c.eat(TokenKind.RParen);
+					} else {
+						c.advance(); // skip string literals, etc.
+					}
+				}
+				c.eat(TokenKind.RBracket); // consume ]
+
+				const capName = tryCapture();
+				if (capName) {
+					for (const kn of bracketKinds) {
+						captures.push({ kindName: kn, captureName: capName });
+					}
+				}
+
+				// Skip predicates and rest until closing )
+				while (!c.done && !c.is(TokenKind.RParen)) {
+					if (c.is(TokenKind.LParen)) {
+						c.advance();
+						skipToClose();
+					} else {
+						c.advance();
+					}
+				}
+				c.eat(TokenKind.RParen); // consume outer )
+				continue;
+			}
+
 			// Normal pattern: (kind ...) @cap
 			const kindName = parsePattern();
 			c.eat(TokenKind.RParen); // consume )
