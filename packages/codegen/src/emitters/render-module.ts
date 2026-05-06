@@ -3178,6 +3178,7 @@ function renderTransportBridge(
 		'        span,',
 		'        node_handle,',
 		'        child_index,',
+		'        trivia_data: None,',
 		'    }',
 		'}',
 		'',

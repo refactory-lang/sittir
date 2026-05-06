@@ -22,9 +22,8 @@ const K_INTEGER_LITERAL: KindId = KindId(126);
 const K_FUNCTION_ITEM: KindId = KindId(188);
 const K_BLOCK: KindId = KindId(293);
 
-/// The exact eight keys data-model.md §1 enumerates. Sorted
-/// alphabetically (after the required trio) per the determinism
-/// invariant, but `HashSet` membership is the gate.
+/// The ten allowed top-level keys per data-model.md §1 (nine
+/// structural + `$triviaData`). `HashSet` membership is the gate.
 const ALLOWED_KEYS: &[&str] = &[
     "$type",
     "$source",
@@ -35,6 +34,7 @@ const ALLOWED_KEYS: &[&str] = &[
     "$span",
     "$nodeHandle",
     "$childIndex",
+    "$triviaData",
 ];
 
 /// Build a NodeData where every optional field is populated, so the
@@ -54,6 +54,7 @@ fn complex_node() -> NodeData {
             span: Some(Span { start: 0, end: 3 }),
             node_handle: None,
             child_index: Some(0),
+            trivia_data: None,
         })),
     );
     fields.insert(
@@ -68,6 +69,7 @@ fn complex_node() -> NodeData {
             span: Some(Span { start: 5, end: 6 }),
             node_handle: None,
             child_index: Some(1),
+            trivia_data: None,
         }]),
     );
     fields.insert("op".to_string(), FieldValue::Text("+".to_string()));
@@ -86,11 +88,13 @@ fn complex_node() -> NodeData {
             span: Some(Span { start: 7, end: 9 }),
             node_handle: None,
             child_index: Some(2),
+            trivia_data: None,
         }]),
         text: None,
         span: Some(Span { start: 0, end: 9 }),
         node_handle: None,
         child_index: None,
+        trivia_data: None,
     }
 }
 

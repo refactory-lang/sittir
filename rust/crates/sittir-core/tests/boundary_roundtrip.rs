@@ -28,6 +28,7 @@ fn sample_leaf() -> NodeData {
         span: Some(Span { start: 42, end: 45 }),
         node_handle: Some(7),
         child_index: None,
+        trivia_data: None,
     }
 }
 
@@ -49,6 +50,7 @@ fn sample_branch() -> NodeData {
         span: None,
         node_handle: None,
         child_index: None,
+        trivia_data: None,
     }
 }
 
@@ -104,7 +106,7 @@ fn present_optionals_appear_on_the_wire() {
 
 #[test]
 fn no_unexpected_top_level_keys() {
-    // Enumerate the 9 allowed top-level keys per data-model.md §1.
+    // Enumerate the 10 allowed top-level keys per data-model.md §1.
     // Any other top-level `$`-key is a contract violation.
     const ALLOWED: &[&str] = &[
         "$type",
@@ -116,6 +118,7 @@ fn no_unexpected_top_level_keys() {
         "$span",
         "$nodeHandle",
         "$childIndex",
+        "$triviaData",
     ];
     let json = serde_json::to_string(&sample_branch()).unwrap();
     let v = wire(&json);

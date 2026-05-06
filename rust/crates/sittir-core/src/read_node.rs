@@ -96,6 +96,9 @@ fn read_ts_node(node: tree_sitter::Node<'_>, source: &str) -> NodeData {
         // child_index is set by read_children on each child; the root
         // node has no parent, so it stays None.
         child_index: None,
+        // trivia_data is never set by readNode — only by $trivia() on
+        // factory-constructed nodes.
+        trivia_data: None,
     }
 }
 

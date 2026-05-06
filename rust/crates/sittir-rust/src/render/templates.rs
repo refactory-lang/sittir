@@ -26626,6 +26626,7 @@ fn transport_node_data(
         span,
         node_handle,
         child_index,
+        trivia_data: None,
     }
 }
 
