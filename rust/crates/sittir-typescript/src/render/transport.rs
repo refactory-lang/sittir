@@ -37533,7 +37533,26 @@ pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNode
 
 pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportNodeData, String), ::askama::Error> {
     let node = node_data_from_transport(transport)?;
-    let rendered = render_dispatch(&node)?;
+    let mut rendered = render_dispatch(&node)?;
+    if let Some(ref trivia) = node.trivia_data {
+        if let Some(ref leading) = trivia.leading {
+            if !leading.is_empty() {
+                let mut buf = String::new();
+                for item in leading {
+                    if let Some(ref text) = item.text { buf.push_str(text); }
+                    buf.push('\n');
+                }
+                buf.push_str(&rendered);
+                rendered = buf;
+            }
+        }
+        if let Some(ref trailing) = trivia.trailing {
+            for item in trailing {
+                rendered.push('\n');
+                if let Some(ref text) = item.text { rendered.push_str(text); }
+            }
+        }
+    }
     Ok((node, rendered))
 }
 
