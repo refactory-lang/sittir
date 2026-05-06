@@ -36,12 +36,21 @@ Migrate the native render engine from `template.render() → String` to `templat
 packages/codegen/src/emitters/
 └── render-module.ts      # Emitter that generates per-grammar Rust render code
                           # ALL changes are here — generates streaming functions
+                          # Must emit to multiple files instead of one templates.rs
 
 rust/crates/sittir-core/src/
 ├── engine.rs             # ParsedTree::render_node_data — trivia inlining
 └── types.rs              # NodeData, NodeTrivia (unchanged)
 
 rust/crates/sittir-{lang}/src/render/
-└── templates.rs          # Generated — per-kind render functions + dispatch table
-                          # NOT hand-edited — regenerated from render-module.ts
+├── mod.rs                # Re-exports (existing, updated)
+├── dispatch.rs           # NEW — render_dispatch / render_into (match table)
+├── transport.rs          # NEW — AnyTransport enum + FromNapiValue + transport dispatch
+├── templates.rs          # SPLIT — per-kind Template structs + render functions only
+├── bridge.rs             # NEW — transport_node_data + field/child resolution helpers
+├── hash.rs               # Existing (unchanged)
+└── kind_ids.rs           # Existing (unchanged)
 ```
+
+Current state: `templates.rs` is a ~40K line monolith per grammar (109K total).
+After split: 4 focused files per grammar, each under 15K lines.

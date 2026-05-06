@@ -1,5 +1,33 @@
 # Research: Streaming Render Architecture
 
+## R0: File split — templates.rs monolith
+
+**Decision**: Split each grammar's `templates.rs` (~40K lines) into 4 files.
+
+**Current**: One `templates.rs` per grammar containing:
+- Askama template structs + per-kind render functions (~60%)
+- `AnyTransport` enum + `FromNapiValue` impls (~25%)
+- Dispatch tables (`render_dispatch`, `render_transport_dispatch`) (~5%)
+- Bridge helpers (`transport_node_data`, field/child resolution) (~10%)
+
+**After split**:
+
+| File | Contents | ~Lines |
+|---|---|---|
+| `templates.rs` | Template structs + per-kind render functions | ~25K |
+| `transport.rs` | `AnyTransport` enum + `FromNapiValue` + transport dispatch | ~10K |
+| `dispatch.rs` | `render_dispatch` / `render_into` match table | ~1K |
+| `bridge.rs` | `transport_node_data` + field/child helpers | ~2K |
+
+**Rationale**: 40K-line files are unmaintainable. The split aligns with
+the streaming migration — `dispatch.rs` gets the new streaming signatures,
+`templates.rs` gets `write_into`, `transport.rs` can be simplified after
+unification. Each file has one clear responsibility.
+
+**Emitter impact**: `render-module.ts` currently emits one string for all
+of `templates.rs`. After split, it emits 4 strings keyed by filename.
+The `RustRenderModuleEmit` return type gains new fields.
+
 ## R1: Askama write_into vs render
 
 **Decision**: Use `template.write_into(dest)` instead of `template.render()`.
