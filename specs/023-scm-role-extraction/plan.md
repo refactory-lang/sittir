@@ -5,7 +5,7 @@
 
 ## Summary
 
-Extract `@comment` captures from tree-sitter `highlights.scm` query files to discover trivia kinds per grammar, then make the existing `$trivia()` stub functional — attaching leading/trailing comments to NodeData and rendering them in both TS and Rust engines.
+Two phases: (1) Extract `@comment` captures from `highlights.scm` to discover trivia kinds, make `$trivia()` functional with typed signatures and dual-engine render [SHIPPED]. (2) Extend extraction to all semantic roles from `highlights.scm` + `tags.scm`, emit `ir.from.*` canonical factory namespace with grammar-agnostic factories (boolean, number, string, comment, type, identifier) [IN PROGRESS].
 
 ## Technical Context
 
@@ -52,11 +52,14 @@ specs/023-scm-role-extraction/
 packages/codegen/src/
 ├── scm/
 │   ├── parse.ts         # SCM query file parser (subset)
-│   └── extract-roles.ts # @comment → trivia role mapping
+│   └── extract-roles.ts # Role extraction (trivia + canonical vocabulary)
 ├── emitters/
-│   └── client-utils.ts  # withMethods $trivia() implementation
+│   ├── client-utils.ts  # withMethods $trivia() implementation
+│   ├── ir.ts            # ir.from.* canonical factory emission (Phase 2)
+│   └── emit.ts          # Single-loop orchestrator
 └── __tests__/
-    └── scm-trivia.test.ts
+    ├── scm-trivia.test.ts  # Phase 1 tests
+    └── scm-roles.test.ts   # Phase 2 tests (role extraction + ir.from.*)
 
 packages/types/src/
 └── core-types.ts        # NodeTrivia type, $trivia on AnyNodeData
@@ -65,7 +68,8 @@ packages/core/src/
 └── render.ts            # Trivia wrapper (prepend leading, append trailing)
 
 rust/crates/sittir-core/src/
-└── types.rs             # NodeTrivia Rust type
+├── types.rs             # NodeTrivia Rust type
+└── engine.rs            # Trivia render support
 
 rust/crates/sittir-{lang}/src/render/
 └── templates.rs         # Trivia render support

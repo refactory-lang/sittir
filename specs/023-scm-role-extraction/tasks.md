@@ -66,31 +66,66 @@
 
 ---
 
-## Phase 7: Polish
+## Phase 7: Polish (Phase 1)
 
-- [X] T019 Run full validator suite and report per-grammar counts — all counts hold at baseline (rust: from=154, cov=177, rt=121, factory=424; typescript: from=145, cov=177, rt=99, factory=392; python: from=111, cov=106, rt=107, factory=210).
-- [X] T020 Type-check all 6 packages — zero errors (tsgo --noEmit passes on types, core, rust, typescript, python, codegen).
-- [X] T021 Update CLAUDE.md if any new conventions emerged — no new conventions needed; trivia support follows existing patterns.
+- [X] T019 Run full validator suite and report per-grammar counts — all counts hold at baseline.
+- [X] T020 Type-check all 6 packages — zero errors.
+- [X] T021 Update CLAUDE.md if any new conventions emerged — no new conventions needed.
+
+---
+
+## Phase 8: US5 — General role extraction (Priority: P1)
+
+**Goal**: Extract all semantic roles from `highlights.scm` + `tags.scm`.
+
+- [ ] T022 [US5] Add `Role` type and `GrammarRoles` interface to `packages/codegen/src/scm/extract-roles.ts` — role enum covering trivia, string, number, boolean, type, variable, function, definition.*, reference.*. Add `CAPTURE_TO_ROLE` mapping table.
+- [ ] T023 [US5] Implement `extractGrammarRoles(grammar)` in `packages/codegen/src/scm/extract-roles.ts` — reads both `highlights.scm` AND `tags.scm`, matches captures against mapping table, returns `GrammarRoles` with all discovered role→kinds mappings. Refactor `extractTriviaRoles` as thin wrapper.
+- [ ] T024 [US5] Add `tags.scm` reading support — locate `tags.scm` in grammar package alongside `highlights.scm`, follow inheritance chains for both files.
+- [ ] T025 [US5] Implement cross-grammar diagnostic `printRoleDiagnostic()` — runs extraction on all three grammars and prints a table of role→kinds per grammar.
+- [ ] T026 [US5] Write tests in `packages/codegen/src/__tests__/scm-roles.test.ts` — test role extraction for string, number, type, definition.function, definition.class across all three grammars. Test backward compat of `extractTriviaRoles`.
+
+---
+
+## Phase 9: US6 — `ir.from.*` canonical factories (Priority: P1)
+
+**Goal**: Grammar-agnostic canonical factory namespace.
+
+- [ ] T027 [US6] Wire `extractGrammarRoles` into `packages/codegen/src/compiler/generate.ts` — pass full `GrammarRoles` to the ir emitter.
+- [ ] T028 [US6] Emit `ir.from` namespace in `packages/codegen/src/emitters/ir.ts` — for each leaf-shaped role with discovered kinds, emit a canonical factory function with the appropriate discriminator (boolean-value, number-type, comment-prefix, or none).
+- [ ] T029 [P] [US6] Emit typed return types for `ir.from.*` — each function returns a grammar-specific union of the role's kinds (e.g., `T.IntegerLiteral | T.FloatLiteral` for number).
+- [ ] T030 [US6] Regenerate all three grammars and verify `ir.from.boolean(true).$render()` produces `true`, `ir.from.number(42).$render()` produces `42`, `ir.from.string("hello").$render()` produces `hello`.
+- [ ] T031 [US6] Write integration tests in `packages/codegen/src/__tests__/scm-roles.test.ts` — test `ir.from.*` for boolean, number, string, comment, type, identifier across all three grammars.
+
+---
+
+## Phase 10: Polish (Phase 2)
+
+- [ ] T032 Run full validator suite — counts must hold or improve.
+- [ ] T033 Type-check all 6 packages — zero errors.
+- [ ] T034 Verify `ir.from.*` is tree-shakeable — each function is a named export, not a monolithic object.
 
 ---
 
 ## Dependencies
 
 ```
+Phase 1 (shipped):
 T002 → T004 → T011 (SCM parser → extractor → generate pipeline)
-T003 → T004 (inherits → extractor)
 T006 → T007 → T008 → T009 (type → method → render → verify)
-T011 → T014 (discovery → typed signature)
-T016, T017 can run in parallel (Rust types + render)
+
+Phase 2:
+T022 → T023 → T027 (Role type → extraction → generate wire)
+T024 → T023 (tags.scm → extraction)
+T027 → T028 → T030 (generate wire → ir.from emission → verify)
+T029 parallel with T028 (return types alongside emission)
 ```
 
 ## Implementation Strategy
 
-**MVP**: Phases 1–4 (T001–T013). Functional `$trivia()` with auto-discovered kinds. ~350 lines.
+**Phase 1 (shipped)**: T001–T021. Functional `$trivia()` + SCM extraction + typed signatures + Rust parity + emit.ts.
 
-**Full**: Add Phases 5–6 (T014–T018). Typed signatures + Rust parity. ~100 more lines.
+**Phase 2 (in progress)**: T022–T034. General role extraction + `ir.from.*` canonical surface. ~300 lines.
 
 **Suggested parallel execution**:
-- T002 + T003 (parser + inherits — different functions, same file)
-- T006 + T007 (type + method — different packages)
-- T016 + T017 (Rust types + render — different files)
+- T028 + T029 (ir.from emission + typed return types — same file, different concerns)
+- T025 can run independently (diagnostic is developer tool)
