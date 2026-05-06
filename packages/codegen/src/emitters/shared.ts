@@ -7,7 +7,8 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
-	AssembledNode
+	AssembledNode,
+	BranchSlotClass
 } from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
@@ -814,28 +815,7 @@ export function keywordPresenceIsNonEmptyRepeat(
 // Branch slot classification — single source of truth
 // ---------------------------------------------------------------------------
 
-/**
- * Discriminated result of {@link classifyBranchSlots}.
- *
- * - `multiSlot` — the node has 2+ user-facing slots (after filtering out
- *   auto-stamp fields, hidden-infra fields, keyword-presence fields, and
- *   auto-stamp children). Factory / from / wrap emitters use the standard
- *   multi-field Config shape.
- *
- * - `singleSlot` — exactly one user-facing slot survives filtering. The
- *   `slot` reference, `arity`, `optional`, and `nonEmpty` flags carry
- *   everything downstream emitters need to decide between direct-value
- *   and rest-param signatures.
- */
-export type BranchSlotClass =
-	| { tag: 'multiSlot' }
-	| {
-			tag: 'singleSlot';
-			arity: 'singular' | 'multiple';
-			optional: boolean;
-			nonEmpty: boolean;
-			slot: AssembledNonterminal;
-	  };
+export type { BranchSlotClass } from '../compiler/node-map.ts';
 
 /**
  * Classify a branch or group node's user-facing slot count — the ONE
@@ -871,7 +851,7 @@ export function classifyBranchSlots(
 	const userSlots: AssembledNonterminal[] = [];
 
 	for (const f of node.fields) {
-		if (isAutoStampField(f, nodeMap)) continue;
+		if (stampExpressionFor(f, nodeMap) !== undefined) continue;
 		if (isHiddenInfraSlot(f, nodeMap)) continue;
 		if (keywordPresenceKind(f, nodeMap) !== null) continue;
 		userSlots.push(f);
@@ -893,4 +873,16 @@ export function classifyBranchSlots(
 		nonEmpty: isNonEmpty(sole),
 		slot: sole
 	};
+}
+
+/**
+ * Post-assembly pass: compute and store `slotClass` on every branch/group
+ * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
+ */
+export function computeSlotClasses(nodeMap: NodeMap): void {
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType === 'branch' || node.modelType === 'group') {
+			node.slotClass = classifyBranchSlots(node, nodeMap);
+		}
+	}
 }

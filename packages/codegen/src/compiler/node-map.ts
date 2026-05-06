@@ -90,6 +90,20 @@ export interface UnresolvedRef {
  * Populated by the unified `deriveSlots` walk — undefined on values from
  * non-repeat positions.
  */
+/**
+ * Slot taxonomy classification for branch/group nodes.
+ * Computed post-assembly by `computeSlotClasses()`.
+ */
+export type BranchSlotClass =
+	| { tag: 'multiSlot' }
+	| {
+			tag: 'singleSlot';
+			arity: 'singular' | 'multiple';
+			optional: boolean;
+			nonEmpty: boolean;
+			slot: AssembledNonterminal;
+	  };
+
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
@@ -2417,6 +2431,14 @@ export class AssembledBranch extends AssembledNodeBase<
 	readonly variantChildKinds: readonly string[];
 
 	/**
+	 * Slot taxonomy — `singleSlot` when exactly one user-facing slot
+	 * survives after filtering auto-stamp, hidden-infra, and keyword-
+	 * presence fields; `multiSlot` otherwise. Set post-assembly by
+	 * `computeSlotClasses()`.
+	 */
+	slotClass?: BranchSlotClass;
+
+	/**
 	 * The unified slot Record — every constituent of this branch keyed
 	 * by its grammar field name (for `field()`-derived slots) or its
 	 * kind-derived positional name (for inferred slots). Insertion order
@@ -3429,6 +3451,9 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 * standalone groups (inlined hidden seqs).
 	 */
 	readonly parentKind?: string;
+
+	/** See {@link AssembledBranch.slotClass}. */
+	slotClass?: BranchSlotClass;
 
 	/**
 	 * The unified slot Record — every constituent of this group keyed by

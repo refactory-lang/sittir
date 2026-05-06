@@ -35,6 +35,7 @@ import { emitSuggested } from '../emitters/suggested.ts';
 import { emitIs } from '../emitters/is.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
+import { computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
@@ -185,6 +186,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// read `.kind` / `.modelType` directly without the per-call-site
 	// `isUnresolvedRef` fallback ternary. Throws on unresolvable refs.
 	hydrateSlotRefs(nodeMap);
+
+	// Phase 5b½: Compute slot taxonomy (singleSlot vs multiSlot) on each
+	// branch/group node. Runs after hydration so stampExpressionFor can
+	// resolve parameterless-kind refs through the hydrated slot graph.
+	computeSlotClasses(nodeMap);
 
 	// Phase 5c: Emit — every emitter consumes the hydrated NodeMap directly.
 	// The ir-namespace keys are populated on each AssembledNode during
