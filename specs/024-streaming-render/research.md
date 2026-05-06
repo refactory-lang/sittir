@@ -28,6 +28,29 @@ unification. Each file has one clear responsibility.
 of `templates.rs`. After split, it emits 4 strings keyed by filename.
 The `RustRenderModuleEmit` return type gains new fields.
 
+## R0b: Redundant trait object casts
+
+**Decision**: Remove `as &dyn RenderableTransport` casts from generated
+transport field references.
+
+**Current**:
+```rust
+SingleNonterminalView(Renderable::Transport(&node.argument as &dyn RenderableTransport))
+```
+
+**After**:
+```rust
+SingleNonterminalView(Renderable::Transport(&node.argument))
+```
+
+**Rationale**: Rust auto-coerces `&T` to `&dyn Trait` when `T: Trait` is
+in scope. Every transport struct implements `RenderableTransport`, so the
+explicit cast is noise. The emitter generates these casts defensively —
+they should be dropped.
+
+**Emitter impact**: One-line change in `render-module.ts` where field
+references are emitted for transport template construction.
+
 ## R1: Askama write_into vs render
 
 **Decision**: Use `template.write_into(dest)` instead of `template.render()`.
