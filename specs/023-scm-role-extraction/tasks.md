@@ -21,7 +21,7 @@
 - [ ] T002 Implement SCM query parser subset in `packages/codegen/src/scm/parse.ts` — parse S-expression patterns `(kind_name child*)` with `@capture` annotations. Handle nested patterns `(parent (child)) @capture.sub`. Skip predicates (`#match?`, `#eq?`). Return array of `{ kindName: string; captureName: string }`.
 - [ ] T003 Implement `; inherits:` directive parser in `packages/codegen/src/scm/parse.ts` — detect `; inherits: language` comments and return the parent language name (needed for TypeScript → JavaScript chain).
 - [ ] T004 Implement role extractor in `packages/codegen/src/scm/extract-roles.ts` — given parsed captures, filter `@comment` and `@comment.*`, return `TriviaRoleMap { grammar: string; triviaKinds: string[] }`. Follow `; inherits:` chains by loading parent grammar's `highlights.scm`.
-- [ ] T005 Write unit tests in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test parse, inherits detection, and role extraction against all three grammars (rust, typescript/javascript, python).
+- [ ] T005 Write unit tests in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test parse, inherits detection, and role extraction against all three grammars (rust, typescript/javascript, python). Also test: missing `highlights.scm` returns empty `triviaKinds` and emits a diagnostic warning.
 
 ---
 
@@ -32,8 +32,8 @@
 - [ ] T006 [US1] Add `NodeTrivia` type to `packages/types/src/core-types.ts` — `{ leading?: AnyNodeData[]; trailing?: AnyNodeData[] }`. Add optional `$trivia?: NodeTrivia` to `AnyNodeData`.
 - [ ] T007 [US1] Replace `$trivia()` stub in `packages/codegen/src/emitters/client-utils.ts` — emit functional implementation in `withMethods<T>` that accepts rest args (leading shorthand) or object form `{ leading, trailing }`, sets `$trivia` on the node, and returns `this`.
 - [ ] T008 [US1] Add trivia render wrapper in `packages/core/src/render.ts` — when `node.$trivia` is present, prepend each `leading` item's rendered text (with newline) before the node's output, append each `trailing` item's rendered text after.
-- [ ] T009 [US1] Regenerate all three grammars and verify `$trivia()` is functional: `ir.functionItem.from({ name: 'main' }).$trivia(ir.lineComment('// hello')).$render()` produces output with the comment above the function.
-- [ ] T010 [US1] Write integration test in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test leading, trailing, and both-side trivia rendering via the Rust grammar's `ir` namespace.
+- [ ] T009 [US1] Regenerate all three grammars (`npx tsx packages/codegen/src/cli.ts --grammar {rust,typescript,python} --all`) and verify `$trivia()` is functional in `packages/codegen/src/__tests__/scm-trivia.test.ts`: `ir.functionItem.from({ name: 'main' }).$trivia(ir.lineComment('// hello')).$render()` produces output with the comment above the function.
+- [ ] T010 [US1] Write integration test in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test leading, trailing, and both-side trivia rendering via the Rust grammar's `ir` namespace. Also test: (a) multiple `$trivia()` calls → last wins (overwrite, not append), (b) `$with` rebuild drops trivia (not carried over), (c) `readTreeNode(parsedTree).$trivia(comment).$render()` renders original source plus comment.
 
 ---
 
@@ -41,8 +41,8 @@
 
 **Goal**: Codegen auto-discovers trivia kinds per grammar from `highlights.scm`.
 
-- [ ] T011 [US2] Wire SCM extraction into `packages/codegen/src/compiler/generate.ts` — call `extractTriviaRoles(grammar)` during the generate pipeline, pass discovered `triviaKinds` to emitters via config.
-- [ ] T012 [US2] Locate `highlights.scm` per grammar — resolve path from the grammar's npm package (`tree-sitter-{lang}/queries/highlights.scm`). Handle TypeScript's JavaScript inheritance.
+- [ ] T011 [US2] Locate `highlights.scm` per grammar in `packages/codegen/src/scm/extract-roles.ts` — resolve path from the grammar's npm package (`tree-sitter-{lang}/queries/highlights.scm`). Handle TypeScript's JavaScript inheritance via `; inherits:` directive.
+- [ ] T012 [US2] Wire SCM extraction into `packages/codegen/src/compiler/generate.ts` — call `extractTriviaRoles(grammar)` during the generate pipeline, pass discovered `triviaKinds` to emitters via config.
 - [ ] T013 [US2] Verify all three grammars produce correct trivia kinds: rust → `[line_comment, block_comment]`, typescript → `[comment]`, python → `[comment]`.
 
 ---
