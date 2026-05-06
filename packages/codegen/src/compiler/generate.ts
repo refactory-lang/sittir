@@ -17,24 +17,13 @@ import {
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 
 import { emitGrammar } from '../emitters/grammar.ts';
-import { emitTypes } from '../emitters/types.ts';
-import { emitJinjaTemplates } from '../emitters/templates.ts';
-import { emitFactories } from '../emitters/factories.ts';
-import { emitFactoryMap } from '../emitters/factory-map.ts';
-import { emitWrap } from '../emitters/wrap.ts';
-import { emitFrom } from '../emitters/from.ts';
-import { emitClientUtils } from '../emitters/client-utils.ts';
 import { emitKindIdRust } from '../emitters/kind-id-rust.ts';
-import { emitIr } from '../emitters/ir.ts';
-import { emitTests } from '../emitters/test.ts';
-import { emitTypeTests } from '../emitters/type-test.ts';
 import { emitConfig } from '../emitters/config.ts';
-import { emitConsts } from '../emitters/consts.ts';
 import { emitIndex } from '../emitters/index-file.ts';
 import { emitSuggested } from '../emitters/suggested.ts';
-import { emitIs } from '../emitters/is.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
+import { emitAll } from '../emitters/emit.ts';
 import { computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractTriviaRoles } from '../scm/extract-roles.ts';
@@ -201,28 +190,35 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	// The ir-namespace keys are populated on each AssembledNode during
 	// assemble() (see resolveIrKeys), so emitters read node.irKey
 	// directly. No side-channel map plumbing, no NodeMap→Hydrated adapter.
+
+	// Single-loop orchestrator: factory/from/wrap share ONE iteration
+	// over nodeMap.nodes; other emitters run their own internal loops
+	// via emitAll. See emitters/emit.ts for architecture.
+	const emitted = emitAll({
+		grammar: cfg.grammar,
+		nodeMap,
+		generatedIdTables,
+		inlineKinds,
+		synthesizedKinds: evaluateSynthesizedKinds,
+		strict: cfg.strict,
+		triviaKinds: triviaRoles.triviaKinds
+	});
+
 	return {
 		grammar: emitGrammar({ grammar: cfg.grammar }),
 		engine: emitEngine({ grammar: cfg.grammar }),
-		types: emitTypes({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		jinjaTemplates: emitJinjaTemplates({ grammar: cfg.grammar, nodeMap }),
-		factories: emitFactories({
-			grammar: cfg.grammar,
-			nodeMap,
-			strict: cfg.strict,
-			generatedIdTables,
-			inlineKinds,
-			synthesizedKinds: evaluateSynthesizedKinds
-		}),
-		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
-		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables, inlineKinds, synthesizedKinds: evaluateSynthesizedKinds }),
-		utils: emitClientUtils({ nodeMap, generatedIdTables, triviaKinds: triviaRoles.triviaKinds }),
-		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		types: emitted.types,
+		jinjaTemplates: emitted.jinjaTemplates,
+		factories: emitted.factories,
+		factoryMap: emitted.factoryMap,
+		wrap: emitted.wrap,
+		utils: emitted.utils,
+		from: emitted.from,
+		irNamespace: emitted.irNamespace,
+		consts: emitted.consts,
 		index: emitIndex({ grammar: cfg.grammar, nodeMap }),
-		tests: emitTests({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
-		typeTests: emitTypeTests({ nodeMap, generatedIdTables }),
+		tests: emitted.tests,
+		typeTests: emitted.typeTests,
 		config: emitConfig({ grammar: cfg.grammar }),
 		nodeModel,
 		suggested: emitSuggested({
@@ -230,7 +226,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeMap,
 			roundTripFailures: cfg.roundTripFailures
 		}),
-		is: emitIs({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
+		is: emitted.is,
 		kindIds: generatedIdTables
 			? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables })
 			: '',
