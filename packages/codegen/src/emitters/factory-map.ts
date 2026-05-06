@@ -175,7 +175,6 @@ function shapeOf(
 	node: AssembledNode,
 	nodeMap: NodeMap
 ): FactoryShape | null {
-	if (node.isTextTemplate(nodeMap.externals)) return 'text';
 	switch (node.modelType) {
 		case 'pattern':
 		case 'enum':

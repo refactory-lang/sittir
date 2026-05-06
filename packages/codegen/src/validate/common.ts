@@ -484,9 +484,8 @@ const REPARSE_WRAPPERS: Record<
 			`fn _f() { let _ = ${r} { val: 1 }; }`,
 		// `delim_token_tree` (ADR-0006): aliased to `token_tree` at
 		// attribute.arguments and macro_invocation positions. Both kinds
-		// use $TEXT rendering now via isVerbatimTokenStream detection
-		// (macro token content is author-declared-verbatim, mixes named
-		// and anon tokens).
+		// use structural rendering (macro token content is
+		// author-declared-verbatim, mixes named and anon tokens).
 		delim_token_tree: (r) => `fn _f() { mac! ${r} }`,
 		// visibility_modifier is a declaration-position prefix — has no
 		// supertype it fits under. Only fires when variant() adoption

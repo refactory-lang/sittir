@@ -13521,8 +13521,14 @@ fn render_not_in_transport(t: &NotInTransport) -> Result<String, ::askama::Error
 }
 
 fn render_simple_pattern_negative_transport(node: &SimplePatternNegativeTransport) -> Result<String, ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children as &dyn ::sittir_core::types::RenderableTransport)];
     let template = SimplePatternNegativeTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
     };
     template.render()
 }
@@ -14786,8 +14792,18 @@ fn render_splat_type_transport(node: &SplatTypeTransport) -> Result<String, ::as
 }
 
 fn render_string_transport(node: &StringTransport) -> Result<String, ::askama::Error> {
+    let content_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.content.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t as &dyn ::sittir_core::types::RenderableTransport))
+        .collect();
     let template = StringTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
+        content: ::sittir_core::filters::ListNonterminalView {
+            items: content_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        string_end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_end as &dyn ::sittir_core::types::RenderableTransport)),
+        string_start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_start as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -19953,7 +19969,7 @@ pub struct MatchBlockTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_simple_pattern_negative.jinja", escape = "none")]
 pub struct SimplePatternNegativeTemplate<'a> {
-    pub text: &'a str,
+    pub children: ::sittir_core::filters::ListNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -20549,7 +20565,9 @@ pub struct StringContentTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "string.jinja", escape = "none")]
 pub struct StringTemplate<'a> {
-    pub text: &'a str,
+    pub content: ::sittir_core::filters::ListNonterminalView<'a>,
+    pub string_end: ::sittir_core::filters::SingleNonterminalView<'a>,
+    pub string_start: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -21153,9 +21171,14 @@ fn render_hidden_match_block(node: &NodeData) -> Result<String, ::askama::Error>
 
 fn render_hidden_simple_pattern_negative(node: &NodeData) -> Result<String, ::askama::Error> {
     let children = resolve_children(node, &[])?;
-    let text = resolve_text(node)?;
+    let children_renderables = children.renderable_items();
     let template = SimplePatternNegativeTemplate {
-        text: text.as_str(),
+        children: ::sittir_core::filters::ListNonterminalView {
+            items: children_renderables.as_slice(),
+            separator: children.separator,
+            leading: children.leading_sep,
+            trailing: children.trailing_sep,
+        },
     };
     template.render()
 }
@@ -22435,10 +22458,20 @@ fn render_string_content(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_string(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let text = resolve_text(node)?;
+    let children = resolve_children(node, &["content", "string_end", "string_start"])?;
+    let field_0 = resolve_field(node, "content", true)?;
+    let field_1 = resolve_field(node, "string_end", true)?;
+    let field_2 = resolve_field(node, "string_start", true)?;
+    let field_0_renderables = field_0.renderable_items();
     let template = StringTemplate {
-        text: text.as_str(),
+        content: ::sittir_core::filters::ListNonterminalView {
+            items: field_0_renderables.as_slice(),
+            separator: field_0.separator,
+            leading: field_0.leading_sep,
+            trailing: field_0.trailing_sep,
+        },
+        string_end: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        string_start: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }

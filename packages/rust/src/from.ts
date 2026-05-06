@@ -1609,9 +1609,13 @@ export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternU
   });
 }
 
-export function rawStringLiteralFrom(input: string | T.RawStringLiteral) {
-  if (typeof input !== 'string') return input;
-  return F.rawStringLiteral(input as Parameters<typeof F.rawStringLiteral>[0]);
+export function rawStringLiteralFrom(input: T.RawStringLiteral.Loose) {
+  if (isNodeData(input)) return input;
+  return F.rawStringLiteral({
+    rawStringLiteralStart: _resolveOne<string>(input.rawStringLiteralStart, _K0, _K0),
+    stringContent: _resolveOneLeaf<T.RawStringLiteralContent>(input.stringContent, "raw_string_literal_content"),
+    rawStringLiteralEnd: _resolveOne<string>(input.rawStringLiteralEnd, _K0, _K0),
+  });
 }
 
 export function refPatternFrom(input?: NonNullable<T.RefPattern.Config['children']>[number] | T.RefPattern) {

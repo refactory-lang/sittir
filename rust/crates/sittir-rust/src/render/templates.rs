@@ -24535,7 +24535,15 @@ fn render_range_pattern_uform_prefix_transport(node: &RangePatternUFormPrefixTra
 
 fn render_raw_string_literal_transport(node: &RawStringLiteralTransport) -> Result<String, ::askama::Error> {
     let template = RawStringLiteralTemplate {
-        text: node.transport_text.as_deref().unwrap_or(""),
+        raw_string_literal_end: match &node.raw_string_literal_end {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
+        raw_string_literal_start: match &node.raw_string_literal_start {
+            Some(v) => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Transport(v.as_ref())),
+            None => ::sittir_core::filters::OptionalNonterminalView::Missing,
+        },
+        string_content: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.string_content as &dyn ::sittir_core::types::RenderableTransport)),
     };
     template.render()
 }
@@ -35187,7 +35195,9 @@ pub struct RangePatternTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "raw_string_literal.jinja", escape = "none")]
 pub struct RawStringLiteralTemplate<'a> {
-    pub text: &'a str,
+    pub raw_string_literal_end: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub raw_string_literal_start: ::sittir_core::filters::OptionalNonterminalView<'a>,
+    pub string_content: ::sittir_core::filters::SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -38263,10 +38273,20 @@ fn render_range_pattern(node: &NodeData) -> Result<String, ::askama::Error> {
 }
 
 fn render_raw_string_literal(node: &NodeData) -> Result<String, ::askama::Error> {
-    let children = resolve_children(node, &[])?;
-    let text = resolve_text(node)?;
+    let children = resolve_children(node, &["raw_string_literal_end", "raw_string_literal_start", "string_content"])?;
+    let field_0 = resolve_field(node, "raw_string_literal_end", false)?;
+    let field_1 = resolve_field(node, "raw_string_literal_start", false)?;
+    let field_2 = resolve_field(node, "string_content", true)?;
     let template = RawStringLiteralTemplate {
-        text: text.as_str(),
+        raw_string_literal_end: match field_0.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+        },
+        raw_string_literal_start: match field_1.kind {
+            ResolvedFieldKind::Missing => ::sittir_core::filters::OptionalNonterminalView::Missing,
+            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => ::sittir_core::filters::OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+        },
+        string_content: ::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
     };
     template.render()
 }

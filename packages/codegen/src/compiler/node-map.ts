@@ -19,9 +19,7 @@
  *   {@link hasAnyField}, {@link hasAnyChild} — walk a Rule tree to
  *   produce the field / child metadata the emitters consume.
  * - **Structural predicates:** {@link isSyntheticFieldWrapper} —
- *   classification hint used by template-walker.ts. `isVerbatimTokenStream`
- *   and `hasHiddenExternalRef` are file-private helpers used only by
- *   `AssembledNodeBase.isTextTemplate()` and the renderTemplate() methods.
+ *   classification hint used by template-walker.ts.
  *
  * Backward compatibility: `rule.ts` re-exports everything from this
  * file. New code should import from `./node-map.ts` directly.
@@ -1391,7 +1389,7 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	 * behaviors) read `this.rule` directly. Outside consumers (emitters,
 	 * assemble/link phases, tests) must go through the class's public
 	 * getters (`members`, `content`, `separator`, `text`, `values`,
-	 * `subtypes`, `forms`, `pattern`, `elementRule`, `isTextTemplate`,
+	 * `subtypes`, `forms`, `pattern`, `elementRule`,
 	 * ...) — if a new use case needs raw rule access, add the
 	 * corresponding getter here instead of widening this field.
 	 */
@@ -1446,68 +1444,6 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 	/** A node is hidden when it has no factory (supertype, group, token). */
 	get hidden(): boolean {
 		return this.factoryName === undefined;
-	}
-
-	/**
-	 * True when this node's rule shape is a text template — a rule whose
-	 * parse result is emitted as a single string of text rather than a
-	 * structured config/children value. Two sources: verbatim-token-stream
-	 * rules (bare-literal sequences with no fields / symbols), and rules
-	 * that reach an external hidden token.
-	 *
-	 * Consumers (emitters) use this instead of reading `node.rule` directly —
-	 * per the project convention that only renderTemplate() methods on
-	 * AssembledNode subclasses reach into the raw rule.
-	 */
-	isTextTemplate(externals: ReadonlySet<string> | undefined): boolean {
-		if (
-			externals !== undefined &&
-			externals.size > 0 &&
-			hasHiddenExternalRef(this.rule, externals)
-		) {
-			return true;
-		}
-		if (isVerbatimTokenStream(this.rule)) return true;
-		// Container with optional-punct prefix: the template walker emits
-		// nothing for `optional(punct)` (see `containsOnlyPunctuation`
-		// path in `template-walker.ts` optional case). A seq whose FIRST
-		// member is an optional-punctuation wrapper — e.g.
-		// `seq(optional('-'), choice(integer, float))` for
-		// `_simple_pattern_negative` — would silently drop the prefix.
-		// Fall back to `{{ text }}` so the anonymous prefix is preserved.
-		return hasOptionalPunctPrefix(this.rule);
-	}
-
-	/**
-	 * Render-template short-circuit for text-shape kinds. Branch /
-	 * Container / Group all start their `renderTemplate()` with the
-	 * same two checks — hidden-external-ref and verbatim-token-stream —
-	 * and return `{{ text }}` when either fires. That preamble is one
-	 * fact (isTextTemplate) materialised three times; consolidate it
-	 * here so each subclass's renderTemplate() can short-circuit via
-	 * a single call.
-	 *
-	 * Returns the `{{ text }}` template when the rule is a text
-	 * template, otherwise `undefined` so the caller proceeds to its
-	 * structured walk.
-	 *
-	 * @see isTextTemplate — the underlying classification.
-	 */
-	protected textTemplate(
-		externals: ReadonlySet<string> | undefined
-	): RenderTemplateEntry | undefined {
-		if (this.isTextTemplate(externals)) {
-			return {
-				template: '{{ text }}',
-				surface: {
-					slots: [],
-					usesChildren: false,
-					usesVariant: false,
-					usesText: true
-				}
-			};
-		}
-		return undefined;
 	}
 
 	/**
@@ -2538,18 +2474,8 @@ export class AssembledBranch extends AssembledNodeBase<
 	renderTemplate(
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
-		externals?: ReadonlySet<string>
+		_externals?: ReadonlySet<string>
 	): RenderTemplateEntry {
-		// Rules whose structure depends on hidden external-scanner
-		// tokens (e.g. rust's raw_string_literal, whose `r#"` and `"#`
-		// are produced by `_raw_string_literal_start` and
-		// `_raw_string_literal_end`) can't be rendered slot-by-slot
-		// because the delimiters never appear as children. Same for
-		// verbatim token-stream rules (rust's token_tree /
-		// delim_token_tree). Both render as `{{ text }}` — emits the
-		// node's raw source span verbatim.
-		const textShape = this.textTemplate(externals);
-		if (textShape) return textShape;
 		// Template walking stays on the RAW rule — templates need the
 		// anonymous delimiters ('(', '{', ';', etc.) to surface as
 		// template text. Only derivations use simplifiedRule.
@@ -2628,92 +2554,6 @@ export class AssembledBranch extends AssembledNodeBase<
 }
 
 /**
- * Detect "verbatim token stream" shape — a rule whose body is a choice
- * of `seq(delim, repeat(hidden_symbol), delim)` variants. Canonical
- * case: rust's `token_tree` / `delim_token_tree`, whose children are
- * any mix of named and anonymous tokens (including punctuation like
- * `=`, `=>`, `,` that readNode promotes into $fields rather than
- * $children). Field-by-field rendering can't reassemble these losslessly
- * — the anonymous tokens would drop out of `$$$CHILDREN`.
- *
- * Emitting `$TEXT` for these rules preserves the source span verbatim
- * on readNode-derived data. Factory construction requires the kind to
- * use the text-shape factory (receives a `text: string`), same path
- * we already use for `$TEXT` kinds via `hasHiddenExternalRef`.
- *
- * Shape criteria: rule is a `choice` (possibly wrapped in `variant`
- * markers from tagVariants). Every member has exactly three elements:
- * string-literal, repeat/repeat1 of a hidden symbol, string-literal.
- */
-function isVerbatimTokenStream(rule: Rule): boolean {
-	if (rule.type !== 'choice') return false;
-	if (rule.members.length === 0) return false;
-	return rule.members.every((m) => {
-		const core = m.type === 'variant' ? m.content : m;
-		if (core.type !== 'seq' || core.members.length !== 3) return false;
-		const [start, mid, end] = core.members;
-		if (!start || !mid || !end) return false;
-		if (start.type !== 'string' || end.type !== 'string') return false;
-		if (mid.type !== 'repeat' && mid.type !== 'repeat1') return false;
-		const inner = mid.content;
-		return inner.type === 'symbol' && inner.hidden === true;
-	});
-}
-
-/**
- * Return `true` when a rule is a `seq` whose first member is
- * `optional(<punct>)` — a purely-punctuation optional the template
- * walker unconditionally drops.
- *
- * The canonical example is python's `_simple_pattern_negative`:
- *   `seq(optional('-'), choice(integer, float))`
- * whose optional `-` prefix is silently lost by
- * `template-walker.ts`'s `containsOnlyPunctuation` branch. Falling
- * back to `{{ text }}` preserves the prefix for roundtrip fidelity.
- *
- * Only fires for containers — branch nodes with named fields are handled
- * by the field-conditional path and don't reach `isTextTemplate`.
- */
-function hasOptionalPunctPrefix(rule: Rule): boolean {
-	if (rule.type !== 'seq' || rule.members.length < 2) return false;
-	const first = rule.members[0]!;
-	if (first.type !== 'optional') return false;
-	// The optional's content must be purely punctuation (no symbols/fields).
-	return isAllPunct(first.content);
-}
-
-/** Return true when a rule contains only string/pattern literals with no
- *  symbol references or field wrappers. Mirrors `containsOnlyPunctuation`
- *  in `template-walker.ts` (kept local to avoid a cross-file import). */
-function isAllPunct(rule: Rule): boolean {
-	switch (rule.type) {
-		case 'string':
-		case 'pattern':
-		case 'indent':
-		case 'dedent':
-		case 'newline':
-			return true;
-		case 'field':
-		case 'symbol':
-		case 'supertype':
-		case 'enum':
-			return false;
-		case 'seq':
-		case 'choice':
-			return (rule as { members: Rule[] }).members.every(isAllPunct);
-		case 'optional':
-		case 'repeat':
-		case 'repeat1':
-		case 'variant':
-		case 'clause':
-		case 'group':
-			return isAllPunct((rule as { content: Rule }).content);
-		default:
-			return false;
-	}
-}
-
-/**
  * Peel structural passthrough wrappers off a rule until reaching a
  * non-passthrough core. Single source of truth for the "find the
  * meaningful inner rule" walk that otherwise gets re-inlined every
@@ -2734,9 +2574,7 @@ function isAllPunct(rule: Rule): boolean {
  * Rule variant becomes a compile error here instead of silently
  * skipping the unwrap step.
  *
- * @see hasHiddenExternalRef, hasExternalBoundaries (this file) and
- *      template-walker.ts `fieldContentIsMultiSibling` — the three
- *      original call sites this helper consolidates.
+ * @see template-walker.ts `fieldContentIsMultiSibling`.
  */
 export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 	let r: Rule = rule;
@@ -2770,112 +2608,6 @@ export function unwrapStructuralPassthroughs(rule: Rule): Rule {
 				return assertNever(r);
 		}
 	}
-}
-
-/**
- * Shared predicate — does `rule` reduce to an external-scanner terminal?
- * Single source of truth for the symbol-in-externals + field/pattern('')
- * stub recognition used by both `hasHiddenExternalRef` (every member
- * must match for $TEXT promotion) and `hasExternalBoundaries` (only
- * first and last seq members must match).
- *
- * Two acceptance shapes:
- *
- * 1. After peeling structural passthroughs, the result is a `symbol`
- *    whose name is in `externals`.
- *
- * 2. After peeling, the result is a `field` whose unwrapped content
- *    is the link-stub `pattern('')` AND whose name (or `_`-prefixed
- *    form) is in `externals`. Link inlines external-token rule bodies
- *    as empty-pattern stubs; enrich then wraps them in
- *    `field('<stripped_name>', pattern(''))`. Both conditions must
- *    hold — a non-external rule could coincidentally have an empty-
- *    pattern child, and a field named after an external might
- *    legitimately carry real content.
- *
- * For non-stub field content, recurses into the content so wrapper-
- * of-symbol shapes still match (the `hasHiddenExternalRef` use-case).
- *
- * Anything else returns false. String literals like `{` / `}` / `;`
- * make the rule walkable via template text and disqualify the $TEXT
- * fallback.
- */
-function isExternalTerminalMember(
-	rule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
-	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type === 'field') {
-		const inner = unwrapStructuralPassthroughs(core.content);
-		if (
-			inner.type === 'pattern' &&
-			inner.value === '' &&
-			(externals.has(core.name) || externals.has('_' + core.name))
-		)
-			return true;
-		return isExternalTerminalMember(core.content, externals);
-	}
-	return core.type === 'symbol' && externals.has(core.name);
-}
-
-function hasHiddenExternalRef(
-	rule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
-	// Unwrap transparent wrappers to find the structural core.
-	const core = unwrapStructuralPassthroughs(rule);
-	if (core.type !== 'seq') return false;
-	// Also ignore pure-boundary optionals (e.g. the trailing
-	// `optional($._automatic_semicolon)` in javascript's
-	// `statement_block`) so they don't disqualify the rule from
-	// slot-by-slot rendering but also don't count toward the
-	// "all external" tally.
-	const isIgnorableBoundaryExternal = (r: Rule): boolean => {
-		if (r.type !== 'optional') return false;
-		const inner = r.content;
-		return (
-			inner.type === 'symbol' && externals.has((inner as { name: string }).name)
-		);
-	};
-	let hasContent = false;
-	for (const m of core.members) {
-		if (isIgnorableBoundaryExternal(m)) continue;
-		hasContent = true;
-		if (!isExternalTerminalMember(m, externals)) {
-			// Relaxed path: rule has external-scanner BOUNDARIES (first
-			// and last non-ignorable members are external) — treat as
-			// $TEXT. Python's `string` kind has this shape:
-			// `seq(field('string_start', external), REPEAT(content),
-			// field('string_end', external))`. Start and end are
-			// external-only tokens; the REPEAT between them holds the
-			// text + interpolations. Slot-by-slot rendering can't
-			// reconstruct the start/end delimiters and breaks f-strings
-			// / template strings. $TEXT preserves the source span
-			// verbatim on readNode-derived data.
-			return hasExternalBoundaries(core, externals);
-		}
-	}
-	return hasContent;
-}
-
-/**
- * Rule-level boundary check — first and last non-ignorable seq members
- * are external-scanner symbols. Fires for rules like python's `string`
- * where scanner tokens delimit but the interior is author-content.
- */
-function hasExternalBoundaries(
-	seqRule: Rule,
-	externals: ReadonlySet<string>
-): boolean {
-	if (seqRule.type !== 'seq') return false;
-	if (seqRule.members.length < 2) return false;
-	const first = seqRule.members[0];
-	const last = seqRule.members[seqRule.members.length - 1];
-	if (!first || !last) return false;
-	return (
-		isExternalTerminalMember(first, externals) &&
-		isExternalTerminalMember(last, externals)
-	);
 }
 
 export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
@@ -3517,10 +3249,8 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	renderTemplate(
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
-		externals?: ReadonlySet<string>
+		_externals?: ReadonlySet<string>
 	): RenderTemplateEntry {
-		const textShape = this.textTemplate(externals);
-		if (textShape) return textShape;
 		// Template walking stays on RAW rule (needs literals); derivations
 		// and separator discovery use simplifiedRule.
 		const optionalFields = deriveOptionalFieldNames(this.fields);

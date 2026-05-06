@@ -572,31 +572,26 @@ function emitPerNodeFactories(
 
 		// --- Taxonomy dispatch (replaces renderFactoryForNode) ---
 		if (!node.rawFactoryName) continue;
-		const isTextTemplate = node.isTextTemplate(nodeMap.externals);
 		const prevLen = _factoryOutput.length;
 
-		if (isTextTemplate) {
-			factory.leaf(node, nodeMap, leafReConsts, kindEntries);
-		} else {
-			switch (node.modelType) {
-				case 'pattern':
-				case 'keyword':
-				case 'enum':
-					factory.leaf(node, nodeMap, leafReConsts, kindEntries);
-					break;
-				case 'branch':
-					factory.branch(node, nodeMap, kindEntries);
-					break;
-				case 'polymorph':
-					factory.polymorph(node, nodeMap, kindEntries);
-					break;
-				case 'group':
-					factory.group(node, nodeMap, kindEntries);
-					break;
-				default:
-					// token, supertype, multi — no factory
-					break;
-			}
+		switch (node.modelType) {
+			case 'pattern':
+			case 'keyword':
+			case 'enum':
+				factory.leaf(node, nodeMap, leafReConsts, kindEntries);
+				break;
+			case 'branch':
+				factory.branch(node, nodeMap, kindEntries);
+				break;
+			case 'polymorph':
+				factory.polymorph(node, nodeMap, kindEntries);
+				break;
+			case 'group':
+				factory.group(node, nodeMap, kindEntries);
+				break;
+			default:
+				// token, supertype, multi — no factory
+				break;
 		}
 
 		// Nothing emitted for this node — skip refine forms.
@@ -676,8 +671,7 @@ function buildFactoryMapEntries(
 		const isContainerShape =
 			node.modelType === 'branch' && node.isContainerShape;
 		let shape: 'config' | 'children' | 'text';
-		if (node.isTextTemplate(nodeMap.externals)) shape = 'text';
-		else if (isContainerShape) shape = 'children';
+		if (isContainerShape) shape = 'children';
 		else if (
 			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
@@ -777,8 +771,7 @@ export namespace factory {
 	}
 
 	/**
-	 * Emit a leaf factory (pattern, keyword, enum) or a text-template
-	 * branch factory.
+	 * Emit a leaf factory (pattern, keyword, enum).
 	 */
 	export function leaf(
 		node: AssembledNode,
@@ -788,43 +781,30 @@ export namespace factory {
 	): void {
 		if (!node.rawFactoryName) return;
 		let result: string | undefined;
-		// Text-template branch — external-scanner delimiters that can't be
-		// field-reconstructed. Emit a text-accepting factory.
-		if (node.isTextTemplate(nodeMap.externals)) {
-			result = emitTextFactory(
-				node,
-				'(text: string)',
-				'text',
-				undefined,
-				kindEntries,
-				nodeMap
-			);
-		} else {
-			switch (node.modelType) {
-				case 'pattern': {
-					const guards = buildLeafGuards(node, leafReConsts);
-					const guard = guards.join(' ');
-					result = emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
-					break;
-				}
-				case 'keyword':
-					result = emitTextFactory(
-						node,
-						'()',
-						`'${escForSource(node.text)}' as const`,
-						undefined,
-						kindEntries,
-						nodeMap
-					);
-					break;
-				case 'enum': {
-					const literalUnion = buildEnumLiteralUnion(node);
-					result = emitTextFactory(node, `(text: ${literalUnion})`, 'text', undefined, kindEntries, nodeMap);
-					break;
-				}
-				default:
-					break;
+		switch (node.modelType) {
+			case 'pattern': {
+				const guards = buildLeafGuards(node, leafReConsts);
+				const guard = guards.join(' ');
+				result = emitTextFactory(node, '(text: string)', 'text', guard, kindEntries, nodeMap);
+				break;
 			}
+			case 'keyword':
+				result = emitTextFactory(
+					node,
+					'()',
+					`'${escForSource(node.text)}' as const`,
+					undefined,
+					kindEntries,
+					nodeMap
+				);
+				break;
+			case 'enum': {
+				const literalUnion = buildEnumLiteralUnion(node);
+				result = emitTextFactory(node, `(text: ${literalUnion})`, 'text', undefined, kindEntries, nodeMap);
+				break;
+			}
+			default:
+				break;
 		}
 		if (result) _factoryOutput.push(result);
 	}

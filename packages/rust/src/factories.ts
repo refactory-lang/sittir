@@ -3125,12 +3125,25 @@ export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFor
   });
 }
 
-export function rawStringLiteral(text: string) {
+export function rawStringLiteral(config: T.RawStringLiteral.Config) {
+  const _raw_string_literal_start = config.rawStringLiteralStart;
+  const _string_content = config.stringContent.$text;
+  const _raw_string_literal_end = config.rawStringLiteralEnd;
   return withMethods({
     $type: TSKindId.RawStringLiteral as const,
     $source: 2 as const,
     $named: true as const,
-    $text: text,
+    _raw_string_literal_start,
+    _string_content,
+    _raw_string_literal_end,
+    rawStringLiteralStart() { return _raw_string_literal_start; },
+    stringContent() { return _string_content; },
+    rawStringLiteralEnd() { return _raw_string_literal_end; },
+    $with: {
+      rawStringLiteralStart: (value?: string) => rawStringLiteral({ ...config, rawStringLiteralStart: value }),
+      stringContent: (value: T.RawStringLiteralContent) => rawStringLiteral({ ...config, stringContent: value }),
+      rawStringLiteralEnd: (value?: string) => rawStringLiteral({ ...config, rawStringLiteralEnd: value }),
+    },
   });
 }
 

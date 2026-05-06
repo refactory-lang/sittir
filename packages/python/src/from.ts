@@ -459,8 +459,9 @@ const _K11: readonly string[] = ["true","false","none"];
 const _K12: readonly string[] = ["class_pattern","splat_pattern","union_pattern","_list_pattern","_tuple_pattern","dict_pattern","string","concatenated_string","_simple_pattern_negative","complex_pattern","dotted_name"];
 const _K13: readonly string[] = ["keyword_identifier"];
 const _K14: readonly string[] = ["_identifier","identifier"];
-const _K15: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
-const _K16: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
+const _K15: readonly string[] = ["interpolation","string_content"];
+const _K16: readonly string[] = ["comparison_operator","not_operator","boolean_operator","lambda","primary_expression","conditional_expression","named_expression","as_pattern","slice"];
+const _K17: readonly string[] = ["list_splat_pattern","dictionary_splat_pattern"];
 
 export function aliasedImportFrom(input: T.AliasedImport.Loose) {
   if (isNodeData(input)) return input;
@@ -1220,9 +1221,13 @@ export function splatTypeFrom(input: T.SplatType.Loose) {
   return F.splatType(_resolveOne<T._Identifier | T.Identifier>(input.identifier, _K14, _K0));
 }
 
-export function stringFrom(input: string | T.String) {
-  if (typeof input !== 'string') return input;
-  return F.string(input as Parameters<typeof F.string>[0]);
+export function stringFrom(input: T.String.Loose) {
+  if (isNodeData(input)) return input;
+  return F.string({
+    stringStart: _resolveOneLeaf<T.StringStart>(input.stringStart, "string_start"),
+    content: _resolveMany<T.Interpolation | T.StringContent>(input.content, _K0, _K15),
+    stringEnd: _resolveOneLeaf<T.StringEnd>(input.stringEnd, "string_end"),
+  });
 }
 
 export function stringContentFrom(...input: readonly (NonNullable<T.StringContent.Config['children']>[number] | T.StringContent)[]) {
@@ -1235,7 +1240,7 @@ export function stringContentFrom(...input: readonly (NonNullable<T.StringConten
 
 export function subscriptFrom(input: T.Subscript.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K15);
+  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K16);
   _assertNonEmpty(_ne_subscript, 'subscript.subscript');
   return F.subscript({
     value: _resolveOne<T.PrimaryExpression>(input.value, _K1, _K2),
@@ -1317,7 +1322,7 @@ export function typedParameterFrom(input: T.TypedParameter.Loose) {
   if (isNodeData(input)) return input;
   return F.typedParameter({
     type: _resolveOneBranch<T.Type>(input.type, "type"),
-    children: _resolveOne(input.children, _super_keyword_identifier, _K16),
+    children: _resolveOne(input.children, _super_keyword_identifier, _K17),
   });
 }
 

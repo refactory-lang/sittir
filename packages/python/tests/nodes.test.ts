@@ -1007,12 +1007,12 @@ describe('splat_type', () => {
 
 describe('string', () => {
   it('factory produces correct type', () => {
-    const node = ir.string('test');
+    const node = ir.string({ stringStart: { $type: 'string_start', $text: 'test', $source: 2, $named: true } as any, content: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], stringEnd: { $type: 'string_end', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.String);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.string('test');
+    const node = ir.string({ stringStart: { $type: 'string_start', $text: 'test', $source: 2, $named: true } as any, content: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any], stringEnd: { $type: 'string_end', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

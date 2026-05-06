@@ -186,7 +186,7 @@
     "range_expression_bare": "config",
     "range_expression": "config",
     "range_pattern": "config",
-    "raw_string_literal": "text",
+    "raw_string_literal": "config",
     "ref_pattern": "children",
     "reference_expression": "config",
     "reference_pattern": "config",

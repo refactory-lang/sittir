@@ -96,27 +96,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		if (!isValidIdent(key)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
-		// Text-template branches (e.g. rust `raw_string_literal`) surface
-		// through `factory-map.json5`'s `factoryShapes: "text"` and the
-		// generated factory signature is `fn(text: string)`, not a Config
-		// object. A node-model branch model with an all-external-token
-		// content structure is the trigger — invoke it with a string.
-		// Phase 1d.vii (spec 022): only true (field-carrying) branches
-		// hit the text-template short-circuit. The former-container
-		// shape (now `branch` with `isContainerShape === true`) keeps
-		// its rest-param test surface via `emitContainerTest` below,
-		// even when its content happens to look like a text-template —
-		// that preserves byte-identity with the pre-merge `'container'`
-		// arm.
-		if (
-			node.modelType === 'branch' &&
-			!node.isContainerShape &&
-			node.isTextTemplate(nodeMap.externals)
-		) {
-			emitTextTemplateBranchTest(lines, kind, key, kindEntries, nodeMap);
-			continue;
-		}
-
 		switch (node.modelType) {
 			case 'branch':
 				// Phase 1d.vii (spec 022): the former `'container'` modelType
@@ -362,27 +341,6 @@ function emitPolymorphTest(
 		lines.push(`    expect(node.$source).toBe(2);`);
 		lines.push('  });');
 	}
-	lines.push('});');
-	lines.push('');
-}
-
-function emitTextTemplateBranchTest(
-	lines: string[],
-	kind: string,
-	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	lines.push(`describe('${kind}', () => {`);
-	lines.push(`  it('factory produces correct type', () => {`);
-	lines.push(`    const node = ir.${key}('test');`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
-	lines.push('  });');
-	lines.push(`  it('render produces non-empty string', () => {`);
-	lines.push(`    const node = ir.${key}('test');`);
-	lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-	lines.push('  });');
 	lines.push('});');
 	lines.push('');
 }

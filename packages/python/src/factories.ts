@@ -185,12 +185,15 @@ export function notIn(text: string) {
   });
 }
 
-export function simplePatternNegative(text: string) {
+export function simplePatternNegative(child: (T.Integer | T.Float)) {
+  const children = [child];
   return withMethods({
     $type: TSKindId.SimplePatternNegative as const,
     $source: 2 as const,
     $named: true as const,
-    $text: text,
+    $children: children,
+    children() { return children; },
+    $with: { $child: (v: (T.Integer | T.Float)) => simplePatternNegative(v) },
   });
 }
 
@@ -1758,12 +1761,25 @@ export function splatType(identifier: T._Identifier | T.Identifier) {
   });
 }
 
-export function string(text: string) {
+export function string(config: T.String.Config) {
+  const _string_start = config.stringStart.$text;
+  const _content = config.content;
+  const _string_end = config.stringEnd.$text;
   return withMethods({
     $type: TSKindId.String as const,
     $source: 2 as const,
     $named: true as const,
-    $text: text,
+    _string_start,
+    _content,
+    _string_end,
+    stringStart() { return _string_start; },
+    content() { return _content; },
+    stringEnd() { return _string_end; },
+    $with: {
+      stringStart: (value: T.StringStart) => string({ ...config, stringStart: value }),
+      content: (...values: (T.Interpolation | T.StringContent)[]) => string({ ...config, content: values }),
+      stringEnd: (value: T.StringEnd) => string({ ...config, stringEnd: value }),
+    },
   });
 }
 

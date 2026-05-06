@@ -1265,12 +1265,12 @@ describe('range_pattern', () => {
 
 describe('raw_string_literal', () => {
   it('factory produces correct type', () => {
-    const node = ir.rawStringLiteral('test');
+    const node = ir.rawStringLiteral({ stringContent: { $type: 'raw_string_literal_content', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.RawStringLiteral);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.rawStringLiteral('test');
+    const node = ir.rawStringLiteral({ stringContent: { $type: 'raw_string_literal_content', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });

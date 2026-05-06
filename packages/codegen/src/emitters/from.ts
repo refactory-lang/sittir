@@ -491,12 +491,6 @@ export namespace from {
 				kindEntries,
 				nodeMap
 			);
-		} else if (node.isTextTemplate(nodeMap.externals)) {
-			result = emitStringLikeFrom({
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				fromFunctionName: node.fromFunctionName
-			});
 		} else {
 			result = emitBranchFrom(node, nodeMap, intern);
 		}
