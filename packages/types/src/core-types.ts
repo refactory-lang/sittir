@@ -6,6 +6,23 @@
  */
 
 // ---------------------------------------------------------------------------
+// Trivia — leading / trailing comments or whitespace attached to a node
+// ---------------------------------------------------------------------------
+
+/**
+ * Trivia metadata attached to a node via `$trivia()`.
+ *
+ * Leading trivia renders before the node's own text; trailing trivia
+ * renders after. Each entry is a fully-formed NodeData (e.g. a
+ * `line_comment` or `block_comment` factory node) that renders
+ * independently via its own template.
+ */
+export interface NodeTrivia {
+	leading?: readonly AnyNodeData[];
+	trailing?: readonly AnyNodeData[];
+}
+
+// ---------------------------------------------------------------------------
 // Node data — what factories produce, what the render engine consumes
 // ---------------------------------------------------------------------------
 
@@ -93,7 +110,9 @@ export interface AnyNodeData {
 	$toEdit?: (startOrRange: number | ByteRange, endPos?: number) => Edit;
 	/** Create an Edit replacing the target tree node's range with this node's rendered text. */
 	$replace?: (target: { range(): ByteRange }) => Edit;
-	/** Return a new frozen node with per-field trivia updates applied. */
+	/** Trivia metadata (leading / trailing comments) attached via `$trivia()`. */
+	$triviaData?: NodeTrivia;
+	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`. */
 	$trivia?: (...args: unknown[]) => AnyNodeData;
 }
 

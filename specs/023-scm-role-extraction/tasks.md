@@ -12,16 +12,16 @@
 
 ## Phase 1: Setup
 
-- [ ] T001 Create `packages/codegen/src/scm/` directory for SCM parser module
+- [X] T001 Create `packages/codegen/src/scm/` directory for SCM parser module
 
 ---
 
 ## Phase 2: Foundational — SCM parser + extraction (US1+US2 prerequisite)
 
-- [ ] T002 Implement SCM query parser subset in `packages/codegen/src/scm/parse.ts` — parse S-expression patterns `(kind_name child*)` with `@capture` annotations. Handle nested patterns `(parent (child)) @capture.sub`. Skip predicates (`#match?`, `#eq?`). Return array of `{ kindName: string; captureName: string }`.
-- [ ] T003 Implement `; inherits:` directive parser in `packages/codegen/src/scm/parse.ts` — detect `; inherits: language` comments and return the parent language name (needed for TypeScript → JavaScript chain).
-- [ ] T004 Implement role extractor in `packages/codegen/src/scm/extract-roles.ts` — given parsed captures, filter `@comment` and `@comment.*`, return `TriviaRoleMap { grammar: string; triviaKinds: string[] }`. Follow `; inherits:` chains by loading parent grammar's `highlights.scm`.
-- [ ] T005 Write unit tests in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test parse, inherits detection, and role extraction against all three grammars (rust, typescript/javascript, python). Also test: missing `highlights.scm` returns empty `triviaKinds` and emits a diagnostic warning.
+- [X] T002 Implement SCM query parser subset in `packages/codegen/src/scm/parse.ts` — parse S-expression patterns `(kind_name child*)` with `@capture` annotations. Handle nested patterns `(parent (child)) @capture.sub`. Skip predicates (`#match?`, `#eq?`). Return array of `{ kindName: string; captureName: string }`.
+- [X] T003 Implement `; inherits:` directive parser in `packages/codegen/src/scm/parse.ts` — detect `; inherits: language` comments and return the parent language name (needed for TypeScript → JavaScript chain).
+- [X] T004 Implement role extractor in `packages/codegen/src/scm/extract-roles.ts` — given parsed captures, filter `@comment` and `@comment.*`, return `TriviaRoleMap { grammar: string; triviaKinds: string[] }`. Follow `; inherits:` chains by loading parent grammar's `highlights.scm`.
+- [X] T005 Write unit tests in `packages/codegen/src/__tests__/scm-trivia.test.ts` — test parse, inherits detection, and role extraction against all three grammars (rust, typescript/javascript, python). Also test: missing `highlights.scm` returns empty `triviaKinds` and emits a diagnostic warning.
 
 ---
 
