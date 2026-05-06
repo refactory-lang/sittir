@@ -1167,6 +1167,18 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		const kids = (childConfig.children ?? []) as unknown[];
 		return factory(...kids);
 	}
+	// 'single-field' shape: factory takes the sole field value directly,
+	// not a config object. Extract the value using factoryFields metadata.
+	if (shape === 'single-field') {
+		const { factoryFields } = opts;
+		const fieldNames = factoryFields?.[kind];
+		const rawName = fieldNames?.[0];
+		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
+			c.toUpperCase()
+		);
+		const value = camelName ? (childConfig as Record<string, unknown>)[camelName] : undefined;
+		return factory(value);
+	}
 	return factory(childConfig);
 }
 
