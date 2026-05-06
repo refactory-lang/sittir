@@ -143,15 +143,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	lines.push(`  $trivia(...args: ${buildTriviaParamType(triviaTypeNames)}[]): AnyNodeData;`);
 	lines.push('} {');
 	lines.push('  return Object.assign(node, {');
-	lines.push('    $render(this: AnyNodeData): string {');
-	lines.push('      let text = render(this);');
-	lines.push('      const td = (this as unknown as Record<string, unknown>).$triviaData as { leading?: readonly AnyNodeData[]; trailing?: readonly AnyNodeData[] } | undefined;');
-	lines.push('      if (td) {');
-	lines.push('        if (td.leading) text = td.leading.map(t => render(t)).join("\\n") + "\\n" + text;');
-	lines.push('        if (td.trailing) text = text + "\\n" + td.trailing.map(t => render(t)).join("\\n");');
-	lines.push('      }');
-	lines.push('      return text;');
-	lines.push('    },');
+	lines.push('    $render(this: AnyNodeData): string { return render(this); },');
 	lines.push('    $toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {');
 	lines.push('      return toEdit(this, startOrRange, endPos);');
 	lines.push('    },');

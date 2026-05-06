@@ -72,15 +72,7 @@ export function withMethods<T extends object>(
   $trivia(...args: (BlockComment | LineComment | { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] })[]): AnyNodeData;
 } {
   return Object.assign(node, {
-    $render(this: AnyNodeData): string {
-      let text = render(this);
-      const td = (this as unknown as Record<string, unknown>).$triviaData as { leading?: readonly AnyNodeData[]; trailing?: readonly AnyNodeData[] } | undefined;
-      if (td) {
-        if (td.leading) text = td.leading.map(t => render(t)).join("\n") + "\n" + text;
-        if (td.trailing) text = text + "\n" + td.trailing.map(t => render(t)).join("\n");
-      }
-      return text;
-    },
+    $render(this: AnyNodeData): string { return render(this); },
     $toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
       return toEdit(this, startOrRange, endPos);
     },
