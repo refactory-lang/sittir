@@ -112,8 +112,13 @@ export interface AnyNodeData {
 	$replace?: (target: { range(): ByteRange }) => Edit;
 	/** Trivia metadata (leading / trailing comments) attached via `$trivia()`. */
 	$triviaData?: NodeTrivia;
-	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`. */
-	$trivia?: (...args: unknown[]) => AnyNodeData;
+	/** Attach trivia to this node. Rest args → leading; object form → as-is. Returns `this`.
+	 *
+	 * `any[]` in the base type so per-grammar narrowed signatures
+	 * (`(LineComment | BlockComment | ...)[]`) remain assignable —
+	 * function parameters are contravariant, and `unknown` would
+	 * reject narrower argument types. */
+	$trivia?: (...args: any[]) => AnyNodeData;
 }
 
 // ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
-import type { AnyTransport, NamespaceMap } from './types.js';
+import type { BlockComment, LineComment, AnyTransport, NamespaceMap } from './types.js';
 import { KIND_NAMES, kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 
@@ -69,7 +69,7 @@ export function withMethods<T extends object>(
   $render(): string;
   $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
   $replace(target: { range(): ByteRange }): Edit;
-  $trivia(...args: unknown[]): AnyNodeData;
+  $trivia(...args: (BlockComment | LineComment | { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] })[]): AnyNodeData;
 } {
   return Object.assign(node, {
     $render(this: AnyNodeData): string {
@@ -87,7 +87,7 @@ export function withMethods<T extends object>(
     $replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
       return toEdit(this, target.range());
     },
-    $trivia(this: AnyNodeData, ...items: unknown[]): AnyNodeData {
+    $trivia(this: AnyNodeData, ...items: (BlockComment | LineComment | { leading?: (BlockComment | LineComment)[]; trailing?: (BlockComment | LineComment)[] })[]): AnyNodeData {
       if (items.length === 1 && typeof items[0] === 'object' && items[0] !== null && ('leading' in items[0] || 'trailing' in items[0])) {
         (this as unknown as Record<string, unknown>).$triviaData = items[0];
       } else {

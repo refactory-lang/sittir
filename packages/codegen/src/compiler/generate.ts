@@ -37,6 +37,7 @@ import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
 import { computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
+import { extractTriviaRoles } from '../scm/extract-roles.ts';
 
 import type { NodeMap, IncludeFilter, RawGrammar } from './types.ts';
 import type { EmittedTemplates } from '../emitters/templates.ts';
@@ -160,6 +161,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 	traceAssembleNodes('assemble', nodeMap.nodes);
 	const generatedIdTables = await loadGeneratedIdTables(cfg.grammar);
 
+	// Extract trivia (comment) kinds from the grammar's highlights.scm.
+	// Used to type the `$trivia()` signature in utils.ts.
+	const triviaRoles = extractTriviaRoles(cfg.grammar);
+
 	// Authoritative inline list from the compiled grammar.json (if present).
 	// `raw.inline` only contains what the overrides callback explicitly
 	// returns — base-grammar string items in `previous` are silently dropped
@@ -211,7 +216,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		}),
 		factoryMap: emitFactoryMap({ grammar: cfg.grammar, nodeMap }),
 		wrap: emitWrap({ grammar: cfg.grammar, nodeMap, generatedIdTables, inlineKinds, synthesizedKinds: evaluateSynthesizedKinds }),
-		utils: emitClientUtils({ nodeMap, generatedIdTables }),
+		utils: emitClientUtils({ nodeMap, generatedIdTables, triviaKinds: triviaRoles.triviaKinds }),
 		from: emitFrom({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		irNamespace: emitIr({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 		consts: emitConsts({ grammar: cfg.grammar, nodeMap, generatedIdTables }),

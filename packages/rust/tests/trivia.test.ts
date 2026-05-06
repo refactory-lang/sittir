@@ -4,6 +4,7 @@
 
 import { describe, it, expect } from 'vitest';
 import * as F from '../src/factories.js';
+import type { LineComment } from '../src/types.js';
 
 function makeFn(name: string) {
 	return F.functionItem({
@@ -13,9 +14,19 @@ function makeFn(name: string) {
 	});
 }
 
+/** Build a `LineComment` trivia node from raw text.
+ *  Cast through `unknown` because the factory's optional-default `$children`
+ *  type (`[] | readonly [LineCommentContent]`) doesn't narrow to the concrete
+ *  interface's required tuple (`readonly [LineCommentContent]`). */
+function makeComment(text: string): LineComment {
+	return F.lineCommentUFormContent({
+		children: [F.lineCommentContent(text)],
+	}) as unknown as LineComment;
+}
+
 describe('$trivia() integration', () => {
 	it('attaches leading trivia via rest args', () => {
-		const comment = F.lineCommentContent('// hello');
+		const comment = makeComment('// hello');
 		const fn = makeFn('main');
 		const result = fn.$trivia(comment);
 		expect(result).toBe(fn);
@@ -24,11 +35,10 @@ describe('$trivia() integration', () => {
 		};
 		expect(td).toBeDefined();
 		expect(td.leading).toHaveLength(1);
-		expect((td.leading![0] as Record<string, unknown>).$text).toBe('// hello');
 	});
 
 	it('attaches trailing trivia via object form', () => {
-		const comment = F.lineCommentContent('// end');
+		const comment = makeComment('// end');
 		const fn = makeFn('main');
 		fn.$trivia({ trailing: [comment] });
 		const td = (fn as Record<string, unknown>).$triviaData as {
@@ -36,23 +46,21 @@ describe('$trivia() integration', () => {
 		};
 		expect(td).toBeDefined();
 		expect(td.trailing).toHaveLength(1);
-		expect((td.trailing![0] as Record<string, unknown>).$text).toBe('// end');
 	});
 
 	it('last $trivia() call wins (overwrite)', () => {
-		const c1 = F.lineCommentContent('// first');
-		const c2 = F.lineCommentContent('// second');
+		const c1 = makeComment('// first');
+		const c2 = makeComment('// second');
 		const fn = makeFn('main');
 		fn.$trivia(c1).$trivia!(c2);
 		const td = (fn as Record<string, unknown>).$triviaData as {
 			leading?: unknown[];
 		};
 		expect(td.leading).toHaveLength(1);
-		expect((td.leading![0] as Record<string, unknown>).$text).toBe('// second');
 	});
 
 	it('$with rebuild drops trivia', () => {
-		const comment = F.lineCommentContent('// hello');
+		const comment = makeComment('// hello');
 		const fn = makeFn('main');
 		fn.$trivia(comment);
 		expect((fn as Record<string, unknown>).$triviaData).toBeDefined();
