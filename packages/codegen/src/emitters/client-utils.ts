@@ -71,60 +71,6 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 	// of bodies); per-grammar duplication of generated text is intentional
 	// locality.
 	lines.push('/**');
-	lines.push(' * Freeze a NodeData object and all its array-valued `_*` storage slots.');
-	lines.push(' *');
-	lines.push(' * Generic on `T` so the caller\'s concrete factory-output type flows');
-	lines.push(' * through to the `Readonly<T> & AnyNodeData` return. Hygiene rule 4:');
-	lines.push(' * preserve type information.');
-	lines.push(' */');
-	lines.push('export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {');
-	lines.push('  const rec = node as unknown as Record<string, unknown>;');
-	lines.push('  for (const key of Object.keys(rec)) {');
-	lines.push("    if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {");
-	lines.push('      Object.freeze(rec[key]);');
-	lines.push('    }');
-	lines.push('  }');
-	lines.push('  return Object.freeze(node) as Readonly<T> & AnyNodeData;');
-	lines.push('}');
-	lines.push('');
-
-	lines.push('/**');
-	lines.push(' * Build the `$with` updater namespace for a NodeData.');
-	lines.push(' *');
-	lines.push(' * Each `[storageKey, configKey]` pair becomes a `$with.<configKey>(v)`');
-	lines.push(' * updater that calls `factory({ ...config, <configKey>: v })`. Generic on');
-	lines.push(' * the caller\'s `Config` and per-kind `NodeData` return so updater');
-	lines.push(' * signatures preserve grammar-specific types.');
-	lines.push(' */');
-	lines.push('export function buildWithNamespace<C extends object, R extends AnyNodeData>(');
-	lines.push('  config: C,');
-	lines.push('  factory: (cfg: C) => R,');
-	lines.push('  slotKeys: readonly [storageKey: string, configKey: string][]');
-	lines.push('): { readonly [k: string]: (v: unknown) => R } {');
-	lines.push('  const withNs: Record<string, (v: unknown) => R> = {};');
-	lines.push('  for (const [, configKey] of slotKeys) {');
-	lines.push('    withNs[configKey] = function(v: unknown): R {');
-	lines.push('      return factory({ ...config, [configKey]: v });');
-	lines.push('    };');
-	lines.push('  }');
-	lines.push('  return withNs;');
-	lines.push('}');
-	lines.push('');
-
-	// Codegen-hygiene helpers: consolidate the
-	// `Object.defineProperty` boilerplate that previously appeared
-	// thousands of times across generated factories.ts. Generated factories
-	// now use inline-object-literal method shorthand + spread `_sharedMethods`.
-
-	lines.push('/**');
-	lines.push(' * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)');
-	lines.push(' * that every factory-produced NodeData carries. Spread into each factory');
-	lines.push(' * literal via `..._sharedMethods` — no post-construction `defineProperty`');
-	lines.push(' * boilerplate. Methods are enumerable; functions are dropped by');
-	lines.push(' * `JSON.stringify` regardless, so the only visible difference is');
-	lines.push(' * `Object.keys(node)` includes them.');
-	lines.push(' */');
-	lines.push('/**');
 	lines.push(' * Wrap a factory-built node literal with the four `$`-prefixed shared');
 	lines.push(' * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).');
 	lines.push(' *');

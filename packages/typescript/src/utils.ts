@@ -7,53 +7,6 @@ import { KIND_NAMES, kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 
 /**
- * Freeze a NodeData object and all its array-valued `_*` storage slots.
- *
- * Generic on `T` so the caller's concrete factory-output type flows
- * through to the `Readonly<T> & AnyNodeData` return. Hygiene rule 4:
- * preserve type information.
- */
-export function freezeNodeData<T extends object>(node: T): Readonly<T> & AnyNodeData {
-  const rec = node as unknown as Record<string, unknown>;
-  for (const key of Object.keys(rec)) {
-    if ((key.startsWith('_') || key === '$children') && Array.isArray(rec[key])) {
-      Object.freeze(rec[key]);
-    }
-  }
-  return Object.freeze(node) as Readonly<T> & AnyNodeData;
-}
-
-/**
- * Build the `$with` updater namespace for a NodeData.
- *
- * Each `[storageKey, configKey]` pair becomes a `$with.<configKey>(v)`
- * updater that calls `factory({ ...config, <configKey>: v })`. Generic on
- * the caller's `Config` and per-kind `NodeData` return so updater
- * signatures preserve grammar-specific types.
- */
-export function buildWithNamespace<C extends object, R extends AnyNodeData>(
-  config: C,
-  factory: (cfg: C) => R,
-  slotKeys: readonly [storageKey: string, configKey: string][]
-): { readonly [k: string]: (v: unknown) => R } {
-  const withNs: Record<string, (v: unknown) => R> = {};
-  for (const [, configKey] of slotKeys) {
-    withNs[configKey] = function(v: unknown): R {
-      return factory({ ...config, [configKey]: v });
-    };
-  }
-  return withNs;
-}
-
-/**
- * The four `$`-prefixed shared methods (render, toEdit, replace, trivia)
- * that every factory-produced NodeData carries. Spread into each factory
- * literal via `..._sharedMethods` — no post-construction `defineProperty`
- * boilerplate. Methods are enumerable; functions are dropped by
- * `JSON.stringify` regardless, so the only visible difference is
- * `Object.keys(node)` includes them.
- */
-/**
  * Wrap a factory-built node literal with the four `$`-prefixed shared
  * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).
  *
