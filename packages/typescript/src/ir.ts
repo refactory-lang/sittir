@@ -205,7 +205,7 @@ export const from = {
     return F.comment(text);
   },
   type(name: string): ReturnType<typeof F.typeIdentifier> {
-    return F.typeIdentifier(F.identifier(name) as never);
+    return F.typeIdentifier(F.identifier(name));
   },
   identifier(name: string): ReturnType<typeof F.identifier> {
     return F.identifier(name);

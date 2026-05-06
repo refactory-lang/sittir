@@ -526,7 +526,7 @@ function emitFromString(
 	const contentNode = nodeMap.nodes.get('string_content');
 	if (contentNode && isLeafFactory(contentNode)) {
 		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
-		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value) as never);`);
+		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value));`);
 		fns.push('  },');
 	}
 	// Otherwise: skip — too complex to auto-compose
@@ -635,7 +635,7 @@ function emitFromType(
 		const identNode = nodeMap.nodes.get('identifier');
 		if (identNode && isLeafFactory(identNode)) {
 			fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
-			fns.push(`    return F.${typeNode.rawFactoryName}(F.${identNode.rawFactoryName}(name) as never);`);
+			fns.push(`    return F.${typeNode.rawFactoryName}(F.${identNode.rawFactoryName}(name));`);
 			fns.push('  },');
 		}
 	}

@@ -430,15 +430,18 @@ export function extractGrammarRoles(grammar: string): GrammarRoles {
 	applyFallbackProbes(roleKinds, addToRole);
 
 	const entries: RoleEntry[] = [];
+	const roleMap = new Map<Role, string[]>();
 	for (const [role, kinds] of roleKinds) {
-		entries.push({ role, kinds: [...kinds] });
+		const kindList = [...kinds];
+		entries.push({ role, kinds: kindList });
+		roleMap.set(role, kindList);
 	}
 
 	return {
 		grammar,
 		entries,
 		get(role: Role): string[] {
-			return entries.find(e => e.role === role)?.kinds ?? [];
+			return roleMap.get(role) ?? [];
 		},
 	};
 }
