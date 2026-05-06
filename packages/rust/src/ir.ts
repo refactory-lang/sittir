@@ -389,6 +389,16 @@ export const from = {
   identifier(name: string): ReturnType<typeof F.identifier> {
     return F.identifier(name);
   },
+  // definition.function → function_item
+  get function_() { return ir.functionItem; },
+  // definition.class → struct_item
+  get class_() { return ir.structItem; },
+  // definition.method → function_item
+  get method() { return ir.functionItem; },
+  // definition.module → mod_item
+  get module_() { return ir.mod; },
+  // definition.interface → trait_item
+  get interface_() { return ir.trait; },
 } as const;
 
 export const ir = {

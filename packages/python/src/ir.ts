@@ -191,6 +191,10 @@ export const from = {
   identifier(name: string): ReturnType<typeof F.identifier> {
     return F.identifier(name);
   },
+  // definition.function → function_definition
+  get function_() { return ir.functionDefinition; },
+  // definition.class → class_definition
+  get class_() { return ir.classDefinition; },
 } as const;
 
 export const ir = {

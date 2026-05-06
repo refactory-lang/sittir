@@ -386,6 +386,7 @@ function emitFromNamespace(
 	emitFromComment(grammarRoles, nodeMap, fns);
 	emitFromType(grammarRoles, nodeMap, fns);
 	emitFromIdentifier(grammarRoles, nodeMap, fns);
+	emitFromAliases(grammarRoles, nodeMap, fns);
 
 	if (fns.length === 0) return [];
 
@@ -656,6 +657,36 @@ function emitFromIdentifier(
 	fns.push(`  identifier(name: string): ${returnTypeExpr(node)} {`);
 	fns.push(`    return F.${node.rawFactoryName}(name);`);
 	fns.push('  },');
+}
+
+/**
+ * Emit definition-role aliases — `from.function`, `from.class`, etc.
+ * These are direct references to the grammar-specific `ir.*` entry,
+ * not wrapper functions. E.g., `from.function = ir.functionItem`.
+ */
+function emitFromAliases(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
+		{ role: 'definition.function', canonicalName: 'function_' },
+		{ role: 'definition.class', canonicalName: 'class_' },
+		{ role: 'definition.method', canonicalName: 'method' },
+		{ role: 'definition.module', canonicalName: 'module_' },
+		{ role: 'definition.interface', canonicalName: 'interface_' },
+	];
+
+	for (const { role, canonicalName } of ALIAS_ROLES) {
+		const kinds = grammarRoles.get(role);
+		if (kinds.length === 0) continue;
+		const primaryKind = kinds[0]!;
+		const node = nodeMap.nodes.get(primaryKind);
+		if (!node?.rawFactoryName) continue;
+		const irKey = node.irKey ?? memberKeyFor(primaryKind, '');
+		fns.push(`  // ${role} → ${primaryKind}`);
+		fns.push(`  get ${canonicalName}() { return ir.${irKey}; },`);
+	}
 }
 
 // JS reserved words that can't be bare property accessors in some lint

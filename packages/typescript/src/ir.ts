@@ -210,6 +210,16 @@ export const from = {
   identifier(name: string): ReturnType<typeof F.identifier> {
     return F.identifier(name);
   },
+  // definition.function → function_signature
+  get function_() { return ir.functionSignature; },
+  // definition.class → abstract_class_declaration
+  get class_() { return ir.abstractClass; },
+  // definition.method → method_signature
+  get method() { return ir.methodSignature; },
+  // definition.module → module
+  get module_() { return ir.module; },
+  // definition.interface → interface_declaration
+  get interface_() { return ir.interface; },
 } as const;
 
 export const ir = {
