@@ -28,7 +28,45 @@ unification. Each file has one clear responsibility.
 of `templates.rs`. After split, it emits 4 strings keyed by filename.
 The `RustRenderModuleEmit` return type gains new fields.
 
-## R0b: Redundant trait object casts
+## R0b: Simplify core module references with `use` imports
+
+**Decision**: Add `use sittir_core::{filters, types}` imports at the top
+of each generated file. Replace `::sittir_core::filters::Renderable` with
+`Renderable`, etc.
+
+**Current**: 3,170+ fully-qualified `::sittir_core::` paths in Rust's
+`templates.rs` alone. Every field reference, every filter call, every
+type annotation uses the full path.
+
+**After**: Module-level imports at the top of each generated file:
+```rust
+use sittir_core::filters::{
+    Renderable, SingleNonterminalView, ListNonterminalView,
+    joinby, joinWithTrailing, Joined, JoinSource,
+};
+use sittir_core::types::{
+    NodeData, FieldValue, KindId, Source, RenderableTransport,
+};
+```
+
+Then inline references shorten from:
+```rust
+::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(...))
+```
+to:
+```rust
+SingleNonterminalView(Renderable::Transport(...))
+```
+
+**Rationale**: Fully-qualified paths are defensive against name collisions
+but these are generated files in dedicated render modules — no collision
+risk. The short names make the generated code more readable and reduce
+file size by ~30%.
+
+**Emitter impact**: One-time change in `render-module.ts` — emit a `use`
+block at the top of each file, then reference short names everywhere.
+
+## R0c: Redundant trait object casts
 
 **Decision**: Remove `as &dyn RenderableTransport` casts from generated
 transport field references.
