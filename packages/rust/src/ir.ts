@@ -369,6 +369,44 @@ export const useClause = {
   scopedUse: _attach(F.scopedUseList, { from: FR.scopedUseListFrom }),
 } as const;
 
+// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
+// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
+export const from = {
+  boolean(value: boolean): ReturnType<typeof F.booleanLiteral> {
+    return F.booleanLiteral(value ? 'true' : 'false');
+  },
+  number: Object.assign(
+    function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
+      return Number.isInteger(value)
+        ? F.integerLiteral(String(value))
+        : F.floatLiteral(String(value));
+    },
+    {
+      integer(value: number): ReturnType<typeof F.integerLiteral> { return F.integerLiteral(String(value)); },
+      float(value: number): ReturnType<typeof F.floatLiteral> { return F.floatLiteral(String(value)); },
+    }
+  ),
+  string(value: string): ReturnType<typeof F.stringLiteral> {
+    return F.stringLiteral(F.stringContent(value) as never);
+  },
+  type(name: string): ReturnType<typeof F.typeIdentifier> {
+    return F.typeIdentifier(F.identifier(name) as never);
+  },
+  identifier(name: string): ReturnType<typeof F.identifier> {
+    return F.identifier(name);
+  },
+  // definition.function → function_item
+  get function() { return ir.functionItem; },
+  // definition.class → struct_item
+  get class() { return ir.structItem; },
+  // definition.method → function_item
+  get method() { return ir.functionItem; },
+  // definition.module → mod_item
+  get module() { return ir.mod; },
+  // definition.interface → trait_item
+  get interface() { return ir.trait; },
+} as const;
+
 export const ir = {
   // Node factories
   abstractType: _attach(F.abstractType, { from: FR.abstractTypeFrom }),
@@ -572,4 +610,5 @@ export const ir = {
   tokens,
   type,
   useClause,
+  from,
 } as const;

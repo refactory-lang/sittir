@@ -3167,6 +3167,7 @@ function renderTransportBridge(
 		'    child_index: Option<u16>,',
 		'    fields: Option<TransportHashMap<String, TransportFieldValue>>,',
 		'    children: Option<Vec<TransportNodeData>>,',
+		'    trivia_data: Option<::sittir_core::types::NodeTrivia>,',
 		') -> TransportNodeData {',
 		'    TransportNodeData {',
 		'        type_: kind,',
@@ -3178,6 +3179,7 @@ function renderTransportBridge(
 		'        span,',
 		'        node_handle,',
 		'        child_index,',
+		'        trivia_data,',
 		'    }',
 		'}',
 		'',
@@ -3220,7 +3222,7 @@ function renderTransportBridge(
 				id !== undefined
 					? `TransportKindId(${id}) /* ${safeKind} */`
 					: `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
-			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None)),`;
+			return `        AnyTransport::${rustLiteralTransportVariantName(literal, index)} => Ok(transport_node_data(${kindArg}, None, None, false, Some(${JSON.stringify(literal.text)}.to_string()), None, None, None, None, None, None)),`;
 		}),
 		'    }',
 		'}',
@@ -3367,6 +3369,7 @@ function renderTransportDataToNodeFn(
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
 	lines.push(...renderTransportChildrenBinding(children, nodeMap, ownerTypeName));
+	lines.push('    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());');
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
 	lines.push('        transport.transport_source,');
@@ -3378,6 +3381,7 @@ function renderTransportDataToNodeFn(
 	lines.push('        transport.transport_child_index.map(|v| v as u16),');
 	lines.push('        fields,');
 	lines.push('        children,');
+	lines.push('        trivia_data,');
 	lines.push('    ))');
 	lines.push('}');
 	lines.push('');
@@ -3670,6 +3674,7 @@ function renderTerminalTransportToNodeFn(
 				'        None,',
 				'        None,',
 				'        None,',
+				'        None,',
 				'    ))',
 				'}',
 				''
@@ -3691,6 +3696,7 @@ function renderTerminalTransportToNodeFn(
 			'        None,',
 			'        None,',
 			'        None,',
+			'        None,',
 			'    ))',
 			'}',
 			''
@@ -3699,6 +3705,7 @@ function renderTerminalTransportToNodeFn(
 
 	return [
 		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
+		'    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());',
 		'    Ok(transport_node_data(',
 		`        ${kindArg},`,
 		'        transport.transport_source,',
@@ -3710,6 +3717,7 @@ function renderTerminalTransportToNodeFn(
 		'        transport.transport_child_index.map(|v| v as u16),',
 		'        None,',
 		'        None,',
+		'        trivia_data,',
 		'    ))',
 		'}',
 		''
@@ -3917,6 +3925,7 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`            transport_span: None,`);
 	lines.push(`            transport_node_handle: None,`);
 	lines.push(`            transport_child_index: None,`);
+	lines.push(`            transport_trivia_data: None,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3937,12 +3946,14 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push('        let transport_span = obj.get("$span")?;');
 	lines.push('        let transport_node_handle = obj.get("$nodeHandle")?;');
 	lines.push('        let transport_child_index = obj.get("$childIndex")?;');
+	lines.push('        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;');
 	lines.push(`        Ok(Self {`);
 	lines.push(`            transport_source,`);
 	lines.push(`            transport_named,`);
 	lines.push(`            transport_span,`);
 	lines.push(`            transport_node_handle,`);
 	lines.push(`            transport_child_index,`);
+	lines.push(`            transport_trivia_data,`);
 	lines.push(`            text,`);
 	lines.push(`        })`);
 	lines.push(`    }`);
@@ -3987,7 +3998,12 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
 		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]',
 		'    pub transport_node_handle: Option<f64>,',
 		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]',
-		'    pub transport_child_index: Option<f64>,'
+		'    pub transport_child_index: Option<f64>,',
+		// $triviaData is a deep nested structure (NodeTrivia { leading: Vec<NodeData>, ... }).
+		// Using serde_json::Value avoids requiring FromNapiValue impls on all NodeData subtypes;
+		// the bridge function deserializes to NodeTrivia via serde_json::from_value.
+		'    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]',
+		'    pub transport_trivia_data: Option<::serde_json::Value>,'
 	);
 	return lines;
 }
@@ -4010,6 +4026,7 @@ function renderLeafTransportPlainFields(): string[] {
 		// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
 		'    pub transport_node_handle: Option<f64>,',
 		'    pub transport_child_index: Option<f64>,',
+		'    pub transport_trivia_data: Option<::serde_json::Value>,',
 		'    pub text: String,'
 	];
 }

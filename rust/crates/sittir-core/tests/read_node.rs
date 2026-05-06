@@ -15,7 +15,8 @@ use serde_json::Value;
 use sittir_core::read_node::read_node;
 use sittir_core::types::{NodeData, Source};
 
-/// The nine top-level keys permitted on the wire, per data-model.md §1.
+/// The ten top-level keys permitted on the wire, per data-model.md §1
+/// (nine structural + `$triviaData`).
 const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
     "$type",
     "$source",
@@ -26,6 +27,7 @@ const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
     "$span",
     "$nodeHandle",
     "$childIndex",
+    "$triviaData",
 ];
 
 /// Recursively assert that every object-shaped JSON node in `value`

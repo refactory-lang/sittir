@@ -1565,12 +1565,29 @@ export function createRendererFromConfig(
 		// whitespace artifacts indicate walker bugs (template emits a
 		// trailing/leading space when an optional field is absent) and
 		// must surface, not be hidden. Native engine matches this contract.
-		return withMetrics(grammar, resolveKindName(node.$type, ctx), () => {
+		let result = withMetrics(grammar, resolveKindName(node.$type, ctx), () => {
 			if (nunjucksEnv || templatesDir) {
 				return renderNunjucks(node, ctx, nunjucksEnv, templatesDir);
 			}
 			return render(node, ctx);
 		});
+
+		// Trivia wrapping: when `$triviaData` is present, prepend leading
+		// trivia items and append trailing trivia items. Each trivia item
+		// renders via `boundRender` so it uses its own template.
+		const trivia = node.$triviaData;
+		if (trivia) {
+			if (trivia.leading && trivia.leading.length > 0) {
+				const leadingText = trivia.leading.map((t) => boundRender(t)).join('\n');
+				result = leadingText + '\n' + result;
+			}
+			if (trivia.trailing && trivia.trailing.length > 0) {
+				const trailingText = trivia.trailing.map((t) => boundRender(t)).join('\n');
+				result = result + '\n' + trailingText;
+			}
+		}
+
+		return result;
 	}
 
 	function boundToEdit(

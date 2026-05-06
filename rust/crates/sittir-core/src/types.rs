@@ -75,8 +75,25 @@ impl From<KindId> for u16 {
     }
 }
 
-/// Primitive NodeData — the wire shape. Exactly nine `$`-prefixed
-/// top-level fields. Enrichment (`$variant`, etc.) is TS-side only.
+/// Leading / trailing trivia (comments) for a `NodeData`. Attached by
+/// `$trivia()` on the TS side; carried across the wire for native
+/// render support. Mirrors `NodeTrivia` in `@sittir/types`.
+///
+/// Each entry is a fully-formed `NodeData` (e.g. a `line_comment` or
+/// `block_comment` factory node) that renders independently via its own
+/// template.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct NodeTrivia {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub leading: Option<Vec<NodeData>>,
+
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trailing: Option<Vec<NodeData>>,
+}
+
+/// Primitive NodeData — the wire shape. Ten `$`-prefixed top-level
+/// fields (nine structural + `$triviaData`). Enrichment (`$variant`,
+/// etc.) is TS-side only.
 ///
 /// `type_` is a numeric `KindId` (parser.c-derived symbol ID) rather than
 /// a string kind name. JSON wire shape is `{"$type": 42}` — `KindId` is
@@ -120,6 +137,16 @@ pub struct NodeData {
     /// `None` on root nodes and factory-constructed nodes.
     #[serde(rename = "$childIndex", default, skip_serializing_if = "Option::is_none")]
     pub child_index: Option<u16>,
+
+    /// Leading / trailing trivia (comments) attached via `$trivia()`.
+    /// Present only on factory-constructed nodes that have had trivia
+    /// attached — `readNode` never sets this. Each trivia item is a
+    /// fully-formed `NodeData` (e.g. a `line_comment` or `block_comment`
+    /// factory node) that renders independently via its own template.
+    ///
+    /// Mirrors `NodeTrivia` in `@sittir/types` (spec 023 T016).
+    #[serde(rename = "$triviaData", default, skip_serializing_if = "Option::is_none")]
+    pub trivia_data: Option<NodeTrivia>,
 }
 
 /// Where a `NodeData` originated. `Ts` = `readNode` over a tree-sitter

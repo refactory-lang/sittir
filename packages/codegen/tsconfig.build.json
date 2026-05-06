@@ -6,5 +6,5 @@
 		"tsBuildInfoFile": "./tsconfig.build.tsbuildinfo"
 	},
 	"include": ["src"],
-	"exclude": ["node_modules", "dist", "tests", "src/emitters/*-ir.ts"]
+	"exclude": ["node_modules", "dist", "tests", "src/__tests__", "src/emitters/*-ir.ts"]
 }

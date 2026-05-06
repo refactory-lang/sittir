@@ -5226,6 +5226,8 @@ pub struct ArrayExpressionListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: Vec<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -5257,6 +5259,8 @@ pub struct ArrayExpressionSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: ExpressionTransport,
     pub length: ExpressionTransport,
@@ -5287,6 +5291,8 @@ pub struct ClosureExpressionBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub return_type: Option<_TypeTransport>,
     pub body: BlockTransport,
 }
@@ -5316,6 +5322,8 @@ pub struct _ClosureExpressionExprTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: ExpressionTransport,
 }
 
@@ -5430,6 +5438,8 @@ pub struct _DelimTokenTreeBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5459,6 +5469,8 @@ pub struct _DelimTokenTreeBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5488,6 +5500,8 @@ pub struct _DelimTokenTreeParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -5517,6 +5531,8 @@ pub struct _ExpressionStatementBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -5546,6 +5562,8 @@ pub struct _ExpressionStatementWithSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -5575,6 +5593,8 @@ pub struct FieldIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -5604,6 +5624,8 @@ pub struct FieldPatternNamedTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: FieldIdentifierTransport,
     pub pattern: PatternTransport,
 }
@@ -5633,6 +5655,8 @@ pub struct _FieldPatternShorthandTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: IdentifierTransport,
 }
 
@@ -5661,6 +5685,8 @@ pub struct _ForeignModItemBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -5681,6 +5707,7 @@ pub struct ForeignModItemSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -5706,6 +5733,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -5724,12 +5752,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -5760,6 +5790,8 @@ pub struct FunctionTypeFnFormTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<FunctionModifiersTransport>,
 }
@@ -5789,6 +5821,8 @@ pub struct FunctionTypeTraitFormTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
@@ -5818,6 +5852,8 @@ pub struct _ImplItemBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -5838,6 +5874,7 @@ pub struct ImplItemSemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -5863,6 +5900,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -5881,12 +5919,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -5909,6 +5949,7 @@ pub struct InnerLineDocCommentMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -5934,6 +5975,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -5952,12 +5994,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -5980,6 +6024,7 @@ pub struct KwAsyncMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6005,6 +6050,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6023,12 +6069,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6051,6 +6099,7 @@ pub struct KwInTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6076,6 +6125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6094,12 +6144,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6122,6 +6174,7 @@ pub struct KwMoveMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6147,6 +6200,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6165,12 +6219,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6193,6 +6249,7 @@ pub struct KwNegativeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6218,6 +6275,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6236,12 +6294,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6264,6 +6324,7 @@ pub struct KwOperatorTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6289,6 +6350,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6307,12 +6369,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6335,6 +6399,7 @@ pub struct KwPubTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6360,6 +6425,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6378,12 +6444,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6406,6 +6474,7 @@ pub struct KwRefMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6431,6 +6500,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6449,12 +6519,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6477,6 +6549,7 @@ pub struct KwStaticMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6502,6 +6575,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6520,12 +6594,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6548,6 +6624,7 @@ pub struct KwTurbofishTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6573,6 +6650,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6591,12 +6669,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6619,6 +6699,7 @@ pub struct KwUnsafeMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6644,6 +6725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6662,12 +6744,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6698,6 +6782,8 @@ pub struct LetChainTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LetChainChildTransport,
 }
@@ -6719,6 +6805,7 @@ pub struct LineCommentContentTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6744,6 +6831,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6762,12 +6850,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6798,6 +6888,8 @@ pub struct LineCommentDocTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub doc: LineDocContentTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentDocChildTransport,
@@ -6820,6 +6912,7 @@ pub struct LineCommentRegularDslashTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -6845,6 +6938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTranspor
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -6863,12 +6957,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTranspor
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -6899,6 +6995,8 @@ pub struct _MacroDefinitionBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6928,6 +7026,8 @@ pub struct _MacroDefinitionBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6957,6 +7057,8 @@ pub struct _MacroDefinitionParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -6986,6 +7088,8 @@ pub struct _MatchArmBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionEndingWithBlockTransport,
 }
 
@@ -7014,6 +7118,8 @@ pub struct MatchArmWithCommaTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
 }
 
@@ -7034,6 +7140,7 @@ pub struct ModItemExternalTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7059,6 +7166,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7077,12 +7185,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -7113,6 +7223,8 @@ pub struct _ModItemInlineTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -7141,6 +7253,8 @@ pub struct NonSpecialTokenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<NonSpecialTokenChildTransport>,
 }
@@ -7170,6 +7284,8 @@ pub struct OrPatternBinaryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: PatternTransport,
     pub right: PatternTransport,
 }
@@ -7199,6 +7315,8 @@ pub struct OrPatternPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub right: PatternTransport,
 }
 
@@ -7219,6 +7337,7 @@ pub struct OuterLineDocCommentMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7244,6 +7363,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7262,12 +7382,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -7290,6 +7412,7 @@ pub struct PointerTypeConstTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7315,6 +7438,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7333,12 +7457,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -7369,6 +7495,8 @@ pub struct _PointerTypeMutTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -7512,6 +7640,8 @@ pub struct _RangeExpressionBareTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub operator: bool,
 }
 
@@ -7540,6 +7670,8 @@ pub struct RangeExpressionBinaryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub start: ExpressionTransport,
     pub operator: RangeExpressionBinaryOperatorEnum,
     pub end: ExpressionTransport,
@@ -7570,6 +7702,8 @@ pub struct RangeExpressionPostfixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub start: ExpressionTransport,
     pub operator: bool,
 }
@@ -7599,6 +7733,8 @@ pub struct RangeExpressionPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub operator: bool,
     pub end: ExpressionTransport,
 }
@@ -7620,6 +7756,7 @@ pub struct RangePatternLeftBareTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7645,6 +7782,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7663,12 +7801,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -7699,6 +7839,8 @@ pub struct RangePatternLeftWithRightTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub right: Box<AnyTransport>,
 }
 
@@ -7727,6 +7869,8 @@ pub struct RangePatternPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub right: Box<AnyTransport>,
 }
 
@@ -7747,6 +7891,7 @@ pub struct ReferenceExpressionRawConstTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7772,6 +7917,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7790,12 +7936,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -7826,6 +7974,8 @@ pub struct ReferenceExpressionRawMutTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -7855,6 +8005,8 @@ pub struct ReservedIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -7884,6 +8036,8 @@ pub struct StructItemBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: FieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<WhereClauseTransport>,
@@ -7914,6 +8068,8 @@ pub struct StructItemTupleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: OrderedFieldDeclarationListTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<WhereClauseTransport>,
@@ -7936,6 +8092,7 @@ pub struct StructItemUnitTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -7961,6 +8118,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -7979,12 +8137,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -8121,6 +8281,8 @@ pub struct _TokenTreeBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8150,6 +8312,8 @@ pub struct _TokenTreeBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8179,6 +8343,8 @@ pub struct _TokenTreeParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -8208,6 +8374,8 @@ pub struct _TokenTreePatternBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8237,6 +8405,8 @@ pub struct _TokenTreePatternBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8266,6 +8436,8 @@ pub struct _TokenTreePatternParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -8295,6 +8467,8 @@ pub struct TypeIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: IdentifierTransport,
 }
@@ -8382,6 +8556,8 @@ pub struct _VisibilityModifierCrateTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CrateTransport,
 }
@@ -8411,6 +8587,8 @@ pub struct VisibilityModifierInPathTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "in"))]
     pub r#in: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8442,6 +8620,8 @@ pub struct VisibilityModifierPubTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "pub"))]
     pub r#pub: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8465,6 +8645,7 @@ pub struct WildcardPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -8490,6 +8671,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -8508,12 +8690,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -8544,6 +8728,8 @@ pub struct AbstractTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub type_parameters: Option<TypeParametersTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
@@ -8574,6 +8760,8 @@ pub struct ArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AnyTransport>,
 }
 
@@ -8642,6 +8830,8 @@ pub struct ArrayExpressionUFormSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ArrayExpressionSemiTransport,
 }
@@ -8671,6 +8861,8 @@ pub struct ArrayExpressionUFormListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ArrayExpressionListTransport,
 }
@@ -8700,6 +8892,8 @@ pub struct ArrayTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub element: _TypeTransport,
     pub length: Option<ExpressionTransport>,
 }
@@ -8729,6 +8923,8 @@ pub struct AssignmentExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: ExpressionTransport,
     pub right: ExpressionTransport,
 }
@@ -8758,6 +8954,8 @@ pub struct AssociatedTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
     pub bounds: Option<TraitBoundsTransport>,
@@ -8789,6 +8987,8 @@ pub struct AsyncBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
@@ -8818,6 +9018,8 @@ pub struct AttributeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: PathTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Box<AnyTransport>>,
@@ -8848,6 +9050,8 @@ pub struct AttributeItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attribute: AttributeTransport,
 }
 
@@ -8876,6 +9080,8 @@ pub struct AwaitExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -8905,6 +9111,8 @@ pub struct BaseFieldInitializerTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -8934,6 +9142,8 @@ pub struct BinaryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: ExpressionTransport,
     pub operator: bool,
     pub right: ExpressionTransport,
@@ -8964,6 +9174,8 @@ pub struct BlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
     pub trailing_expression: Option<ExpressionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -8995,6 +9207,8 @@ pub struct BlockCommentTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub doc: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<BlockCommentChildTransport>,
@@ -9079,6 +9293,8 @@ pub struct BoundedTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
@@ -9108,6 +9324,8 @@ pub struct BracketedTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: BracketedTypeChildTransport,
 }
@@ -9137,6 +9355,8 @@ pub struct BreakExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
@@ -9167,6 +9387,8 @@ pub struct CallExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub function: ExpressionExceptRangeTransport,
     pub arguments: ArgumentsTransport,
 }
@@ -9196,6 +9418,8 @@ pub struct CapturedPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub identifier: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -9218,6 +9442,7 @@ pub struct CharLiteralTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -9243,6 +9468,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -9261,12 +9487,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -9297,6 +9525,8 @@ pub struct ClosureExpressionExprTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: ExpressionTransport,
 }
 
@@ -9365,6 +9595,8 @@ pub struct ClosureExpressionUFormBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub static_marker: Option<bool>,
     pub async_marker: Option<bool>,
     pub move_marker: Option<bool>,
@@ -9398,6 +9630,8 @@ pub struct ClosureExpressionUFormExprTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub static_marker: Option<bool>,
     pub async_marker: Option<bool>,
     pub move_marker: Option<bool>,
@@ -9431,6 +9665,8 @@ pub struct ClosureParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ClosureParametersChildTransport>,
 }
@@ -9460,6 +9696,8 @@ pub struct CommentTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CommentChildTransport,
 }
@@ -9489,6 +9727,8 @@ pub struct CompoundAssignmentExprTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: ExpressionTransport,
     pub operator: CompoundAssignmentExprOperatorEnum,
     pub right: ExpressionTransport,
@@ -9519,6 +9759,8 @@ pub struct ConstBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: BlockTransport,
 }
 
@@ -9547,6 +9789,8 @@ pub struct ConstItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -9579,6 +9823,8 @@ pub struct ConstParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -9610,6 +9856,8 @@ pub struct ContinueExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
 }
 
@@ -9630,6 +9878,7 @@ pub struct CrateTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -9655,6 +9904,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -9673,12 +9923,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -9709,6 +9961,8 @@ pub struct DeclarationListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DeclarationStatementTransport>,
 }
@@ -9738,6 +9992,8 @@ pub struct DelimTokenTreeParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9767,6 +10023,8 @@ pub struct DelimTokenTreeBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9796,6 +10054,8 @@ pub struct DelimTokenTreeBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<DelimTokensTransport>,
 }
@@ -9869,6 +10129,8 @@ pub struct DelimTokenTreeUFormParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeParenTransport,
 }
@@ -9898,6 +10160,8 @@ pub struct DelimTokenTreeUFormBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeBracketTransport,
 }
@@ -9927,6 +10191,8 @@ pub struct DelimTokenTreeUFormBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _DelimTokenTreeBraceTransport,
 }
@@ -9956,6 +10222,8 @@ pub struct DynamicTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "trait"))]
     pub r#trait: Box<AnyTransport>,
 }
@@ -9985,6 +10253,8 @@ pub struct ElseClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -10006,6 +10276,7 @@ pub struct EmptyStatementTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -10031,6 +10302,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -10049,12 +10321,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -10085,6 +10359,8 @@ pub struct EnumItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -10117,6 +10393,8 @@ pub struct EnumVariantTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     pub body: Option<Box<AnyTransport>>,
@@ -10148,6 +10426,8 @@ pub struct EnumVariantListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<EnumVariantListChildTransport>,
 }
@@ -10169,6 +10449,7 @@ pub struct EscapeSequenceTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -10194,6 +10475,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -10212,12 +10494,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -10248,6 +10532,8 @@ pub struct ExpressionStatementWithSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -10277,6 +10563,8 @@ pub struct ExpressionStatementBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionEndingWithBlockTransport,
 }
@@ -10346,6 +10634,8 @@ pub struct ExpressionStatementUFormWithSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _ExpressionStatementWithSemiTransport,
 }
@@ -10375,6 +10665,8 @@ pub struct ExpressionStatementUFormBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _ExpressionStatementBlockEndingTransport,
 }
@@ -10404,6 +10696,8 @@ pub struct ExternCrateDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "crate"))]
     pub crate_: bool,
@@ -10436,6 +10730,8 @@ pub struct ExternModifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub string_literal: Option<StringLiteralTransport>,
 }
 
@@ -10464,6 +10760,8 @@ pub struct FieldDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: FieldIdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -10495,6 +10793,8 @@ pub struct FieldDeclarationListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldDeclarationListChildTransport>,
 }
@@ -10524,6 +10824,8 @@ pub struct FieldExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
     pub field: Box<AnyTransport>,
 }
@@ -10553,6 +10855,8 @@ pub struct FieldInitializerTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub field: Box<AnyTransport>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10584,6 +10888,8 @@ pub struct FieldInitializerListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<FieldInitializerListChildTransport>,
 }
@@ -10613,6 +10919,8 @@ pub struct FieldPatternShorthandTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: IdentifierTransport,
 }
 
@@ -10681,6 +10989,8 @@ pub struct FieldPatternUFormShorthandTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub ref_marker: Option<bool>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10712,6 +11022,8 @@ pub struct FieldPatternUFormNamedTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub ref_marker: Option<bool>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10743,6 +11055,8 @@ pub struct ForExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
     pub pattern: PatternTransport,
     pub value: ExpressionTransport,
@@ -10774,6 +11088,8 @@ pub struct ForLifetimesTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<LifetimeTransport>,
 }
@@ -10803,6 +11119,8 @@ pub struct ForeignModItemBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -10871,6 +11189,8 @@ pub struct ForeignModItemUFormSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -10902,6 +11222,8 @@ pub struct ForeignModItemUFormBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub extern_modifier: ExternModifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -11039,6 +11361,8 @@ pub struct FunctionItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: PathTransport,
@@ -11074,6 +11398,8 @@ pub struct FunctionModifiersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub modifier: Vec<ExternModifierTransport>,
 }
 
@@ -11102,6 +11428,8 @@ pub struct FunctionSignatureItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub function_modifiers: Option<FunctionModifiersTransport>,
     pub name: PathTransport,
@@ -11136,6 +11464,8 @@ pub struct FunctionTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub for_lifetimes: Option<ForLifetimesTransport>,
     pub parameters: ParametersTransport,
     pub return_type: Option<_TypeTransport>,
@@ -11168,6 +11498,8 @@ pub struct GenBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub move_marker: Option<bool>,
     pub block: BlockTransport,
 }
@@ -11197,6 +11529,8 @@ pub struct GenericFunctionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub function: ExpressionExceptRangeTransport,
     pub type_arguments: TypeArgumentsTransport,
 }
@@ -11226,6 +11560,8 @@ pub struct GenericPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub type_arguments: TypeArgumentsTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PathTransport,
@@ -11256,6 +11592,8 @@ pub struct GenericTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub type_arguments: TypeArgumentsTransport,
@@ -11286,6 +11624,8 @@ pub struct GenericTypeWithTurbofishTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     pub turbofish: bool,
@@ -11317,6 +11657,8 @@ pub struct HigherRankedTraitBoundTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub type_parameters: TypeParametersTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -11339,6 +11681,7 @@ pub struct IdentifierTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -11364,6 +11707,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -11382,12 +11726,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -11418,6 +11764,8 @@ pub struct IfExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub condition: ConditionTransport,
     pub consequence: BlockTransport,
     pub alternative: Option<ElseClauseTransport>,
@@ -11448,6 +11796,8 @@ pub struct ImplItemBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -11516,6 +11866,8 @@ pub struct ImplItemUFormBodyTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<bool>,
@@ -11553,6 +11905,8 @@ pub struct ImplItemUFormSemiTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub unsafe_marker: Option<bool>,
     pub type_parameters: Option<TypeParametersTransport>,
     pub negative: Option<bool>,
@@ -11590,6 +11944,8 @@ pub struct IndexExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub object: ExpressionTransport,
     pub index: ExpressionTransport,
 }
@@ -11619,6 +11975,8 @@ pub struct InnerAttributeItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attribute: AttributeTransport,
 }
 
@@ -11639,6 +11997,7 @@ pub struct IntegerLiteralTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -11664,6 +12023,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -11682,12 +12042,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -11718,6 +12080,8 @@ pub struct LabelTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub identifier: IdentifierTransport,
 }
 
@@ -11746,6 +12110,8 @@ pub struct LastMatchArmTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub pattern: MatchPatternTransport,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -11777,6 +12143,8 @@ pub struct LetConditionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub pattern: PatternTransport,
     pub value: ExpressionTransport,
 }
@@ -11806,6 +12174,8 @@ pub struct LetDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -11839,6 +12209,8 @@ pub struct LifetimeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub identifier: IdentifierTransport,
 }
 
@@ -11867,6 +12239,8 @@ pub struct LifetimeParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: LifetimeTransport,
     pub bounds: Option<TraitBoundsTransport>,
 }
@@ -11940,6 +12314,8 @@ pub struct LineCommentUFormRegularDslashTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentRegularDslashTransport,
 }
@@ -11969,6 +12345,8 @@ pub struct LineCommentUFormDocTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentDocTransport,
 }
@@ -11998,6 +12376,8 @@ pub struct LineCommentUFormContentTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: LineCommentContentTransport,
 }
@@ -12027,6 +12407,8 @@ pub struct LoopExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
     pub body: BlockTransport,
 }
@@ -12056,6 +12438,8 @@ pub struct MacroDefinitionParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -12085,6 +12469,8 @@ pub struct MacroDefinitionBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -12114,6 +12500,8 @@ pub struct MacroDefinitionBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MacroRuleTransport>>,
 }
@@ -12187,6 +12575,8 @@ pub struct MacroDefinitionUFormParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionParenTransport,
@@ -12217,6 +12607,8 @@ pub struct MacroDefinitionUFormBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionBracketTransport,
@@ -12247,6 +12639,8 @@ pub struct MacroDefinitionUFormBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _MacroDefinitionBraceTransport,
@@ -12277,6 +12671,8 @@ pub struct MacroInvocationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "macro"))]
     pub r#macro: Box<AnyTransport>,
     pub token_tree: Box<AnyTransport>,
@@ -12307,6 +12703,8 @@ pub struct MacroRuleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: Box<AnyTransport>,
     pub right: Box<AnyTransport>,
 }
@@ -12336,6 +12734,8 @@ pub struct MatchArmBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionEndingWithBlockTransport,
 }
 
@@ -12404,6 +12804,8 @@ pub struct MatchArmUFormWithCommaTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<DeclarationStatementTransport>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12435,6 +12837,8 @@ pub struct MatchArmUFormBlockEndingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<DeclarationStatementTransport>,
     pub pattern: MatchPatternTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12466,6 +12870,8 @@ pub struct MatchBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<Vec<MatchBlockChildTransport>>,
 }
@@ -12495,6 +12901,8 @@ pub struct MatchExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
     pub body: MatchBlockTransport,
 }
@@ -12524,6 +12932,8 @@ pub struct MatchPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub condition: Option<ConditionTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -12546,6 +12956,7 @@ pub struct MetavariableTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -12571,6 +12982,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -12589,12 +13001,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -12625,6 +13039,8 @@ pub struct ModItemInlineTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub body: DeclarationListTransport,
 }
 
@@ -12693,6 +13109,8 @@ pub struct ModItemUFormExternalTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12724,6 +13142,8 @@ pub struct ModItemUFormInlineTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -12755,6 +13175,8 @@ pub struct MutPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub mutable_specifier: bool,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
@@ -12777,6 +13199,7 @@ pub struct MutableSpecifierTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -12802,6 +13225,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -12820,12 +13244,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -12856,6 +13282,8 @@ pub struct NegativeLiteralTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: Box<AnyTransport>,
 }
 
@@ -12876,6 +13304,7 @@ pub struct NeverTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -12901,6 +13330,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -12919,12 +13349,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -12995,6 +13427,8 @@ pub struct OrPatternUFormBinaryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: OrPatternBinaryTransport,
 }
@@ -13024,6 +13458,8 @@ pub struct OrPatternUFormPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: OrPatternPrefixTransport,
 }
@@ -13053,6 +13489,8 @@ pub struct OrderedFieldDeclarationListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Vec<_TypeTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -13084,6 +13522,8 @@ pub struct ParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub mutable_specifier: Option<bool>,
     pub pattern: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -13115,6 +13555,8 @@ pub struct ParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<ParametersChildTransport>,
 }
@@ -13144,6 +13586,8 @@ pub struct ParenthesizedExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: ExpressionTransport,
 }
@@ -13173,6 +13617,8 @@ pub struct PointerTypeMutTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: MutableSpecifierTransport,
 }
@@ -13242,6 +13688,8 @@ pub struct PointerTypeUFormConstTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -13273,6 +13721,8 @@ pub struct PointerTypeUFormMutTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -13304,6 +13754,8 @@ pub struct QualifiedTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
     pub alias: _TypeTransport,
@@ -13334,6 +13786,8 @@ pub struct RangeExpressionBareTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub operator: bool,
 }
 
@@ -13410,6 +13864,8 @@ pub struct RangeExpressionUFormBinaryTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionBinaryTransport,
 }
@@ -13439,6 +13895,8 @@ pub struct RangeExpressionUFormPostfixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionPostfixTransport,
 }
@@ -13468,6 +13926,8 @@ pub struct RangeExpressionUFormPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangeExpressionPrefixTransport,
 }
@@ -13497,6 +13957,8 @@ pub struct RangeExpressionUFormBareTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _RangeExpressionBareTransport,
 }
@@ -13570,6 +14032,8 @@ pub struct RangePatternUFormLeftWithRightTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternLeftWithRightTransport,
@@ -13600,6 +14064,8 @@ pub struct RangePatternUFormLeftBareTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternLeftBareTransport,
@@ -13630,6 +14096,8 @@ pub struct RangePatternUFormPrefixTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: RangePatternPrefixTransport,
 }
@@ -13659,6 +14127,8 @@ pub struct RawStringLiteralTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub raw_string_literal_start: Option<Box<AnyTransport>>,
     pub string_content: RawStringLiteralContentTransport,
     pub raw_string_literal_end: Option<Box<AnyTransport>>,
@@ -13689,6 +14159,8 @@ pub struct RefPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: PatternTransport,
 }
@@ -13718,6 +14190,8 @@ pub struct ReferenceExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ReferenceExpressionChildTransport>,
@@ -13748,6 +14222,8 @@ pub struct ReferencePatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub mutable_specifier: Option<bool>,
     pub pattern: PatternTransport,
 }
@@ -13777,6 +14253,8 @@ pub struct ReferenceTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub lifetime: Option<LifetimeTransport>,
     pub mutable_specifier: Option<bool>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -13800,6 +14278,7 @@ pub struct RemainingFieldPatternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -13825,6 +14304,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -13843,12 +14323,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -13879,6 +14361,8 @@ pub struct RemovedTraitBoundTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TypeTransport,
 }
@@ -13908,6 +14392,8 @@ pub struct ReturnExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
 }
@@ -13937,6 +14423,8 @@ pub struct ScopedIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: Option<Box<AnyTransport>>,
     pub name: PathTransport,
 }
@@ -13966,6 +14454,8 @@ pub struct ScopedTypeIdentifierTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
 }
@@ -13995,6 +14485,8 @@ pub struct ScopedTypeIdentifierInExpressionPositionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
 }
@@ -14024,6 +14516,8 @@ pub struct ScopedUseListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: Option<PathTransport>,
     pub list: UseListTransport,
 }
@@ -14045,6 +14539,7 @@ pub struct Self_Transport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -14070,6 +14565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -14088,12 +14584,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -14124,6 +14622,8 @@ pub struct SelfParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub reference: Option<Box<AnyTransport>>,
     pub lifetime: Option<LifetimeTransport>,
     pub mutable_specifier: Option<bool>,
@@ -14148,6 +14648,7 @@ pub struct ShebangTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -14173,6 +14674,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -14191,12 +14693,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -14227,6 +14731,8 @@ pub struct ShorthandFieldInitializerTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AttributeItemTransport>,
     pub identifier: IdentifierTransport,
 }
@@ -14256,6 +14762,8 @@ pub struct SlicePatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<PatternTransport>,
 }
@@ -14285,6 +14793,8 @@ pub struct SourceFileTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub shebang: Option<ShebangTransport>,
     pub statements: Vec<StatementTransport>,
 }
@@ -14314,6 +14824,8 @@ pub struct StaticItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub mutable_specifier: Option<Box<AnyTransport>>,
     pub name: IdentifierTransport,
@@ -14347,6 +14859,8 @@ pub struct StringLiteralTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<StringLiteralChildTransport>,
 }
@@ -14376,6 +14890,8 @@ pub struct StructExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: Box<AnyTransport>,
     pub body: FieldInitializerListTransport,
 }
@@ -14449,6 +14965,8 @@ pub struct StructItemUFormBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14481,6 +14999,8 @@ pub struct StructItemUFormTupleTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14513,6 +15033,8 @@ pub struct StructItemUFormUnitTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -14545,6 +15067,8 @@ pub struct StructPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -14568,6 +15092,7 @@ pub struct SuperTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -14593,6 +15118,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -14611,12 +15137,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -14647,6 +15175,8 @@ pub struct TokenBindingPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: MetavariableTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: TokenBindingPatternTypeEnum,
@@ -14677,6 +15207,8 @@ pub struct TokenRepetitionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14706,6 +15238,8 @@ pub struct TokenRepetitionPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14735,6 +15269,8 @@ pub struct TokenTreeParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14764,6 +15300,8 @@ pub struct TokenTreeBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14793,6 +15331,8 @@ pub struct TokenTreeBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokensTransport>,
 }
@@ -14866,6 +15406,8 @@ pub struct TokenTreeUFormParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeParenTransport,
 }
@@ -14895,6 +15437,8 @@ pub struct TokenTreeUFormBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeBracketTransport,
 }
@@ -14924,6 +15468,8 @@ pub struct TokenTreeUFormBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreeBraceTransport,
 }
@@ -14953,6 +15499,8 @@ pub struct TokenTreePatternParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -14982,6 +15530,8 @@ pub struct TokenTreePatternBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -15011,6 +15561,8 @@ pub struct TokenTreePatternBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TokenPatternTransport>,
 }
@@ -15084,6 +15636,8 @@ pub struct TokenTreePatternUFormParenTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternParenTransport,
 }
@@ -15113,6 +15667,8 @@ pub struct TokenTreePatternUFormBracketTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternBracketTransport,
 }
@@ -15142,6 +15698,8 @@ pub struct TokenTreePatternUFormBraceTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _TokenTreePatternBraceTransport,
 }
@@ -15171,6 +15729,8 @@ pub struct TraitBoundsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TraitBoundsChildTransport>,
 }
@@ -15200,6 +15760,8 @@ pub struct TraitItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub unsafe_marker: Option<bool>,
     pub name: TypeIdentifierTransport,
@@ -15234,6 +15796,8 @@ pub struct TryBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub block: BlockTransport,
 }
 
@@ -15262,6 +15826,8 @@ pub struct TryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
 }
 
@@ -15290,6 +15856,8 @@ pub struct TupleExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AttributeItemTransport>,
     pub elements: Option<Vec<ExpressionTransport>>,
 }
@@ -15319,6 +15887,8 @@ pub struct TuplePatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<AnyTransport>,
 }
@@ -15348,6 +15918,8 @@ pub struct TupleStructPatternTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: Box<AnyTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
@@ -15379,6 +15951,8 @@ pub struct TupleTypeTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<_TypeTransport>,
 }
@@ -15408,6 +15982,8 @@ pub struct TypeArgumentsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<TypeArgumentsChildTransport>,
 }
@@ -15437,6 +16013,8 @@ pub struct TypeBindingTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: TypeIdentifierTransport,
     pub type_arguments: Option<TypeArgumentsTransport>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
@@ -15468,6 +16046,8 @@ pub struct TypeCastExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub value: ExpressionTransport,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "type"))]
     pub r#type: _TypeTransport,
@@ -15498,6 +16078,8 @@ pub struct TypeItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -15532,6 +16114,8 @@ pub struct TypeParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub name: TypeIdentifierTransport,
     pub bounds: Option<TraitBoundsTransport>,
     pub default_type: Option<_TypeTransport>,
@@ -15562,6 +16146,8 @@ pub struct TypeParametersTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub attributes: Vec<AnyTransport>,
 }
 
@@ -15590,6 +16176,8 @@ pub struct UnaryExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub operator: UnaryExpressionOperatorEnum,
     pub operand: ExpressionTransport,
 }
@@ -15619,6 +16207,8 @@ pub struct UnionItemTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub name: TypeIdentifierTransport,
     pub type_parameters: Option<TypeParametersTransport>,
@@ -15643,6 +16233,7 @@ pub struct UnitExpressionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -15668,6 +16259,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -15686,12 +16278,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -15714,6 +16308,7 @@ pub struct UnitTypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -15739,6 +16334,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -15757,12 +16353,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -15793,6 +16391,8 @@ pub struct UnsafeBlockTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub block: BlockTransport,
 }
 
@@ -15821,6 +16421,8 @@ pub struct UseAsClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: PathTransport,
     pub alias: IdentifierTransport,
 }
@@ -15850,6 +16452,8 @@ pub struct UseBoundsTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<UseBoundsChildTransport>,
 }
@@ -15879,6 +16483,8 @@ pub struct UseDeclarationTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub visibility_modifier: Option<Box<AnyTransport>>,
     pub argument: UseClauseTransport,
 }
@@ -15908,6 +16514,8 @@ pub struct UseListTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<UseClauseTransport>,
 }
@@ -15937,6 +16545,8 @@ pub struct UseWildcardTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub path: Option<PathTransport>,
 }
 
@@ -15965,6 +16575,8 @@ pub struct VariadicParameterTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub mutable_specifier: Option<bool>,
     pub pattern: Option<PatternTransport>,
 }
@@ -15994,6 +16606,8 @@ pub struct VisibilityModifierCrateTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: CrateTransport,
 }
@@ -16067,6 +16681,8 @@ pub struct VisibilityModifierUFormInPathTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: VisibilityModifierInPathTransport,
 }
@@ -16096,6 +16712,8 @@ pub struct VisibilityModifierUFormCrateTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: _VisibilityModifierCrateTransport,
 }
@@ -16125,6 +16743,8 @@ pub struct VisibilityModifierUFormPubTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: VisibilityModifierPubTransport,
 }
@@ -16154,6 +16774,8 @@ pub struct WhereClauseTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Vec<WherePredicateTransport>,
 }
@@ -16183,6 +16805,8 @@ pub struct WherePredicateTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub left: Box<AnyTransport>,
     pub bounds: TraitBoundsTransport,
 }
@@ -16212,6 +16836,8 @@ pub struct WhileExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub label: Option<LabelTransport>,
     pub condition: ConditionTransport,
     pub body: BlockTransport,
@@ -16242,6 +16868,8 @@ pub struct YieldExpressionTransport {
     pub transport_node_handle: Option<f64>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
     pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<::serde_json::Value>,
     #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
     pub children: Option<ExpressionTransport>,
 }
@@ -16263,6 +16891,7 @@ pub struct StringContentTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16288,6 +16917,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16306,12 +16936,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16334,6 +16966,7 @@ pub struct RawStringLiteralContentTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16359,6 +16992,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16377,12 +17011,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16405,6 +17041,7 @@ pub struct FloatLiteralTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16430,6 +17067,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16448,12 +17086,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16476,6 +17116,7 @@ pub struct OuterBlockDocCommentMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16501,6 +17142,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransp
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16519,12 +17161,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransp
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16547,6 +17191,7 @@ pub struct InnerBlockDocCommentMarkerTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16572,6 +17217,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransp
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16590,12 +17236,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransp
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16618,6 +17266,7 @@ pub struct LineDocContentTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16643,6 +17292,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16661,12 +17311,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16689,6 +17341,7 @@ pub struct ErrorSentinelTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16714,6 +17367,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16732,12 +17386,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16760,6 +17416,7 @@ pub struct BracketTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16785,6 +17442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16803,12 +17461,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16831,6 +17491,7 @@ pub struct CloseBracketTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16856,6 +17517,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16874,12 +17536,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16902,6 +17566,7 @@ pub struct SemiTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16927,6 +17592,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -16945,12 +17611,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -16973,6 +17641,7 @@ pub struct ArrowTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -16998,6 +17667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17016,12 +17686,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17044,6 +17716,7 @@ pub struct AnonymousTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17069,6 +17742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17087,12 +17761,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17115,6 +17791,7 @@ pub struct BraceTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17140,6 +17817,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17158,12 +17836,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17186,6 +17866,7 @@ pub struct CloseBraceTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17211,6 +17892,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17229,12 +17911,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17257,6 +17941,7 @@ pub struct ParenTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17282,6 +17967,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17300,12 +17986,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17328,6 +18016,7 @@ pub struct CloseParenTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17353,6 +18042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17371,12 +18061,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17399,6 +18091,7 @@ pub struct ColonTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17424,6 +18117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17442,12 +18136,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17470,6 +18166,7 @@ pub struct FnTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17495,6 +18192,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17513,12 +18211,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17541,6 +18241,7 @@ pub struct BangTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17566,6 +18267,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17584,12 +18286,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17612,6 +18316,7 @@ pub struct AsyncTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17637,6 +18342,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17655,12 +18361,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17683,6 +18391,7 @@ pub struct InTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17708,6 +18417,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17726,12 +18436,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17754,6 +18466,7 @@ pub struct MoveTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17779,6 +18492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17797,12 +18511,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17825,6 +18541,7 @@ pub struct DotdotTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17850,6 +18567,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17868,12 +18586,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17896,6 +18616,7 @@ pub struct PubTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17921,6 +18642,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -17939,12 +18661,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -17967,6 +18691,7 @@ pub struct RefTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -17992,6 +18717,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18010,12 +18736,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18038,6 +18766,7 @@ pub struct StaticTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18063,6 +18792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18081,12 +18811,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18109,6 +18841,7 @@ pub struct UnsafeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18134,6 +18867,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18152,12 +18886,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18180,6 +18916,7 @@ pub struct AndandTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18205,6 +18942,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18223,12 +18961,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18251,6 +18991,7 @@ pub struct CommaTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18276,6 +19017,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18294,12 +19036,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18322,6 +19066,7 @@ pub struct TokSqTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18347,6 +19092,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18365,12 +19111,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18393,6 +19141,7 @@ pub struct AsTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18418,6 +19167,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18436,12 +19186,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18464,6 +19216,7 @@ pub struct AwaitTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18489,6 +19242,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18507,12 +19261,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18535,6 +19291,7 @@ pub struct BreakTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18560,6 +19317,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18578,12 +19336,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18606,6 +19366,7 @@ pub struct ConstTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18631,6 +19392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18649,12 +19411,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18677,6 +19441,7 @@ pub struct ContinueTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18702,6 +19467,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18720,12 +19486,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18748,6 +19516,7 @@ pub struct DefaultTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18773,6 +19542,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18791,12 +19561,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18819,6 +19591,7 @@ pub struct EnumTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18844,6 +19617,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18862,12 +19636,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18890,6 +19666,7 @@ pub struct ForTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18915,6 +19692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -18933,12 +19711,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -18961,6 +19741,7 @@ pub struct GenTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -18986,6 +19767,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19004,12 +19786,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19032,6 +19816,7 @@ pub struct IfTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19057,6 +19842,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19075,12 +19861,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19103,6 +19891,7 @@ pub struct ImplTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19128,6 +19917,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19146,12 +19936,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19174,6 +19966,7 @@ pub struct LetTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19199,6 +19992,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19217,12 +20011,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19245,6 +20041,7 @@ pub struct LoopTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19270,6 +20067,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19288,12 +20086,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19316,6 +20116,7 @@ pub struct MatchTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19341,6 +20142,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19359,12 +20161,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19387,6 +20191,7 @@ pub struct ModTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19412,6 +20217,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19430,12 +20236,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19458,6 +20266,7 @@ pub struct ReturnTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19483,6 +20292,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19501,12 +20311,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19529,6 +20341,7 @@ pub struct StructTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19554,6 +20367,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19572,12 +20386,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19600,6 +20416,7 @@ pub struct TraitTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19625,6 +20442,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19643,12 +20461,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19671,6 +20491,7 @@ pub struct TypeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19696,6 +20517,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19714,12 +20536,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19742,6 +20566,7 @@ pub struct UnionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19767,6 +20592,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19785,12 +20611,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19813,6 +20641,7 @@ pub struct UseTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19838,6 +20667,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19856,12 +20686,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19884,6 +20716,7 @@ pub struct WhereTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19909,6 +20742,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19927,12 +20761,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -19955,6 +20791,7 @@ pub struct WhileTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -19980,6 +20817,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -19998,12 +20836,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20026,6 +20866,7 @@ pub struct PipeTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20051,6 +20892,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20069,12 +20911,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20097,6 +20941,7 @@ pub struct SlashTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20122,6 +20967,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20140,12 +20986,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20168,6 +21016,7 @@ pub struct RawTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20193,6 +21042,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20211,12 +21061,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20239,6 +21091,7 @@ pub struct EqTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20264,6 +21117,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20282,12 +21136,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20310,6 +21166,7 @@ pub struct HashTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20335,6 +21192,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20353,12 +21211,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20381,6 +21241,7 @@ pub struct DotTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20406,6 +21267,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20424,12 +21286,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20452,6 +21316,7 @@ pub struct TokSlashStarTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20477,6 +21342,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20495,12 +21361,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20523,6 +21391,7 @@ pub struct TokStarSlashTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20548,6 +21417,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20566,12 +21436,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20594,6 +21466,7 @@ pub struct PlusTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20619,6 +21492,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20637,12 +21511,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20665,6 +21541,7 @@ pub struct LtTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20690,6 +21567,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20708,12 +21586,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20736,6 +21616,7 @@ pub struct GtTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20761,6 +21642,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20779,12 +21661,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20807,6 +21691,7 @@ pub struct AtTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20832,6 +21717,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20850,12 +21736,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20878,6 +21766,7 @@ pub struct DynTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20903,6 +21792,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20921,12 +21811,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -20949,6 +21841,7 @@ pub struct ElseTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -20974,6 +21867,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -20992,12 +21886,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21020,6 +21916,7 @@ pub struct ExternTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21045,6 +21942,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21063,12 +21961,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21091,6 +21991,7 @@ pub struct FatArrowTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21116,6 +22017,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21134,12 +22036,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21162,6 +22066,7 @@ pub struct MutTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21187,6 +22092,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21205,12 +22111,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21233,6 +22141,7 @@ pub struct MinusTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21258,6 +22167,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21276,12 +22186,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21304,6 +22216,7 @@ pub struct AmpTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21329,6 +22242,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21347,12 +22261,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21375,6 +22291,7 @@ pub struct QuestionTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21400,6 +22317,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21418,12 +22336,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21446,6 +22366,7 @@ pub struct TokDqTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21471,6 +22392,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21489,12 +22411,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21517,6 +22441,7 @@ pub struct TokDollarTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21542,6 +22467,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21560,12 +22486,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21588,6 +22516,7 @@ pub struct TryTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21613,6 +22542,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21631,12 +22561,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21659,6 +22591,7 @@ pub struct StarTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21684,6 +22617,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21702,12 +22636,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21730,6 +22666,7 @@ pub struct EllipsisTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21755,6 +22692,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21773,12 +22711,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -21801,6 +22741,7 @@ pub struct YieldTransport {
     pub transport_span: Option<::sittir_core::types::Span>,
     pub transport_node_handle: Option<f64>,
     pub transport_child_index: Option<f64>,
+    pub transport_trivia_data: Option<::serde_json::Value>,
     pub text: String,
 }
 
@@ -21826,6 +22767,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
+            transport_trivia_data: None,
             text,
         })
     }
@@ -21844,12 +22786,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         let transport_span = obj.get("$span")?;
         let transport_node_handle = obj.get("$nodeHandle")?;
         let transport_child_index = obj.get("$childIndex")?;
+        let transport_trivia_data: Option<::serde_json::Value> = obj.get("$triviaData")?;
         Ok(Self {
             transport_source,
             transport_named,
             transport_span,
             transport_node_handle,
             transport_child_index,
+            transport_trivia_data,
             text,
         })
     }
@@ -26615,6 +27559,7 @@ fn transport_node_data(
     child_index: Option<u16>,
     fields: Option<TransportHashMap<String, TransportFieldValue>>,
     children: Option<Vec<TransportNodeData>>,
+    trivia_data: Option<::sittir_core::types::NodeTrivia>,
 ) -> TransportNodeData {
     TransportNodeData {
         type_: kind,
@@ -26626,6 +27571,7 @@ fn transport_node_data(
         span,
         node_handle,
         child_index,
+        trivia_data,
     }
 }
 
@@ -27005,27 +27951,27 @@ fn transport_to_node(transport: AnyTransport) -> Result<TransportNodeData, ::ask
         AnyTransport::Star(data) => transport_to_node_star(data),
         AnyTransport::Ellipsis(data) => transport_to_node_ellipsis(data),
         AnyTransport::Yield(data) => transport_to_node_yield(data),
-        AnyTransport::Literal0_25 => Ok(transport_node_data(TransportKindId(47) /* "%" */, None, None, false, Some("%".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal1_5e => Ok(transport_node_data(TransportKindId(48) /* "^" */, None, None, false, Some("^".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal2_7c_7c => Ok(transport_node_data(TransportKindId(53) /* "||" */, None, None, false, Some("||".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal3_3c_3c => Ok(transport_node_data(TransportKindId(54) /* "<<" */, None, None, false, Some("<<".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal4_3e_3e => Ok(transport_node_data(TransportKindId(55) /* ">>" */, None, None, false, Some(">>".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal5_2b_3d => Ok(transport_node_data(TransportKindId(56) /* "+=" */, None, None, false, Some("+=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal6_2d_3d => Ok(transport_node_data(TransportKindId(57) /* "-=" */, None, None, false, Some("-=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal7_2a_3d => Ok(transport_node_data(TransportKindId(58) /* "*=" */, None, None, false, Some("*=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal8_2f_3d => Ok(transport_node_data(TransportKindId(59) /* "/=" */, None, None, false, Some("/=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal9_25_3d => Ok(transport_node_data(TransportKindId(60) /* "%=" */, None, None, false, Some("%=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal10_5e_3d => Ok(transport_node_data(TransportKindId(61) /* "^=" */, None, None, false, Some("^=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal11_26_3d => Ok(transport_node_data(TransportKindId(62) /* "&=" */, None, None, false, Some("&=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal12_7c_3d => Ok(transport_node_data(TransportKindId(63) /* "|=" */, None, None, false, Some("|=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal13_3c_3c_3d => Ok(transport_node_data(TransportKindId(64) /* "<<=" */, None, None, false, Some("<<=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal14_3e_3e_3d => Ok(transport_node_data(TransportKindId(65) /* ">>=" */, None, None, false, Some(">>=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal15_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal16_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal17_3e_3d => Ok(transport_node_data(TransportKindId(71) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal18_3c_3d => Ok(transport_node_data(TransportKindId(72) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal19_2e_2e_3d => Ok(transport_node_data(TransportKindId(78) /* "..=" */, None, None, false, Some("..=".to_string()), None, None, None, None, None)),
-        AnyTransport::Literal20_3a_3a => Ok(transport_node_data(TransportKindId(80) /* "::" */, None, None, false, Some("::".to_string()), None, None, None, None, None)),
+        AnyTransport::Literal0_25 => Ok(transport_node_data(TransportKindId(47) /* "%" */, None, None, false, Some("%".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal1_5e => Ok(transport_node_data(TransportKindId(48) /* "^" */, None, None, false, Some("^".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal2_7c_7c => Ok(transport_node_data(TransportKindId(53) /* "||" */, None, None, false, Some("||".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal3_3c_3c => Ok(transport_node_data(TransportKindId(54) /* "<<" */, None, None, false, Some("<<".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal4_3e_3e => Ok(transport_node_data(TransportKindId(55) /* ">>" */, None, None, false, Some(">>".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal5_2b_3d => Ok(transport_node_data(TransportKindId(56) /* "+=" */, None, None, false, Some("+=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal6_2d_3d => Ok(transport_node_data(TransportKindId(57) /* "-=" */, None, None, false, Some("-=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal7_2a_3d => Ok(transport_node_data(TransportKindId(58) /* "*=" */, None, None, false, Some("*=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal8_2f_3d => Ok(transport_node_data(TransportKindId(59) /* "/=" */, None, None, false, Some("/=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal9_25_3d => Ok(transport_node_data(TransportKindId(60) /* "%=" */, None, None, false, Some("%=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal10_5e_3d => Ok(transport_node_data(TransportKindId(61) /* "^=" */, None, None, false, Some("^=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal11_26_3d => Ok(transport_node_data(TransportKindId(62) /* "&=" */, None, None, false, Some("&=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal12_7c_3d => Ok(transport_node_data(TransportKindId(63) /* "|=" */, None, None, false, Some("|=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal13_3c_3c_3d => Ok(transport_node_data(TransportKindId(64) /* "<<=" */, None, None, false, Some("<<=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal14_3e_3e_3d => Ok(transport_node_data(TransportKindId(65) /* ">>=" */, None, None, false, Some(">>=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal15_3d_3d => Ok(transport_node_data(TransportKindId(67) /* "==" */, None, None, false, Some("==".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal16_21_3d => Ok(transport_node_data(TransportKindId(68) /* "!=" */, None, None, false, Some("!=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal17_3e_3d => Ok(transport_node_data(TransportKindId(71) /* ">=" */, None, None, false, Some(">=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal18_3c_3d => Ok(transport_node_data(TransportKindId(72) /* "<=" */, None, None, false, Some("<=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal19_2e_2e_3d => Ok(transport_node_data(TransportKindId(78) /* "..=" */, None, None, false, Some("..=".to_string()), None, None, None, None, None, None)),
+        AnyTransport::Literal20_3a_3a => Ok(transport_node_data(TransportKindId(80) /* "::" */, None, None, false, Some("::".to_string()), None, None, None, None, None, None)),
     }
 }
 
@@ -27036,6 +27982,7 @@ fn transport_to_node_range_expression_binary_operator(transport: RangeExpression
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -27056,6 +28003,7 @@ fn transport_to_node_visibility_modifier_in_path_in(transport: bool) -> Result<T
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27071,6 +28019,7 @@ fn transport_to_node_visibility_modifier_pub_pub(transport: bool) -> Result<Tran
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27080,6 +28029,7 @@ fn transport_to_node_array_expression_list(transport: ArrayExpressionListTranspo
     fields.insert("elements".to_string(), transport_field_values(transport.elements.into_iter().map(|v| expression_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(322) /* "_array_expression_list" */,
         transport.transport_source,
@@ -27091,6 +28041,7 @@ fn transport_to_node_array_expression_list(transport: ArrayExpressionListTranspo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27101,6 +28052,7 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
     fields.insert("length".to_string(), transport_field_value(expression_transport_to_any(transport.length))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(321) /* "_array_expression_semi" */,
         transport.transport_source,
@@ -27112,6 +28064,7 @@ fn transport_to_node_array_expression_semi(transport: ArrayExpressionSemiTranspo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27122,6 +28075,7 @@ fn transport_to_node_binary_expression_operator(transport: bool) -> Result<Trans
         None,
         true,
         Some(if transport { "&&".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27142,6 +28096,7 @@ fn transport_to_node_closure_expression_async_marker(transport: bool) -> Result<
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27153,6 +28108,7 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(323) /* "_closure_expression_block" */,
         transport.transport_source,
@@ -27164,6 +28120,7 @@ fn transport_to_node_closure_expression_block(transport: ClosureExpressionBlockT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27172,6 +28129,7 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(324) /* "_closure_expression_expr" */,
         transport.transport_source,
@@ -27183,6 +28141,7 @@ fn transport_to_node__closure_expression_expr(transport: _ClosureExpressionExprT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27193,6 +28152,7 @@ fn transport_to_node_closure_expression_static_marker(transport: bool) -> Result
         None,
         true,
         Some(if transport { "static".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27213,6 +28173,7 @@ fn transport_to_node_compound_assignment_expr_operator(transport: CompoundAssign
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27228,6 +28189,7 @@ fn transport_to_node__crate(transport: bool) -> Result<TransportNodeData, ::aska
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27235,6 +28197,7 @@ fn transport_to_node__delim_token_tree_brace(transport: _DelimTokenTreeBraceTran
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(381) /* "_delim_token_tree_brace" */,
         transport.transport_source,
@@ -27246,6 +28209,7 @@ fn transport_to_node__delim_token_tree_brace(transport: _DelimTokenTreeBraceTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27253,6 +28217,7 @@ fn transport_to_node__delim_token_tree_bracket(transport: _DelimTokenTreeBracket
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(380) /* "_delim_token_tree_bracket" */,
         transport.transport_source,
@@ -27264,6 +28229,7 @@ fn transport_to_node__delim_token_tree_bracket(transport: _DelimTokenTreeBracket
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27271,6 +28237,7 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(379) /* "_delim_token_tree_paren" */,
         transport.transport_source,
@@ -27282,6 +28249,7 @@ fn transport_to_node__delim_token_tree_paren(transport: _DelimTokenTreeParenTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27289,6 +28257,7 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(366) /* "_expression_statement_block_ending" */,
         transport.transport_source,
@@ -27300,6 +28269,7 @@ fn transport_to_node__expression_statement_block_ending(transport: _ExpressionSt
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27307,6 +28277,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(365) /* "_expression_statement_with_semi" */,
         transport.transport_source,
@@ -27318,6 +28289,7 @@ fn transport_to_node__expression_statement_with_semi(transport: _ExpressionState
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27325,6 +28297,7 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Identifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(414) /* "_field_identifier" */,
         transport.transport_source,
@@ -27336,6 +28309,7 @@ fn transport_to_node_field_identifier(transport: FieldIdentifierTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27345,6 +28319,7 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
     fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(326) /* "_field_pattern_named" */,
         transport.transport_source,
@@ -27356,6 +28331,7 @@ fn transport_to_node_field_pattern_named(transport: FieldPatternNamedTransport) 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27364,6 +28340,7 @@ fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandT
     fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(325) /* "_field_pattern_shorthand" */,
         transport.transport_source,
@@ -27375,6 +28352,7 @@ fn transport_to_node__field_pattern_shorthand(transport: _FieldPatternShorthandT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27383,6 +28361,7 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(368) /* "_foreign_mod_item_body" */,
         transport.transport_source,
@@ -27394,10 +28373,12 @@ fn transport_to_node__foreign_mod_item_body(transport: _ForeignModItemBodyTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(367) /* "_foreign_mod_item_semi" */,
         transport.transport_source,
@@ -27409,6 +28390,7 @@ fn transport_to_node_foreign_mod_item_semi(transport: ForeignModItemSemiTranspor
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -27419,6 +28401,7 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
         Some(c) => Some(transport_children(vec![AnyTransport::FunctionModifiers(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(328) /* "_function_type_fn_form" */,
         transport.transport_source,
@@ -27430,6 +28413,7 @@ fn transport_to_node_function_type_fn_form(transport: FunctionTypeFnFormTranspor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27438,6 +28422,7 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
     fields.insert("trait".to_string(), transport_field_value(*transport.r#trait)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(327) /* "_function_type_trait_form" */,
         transport.transport_source,
@@ -27449,6 +28434,7 @@ fn transport_to_node_function_type_trait_form(transport: FunctionTypeTraitFormTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27464,6 +28450,7 @@ fn transport_to_node_generic_type_with_turbofish_turbofish(transport: bool) -> R
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27472,6 +28459,7 @@ fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Resul
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(329) /* "_impl_item_body" */,
         transport.transport_source,
@@ -27483,6 +28471,7 @@ fn transport_to_node__impl_item_body(transport: _ImplItemBodyTransport) -> Resul
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27498,10 +28487,12 @@ fn transport_to_node_impl_item_negative(transport: bool) -> Result<TransportNode
         None,
         None,
         None,
+        None,
     ))
 }
 
 fn transport_to_node_impl_item_semi(transport: ImplItemSemiTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(330) /* "_impl_item_semi" */,
         transport.transport_source,
@@ -27513,10 +28504,12 @@ fn transport_to_node_impl_item_semi(transport: ImplItemSemiTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_inner_line_doc_comment_marker(transport: InnerLineDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(316) /* "_inner_line_doc_comment_marker" */,
         transport.transport_source,
@@ -27528,10 +28521,12 @@ fn transport_to_node_inner_line_doc_comment_marker(transport: InnerLineDocCommen
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "_kw_async_marker" — no parser symbol */,
         transport.transport_source,
@@ -27543,10 +28538,12 @@ fn transport_to_node_kw_async_marker(transport: KwAsyncMarkerTransport) -> Resul
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_in(transport: KwInTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(354) /* "_kw_in" */,
         transport.transport_source,
@@ -27558,10 +28555,12 @@ fn transport_to_node_kw_in(transport: KwInTransport) -> Result<TransportNodeData
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(351) /* "_kw_move_marker" */,
         transport.transport_source,
@@ -27573,10 +28572,12 @@ fn transport_to_node_kw_move_marker(transport: KwMoveMarkerTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(357) /* "_kw_negative" */,
         transport.transport_source,
@@ -27588,10 +28589,12 @@ fn transport_to_node_kw_negative(transport: KwNegativeTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(360) /* "_kw_operator" */,
         transport.transport_source,
@@ -27603,10 +28606,12 @@ fn transport_to_node_kw_operator(transport: KwOperatorTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_pub(transport: KwPubTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(353) /* "_kw_pub" */,
         transport.transport_source,
@@ -27618,10 +28623,12 @@ fn transport_to_node_kw_pub(transport: KwPubTransport) -> Result<TransportNodeDa
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_ref_marker(transport: KwRefMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "_kw_ref_marker" — no parser symbol */,
         transport.transport_source,
@@ -27633,10 +28640,12 @@ fn transport_to_node_kw_ref_marker(transport: KwRefMarkerTransport) -> Result<Tr
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(352) /* "_kw_static_marker" */,
         transport.transport_source,
@@ -27648,10 +28657,12 @@ fn transport_to_node_kw_static_marker(transport: KwStaticMarkerTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_turbofish(transport: KwTurbofishTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(355) /* "_kw_turbofish" */,
         transport.transport_source,
@@ -27663,10 +28674,12 @@ fn transport_to_node_kw_turbofish(transport: KwTurbofishTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(356) /* "_kw_unsafe_marker" */,
         transport.transport_source,
@@ -27678,6 +28691,7 @@ fn transport_to_node_kw_unsafe_marker(transport: KwUnsafeMarkerTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -27685,6 +28699,7 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![let_chain_child_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(269) /* "_let_chain" */,
         transport.transport_source,
@@ -27696,10 +28711,12 @@ fn transport_to_node_let_chain(transport: LetChainTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_line_comment_content(transport: LineCommentContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(146) /* "_line_comment_content" */,
         transport.transport_source,
@@ -27711,6 +28728,7 @@ fn transport_to_node_line_comment_content(transport: LineCommentContentTransport
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -27719,6 +28737,7 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
     fields.insert("doc".to_string(), transport_field_value(AnyTransport::LineDocContent(transport.doc))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![line_comment_doc_child_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(372) /* "_line_comment_doc" */,
         transport.transport_source,
@@ -27730,10 +28749,12 @@ fn transport_to_node_line_comment_doc(transport: LineCommentDocTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_line_comment_regular_dslash(transport: LineCommentRegularDslashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(371) /* "_line_comment_regular_dslash" */,
         transport.transport_source,
@@ -27745,6 +28766,7 @@ fn transport_to_node_line_comment_regular_dslash(transport: LineCommentRegularDs
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -27755,6 +28777,7 @@ fn transport_to_node__macro_definition_brace(transport: _MacroDefinitionBraceTra
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(333) /* "_macro_definition_brace" */,
         transport.transport_source,
@@ -27766,6 +28789,7 @@ fn transport_to_node__macro_definition_brace(transport: _MacroDefinitionBraceTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27776,6 +28800,7 @@ fn transport_to_node__macro_definition_bracket(transport: _MacroDefinitionBracke
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(332) /* "_macro_definition_bracket" */,
         transport.transport_source,
@@ -27787,6 +28812,7 @@ fn transport_to_node__macro_definition_bracket(transport: _MacroDefinitionBracke
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27797,6 +28823,7 @@ fn transport_to_node__macro_definition_paren(transport: _MacroDefinitionParenTra
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(331) /* "_macro_definition_paren" */,
         transport.transport_source,
@@ -27808,6 +28835,7 @@ fn transport_to_node__macro_definition_paren(transport: _MacroDefinitionParenTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27816,6 +28844,7 @@ fn transport_to_node__match_arm_block_ending(transport: _MatchArmBlockEndingTran
     fields.insert("value".to_string(), transport_field_value(expression_ending_with_block_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(370) /* "_match_arm_block_ending" */,
         transport.transport_source,
@@ -27827,6 +28856,7 @@ fn transport_to_node__match_arm_block_ending(transport: _MatchArmBlockEndingTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27835,6 +28865,7 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(369) /* "_match_arm_with_comma" */,
         transport.transport_source,
@@ -27846,10 +28877,12 @@ fn transport_to_node_match_arm_with_comma(transport: MatchArmWithCommaTransport)
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_mod_item_external(transport: ModItemExternalTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(334) /* "_mod_item_external" */,
         transport.transport_source,
@@ -27861,6 +28894,7 @@ fn transport_to_node_mod_item_external(transport: ModItemExternalTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -27869,6 +28903,7 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(335) /* "_mod_item_inline" */,
         transport.transport_source,
@@ -27880,6 +28915,7 @@ fn transport_to_node__mod_item_inline(transport: _ModItemInlineTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27890,6 +28926,7 @@ fn transport_to_node_move_marker(transport: bool) -> Result<TransportNodeData, :
         None,
         true,
         Some(if transport { "move".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -27910,6 +28947,7 @@ fn transport_to_node__mutable_specifier(transport: bool) -> Result<TransportNode
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27917,6 +28955,7 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| non_special_token_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "_non_special_token" — no parser symbol */,
         transport.transport_source,
@@ -27928,6 +28967,7 @@ fn transport_to_node_non_special_token(transport: NonSpecialTokenTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27943,6 +28983,7 @@ fn transport_to_node_operator(transport: bool) -> Result<TransportNodeData, ::as
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -27952,6 +28993,7 @@ fn transport_to_node_or_pattern_binary(transport: OrPatternBinaryTransport) -> R
     fields.insert("right".to_string(), transport_field_value(pattern_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(336) /* "_or_pattern_binary" */,
         transport.transport_source,
@@ -27963,6 +29005,7 @@ fn transport_to_node_or_pattern_binary(transport: OrPatternBinaryTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -27971,6 +29014,7 @@ fn transport_to_node_or_pattern_prefix(transport: OrPatternPrefixTransport) -> R
     fields.insert("right".to_string(), transport_field_value(pattern_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(337) /* "_or_pattern_prefix" */,
         transport.transport_source,
@@ -27982,10 +29026,12 @@ fn transport_to_node_or_pattern_prefix(transport: OrPatternPrefixTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_outer_line_doc_comment_marker(transport: OuterLineDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(317) /* "_outer_line_doc_comment_marker" */,
         transport.transport_source,
@@ -27997,10 +29043,12 @@ fn transport_to_node_outer_line_doc_comment_marker(transport: OuterLineDocCommen
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(358) /* "_pointer_type_const" */,
         transport.transport_source,
@@ -28012,6 +29060,7 @@ fn transport_to_node_pointer_type_const(transport: PointerTypeConstTransport) ->
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -28019,6 +29068,7 @@ fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(359) /* "_pointer_type_mut" */,
         transport.transport_source,
@@ -28030,6 +29080,7 @@ fn transport_to_node__pointer_type_mut(transport: _PointerTypeMutTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28045,6 +29096,7 @@ fn transport_to_node_primitive_type(transport: PrimitiveTypeEnum) -> Result<Tran
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -28053,6 +29105,7 @@ fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTrans
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(341) /* "_range_expression_bare" */,
         transport.transport_source,
@@ -28064,6 +29117,7 @@ fn transport_to_node__range_expression_bare(transport: _RangeExpressionBareTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28074,6 +29128,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
     fields.insert("end".to_string(), transport_field_value(expression_transport_to_any(transport.end))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(338) /* "_range_expression_binary" */,
         transport.transport_source,
@@ -28085,6 +29140,7 @@ fn transport_to_node_range_expression_binary(transport: RangeExpressionBinaryTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28094,6 +29150,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(339) /* "_range_expression_postfix" */,
         transport.transport_source,
@@ -28105,6 +29162,7 @@ fn transport_to_node_range_expression_postfix(transport: RangeExpressionPostfixT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28114,6 +29172,7 @@ fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTra
     fields.insert("end".to_string(), transport_field_value(expression_transport_to_any(transport.end))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(340) /* "_range_expression_prefix" */,
         transport.transport_source,
@@ -28125,10 +29184,12 @@ fn transport_to_node_range_expression_prefix(transport: RangeExpressionPrefixTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(344) /* "_range_pattern_left_bare" */,
         transport.transport_source,
@@ -28140,6 +29201,7 @@ fn transport_to_node_range_pattern_left_bare(transport: RangePatternLeftBareTran
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -28148,6 +29210,7 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
     fields.insert("right".to_string(), transport_field_value(*transport.right)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(343) /* "_range_pattern_left_with_right" */,
         transport.transport_source,
@@ -28159,6 +29222,7 @@ fn transport_to_node_range_pattern_left_with_right(transport: RangePatternLeftWi
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28167,6 +29231,7 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
     fields.insert("right".to_string(), transport_field_value(*transport.right)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(342) /* "_range_pattern_prefix" */,
         transport.transport_source,
@@ -28178,6 +29243,7 @@ fn transport_to_node_range_pattern_prefix(transport: RangePatternPrefixTransport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28193,10 +29259,12 @@ fn transport_to_node_ref_marker(transport: bool) -> Result<TransportNodeData, ::
         None,
         None,
         None,
+        None,
     ))
 }
 
 fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressionRawConstTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(361) /* "_reference_expression_raw_const" */,
         transport.transport_source,
@@ -28208,6 +29276,7 @@ fn transport_to_node_reference_expression_raw_const(transport: ReferenceExpressi
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -28215,6 +29284,7 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(362) /* "_reference_expression_raw_mut" */,
         transport.transport_source,
@@ -28226,6 +29296,7 @@ fn transport_to_node_reference_expression_raw_mut(transport: ReferenceExpression
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28233,6 +29304,7 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Identifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "_reserved_identifier" — no parser symbol */,
         transport.transport_source,
@@ -28244,6 +29316,7 @@ fn transport_to_node_reserved_identifier(transport: ReservedIdentifierTransport)
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28254,6 +29327,7 @@ fn transport_to_node__self(transport: bool) -> Result<TransportNodeData, ::askam
         None,
         true,
         Some(if transport { "self".to_string() } else { String::new() }),
+        None,
         None,
         None,
         None,
@@ -28270,6 +29344,7 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
         Some(c) => Some(transport_children(vec![AnyTransport::WhereClause(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(345) /* "_struct_item_brace" */,
         transport.transport_source,
@@ -28281,6 +29356,7 @@ fn transport_to_node_struct_item_brace(transport: StructItemBraceTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28292,6 +29368,7 @@ fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> R
         Some(c) => Some(transport_children(vec![AnyTransport::WhereClause(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(346) /* "_struct_item_tuple" */,
         transport.transport_source,
@@ -28303,10 +29380,12 @@ fn transport_to_node_struct_item_tuple(transport: StructItemTupleTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_struct_item_unit(transport: StructItemUnitTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(347) /* "_struct_item_unit" */,
         transport.transport_source,
@@ -28318,6 +29397,7 @@ fn transport_to_node_struct_item_unit(transport: StructItemUnitTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -28333,6 +29413,7 @@ fn transport_to_node_token_binding_pattern_type(transport: TokenBindingPatternTy
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -28340,6 +29421,7 @@ fn transport_to_node__token_tree_brace(transport: _TokenTreeBraceTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(378) /* "_token_tree_brace" */,
         transport.transport_source,
@@ -28351,6 +29433,7 @@ fn transport_to_node__token_tree_brace(transport: _TokenTreeBraceTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28358,6 +29441,7 @@ fn transport_to_node__token_tree_bracket(transport: _TokenTreeBracketTransport) 
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(377) /* "_token_tree_bracket" */,
         transport.transport_source,
@@ -28369,6 +29453,7 @@ fn transport_to_node__token_tree_bracket(transport: _TokenTreeBracketTransport) 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28376,6 +29461,7 @@ fn transport_to_node__token_tree_paren(transport: _TokenTreeParenTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(376) /* "_token_tree_paren" */,
         transport.transport_source,
@@ -28387,6 +29473,7 @@ fn transport_to_node__token_tree_paren(transport: _TokenTreeParenTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28394,6 +29481,7 @@ fn transport_to_node__token_tree_pattern_brace(transport: _TokenTreePatternBrace
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(375) /* "_token_tree_pattern_brace" */,
         transport.transport_source,
@@ -28405,6 +29493,7 @@ fn transport_to_node__token_tree_pattern_brace(transport: _TokenTreePatternBrace
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28412,6 +29501,7 @@ fn transport_to_node__token_tree_pattern_bracket(transport: _TokenTreePatternBra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(374) /* "_token_tree_pattern_bracket" */,
         transport.transport_source,
@@ -28423,6 +29513,7 @@ fn transport_to_node__token_tree_pattern_bracket(transport: _TokenTreePatternBra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28430,6 +29521,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(373) /* "_token_tree_pattern_paren" */,
         transport.transport_source,
@@ -28441,6 +29533,7 @@ fn transport_to_node__token_tree_pattern_paren(transport: _TokenTreePatternParen
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28448,6 +29541,7 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Identifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(417) /* "_type_identifier" */,
         transport.transport_source,
@@ -28459,6 +29553,7 @@ fn transport_to_node_type_identifier(transport: TypeIdentifierTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28469,6 +29564,7 @@ fn transport_to_node_unary_expression_operator(transport: UnaryExpressionOperato
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -28489,6 +29585,7 @@ fn transport_to_node_unsafe_marker(transport: bool) -> Result<TransportNodeData,
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -28496,6 +29593,7 @@ fn transport_to_node__visibility_modifier_crate(transport: _VisibilityModifierCr
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Crate(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(348) /* "_visibility_modifier_crate" */,
         transport.transport_source,
@@ -28507,6 +29605,7 @@ fn transport_to_node__visibility_modifier_crate(transport: _VisibilityModifierCr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28515,6 +29614,7 @@ fn transport_to_node_visibility_modifier_in_path(transport: VisibilityModifierIn
     fields.insert("in".to_string(), transport_field_value(AnyTransport::VisibilityModifierInPathIn(transport.r#in))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![path_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(350) /* "_visibility_modifier_in_path" */,
         transport.transport_source,
@@ -28526,6 +29626,7 @@ fn transport_to_node_visibility_modifier_in_path(transport: VisibilityModifierIn
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28537,6 +29638,7 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
         Some(c) => Some(transport_children(vec![visibility_modifier_pub_child_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(349) /* "_visibility_modifier_pub" */,
         transport.transport_source,
@@ -28548,10 +29650,12 @@ fn transport_to_node_visibility_modifier_pub(transport: VisibilityModifierPubTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_wildcard_pattern(transport: WildcardPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(320) /* "_wildcard_pattern" */,
         transport.transport_source,
@@ -28563,6 +29667,7 @@ fn transport_to_node_wildcard_pattern(transport: WildcardPatternTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -28574,6 +29679,7 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
     fields.insert("trait".to_string(), transport_field_value(*transport.r#trait)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(235) /* "abstract_type" */,
         transport.transport_source,
@@ -28585,6 +29691,7 @@ fn transport_to_node_abstract_type(transport: AbstractTypeTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28593,6 +29700,7 @@ fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<Transpor
     fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(257) /* "arguments" */,
         transport.transport_source,
@@ -28604,6 +29712,7 @@ fn transport_to_node_arguments(transport: ArgumentsTransport) -> Result<Transpor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28618,6 +29727,7 @@ fn transport_to_node_array_expression_uform_semi(transport: ArrayExpressionUForm
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ArrayExpressionSemi(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(258) /* "array_expression" */,
         transport.transport_source,
@@ -28629,6 +29739,7 @@ fn transport_to_node_array_expression_uform_semi(transport: ArrayExpressionUForm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28636,6 +29747,7 @@ fn transport_to_node_array_expression_uform_list(transport: ArrayExpressionUForm
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ArrayExpressionList(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(258) /* "array_expression" */,
         transport.transport_source,
@@ -28647,6 +29759,7 @@ fn transport_to_node_array_expression_uform_list(transport: ArrayExpressionUForm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28658,6 +29771,7 @@ fn transport_to_node_array_type(transport: ArrayTypeTransport) -> Result<Transpo
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(220) /* "array_type" */,
         transport.transport_source,
@@ -28669,6 +29783,7 @@ fn transport_to_node_array_type(transport: ArrayTypeTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28678,6 +29793,7 @@ fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransp
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(251) /* "assignment_expression" */,
         transport.transport_source,
@@ -28689,6 +29805,7 @@ fn transport_to_node_assignment_expression(transport: AssignmentExpressionTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28706,6 +29823,7 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(195) /* "associated_type" */,
         transport.transport_source,
@@ -28717,6 +29835,7 @@ fn transport_to_node_associated_type(transport: AssociatedTypeTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28728,6 +29847,7 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
     fields.insert("block".to_string(), transport_field_value(AnyTransport::Block(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(290) /* "async_block" */,
         transport.transport_source,
@@ -28739,6 +29859,7 @@ fn transport_to_node_async_block(transport: AsyncBlockTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28750,6 +29871,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
         Some(c) => Some(transport_children(vec![*c])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(172) /* "attribute" */,
         transport.transport_source,
@@ -28761,6 +29883,7 @@ fn transport_to_node_attribute(transport: AttributeTransport) -> Result<Transpor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28769,6 +29892,7 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
     fields.insert("attribute".to_string(), transport_field_value(AnyTransport::Attribute(transport.attribute))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(170) /* "attribute_item" */,
         transport.transport_source,
@@ -28780,6 +29904,7 @@ fn transport_to_node_attribute_item(transport: AttributeItemTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28787,6 +29912,7 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(287) /* "await_expression" */,
         transport.transport_source,
@@ -28798,6 +29924,7 @@ fn transport_to_node_await_expression(transport: AwaitExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28805,6 +29932,7 @@ fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTrans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(266) /* "base_field_initializer" */,
         transport.transport_source,
@@ -28816,6 +29944,7 @@ fn transport_to_node_base_field_initializer(transport: BaseFieldInitializerTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28826,6 +29955,7 @@ fn transport_to_node_binary_expression(transport: BinaryExpressionTransport) -> 
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(250) /* "binary_expression" */,
         transport.transport_source,
@@ -28837,6 +29967,7 @@ fn transport_to_node_binary_expression(transport: BinaryExpressionTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28850,6 +29981,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(293) /* "block" */,
         transport.transport_source,
@@ -28861,6 +29993,7 @@ fn transport_to_node_block(transport: BlockTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28874,6 +30007,7 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
         Some(c) => Some(transport_children(vec![block_comment_child_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(318) /* "block_comment" */,
         transport.transport_source,
@@ -28885,6 +30019,7 @@ fn transport_to_node_block_comment(transport: BlockCommentTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28900,6 +30035,7 @@ fn transport_to_node_boolean_literal(transport: BooleanLiteralEnum) -> Result<Tr
         None,
         None,
         None,
+        None,
     ))
 }
 
@@ -28909,6 +30045,7 @@ fn transport_to_node_bounded_type(transport: BoundedTypeTransport) -> Result<Tra
     fields.insert("right".to_string(), transport_field_value(*transport.right)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(228) /* "bounded_type" */,
         transport.transport_source,
@@ -28920,6 +30057,7 @@ fn transport_to_node_bounded_type(transport: BoundedTypeTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28927,6 +30065,7 @@ fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![bracketed_type_child_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(217) /* "bracketed_type" */,
         transport.transport_source,
@@ -28938,6 +30077,7 @@ fn transport_to_node_bracketed_type(transport: BracketedTypeTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28951,6 +30091,7 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
         Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(284) /* "break_expression" */,
         transport.transport_source,
@@ -28962,6 +30103,7 @@ fn transport_to_node_break_expression(transport: BreakExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28971,6 +30113,7 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
     fields.insert("arguments".to_string(), transport_field_value(AnyTransport::Arguments(transport.arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(256) /* "call_expression" */,
         transport.transport_source,
@@ -28982,6 +30125,7 @@ fn transport_to_node_call_expression(transport: CallExpressionTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -28990,6 +30134,7 @@ fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Re
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(305) /* "captured_pattern" */,
         transport.transport_source,
@@ -29001,10 +30146,12 @@ fn transport_to_node_captured_pattern(transport: CapturedPatternTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_char_literal(transport: CharLiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(129) /* "char_literal" */,
         transport.transport_source,
@@ -29016,6 +30163,7 @@ fn transport_to_node_char_literal(transport: CharLiteralTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -29024,6 +30172,7 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
     fields.insert("body".to_string(), transport_field_value(expression_transport_to_any(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(324) /* "closure_expression_expr" */,
         transport.transport_source,
@@ -29035,6 +30184,7 @@ fn transport_to_node_closure_expression_expr(transport: ClosureExpressionExprTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29059,6 +30209,7 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
     fields.insert("parameters".to_string(), transport_field_value(AnyTransport::ClosureParameters(transport.parameters))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ClosureExpressionBlock(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(281) /* "closure_expression" */,
         transport.transport_source,
@@ -29070,6 +30221,7 @@ fn transport_to_node_closure_expression_uform_block(transport: ClosureExpression
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29087,6 +30239,7 @@ fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionU
     fields.insert("parameters".to_string(), transport_field_value(AnyTransport::ClosureParameters(transport.parameters))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ClosureExpressionExpr(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(281) /* "closure_expression" */,
         transport.transport_source,
@@ -29098,6 +30251,7 @@ fn transport_to_node_closure_expression_uform_expr(transport: ClosureExpressionU
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29105,6 +30259,7 @@ fn transport_to_node_closure_parameters(transport: ClosureParametersTransport) -
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| closure_parameters_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(282) /* "closure_parameters" */,
         transport.transport_source,
@@ -29116,6 +30271,7 @@ fn transport_to_node_closure_parameters(transport: ClosureParametersTransport) -
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29123,6 +30279,7 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![comment_child_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "comment" — no parser symbol */,
         transport.transport_source,
@@ -29134,6 +30291,7 @@ fn transport_to_node_comment(transport: CommentTransport) -> Result<TransportNod
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29144,6 +30302,7 @@ fn transport_to_node_compound_assignment_expr(transport: CompoundAssignmentExprT
     fields.insert("right".to_string(), transport_field_value(expression_transport_to_any(transport.right))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(252) /* "compound_assignment_expr" */,
         transport.transport_source,
@@ -29155,6 +30314,7 @@ fn transport_to_node_compound_assignment_expr(transport: CompoundAssignmentExprT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29163,6 +30323,7 @@ fn transport_to_node_const_block(transport: ConstBlockTransport) -> Result<Trans
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(280) /* "const_block" */,
         transport.transport_source,
@@ -29174,6 +30335,7 @@ fn transport_to_node_const_block(transport: ConstBlockTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29189,6 +30351,7 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(185) /* "const_item" */,
         transport.transport_source,
@@ -29200,6 +30363,7 @@ fn transport_to_node_const_item(transport: ConstItemTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29212,6 +30376,7 @@ fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(200) /* "const_parameter" */,
         transport.transport_source,
@@ -29223,6 +30388,7 @@ fn transport_to_node_const_parameter(transport: ConstParameterTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29233,6 +30399,7 @@ fn transport_to_node_continue_expression(transport: ContinueExpressionTransport)
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(285) /* "continue_expression" */,
         transport.transport_source,
@@ -29244,10 +30411,12 @@ fn transport_to_node_continue_expression(transport: ContinueExpressionTransport)
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_crate(transport: CrateTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(141) /* "crate" */,
         transport.transport_source,
@@ -29259,6 +30428,7 @@ fn transport_to_node_crate(transport: CrateTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -29266,6 +30436,7 @@ fn transport_to_node_declaration_list(transport: DeclarationListTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(175) /* "declaration_list" */,
         transport.transport_source,
@@ -29277,6 +30448,7 @@ fn transport_to_node_declaration_list(transport: DeclarationListTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29284,6 +30456,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(379) /* "delim_token_tree_paren" */,
         transport.transport_source,
@@ -29295,6 +30468,7 @@ fn transport_to_node_delim_token_tree_paren(transport: DelimTokenTreeParenTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29302,6 +30476,7 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(380) /* "delim_token_tree_bracket" */,
         transport.transport_source,
@@ -29313,6 +30488,7 @@ fn transport_to_node_delim_token_tree_bracket(transport: DelimTokenTreeBracketTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29320,6 +30496,7 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| delim_tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(381) /* "delim_token_tree_brace" */,
         transport.transport_source,
@@ -29331,6 +30508,7 @@ fn transport_to_node_delim_token_tree_brace(transport: DelimTokenTreeBraceTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29346,6 +30524,7 @@ fn transport_to_node_delim_token_tree_uform_paren(transport: DelimTokenTreeUForm
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_DelimTokenTreeParen(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(240) /* "delim_token_tree" */,
         transport.transport_source,
@@ -29357,6 +30536,7 @@ fn transport_to_node_delim_token_tree_uform_paren(transport: DelimTokenTreeUForm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29364,6 +30544,7 @@ fn transport_to_node_delim_token_tree_uform_bracket(transport: DelimTokenTreeUFo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_DelimTokenTreeBracket(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(240) /* "delim_token_tree" */,
         transport.transport_source,
@@ -29375,6 +30556,7 @@ fn transport_to_node_delim_token_tree_uform_bracket(transport: DelimTokenTreeUFo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29382,6 +30564,7 @@ fn transport_to_node_delim_token_tree_uform_brace(transport: DelimTokenTreeUForm
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_DelimTokenTreeBrace(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(240) /* "delim_token_tree" */,
         transport.transport_source,
@@ -29393,6 +30576,7 @@ fn transport_to_node_delim_token_tree_uform_brace(transport: DelimTokenTreeUForm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29401,6 +30585,7 @@ fn transport_to_node_dynamic_type(transport: DynamicTypeTransport) -> Result<Tra
     fields.insert("trait".to_string(), transport_field_value(*transport.r#trait)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(236) /* "dynamic_type" */,
         transport.transport_source,
@@ -29412,6 +30597,7 @@ fn transport_to_node_dynamic_type(transport: DynamicTypeTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29419,6 +30605,7 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(271) /* "else_clause" */,
         transport.transport_source,
@@ -29430,10 +30617,12 @@ fn transport_to_node_else_clause(transport: ElseClauseTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_empty_statement(transport: EmptyStatementTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(159) /* "empty_statement" */,
         transport.transport_source,
@@ -29445,6 +30634,7 @@ fn transport_to_node_empty_statement(transport: EmptyStatementTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -29463,6 +30653,7 @@ fn transport_to_node_enum_item(transport: EnumItemTransport) -> Result<Transport
     fields.insert("body".to_string(), transport_field_value(AnyTransport::EnumVariantList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(178) /* "enum_item" */,
         transport.transport_source,
@@ -29474,6 +30665,7 @@ fn transport_to_node_enum_item(transport: EnumItemTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29491,6 +30683,7 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(180) /* "enum_variant" */,
         transport.transport_source,
@@ -29502,6 +30695,7 @@ fn transport_to_node_enum_variant(transport: EnumVariantTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29509,6 +30703,7 @@ fn transport_to_node_enum_variant_list(transport: EnumVariantListTransport) -> R
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| enum_variant_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(179) /* "enum_variant_list" */,
         transport.transport_source,
@@ -29520,10 +30715,12 @@ fn transport_to_node_enum_variant_list(transport: EnumVariantListTransport) -> R
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(130) /* "escape_sequence" */,
         transport.transport_source,
@@ -29535,6 +30732,7 @@ fn transport_to_node_escape_sequence(transport: EscapeSequenceTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -29542,6 +30740,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(365) /* "expression_statement_with_semi" */,
         transport.transport_source,
@@ -29553,6 +30752,7 @@ fn transport_to_node_expression_statement_with_semi(transport: ExpressionStateme
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29560,6 +30760,7 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_ending_with_block_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(366) /* "expression_statement_block_ending" */,
         transport.transport_source,
@@ -29571,6 +30772,7 @@ fn transport_to_node_expression_statement_block_ending(transport: ExpressionStat
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29585,6 +30787,7 @@ fn transport_to_node_expression_statement_uform_with_semi(transport: ExpressionS
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ExpressionStatementWithSemi(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(160) /* "expression_statement" */,
         transport.transport_source,
@@ -29596,6 +30799,7 @@ fn transport_to_node_expression_statement_uform_with_semi(transport: ExpressionS
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29603,6 +30807,7 @@ fn transport_to_node_expression_statement_uform_block_ending(transport: Expressi
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ExpressionStatementBlockEnding(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(160) /* "expression_statement" */,
         transport.transport_source,
@@ -29614,6 +30819,7 @@ fn transport_to_node_expression_statement_uform_block_ending(transport: Expressi
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29629,6 +30835,7 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(184) /* "extern_crate_declaration" */,
         transport.transport_source,
@@ -29640,6 +30847,7 @@ fn transport_to_node_extern_crate_declaration(transport: ExternCrateDeclarationT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29650,6 +30858,7 @@ fn transport_to_node_extern_modifier(transport: ExternModifierTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(214) /* "extern_modifier" */,
         transport.transport_source,
@@ -29661,6 +30870,7 @@ fn transport_to_node_extern_modifier(transport: ExternModifierTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29673,6 +30883,7 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(182) /* "field_declaration" */,
         transport.transport_source,
@@ -29684,6 +30895,7 @@ fn transport_to_node_field_declaration(transport: FieldDeclarationTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29691,6 +30903,7 @@ fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTrans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| field_declaration_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(181) /* "field_declaration_list" */,
         transport.transport_source,
@@ -29702,6 +30915,7 @@ fn transport_to_node_field_declaration_list(transport: FieldDeclarationListTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29711,6 +30925,7 @@ fn transport_to_node_field_expression(transport: FieldExpressionTransport) -> Re
     fields.insert("field".to_string(), transport_field_value(*transport.field)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(288) /* "field_expression" */,
         transport.transport_source,
@@ -29722,6 +30937,7 @@ fn transport_to_node_field_expression(transport: FieldExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29731,6 +30947,7 @@ fn transport_to_node_field_initializer(transport: FieldInitializerTransport) -> 
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::AttributeItem(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(265) /* "field_initializer" */,
         transport.transport_source,
@@ -29742,6 +30959,7 @@ fn transport_to_node_field_initializer(transport: FieldInitializerTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29749,6 +30967,7 @@ fn transport_to_node_field_initializer_list(transport: FieldInitializerListTrans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| field_initializer_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(263) /* "field_initializer_list" */,
         transport.transport_source,
@@ -29760,6 +30979,7 @@ fn transport_to_node_field_initializer_list(transport: FieldInitializerListTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29768,6 +30988,7 @@ fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTra
     fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(325) /* "field_pattern_shorthand" */,
         transport.transport_source,
@@ -29779,6 +31000,7 @@ fn transport_to_node_field_pattern_shorthand(transport: FieldPatternShorthandTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29799,6 +31021,7 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_FieldPatternShorthand(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(300) /* "field_pattern" */,
         transport.transport_source,
@@ -29810,6 +31033,7 @@ fn transport_to_node_field_pattern_uform_shorthand(transport: FieldPatternUFormS
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29823,6 +31047,7 @@ fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamed
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::FieldPatternNamed(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(300) /* "field_pattern" */,
         transport.transport_source,
@@ -29834,6 +31059,7 @@ fn transport_to_node_field_pattern_uform_named(transport: FieldPatternUFormNamed
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29847,6 +31073,7 @@ fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(279) /* "for_expression" */,
         transport.transport_source,
@@ -29858,6 +31085,7 @@ fn transport_to_node_for_expression(transport: ForExpressionTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29865,6 +31093,7 @@ fn transport_to_node_for_lifetimes(transport: ForLifetimesTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::Lifetime(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(221) /* "for_lifetimes" */,
         transport.transport_source,
@@ -29876,6 +31105,7 @@ fn transport_to_node_for_lifetimes(transport: ForLifetimesTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29884,6 +31114,7 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(368) /* "foreign_mod_item_body" */,
         transport.transport_source,
@@ -29895,6 +31126,7 @@ fn transport_to_node_foreign_mod_item_body(transport: ForeignModItemBodyTranspor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29913,6 +31145,7 @@ fn transport_to_node_foreign_mod_item_uform_semi(transport: ForeignModItemUFormS
     fields.insert("extern_modifier".to_string(), transport_field_value(AnyTransport::ExternModifier(transport.extern_modifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ForeignModItemSemi(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(174) /* "foreign_mod_item" */,
         transport.transport_source,
@@ -29924,6 +31157,7 @@ fn transport_to_node_foreign_mod_item_uform_semi(transport: ForeignModItemUFormS
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29935,6 +31169,7 @@ fn transport_to_node_foreign_mod_item_uform_body(transport: ForeignModItemUFormB
     fields.insert("extern_modifier".to_string(), transport_field_value(AnyTransport::ExternModifier(transport.extern_modifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ForeignModItemBody(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(174) /* "foreign_mod_item" */,
         transport.transport_source,
@@ -29946,6 +31181,7 @@ fn transport_to_node_foreign_mod_item_uform_body(transport: ForeignModItemUFormB
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -29956,6 +31192,7 @@ fn transport_to_node_fragment_specifier(transport: FragmentSpecifierEnum) -> Res
         None,
         true,
         Some(transport.to_string()),
+        None,
         None,
         None,
         None,
@@ -29986,6 +31223,7 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(188) /* "function_item" */,
         transport.transport_source,
@@ -29997,6 +31235,7 @@ fn transport_to_node_function_item(transport: FunctionItemTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30005,6 +31244,7 @@ fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -
     fields.insert("modifier".to_string(), transport_field_values(transport.modifier.into_iter().map(|v| AnyTransport::ExternModifier(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(190) /* "function_modifiers" */,
         transport.transport_source,
@@ -30016,6 +31256,7 @@ fn transport_to_node_function_modifiers(transport: FunctionModifiersTransport) -
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30040,6 +31281,7 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(189) /* "function_signature_item" */,
         transport.transport_source,
@@ -30051,6 +31293,7 @@ fn transport_to_node_function_signature_item(transport: FunctionSignatureItemTra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30065,6 +31308,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![function_type_child_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(222) /* "function_type" */,
         transport.transport_source,
@@ -30076,6 +31320,7 @@ fn transport_to_node_function_type(transport: FunctionTypeTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30087,6 +31332,7 @@ fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<Transport
     fields.insert("block".to_string(), transport_field_value(AnyTransport::Block(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(291) /* "gen_block" */,
         transport.transport_source,
@@ -30098,6 +31344,7 @@ fn transport_to_node_gen_block(transport: GenBlockTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30107,6 +31354,7 @@ fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Re
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(225) /* "generic_function" */,
         transport.transport_source,
@@ -30118,6 +31366,7 @@ fn transport_to_node_generic_function(transport: GenericFunctionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30126,6 +31375,7 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![path_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(295) /* "generic_pattern" */,
         transport.transport_source,
@@ -30137,6 +31387,7 @@ fn transport_to_node_generic_pattern(transport: GenericPatternTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30146,6 +31397,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(226) /* "generic_type" */,
         transport.transport_source,
@@ -30157,6 +31409,7 @@ fn transport_to_node_generic_type(transport: GenericTypeTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30167,6 +31420,7 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
     fields.insert("type_arguments".to_string(), transport_field_value(AnyTransport::TypeArguments(transport.type_arguments))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(227) /* "generic_type_with_turbofish" */,
         transport.transport_source,
@@ -30178,6 +31432,7 @@ fn transport_to_node_generic_type_with_turbofish(transport: GenericTypeWithTurbo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30187,6 +31442,7 @@ fn transport_to_node_higher_ranked_trait_bound(transport: HigherRankedTraitBound
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(197) /* "higher_ranked_trait_bound" */,
         transport.transport_source,
@@ -30198,10 +31454,12 @@ fn transport_to_node_higher_ranked_trait_bound(transport: HigherRankedTraitBound
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(1) /* "identifier" */,
         transport.transport_source,
@@ -30213,6 +31471,7 @@ fn transport_to_node_identifier(transport: IdentifierTransport) -> Result<Transp
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -30225,6 +31484,7 @@ fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(267) /* "if_expression" */,
         transport.transport_source,
@@ -30236,6 +31496,7 @@ fn transport_to_node_if_expression(transport: IfExpressionTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30244,6 +31505,7 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(329) /* "impl_item_body" */,
         transport.transport_source,
@@ -30255,6 +31517,7 @@ fn transport_to_node_impl_item_body(transport: ImplItemBodyTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30285,6 +31548,7 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ImplItemBody(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(193) /* "impl_item" */,
         transport.transport_source,
@@ -30296,6 +31560,7 @@ fn transport_to_node_impl_item_uform_body(transport: ImplItemUFormBodyTransport)
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30319,6 +31584,7 @@ fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport)
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ImplItemSemi(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(193) /* "impl_item" */,
         transport.transport_source,
@@ -30330,6 +31596,7 @@ fn transport_to_node_impl_item_uform_semi(transport: ImplItemUFormSemiTransport)
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30339,6 +31606,7 @@ fn transport_to_node_index_expression(transport: IndexExpressionTransport) -> Re
     fields.insert("index".to_string(), transport_field_value(expression_transport_to_any(transport.index))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(286) /* "index_expression" */,
         transport.transport_source,
@@ -30350,6 +31618,7 @@ fn transport_to_node_index_expression(transport: IndexExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30358,6 +31627,7 @@ fn transport_to_node_inner_attribute_item(transport: InnerAttributeItemTransport
     fields.insert("attribute".to_string(), transport_field_value(AnyTransport::Attribute(transport.attribute))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(171) /* "inner_attribute_item" */,
         transport.transport_source,
@@ -30369,10 +31639,12 @@ fn transport_to_node_inner_attribute_item(transport: InnerAttributeItemTransport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_integer_literal(transport: IntegerLiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(126) /* "integer_literal" */,
         transport.transport_source,
@@ -30384,6 +31656,7 @@ fn transport_to_node_integer_literal(transport: IntegerLiteralTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -30392,6 +31665,7 @@ fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeDat
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(283) /* "label" */,
         transport.transport_source,
@@ -30403,6 +31677,7 @@ fn transport_to_node_label(transport: LabelTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30412,6 +31687,7 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| declaration_statement_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(275) /* "last_match_arm" */,
         transport.transport_source,
@@ -30423,6 +31699,7 @@ fn transport_to_node_last_match_arm(transport: LastMatchArmTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30432,6 +31709,7 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(268) /* "let_condition" */,
         transport.transport_source,
@@ -30443,6 +31721,7 @@ fn transport_to_node_let_condition(transport: LetConditionTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30463,6 +31742,7 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(203) /* "let_declaration" */,
         transport.transport_source,
@@ -30474,6 +31754,7 @@ fn transport_to_node_let_declaration(transport: LetDeclarationTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30482,6 +31763,7 @@ fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportN
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(219) /* "lifetime" */,
         transport.transport_source,
@@ -30493,6 +31775,7 @@ fn transport_to_node_lifetime(transport: LifetimeTransport) -> Result<TransportN
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30504,6 +31787,7 @@ fn transport_to_node_lifetime_parameter(transport: LifetimeParameterTransport) -
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(202) /* "lifetime_parameter" */,
         transport.transport_source,
@@ -30515,6 +31799,7 @@ fn transport_to_node_lifetime_parameter(transport: LifetimeParameterTransport) -
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30530,6 +31815,7 @@ fn transport_to_node_line_comment_uform_regular_dslash(transport: LineCommentUFo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::LineCommentRegularDslash(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(314) /* "line_comment" */,
         transport.transport_source,
@@ -30541,6 +31827,7 @@ fn transport_to_node_line_comment_uform_regular_dslash(transport: LineCommentUFo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30548,6 +31835,7 @@ fn transport_to_node_line_comment_uform_doc(transport: LineCommentUFormDocTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::LineCommentDoc(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(314) /* "line_comment" */,
         transport.transport_source,
@@ -30559,6 +31847,7 @@ fn transport_to_node_line_comment_uform_doc(transport: LineCommentUFormDocTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30566,6 +31855,7 @@ fn transport_to_node_line_comment_uform_content(transport: LineCommentUFormConte
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::LineCommentContent(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(314) /* "line_comment" */,
         transport.transport_source,
@@ -30577,6 +31867,7 @@ fn transport_to_node_line_comment_uform_content(transport: LineCommentUFormConte
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30588,6 +31879,7 @@ fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Resu
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(278) /* "loop_expression" */,
         transport.transport_source,
@@ -30599,6 +31891,7 @@ fn transport_to_node_loop_expression(transport: LoopExpressionTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30609,6 +31902,7 @@ fn transport_to_node_macro_definition_paren(transport: MacroDefinitionParenTrans
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(331) /* "macro_definition_paren" */,
         transport.transport_source,
@@ -30620,6 +31914,7 @@ fn transport_to_node_macro_definition_paren(transport: MacroDefinitionParenTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30630,6 +31925,7 @@ fn transport_to_node_macro_definition_bracket(transport: MacroDefinitionBracketT
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(332) /* "macro_definition_bracket" */,
         transport.transport_source,
@@ -30641,6 +31937,7 @@ fn transport_to_node_macro_definition_bracket(transport: MacroDefinitionBracketT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30651,6 +31948,7 @@ fn transport_to_node_macro_definition_brace(transport: MacroDefinitionBraceTrans
         Some(c) => Some(transport_children(c.into_iter().map(|v| AnyTransport::MacroRule(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(333) /* "macro_definition_brace" */,
         transport.transport_source,
@@ -30662,6 +31960,7 @@ fn transport_to_node_macro_definition_brace(transport: MacroDefinitionBraceTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30678,6 +31977,7 @@ fn transport_to_node_macro_definition_uform_paren(transport: MacroDefinitionUFor
     fields.insert("name".to_string(), transport_field_value(*transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_MacroDefinitionParen(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(161) /* "macro_definition" */,
         transport.transport_source,
@@ -30689,6 +31989,7 @@ fn transport_to_node_macro_definition_uform_paren(transport: MacroDefinitionUFor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30697,6 +31998,7 @@ fn transport_to_node_macro_definition_uform_bracket(transport: MacroDefinitionUF
     fields.insert("name".to_string(), transport_field_value(*transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_MacroDefinitionBracket(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(161) /* "macro_definition" */,
         transport.transport_source,
@@ -30708,6 +32010,7 @@ fn transport_to_node_macro_definition_uform_bracket(transport: MacroDefinitionUF
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30716,6 +32019,7 @@ fn transport_to_node_macro_definition_uform_brace(transport: MacroDefinitionUFor
     fields.insert("name".to_string(), transport_field_value(*transport.name)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_MacroDefinitionBrace(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(161) /* "macro_definition" */,
         transport.transport_source,
@@ -30727,6 +32031,7 @@ fn transport_to_node_macro_definition_uform_brace(transport: MacroDefinitionUFor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30736,6 +32041,7 @@ fn transport_to_node_macro_invocation(transport: MacroInvocationTransport) -> Re
     fields.insert("token_tree".to_string(), transport_field_value(*transport.token_tree)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(239) /* "macro_invocation" */,
         transport.transport_source,
@@ -30747,6 +32053,7 @@ fn transport_to_node_macro_invocation(transport: MacroInvocationTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30756,6 +32063,7 @@ fn transport_to_node_macro_rule(transport: MacroRuleTransport) -> Result<Transpo
     fields.insert("right".to_string(), transport_field_value(*transport.right)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(162) /* "macro_rule" */,
         transport.transport_source,
@@ -30767,6 +32075,7 @@ fn transport_to_node_macro_rule(transport: MacroRuleTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30775,6 +32084,7 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
     fields.insert("value".to_string(), transport_field_value(expression_ending_with_block_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(370) /* "match_arm_block_ending" */,
         transport.transport_source,
@@ -30786,6 +32096,7 @@ fn transport_to_node_match_arm_block_ending(transport: MatchArmBlockEndingTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30802,6 +32113,7 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
     fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::MatchArmWithComma(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(274) /* "match_arm" */,
         transport.transport_source,
@@ -30813,6 +32125,7 @@ fn transport_to_node_match_arm_uform_with_comma(transport: MatchArmUFormWithComm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30822,6 +32135,7 @@ fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockE
     fields.insert("pattern".to_string(), transport_field_value(AnyTransport::MatchPattern(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_MatchArmBlockEnding(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(274) /* "match_arm" */,
         transport.transport_source,
@@ -30833,6 +32147,7 @@ fn transport_to_node_match_arm_uform_block_ending(transport: MatchArmUFormBlockE
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30843,6 +32158,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
         Some(c) => Some(transport_children(c.into_iter().map(|v| match_block_child_transport_to_any(v)).collect::<Vec<_>>())?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(273) /* "match_block" */,
         transport.transport_source,
@@ -30854,6 +32170,7 @@ fn transport_to_node_match_block(transport: MatchBlockTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30863,6 +32180,7 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
     fields.insert("body".to_string(), transport_field_value(AnyTransport::MatchBlock(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(272) /* "match_expression" */,
         transport.transport_source,
@@ -30874,6 +32192,7 @@ fn transport_to_node_match_expression(transport: MatchExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30884,6 +32203,7 @@ fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<T
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(276) /* "match_pattern" */,
         transport.transport_source,
@@ -30895,10 +32215,12 @@ fn transport_to_node_match_pattern(transport: MatchPatternTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_metavariable(transport: MetavariableTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(142) /* "metavariable" */,
         transport.transport_source,
@@ -30910,6 +32232,7 @@ fn transport_to_node_metavariable(transport: MetavariableTransport) -> Result<Tr
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -30918,6 +32241,7 @@ fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Resul
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(335) /* "mod_item_inline" */,
         transport.transport_source,
@@ -30929,6 +32253,7 @@ fn transport_to_node_mod_item_inline(transport: ModItemInlineTransport) -> Resul
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30947,6 +32272,7 @@ fn transport_to_node_mod_item_uform_external(transport: ModItemUFormExternalTran
     fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::ModItemExternal(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(173) /* "mod_item" */,
         transport.transport_source,
@@ -30958,6 +32284,7 @@ fn transport_to_node_mod_item_uform_external(transport: ModItemUFormExternalTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30969,6 +32296,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
     fields.insert("name".to_string(), transport_field_value(AnyTransport::Identifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_ModItemInline(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(173) /* "mod_item" */,
         transport.transport_source,
@@ -30980,6 +32308,7 @@ fn transport_to_node_mod_item_uform_inline(transport: ModItemUFormInlineTranspor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -30988,6 +32317,7 @@ fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<Trans
     fields.insert("mutable_specifier".to_string(), transport_field_value(AnyTransport::_MutableSpecifier(transport.mutable_specifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(302) /* "mut_pattern" */,
         transport.transport_source,
@@ -30999,10 +32329,12 @@ fn transport_to_node_mut_pattern(transport: MutPatternTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_mutable_specifier(transport: MutableSpecifierTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(120) /* "mutable_specifier" */,
         transport.transport_source,
@@ -31014,6 +32346,7 @@ fn transport_to_node_mutable_specifier(transport: MutableSpecifierTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31022,6 +32355,7 @@ fn transport_to_node_negative_literal(transport: NegativeLiteralTransport) -> Re
     fields.insert("value".to_string(), transport_field_value(*transport.value)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(310) /* "negative_literal" */,
         transport.transport_source,
@@ -31033,10 +32367,12 @@ fn transport_to_node_negative_literal(transport: NegativeLiteralTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_never_type(transport: NeverTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(234) /* "never_type" */,
         transport.transport_source,
@@ -31048,6 +32384,7 @@ fn transport_to_node_never_type(transport: NeverTypeTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31062,6 +32399,7 @@ fn transport_to_node_or_pattern_uform_binary(transport: OrPatternUFormBinaryTran
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::OrPatternBinary(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(307) /* "or_pattern" */,
         transport.transport_source,
@@ -31073,6 +32411,7 @@ fn transport_to_node_or_pattern_uform_binary(transport: OrPatternUFormBinaryTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31080,6 +32419,7 @@ fn transport_to_node_or_pattern_uform_prefix(transport: OrPatternUFormPrefixTran
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::OrPatternPrefix(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(307) /* "or_pattern" */,
         transport.transport_source,
@@ -31091,6 +32431,7 @@ fn transport_to_node_or_pattern_uform_prefix(transport: OrPatternUFormPrefixTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31099,6 +32440,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
     fields.insert("type".to_string(), transport_field_values(transport.r#type.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| ordered_field_declaration_list_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(183) /* "ordered_field_declaration_list" */,
         transport.transport_source,
@@ -31110,6 +32452,7 @@ fn transport_to_node_ordered_field_declaration_list(transport: OrderedFieldDecla
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31122,6 +32465,7 @@ fn transport_to_node_parameter(transport: ParameterTransport) -> Result<Transpor
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(213) /* "parameter" */,
         transport.transport_source,
@@ -31133,6 +32477,7 @@ fn transport_to_node_parameter(transport: ParameterTransport) -> Result<Transpor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31140,6 +32485,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| parameters_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(210) /* "parameters" */,
         transport.transport_source,
@@ -31151,6 +32497,7 @@ fn transport_to_node_parameters(transport: ParametersTransport) -> Result<Transp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31158,6 +32505,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![expression_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(259) /* "parenthesized_expression" */,
         transport.transport_source,
@@ -31169,6 +32517,7 @@ fn transport_to_node_parenthesized_expression(transport: ParenthesizedExpression
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31176,6 +32525,7 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::MutableSpecifier(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(359) /* "pointer_type_mut" */,
         transport.transport_source,
@@ -31187,6 +32537,7 @@ fn transport_to_node_pointer_type_mut(transport: PointerTypeMutTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31202,6 +32553,7 @@ fn transport_to_node_pointer_type_uform_const(transport: PointerTypeUFormConstTr
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::PointerTypeConst(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(233) /* "pointer_type" */,
         transport.transport_source,
@@ -31213,6 +32565,7 @@ fn transport_to_node_pointer_type_uform_const(transport: PointerTypeUFormConstTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31221,6 +32574,7 @@ fn transport_to_node_pointer_type_uform_mut(transport: PointerTypeUFormMutTransp
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_PointerTypeMut(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(233) /* "pointer_type" */,
         transport.transport_source,
@@ -31232,6 +32586,7 @@ fn transport_to_node_pointer_type_uform_mut(transport: PointerTypeUFormMutTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31241,6 +32596,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
     fields.insert("alias".to_string(), transport_field_value(_type_transport_to_any(transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(218) /* "qualified_type" */,
         transport.transport_source,
@@ -31252,6 +32608,7 @@ fn transport_to_node_qualified_type(transport: QualifiedTypeTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31260,6 +32617,7 @@ fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTranspo
     fields.insert("operator".to_string(), transport_field_value(AnyTransport::Operator(transport.operator))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(341) /* "range_expression_bare" */,
         transport.transport_source,
@@ -31271,6 +32629,7 @@ fn transport_to_node_range_expression_bare(transport: RangeExpressionBareTranspo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31287,6 +32646,7 @@ fn transport_to_node_range_expression_uform_binary(transport: RangeExpressionUFo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangeExpressionBinary(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(246) /* "range_expression" */,
         transport.transport_source,
@@ -31298,6 +32658,7 @@ fn transport_to_node_range_expression_uform_binary(transport: RangeExpressionUFo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31305,6 +32666,7 @@ fn transport_to_node_range_expression_uform_postfix(transport: RangeExpressionUF
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangeExpressionPostfix(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(246) /* "range_expression" */,
         transport.transport_source,
@@ -31316,6 +32678,7 @@ fn transport_to_node_range_expression_uform_postfix(transport: RangeExpressionUF
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31323,6 +32686,7 @@ fn transport_to_node_range_expression_uform_prefix(transport: RangeExpressionUFo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangeExpressionPrefix(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(246) /* "range_expression" */,
         transport.transport_source,
@@ -31334,6 +32698,7 @@ fn transport_to_node_range_expression_uform_prefix(transport: RangeExpressionUFo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31341,6 +32706,7 @@ fn transport_to_node_range_expression_uform_bare(transport: RangeExpressionUForm
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_RangeExpressionBare(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(246) /* "range_expression" */,
         transport.transport_source,
@@ -31352,6 +32718,7 @@ fn transport_to_node_range_expression_uform_bare(transport: RangeExpressionUForm
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31368,6 +32735,7 @@ fn transport_to_node_range_pattern_uform_left_with_right(transport: RangePattern
     fields.insert("left".to_string(), transport_field_value(*transport.left)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangePatternLeftWithRight(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(303) /* "range_pattern" */,
         transport.transport_source,
@@ -31379,6 +32747,7 @@ fn transport_to_node_range_pattern_uform_left_with_right(transport: RangePattern
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31387,6 +32756,7 @@ fn transport_to_node_range_pattern_uform_left_bare(transport: RangePatternUFormL
     fields.insert("left".to_string(), transport_field_value(*transport.left)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangePatternLeftBare(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(303) /* "range_pattern" */,
         transport.transport_source,
@@ -31398,6 +32768,7 @@ fn transport_to_node_range_pattern_uform_left_bare(transport: RangePatternUFormL
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31405,6 +32776,7 @@ fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPref
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangePatternPrefix(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(303) /* "range_pattern" */,
         transport.transport_source,
@@ -31416,6 +32788,7 @@ fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPref
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31430,6 +32803,7 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(312) /* "raw_string_literal" */,
         transport.transport_source,
@@ -31441,6 +32815,7 @@ fn transport_to_node_raw_string_literal(transport: RawStringLiteralTransport) ->
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31448,6 +32823,7 @@ fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<Trans
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![pattern_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(304) /* "ref_pattern" */,
         transport.transport_source,
@@ -31459,6 +32835,7 @@ fn transport_to_node_ref_pattern(transport: RefPatternTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31470,6 +32847,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
         Some(c) => Some(transport_children(vec![reference_expression_child_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(249) /* "reference_expression" */,
         transport.transport_source,
@@ -31481,6 +32859,7 @@ fn transport_to_node_reference_expression(transport: ReferenceExpressionTranspor
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31492,6 +32871,7 @@ fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> 
     fields.insert("pattern".to_string(), transport_field_value(pattern_transport_to_any(transport.pattern))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(306) /* "reference_pattern" */,
         transport.transport_source,
@@ -31503,6 +32883,7 @@ fn transport_to_node_reference_pattern(transport: ReferencePatternTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31517,6 +32898,7 @@ fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(232) /* "reference_type" */,
         transport.transport_source,
@@ -31528,10 +32910,12 @@ fn transport_to_node_reference_type(transport: ReferenceTypeTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(301) /* "remaining_field_pattern" */,
         transport.transport_source,
@@ -31543,6 +32927,7 @@ fn transport_to_node_remaining_field_pattern(transport: RemainingFieldPatternTra
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31550,6 +32935,7 @@ fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) 
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![_type_transport_to_any(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(198) /* "removed_trait_bound" */,
         transport.transport_source,
@@ -31561,6 +32947,7 @@ fn transport_to_node_removed_trait_bound(transport: RemovedTraitBoundTransport) 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31571,6 +32958,7 @@ fn transport_to_node_return_expression(transport: ReturnExpressionTransport) -> 
         Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(254) /* "return_expression" */,
         transport.transport_source,
@@ -31582,6 +32970,7 @@ fn transport_to_node_return_expression(transport: ReturnExpressionTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31593,6 +32982,7 @@ fn transport_to_node_scoped_identifier(transport: ScopedIdentifierTransport) -> 
     fields.insert("name".to_string(), transport_field_value(path_transport_to_any(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(243) /* "scoped_identifier" */,
         transport.transport_source,
@@ -31604,6 +32994,7 @@ fn transport_to_node_scoped_identifier(transport: ScopedIdentifierTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31615,6 +33006,7 @@ fn transport_to_node_scoped_type_identifier(transport: ScopedTypeIdentifierTrans
     fields.insert("name".to_string(), transport_field_value(AnyTransport::TypeIdentifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(245) /* "scoped_type_identifier" */,
         transport.transport_source,
@@ -31626,6 +33018,7 @@ fn transport_to_node_scoped_type_identifier(transport: ScopedTypeIdentifierTrans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31637,6 +33030,7 @@ fn transport_to_node_scoped_type_identifier_in_expression_position(transport: Sc
     fields.insert("name".to_string(), transport_field_value(AnyTransport::TypeIdentifier(transport.name))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(244) /* "scoped_type_identifier_in_expression_position" */,
         transport.transport_source,
@@ -31648,6 +33042,7 @@ fn transport_to_node_scoped_type_identifier_in_expression_position(transport: Sc
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31659,6 +33054,7 @@ fn transport_to_node_scoped_use_list(transport: ScopedUseListTransport) -> Resul
     fields.insert("list".to_string(), transport_field_value(AnyTransport::UseList(transport.list))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(206) /* "scoped_use_list" */,
         transport.transport_source,
@@ -31670,10 +33066,12 @@ fn transport_to_node_scoped_use_list(transport: ScopedUseListTransport) -> Resul
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_self(transport: Self_Transport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(139) /* "self" */,
         transport.transport_source,
@@ -31685,6 +33083,7 @@ fn transport_to_node_self(transport: Self_Transport) -> Result<TransportNodeData
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31702,6 +33101,7 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
     fields.insert("self".to_string(), transport_field_value(AnyTransport::_Self(transport.self_))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(211) /* "self_parameter" */,
         transport.transport_source,
@@ -31713,10 +33113,12 @@ fn transport_to_node_self_parameter(transport: SelfParameterTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_shebang(transport: ShebangTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(138) /* "shebang" */,
         transport.transport_source,
@@ -31728,6 +33130,7 @@ fn transport_to_node_shebang(transport: ShebangTransport) -> Result<TransportNod
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31737,6 +33140,7 @@ fn transport_to_node_shorthand_field_initializer(transport: ShorthandFieldInitia
     fields.insert("identifier".to_string(), transport_field_value(AnyTransport::Identifier(transport.identifier))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(264) /* "shorthand_field_initializer" */,
         transport.transport_source,
@@ -31748,6 +33152,7 @@ fn transport_to_node_shorthand_field_initializer(transport: ShorthandFieldInitia
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31755,6 +33160,7 @@ fn transport_to_node_slice_pattern(transport: SlicePatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(297) /* "slice_pattern" */,
         transport.transport_source,
@@ -31766,6 +33172,7 @@ fn transport_to_node_slice_pattern(transport: SlicePatternTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31777,6 +33184,7 @@ fn transport_to_node_source_file(transport: SourceFileTransport) -> Result<Trans
     fields.insert("statements".to_string(), transport_field_values(transport.statements.into_iter().map(|v| statement_transport_to_any(v)).collect::<Vec<_>>())?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(157) /* "source_file" */,
         transport.transport_source,
@@ -31788,6 +33196,7 @@ fn transport_to_node_source_file(transport: SourceFileTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31806,6 +33215,7 @@ fn transport_to_node_static_item(transport: StaticItemTransport) -> Result<Trans
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(186) /* "static_item" */,
         transport.transport_source,
@@ -31817,6 +33227,7 @@ fn transport_to_node_static_item(transport: StaticItemTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31824,6 +33235,7 @@ fn transport_to_node_string_literal(transport: StringLiteralTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| string_literal_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(311) /* "string_literal" */,
         transport.transport_source,
@@ -31835,6 +33247,7 @@ fn transport_to_node_string_literal(transport: StringLiteralTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31844,6 +33257,7 @@ fn transport_to_node_struct_expression(transport: StructExpressionTransport) -> 
     fields.insert("body".to_string(), transport_field_value(AnyTransport::FieldInitializerList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(262) /* "struct_expression" */,
         transport.transport_source,
@@ -31855,6 +33269,7 @@ fn transport_to_node_struct_expression(transport: StructExpressionTransport) -> 
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31877,6 +33292,7 @@ fn transport_to_node_struct_item_uform_brace(transport: StructItemUFormBraceTran
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::StructItemBrace(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(176) /* "struct_item" */,
         transport.transport_source,
@@ -31888,6 +33304,7 @@ fn transport_to_node_struct_item_uform_brace(transport: StructItemUFormBraceTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31902,6 +33319,7 @@ fn transport_to_node_struct_item_uform_tuple(transport: StructItemUFormTupleTran
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::StructItemTuple(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(176) /* "struct_item" */,
         transport.transport_source,
@@ -31913,6 +33331,7 @@ fn transport_to_node_struct_item_uform_tuple(transport: StructItemUFormTupleTran
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31927,6 +33346,7 @@ fn transport_to_node_struct_item_uform_unit(transport: StructItemUFormUnitTransp
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::StructItemUnit(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(176) /* "struct_item" */,
         transport.transport_source,
@@ -31938,6 +33358,7 @@ fn transport_to_node_struct_item_uform_unit(transport: StructItemUFormUnitTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31946,6 +33367,7 @@ fn transport_to_node_struct_pattern(transport: StructPatternTransport) -> Result
     fields.insert("type".to_string(), transport_field_value(*transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| struct_pattern_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(299) /* "struct_pattern" */,
         transport.transport_source,
@@ -31957,10 +33379,12 @@ fn transport_to_node_struct_pattern(transport: StructPatternTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_super(transport: SuperTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(140) /* "super" */,
         transport.transport_source,
@@ -31972,6 +33396,7 @@ fn transport_to_node_super(transport: SuperTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -31981,6 +33406,7 @@ fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTranspo
     fields.insert("type".to_string(), transport_field_value(AnyTransport::TokenBindingPatternType(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(165) /* "token_binding_pattern" */,
         transport.transport_source,
@@ -31992,6 +33418,7 @@ fn transport_to_node_token_binding_pattern(transport: TokenBindingPatternTranspo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -31999,6 +33426,7 @@ fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Re
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(169) /* "token_repetition" */,
         transport.transport_source,
@@ -32010,6 +33438,7 @@ fn transport_to_node_token_repetition(transport: TokenRepetitionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32017,6 +33446,7 @@ fn transport_to_node_token_repetition_pattern(transport: TokenRepetitionPatternT
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(166) /* "token_repetition_pattern" */,
         transport.transport_source,
@@ -32028,6 +33458,7 @@ fn transport_to_node_token_repetition_pattern(transport: TokenRepetitionPatternT
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32035,6 +33466,7 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(376) /* "token_tree_paren" */,
         transport.transport_source,
@@ -32046,6 +33478,7 @@ fn transport_to_node_token_tree_paren(transport: TokenTreeParenTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32053,6 +33486,7 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(377) /* "token_tree_bracket" */,
         transport.transport_source,
@@ -32064,6 +33498,7 @@ fn transport_to_node_token_tree_bracket(transport: TokenTreeBracketTransport) ->
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32071,6 +33506,7 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| tokens_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(378) /* "token_tree_brace" */,
         transport.transport_source,
@@ -32082,6 +33518,7 @@ fn transport_to_node_token_tree_brace(transport: TokenTreeBraceTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32097,6 +33534,7 @@ fn transport_to_node_token_tree_uform_paren(transport: TokenTreeUFormParenTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreeParen(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(168) /* "token_tree" */,
         transport.transport_source,
@@ -32108,6 +33546,7 @@ fn transport_to_node_token_tree_uform_paren(transport: TokenTreeUFormParenTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32115,6 +33554,7 @@ fn transport_to_node_token_tree_uform_bracket(transport: TokenTreeUFormBracketTr
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreeBracket(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(168) /* "token_tree" */,
         transport.transport_source,
@@ -32126,6 +33566,7 @@ fn transport_to_node_token_tree_uform_bracket(transport: TokenTreeUFormBracketTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32133,6 +33574,7 @@ fn transport_to_node_token_tree_uform_brace(transport: TokenTreeUFormBraceTransp
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreeBrace(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(168) /* "token_tree" */,
         transport.transport_source,
@@ -32144,6 +33586,7 @@ fn transport_to_node_token_tree_uform_brace(transport: TokenTreeUFormBraceTransp
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32151,6 +33594,7 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(373) /* "token_tree_pattern_paren" */,
         transport.transport_source,
@@ -32162,6 +33606,7 @@ fn transport_to_node_token_tree_pattern_paren(transport: TokenTreePatternParenTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32169,6 +33614,7 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(374) /* "token_tree_pattern_bracket" */,
         transport.transport_source,
@@ -32180,6 +33626,7 @@ fn transport_to_node_token_tree_pattern_bracket(transport: TokenTreePatternBrack
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32187,6 +33634,7 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| token_pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(375) /* "token_tree_pattern_brace" */,
         transport.transport_source,
@@ -32198,6 +33646,7 @@ fn transport_to_node_token_tree_pattern_brace(transport: TokenTreePatternBraceTr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32213,6 +33662,7 @@ fn transport_to_node_token_tree_pattern_uform_paren(transport: TokenTreePatternU
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreePatternParen(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(164) /* "token_tree_pattern" */,
         transport.transport_source,
@@ -32224,6 +33674,7 @@ fn transport_to_node_token_tree_pattern_uform_paren(transport: TokenTreePatternU
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32231,6 +33682,7 @@ fn transport_to_node_token_tree_pattern_uform_bracket(transport: TokenTreePatter
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreePatternBracket(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(164) /* "token_tree_pattern" */,
         transport.transport_source,
@@ -32242,6 +33694,7 @@ fn transport_to_node_token_tree_pattern_uform_bracket(transport: TokenTreePatter
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32249,6 +33702,7 @@ fn transport_to_node_token_tree_pattern_uform_brace(transport: TokenTreePatternU
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_TokenTreePatternBrace(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(164) /* "token_tree_pattern" */,
         transport.transport_source,
@@ -32260,6 +33714,7 @@ fn transport_to_node_token_tree_pattern_uform_brace(transport: TokenTreePatternU
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32267,6 +33722,7 @@ fn transport_to_node_trait_bounds(transport: TraitBoundsTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| trait_bounds_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(196) /* "trait_bounds" */,
         transport.transport_source,
@@ -32278,6 +33734,7 @@ fn transport_to_node_trait_bounds(transport: TraitBoundsTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32302,6 +33759,7 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
     fields.insert("body".to_string(), transport_field_value(AnyTransport::DeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(194) /* "trait_item" */,
         transport.transport_source,
@@ -32313,6 +33771,7 @@ fn transport_to_node_trait_item(transport: TraitItemTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32321,6 +33780,7 @@ fn transport_to_node_try_block(transport: TryBlockTransport) -> Result<Transport
     fields.insert("block".to_string(), transport_field_value(AnyTransport::Block(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(292) /* "try_block" */,
         transport.transport_source,
@@ -32332,6 +33792,7 @@ fn transport_to_node_try_block(transport: TryBlockTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32340,6 +33801,7 @@ fn transport_to_node_try_expression(transport: TryExpressionTransport) -> Result
     fields.insert("value".to_string(), transport_field_value(expression_transport_to_any(transport.value))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(248) /* "try_expression" */,
         transport.transport_source,
@@ -32351,6 +33813,7 @@ fn transport_to_node_try_expression(transport: TryExpressionTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32362,6 +33825,7 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(260) /* "tuple_expression" */,
         transport.transport_source,
@@ -32373,6 +33837,7 @@ fn transport_to_node_tuple_expression(transport: TupleExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32380,6 +33845,7 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children)?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(296) /* "tuple_pattern" */,
         transport.transport_source,
@@ -32391,6 +33857,7 @@ fn transport_to_node_tuple_pattern(transport: TuplePatternTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32399,6 +33866,7 @@ fn transport_to_node_tuple_struct_pattern(transport: TupleStructPatternTransport
     fields.insert("type".to_string(), transport_field_value(*transport.r#type)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| pattern_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(298) /* "tuple_struct_pattern" */,
         transport.transport_source,
@@ -32410,6 +33878,7 @@ fn transport_to_node_tuple_struct_pattern(transport: TupleStructPatternTransport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32417,6 +33886,7 @@ fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<Transpo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| _type_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(223) /* "tuple_type" */,
         transport.transport_source,
@@ -32428,6 +33898,7 @@ fn transport_to_node_tuple_type(transport: TupleTypeTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32435,6 +33906,7 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| type_arguments_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(230) /* "type_arguments" */,
         transport.transport_source,
@@ -32446,6 +33918,7 @@ fn transport_to_node_type_arguments(transport: TypeArgumentsTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32458,6 +33931,7 @@ fn transport_to_node_type_binding(transport: TypeBindingTransport) -> Result<Tra
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(231) /* "type_binding" */,
         transport.transport_source,
@@ -32469,6 +33943,7 @@ fn transport_to_node_type_binding(transport: TypeBindingTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32478,6 +33953,7 @@ fn transport_to_node_type_cast_expression(transport: TypeCastExpressionTransport
     fields.insert("type".to_string(), transport_field_value(_type_transport_to_any(transport.r#type))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(253) /* "type_cast_expression" */,
         transport.transport_source,
@@ -32489,6 +33965,7 @@ fn transport_to_node_type_cast_expression(transport: TypeCastExpressionTransport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32510,6 +33987,7 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(187) /* "type_item" */,
         transport.transport_source,
@@ -32521,6 +33999,7 @@ fn transport_to_node_type_item(transport: TypeItemTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32535,6 +34014,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(201) /* "type_parameter" */,
         transport.transport_source,
@@ -32546,6 +34026,7 @@ fn transport_to_node_type_parameter(transport: TypeParameterTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32554,6 +34035,7 @@ fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Resu
     fields.insert("attributes".to_string(), transport_field_values(transport.attributes)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(199) /* "type_parameters" */,
         transport.transport_source,
@@ -32565,6 +34047,7 @@ fn transport_to_node_type_parameters(transport: TypeParametersTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32574,6 +34057,7 @@ fn transport_to_node_unary_expression(transport: UnaryExpressionTransport) -> Re
     fields.insert("operand".to_string(), transport_field_value(expression_transport_to_any(transport.operand))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(247) /* "unary_expression" */,
         transport.transport_source,
@@ -32585,6 +34069,7 @@ fn transport_to_node_unary_expression(transport: UnaryExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32603,6 +34088,7 @@ fn transport_to_node_union_item(transport: UnionItemTransport) -> Result<Transpo
     fields.insert("body".to_string(), transport_field_value(AnyTransport::FieldDeclarationList(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(177) /* "union_item" */,
         transport.transport_source,
@@ -32614,10 +34100,12 @@ fn transport_to_node_union_item(transport: UnionItemTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_unit_expression(transport: UnitExpressionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(261) /* "unit_expression" */,
         transport.transport_source,
@@ -32629,10 +34117,12 @@ fn transport_to_node_unit_expression(transport: UnitExpressionTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_unit_type(transport: UnitTypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(224) /* "unit_type" */,
         transport.transport_source,
@@ -32644,6 +34134,7 @@ fn transport_to_node_unit_type(transport: UnitTypeTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
@@ -32652,6 +34143,7 @@ fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<Tra
     fields.insert("block".to_string(), transport_field_value(AnyTransport::Block(transport.block))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(289) /* "unsafe_block" */,
         transport.transport_source,
@@ -32663,6 +34155,7 @@ fn transport_to_node_unsafe_block(transport: UnsafeBlockTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32672,6 +34165,7 @@ fn transport_to_node_use_as_clause(transport: UseAsClauseTransport) -> Result<Tr
     fields.insert("alias".to_string(), transport_field_value(AnyTransport::Identifier(transport.alias))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(208) /* "use_as_clause" */,
         transport.transport_source,
@@ -32683,6 +34177,7 @@ fn transport_to_node_use_as_clause(transport: UseAsClauseTransport) -> Result<Tr
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32690,6 +34185,7 @@ fn transport_to_node_use_bounds(transport: UseBoundsTransport) -> Result<Transpo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| use_bounds_child_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(229) /* "use_bounds" */,
         transport.transport_source,
@@ -32701,6 +34197,7 @@ fn transport_to_node_use_bounds(transport: UseBoundsTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32712,6 +34209,7 @@ fn transport_to_node_use_declaration(transport: UseDeclarationTransport) -> Resu
     fields.insert("argument".to_string(), transport_field_value(use_clause_transport_to_any(transport.argument))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(204) /* "use_declaration" */,
         transport.transport_source,
@@ -32723,6 +34221,7 @@ fn transport_to_node_use_declaration(transport: UseDeclarationTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32730,6 +34229,7 @@ fn transport_to_node_use_list(transport: UseListTransport) -> Result<TransportNo
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| use_clause_transport_to_any(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(207) /* "use_list" */,
         transport.transport_source,
@@ -32741,6 +34241,7 @@ fn transport_to_node_use_list(transport: UseListTransport) -> Result<TransportNo
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32751,6 +34252,7 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(209) /* "use_wildcard" */,
         transport.transport_source,
@@ -32762,6 +34264,7 @@ fn transport_to_node_use_wildcard(transport: UseWildcardTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32775,6 +34278,7 @@ fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -
     }
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(212) /* "variadic_parameter" */,
         transport.transport_source,
@@ -32786,6 +34290,7 @@ fn transport_to_node_variadic_parameter(transport: VariadicParameterTransport) -
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32793,6 +34298,7 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::Crate(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(348) /* "visibility_modifier_crate" */,
         transport.transport_source,
@@ -32804,6 +34310,7 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32819,6 +34326,7 @@ fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModi
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::VisibilityModifierInPath(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(215) /* "visibility_modifier" */,
         transport.transport_source,
@@ -32830,6 +34338,7 @@ fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModi
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32837,6 +34346,7 @@ fn transport_to_node_visibility_modifier_uform_crate(transport: VisibilityModifi
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::_VisibilityModifierCrate(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(215) /* "visibility_modifier" */,
         transport.transport_source,
@@ -32848,6 +34358,7 @@ fn transport_to_node_visibility_modifier_uform_crate(transport: VisibilityModifi
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32855,6 +34366,7 @@ fn transport_to_node_visibility_modifier_uform_pub(transport: VisibilityModifier
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::VisibilityModifierPub(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(215) /* "visibility_modifier" */,
         transport.transport_source,
@@ -32866,6 +34378,7 @@ fn transport_to_node_visibility_modifier_uform_pub(transport: VisibilityModifier
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32873,6 +34386,7 @@ fn transport_to_node_where_clause(transport: WhereClauseTransport) -> Result<Tra
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(transport.children.into_iter().map(|v| AnyTransport::WherePredicate(v)).collect::<Vec<_>>())?);
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(191) /* "where_clause" */,
         transport.transport_source,
@@ -32884,6 +34398,7 @@ fn transport_to_node_where_clause(transport: WhereClauseTransport) -> Result<Tra
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32893,6 +34408,7 @@ fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Resu
     fields.insert("bounds".to_string(), transport_field_value(AnyTransport::TraitBounds(transport.bounds))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(192) /* "where_predicate" */,
         transport.transport_source,
@@ -32904,6 +34420,7 @@ fn transport_to_node_where_predicate(transport: WherePredicateTransport) -> Resu
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32916,6 +34433,7 @@ fn transport_to_node_while_expression(transport: WhileExpressionTransport) -> Re
     fields.insert("body".to_string(), transport_field_value(AnyTransport::Block(transport.body))?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = None;
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(277) /* "while_expression" */,
         transport.transport_source,
@@ -32927,6 +34445,7 @@ fn transport_to_node_while_expression(transport: WhileExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
@@ -32937,6 +34456,7 @@ fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Re
         Some(c) => Some(transport_children(vec![expression_transport_to_any(c)])?),
         None => None,
     };
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(255) /* "yield_expression" */,
         transport.transport_source,
@@ -32948,10 +34468,12 @@ fn transport_to_node_yield_expression(transport: YieldExpressionTransport) -> Re
         transport.transport_child_index.map(|v| v as u16),
         fields,
         children,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_string_content(transport: StringContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(147) /* "string_content" */,
         transport.transport_source,
@@ -32963,10 +34485,12 @@ fn transport_to_node_string_content(transport: StringContentTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_raw_string_literal_content(transport: RawStringLiteralContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(149) /* "raw_string_literal_content" */,
         transport.transport_source,
@@ -32978,10 +34502,12 @@ fn transport_to_node_raw_string_literal_content(transport: RawStringLiteralConte
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_float_literal(transport: FloatLiteralTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(151) /* "float_literal" */,
         transport.transport_source,
@@ -32993,10 +34519,12 @@ fn transport_to_node_float_literal(transport: FloatLiteralTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(152) /* "_outer_block_doc_comment_marker" */,
         transport.transport_source,
@@ -33008,10 +34536,12 @@ fn transport_to_node_outer_block_doc_comment_marker(transport: OuterBlockDocComm
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_inner_block_doc_comment_marker(transport: InnerBlockDocCommentMarkerTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(153) /* "_inner_block_doc_comment_marker" */,
         transport.transport_source,
@@ -33023,10 +34553,12 @@ fn transport_to_node_inner_block_doc_comment_marker(transport: InnerBlockDocComm
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_line_doc_content(transport: LineDocContentTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(155) /* "_line_doc_content" */,
         transport.transport_source,
@@ -33038,10 +34570,12 @@ fn transport_to_node_line_doc_content(transport: LineDocContentTransport) -> Res
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(156) /* "_error_sentinel" */,
         transport.transport_source,
@@ -33053,10 +34587,12 @@ fn transport_to_node_error_sentinel(transport: ErrorSentinelTransport) -> Result
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(112) /* "[" */,
         transport.transport_source,
@@ -33068,10 +34604,12 @@ fn transport_to_node_bracket(transport: BracketTransport) -> Result<TransportNod
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(113) /* "]" */,
         transport.transport_source,
@@ -33083,10 +34621,12 @@ fn transport_to_node_close_bracket(transport: CloseBracketTransport) -> Result<T
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(2) /* ";" */,
         transport.transport_source,
@@ -33098,10 +34638,12 @@ fn transport_to_node_semi(transport: SemiTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(81) /* "->" */,
         transport.transport_source,
@@ -33113,10 +34655,12 @@ fn transport_to_node_arrow(transport: ArrowTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(74) /* "_" */,
         transport.transport_source,
@@ -33128,10 +34672,12 @@ fn transport_to_node_anonymous(transport: AnonymousTransport) -> Result<Transpor
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(114) /* "{" */,
         transport.transport_source,
@@ -33143,10 +34689,12 @@ fn transport_to_node_brace(transport: BraceTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(115) /* "}" */,
         transport.transport_source,
@@ -33158,10 +34706,12 @@ fn transport_to_node_close_brace(transport: CloseBraceTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(7) /* "(" */,
         transport.transport_source,
@@ -33173,10 +34723,12 @@ fn transport_to_node_paren(transport: ParenTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(8) /* ")" */,
         transport.transport_source,
@@ -33188,10 +34740,12 @@ fn transport_to_node_close_paren(transport: CloseParenTransport) -> Result<Trans
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(5) /* ":" */,
         transport.transport_source,
@@ -33203,10 +34757,12 @@ fn transport_to_node_colon(transport: ColonTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_fn(transport: FnTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(92) /* "fn" */,
         transport.transport_source,
@@ -33218,10 +34774,12 @@ fn transport_to_node_fn(transport: FnTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(49) /* "!" */,
         transport.transport_source,
@@ -33233,10 +34791,12 @@ fn transport_to_node_bang(transport: BangTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(85) /* "async" */,
         transport.transport_source,
@@ -33248,10 +34808,12 @@ fn transport_to_node_async(transport: AsyncTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(123) /* "in" */,
         transport.transport_source,
@@ -33263,10 +34825,12 @@ fn transport_to_node_in(transport: InTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_move(transport: MoveTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(143) /* "move" */,
         transport.transport_source,
@@ -33278,10 +34842,12 @@ fn transport_to_node_move(transport: MoveTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_dotdot(transport: DotdotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(76) /* ".." */,
         transport.transport_source,
@@ -33293,10 +34859,12 @@ fn transport_to_node_dotdot(transport: DotdotTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_pub(transport: PubTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(101) /* "pub" */,
         transport.transport_source,
@@ -33308,10 +34876,12 @@ fn transport_to_node_pub(transport: PubTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_ref(transport: RefTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(125) /* "ref" */,
         transport.transport_source,
@@ -33323,10 +34893,12 @@ fn transport_to_node_ref(transport: RefTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_static(transport: StaticTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(103) /* "static" */,
         transport.transport_source,
@@ -33338,10 +34910,12 @@ fn transport_to_node_static(transport: StaticTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(108) /* "unsafe" */,
         transport.transport_source,
@@ -33353,10 +34927,12 @@ fn transport_to_node_unsafe(transport: UnsafeTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(52) /* "&&" */,
         transport.transport_source,
@@ -33368,10 +34944,12 @@ fn transport_to_node_andand(transport: AndandTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(79) /* "," */,
         transport.transport_source,
@@ -33383,10 +34961,12 @@ fn transport_to_node_comma(transport: CommaTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_tok_sq(transport: TokSqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(83) /* "'" */,
         transport.transport_source,
@@ -33398,10 +34978,12 @@ fn transport_to_node_tok_sq(transport: TokSqTransport) -> Result<TransportNodeDa
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(84) /* "as" */,
         transport.transport_source,
@@ -33413,10 +34995,12 @@ fn transport_to_node_as(transport: AsTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(86) /* "await" */,
         transport.transport_source,
@@ -33428,10 +35012,12 @@ fn transport_to_node_await(transport: AwaitTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(87) /* "break" */,
         transport.transport_source,
@@ -33443,10 +35029,12 @@ fn transport_to_node_break(transport: BreakTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_const(transport: ConstTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(88) /* "const" */,
         transport.transport_source,
@@ -33458,10 +35046,12 @@ fn transport_to_node_const(transport: ConstTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(89) /* "continue" */,
         transport.transport_source,
@@ -33473,10 +35063,12 @@ fn transport_to_node_continue(transport: ContinueTransport) -> Result<TransportN
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_default(transport: DefaultTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(90) /* "default" */,
         transport.transport_source,
@@ -33488,10 +35080,12 @@ fn transport_to_node_default(transport: DefaultTransport) -> Result<TransportNod
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_enum(transport: EnumTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(91) /* "enum" */,
         transport.transport_source,
@@ -33503,10 +35097,12 @@ fn transport_to_node_enum(transport: EnumTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(93) /* "for" */,
         transport.transport_source,
@@ -33518,10 +35114,12 @@ fn transport_to_node_for(transport: ForTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_gen(transport: GenTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(94) /* "gen" */,
         transport.transport_source,
@@ -33533,10 +35131,12 @@ fn transport_to_node_gen(transport: GenTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(95) /* "if" */,
         transport.transport_source,
@@ -33548,10 +35148,12 @@ fn transport_to_node_if(transport: IfTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_impl(transport: ImplTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(96) /* "impl" */,
         transport.transport_source,
@@ -33563,10 +35165,12 @@ fn transport_to_node_impl(transport: ImplTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_let(transport: LetTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(97) /* "let" */,
         transport.transport_source,
@@ -33578,10 +35182,12 @@ fn transport_to_node_let(transport: LetTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_loop(transport: LoopTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(98) /* "loop" */,
         transport.transport_source,
@@ -33593,10 +35199,12 @@ fn transport_to_node_loop(transport: LoopTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(99) /* "match" */,
         transport.transport_source,
@@ -33608,10 +35216,12 @@ fn transport_to_node_match(transport: MatchTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_mod(transport: ModTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(100) /* "mod" */,
         transport.transport_source,
@@ -33623,10 +35233,12 @@ fn transport_to_node_mod(transport: ModTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(102) /* "return" */,
         transport.transport_source,
@@ -33638,10 +35250,12 @@ fn transport_to_node_return(transport: ReturnTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_struct(transport: StructTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(104) /* "struct" */,
         transport.transport_source,
@@ -33653,10 +35267,12 @@ fn transport_to_node_struct(transport: StructTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_trait(transport: TraitTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(105) /* "trait" */,
         transport.transport_source,
@@ -33668,10 +35284,12 @@ fn transport_to_node_trait(transport: TraitTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(106) /* "type" */,
         transport.transport_source,
@@ -33683,10 +35301,12 @@ fn transport_to_node_type(transport: TypeTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_union(transport: UnionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(107) /* "union" */,
         transport.transport_source,
@@ -33698,10 +35318,12 @@ fn transport_to_node_union(transport: UnionTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_use(transport: UseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(109) /* "use" */,
         transport.transport_source,
@@ -33713,10 +35335,12 @@ fn transport_to_node_use(transport: UseTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_where(transport: WhereTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(110) /* "where" */,
         transport.transport_source,
@@ -33728,10 +35352,12 @@ fn transport_to_node_where(transport: WhereTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(111) /* "while" */,
         transport.transport_source,
@@ -33743,10 +35369,12 @@ fn transport_to_node_while(transport: WhileTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(51) /* "|" */,
         transport.transport_source,
@@ -33758,10 +35386,12 @@ fn transport_to_node_pipe(transport: PipeTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(46) /* "/" */,
         transport.transport_source,
@@ -33773,10 +35403,12 @@ fn transport_to_node_slash(transport: SlashTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_raw(transport: RawTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(121) /* "raw" */,
         transport.transport_source,
@@ -33788,10 +35420,12 @@ fn transport_to_node_raw(transport: RawTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(66) /* "=" */,
         transport.transport_source,
@@ -33803,10 +35437,12 @@ fn transport_to_node_eq(transport: EqTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(82) /* "#" */,
         transport.transport_source,
@@ -33818,10 +35454,12 @@ fn transport_to_node_hash(transport: HashTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(75) /* "." */,
         transport.transport_source,
@@ -33833,10 +35471,12 @@ fn transport_to_node_dot(transport: DotTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(136) /* "/ *" */,
         transport.transport_source,
@@ -33848,10 +35488,12 @@ fn transport_to_node_tok_slash_star(transport: TokSlashStarTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(137) /* "* /" */,
         transport.transport_source,
@@ -33863,10 +35505,12 @@ fn transport_to_node_tok_star_slash(transport: TokStarSlashTransport) -> Result<
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(10) /* "+" */,
         transport.transport_source,
@@ -33878,10 +35522,12 @@ fn transport_to_node_plus(transport: PlusTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(70) /* "<" */,
         transport.transport_source,
@@ -33893,10 +35539,12 @@ fn transport_to_node_lt(transport: LtTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(69) /* ">" */,
         transport.transport_source,
@@ -33908,10 +35556,12 @@ fn transport_to_node_gt(transport: GtTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(73) /* "@" */,
         transport.transport_source,
@@ -33923,10 +35573,12 @@ fn transport_to_node_at(transport: AtTransport) -> Result<TransportNodeData, ::a
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_dyn(transport: DynTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(119) /* "dyn" */,
         transport.transport_source,
@@ -33938,10 +35590,12 @@ fn transport_to_node_dyn(transport: DynTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(117) /* "else" */,
         transport.transport_source,
@@ -33953,10 +35607,12 @@ fn transport_to_node_else(transport: ElseTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_extern(transport: ExternTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(116) /* "extern" */,
         transport.transport_source,
@@ -33968,10 +35624,12 @@ fn transport_to_node_extern(transport: ExternTransport) -> Result<TransportNodeD
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_fat_arrow(transport: FatArrowTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(4) /* "=>" */,
         transport.transport_source,
@@ -33983,10 +35641,12 @@ fn transport_to_node_fat_arrow(transport: FatArrowTransport) -> Result<Transport
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_mut(transport: MutTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(0) /* "mut" — no parser symbol */,
         transport.transport_source,
@@ -33998,10 +35658,12 @@ fn transport_to_node_mut(transport: MutTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(45) /* "-" */,
         transport.transport_source,
@@ -34013,10 +35675,12 @@ fn transport_to_node_minus(transport: MinusTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(50) /* "&" */,
         transport.transport_source,
@@ -34028,10 +35692,12 @@ fn transport_to_node_amp(transport: AmpTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(12) /* "?" */,
         transport.transport_source,
@@ -34043,10 +35709,12 @@ fn transport_to_node_question(transport: QuestionTransport) -> Result<TransportN
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(127) /* "\"" */,
         transport.transport_source,
@@ -34058,10 +35726,12 @@ fn transport_to_node_tok_dq(transport: TokDqTransport) -> Result<TransportNodeDa
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_tok_dollar(transport: TokDollarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(6) /* "$" */,
         transport.transport_source,
@@ -34073,10 +35743,12 @@ fn transport_to_node_tok_dollar(transport: TokDollarTransport) -> Result<Transpo
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(124) /* "try" */,
         transport.transport_source,
@@ -34088,10 +35760,12 @@ fn transport_to_node_try(transport: TryTransport) -> Result<TransportNodeData, :
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(11) /* "*" */,
         transport.transport_source,
@@ -34103,10 +35777,12 @@ fn transport_to_node_star(transport: StarTransport) -> Result<TransportNodeData,
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(77) /* "..." */,
         transport.transport_source,
@@ -34118,10 +35794,12 @@ fn transport_to_node_ellipsis(transport: EllipsisTransport) -> Result<TransportN
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 
 fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<::sittir_core::types::NodeTrivia>(v).ok());
     Ok(transport_node_data(
         TransportKindId(122) /* "yield" */,
         transport.transport_source,
@@ -34133,6 +35811,7 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
         transport.transport_child_index.map(|v| v as u16),
         None,
         None,
+        trivia_data,
     ))
 }
 

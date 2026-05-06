@@ -132,13 +132,35 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.render_node_data(node)
     }
 
-    /// Render a deserialized `NodeData` with format application.
+    /// Render a deserialized `NodeData` with format application and
+    /// trivia wrapping. Mirrors the TS `boundRender` + trivia-wrapping
+    /// logic in `packages/core/src/render.ts` (spec 023 T017).
     pub fn render_node_data(&self, node: NodeData) -> Result<String, String> {
         let canonical = self
             .grammar
             .render(&node)
             .map_err(|e| format!("render_dispatch failed: {e}"))?;
-        self.render_canonical_node(&node, canonical)
+        let mut result = self.render_canonical_node(&node, canonical)?;
+
+        // Trivia wrapping: when `$triviaData` is present, prepend leading
+        // trivia items and append trailing trivia items. Each trivia item
+        // renders via `grammar.render()` so it uses its own template.
+        if let Some(ref trivia) = node.trivia_data {
+            if let Some(ref leading) = trivia.leading {
+                if !leading.is_empty() {
+                    let leading_text = render_trivia_items(self.grammar, leading)?;
+                    result = format!("{leading_text}\n{result}");
+                }
+            }
+            if let Some(ref trailing) = trivia.trailing {
+                if !trailing.is_empty() {
+                    let trailing_text = render_trivia_items(self.grammar, trailing)?;
+                    result = format!("{result}\n{trailing_text}");
+                }
+            }
+        }
+
+        Ok(result)
     }
 
     /// Apply format to a pre-rendered canonical string.
@@ -261,6 +283,29 @@ fn resolve_render_format<'a>(
     None
 }
 
+/// Render a slice of trivia `NodeData` items, joining them with newlines.
+/// Each item renders independently via the grammar's dispatch (identical to
+/// the TS `boundRender(t)` call in `render.ts`). Leaf nodes (no
+/// fields/children, has $text) short-circuit to their text.
+fn render_trivia_items<G: EngineGrammar>(grammar: G, items: &[NodeData]) -> Result<String, String> {
+    let mut parts: Vec<String> = Vec::with_capacity(items.len());
+    for item in items {
+        // Leaf fast-path: if the trivia item is a simple leaf with $text,
+        // skip template dispatch and return the text directly.
+        if item.fields.is_none() && item.children.is_none() {
+            if let Some(ref text) = item.text {
+                parts.push(text.clone());
+                continue;
+            }
+        }
+        let rendered = grammar
+            .render(item)
+            .map_err(|e| format!("trivia render failed: {e}"))?;
+        parts.push(rendered);
+    }
+    Ok(parts.join("\n"))
+}
+
 pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {
     if let Some(s) = payload.downcast_ref::<String>() {
         s.clone()
@@ -326,6 +371,7 @@ mod tests {
             span: None,
             node_handle: None,
             child_index: None,
+            trivia_data: None,
         }
     }
 
@@ -362,6 +408,114 @@ mod tests {
             .unwrap();
 
         assert_eq!(rendered, "canonical");
+    }
+
+    // --- Trivia render tests (spec 023 T017) ---
+
+    fn node_with_trivia(leading: Option<Vec<NodeData>>, trailing: Option<Vec<NodeData>>) -> NodeData {
+        use crate::types::NodeTrivia;
+        NodeData {
+            type_: crate::types::KindId(1),
+            source: Source::Factory,
+            named: true,
+            fields: None,
+            children: None,
+            text: Some("x".to_string()),
+            span: None,
+            node_handle: None,
+            child_index: None,
+            trivia_data: Some(NodeTrivia { leading, trailing }),
+        }
+    }
+
+    fn comment_leaf(text: &str) -> NodeData {
+        NodeData {
+            type_: crate::types::KindId(318), // block_comment kind in rust grammar
+            source: Source::Factory,
+            named: true,
+            fields: None,
+            children: None,
+            text: Some(text.to_string()),
+            span: None,
+            node_handle: None,
+            child_index: None,
+            trivia_data: None,
+        }
+    }
+
+    #[test]
+    fn render_node_data_prepends_leading_trivia() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node_with_trivia(
+            Some(vec![comment_leaf("// hello")]),
+            None,
+        );
+        let rendered = tree.render_node_data(n).unwrap();
+        // The node renders as "rendered:1" (TestGrammar::render), and
+        // leading trivia "// hello" is prepended with a newline separator.
+        // Trivia items use the leaf fast-path (fields=None, children=None,
+        // text=Some) so they return their $text directly.
+        assert_eq!(rendered, "// hello\nrendered:1");
+    }
+
+    #[test]
+    fn render_node_data_appends_trailing_trivia() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node_with_trivia(
+            None,
+            Some(vec![comment_leaf("// trailing")]),
+        );
+        let rendered = tree.render_node_data(n).unwrap();
+        assert_eq!(rendered, "rendered:1\n// trailing");
+    }
+
+    #[test]
+    fn render_node_data_wraps_with_both_trivia() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node_with_trivia(
+            Some(vec![comment_leaf("// before")]),
+            Some(vec![comment_leaf("// after")]),
+        );
+        let rendered = tree.render_node_data(n).unwrap();
+        assert_eq!(rendered, "// before\nrendered:1\n// after");
+    }
+
+    #[test]
+    fn render_node_data_multiple_trivia_items_joined_with_newlines() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node_with_trivia(
+            Some(vec![comment_leaf("// line 1"), comment_leaf("// line 2")]),
+            None,
+        );
+        let rendered = tree.render_node_data(n).unwrap();
+        assert_eq!(rendered, "// line 1\n// line 2\nrendered:1");
+    }
+
+    #[test]
+    fn render_node_data_no_trivia_unchanged() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node(Source::Factory);
+        let rendered = tree.render_node_data(n).unwrap();
+        // TestGrammar's render returns "rendered:<kind_id>", but the leaf
+        // fast-path in render_dispatch applies: fields=None,
+        // children=None, text=Some("x") → returns "x" directly.
+        // Actually, render_node_data calls grammar.render() which is
+        // TestGrammar::render → "rendered:1".
+        assert_eq!(rendered, "rendered:1");
+    }
+
+    #[test]
+    fn render_node_data_empty_trivia_arrays_unchanged() {
+        let mut engine = Engine::new(TestGrammar, None).unwrap();
+        let mut tree = engine.parse("fn main() {}".to_string()).unwrap();
+        let n = node_with_trivia(Some(vec![]), Some(vec![]));
+        let rendered = tree.render_node_data(n).unwrap();
+        assert_eq!(rendered, "rendered:1");
     }
 
 }
