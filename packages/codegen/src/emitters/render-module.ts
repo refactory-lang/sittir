@@ -21,14 +21,14 @@ import type {
 	AssembledNode,
 	RenderTemplateSurface,
 	AssembledNonterminal,
-	
-	AssembledGroup,
+
 	AssembledSupertype,
 	UnresolvedRef
 } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
+	AssembledGroup,
 	AssembledPolymorph,
 	isMultiple,
 	isRequired,
@@ -39,6 +39,7 @@ import {
 	structuralChildrenOf
 } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
+import { findRepeatSeparator } from '../compiler/template-walker.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
@@ -1150,17 +1151,24 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 	const variants = new Map<string, Map<string, string>>();
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!node.userFacing) continue;
-		// Separator / list-container — only meaningful on container-shape
-		// branches (no `field()` on the rule, repeat-derived) that expose
-		// a repeat separator. Phase 1d.vii (spec 022) merged
-		// `AssembledContainer` into `AssembledBranch`; the discriminant
-		// is `isContainerShape === true` plus a non-empty `separator`.
-		if (node instanceof AssembledBranch && node.isContainerShape) {
-			const sep = node.separator;
+		// Separator — derive from ALL branches and groups, not just
+		// container-shaped ones. Non-container branches (e.g. `parameters`,
+		// `arguments`, `field_declaration_list`) carry repeat separators
+		// inside their simplified rule that `findRepeatSeparator` extracts.
+		// The prior code only checked `isContainerShape` branches, causing
+		// the transport render path to use "" for 138+ kinds that need ","
+		// or other separators.
+		if (node instanceof AssembledBranch) {
+			const sep = node.separator ?? findRepeatSeparator(node.simplifiedRule);
 			if (sep !== undefined) separators.set(kind, sep);
 			// Every container-shape branch with children is a list-container.
-			const childCount = node.children?.length ?? 0;
-			if (childCount > 0) listContainers.add(kind);
+			if (node.isContainerShape) {
+				const childCount = node.children?.length ?? 0;
+				if (childCount > 0) listContainers.add(kind);
+			}
+		} else if (node instanceof AssembledGroup) {
+			const sep = findRepeatSeparator(node.simplifiedRule);
+			if (sep !== undefined) separators.set(kind, sep);
 		}
 		// Variant-branching polymorphs — `variantChildKinds` holds the
 		// ordered list of alias-target kinds. Map each child kind to the

@@ -317,12 +317,22 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
         252 => ",", // "arguments"
         217 => ",", // "array"
         218 => ",", // "array_pattern"
+        291 => ",", // "enum_body"
         169 => ",", // "export_clause"
+        278 => ",", // "extends_clause"
+        289 => ",", // "extends_type_clause"
+        257 => ",", // "formal_parameters"
+        280 => ",", // "implements_clause"
+        184 => ",", // "lexical_declaration"
         178 => ",", // "named_imports"
+        213 => ",", // "object"
+        214 => ",", // "object_pattern"
+        337 => ",", // "object_type"
         246 => ",", // "sequence_expression"
         347 => ",", // "tuple_type"
         336 => ",", // "type_arguments"
         340 => ",", // "type_parameters"
+        183 => ",", // "variable_declaration"
         _ => "",
     }
 }

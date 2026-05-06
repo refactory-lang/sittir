@@ -314,17 +314,30 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
 
 pub(crate) fn separator_for(kind_id: u16) -> &'static str {
     match kind_id {
+        322 => ",", // "_array_expression_list"
+        333 => ";", // "_macro_definition_brace"
+        332 => ";", // "_macro_definition_bracket"
+        331 => ";", // "_macro_definition_paren"
+        257 => ",", // "arguments"
         282 => ",", // "closure_parameters"
         179 => ",", // "enum_variant_list"
         181 => ",", // "field_declaration_list"
         263 => ",", // "field_initializer_list"
+        221 => ",", // "for_lifetimes"
+        183 => ",", // "ordered_field_declaration_list"
         210 => ",", // "parameters"
         297 => ",", // "slice_pattern"
+        299 => ",", // "struct_pattern"
         196 => "+", // "trait_bounds"
+        260 => ",", // "tuple_expression"
         296 => ",", // "tuple_pattern"
+        298 => ",", // "tuple_struct_pattern"
         223 => ",", // "tuple_type"
         230 => ",", // "type_arguments"
+        199 => ",", // "type_parameters"
+        229 => ",", // "use_bounds"
         207 => ",", // "use_list"
+        191 => ",", // "where_clause"
         _ => "",
     }
 }

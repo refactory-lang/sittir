@@ -13865,7 +13865,7 @@ fn render_match_block_block_transport(node: &MatchBlockBlockTransport, dest: &mu
     let template = MatchBlockBlockTemplate {
         alternative: ListNonterminalView {
             items: alternative_buf.as_slice(),
-            separator: "",
+            separator: "\n",
             leading: false,
             trailing: false,
         },
@@ -13895,7 +13895,7 @@ fn render_simple_statements_transport(node: &SimpleStatementsTransport, dest: &m
     let template = SimpleStatementsTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -13962,7 +13962,7 @@ fn render_argument_list_transport(node: &ArgumentListTransport, dest: &mut dyn :
     let template = ArgumentListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -13985,7 +13985,7 @@ fn render_assert_statement_transport(node: &AssertStatementTransport, dest: &mut
     let template = AssertStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14085,7 +14085,7 @@ fn render_block_transport(node: &BlockTransport, dest: &mut dyn ::std::fmt::Writ
     let template = BlockTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: "\n",
             leading: false,
             trailing: false,
         },
@@ -14123,7 +14123,7 @@ fn render_case_clause_transport(node: &CaseClauseTransport, dest: &mut dyn ::std
     let template = CaseClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14179,7 +14179,7 @@ fn render_class_pattern_transport(node: &ClassPatternTransport, dest: &mut dyn :
     let template = ClassPatternTemplate {
         arguments: ListNonterminalView {
             items: arguments_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14430,7 +14430,7 @@ fn render_except_clause_transport(node: &ExceptClauseTransport, dest: &mut dyn :
     let template = ExceptClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14440,7 +14440,7 @@ fn render_except_clause_transport(node: &ExceptClauseTransport, dest: &mut dyn :
         },
         value: ListNonterminalView {
             items: value_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14457,7 +14457,7 @@ fn render_exec_statement_transport(node: &ExecStatementTransport, dest: &mut dyn
         code: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.code)),
         in_clause: ListNonterminalView {
             items: in_clause_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14472,7 +14472,7 @@ fn render_expression_list_transport(node: &ExpressionListTransport, dest: &mut d
     let template = ExpressionListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14542,7 +14542,7 @@ fn render_for_in_clause_transport(node: &ForInClauseTransport, dest: &mut dyn ::
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.left)),
         right: ListNonterminalView {
             items: right_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14610,7 +14610,7 @@ fn render_future_import_statement_transport(node: &FutureImportStatementTranspor
     let template = FutureImportStatementTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14647,7 +14647,7 @@ fn render_global_statement_transport(node: &GlobalStatementTransport, dest: &mut
     let template = GlobalStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14691,14 +14691,14 @@ fn render_import_from_statement_transport(node: &ImportFromStatementTransport, d
     let template = ImportFromStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         module_name: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.module_name.as_ref())),
         name: ListNonterminalView {
             items: &[],
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14717,7 +14717,7 @@ fn render_import_statement_transport(node: &ImportStatementTransport, dest: &mut
     let template = ImportStatementTemplate {
         name: ListNonterminalView {
             items: name_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14812,7 +14812,7 @@ fn render_list_transport(node: &ListTransport, dest: &mut dyn ::std::fmt::Write)
     let template = ListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14841,7 +14841,7 @@ fn render_list_pattern_transport(node: &ListPatternTransport, dest: &mut dyn ::s
     let template = ListPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14877,7 +14877,7 @@ fn render_match_statement_transport(node: &MatchStatementTransport, dest: &mut d
         body: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.body)),
         subject: ListNonterminalView {
             items: subject_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14927,7 +14927,7 @@ fn render_nonlocal_statement_transport(node: &NonlocalStatementTransport, dest: 
     let template = NonlocalStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -14957,7 +14957,7 @@ fn render_parameters_transport(node: &ParametersTransport, dest: &mut dyn ::std:
     let template = ParametersTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15002,7 +15002,7 @@ fn render_pattern_list_transport(node: &PatternListTransport, dest: &mut dyn ::s
     let template = PatternListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15024,13 +15024,13 @@ fn render_print_statement_transport(node: &PrintStatementTransport, dest: &mut d
     let template = PrintStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         argument: ListNonterminalView {
             items: argument_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15180,7 +15180,7 @@ fn render_subscript_transport(node: &SubscriptTransport, dest: &mut dyn ::std::f
     let template = SubscriptTemplate {
         subscript: ListNonterminalView {
             items: subscript_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15224,7 +15224,7 @@ fn render_tuple_transport(node: &TupleTransport, dest: &mut dyn ::std::fmt::Writ
     let template = TupleTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15239,7 +15239,7 @@ fn render_tuple_pattern_transport(node: &TuplePatternTransport, dest: &mut dyn :
     let template = TuplePatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -15328,7 +15328,7 @@ fn render_union_pattern_transport(node: &UnionPatternTransport, dest: &mut dyn :
     let template = UnionPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: "|",
             leading: false,
             trailing: false,
         },

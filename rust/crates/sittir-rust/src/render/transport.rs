@@ -22414,19 +22414,19 @@ fn render_array_expression_list_transport(node: &ArrayExpressionListTransport, d
     let template = ArrayExpressionListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         elements: ListNonterminalView {
             items: elements_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -22722,7 +22722,7 @@ fn render__macro_definition_brace_transport(node: &_MacroDefinitionBraceTranspor
     let template = _MacroDefinitionBraceTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -22738,7 +22738,7 @@ fn render__macro_definition_bracket_transport(node: &_MacroDefinitionBracketTran
     let template = _MacroDefinitionBracketTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -22754,7 +22754,7 @@ fn render__macro_definition_paren_transport(node: &_MacroDefinitionParenTranspor
     let template = _MacroDefinitionParenTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -23160,7 +23160,7 @@ fn render_arguments_transport(node: &ArgumentsTransport, dest: &mut dyn ::std::f
     let template = ArgumentsTemplate {
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -23986,7 +23986,7 @@ fn render_for_lifetimes_transport(node: &ForLifetimesTransport, dest: &mut dyn :
     let template = ForLifetimesTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -24465,7 +24465,7 @@ fn render_macro_definition_paren_transport(node: &MacroDefinitionParenTransport,
     let template = MacroDefinitionParenTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -24481,7 +24481,7 @@ fn render_macro_definition_bracket_transport(node: &MacroDefinitionBracketTransp
     let template = MacroDefinitionBracketTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -24497,7 +24497,7 @@ fn render_macro_definition_brace_transport(node: &MacroDefinitionBraceTransport,
     let template = MacroDefinitionBraceTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ";",
             leading: false,
             trailing: false,
         },
@@ -24807,13 +24807,13 @@ fn render_ordered_field_declaration_list_transport(node: &OrderedFieldDeclaratio
     let template = OrderedFieldDeclarationListTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         r#type: ListNonterminalView {
             items: r#type_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25379,7 +25379,7 @@ fn render_struct_pattern_transport(node: &StructPatternTransport, dest: &mut dyn
     let template = StructPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25682,13 +25682,13 @@ fn render_tuple_expression_transport(node: &TupleExpressionTransport, dest: &mut
     let template = TupleExpressionTemplate {
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         elements: ListNonterminalView {
             items: elements_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25718,7 +25718,7 @@ fn render_tuple_struct_pattern_transport(node: &TupleStructPatternTransport, des
     let template = TupleStructPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25823,7 +25823,7 @@ fn render_type_parameters_transport(node: &TypeParametersTransport, dest: &mut d
     let template = TypeParametersTemplate {
         attributes: ListNonterminalView {
             items: attributes_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25889,7 +25889,7 @@ fn render_use_bounds_transport(node: &UseBoundsTransport, dest: &mut dyn ::std::
     let template = UseBoundsTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26014,7 +26014,7 @@ fn render_where_clause_transport(node: &WhereClauseTransport, dest: &mut dyn ::s
     let template = WhereClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },

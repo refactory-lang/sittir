@@ -25601,13 +25601,13 @@ fn render_enum_body_transport(node: &EnumBodyTransport, dest: &mut dyn ::std::fm
     let template = EnumBodyTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
         name: ListNonterminalView {
             items: &[],
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25794,7 +25794,7 @@ fn render_extends_clause_transport(node: &ExtendsClauseTransport, dest: &mut dyn
         },
         value: ListNonterminalView {
             items: value_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25809,7 +25809,7 @@ fn render_extends_type_clause_transport(node: &ExtendsTypeClauseTransport, dest:
     let template = ExtendsTypeClauseTemplate {
         r#type: ListNonterminalView {
             items: r#type_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -25899,7 +25899,7 @@ fn render_formal_parameters_transport(node: &FormalParametersTransport, dest: &m
     let template = FormalParametersTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26094,7 +26094,7 @@ fn render_implements_clause_transport(node: &ImplementsClauseTransport, dest: &m
     let template = ImplementsClauseTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26547,7 +26547,7 @@ fn render_lexical_declaration_transport(node: &LexicalDeclarationTransport, dest
     let template = LexicalDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26792,7 +26792,7 @@ fn render_object_transport(node: &ObjectTransport, dest: &mut dyn ::std::fmt::Wr
     let template = ObjectTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26816,7 +26816,7 @@ fn render_object_pattern_transport(node: &ObjectPatternTransport, dest: &mut dyn
     let template = ObjectPatternTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -26833,7 +26833,7 @@ fn render_object_type_transport(node: &ObjectTypeTransport, dest: &mut dyn ::std
         closing: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(&node.closing)),
         members: ListNonterminalView {
             items: members_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
@@ -27666,7 +27666,7 @@ fn render_variable_declaration_transport(node: &VariableDeclarationTransport, de
     let template = VariableDeclarationTemplate {
         declarators: ListNonterminalView {
             items: declarators_buf.as_slice(),
-            separator: "",
+            separator: ",",
             leading: false,
             trailing: false,
         },
