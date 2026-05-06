@@ -465,15 +465,19 @@ function emitFromNumber(
 	const floatNode = floatNodes[0];
 
 	if (intNode && floatNode) {
-		// Two-branch discriminator: Number.isInteger() → int, else → float
 		const retType = `${returnTypeExpr(intNode)} | ${returnTypeExpr(floatNode)}`;
-		fns.push(`  number(value: number): ${retType} {`);
-		fns.push(`    return Number.isInteger(value)`);
-		fns.push(`      ? F.${intNode.rawFactoryName}(String(value))`);
-		fns.push(`      : F.${floatNode.rawFactoryName}(String(value));`);
-		fns.push('  },');
+		fns.push(`  number: Object.assign(`);
+		fns.push(`    function number(value: number): ${retType} {`);
+		fns.push(`      return Number.isInteger(value)`);
+		fns.push(`        ? F.${intNode.rawFactoryName}(String(value))`);
+		fns.push(`        : F.${floatNode.rawFactoryName}(String(value));`);
+		fns.push(`    },`);
+		fns.push(`    {`);
+		fns.push(`      integer(value: number): ${returnTypeExpr(intNode)} { return F.${intNode.rawFactoryName}(String(value)); },`);
+		fns.push(`      float(value: number): ${returnTypeExpr(floatNode)} { return F.${floatNode.rawFactoryName}(String(value)); },`);
+		fns.push(`    }`);
+		fns.push(`  ),`);
 	} else {
-		// Single kind — route all numbers there
 		const node = intNode ?? floatNode ?? leafNodes[0];
 		if (!node) return;
 		fns.push(`  number(value: number): ${returnTypeExpr(node)} {`);
@@ -554,19 +558,23 @@ function emitFromComment(
 	}
 
 	if (leafNodes.length > 1) {
-		// Multiple leaf comment kinds — discriminate by prefix
 		const retType = leafNodes.map(returnTypeExpr).join(' | ');
 		const lineNode = leafNodes.find(n => /line/.test(n.kind));
 		const blockNode = leafNodes.find(n => /block/.test(n.kind));
 		if (lineNode && blockNode) {
-			fns.push(`  comment(text: string): ${retType} {`);
-			fns.push(`    return text.startsWith('/*')`);
-			fns.push(`      ? F.${blockNode.rawFactoryName}(text)`);
-			fns.push(`      : F.${lineNode.rawFactoryName}(text);`);
-			fns.push('  },');
+			fns.push(`  comment: Object.assign(`);
+			fns.push(`    function comment(text: string): ${retType} {`);
+			fns.push(`      return text.startsWith('/*')`);
+			fns.push(`        ? F.${blockNode.rawFactoryName}(text)`);
+			fns.push(`        : F.${lineNode.rawFactoryName}(text);`);
+			fns.push(`    },`);
+			fns.push(`    {`);
+			fns.push(`      line(text: string): ${returnTypeExpr(lineNode)} { return F.${lineNode.rawFactoryName}(text); },`);
+			fns.push(`      block(text: string): ${returnTypeExpr(blockNode)} { return F.${blockNode.rawFactoryName}(text); },`);
+			fns.push(`    }`);
+			fns.push(`  ),`);
 			return;
 		}
-		// Fallback: use first leaf
 		const first = leafNodes[0]!;
 		fns.push(`  comment(text: string): ${returnTypeExpr(first)} {`);
 		fns.push(`    return F.${first.rawFactoryName}(text);`);
@@ -670,11 +678,11 @@ function emitFromAliases(
 	fns: string[],
 ): void {
 	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
-		{ role: 'definition.function', canonicalName: 'function_' },
-		{ role: 'definition.class', canonicalName: 'class_' },
+		{ role: 'definition.function', canonicalName: 'function' },
+		{ role: 'definition.class', canonicalName: 'class' },
 		{ role: 'definition.method', canonicalName: 'method' },
-		{ role: 'definition.module', canonicalName: 'module_' },
-		{ role: 'definition.interface', canonicalName: 'interface_' },
+		{ role: 'definition.module', canonicalName: 'module' },
+		{ role: 'definition.interface', canonicalName: 'interface' },
 	];
 
 	for (const { role, canonicalName } of ALIAS_ROLES) {

@@ -177,11 +177,17 @@ export const from = {
   boolean(value: boolean): ReturnType<typeof F.true_> | ReturnType<typeof F.false_> {
     return value ? F.true_() : F.false_();
   },
-  number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
-    return Number.isInteger(value)
-      ? F.integer(String(value))
-      : F.float(String(value));
-  },
+  number: Object.assign(
+    function number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+      return Number.isInteger(value)
+        ? F.integer(String(value))
+        : F.float(String(value));
+    },
+    {
+      integer(value: number): ReturnType<typeof F.integer> { return F.integer(String(value)); },
+      float(value: number): ReturnType<typeof F.float> { return F.float(String(value)); },
+    }
+  ),
   comment(text: string): ReturnType<typeof F.comment> {
     return F.comment(text);
   },
@@ -192,9 +198,9 @@ export const from = {
     return F.identifier(name);
   },
   // definition.function → function_definition
-  get function_() { return ir.functionDefinition; },
+  get function() { return ir.functionDefinition; },
   // definition.class → class_definition
-  get class_() { return ir.classDefinition; },
+  get class() { return ir.classDefinition; },
 } as const;
 
 export const ir = {

@@ -375,11 +375,17 @@ export const from = {
   boolean(value: boolean): ReturnType<typeof F.booleanLiteral> {
     return F.booleanLiteral(value ? 'true' : 'false');
   },
-  number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
-    return Number.isInteger(value)
-      ? F.integerLiteral(String(value))
-      : F.floatLiteral(String(value));
-  },
+  number: Object.assign(
+    function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
+      return Number.isInteger(value)
+        ? F.integerLiteral(String(value))
+        : F.floatLiteral(String(value));
+    },
+    {
+      integer(value: number): ReturnType<typeof F.integerLiteral> { return F.integerLiteral(String(value)); },
+      float(value: number): ReturnType<typeof F.floatLiteral> { return F.floatLiteral(String(value)); },
+    }
+  ),
   string(value: string): ReturnType<typeof F.stringLiteral> {
     return F.stringLiteral(F.stringContent(value) as never);
   },
@@ -390,15 +396,15 @@ export const from = {
     return F.identifier(name);
   },
   // definition.function → function_item
-  get function_() { return ir.functionItem; },
+  get function() { return ir.functionItem; },
   // definition.class → struct_item
-  get class_() { return ir.structItem; },
+  get class() { return ir.structItem; },
   // definition.method → function_item
   get method() { return ir.functionItem; },
   // definition.module → mod_item
-  get module_() { return ir.mod; },
+  get module() { return ir.mod; },
   // definition.interface → trait_item
-  get interface_() { return ir.trait; },
+  get interface() { return ir.trait; },
 } as const;
 
 export const ir = {
