@@ -769,11 +769,12 @@ function canDefaultToEmpty(
 	if (!targetNode) return null;
 	if (!targetNode.rawFactoryName) return null;
 
-	// Container-shaped branches: rest-param signature can always be called
-	// with zero args. Single-child containers need the child to be optional.
+	// Container-shaped branches: rest-param signature can be called with
+	// zero args ONLY when no child is nonEmpty (requires ≥1 element).
 	if (targetNode instanceof AssembledBranch && targetNode.isContainerShape) {
 		const anyMultiple = targetNode.children.some((c) => isMultiple(c));
-		if (anyMultiple) return targetNode.rawFactoryName;
+		const anyNonEmpty = targetNode.children.some((c) => isNonEmpty(c));
+		if (anyMultiple && !anyNonEmpty) return targetNode.rawFactoryName;
 		// Singular child — callable only when the child is not required.
 		const firstChild = targetNode.children[0];
 		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
@@ -1119,7 +1120,7 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const elementType = `T.${node.typeName}.Loose`;
+	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
 	const childrenMultiple = node.children.some((c) => isMultiple(c));
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(
@@ -1943,16 +1944,17 @@ function collectWrapChildrenEntries(
 		if (node.modelType !== 'branch') continue;
 		if (!node.rawFactoryName) continue;
 		if (node.children.length === 0) continue;
-		// Skip hidden kinds unless explicitly userFacing
+		// Only container-shaped branches (no required named fields) —
+		// mixed branches with required fields can't be called with just { children }.
+		if (!node.isContainerShape) continue;
 		if (kind.startsWith('_') && !node.userFacing) continue;
-		// Need a catalog entry for the TSKindId comparison
 		if (!kindEntries) continue;
 		const entry = findKindEntry(kindEntries, kind);
 		if (!entry) continue;
 		entries.push({
 			kind,
 			factoryName: node.rawFactoryName,
-			isContainer: node.isContainerShape,
+			isContainer: true,
 			kindIdExpr: `TSKindId.${entry.member}`
 		});
 	}

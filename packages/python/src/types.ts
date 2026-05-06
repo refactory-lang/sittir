@@ -3161,7 +3161,7 @@ export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];
 export namespace _AsPattern {
   export type Config = ConfigFor<'_as_pattern'>;
   export type Fluent = FluentFor<'_as_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_as_pattern'>;
   export type Tree = TreeFor<'_as_pattern'>;
   export type Kind = '_as_pattern';
 }
@@ -3189,7 +3189,7 @@ export namespace AssignmentTyped {
 export namespace ComprehensionClauses {
   export type Config = ConfigFor<'_comprehension_clauses'>;
   export type Fluent = FluentFor<'_comprehension_clauses'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_comprehension_clauses'>;
   export type Tree = TreeFor<'_comprehension_clauses'>;
   export type Kind = '_comprehension_clauses';
 }
@@ -3210,14 +3210,14 @@ export namespace KeyValuePattern {
 export namespace _ListPattern {
   export type Config = ConfigFor<'_list_pattern'>;
   export type Fluent = FluentFor<'_list_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_list_pattern'>;
   export type Tree = TreeFor<'_list_pattern'>;
   export type Kind = '_list_pattern';
 }
 export namespace MatchBlock {
   export type Config = ConfigFor<'_match_block'>;
   export type Fluent = FluentFor<'_match_block'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_match_block'>;
   export type Tree = TreeFor<'_match_block'>;
   export type Kind = '_match_block';
 }
@@ -3231,35 +3231,35 @@ export namespace MatchBlockBlock {
 export namespace SimplePatternNegative {
   export type Config = ConfigFor<'_simple_pattern_negative'>;
   export type Fluent = FluentFor<'_simple_pattern_negative'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_simple_pattern_negative'>;
   export type Tree = TreeFor<'_simple_pattern_negative'>;
   export type Kind = '_simple_pattern_negative';
 }
 export namespace SimpleStatements {
   export type Config = ConfigFor<'_simple_statements'>;
   export type Fluent = FluentFor<'_simple_statements'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_simple_statements'>;
   export type Tree = TreeFor<'_simple_statements'>;
   export type Kind = '_simple_statements';
 }
 export namespace Suite {
   export type Config = ConfigFor<'_suite'>;
   export type Fluent = FluentFor<'_suite'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_suite'>;
   export type Tree = TreeFor<'_suite'>;
   export type Kind = '_suite';
 }
 export namespace _TuplePattern {
   export type Config = ConfigFor<'_tuple_pattern'>;
   export type Fluent = FluentFor<'_tuple_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_tuple_pattern'>;
   export type Tree = TreeFor<'_tuple_pattern'>;
   export type Kind = '_tuple_pattern';
 }
 export namespace _WithClauseParen {
   export type Config = ConfigFor<'_with_clause_paren'>;
   export type Fluent = FluentFor<'_with_clause_paren'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_with_clause_paren'>;
   export type Tree = TreeFor<'_with_clause_paren'>;
   export type Kind = '_with_clause_paren';
 }
@@ -3273,7 +3273,7 @@ export namespace AliasedImport {
 export namespace ArgumentList {
   export type Config = ConfigFor<'argument_list'>;
   export type Fluent = FluentFor<'argument_list'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'argument_list'>;
   export type Tree = TreeFor<'argument_list'>;
   export type Kind = 'argument_list';
 }
@@ -3287,7 +3287,7 @@ export namespace AsPattern {
 export namespace AssertStatement {
   export type Config = ConfigFor<'assert_statement'>;
   export type Fluent = FluentFor<'assert_statement'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'assert_statement'>;
   export type Tree = TreeFor<'assert_statement'>;
   export type Kind = 'assert_statement';
 }
@@ -3329,7 +3329,7 @@ export namespace BinaryOperator {
 export namespace Block {
   export type Config = ConfigFor<'block'>;
   export type Fluent = FluentFor<'block'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'block'>;
   export type Tree = TreeFor<'block'>;
   export type Kind = 'block';
 }
@@ -3357,7 +3357,7 @@ export namespace CaseClause {
 export namespace CasePattern {
   export type Config = ConfigFor<'case_pattern'>;
   export type Fluent = FluentFor<'case_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'case_pattern'>;
   export type Tree = TreeFor<'case_pattern'>;
   export type Kind = 'case_pattern';
 }
@@ -3399,7 +3399,7 @@ export namespace ComplexPattern {
 export namespace ConcatenatedString {
   export type Config = ConfigFor<'concatenated_string'>;
   export type Fluent = FluentFor<'concatenated_string'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'concatenated_string'>;
   export type Tree = TreeFor<'concatenated_string'>;
   export type Kind = 'concatenated_string';
 }
@@ -3441,21 +3441,21 @@ export namespace DefaultParameter {
 export namespace DeleteStatement {
   export type Config = ConfigFor<'delete_statement'>;
   export type Fluent = FluentFor<'delete_statement'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'delete_statement'>;
   export type Tree = TreeFor<'delete_statement'>;
   export type Kind = 'delete_statement';
 }
 export namespace DictPattern {
   export type Config = ConfigFor<'dict_pattern'>;
   export type Fluent = FluentFor<'dict_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'dict_pattern'>;
   export type Tree = TreeFor<'dict_pattern'>;
   export type Kind = 'dict_pattern';
 }
 export namespace Dictionary {
   export type Config = ConfigFor<'dictionary'>;
   export type Fluent = FluentFor<'dictionary'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'dictionary'>;
   export type Tree = TreeFor<'dictionary'>;
   export type Kind = 'dictionary';
 }
@@ -3476,14 +3476,14 @@ export namespace DictionarySplat {
 export namespace DictionarySplatPattern {
   export type Config = ConfigFor<'dictionary_splat_pattern'>;
   export type Fluent = FluentFor<'dictionary_splat_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'dictionary_splat_pattern'>;
   export type Tree = TreeFor<'dictionary_splat_pattern'>;
   export type Kind = 'dictionary_splat_pattern';
 }
 export namespace DottedName {
   export type Config = ConfigFor<'dotted_name'>;
   export type Fluent = FluentFor<'dotted_name'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'dotted_name'>;
   export type Tree = TreeFor<'dotted_name'>;
   export type Kind = 'dotted_name';
 }
@@ -3518,14 +3518,14 @@ export namespace ExecStatement {
 export namespace ExpressionList {
   export type Config = ConfigFor<'expression_list'>;
   export type Fluent = FluentFor<'expression_list'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'expression_list'>;
   export type Tree = TreeFor<'expression_list'>;
   export type Kind = 'expression_list';
 }
 export namespace ExpressionStatementTuple {
   export type Config = ConfigFor<'expression_statement_tuple'>;
   export type Fluent = FluentFor<'expression_statement_tuple'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'expression_statement_tuple'>;
   export type Tree = TreeFor<'expression_statement_tuple'>;
   export type Kind = 'expression_statement_tuple';
 }
@@ -3560,7 +3560,7 @@ export namespace ForStatement {
 export namespace FormatSpecifier {
   export type Config = ConfigFor<'format_specifier'>;
   export type Fluent = FluentFor<'format_specifier'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'format_specifier'>;
   export type Tree = TreeFor<'format_specifier'>;
   export type Kind = 'format_specifier';
 }
@@ -3595,7 +3595,7 @@ export namespace GenericType {
 export namespace GlobalStatement {
   export type Config = ConfigFor<'global_statement'>;
   export type Fluent = FluentFor<'global_statement'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'global_statement'>;
   export type Tree = TreeFor<'global_statement'>;
   export type Kind = 'global_statement';
 }
@@ -3658,7 +3658,7 @@ export namespace Lambda {
 export namespace LambdaParameters {
   export type Config = ConfigFor<'lambda_parameters'>;
   export type Fluent = FluentFor<'lambda_parameters'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'lambda_parameters'>;
   export type Tree = TreeFor<'lambda_parameters'>;
   export type Kind = 'lambda_parameters';
 }
@@ -3672,7 +3672,7 @@ export namespace LambdaWithinForInClause {
 export namespace List {
   export type Config = ConfigFor<'list'>;
   export type Fluent = FluentFor<'list'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'list'>;
   export type Tree = TreeFor<'list'>;
   export type Kind = 'list';
 }
@@ -3686,7 +3686,7 @@ export namespace ListComprehension {
 export namespace ListPattern {
   export type Config = ConfigFor<'list_pattern'>;
   export type Fluent = FluentFor<'list_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'list_pattern'>;
   export type Tree = TreeFor<'list_pattern'>;
   export type Kind = 'list_pattern';
 }
@@ -3700,7 +3700,7 @@ export namespace ListSplat {
 export namespace ListSplatPattern {
   export type Config = ConfigFor<'list_splat_pattern'>;
   export type Fluent = FluentFor<'list_splat_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'list_splat_pattern'>;
   export type Tree = TreeFor<'list_splat_pattern'>;
   export type Kind = 'list_splat_pattern';
 }
@@ -3721,7 +3721,7 @@ export namespace MemberType {
 export namespace Module {
   export type Config = ConfigFor<'module'>;
   export type Fluent = FluentFor<'module'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'module'>;
   export type Tree = TreeFor<'module'>;
   export type Kind = 'module';
 }
@@ -3735,7 +3735,7 @@ export namespace NamedExpression {
 export namespace NonlocalStatement {
   export type Config = ConfigFor<'nonlocal_statement'>;
   export type Fluent = FluentFor<'nonlocal_statement'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'nonlocal_statement'>;
   export type Tree = TreeFor<'nonlocal_statement'>;
   export type Kind = 'nonlocal_statement';
 }
@@ -3756,28 +3756,28 @@ export namespace Pair {
 export namespace Parameters {
   export type Config = ConfigFor<'parameters'>;
   export type Fluent = FluentFor<'parameters'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'parameters'>;
   export type Tree = TreeFor<'parameters'>;
   export type Kind = 'parameters';
 }
 export namespace ParenthesizedExpression {
   export type Config = ConfigFor<'parenthesized_expression'>;
   export type Fluent = FluentFor<'parenthesized_expression'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'parenthesized_expression'>;
   export type Tree = TreeFor<'parenthesized_expression'>;
   export type Kind = 'parenthesized_expression';
 }
 export namespace ParenthesizedListSplat {
   export type Config = ConfigFor<'parenthesized_list_splat'>;
   export type Fluent = FluentFor<'parenthesized_list_splat'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'parenthesized_list_splat'>;
   export type Tree = TreeFor<'parenthesized_list_splat'>;
   export type Kind = 'parenthesized_list_splat';
 }
 export namespace PatternList {
   export type Config = ConfigFor<'pattern_list'>;
   export type Fluent = FluentFor<'pattern_list'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'pattern_list'>;
   export type Tree = TreeFor<'pattern_list'>;
   export type Kind = 'pattern_list';
 }
@@ -3805,14 +3805,14 @@ export namespace RelativeImport {
 export namespace ReturnStatement {
   export type Config = ConfigFor<'return_statement'>;
   export type Fluent = FluentFor<'return_statement'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'return_statement'>;
   export type Tree = TreeFor<'return_statement'>;
   export type Kind = 'return_statement';
 }
 export namespace Set {
   export type Config = ConfigFor<'set'>;
   export type Fluent = FluentFor<'set'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'set'>;
   export type Tree = TreeFor<'set'>;
   export type Kind = 'set';
 }
@@ -3854,7 +3854,7 @@ export namespace String {
 export namespace StringContent {
   export type Config = ConfigFor<'string_content'>;
   export type Fluent = FluentFor<'string_content'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'string_content'>;
   export type Tree = TreeFor<'string_content'>;
   export type Kind = 'string_content';
 }
@@ -3875,21 +3875,21 @@ export namespace TryStatement {
 export namespace Tuple {
   export type Config = ConfigFor<'tuple'>;
   export type Fluent = FluentFor<'tuple'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'tuple'>;
   export type Tree = TreeFor<'tuple'>;
   export type Kind = 'tuple';
 }
 export namespace TuplePattern {
   export type Config = ConfigFor<'tuple_pattern'>;
   export type Fluent = FluentFor<'tuple_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'tuple_pattern'>;
   export type Tree = TreeFor<'tuple_pattern'>;
   export type Kind = 'tuple_pattern';
 }
 export namespace Type {
   export type Config = ConfigFor<'type'>;
   export type Fluent = FluentFor<'type'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'type'>;
   export type Tree = TreeFor<'type'>;
   export type Kind = 'type';
 }
@@ -3903,7 +3903,7 @@ export namespace TypeAliasStatement {
 export namespace TypeParameter {
   export type Config = ConfigFor<'type_parameter'>;
   export type Fluent = FluentFor<'type_parameter'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'type_parameter'>;
   export type Tree = TreeFor<'type_parameter'>;
   export type Kind = 'type_parameter';
 }
@@ -3931,7 +3931,7 @@ export namespace UnaryOperator {
 export namespace UnionPattern {
   export type Config = ConfigFor<'union_pattern'>;
   export type Fluent = FluentFor<'union_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'union_pattern'>;
   export type Tree = TreeFor<'union_pattern'>;
   export type Kind = 'union_pattern';
 }
@@ -3952,14 +3952,14 @@ export namespace WhileStatement {
 export namespace WithClauseBare {
   export type Config = ConfigFor<'with_clause_bare'>;
   export type Fluent = FluentFor<'with_clause_bare'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'with_clause_bare'>;
   export type Tree = TreeFor<'with_clause_bare'>;
   export type Kind = 'with_clause_bare';
 }
 export namespace WithClauseParen {
   export type Config = ConfigFor<'with_clause_paren'>;
   export type Fluent = FluentFor<'with_clause_paren'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'with_clause_paren'>;
   export type Tree = TreeFor<'with_clause_paren'>;
   export type Kind = 'with_clause_paren';
 }
@@ -3987,7 +3987,7 @@ export namespace WithStatement {
 export namespace Yield {
   export type Config = ConfigFor<'yield'>;
   export type Fluent = FluentFor<'yield'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'yield'>;
   export type Tree = TreeFor<'yield'>;
   export type Kind = 'yield';
 }

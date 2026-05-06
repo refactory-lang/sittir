@@ -5803,7 +5803,7 @@ export namespace _CallSignature {
 export namespace ClassBodyMember {
   export type Config = ConfigFor<'_class_body_member'>;
   export type Fluent = FluentFor<'_class_body_member'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_class_body_member'>;
   export type Tree = TreeFor<'_class_body_member'>;
   export type Kind = '_class_body_member';
 }
@@ -5817,21 +5817,21 @@ export namespace ClassBodyMethod {
 export namespace ClassBodyMethodSig {
   export type Config = ConfigFor<'_class_body_method_sig'>;
   export type Fluent = FluentFor<'_class_body_method_sig'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_class_body_method_sig'>;
   export type Tree = TreeFor<'_class_body_method_sig'>;
   export type Kind = '_class_body_method_sig';
 }
 export namespace _ClassHeritageExtendsClause {
   export type Config = ConfigFor<'_class_heritage_extends_clause'>;
   export type Fluent = FluentFor<'_class_heritage_extends_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_class_heritage_extends_clause'>;
   export type Tree = TreeFor<'_class_heritage_extends_clause'>;
   export type Kind = '_class_heritage_extends_clause';
 }
 export namespace _ClassHeritageImplementsClause {
   export type Config = ConfigFor<'_class_heritage_implements_clause'>;
   export type Fluent = FluentFor<'_class_heritage_implements_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_class_heritage_implements_clause'>;
   export type Tree = TreeFor<'_class_heritage_implements_clause'>;
   export type Kind = '_class_heritage_implements_clause';
 }
@@ -5859,7 +5859,7 @@ export namespace ExportStatementDefaultDeclArmDefaultKwValue {
 export namespace ExportStatementDefaultFromArm {
   export type Config = ConfigFor<'_export_statement_default_from_arm'>;
   export type Fluent = FluentFor<'_export_statement_default_from_arm'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_export_statement_default_from_arm'>;
   export type Tree = TreeFor<'_export_statement_default_from_arm'>;
   export type Kind = '_export_statement_default_from_arm';
 }
@@ -5887,14 +5887,14 @@ export namespace ExportStatementDefaultFromArmStarFrom {
 export namespace _ExportStatementEqualsExport {
   export type Config = ConfigFor<'_export_statement_equals_export'>;
   export type Fluent = FluentFor<'_export_statement_equals_export'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_export_statement_equals_export'>;
   export type Tree = TreeFor<'_export_statement_equals_export'>;
   export type Kind = '_export_statement_equals_export';
 }
 export namespace _ExportStatementNamespaceExport {
   export type Config = ConfigFor<'_export_statement_namespace_export'>;
   export type Fluent = FluentFor<'_export_statement_namespace_export'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_export_statement_namespace_export'>;
   export type Tree = TreeFor<'_export_statement_namespace_export'>;
   export type Kind = '_export_statement_namespace_export';
 }
@@ -5950,21 +5950,21 @@ export namespace FromClause {
 export namespace _ImportClauseDefaultImport {
   export type Config = ConfigFor<'_import_clause_default_import'>;
   export type Fluent = FluentFor<'_import_clause_default_import'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_import_clause_default_import'>;
   export type Tree = TreeFor<'_import_clause_default_import'>;
   export type Kind = '_import_clause_default_import';
 }
 export namespace _ImportClauseNamedImports {
   export type Config = ConfigFor<'_import_clause_named_imports'>;
   export type Fluent = FluentFor<'_import_clause_named_imports'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_import_clause_named_imports'>;
   export type Tree = TreeFor<'_import_clause_named_imports'>;
   export type Kind = '_import_clause_named_imports';
 }
 export namespace _ImportClauseNamespaceImport {
   export type Config = ConfigFor<'_import_clause_namespace_import'>;
   export type Fluent = FluentFor<'_import_clause_namespace_import'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_import_clause_namespace_import'>;
   export type Tree = TreeFor<'_import_clause_namespace_import'>;
   export type Kind = '_import_clause_namespace_import';
 }
@@ -5992,7 +5992,7 @@ export namespace IndexSignatureColon {
 export namespace _IndexSignatureMappedTypeClause {
   export type Config = ConfigFor<'_index_signature_mapped_type_clause'>;
   export type Fluent = FluentFor<'_index_signature_mapped_type_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_index_signature_mapped_type_clause'>;
   export type Tree = TreeFor<'_index_signature_mapped_type_clause'>;
   export type Kind = '_index_signature_mapped_type_clause';
 }
@@ -6013,14 +6013,14 @@ export namespace JsxStartOpeningElement {
 export namespace JsxString {
   export type Config = ConfigFor<'_jsx_string'>;
   export type Fluent = FluentFor<'_jsx_string'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_jsx_string'>;
   export type Tree = TreeFor<'_jsx_string'>;
   export type Kind = '_jsx_string';
 }
 export namespace LhsExpression {
   export type Config = ConfigFor<'_lhs_expression'>;
   export type Fluent = FluentFor<'_lhs_expression'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_lhs_expression'>;
   export type Tree = TreeFor<'_lhs_expression'>;
   export type Kind = '_lhs_expression';
 }
@@ -6048,7 +6048,7 @@ export namespace ParameterName {
 export namespace _ParenthesizedExpressionSequence {
   export type Config = ConfigFor<'_parenthesized_expression_sequence'>;
   export type Fluent = FluentFor<'_parenthesized_expression_sequence'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_parenthesized_expression_sequence'>;
   export type Tree = TreeFor<'_parenthesized_expression_sequence'>;
   export type Kind = '_parenthesized_expression_sequence';
 }
@@ -6083,7 +6083,7 @@ export namespace PublicFieldDefinitionAccessorOpt {
 export namespace PublicFieldDefinitionDeclareFirst {
   export type Config = ConfigFor<'_public_field_definition_declare_first'>;
   export type Fluent = FluentFor<'_public_field_definition_declare_first'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_public_field_definition_declare_first'>;
   export type Tree = TreeFor<'_public_field_definition_declare_first'>;
   export type Kind = '_public_field_definition_declare_first';
 }
@@ -6104,21 +6104,21 @@ export namespace PublicFieldDefinitionStaticMods {
 export namespace _StringDouble {
   export type Config = ConfigFor<'_string_double'>;
   export type Fluent = FluentFor<'_string_double'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_string_double'>;
   export type Tree = TreeFor<'_string_double'>;
   export type Kind = '_string_double';
 }
 export namespace _StringSingle {
   export type Config = ConfigFor<'_string_single'>;
   export type Fluent = FluentFor<'_string_single'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_string_single'>;
   export type Tree = TreeFor<'_string_single'>;
   export type Kind = '_string_single';
 }
 export namespace TypeIdentifier {
   export type Config = ConfigFor<'_type_identifier'>;
   export type Fluent = FluentFor<'_type_identifier'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'_type_identifier'>;
   export type Tree = TreeFor<'_type_identifier'>;
   export type Kind = '_type_identifier';
 }
@@ -6209,21 +6209,21 @@ export namespace AmbientDeclaration {
 export namespace Arguments {
   export type Config = ConfigFor<'arguments'>;
   export type Fluent = FluentFor<'arguments'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'arguments'>;
   export type Tree = TreeFor<'arguments'>;
   export type Kind = 'arguments';
 }
 export namespace Array {
   export type Config = ConfigFor<'array'>;
   export type Fluent = FluentFor<'array'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'array'>;
   export type Tree = TreeFor<'array'>;
   export type Kind = 'array';
 }
 export namespace ArrayPattern {
   export type Config = ConfigFor<'array_pattern'>;
   export type Fluent = FluentFor<'array_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'array_pattern'>;
   export type Tree = TreeFor<'array_pattern'>;
   export type Kind = 'array_pattern';
 }
@@ -6265,7 +6265,7 @@ export namespace AsExpression {
 export namespace Asserts {
   export type Config = ConfigFor<'asserts'>;
   export type Fluent = FluentFor<'asserts'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'asserts'>;
   export type Tree = TreeFor<'asserts'>;
   export type Kind = 'asserts';
 }
@@ -6349,7 +6349,7 @@ export namespace Class {
 export namespace ClassBody {
   export type Config = ConfigFor<'class_body'>;
   export type Fluent = FluentFor<'class_body'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'class_body'>;
   export type Tree = TreeFor<'class_body'>;
   export type Kind = 'class_body';
 }
@@ -6363,14 +6363,14 @@ export namespace ClassDeclaration {
 export namespace ClassHeritageExtendsClause {
   export type Config = ConfigFor<'class_heritage_extends_clause'>;
   export type Fluent = FluentFor<'class_heritage_extends_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'class_heritage_extends_clause'>;
   export type Tree = TreeFor<'class_heritage_extends_clause'>;
   export type Kind = 'class_heritage_extends_clause';
 }
 export namespace ClassHeritageImplementsClause {
   export type Config = ConfigFor<'class_heritage_implements_clause'>;
   export type Fluent = FluentFor<'class_heritage_implements_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'class_heritage_implements_clause'>;
   export type Tree = TreeFor<'class_heritage_implements_clause'>;
   export type Kind = 'class_heritage_implements_clause';
 }
@@ -6440,7 +6440,7 @@ export namespace DebuggerStatement {
 export namespace Decorator {
   export type Config = ConfigFor<'decorator'>;
   export type Fluent = FluentFor<'decorator'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'decorator'>;
   export type Tree = TreeFor<'decorator'>;
   export type Kind = 'decorator';
 }
@@ -6461,7 +6461,7 @@ export namespace DecoratorMemberExpression {
 export namespace DecoratorParenthesizedExpression {
   export type Config = ConfigFor<'decorator_parenthesized_expression'>;
   export type Fluent = FluentFor<'decorator_parenthesized_expression'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'decorator_parenthesized_expression'>;
   export type Tree = TreeFor<'decorator_parenthesized_expression'>;
   export type Kind = 'decorator_parenthesized_expression';
 }
@@ -6510,7 +6510,7 @@ export namespace EnumDeclaration {
 export namespace ExportClause {
   export type Config = ConfigFor<'export_clause'>;
   export type Fluent = FluentFor<'export_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'export_clause'>;
   export type Tree = TreeFor<'export_clause'>;
   export type Kind = 'export_clause';
 }
@@ -6531,14 +6531,14 @@ export namespace ExportStatementTypeExport {
 export namespace ExportStatementEqualsExport {
   export type Config = ConfigFor<'export_statement_equals_export'>;
   export type Fluent = FluentFor<'export_statement_equals_export'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'export_statement_equals_export'>;
   export type Tree = TreeFor<'export_statement_equals_export'>;
   export type Kind = 'export_statement_equals_export';
 }
 export namespace ExportStatementNamespaceExport {
   export type Config = ConfigFor<'export_statement_namespace_export'>;
   export type Fluent = FluentFor<'export_statement_namespace_export'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'export_statement_namespace_export'>;
   export type Tree = TreeFor<'export_statement_namespace_export'>;
   export type Kind = 'export_statement_namespace_export';
 }
@@ -6608,7 +6608,7 @@ export namespace ForStatement {
 export namespace FormalParameters {
   export type Config = ConfigFor<'formal_parameters'>;
   export type Fluent = FluentFor<'formal_parameters'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'formal_parameters'>;
   export type Tree = TreeFor<'formal_parameters'>;
   export type Kind = 'formal_parameters';
 }
@@ -6671,7 +6671,7 @@ export namespace IfStatement {
 export namespace ImplementsClause {
   export type Config = ConfigFor<'implements_clause'>;
   export type Fluent = FluentFor<'implements_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'implements_clause'>;
   export type Tree = TreeFor<'implements_clause'>;
   export type Kind = 'implements_clause';
 }
@@ -6692,21 +6692,21 @@ export namespace ImportAttribute {
 export namespace ImportClauseNamespaceImport {
   export type Config = ConfigFor<'import_clause_namespace_import'>;
   export type Fluent = FluentFor<'import_clause_namespace_import'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'import_clause_namespace_import'>;
   export type Tree = TreeFor<'import_clause_namespace_import'>;
   export type Kind = 'import_clause_namespace_import';
 }
 export namespace ImportClauseNamedImports {
   export type Config = ConfigFor<'import_clause_named_imports'>;
   export type Fluent = FluentFor<'import_clause_named_imports'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'import_clause_named_imports'>;
   export type Tree = TreeFor<'import_clause_named_imports'>;
   export type Kind = 'import_clause_named_imports';
 }
 export namespace ImportClauseDefaultImport {
   export type Config = ConfigFor<'import_clause_default_import'>;
   export type Fluent = FluentFor<'import_clause_default_import'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'import_clause_default_import'>;
   export type Tree = TreeFor<'import_clause_default_import'>;
   export type Kind = 'import_clause_default_import';
 }
@@ -6748,7 +6748,7 @@ export namespace ImportStatement {
 export namespace IndexSignatureMappedTypeClause {
   export type Config = ConfigFor<'index_signature_mapped_type_clause'>;
   export type Fluent = FluentFor<'index_signature_mapped_type_clause'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'index_signature_mapped_type_clause'>;
   export type Tree = TreeFor<'index_signature_mapped_type_clause'>;
   export type Kind = 'index_signature_mapped_type_clause';
 }
@@ -6804,7 +6804,7 @@ export namespace IntersectionType {
 export namespace JsxAttribute {
   export type Config = ConfigFor<'jsx_attribute'>;
   export type Fluent = FluentFor<'jsx_attribute'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'jsx_attribute'>;
   export type Tree = TreeFor<'jsx_attribute'>;
   export type Kind = 'jsx_attribute';
 }
@@ -6825,14 +6825,14 @@ export namespace JsxElement {
 export namespace JsxExpression {
   export type Config = ConfigFor<'jsx_expression'>;
   export type Fluent = FluentFor<'jsx_expression'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'jsx_expression'>;
   export type Tree = TreeFor<'jsx_expression'>;
   export type Kind = 'jsx_expression';
 }
 export namespace JsxNamespaceName {
   export type Config = ConfigFor<'jsx_namespace_name'>;
   export type Fluent = FluentFor<'jsx_namespace_name'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'jsx_namespace_name'>;
   export type Tree = TreeFor<'jsx_namespace_name'>;
   export type Kind = 'jsx_namespace_name';
 }
@@ -6867,7 +6867,7 @@ export namespace LexicalDeclaration {
 export namespace LiteralType {
   export type Config = ConfigFor<'literal_type'>;
   export type Fluent = FluentFor<'literal_type'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'literal_type'>;
   export type Tree = TreeFor<'literal_type'>;
   export type Kind = 'literal_type';
 }
@@ -6916,14 +6916,14 @@ export namespace Module {
 export namespace NamedImports {
   export type Config = ConfigFor<'named_imports'>;
   export type Fluent = FluentFor<'named_imports'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'named_imports'>;
   export type Tree = TreeFor<'named_imports'>;
   export type Kind = 'named_imports';
 }
 export namespace NamespaceExport {
   export type Config = ConfigFor<'namespace_export'>;
   export type Fluent = FluentFor<'namespace_export'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'namespace_export'>;
   export type Tree = TreeFor<'namespace_export'>;
   export type Kind = 'namespace_export';
 }
@@ -6965,7 +6965,7 @@ export namespace NonNullExpression {
 export namespace Object {
   export type Config = ConfigFor<'object'>;
   export type Fluent = FluentFor<'object'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'object'>;
   export type Tree = TreeFor<'object'>;
   export type Kind = 'object';
 }
@@ -6979,7 +6979,7 @@ export namespace ObjectAssignmentPattern {
 export namespace ObjectPattern {
   export type Config = ConfigFor<'object_pattern'>;
   export type Fluent = FluentFor<'object_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'object_pattern'>;
   export type Tree = TreeFor<'object_pattern'>;
   export type Kind = 'object_pattern';
 }
@@ -7051,7 +7051,7 @@ export namespace PairPattern {
 export namespace ParenthesizedExpressionSequence {
   export type Config = ConfigFor<'parenthesized_expression_sequence'>;
   export type Fluent = FluentFor<'parenthesized_expression_sequence'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'parenthesized_expression_sequence'>;
   export type Tree = TreeFor<'parenthesized_expression_sequence'>;
   export type Kind = 'parenthesized_expression_sequence';
 }
@@ -7114,7 +7114,7 @@ export namespace RequiredParameter {
 export namespace RestPattern {
   export type Config = ConfigFor<'rest_pattern'>;
   export type Fluent = FluentFor<'rest_pattern'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'rest_pattern'>;
   export type Tree = TreeFor<'rest_pattern'>;
   export type Kind = 'rest_pattern';
 }
@@ -7142,7 +7142,7 @@ export namespace SatisfiesExpression {
 export namespace SequenceExpression {
   export type Config = ConfigFor<'sequence_expression'>;
   export type Fluent = FluentFor<'sequence_expression'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'sequence_expression'>;
   export type Tree = TreeFor<'sequence_expression'>;
   export type Kind = 'sequence_expression';
 }
@@ -7163,14 +7163,14 @@ export namespace StatementBlock {
 export namespace StringDouble {
   export type Config = ConfigFor<'string_double'>;
   export type Fluent = FluentFor<'string_double'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'string_double'>;
   export type Tree = TreeFor<'string_double'>;
   export type Kind = 'string_double';
 }
 export namespace StringSingle {
   export type Config = ConfigFor<'string_single'>;
   export type Fluent = FluentFor<'string_single'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'string_single'>;
   export type Tree = TreeFor<'string_single'>;
   export type Kind = 'string_single';
 }
@@ -7191,7 +7191,7 @@ export namespace SubscriptExpression {
 export namespace SwitchBody {
   export type Config = ConfigFor<'switch_body'>;
   export type Fluent = FluentFor<'switch_body'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'switch_body'>;
   export type Tree = TreeFor<'switch_body'>;
   export type Kind = 'switch_body';
 }
@@ -7219,28 +7219,28 @@ export namespace SwitchStatement {
 export namespace TemplateLiteralType {
   export type Config = ConfigFor<'template_literal_type'>;
   export type Fluent = FluentFor<'template_literal_type'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'template_literal_type'>;
   export type Tree = TreeFor<'template_literal_type'>;
   export type Kind = 'template_literal_type';
 }
 export namespace TemplateString {
   export type Config = ConfigFor<'template_string'>;
   export type Fluent = FluentFor<'template_string'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'template_string'>;
   export type Tree = TreeFor<'template_string'>;
   export type Kind = 'template_string';
 }
 export namespace TemplateSubstitution {
   export type Config = ConfigFor<'template_substitution'>;
   export type Fluent = FluentFor<'template_substitution'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'template_substitution'>;
   export type Tree = TreeFor<'template_substitution'>;
   export type Kind = 'template_substitution';
 }
 export namespace TemplateType {
   export type Config = ConfigFor<'template_type'>;
   export type Fluent = FluentFor<'template_type'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'template_type'>;
   export type Tree = TreeFor<'template_type'>;
   export type Kind = 'template_type';
 }
@@ -7275,7 +7275,7 @@ export namespace TupleParameter {
 export namespace TupleType {
   export type Config = ConfigFor<'tuple_type'>;
   export type Fluent = FluentFor<'tuple_type'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'tuple_type'>;
   export type Tree = TreeFor<'tuple_type'>;
   export type Kind = 'tuple_type';
 }
@@ -7296,7 +7296,7 @@ export namespace TypeAnnotation {
 export namespace TypeArguments {
   export type Config = ConfigFor<'type_arguments'>;
   export type Fluent = FluentFor<'type_arguments'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'type_arguments'>;
   export type Tree = TreeFor<'type_arguments'>;
   export type Kind = 'type_arguments';
 }
@@ -7317,7 +7317,7 @@ export namespace TypeParameter {
 export namespace TypeParameters {
   export type Config = ConfigFor<'type_parameters'>;
   export type Fluent = FluentFor<'type_parameters'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'type_parameters'>;
   export type Tree = TreeFor<'type_parameters'>;
   export type Kind = 'type_parameters';
 }
@@ -7338,7 +7338,7 @@ export namespace TypePredicateAnnotation {
 export namespace TypeQuery {
   export type Config = ConfigFor<'type_query'>;
   export type Fluent = FluentFor<'type_query'>;
-  export type Loose = NonNullable<Config['children']>[number];
+  export type Loose = LooseFor<'type_query'>;
   export type Tree = TreeFor<'type_query'>;
   export type Kind = 'type_query';
 }
