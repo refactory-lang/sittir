@@ -66,7 +66,46 @@ file size by ~30%.
 **Emitter impact**: One-time change in `render-module.ts` — emit a `use`
 block at the top of each file, then reference short names everywhere.
 
-## R0c: Redundant trait object casts
+## R0d: Inline render_xxx_transport into RenderableTransport::render_into
+
+**Decision**: Eliminate standalone `render_xxx_transport` functions. Inline
+template construction directly into each transport struct's `render_into` impl.
+
+**Current** (two functions, two String allocations):
+```rust
+impl RenderableTransport for IndexExpressionTransport {
+    fn render_into(&self, dest: &mut dyn Write) -> Result<(), Error> {
+        let s = render_index_expression_transport(self)?;
+        dest.write_str(&s)
+    }
+}
+fn render_index_expression_transport(t: &IndexExpressionTransport) -> Result<String, Error> {
+    let template = IndexExpressionTemplate { /* from t */ };
+    template.render()
+}
+```
+
+**After** (one impl, zero allocation):
+```rust
+impl RenderableTransport for IndexExpressionTransport {
+    fn render_into(&self, dest: &mut dyn Write) -> Result<(), Error> {
+        let template = IndexExpressionTemplate { /* from self */ };
+        template.write_into(dest)
+    }
+}
+```
+
+**Rationale**: The standalone functions exist only because the emitter
+generates them as a convenience. After streaming, they're dead code —
+`render_transport_dispatch` calls `t.render_into(dest)` directly, and
+`render_into` should construct the template and stream. No intermediate
+function, no String, no indirection.
+
+**Emitter impact**: In `render-module.ts`, change per-kind transport
+emission from "emit standalone function + impl calling it" to "emit impl
+with inline template construction."
+
+## R0e: Redundant trait object casts
 
 **Decision**: Remove `as &dyn RenderableTransport` casts from generated
 transport field references.
