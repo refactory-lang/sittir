@@ -40,7 +40,7 @@ export function emitConsts(config: EmitConstsConfig): string {
 			case 'polymorph':
 				nodeKinds.push(kind);
 				break;
-			case 'leaf':
+			case 'pattern':
 			case 'enum':
 				leafKinds.push(kind);
 				if (node.modelType === 'enum') {

@@ -77,7 +77,7 @@ function classify(node: AssembledNode): RenderKindPath {
 		case 'group':
 		case 'polymorph':
 			return 'template';
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'enum':
 			return 'text';

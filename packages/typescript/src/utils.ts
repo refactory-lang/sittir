@@ -88,8 +88,6 @@ export function withMethods<T extends object>(
  *
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
  * from loose config bags by the presence of any of:
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
  *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
  *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
  *   - `$children` (container nodes whose children arrive without field names),

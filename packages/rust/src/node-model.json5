@@ -953,7 +953,7 @@
     },
     {
       "kind": "_error_sentinel",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ErrorSentinel",
       "factoryName": "errorSentinel",
       "irKey": "errorSentinel",
@@ -1442,7 +1442,7 @@
     },
     {
       "kind": "_inner_block_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "InnerBlockDocCommentMarker",
       "factoryName": "innerBlockDocCommentMarker",
       "irKey": "innerBlockDocCommentMarker",
@@ -1605,7 +1605,7 @@
     },
     {
       "kind": "_line_comment_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineCommentContent",
       "factoryName": "lineCommentContent",
       "irKey": "lineCommentContent",
@@ -1674,7 +1674,7 @@
     },
     {
       "kind": "_line_comment_regular_dslash",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineCommentRegularDslash",
       "factoryName": "lineCommentRegularDslash",
       "irKey": "lineCommentRegularDslash",
@@ -1682,7 +1682,7 @@
     },
     {
       "kind": "_line_doc_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "LineDocContent",
       "factoryName": "lineDocContent",
       "irKey": "lineDocContent",
@@ -2509,7 +2509,7 @@
     },
     {
       "kind": "_outer_block_doc_comment_marker",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "OuterBlockDocCommentMarker",
       "factoryName": "outerBlockDocCommentMarker",
       "irKey": "outerBlockDocCommentMarker",
@@ -2981,7 +2981,7 @@
     },
     {
       "kind": "_reference_expression_raw_const",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "ReferenceExpressionRawConst",
       "factoryName": "referenceExpressionRawConst",
       "irKey": "referenceExpressionRawConst",
@@ -4847,7 +4847,7 @@
     },
     {
       "kind": "char_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "CharLiteral",
       "factoryName": "charLiteral",
       "irKey": "charLiteral",
@@ -6187,31 +6187,7 @@
       "factoryName": "enumVariantList",
       "irKey": "enumVariantList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "enum_variant",
-          "propertyName": "enumVariant",
-          "paramName": "enumVariant",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "enum_variant",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "enum_variant"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6227,13 +6203,28 @@
               "unresolved": true
             }
           ]
+        },
+        {
+          "name": "enum_variant",
+          "propertyName": "enumVariant",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "enum_variant",
+              "unresolved": true
+            }
+          ]
         }
       ],
       "separator": ","
     },
     {
       "kind": "escape_sequence",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "EscapeSequence",
       "factoryName": "escapeSequence",
       "irKey": "escapeSequence",
@@ -6593,31 +6584,7 @@
       "factoryName": "fieldDeclarationList",
       "irKey": "fieldDeclarationList",
       "hidden": false,
-      "fields": [
-        {
-          "name": "field_declaration",
-          "propertyName": "fieldDeclaration",
-          "paramName": "fieldDeclaration",
-          "required": true,
-          "multiple": true,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "array",
-              "name": "field_declaration",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "field_declaration"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "attribute_item",
@@ -6630,6 +6597,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "field_declaration",
+          "propertyName": "fieldDeclaration",
+          "required": true,
+          "multiple": true,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "array",
+              "name": "field_declaration",
               "unresolved": true
             }
           ]
@@ -7021,7 +7003,7 @@
     },
     {
       "kind": "float_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "FloatLiteral",
       "factoryName": "floatLiteral",
       "irKey": "floatLiteral",
@@ -8345,7 +8327,7 @@
     },
     {
       "kind": "identifier",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Identifier",
       "factoryName": "identifier",
       "irKey": "identifier",
@@ -8963,7 +8945,7 @@
     },
     {
       "kind": "integer_literal",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "IntegerLiteral",
       "factoryName": "integerLiteral",
       "irKey": "integerLiteral",
@@ -10304,7 +10286,7 @@
     },
     {
       "kind": "metavariable",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Metavariable",
       "factoryName": "metavariable",
       "irKey": "metavariable",
@@ -10726,29 +10708,6 @@
       "hidden": false,
       "fields": [
         {
-          "name": "visibility_modifier",
-          "propertyName": "visibilityModifier",
-          "paramName": "visibilityModifier",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "visibility_modifier",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "visibility_modifier"
-            ]
-          }
-        },
-        {
           "name": "type",
           "propertyName": "type",
           "paramName": "type",
@@ -10784,6 +10743,21 @@
               "kind": "node-ref",
               "multiplicity": "array",
               "name": "attribute_item",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "visibility_modifier",
+          "propertyName": "visibilityModifier",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "visibility_modifier",
               "unresolved": true
             }
           ]
@@ -10884,11 +10858,11 @@
       "factoryName": "parameters",
       "irKey": "parameters",
       "hidden": false,
-      "fields": [
+      "fields": [],
+      "children": [
         {
           "name": "attribute_item",
           "propertyName": "attributeItem",
-          "paramName": "attributeItem",
           "required": false,
           "multiple": false,
           "nonEmpty": false,
@@ -10899,17 +10873,8 @@
               "name": "attribute_item",
               "unresolved": true
             }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "attribute_item"
-            ]
-          }
-        }
-      ],
-      "children": [
+          ]
+        },
         {
           "name": "parameter",
           "propertyName": "parameter",
@@ -11580,7 +11545,7 @@
     },
     {
       "kind": "raw_string_literal_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "RawStringLiteralContent",
       "factoryName": "rawStringLiteralContent",
       "irKey": "rawStringLiteralContent",
@@ -12294,7 +12259,7 @@
     },
     {
       "kind": "shebang",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "Shebang",
       "factoryName": "shebang",
       "irKey": "shebang",
@@ -12587,7 +12552,7 @@
     },
     {
       "kind": "string_content",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "StringContent",
       "factoryName": "stringContent",
       "irKey": "stringContent",
@@ -14055,31 +14020,7 @@
       "factoryName": "typeArguments",
       "irKey": "typeArguments",
       "hidden": false,
-      "fields": [
-        {
-          "name": "trait_bounds",
-          "propertyName": "traitBounds",
-          "paramName": "traitBounds",
-          "required": false,
-          "multiple": false,
-          "nonEmpty": false,
-          "values": [
-            {
-              "kind": "node-ref",
-              "multiplicity": "optional",
-              "name": "trait_bounds",
-              "unresolved": true
-            }
-          ],
-          "source": "enriched",
-          "projection": {
-            "typeName": "",
-            "kinds": [
-              "trait_bounds"
-            ]
-          }
-        }
-      ],
+      "fields": [],
       "children": [
         {
           "name": "type",
@@ -14116,6 +14057,21 @@
               "kind": "node-ref",
               "multiplicity": "nonEmptyArray",
               "name": "block",
+              "unresolved": true
+            }
+          ]
+        },
+        {
+          "name": "trait_bounds",
+          "propertyName": "traitBounds",
+          "required": false,
+          "multiple": false,
+          "nonEmpty": false,
+          "values": [
+            {
+              "kind": "node-ref",
+              "multiplicity": "optional",
+              "name": "trait_bounds",
               "unresolved": true
             }
           ]
@@ -14746,7 +14702,7 @@
     },
     {
       "kind": "unit_expression",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnitExpression",
       "factoryName": "unitExpression",
       "irKey": "unit",
@@ -14754,7 +14710,7 @@
     },
     {
       "kind": "unit_type",
-      "modelType": "leaf",
+      "modelType": "pattern",
       "typeName": "UnitType",
       "factoryName": "unitType",
       "irKey": "unitType",

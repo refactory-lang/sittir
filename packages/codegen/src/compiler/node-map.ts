@@ -90,6 +90,20 @@ export interface UnresolvedRef {
  * Populated by the unified `deriveSlots` walk — undefined on values from
  * non-repeat positions.
  */
+/**
+ * Slot taxonomy classification for branch/group nodes.
+ * Computed post-assembly by `computeSlotClasses()`.
+ */
+export type BranchSlotClass =
+	| { tag: 'multiSlot' }
+	| {
+			tag: 'singleSlot';
+			arity: 'singular' | 'multiple';
+			optional: boolean;
+			nonEmpty: boolean;
+			slot: AssembledNonterminal;
+	  };
+
 export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly kind: 'node-ref';
 	readonly node: T | UnresolvedRef;
@@ -2417,6 +2431,14 @@ export class AssembledBranch extends AssembledNodeBase<
 	readonly variantChildKinds: readonly string[];
 
 	/**
+	 * Slot taxonomy — `singleSlot` when exactly one user-facing slot
+	 * survives after filtering auto-stamp, hidden-infra, and keyword-
+	 * presence fields; `multiSlot` otherwise. Set post-assembly by
+	 * `computeSlotClasses()`.
+	 */
+	slotClass?: BranchSlotClass;
+
+	/**
 	 * The unified slot Record — every constituent of this branch keyed
 	 * by its grammar field name (for `field()`-derived slots) or its
 	 * kind-derived positional name (for inferred slots). Insertion order
@@ -3144,7 +3166,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
  *   - `AssembledEnum` — closed set of literals (e.g. `"u8" | "u16"`)
  *
  * The base intentionally has no `modelType` — each concrete subclass
- * keeps its own discriminant string (`'leaf'` for Pattern, `'keyword'`,
+ * keeps its own discriminant string (`'pattern'` for Pattern, `'keyword'`,
  * `'token'`, `'enum'`) so byte-identity of generated output is preserved
  * during the taxonomy refactor.
  *
@@ -3159,15 +3181,15 @@ export abstract class AssembledLeaf<R extends Rule = Rule> extends AssembledNode
  * Examples: `identifier`, `integer_literal`, `string_content`.
  *
  * Renamed from the original `AssembledLeaf` class. The `modelType`
- * discriminant remains `'leaf'` to preserve
- * byte-identity in emitted output — only the TypeScript class identifier
- * changed. The new `AssembledLeaf` is now an abstract base (above);
- * `AssembledPattern` is one of its four concrete subclasses.
+ * discriminant is `'pattern'` (renamed from `'leaf'` during the
+ * taxonomy-driven emitter dispatch refactor). The new `AssembledLeaf`
+ * is now an abstract base (above); `AssembledPattern` is one of its
+ * four concrete subclasses.
  */
 export class AssembledPattern extends AssembledLeaf<
 	PatternRule | TerminalRule
 > {
-	readonly modelType = 'leaf' as const;
+	readonly modelType = 'pattern' as const;
 
 	constructor(
 		kind: string,
@@ -3429,6 +3451,9 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 * standalone groups (inlined hidden seqs).
 	 */
 	readonly parentKind?: string;
+
+	/** See {@link AssembledBranch.slotClass}. */
+	slotClass?: BranchSlotClass;
 
 	/**
 	 * The unified slot Record — every constituent of this group keyed by

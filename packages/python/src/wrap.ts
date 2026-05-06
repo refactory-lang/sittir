@@ -411,15 +411,14 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
     $type: TSKindId.ComparisonOperator as const,
     _left: data._left,
     _operators: data._operators,
-    _primary_expression: data._primary_expression,
+    $children: data.$children,
 
     left() { return drillIn<T.PrimaryExpression>(this._left, tree); },
     operators() { return drillInAll<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(this._operators, tree); },
-    primaryExpression() { return drillInAll<T.PrimaryExpression>(this._primary_expression, tree); },
     $with: {
       left: (v: T.PrimaryExpression) => wrapComparisonOperator({ ...data, _left: v }, tree),
       operators: (...v: NonEmptyArray<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">) => wrapComparisonOperator({ ...data, _operators: v }, tree),
-      primaryExpression: (...v: NonEmptyArray<T.PrimaryExpression>) => wrapComparisonOperator({ ...data, _primary_expression: v }, tree),
+      children: (...items: NonEmptyArray<T.PrimaryExpression>) => wrapComparisonOperator({ ...data, $children: items }, tree),
     },
   });
   return _node;

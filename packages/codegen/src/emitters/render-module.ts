@@ -1374,7 +1374,7 @@ function renderTypedDispatch(
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
 		const isLeafLikeNode =
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
 			node.modelType === 'token';
 		const isEnumNode = node instanceof AssembledEnum && !isSingleMemberEnum(node);
@@ -1453,7 +1453,7 @@ function renderTypedKindFn(
 			}
 			return renderTypedBranchFn(node, struct, meta, nodeMap);
 		}
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':
@@ -2563,7 +2563,7 @@ function emitSupertypeTransportEnum(
 
 	// Helper: is a subtype leaf-like (small, no Box needed)?
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'leaf' ||
+		n.modelType === 'pattern' ||
 		n.modelType === 'keyword' ||
 		n.modelType === 'token' ||
 		n.modelType === 'enum';
@@ -2708,7 +2708,7 @@ function emitSupertypeRenderHelper(
 	const lines: string[] = [];
 
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'leaf' ||
+		n.modelType === 'pattern' ||
 		n.modelType === 'keyword' ||
 		n.modelType === 'token' ||
 		n.modelType === 'enum';
@@ -2835,7 +2835,7 @@ function emitPerSlotChildEnum(
 	// If no valid concrete kinds remain (all were supertypes/polymorphs), fall back
 	// to emitting an empty enum — this should be caught upstream by the caller.
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'leaf' ||
+		n.modelType === 'pattern' ||
 		n.modelType === 'keyword' ||
 		n.modelType === 'token' ||
 		n.modelType === 'enum';
@@ -3300,7 +3300,7 @@ function renderTransportToNodeFns(
 				nodeMap,
 				node.typeName
 			);
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':
@@ -3808,7 +3808,7 @@ function renderTransportDataStruct(
 	nodeMap: NodeMap
 ): string[] {
 	const isLeafNode =
-		node.modelType === 'leaf' ||
+		node.modelType === 'pattern' ||
 		node.modelType === 'keyword' ||
 		node.modelType === 'token';
 	const lines: string[] = [];
@@ -3835,7 +3835,7 @@ function renderTransportDataStruct(
 				lines.push(`    pub children: ${rustTransportChildrenType(children, node.typeName, nodeMap)},`);
 			}
 			break;
-		case 'leaf':
+		case 'pattern':
 		case 'keyword':
 		case 'token':
 		case 'enum':
@@ -4471,7 +4471,7 @@ const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
  *
  * @param literal - The grammar literal string (e.g. `"+"`, `"mut"`, `"u8"`).
  */
-export function literalToVariantName(literal: string): string {
+function literalToVariantName(literal: string): string {
 	const known = LITERAL_TO_VARIANT_NAME.get(literal);
 	if (known !== undefined) return known;
 

@@ -192,9 +192,9 @@ describe('Assemble — classifyNode', () => {
 		expect(classifyNode('binary_op', rule)).toBe('branch');
 	});
 
-	it('classifies visible pattern as leaf', () => {
+	it('classifies visible pattern as pattern', () => {
 		const rule: Rule = { type: 'pattern', value: '[a-z]+' };
-		expect(classifyNode('identifier', rule)).toBe('leaf');
+		expect(classifyNode('identifier', rule)).toBe('pattern');
 	});
 
 	it('classifies visible single alphanumeric string as keyword', () => {
@@ -262,9 +262,9 @@ describe('Assemble — classifyNode', () => {
 });
 
 describe('Assemble — T027a empty seq after stripping', () => {
-	it('classifies a named seq of pure punctuation as a leaf', () => {
+	it('classifies a named seq of pure punctuation as a pattern', () => {
 		// Post-Link, a pure-terminal subtree is wrapped as TerminalRule;
-		// classifyNode then dispatches it to 'leaf' by rule.type alone.
+		// classifyNode then dispatches it to 'pattern' by rule.type alone.
 		const rule: Rule = {
 			type: 'terminal',
 			content: {
@@ -276,7 +276,7 @@ describe('Assemble — T027a empty seq after stripping', () => {
 			}
 		};
 		const modelType = classifyNode('braces', rule);
-		expect(modelType).toBe('leaf');
+		expect(modelType).toBe('pattern');
 	});
 });
 
@@ -379,7 +379,7 @@ describe('Assemble — assemble()', () => {
 		const nodeMap = assemble(optimized);
 		expect(nodeMap.name).toBe('test');
 		expect(nodeMap.nodes.get('function_item')?.modelType).toBe('branch');
-		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('leaf');
+		expect(nodeMap.nodes.get('identifier')?.modelType).toBe('pattern');
 	});
 
 	it('assigns typeName and factoryName to nodes', () => {

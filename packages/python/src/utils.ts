@@ -88,8 +88,6 @@ export function withMethods<T extends object>(
  *
  * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
  * from loose config bags by the presence of any of:
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
  *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
  *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
  *   - `$children` (container nodes whose children arrive without field names),
@@ -208,11 +206,10 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
     ],
   },
   "comparison_operator": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
+    childrenRequired: true,
+    childAlternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const,
     fields: [
       { name: "operators", multiple: true, required: true, alternatives: [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const },
-      { name: "primary_expression", multiple: true, required: true, alternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const },
     ],
   },
   "except_clause": {

@@ -11,8 +11,9 @@
  */
 
 import { readNode, createRenderer } from '@sittir/core';
-import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
+import type { FactoryShape } from '../emitters/factory-map.ts';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';
 import {
@@ -124,47 +125,29 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	if (data.$text !== undefined) result.$text = data.$text;
 	if (data.$variant !== undefined) result.$variant = data.$variant;
 
-	// Collect named fields from either the legacy `$fields` wrapper (readNode/wrap path)
-	// or the new `_<name>` top-level keys (ADR-0018 Phase 2 factory/wrap path).
-	const legacyFields = (data as unknown as Record<string, unknown>)['$fields'] as Record<string, unknown> | undefined;
-	const dehoistedKeys = Object.keys(data as unknown as Record<string, unknown>).filter((k) => k.startsWith('_'));
-	if (legacyFields || dehoistedKeys.length > 0) {
-		const fields: { [key: string]: NodeFieldValue } = {};
-		// Legacy shape: iterate $fields.
-		if (legacyFields) {
-			for (const [key, value] of Object.entries(legacyFields)) {
-				if (Array.isArray(value)) {
-					fields[key] = value.map((v) =>
-						typeof v === 'object' && v !== null
-							? stripToFactory(v as AnyNodeData)
-							: v
-					) as readonly (AnyNodeData | string | number)[];
-				} else if (typeof value === 'object' && value !== null) {
-					fields[key] = stripToFactory(value as AnyNodeData);
-				} else {
-					fields[key] = value as NodeFieldValue;
-				}
-			}
-		}
-		// New shape: iterate `_<name>` keys and strip the prefix.
-		for (const rawKey of dehoistedKeys) {
-			const fieldName = rawKey.slice(1); // strip leading `_`
-			const value = (data as unknown as Record<string, unknown>)[rawKey];
-			if (Array.isArray(value)) {
-				fields[fieldName] = value.map((v) =>
-					typeof v === 'object' && v !== null
-						? stripToFactory(v as AnyNodeData)
-						: v
-				) as readonly (AnyNodeData | string | number)[];
-			} else if (typeof value === 'object' && value !== null) {
-				fields[fieldName] = stripToFactory(value as AnyNodeData);
-			} else {
-				fields[fieldName] = value as NodeFieldValue;
-			}
-		}
-		result.$fields = fields;
-	}
+	const rec = data as unknown as Record<string, unknown>;
+	const dehoistedKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
 
+	/** Recursively strip a single field value. */
+	const stripFieldValue = (value: unknown): NodeMemberValue | readonly (AnyNodeData | string | number)[] => {
+		if (Array.isArray(value)) {
+			return value.map((v) =>
+				typeof v === 'object' && v !== null
+					? stripToFactory(v as AnyNodeData)
+					: v
+			) as readonly (AnyNodeData | string | number)[];
+		}
+		if (typeof value === 'object' && value !== null) {
+			return stripToFactory(value as AnyNodeData);
+		}
+		return value as NodeMemberValue;
+	};
+
+	// New shape: iterate `_<name>` keys directly.
+	for (const rawKey of dehoistedKeys) {
+		const value = rec[rawKey];
+		(result as unknown as Record<string, unknown>)[rawKey] = stripFieldValue(value);
+	}
 	if (data.$children) {
 		// Factory nodes only have named children — filter anonymous
 		result.$children = (data.$children as AnyNodeData[])
@@ -204,7 +187,7 @@ const FACTORY_MAP_PATHS: Record<string, string> = {
  * pure data (no functions). Strips the leading comment block and
  * JSON.parses the rest. */
 async function loadFactoryMap(grammar: string): Promise<{
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
@@ -279,7 +262,7 @@ export interface FactoryRoundTripResult {
  */
 async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	factoryMap: Record<string, (config?: any) => unknown>;
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>;
+	factoryShapes: Record<string, FactoryShape>;
 	fieldAliasMap: Record<string, Record<string, string>>;
 	factoryFields: Record<string, readonly string[]>;
 	polymorphVariants: PolymorphVariantMap;
@@ -290,7 +273,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 }> {
 	const factoryModulePath = FACTORY_MODULE_PATHS[grammar];
 	let factoryMap: Record<string, (config?: any) => unknown> = {};
-	let factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	let factoryShapes: Record<string, FactoryShape> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
@@ -472,8 +455,8 @@ function resolveNodeForKind(
 
 /**
  * Dispatch `readData` through the appropriate factory call convention and
- * return the resulting `NodeData`. Pure text leaves (no `$fields` and no
- * `$children`) are returned as-is — factories for container-shaped wrappers
+ * return the resulting `NodeData`. Pure text leaves (no `_<name>` keys, no
+ * legacy `$fields`, and no `$children`) are returned as-is — factories for container-shaped wrappers
  * that tree-sitter surfaces as leaves would produce garbage. Factory lookup
  * uses the walker-resolved kind so that alias-source factories are preferred
  * over alias-target factories, keeping the output `$type` aligned with our
@@ -503,7 +486,7 @@ function buildFactoryNodeData(
 	readData: AnyNodeData,
 	renderedKind: string,
 	factoryMap: Record<string, (config?: any) => unknown>,
-	factoryShapes: Record<string, 'config' | 'children' | 'text'>,
+	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
 	factoryFields: Record<string, readonly string[]>,
 	polymorphVariants: PolymorphVariantMap,
@@ -519,7 +502,7 @@ function buildFactoryNodeData(
 	}[],
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
-	// Leaf check: no named fields (legacy $fields or new _* keys) and no $children.
+	// Leaf check: no named fields (_<name> keys or legacy $fields) and no $children.
 	const hasLegacyFields = !!(readData as unknown as Record<string,unknown>)['$fields'];
 	const hasDehoistedFields = Object.keys(readData as unknown as Record<string,unknown>).some((k) => k.startsWith('_'));
 	if (!hasLegacyFields && !hasDehoistedFields && !readData.$children) {
@@ -532,7 +515,7 @@ function buildFactoryNodeData(
 	}
 	try {
 		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config') {
+		if (shape === 'config' || shape === 'single-field') {
 			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 			const config = recursive
 				? nodeToConfig(readData, {
@@ -545,6 +528,19 @@ function buildFactoryNodeData(
 						kindNameFromId
 					})
 				: nodeToConfig(readData, { polymorphVariants, kindNameFromId });
+			if (shape === 'single-field') {
+				// Gap 5: single-field-no-children factory takes the value directly.
+				// Extract the sole field value from the config object.
+				// factoryFields stores raw snake_case names; nodeToConfig
+				// returns camelCase keys — convert for the lookup.
+				const fieldNames = factoryFields[renderedKind];
+				const rawName = fieldNames?.[0];
+				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
+					c.toUpperCase()
+				);
+				const value = camelName ? (config as Record<string, unknown>)[camelName] : undefined;
+				return (factory as (v: unknown) => AnyNodeData)(value);
+			}
 			return factory(config) as AnyNodeData;
 		} else if (shape === 'text') {
 			// $TEXT-templated branch/container (e.g. rust

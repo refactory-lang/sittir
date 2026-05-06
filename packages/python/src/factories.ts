@@ -185,12 +185,15 @@ export function notIn(text: string) {
   });
 }
 
-export function simplePatternNegative(text: string) {
+export function simplePatternNegative(child: (T.Integer | T.Float)) {
+  const children = [child];
   return withMethods({
     $type: TSKindId.SimplePatternNegative as const,
     $source: 2 as const,
     $named: true as const,
-    $text: text,
+    $children: children,
+    children() { return children; },
+    $with: { $child: (v: (T.Integer | T.Float)) => simplePatternNegative(v) },
   });
 }
 
@@ -399,8 +402,8 @@ export function augmentedAssignment(config: T.AugmentedAssignment.Config) {
   });
 }
 
-export function await_(config: T.Await.Config) {
-  const _primary_expression = config.primaryExpression;
+export function await_(primaryExpression: T.PrimaryExpression) {
+  const _primary_expression = primaryExpression;
   return withMethods({
     $type: TSKindId.Await as const,
     $source: 2 as const,
@@ -408,7 +411,7 @@ export function await_(config: T.Await.Config) {
     _primary_expression,
     primaryExpression() { return _primary_expression; },
     $with: {
-      primaryExpression: (value: T.PrimaryExpression) => await_({ ...config, primaryExpression: value }),
+      primaryExpression: (value: T.PrimaryExpression) => await_(value),
     },
   });
 }
@@ -527,8 +530,8 @@ export function casePattern(child: (T._AsPattern | T.KeywordPattern | T.SimplePa
   });
 }
 
-export function chevron(config: T.Chevron.Config) {
-  const _expression = config.expression;
+export function chevron(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.Chevron as const,
     $source: 2 as const,
@@ -536,7 +539,7 @@ export function chevron(config: T.Chevron.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => chevron({ ...config, expression: value }),
+      expression: (value: T.Expression) => chevron(value),
     },
   });
 }
@@ -596,23 +599,23 @@ export function comment(text: string) {
 }
 
 export function comparisonOperator(config: T.ComparisonOperator.Config) {
+  const children = config.children ?? [];
   const _left = config.left;
   const _operators = _bf<"<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">(config.operators, ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], ["<", "<=", "==", "!=", ">=", ">", "<>", "in", "not in", "is", "is not"], false);
-  const _primary_expression = config.primaryExpression;
   return withMethods({
     $type: TSKindId.ComparisonOperator as const,
     $source: 2 as const,
     $named: true as const,
     _left,
     _operators,
-    _primary_expression,
+    $children: children,
     left() { return _left; },
     operators() { return _operators; },
-    primaryExpression() { return _primary_expression; },
+    children() { return children; },
     $with: {
       left: (value: T.PrimaryExpression) => comparisonOperator({ ...config, left: value }),
       operators: (value: Parameters<typeof comparisonOperator>[0]['operators']) => comparisonOperator({ ...config, operators: value }),
-      primaryExpression: (...values: NonEmptyArray<T.PrimaryExpression>) => comparisonOperator({ ...config, primaryExpression: values }),
+      children: (...items: NonEmptyArray<T.PrimaryExpression>) => comparisonOperator({ ...config, children: items }),
     },
   });
 }
@@ -806,8 +809,8 @@ export function dictionaryComprehension(config: T.DictionaryComprehension.Config
   });
 }
 
-export function dictionarySplat(config: T.DictionarySplat.Config) {
-  const _expression = config.expression;
+export function dictionarySplat(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.DictionarySplat as const,
     $source: 2 as const,
@@ -815,7 +818,7 @@ export function dictionarySplat(config: T.DictionarySplat.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => dictionarySplat({ ...config, expression: value }),
+      expression: (value: T.Expression) => dictionarySplat(value),
     },
   });
 }
@@ -1166,8 +1169,8 @@ export function identifier(text: string) {
   });
 }
 
-export function ifClause(config: T.IfClause.Config) {
-  const _expression = config.expression;
+export function ifClause(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.IfClause as const,
     $source: 2 as const,
@@ -1175,7 +1178,7 @@ export function ifClause(config: T.IfClause.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => ifClause({ ...config, expression: value }),
+      expression: (value: T.Expression) => ifClause(value),
     },
   });
 }
@@ -1410,8 +1413,8 @@ export function listPattern(...children: T.Pattern[]) {
   });
 }
 
-export function listSplat(config: T.ListSplat.Config) {
-  const _expression = config.expression;
+export function listSplat(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.ListSplat as const,
     $source: 2 as const,
@@ -1419,7 +1422,7 @@ export function listSplat(config: T.ListSplat.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => listSplat({ ...config, expression: value }),
+      expression: (value: T.Expression) => listSplat(value),
     },
   });
 }
@@ -1522,8 +1525,8 @@ export function nonlocalStatement(...children: T.Identifier[]) {
   });
 }
 
-export function notOperator(config: T.NotOperator.Config) {
-  const _argument = config.argument;
+export function notOperator(argument: T.Expression) {
+  const _argument = argument;
   return withMethods({
     $type: TSKindId.NotOperator as const,
     $source: 2 as const,
@@ -1531,7 +1534,7 @@ export function notOperator(config: T.NotOperator.Config) {
     _argument,
     argument() { return _argument; },
     $with: {
-      argument: (value: T.Expression) => notOperator({ ...config, argument: value }),
+      argument: (value: T.Expression) => notOperator(value),
     },
   });
 }
@@ -1629,8 +1632,9 @@ export function printStatement(config: T.PrintStatement.Config) {
 }
 
 export function raiseStatement(config?: T.RaiseStatement.Config) {
-  const children = config?.children ?? [];
-  const _cause = config?.cause;
+  const _config = config ?? {};
+  const children = _config.children ?? [];
+  const _cause = _config.cause;
   return withMethods({
     $type: TSKindId.RaiseStatement as const,
     $source: 2 as const,
@@ -1640,8 +1644,8 @@ export function raiseStatement(config?: T.RaiseStatement.Config) {
     cause() { return _cause; },
     children() { return children; },
     $with: {
-      cause: (value?: T.Expression) => raiseStatement({ ...config, cause: value }),
-      children: (...items: readonly [T.Expressions]) => raiseStatement({ ...config, children: items }),
+      cause: (value?: T.Expression) => raiseStatement({ ..._config, cause: value }),
+      children: (...items: readonly [T.Expressions]) => raiseStatement({ ..._config, children: items }),
     },
   });
 }
@@ -1707,9 +1711,10 @@ export function setComprehension(config: T.SetComprehension.Config) {
 }
 
 export function slice(config?: T.Slice.Config) {
-  const _start = config?.start;
-  const _stop = config?.stop;
-  const _step = config?.step;
+  const _config = config ?? {};
+  const _start = _config.start;
+  const _stop = _config.stop;
+  const _step = _config.step;
   return withMethods({
     $type: TSKindId.Slice as const,
     $source: 2 as const,
@@ -1721,15 +1726,15 @@ export function slice(config?: T.Slice.Config) {
     stop() { return _stop; },
     step() { return _step; },
     $with: {
-      start: (value?: T.Expression) => slice({ ...config, start: value }),
-      stop: (value?: T.Expression) => slice({ ...config, stop: value }),
-      step: (value?: T.Expression) => slice({ ...config, step: value }),
+      start: (value?: T.Expression) => slice({ ..._config, start: value }),
+      stop: (value?: T.Expression) => slice({ ..._config, stop: value }),
+      step: (value?: T.Expression) => slice({ ..._config, step: value }),
     },
   });
 }
 
-export function splatPattern(config: T.SplatPattern.Config) {
-  const _identifier = config.identifier;
+export function splatPattern(identifier: T._Identifier | T.Identifier | "_") {
+  const _identifier = identifier;
   return withMethods({
     $type: TSKindId.SplatPattern as const,
     $source: 2 as const,
@@ -1737,13 +1742,13 @@ export function splatPattern(config: T.SplatPattern.Config) {
     _identifier,
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T._Identifier | T.Identifier | "_") => splatPattern({ ...config, identifier: value }),
+      identifier: (value: T._Identifier | T.Identifier | "_") => splatPattern(value),
     },
   });
 }
 
-export function splatType(config: T.SplatType.Config) {
-  const _identifier = config.identifier.$text;
+export function splatType(identifier: T._Identifier | T.Identifier) {
+  const _identifier = identifier.$text;
   return withMethods({
     $type: TSKindId.SplatType as const,
     $source: 2 as const,
@@ -1751,17 +1756,30 @@ export function splatType(config: T.SplatType.Config) {
     _identifier,
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T._Identifier | T.Identifier) => splatType({ ...config, identifier: value }),
+      identifier: (value: T._Identifier | T.Identifier) => splatType(value),
     },
   });
 }
 
-export function string(text: string) {
+export function string(config: T.String.Config) {
+  const _string_start = config.stringStart.$text;
+  const _content = config.content;
+  const _string_end = config.stringEnd.$text;
   return withMethods({
     $type: TSKindId.String as const,
     $source: 2 as const,
     $named: true as const,
-    $text: text,
+    _string_start,
+    _content,
+    _string_end,
+    stringStart() { return _string_start; },
+    content() { return _content; },
+    stringEnd() { return _string_end; },
+    $with: {
+      stringStart: (value: T.StringStart) => string({ ...config, stringStart: value }),
+      content: (...values: (T.Interpolation | T.StringContent)[]) => string({ ...config, content: values }),
+      stringEnd: (value: T.StringEnd) => string({ ...config, stringEnd: value }),
+    },
   });
 }
 
@@ -2073,8 +2091,8 @@ export function withClauseUFormParen(config?: Omit<ConfigOf<T.WithClauseUFormPar
   });
 }
 
-export function withItem(config: T.WithItem.Config) {
-  const _value = config.value;
+export function withItem(value: T.Expression) {
+  const _value = value;
   return withMethods({
     $type: TSKindId.WithItem as const,
     $source: 2 as const,
@@ -2082,7 +2100,7 @@ export function withItem(config: T.WithItem.Config) {
     _value,
     value() { return _value; },
     $with: {
-      value: (value: T.Expression) => withItem({ ...config, value: value }),
+      value: (value: T.Expression) => withItem(value),
     },
   });
 }

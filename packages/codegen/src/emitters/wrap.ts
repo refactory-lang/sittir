@@ -87,7 +87,8 @@ export function emitWrap(config: EmitWrapConfig): string {
 	// lint warnings (`no-unused-vars` on drillAsAll for grammars with
 	// no multiple-cardinality alias-source fields).
 	// ------------------------------------------------------------------
-	const bodyLines: string[] = [];
+	wrap.init();
+
 	for (const [kind, node] of nodeMap.nodes) {
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; wrap functions for them are dead code.
@@ -112,8 +113,25 @@ export function emitWrap(config: EmitWrapConfig): string {
 			}
 			continue;
 		}
-		const source = renderWrapForNode(node, kindEntries, nodeMap);
-		if (source === undefined) continue;
+
+		// --- Taxonomy dispatch (replaces renderWrapForNode) ---
+		if (!node.rawFactoryName) continue;
+
+		switch (node.modelType) {
+			case 'branch':
+				wrap.branch(node, kindEntries, nodeMap);
+				break;
+			case 'polymorph':
+				wrap.polymorph(node, kindEntries, nodeMap);
+				break;
+			default:
+				// Leaves, groups, supertypes, tokens — no wrap function
+				break;
+		}
+	}
+
+	const bodyLines: string[] = [];
+	for (const source of wrap.collect()) {
 		bodyLines.push(source);
 		bodyLines.push('');
 	}
@@ -213,7 +231,7 @@ export function emitWrap(config: EmitWrapConfig): string {
 		if (node.modelType === 'branch' || node.modelType === 'polymorph') {
 			lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
 		} else if (
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'enum' ||
 			node.modelType === 'keyword'
 		) {
@@ -389,60 +407,91 @@ function collectTypeImports(_nodeMap: NodeMap): Set<string> {
 }
 
 // ---------------------------------------------------------------------------
-// Per-node wrap dispatch
+// Namespace — taxonomy-keyed wrap dispatch API
 // ---------------------------------------------------------------------------
 
-function renderWrapForNode(
-	node: AssembledNode,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): string | undefined {
-	if (!node.rawFactoryName) return undefined;
+/**
+ * Module-local output buffer — populated by {@link wrap} namespace
+ * functions, read by {@link emitWrap} after the dispatch loop.
+ */
+let _wrapOutput: string[] = [];
 
-	switch (node.modelType) {
-		case 'branch':
-			// The former `'container'` modelType is
-			// now `'branch'` with `fields.length === 0`. Both shapes share the
-			// same wrap entry — fields is `[]` for the container case which
-			// `emitFieldCarryingWrap` already handles.
-			//
-			// NOTE: class getters are NOT enumerable, so we must pass explicitly
-			// rather than relying on { ...node } to capture prototype-defined
-			// getters like `rawFactoryName` and `isContainerShape`.
-			return emitFieldCarryingWrap(
-				{
-					kind: node.kind,
-					typeName: node.typeName,
-					rawFactoryName: node.rawFactoryName,
-					isContainerShape: node.isContainerShape
-				},
-				node.fields,
-				node.children,
-				kindEntries,
-				nodeMap
-			);
-		case 'polymorph': {
-			const { fields, children } =
-				mergePolymorphFormsIntoFieldsAndChildren(node);
-			// Polymorph wraps never have container shape — they always have at least
-			// one form with fields. Pass rawFactoryName explicitly (class getters are
-			// NOT enumerable, so { ...node } would lose it).
-			return emitFieldCarryingWrap(
-				{
-					kind: node.kind,
-					typeName: node.typeName,
-					rawFactoryName: node.rawFactoryName,
-					isContainerShape: false,
-					isPolymorph: true
-				},
-				fields,
-				children,
-				kindEntries,
-				nodeMap
-			);
-		}
-		default:
-			return undefined;
+/**
+ * Taxonomy-keyed wrap dispatch namespace.
+ *
+ * Each function pushes into the module-local `_wrapOutput` buffer
+ * (populated via `init()`, consumed via `collect()`). The functions are
+ * thin wrappers that delegate to the existing internal emit helpers;
+ * no emit-function signatures are changed.
+ */
+export namespace wrap {
+	/** Reset the output buffer before a new dispatch loop. */
+	export function init(): void {
+		_wrapOutput = [];
+	}
+
+	/** Return the accumulated wrap source blocks. */
+	export function collect(): string[] {
+		return _wrapOutput;
+	}
+
+	/**
+	 * Emit a branch wrap function — field-carrying (handles both regular
+	 * and container shapes; fields is `[]` for the container case).
+	 */
+	export function branch(
+		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		nodeMap: NodeMap
+	): void {
+		if (!node.rawFactoryName) return;
+		// NOTE: class getters are NOT enumerable, so we must pass explicitly
+		// rather than relying on { ...node } to capture prototype-defined
+		// getters like `rawFactoryName` and `isContainerShape`.
+		const result = emitFieldCarryingWrap(
+			{
+				kind: node.kind,
+				typeName: node.typeName,
+				rawFactoryName: node.rawFactoryName,
+				isContainerShape: node.isContainerShape
+			},
+			node.fields,
+			node.children,
+			kindEntries,
+			nodeMap
+		);
+		_wrapOutput.push(result);
+	}
+
+	/**
+	 * Emit a polymorph wrap function — merges all form fields/children
+	 * into a unified superset, then emits a field-carrying wrap.
+	 */
+	export function polymorph(
+		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+		kindEntries: readonly KindEnumEntry[] | undefined,
+		nodeMap: NodeMap
+	): void {
+		if (!node.rawFactoryName) return;
+		const { fields, children } =
+			mergePolymorphFormsIntoFieldsAndChildren(node);
+		// Polymorph wraps never have container shape — they always have at least
+		// one form with fields. Pass rawFactoryName explicitly (class getters are
+		// NOT enumerable, so { ...node } would lose it).
+		const result = emitFieldCarryingWrap(
+			{
+				kind: node.kind,
+				typeName: node.typeName,
+				rawFactoryName: node.rawFactoryName,
+				isContainerShape: false,
+				isPolymorph: true
+			},
+			fields,
+			children,
+			kindEntries,
+			nodeMap
+		);
+		_wrapOutput.push(result);
 	}
 }
 
@@ -608,7 +657,7 @@ function emitFieldCarryingWrap(
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
 	// $children is a $-prefixed metadata key, not a _<name> storage key, so
 	// $children doesn't have the `_` prefix convention — access via data.$children
-	// which AnyNodeData declares as `readonly NodeChildValue[] | undefined`.
+	// which AnyNodeData declares as `readonly NodeMemberValue[] | undefined`.
 	// Polymorph parent types are unions of UForm interfaces — not all members
 	// may declare `$children`, but it is always present at runtime. Cast
 	// through `(data as any)` to access the property without type errors.

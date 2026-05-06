@@ -18,6 +18,10 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts';
 import { allSlotsOf } from '../compiler/node-map.ts';
+import {
+	isAutoStampField
+} from './shared.ts';
+import type { BranchSlotClass } from './shared.ts';
 import type {
 	PolymorphVariantDescriptor,
 	PolymorphVariantMap
@@ -28,10 +32,10 @@ export interface EmitFactoryMapConfig {
 	nodeMap: NodeMap;
 }
 
+export type FactoryShape = 'config' | 'children' | 'text' | 'single-field';
+
 export interface FactoryMapData {
-	readonly factoryShapes: Readonly<
-		Record<string, 'config' | 'children' | 'text'>
-	>;
+	readonly factoryShapes: Readonly<Record<string, FactoryShape>>;
 	readonly fieldAliasMap: Readonly<
 		Record<string, Readonly<Record<string, string>>>
 	>;
@@ -57,7 +61,7 @@ export interface FactoryMapData {
 export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 	const aliasSet = collectAliasSourceKinds(nodeMap);
 
-	const factoryShapes: Record<string, 'config' | 'children' | 'text'> = {};
+	const factoryShapes: Record<string, FactoryShape> = {};
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
@@ -170,10 +174,9 @@ export function emitFactoryMap(config: EmitFactoryMapConfig): string {
 function shapeOf(
 	node: AssembledNode,
 	nodeMap: NodeMap
-): 'config' | 'children' | 'text' | null {
-	if (node.isTextTemplate(nodeMap.externals)) return 'text';
+): FactoryShape | null {
 	switch (node.modelType) {
-		case 'leaf':
+		case 'pattern':
 		case 'enum':
 		case 'keyword':
 			return 'text';
@@ -183,13 +186,42 @@ function shapeOf(
 			// `isContainerShape === true`. Preserve the `'children'`
 			// factory shape for that case so downstream validators
 			// dispatch the same way.
-			return node.isContainerShape ? 'children' : 'config';
+			if (node.isContainerShape) return 'children';
+			// Gap 5: single-field-no-children branch factories take the
+			// value directly. Mirror the detection from emitFieldCarryingFactory.
+			if (isSingleFieldDirect(node, nodeMap)) return 'single-field';
+			return 'config';
 		case 'polymorph':
 		case 'group':
 			return 'config';
 		default:
 			return null;
 	}
+}
+
+/**
+ * Detect whether a branch or group node qualifies for the Gap 5
+ * single-field direct-value factory signature.
+ *
+ * @remarks
+ * Uses the pre-computed `slotClass` attribute (set by
+ * `computeSlotClasses`) for the core classification, with
+ * compatibility guards (non-stamp field count, children count)
+ * that preserve the existing dispatch. Hidden kinds (`_`-prefixed)
+ * and container-shape branches are excluded.
+ */
+function isSingleFieldDirect(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): boolean {
+	if (node.kind.startsWith('_')) return false;
+	if (node.modelType !== 'branch' && node.modelType !== 'group') return false;
+	if (node.modelType === 'branch' && node.isContainerShape) return false;
+	if (node.children.length > 0) return false;
+	const nonStamp = node.fields.filter((f) => !isAutoStampField(f, nodeMap));
+	if (nonStamp.length !== 1) return false;
+	const sc = (node as { slotClass?: BranchSlotClass }).slotClass;
+	return sc?.tag === 'singleSlot' && sc.arity === 'singular';
 }
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {

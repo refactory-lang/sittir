@@ -1,4 +1,8 @@
-import type { AnyNodeData, NodeFieldValue } from '@sittir/types';
+import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
+
+const ASSERT_ENABLED =
+	typeof process !== 'undefined' &&
+	process.env?.NODE_ENV !== 'production';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -55,7 +59,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 function assertNativeFieldValue(
 	value: unknown,
 	path: string
-): asserts value is NodeFieldValue {
+): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
@@ -64,18 +68,6 @@ function assertNativeFieldValue(
 		return;
 	}
 	assertNativeNodeDataInternal(value, path);
-}
-
-function assertNativeFields(value: unknown, path: string): void {
-	if (!isRecord(value)) {
-		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
-	}
-	for (const [key, entry] of Object.entries(value)) {
-		// Optional fields are stored as `undefined` in factory nodes; JSON.stringify
-		// strips them before the native engine sees the data, so they are safe to skip.
-		if (entry === undefined) continue;
-		assertNativeFieldValue(entry, `${path}.${key}`);
-	}
 }
 
 function assertNativeChildren(value: unknown, path: string): void {
@@ -118,7 +110,9 @@ function assertNativeNodeDataInternal(
 	}
 	// Phase D: $type must be a numeric KindId. String $type is no longer accepted.
 	if (typeof value.$type !== 'number') {
-		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
+		throw new TypeError(
+			`${path}.$type must be a number, got ${describe(value.$type)}`
+		);
 	}
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
@@ -127,20 +121,17 @@ function assertNativeNodeDataInternal(
 			`${path}.$format is not supported by the native render boundary; pass format separately`
 		);
 	}
-	// ADR-0018 Phase 3a: `$fields` is no longer emitted by readNode. Validate
-	// `_<name>` storage keys directly. Legacy `$fields` is still tolerated for
-	// backward compatibility (e.g. test fixtures) but warns in dev mode.
-	if (value.$fields !== undefined)
-		assertNativeFields(value.$fields, `${path}.$fields`);
-	// Validate `_<name>` storage keys (de-hoisted surface, Phase 3a).
+	// Validate `_<name>` storage keys (de-hoisted surface).
 	for (const key of Object.keys(value)) {
 		if (!key.startsWith('_')) continue;
+		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
 	if (value.$children !== undefined)
 		assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
-	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
+	if (value.$span !== undefined)
+		assertNativeSpan(value.$span, `${path}.$span`);
 	if (value.$nodeHandle !== undefined)
 		assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
 	if (value.$childIndex !== undefined)
@@ -151,9 +142,14 @@ function assertNativeNodeDataInternal(
  * Type guard — returns `true` iff `node` passes all runtime invariants
  * required by the native (napi) render boundary.
  *
+ * @remarks
+ * Returns `true` unconditionally when `NODE_ENV === 'production'` — the
+ * O(n) tree walk is skipped in production builds for performance.
+ *
  * @see {@link assertRenderableNodeData} for the throwing variant.
  */
 export function isRenderableNodeData(node: AnyNodeData): boolean {
+	if (!ASSERT_ENABLED) return true;
 	try {
 		assertRenderableNodeData(node);
 		return true;
@@ -172,13 +168,14 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *  - `$named` is a boolean
  *  - `$format` is absent
  *  - no function-valued properties
- *  - `$fields` and `$children` satisfy the same constraints recursively
+ *  - `_<name>` storage keys and `$children` satisfy the same constraints recursively
  *
  * @see {@link isRenderableNodeData} for the non-throwing predicate.
  */
 export function assertRenderableNodeData(
 	node: AnyNodeData
 ): asserts node is AnyNodeData {
+	if (!ASSERT_ENABLED) return;
 	assertNativeNodeDataInternal(node, 'node');
 }
 

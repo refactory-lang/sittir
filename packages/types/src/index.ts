@@ -25,8 +25,6 @@ import type { CamelCase } from 'type-fest';
 export type {
 	AnyNodeData,
 	NodeId,
-	NodeFieldValue,
-	NodeChildValue,
 	NodeMemberValue,
 	AnyTreeNode,
 	TemplateRule,
@@ -76,7 +74,7 @@ export type Simplify<T> = { [K in keyof T]: T[K] } & {};
 export type NonEmptyArray<T> = readonly [T, ...(readonly T[])];
 
 /**
- * AutoStamp<T> — brands a `$fields` entry as auto-stamped by the factory.
+ * AutoStamp<T> — brands a storage entry as auto-stamped by the factory.
  *
  * The factory always writes a fixed constant for this field; the caller
  * never supplies it. `ConfigOf` and `FromInputOf` filter out all
@@ -98,7 +96,7 @@ export type AutoStamp<T> = T & { readonly __autoStamp__?: never };
 type IsAutoStamp<T> = '__autoStamp__' extends keyof T ? true : false;
 
 /**
- * BooleanKeyword<T> — brands a `$fields` entry as a boolean-keyword
+ * BooleanKeyword<T> — brands a storage entry as a boolean-keyword
  * position (ADR-0012). The underlying NodeData value is still `T`
  * (typically a keyword/terminal node such as `MutableSpecifier`), so
  * render and readNode round-trip shapes are unchanged. At the Config /
@@ -116,7 +114,7 @@ export type BooleanKeyword<T> = T & { readonly __booleanKeyword__?: never };
 type IsBooleanKeyword<T> = '__booleanKeyword__' extends keyof T ? true : false;
 
 /**
- * Bitflag<E, T> — brands a `$fields` entry as a bitflag position (ADR-0012).
+ * Bitflag<E, T> — brands a storage entry as a bitflag position (ADR-0012).
  * `E` is the const-enum type the Config / Loose surface expose (e.g.
  * `FunctionMod`); `T` is the underlying NodeData container type that
  * remains on the data surface (render / readNode round-trip preserved).

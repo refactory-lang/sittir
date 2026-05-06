@@ -680,8 +680,9 @@ export function _parenthesizedExpressionTyped(config: T.ParenthesizedExpressionT
 }
 
 export function _publicFieldDefinitionAbstractFirst(config?: T.PublicFieldDefinitionAbstractFirst.Config) {
+  const _config = config ?? {};
   const _abstract_marker = "abstract" as const;
-  const _readonly_marker = config?.readonlyMarker ? "readonly" as const : undefined;
+  const _readonly_marker = _config.readonlyMarker ? "readonly" as const : undefined;
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionAbstractFirst as const,
     $source: 2 as const,
@@ -691,7 +692,7 @@ export function _publicFieldDefinitionAbstractFirst(config?: T.PublicFieldDefini
     abstractMarker() { return _abstract_marker; },
     readonlyMarker() { return _readonly_marker; },
     $with: {
-      readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => _publicFieldDefinitionAbstractFirst({ ...config, readonlyMarker: value }),
+      readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => _publicFieldDefinitionAbstractFirst({ ..._config, readonlyMarker: value }),
     },
   });
 }
@@ -740,8 +741,9 @@ export function publicFieldDefinitionDeclareFirst(child?: T.AccessibilityModifie
 }
 
 export function _publicFieldDefinitionReadonlyFirst(config?: T.PublicFieldDefinitionReadonlyFirst.Config) {
+  const _config = config ?? {};
   const _readonly_marker = "readonly" as const;
-  const _abstract_marker = config?.abstractMarker ? "abstract" as const : undefined;
+  const _abstract_marker = _config.abstractMarker ? "abstract" as const : undefined;
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionReadonlyFirst as const,
     $source: 2 as const,
@@ -751,15 +753,16 @@ export function _publicFieldDefinitionReadonlyFirst(config?: T.PublicFieldDefini
     readonlyMarker() { return _readonly_marker; },
     abstractMarker() { return _abstract_marker; },
     $with: {
-      abstractMarker: (value?: BooleanKeyword<T.AbstractMarker>) => _publicFieldDefinitionReadonlyFirst({ ...config, abstractMarker: value }),
+      abstractMarker: (value?: BooleanKeyword<T.AbstractMarker>) => _publicFieldDefinitionReadonlyFirst({ ..._config, abstractMarker: value }),
     },
   });
 }
 
 export function _publicFieldDefinitionStaticMods(config?: T.PublicFieldDefinitionStaticMods.Config) {
-  const children = config?.children ?? [];
+  const _config = config ?? {};
+  const children = _config.children ?? [];
   const _static_marker = "static" as const;
-  const _readonly_marker = config?.readonlyMarker ? "readonly" as const : undefined;
+  const _readonly_marker = _config.readonlyMarker ? "readonly" as const : undefined;
   return withMethods({
     $type: TSKindId.PublicFieldDefinitionStaticMods as const,
     $source: 2 as const,
@@ -771,8 +774,8 @@ export function _publicFieldDefinitionStaticMods(config?: T.PublicFieldDefinitio
     readonlyMarker() { return _readonly_marker; },
     children() { return children; },
     $with: {
-      readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => _publicFieldDefinitionStaticMods({ ...config, readonlyMarker: value }),
-      children: (...items: readonly [T.OverrideModifier]) => _publicFieldDefinitionStaticMods({ ...config, children: items }),
+      readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => _publicFieldDefinitionStaticMods({ ..._config, readonlyMarker: value }),
+      children: (...items: readonly [T.OverrideModifier]) => _publicFieldDefinitionStaticMods({ ..._config, children: items }),
     },
   });
 }
@@ -1036,8 +1039,8 @@ export function accessibilityModifier(text: 'public' | 'private' | 'protected') 
   });
 }
 
-export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
-  const _type = config.type;
+export function addingTypeAnnotation(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.AddingTypeAnnotation as const,
     $source: 2 as const,
@@ -1045,13 +1048,13 @@ export function addingTypeAnnotation(config: T.AddingTypeAnnotation.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => addingTypeAnnotation({ ...config, type: value }),
+      typeField: (value: T.Type) => addingTypeAnnotation(value),
     },
   });
 }
 
-export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
-  const _declaration = config.declaration;
+export function ambientDeclaration(declaration: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) {
+  const _declaration = declaration;
   return withMethods({
     $type: TSKindId.AmbientDeclaration as const,
     $source: 2 as const,
@@ -1059,7 +1062,7 @@ export function ambientDeclaration(config: T.AmbientDeclaration.Config) {
     _declaration,
     declaration() { return _declaration; },
     $with: {
-      declaration: (value: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => ambientDeclaration({ ...config, declaration: value }),
+      declaration: (value: T.Declaration | "global" | T.StatementBlock | "module" | T.Identifier | T.Type | T.Semicolon) => ambientDeclaration(value),
     },
   });
 }
@@ -1097,8 +1100,8 @@ export function arrayPattern(...children: (T.Pattern | T.AssignmentPattern)[]) {
   });
 }
 
-export function arrayType(config: T.ArrayType.Config) {
-  const _primary_type = config.primaryType;
+export function arrayType(primaryType: T.PrimaryType) {
+  const _primary_type = primaryType;
   return withMethods({
     $type: TSKindId.ArrayType as const,
     $source: 2 as const,
@@ -1106,13 +1109,13 @@ export function arrayType(config: T.ArrayType.Config) {
     _primary_type,
     primaryType() { return _primary_type; },
     $with: {
-      primaryType: (value: T.PrimaryType) => arrayType({ ...config, primaryType: value }),
+      primaryType: (value: T.PrimaryType) => arrayType(value),
     },
   });
 }
 
-export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) {
-  const _parameter = config.parameter.$text;
+export function arrowFunctionParameter(parameter: T.ReservedIdentifier) {
+  const _parameter = parameter.$text;
   return withMethods({
     $type: TSKindId._ArrowFunctionParameter as const,
     $source: 2 as const,
@@ -1120,7 +1123,7 @@ export function arrowFunctionParameter(config: T.ArrowFunctionParameter.Config) 
     _parameter,
     parameter() { return _parameter; },
     $with: {
-      parameter: (value: T.ReservedIdentifier) => arrowFunctionParameter({ ...config, parameter: value }),
+      parameter: (value: T.ReservedIdentifier) => arrowFunctionParameter(value),
     },
   });
 }
@@ -1237,8 +1240,8 @@ export function asserts(child: (T.TypePredicate | T.Identifier | T.This)) {
   });
 }
 
-export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
-  const _asserts = config.asserts;
+export function assertsAnnotation(asserts: T.AssertsAnnotationAsserts | T.Asserts) {
+  const _asserts = asserts;
   return withMethods({
     $type: TSKindId.AssertsAnnotation as const,
     $source: 2 as const,
@@ -1246,7 +1249,7 @@ export function assertsAnnotation(config: T.AssertsAnnotation.Config) {
     _asserts,
     asserts() { return _asserts; },
     $with: {
-      asserts: (value: T.AssertsAnnotationAsserts | T.Asserts) => assertsAnnotation({ ...config, asserts: value }),
+      asserts: (value: T.AssertsAnnotationAsserts | T.Asserts) => assertsAnnotation(value),
     },
   });
 }
@@ -1313,8 +1316,8 @@ export function augmentedAssignmentExpression(config: T.AugmentedAssignmentExpre
   });
 }
 
-export function awaitExpression(config: T.AwaitExpression.Config) {
-  const _expression = config.expression;
+export function awaitExpression(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.AwaitExpression as const,
     $source: 2 as const,
@@ -1322,7 +1325,7 @@ export function awaitExpression(config: T.AwaitExpression.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => awaitExpression({ ...config, expression: value }),
+      expression: (value: T.Expression) => awaitExpression(value),
     },
   });
 }
@@ -1638,8 +1641,8 @@ export function comment(text: string) {
   });
 }
 
-export function computedPropertyName(config: T.ComputedPropertyName.Config) {
-  const _expression = config.expression;
+export function computedPropertyName(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.ComputedPropertyName as const,
     $source: 2 as const,
@@ -1647,7 +1650,7 @@ export function computedPropertyName(config: T.ComputedPropertyName.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => computedPropertyName({ ...config, expression: value }),
+      expression: (value: T.Expression) => computedPropertyName(value),
     },
   });
 }
@@ -1678,8 +1681,8 @@ export function conditionalType(config: T.ConditionalType.Config) {
   });
 }
 
-export function constraint(config: T.Constraint.Config) {
-  const _type = config.type;
+export function constraint(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.Constraint as const,
     $source: 2 as const,
@@ -1687,7 +1690,7 @@ export function constraint(config: T.Constraint.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => constraint({ ...config, type: value }),
+      typeField: (value: T.Type) => constraint(value),
     },
   });
 }
@@ -1840,8 +1843,8 @@ export function decoratorParenthesizedExpression(child: (T.Identifier | T.Decora
   });
 }
 
-export function defaultType(config: T.DefaultType.Config) {
-  const _type = config.type;
+export function defaultType(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.DefaultType as const,
     $source: 2 as const,
@@ -1849,7 +1852,7 @@ export function defaultType(config: T.DefaultType.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => defaultType({ ...config, type: value }),
+      typeField: (value: T.Type) => defaultType(value),
     },
   });
 }
@@ -1876,8 +1879,8 @@ export function doStatement(config: T.DoStatement.Config) {
   });
 }
 
-export function elseClause(config: T.ElseClause.Config) {
-  const _statement = config.statement;
+export function elseClause(statement: T.Statement) {
+  const _statement = statement;
   return withMethods({
     $type: TSKindId.ElseClause as const,
     $source: 2 as const,
@@ -1885,7 +1888,7 @@ export function elseClause(config: T.ElseClause.Config) {
     _statement,
     statement() { return _statement; },
     $with: {
-      statement: (value: T.Statement) => elseClause({ ...config, statement: value }),
+      statement: (value: T.Statement) => elseClause(value),
     },
   });
 }
@@ -1908,8 +1911,9 @@ export function enumAssignment(config: T.EnumAssignment.Config) {
   });
 }
 
-export function enumBody(config: T.EnumBody.Config) {
-  const children = config.children ?? [];
+export function enumBody(config?: T.EnumBody.Config) {
+  const _config = config ?? {};
+  const children = _config.children ?? [];
   return withMethods({
     $type: TSKindId.EnumBody as const,
     $source: 2 as const,
@@ -1917,7 +1921,7 @@ export function enumBody(config: T.EnumBody.Config) {
     $children: children,
     children() { return children; },
     $with: {
-      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => enumBody({ ...config, children: items }),
+      children: (...items: ((T.PropertyName | T.EnumAssignment))[]) => enumBody({ ..._config, children: items }),
     },
   });
 }
@@ -2155,8 +2159,8 @@ export function false_() {
   });
 }
 
-export function finallyClause(config: T.FinallyClause.Config) {
-  const _body = config.body;
+export function finallyClause(body: T.StatementBlock) {
+  const _body = body;
   return withMethods({
     $type: TSKindId.FinallyClause as const,
     $source: 2 as const,
@@ -2164,13 +2168,13 @@ export function finallyClause(config: T.FinallyClause.Config) {
     _body,
     body() { return _body; },
     $with: {
-      body: (value: T.StatementBlock) => finallyClause({ ...config, body: value }),
+      body: (value: T.StatementBlock) => finallyClause(value),
     },
   });
 }
 
-export function flowMaybeType(config: T.FlowMaybeType.Config) {
-  const _primary_type = config.primaryType;
+export function flowMaybeType(primaryType: T.PrimaryType) {
+  const _primary_type = primaryType;
   return withMethods({
     $type: TSKindId.FlowMaybeType as const,
     $source: 2 as const,
@@ -2178,7 +2182,7 @@ export function flowMaybeType(config: T.FlowMaybeType.Config) {
     _primary_type,
     primaryType() { return _primary_type; },
     $with: {
-      primaryType: (value: T.PrimaryType) => flowMaybeType({ ...config, primaryType: value }),
+      primaryType: (value: T.PrimaryType) => flowMaybeType(value),
     },
   });
 }
@@ -2553,8 +2557,8 @@ export function importAlias(config: T.ImportAlias.Config) {
   });
 }
 
-export function importAttribute(config: T.ImportAttribute.Config) {
-  const _object = config.object;
+export function importAttribute(object: T.ImportAttributeObject | T.Object) {
+  const _object = object;
   return withMethods({
     $type: TSKindId.ImportAttribute as const,
     $source: 2 as const,
@@ -2562,7 +2566,7 @@ export function importAttribute(config: T.ImportAttribute.Config) {
     _object,
     object() { return _object; },
     $with: {
-      object: (value: T.ImportAttributeObject | T.Object) => importAttribute({ ...config, object: value }),
+      object: (value: T.ImportAttributeObject | T.Object) => importAttribute(value),
     },
   });
 }
@@ -2669,8 +2673,8 @@ export function importRequireClause(config: T.ImportRequireClause.Config) {
   });
 }
 
-export function importSpecifierName(config: T.ImportSpecifierName.Config) {
-  const _name = config.name;
+export function importSpecifierName(name: T.ImportIdentifier) {
+  const _name = name;
   return withMethods({
     $type: TSKindId._ImportSpecifierName as const,
     $source: 2 as const,
@@ -2678,7 +2682,7 @@ export function importSpecifierName(config: T.ImportSpecifierName.Config) {
     _name,
     name() { return _name; },
     $with: {
-      name: (value: T.ImportIdentifier) => importSpecifierName({ ...config, name: value }),
+      name: (value: T.ImportIdentifier) => importSpecifierName(value),
     },
   });
 }
@@ -2827,8 +2831,8 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
   });
 }
 
-export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
-  const _primary_type = config.primaryType;
+export function indexTypeQuery(primaryType: T.PrimaryType) {
+  const _primary_type = primaryType;
   return withMethods({
     $type: TSKindId.IndexTypeQuery as const,
     $source: 2 as const,
@@ -2836,7 +2840,7 @@ export function indexTypeQuery(config: T.IndexTypeQuery.Config) {
     _primary_type,
     primaryType() { return _primary_type; },
     $with: {
-      primaryType: (value: T.PrimaryType) => indexTypeQuery({ ...config, primaryType: value }),
+      primaryType: (value: T.PrimaryType) => indexTypeQuery(value),
     },
   });
 }
@@ -3216,8 +3220,8 @@ export function namespaceExport(child: T.ModuleExportName) {
   });
 }
 
-export function namespaceImport(config: T.NamespaceImport.Config) {
-  const _identifier = config.identifier.$text;
+export function namespaceImport(identifier: T.Identifier) {
+  const _identifier = identifier.$text;
   return withMethods({
     $type: TSKindId.NamespaceImport as const,
     $source: 2 as const,
@@ -3225,7 +3229,7 @@ export function namespaceImport(config: T.NamespaceImport.Config) {
     _identifier,
     identifier() { return _identifier; },
     $with: {
-      identifier: (value: T.Identifier) => namespaceImport({ ...config, identifier: value }),
+      identifier: (value: T.Identifier) => namespaceImport(value),
     },
   });
 }
@@ -3288,8 +3292,8 @@ export function newExpression(config: T.NewExpression.Config) {
   });
 }
 
-export function nonNullExpression(config: T.NonNullExpression.Config) {
-  const _expression = config.expression;
+export function nonNullExpression(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.NonNullExpression as const,
     $source: 2 as const,
@@ -3297,7 +3301,7 @@ export function nonNullExpression(config: T.NonNullExpression.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => nonNullExpression({ ...config, expression: value }),
+      expression: (value: T.Expression) => nonNullExpression(value),
     },
   });
 }
@@ -3427,8 +3431,8 @@ export function objectTypeFlow(config: T.ObjectType.Flow.Config) {
   });
 }
 
-export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) {
-  const _type = config.type;
+export function omittingTypeAnnotation(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.OmittingTypeAnnotation as const,
     $source: 2 as const,
@@ -3436,13 +3440,13 @@ export function omittingTypeAnnotation(config: T.OmittingTypeAnnotation.Config) 
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => omittingTypeAnnotation({ ...config, type: value }),
+      typeField: (value: T.Type) => omittingTypeAnnotation(value),
     },
   });
 }
 
-export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
-  const _type = config.type;
+export function optingTypeAnnotation(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.OptingTypeAnnotation as const,
     $source: 2 as const,
@@ -3450,7 +3454,7 @@ export function optingTypeAnnotation(config: T.OptingTypeAnnotation.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => optingTypeAnnotation({ ...config, type: value }),
+      typeField: (value: T.Type) => optingTypeAnnotation(value),
     },
   });
 }
@@ -3507,8 +3511,8 @@ export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) 
   });
 }
 
-export function optionalType(config: T.OptionalType.Config) {
-  const _type = config.type;
+export function optionalType(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.OptionalType as const,
     $source: 2 as const,
@@ -3516,7 +3520,7 @@ export function optionalType(config: T.OptionalType.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => optionalType({ ...config, type: value }),
+      typeField: (value: T.Type) => optionalType(value),
     },
   });
 }
@@ -3615,8 +3619,8 @@ export function parenthesizedExpressionUFormSequence(config?: Omit<ConfigOf<T.Pa
   });
 }
 
-export function parenthesizedType(config: T.ParenthesizedType.Config) {
-  const _type = config.type;
+export function parenthesizedType(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.ParenthesizedType as const,
     $source: 2 as const,
@@ -3624,7 +3628,7 @@ export function parenthesizedType(config: T.ParenthesizedType.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => parenthesizedType({ ...config, type: value }),
+      typeField: (value: T.Type) => parenthesizedType(value),
     },
   });
 }
@@ -3739,8 +3743,8 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
   });
 }
 
-export function readonlyType(config: T.ReadonlyType.Config) {
-  const _type = config.type;
+export function readonlyType(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.ReadonlyType as const,
     $source: 2 as const,
@@ -3748,7 +3752,7 @@ export function readonlyType(config: T.ReadonlyType.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => readonlyType({ ...config, type: value }),
+      typeField: (value: T.Type) => readonlyType(value),
     },
   });
 }
@@ -3837,8 +3841,8 @@ export function restPattern(child: T.LhsExpression) {
   });
 }
 
-export function restType(config: T.RestType.Config) {
-  const _type = config.type;
+export function restType(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.RestType as const,
     $source: 2 as const,
@@ -3846,7 +3850,7 @@ export function restType(config: T.RestType.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => restType({ ...config, type: value }),
+      typeField: (value: T.Type) => restType(value),
     },
   });
 }
@@ -3899,8 +3903,8 @@ export function sequenceExpression(...children: T.Expression[]) {
   });
 }
 
-export function spreadElement(config: T.SpreadElement.Config) {
-  const _expression = config.expression;
+export function spreadElement(expression: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.SpreadElement as const,
     $source: 2 as const,
@@ -3908,7 +3912,7 @@ export function spreadElement(config: T.SpreadElement.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value: T.Expression) => spreadElement({ ...config, expression: value }),
+      expression: (value: T.Expression) => spreadElement(value),
     },
   });
 }
@@ -4260,8 +4264,8 @@ export function typeAliasDeclaration(config: T.TypeAliasDeclaration.Config) {
   });
 }
 
-export function typeAnnotation(config: T.TypeAnnotation.Config) {
-  const _type = config.type;
+export function typeAnnotation(type: T.Type) {
+  const _type = type;
   return withMethods({
     $type: TSKindId.TypeAnnotation as const,
     $source: 2 as const,
@@ -4269,7 +4273,7 @@ export function typeAnnotation(config: T.TypeAnnotation.Config) {
     _type,
     typeField() { return _type; },
     $with: {
-      typeField: (value: T.Type) => typeAnnotation({ ...config, type: value }),
+      typeField: (value: T.Type) => typeAnnotation(value),
     },
   });
 }
@@ -4360,8 +4364,8 @@ export function typePredicate(config: T.TypePredicate.Config) {
   });
 }
 
-export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config) {
-  const _type_predicate = config.typePredicate;
+export function typePredicateAnnotation(typePredicate: T.AssertsAnnotationAsserts | T.TypePredicate) {
+  const _type_predicate = typePredicate;
   return withMethods({
     $type: TSKindId.TypePredicateAnnotation as const,
     $source: 2 as const,
@@ -4369,7 +4373,7 @@ export function typePredicateAnnotation(config: T.TypePredicateAnnotation.Config
     _type_predicate,
     typePredicate() { return _type_predicate; },
     $with: {
-      typePredicate: (value: T.AssertsAnnotationAsserts | T.TypePredicate) => typePredicateAnnotation({ ...config, typePredicate: value }),
+      typePredicate: (value: T.AssertsAnnotationAsserts | T.TypePredicate) => typePredicateAnnotation(value),
     },
   });
 }
@@ -4571,8 +4575,8 @@ export function withStatement(config: T.WithStatement.Config) {
   });
 }
 
-export function yieldExpression(config?: T.YieldExpression.Config) {
-  const _expression = config?.expression;
+export function yieldExpression(expression?: T.Expression) {
+  const _expression = expression;
   return withMethods({
     $type: TSKindId.YieldExpression as const,
     $source: 2 as const,
@@ -4580,7 +4584,7 @@ export function yieldExpression(config?: T.YieldExpression.Config) {
     _expression,
     expression() { return _expression; },
     $with: {
-      expression: (value?: T.Expression) => yieldExpression({ ...config, expression: value }),
+      expression: (value?: T.Expression) => yieldExpression(value),
     },
   });
 }

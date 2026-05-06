@@ -959,14 +959,9 @@ export function wrapEnumVariantList(data: T.EnumVariantList, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.EnumVariantList as const,
-    _enum_variant: data._enum_variant,
     $children: data.$children,
 
-    enumVariant() { return drillInAll<T.EnumVariant>(this._enum_variant, tree); },
-    $with: {
-      enumVariant: (...v: T.EnumVariant[]) => wrapEnumVariantList({ ...data, _enum_variant: v }, tree),
-      children: (...items: T.AttributeItem[]) => wrapEnumVariantList({ ...data, $children: items }, tree),
-    },
+    $with: { $children: (...vs: ((T.AttributeItem | T.EnumVariant))[]) => wrapEnumVariantList({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
@@ -1065,14 +1060,9 @@ export function wrapFieldDeclarationList(data: T.FieldDeclarationList, tree: Tre
   const _node = withMethods({
     ...data,
     $type: TSKindId.FieldDeclarationList as const,
-    _field_declaration: data._field_declaration,
     $children: data.$children,
 
-    fieldDeclaration() { return drillInAll<T.FieldDeclaration>(this._field_declaration, tree); },
-    $with: {
-      fieldDeclaration: (...v: T.FieldDeclaration[]) => wrapFieldDeclarationList({ ...data, _field_declaration: v }, tree),
-      children: (...items: T.AttributeItem[]) => wrapFieldDeclarationList({ ...data, $children: items }, tree),
-    },
+    $with: { $children: (...vs: ((T.AttributeItem | T.FieldDeclaration))[]) => wrapFieldDeclarationList({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
@@ -1896,16 +1886,13 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
   const _node = withMethods({
     ...data,
     $type: TSKindId.OrderedFieldDeclarationList as const,
-    _visibility_modifier: data._visibility_modifier,
     _type: data._type,
     $children: data.$children,
 
-    visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     typeField() { return drillInAll<T._Type>(this._type, tree); },
     $with: {
-      visibilityModifier: (v: T.VisibilityModifier) => wrapOrderedFieldDeclarationList({ ...data, _visibility_modifier: v }, tree),
       typeField: (...v: T._Type[]) => wrapOrderedFieldDeclarationList({ ...data, _type: v }, tree),
-      children: (...items: T.AttributeItem[]) => wrapOrderedFieldDeclarationList({ ...data, $children: items }, tree),
+      children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => wrapOrderedFieldDeclarationList({ ...data, $children: items }, tree),
     },
   });
   return _node;
@@ -1935,14 +1922,9 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.Parameters as const,
-    _attribute_item: data._attribute_item,
     $children: data.$children,
 
-    attributeItem() { return drillIn<T.AttributeItem | undefined>(this._attribute_item, tree); },
-    $with: {
-      attributeItem: (v: T.AttributeItem) => wrapParameters({ ...data, _attribute_item: v }, tree),
-      children: (...items: ((T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => wrapParameters({ ...data, $children: items }, tree),
-    },
+    $with: { $children: (...vs: ((T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type))[]) => wrapParameters({ ...data, $children: vs }, tree) },
   });
   return _node;
 }
@@ -2632,14 +2614,9 @@ export function wrapTypeArguments(data: T.TypeArguments, tree: TreeHandle) {
   const _node = withMethods({
     ...data,
     $type: TSKindId.TypeArguments as const,
-    _trait_bounds: data._trait_bounds,
     $children: data.$children,
 
-    traitBounds() { return drillIn<T.TraitBounds | undefined>(this._trait_bounds, tree); },
-    $with: {
-      traitBounds: (v: T.TraitBounds) => wrapTypeArguments({ ...data, _trait_bounds: v }, tree),
-      children: (...items: NonEmptyArray<(T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block)>) => wrapTypeArguments({ ...data, $children: items }, tree),
-    },
+    $with: { $children: (...vs: NonEmptyArray<(T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)>) => wrapTypeArguments({ ...data, $children: vs }, tree) },
   });
   return _node;
 }

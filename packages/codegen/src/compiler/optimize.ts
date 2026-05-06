@@ -376,7 +376,7 @@ export function dedupeSeqMembers(rule: Rule): Rule {
  * produce the same downstream shape whether the helper exists as
  * its own entry or as an expansion in its parent.
  */
-export function inlineSingleUseHidden(
+function inlineSingleUseHidden(
 	rules: Record<string, Rule>
 ): Record<string, Rule> {
 	// Work on a shallow copy — we mutate entries and delete keys.
@@ -768,17 +768,6 @@ export {
 	nameVariant,
 	tokenToName
 } from './link.ts';
-
-// ---------------------------------------------------------------------------
-// fanOutChoices — expand nested choices (for use by callers)
-// ---------------------------------------------------------------------------
-
-export function fanOutChoices(rule: Rule): Rule[] {
-	if (rule.type === 'choice') {
-		return rule.members.flatMap((m) => fanOutChoices(m));
-	}
-	return [rule];
-}
 
 // ---------------------------------------------------------------------------
 // Spacing

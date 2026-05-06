@@ -1580,10 +1580,9 @@ export interface ComparisonOperator {
   readonly $type: TSKindId.ComparisonOperator;
   readonly _left: PrimaryExpression;
   readonly _operators: NonEmptyArray<Bitflag<Operators, "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">>;
-  readonly _primary_expression: NonEmptyArray<PrimaryExpression>;
   left(): PrimaryExpression;
   operators(): NonEmptyArray<Bitflag<Operators, "<" | "<=" | "==" | "!=" | ">=" | ">" | "<>" | "in" | "not in" | "is" | "is not">>;
-  primaryExpression(): NonEmptyArray<PrimaryExpression>;
+  readonly $children: NonEmptyArray<PrimaryExpression>;
 }
 
 export interface ComplexPattern {
@@ -4567,7 +4566,7 @@ export namespace ComparisonOperator {
     readonly $childIndex?: number;
     readonly left: PrimaryExpression.Transport;
     readonly operators: readonly (LiteralTransport<TSKindId.Lt, "<"> | LiteralTransport<TSKindId.LtEq, "<="> | LiteralTransport<TSKindId.EqEq, "=="> | LiteralTransport<TSKindId.BangEq, "!="> | LiteralTransport<TSKindId.GtEq, ">="> | LiteralTransport<TSKindId.Gt, ">"> | LiteralTransport<TSKindId.LtGt, "<>"> | LiteralTransport<TSKindId.In, "in"> | LiteralTransport<number, "not in"> | LiteralTransport<TSKindId.Is, "is"> | LiteralTransport<number, "is not">)[];
-    readonly primary_expression: readonly (PrimaryExpression.Transport)[];
+    readonly $children: readonly (PrimaryExpression.Transport)[];
   }
 }
 

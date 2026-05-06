@@ -36,7 +36,7 @@ import {
 } from './common.ts';
 
 /**
- * Read a tree node and selectively populate `$children` / `$fields` of
+ * Read a tree node and selectively populate `$children` / `_<name>` keys of
  * NAMED descendants whose kind appears in `deepReadKinds`. Other named
  * children stay shallow (the renderer short-circuits their render path
  * to `$text`, which matches the source verbatim).
@@ -73,7 +73,7 @@ function _deepReadNode(
 	deepReadKinds: KindMembership
 ): ReturnType<typeof readNode> {
 	const data = readNode(tree, handle, childIndex);
-	// NodeChildValue / NodeFieldValue widened to AnyNodeData | string | number.
+	// NodeMemberValue = AnyNodeData | string | number.
 	// Narrow to NodeData before reading $nodeHandle / $type.
 	const isNodeData = (v: unknown): v is AnyNodeData =>
 		typeof v === 'object' && v !== null && '$type' in v;
@@ -93,31 +93,22 @@ function _deepReadNode(
 		);
 		(data as { $children?: typeof drilled }).$children = drilled;
 	}
-	if (data.$fields) {
-		// $fields has a readonly index signature; rebuild as a mutable map
-		// then assign back via a structural cast.
-		const newFields: Record<
-			string,
-			| AnyNodeData
-			| string
-			| number
-			| readonly (AnyNodeData | string | number)[]
-			| undefined
-		> = {};
-		for (const [key, value] of Object.entries(data.$fields)) {
+	// Iterate `_<name>` top-level keys (de-hoisted storage).
+	const rec = data as unknown as Record<string, unknown>;
+	const namedSlotKeys = Object.keys(rec).filter((k) => k.startsWith('_'));
+	if (namedSlotKeys.length > 0) {
+		for (const rawKey of namedSlotKeys) {
+			const value = rec[rawKey];
 			if (Array.isArray(value)) {
-				newFields[key] = value.map((entry) =>
+				rec[rawKey] = value.map((entry) =>
 					shouldDrill(entry)
 						? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds)
 						: entry
 				);
-			} else {
-				newFields[key] = shouldDrill(value)
-					? _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds)
-					: value;
+			} else if (shouldDrill(value)) {
+				rec[rawKey] = _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds);
 			}
 		}
-		(data as { $fields?: typeof newFields }).$fields = newFields;
 	}
 	return data;
 }

@@ -704,27 +704,23 @@ function shapeOf(node: CstNode): string {
  *  returned the whole-tree NodeData. */
 function findInNodeData(node: unknown, kind: string): unknown | null {
 	if (!node || typeof node !== 'object') return null;
-	const n = node as {
-		$type?: string;
-		$fields?: Record<string, unknown>;
-		$children?: unknown[];
-	};
+	const n = node as Record<string, unknown>;
 	if (n.$type === kind) return node;
-	if (n.$fields) {
-		for (const v of Object.values(n.$fields)) {
-			if (Array.isArray(v)) {
-				for (const item of v) {
-					const found = findInNodeData(item, kind);
-					if (found) return found;
-				}
-			} else {
-				const found = findInNodeData(v, kind);
+	for (const key of Object.keys(n)) {
+		if (!key.startsWith('_')) continue;
+		const v = n[key];
+		if (Array.isArray(v)) {
+			for (const item of v) {
+				const found = findInNodeData(item, kind);
 				if (found) return found;
 			}
+		} else {
+			const found = findInNodeData(v, kind);
+			if (found) return found;
 		}
 	}
 	if (Array.isArray(n.$children)) {
-		for (const c of n.$children) {
+		for (const c of n.$children as unknown[]) {
 			const found = findInNodeData(c, kind);
 			if (found) return found;
 		}
@@ -743,26 +739,23 @@ function findInNodeDataByRange(
 	end: number
 ): unknown | null {
 	if (!node || typeof node !== 'object') return null;
-	const n = node as {
-		$span?: { start: number; end: number };
-		$fields?: Record<string, unknown>;
-		$children?: unknown[];
-	};
-	if (!n.$span) return null;
-	if (n.$span.start > start || n.$span.end < end) return null;
+	const n = node as Record<string, unknown>;
+	const span = n.$span as { start: number; end: number } | undefined;
+	if (!span) return null;
+	if (span.start > start || span.end < end) return null;
 	const recurseInto = (child: unknown): unknown | null =>
 		findInNodeDataByRange(child, start, end);
-	if (n.$fields) {
-		for (const v of Object.values(n.$fields)) {
-			if (Array.isArray(v)) {
-				for (const item of v) {
-					const f = recurseInto(item);
-					if (f) return f;
-				}
-			} else {
-				const f = recurseInto(v);
+	for (const key of Object.keys(n)) {
+		if (!key.startsWith('_')) continue;
+		const v = n[key];
+		if (Array.isArray(v)) {
+			for (const item of v) {
+				const f = recurseInto(item);
 				if (f) return f;
 			}
+		} else {
+			const f = recurseInto(v);
+			if (f) return f;
 		}
 	}
 	if (Array.isArray(n.$children)) {

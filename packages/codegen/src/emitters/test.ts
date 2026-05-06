@@ -96,27 +96,6 @@ export function emitTests(config: EmitTestsConfig): string {
 		if (!isValidIdent(key)) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 
-		// Text-template branches (e.g. rust `raw_string_literal`) surface
-		// through `factory-map.json5`'s `factoryShapes: "text"` and the
-		// generated factory signature is `fn(text: string)`, not a Config
-		// object. A node-model branch model with an all-external-token
-		// content structure is the trigger — invoke it with a string.
-		// Phase 1d.vii (spec 022): only true (field-carrying) branches
-		// hit the text-template short-circuit. The former-container
-		// shape (now `branch` with `isContainerShape === true`) keeps
-		// its rest-param test surface via `emitContainerTest` below,
-		// even when its content happens to look like a text-template —
-		// that preserves byte-identity with the pre-merge `'container'`
-		// arm.
-		if (
-			node.modelType === 'branch' &&
-			!node.isContainerShape &&
-			node.isTextTemplate(nodeMap.externals)
-		) {
-			emitTextTemplateBranchTest(lines, kind, key, kindEntries, nodeMap);
-			continue;
-		}
-
 		switch (node.modelType) {
 			case 'branch':
 				// Phase 1d.vii (spec 022): the former `'container'` modelType
@@ -132,7 +111,7 @@ export function emitTests(config: EmitTestsConfig): string {
 			case 'polymorph':
 				emitPolymorphTest(lines, node, kind, key, nodeMap, kindEntries);
 				break;
-			case 'leaf':
+			case 'pattern':
 				emitLeafTest(lines, node, kind, key, kindEntries, nodeMap);
 				break;
 			case 'keyword':
@@ -205,10 +184,31 @@ function emitBranchTest(
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
 
-	const typeConfigArg =
-		typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
-	const renderConfigArg =
-		renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
+	// Gap 5: single-field-no-children factories take the value directly.
+	// Detect and emit a direct-value call instead of a config-object.
+	const nonStampFields = node.fields.filter(
+		(f) => !isAutoStampField(f, nodeMap)
+	);
+	const isSingleFieldDirect =
+		nonStampFields.length === 1 &&
+		(!node.children || node.children.length === 0) &&
+		!isMultiple(nonStampFields[0]!) &&
+		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null;
+
+	let typeConfigArg: string;
+	let renderConfigArg: string;
+	if (isSingleFieldDirect) {
+		const sole = nonStampFields[0]!;
+		const dummy = dummyValue(sole, nodeMap, kindEntries);
+		// Optional field: type test passes no arg; render test passes dummy.
+		typeConfigArg = isRequired(sole) ? dummy : '';
+		renderConfigArg = dummy;
+	} else {
+		typeConfigArg =
+			typeConfigParts.length > 0 ? `{ ${typeConfigParts.join(', ')} }` : '{}';
+		renderConfigArg =
+			renderConfigParts.length > 0 ? `{ ${renderConfigParts.join(', ')} }` : '{}';
+	}
 	lines.push(`    const node = ir.${key}(${typeConfigArg});`);
 	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
 	lines.push(`    expect(node.$source).toBe(2);`);
@@ -345,27 +345,6 @@ function emitPolymorphTest(
 	lines.push('');
 }
 
-function emitTextTemplateBranchTest(
-	lines: string[],
-	kind: string,
-	key: string,
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	nodeMap: NodeMap
-): void {
-	lines.push(`describe('${kind}', () => {`);
-	lines.push(`  it('factory produces correct type', () => {`);
-	lines.push(`    const node = ir.${key}('test');`);
-	lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
-	lines.push(`    expect(node.$source).toBe(2);`);
-	lines.push('  });');
-	lines.push(`  it('render produces non-empty string', () => {`);
-	lines.push(`    const node = ir.${key}('test');`);
-	lines.push(`    expect(node.$render!().length).toBeGreaterThan(0);`);
-	lines.push('  });');
-	lines.push('});');
-	lines.push('');
-}
-
 function emitLeafTest(
 	lines: string[],
 	node: AssembledNode,
@@ -381,7 +360,7 @@ function emitLeafTest(
 	// pattern and pick the first match; if none match, the leaf has
 	// an exotic shape and we skip the construction test (the regex
 	// check itself is the test).
-	const pattern = node.modelType === 'leaf' ? node.pattern : undefined;
+	const pattern = node.modelType === 'pattern' ? node.pattern : undefined;
 	const sample = pickSampleForPattern(pattern);
 	if (sample === null) {
 		// No working sample found — skip this leaf's construction
@@ -551,7 +530,7 @@ function resolveConcreteKind(
 		if (kindEntries && !hasCatalogEntry(kindEntries, current)) continue;
 		// Prefer text-only-compatible kinds — safe as `$text`-only stubs.
 		if (
-			node.modelType === 'leaf' ||
+			node.modelType === 'pattern' ||
 			node.modelType === 'keyword' ||
 			node.modelType === 'enum' ||
 			node.modelType === 'token'

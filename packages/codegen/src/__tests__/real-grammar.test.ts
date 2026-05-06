@@ -87,7 +87,7 @@ describe('Full pipeline — evaluate → link → optimize → assemble', () => 
 			types.set(node.modelType, (types.get(node.modelType) ?? 0) + 1);
 		}
 		expect(types.get('branch')).toBeGreaterThan(10);
-		expect(types.get('leaf')).toBeGreaterThan(0);
+		expect(types.get('pattern')).toBeGreaterThan(0);
 	});
 
 	it('processes Rust through all 4 phases', async () => {

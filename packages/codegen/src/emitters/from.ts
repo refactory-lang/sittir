@@ -14,6 +14,7 @@ import {
 	collectCatalogKinds,
 	kindDiscriminantExpr,
 	hasCatalogEntry,
+	findKindEntry,
 	type KindEnumEntry
 } from './kind-discriminant.ts';
 import type {
@@ -21,6 +22,7 @@ import type {
 	AssembledNonterminal,
 	AssembledGroup
 } from '../compiler/node-map.ts';
+import { AssembledBranch } from '../compiler/node-map.ts';
 import type { PolymorphVariant } from '../compiler/types.ts';
 import {
 	isAutoStampField,
@@ -30,11 +32,14 @@ import {
 	isNonEmpty,
 	slotKindNames,
 	slotLiteralValues,
-	fieldTypeComponents,
 	isValidIdent,
 	keywordPresenceKind,
-	resolveHoistedForm
+	resolveHoistedForm,
+	stampExpressionFor,
+	isHiddenInfraSlot,
+	type BranchSlotClass
 } from './shared.ts';
+import { fieldElementType } from './factories.ts';
 import {
 	isNodeRef,
 	isTerminalValue,
@@ -243,18 +248,37 @@ function collectPerNodeFromBlocks(
 	internKinds: KindInterner,
 	kindEntries: readonly KindEnumEntry[] | undefined
 ): string[] {
-	const perNodeBlocks: string[] = [];
+	from.init();
+
 	for (const [kind, node] of nodeMap.nodes) {
 		if (kind.startsWith('_')) continue;
 		if (nodeMap.polymorphFormKinds.has(kind)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; from() resolvers for them are dead code.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
-		const source = renderFromForNode(node, nodeMap, internKinds, kindEntries);
-		if (source === undefined) continue;
-		perNodeBlocks.push(source);
+
+		// --- Taxonomy dispatch (replaces renderFromForNode) ---
+		if (!node.rawFactoryName || !node.fromFunctionName) continue;
+
+		switch (node.modelType) {
+			case 'branch':
+				from.branch(node, nodeMap, internKinds, kindEntries);
+				break;
+			case 'polymorph':
+				from.polymorph(node, nodeMap, internKinds);
+				break;
+			case 'pattern':
+			case 'enum':
+			case 'keyword':
+				from.leaf(node);
+				break;
+			default:
+				// token, supertype, group, multi — no from() resolver
+				break;
+		}
 	}
-	return perNodeBlocks;
+
+	return from.collect();
 }
 
 /**
@@ -387,64 +411,102 @@ export function emitFrom(config: EmitFromConfig): string {
 }
 
 // ---------------------------------------------------------------------------
-// Dispatch
+// Namespace — taxonomy-keyed from() dispatch API
 // ---------------------------------------------------------------------------
 
-function renderFromForNode(
-	node: AssembledNode,
-	nodeMap: NodeMap,
-	intern: KindInterner,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string | undefined {
-	if (!node.rawFactoryName || !node.fromFunctionName) return undefined;
-	switch (node.modelType) {
-		case 'branch':
-			// The former `AssembledContainer`
-			// shape (no `field()` on the rule) is now an `AssembledBranch`
-			// with `isContainerShape === true`. Dispatch on that BEFORE
-			// the text-template short-circuit so the original behavior is
-			// preserved byte-identically — containers always emit a
-			// rest-param `from()` regardless of any text-template flag.
-			if (node.isContainerShape) {
-				return emitContainerFrom(
-					{
-						kind: node.kind,
-						typeName: node.typeName,
-						rawFactoryName: node.rawFactoryName,
-						fromFunctionName: node.fromFunctionName,
-						children: node.children
-					},
-					kindEntries,
-					nodeMap
-				);
-			}
-			// Text-template branches (e.g. rust raw_string_literal) emit a
-			// factory of shape `(text: string)` per factory-map.json5, not a
-			// Config object. Route them through the string-like from() so
-			// the from() signature matches the factory's text-only contract.
-			if (node.isTextTemplate(nodeMap.externals)) {
-				return emitStringLikeFrom({
+/**
+ * Module-local output buffer — populated by {@link from} namespace
+ * functions, read by {@link collectPerNodeFromBlocks} after the dispatch loop.
+ */
+let _fromOutput: string[] = [];
+
+/**
+ * Taxonomy-keyed from() dispatch namespace.
+ *
+ * Each function pushes into the module-local `_fromOutput` buffer
+ * (populated via `init()`, consumed via `collect()`). The functions are
+ * thin wrappers that delegate to the existing internal emit helpers;
+ * no emit-function signatures are changed.
+ */
+export namespace from {
+	/** Reset the output buffer before a new dispatch loop. */
+	export function init(): void {
+		_fromOutput = [];
+	}
+
+	/** Return the accumulated from() source blocks. */
+	export function collect(): string[] {
+		return _fromOutput;
+	}
+
+	/**
+	 * Emit a leaf from() resolver — string-like (pattern, enum) or keyword.
+	 */
+	export function leaf(
+		node: AssembledNode
+	): void {
+		if (!node.rawFactoryName || !node.fromFunctionName) return;
+		let result: string | undefined;
+		switch (node.modelType) {
+			case 'pattern':
+				result = emitStringLikeFrom(node);
+				break;
+			case 'enum':
+				result = emitStringLikeFrom({
 					typeName: node.typeName,
 					rawFactoryName: node.rawFactoryName,
-					fromFunctionName: node.fromFunctionName
+					fromFunctionName: node.fromFunctionName,
+					enumValues: node.values
 				});
-			}
-			return emitBranchFrom(node, nodeMap, intern);
-		case 'polymorph':
-			return emitPolymorphFrom(node, nodeMap, intern);
-		case 'leaf':
-			return emitStringLikeFrom(node);
-		case 'enum':
-			return emitStringLikeFrom({
-				typeName: node.typeName,
-				rawFactoryName: node.rawFactoryName,
-				fromFunctionName: node.fromFunctionName,
-				enumValues: node.values
-			});
-		case 'keyword':
-			return emitKeywordFrom(node);
-		default:
-			return undefined;
+				break;
+			case 'keyword':
+				result = emitKeywordFrom(node);
+				break;
+			default:
+				break;
+		}
+		if (result) _fromOutput.push(result);
+	}
+
+	/**
+	 * Emit a branch from() resolver — container shape, text-template,
+	 * or regular field-carrying branch.
+	 */
+	export function branch(
+		node: Extract<AssembledNode, { modelType: 'branch' }>,
+		nodeMap: NodeMap,
+		intern: KindInterner,
+		kindEntries: readonly KindEnumEntry[] | undefined
+	): void {
+		let result: string;
+		if (node.isContainerShape) {
+			result = emitContainerFrom(
+				{
+					kind: node.kind,
+					typeName: node.typeName,
+					rawFactoryName: node.rawFactoryName,
+					fromFunctionName: node.fromFunctionName,
+					children: node.children
+				},
+				kindEntries,
+				nodeMap
+			);
+		} else {
+			result = emitBranchFrom(node, nodeMap, intern);
+		}
+		_fromOutput.push(result);
+	}
+
+	/**
+	 * Emit a polymorph from() resolver — dispatcher + per-form resolvers.
+	 */
+	export function polymorph(
+		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
+		nodeMap: NodeMap,
+		intern: KindInterner
+	): void {
+		const result = emitPolymorphFrom(node, nodeMap, intern);
+		_fromOutput.push(result);
 	}
 }
 
@@ -460,6 +522,7 @@ interface BranchLikeNode {
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
 	readonly children: readonly AssembledNonterminal[];
+	readonly slotClass?: BranchSlotClass;
 }
 
 function _emitVariantFrom(
@@ -473,14 +536,13 @@ function _emitVariantFrom(
 	const typeName = node.typeName;
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose | T.${typeName}`;
+	const inputType = `T.${typeName}.Loose`;
 	// Return type unions the factory output with the bare data interface so
 	// the `if (isNodeData(input)) return input;` passthrough — input narrows
 	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
 	// / fluent methods — type-checks without forcing a re-construction.
-	const returnType = `ReturnType<typeof ${factory}> | T.${typeName}`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(input: ${inputType}): ${returnType} {`);
+	lines.push(`export function ${fn}(input: ${inputType}) {`);
 	lines.push(`  if (isNodeData(input)) return input;`);
 
 	const parentFields =
@@ -535,68 +597,22 @@ function _emitVariantFrom(
 }
 
 /**
- * Builds the `(input: T.Foo | T.Foo.Loose): ReturnType<typeof F.fooFactory>`
- * signature text for a branch from() function.
- *
- * @remarks
- * Return type is inferred from the factory call so the fluent accessor
- * methods (render, toEdit, replace, per-field getters/setters) flow through.
- * Annotating with the bare interface name `${typeName}` loses the methods and
- * fails assignability.
- *
- * Accepts either a pre-built NodeData (`T.Foo`, with snake_case `.fields`) or
- * the loose camelCase FromInput bag. The top-level `FromInputOf<T>` alias
- * itself never includes the node arm — only nested branch-slot values do via
- * WidenValue — so the union is added explicitly at the public signature.
- *
- * `T.<Kind>.Loose` resolves via `NamespaceMap[K]['Loose']`
- * (same type as the pre-008 Loose alias). Return type stays
- * `ReturnType<typeof F.<factory>>` — `FluentNodeOf<T>` (what `.Fluent`
- * resolves to) and the factory's concrete return shape are structurally
- * isomorphic but TS's strict function-parameter variance rejects the
- * assignment at the value position.
- *
- * @param node - The branch-like node being emitted.
- * @param factory - The `F.<factoryName>` reference string.
- * @param opt - `'?'` when all fields/children are optional, `''` otherwise.
- * @returns Object containing `inputType`, `returnType`, and `inputOptional` flag.
+ * Builds the input signature parts for a branch from() function.
+ * Return type is omitted — TS infers it from the body.
  */
 function buildBranchSignatureParts(
 	node: BranchLikeNode,
-	factory: string,
+	_factory: string,
 	opt: string
-): { inputType: string; returnType: string; inputOptional: boolean } {
-	// Input union includes both the Loose config bag AND the per-kind NodeData
-	// interface — callers can pass either a new config or an existing built node.
-	// The `isNodeData` generic overload narrows the union to `T.<Kind>` in the
-	// pass-through branch, making the return type sound without a sideways cast.
-	const inputType = `T.${node.typeName}.Loose | T.${node.typeName}`;
-	// Return type unions the factory output with the bare data interface so
-	// the `if (isNodeData(input)) return input;` passthrough — input narrows
-	// to `T.<TypeName>` after the predicate, which lacks `$source` / `$named`
-	// / fluent methods — type-checks without forcing a re-construction.
-	const returnType = `ReturnType<typeof ${factory}> | T.${node.typeName}`;
+): { inputType: string; inputOptional: boolean } {
+	const inputType = `T.${node.typeName}.Loose`;
 	const inputOptional = opt === '?';
-	return { inputType, returnType, inputOptional };
+	return { inputType, inputOptional };
 }
 
-/**
- * Emits the identity quick-return guard line for a branch from() body.
- *
- * @remarks
- * Wrapped (fluent) NodeData IS the target type,
- * so it is returned unchanged. Bare readNode output (without fluent methods)
- * is an unsupported input path — callers should use readTreeNode (which wraps
- * via per-kind dispatch) before handing to .from().
- *
- * @param lines - Per-function lines array to push into.
- * @param inputOptional - Whether the input parameter is optional.
- * @param returnType - The return type annotation string for the cast.
- */
 function emitBranchNodeDataPassthrough(
 	lines: string[],
-	inputOptional: boolean,
-	_returnType: string
+	inputOptional: boolean
 ): void {
 	const passGuard = inputOptional ? 'input !== undefined && ' : '';
 	lines.push(`  if (${passGuard}isNodeData(input)) return input;`);
@@ -717,6 +733,71 @@ function emitBranchChildrenEntry(
 	}
 }
 
+/**
+ * Returns the target factory name when a required field can default to an
+ * empty factory call, or `null` when it cannot.
+ *
+ * A field qualifies for default-empty when:
+ * 1. `isRequired(field)` is true.
+ * 2. Its `values` resolve to exactly ONE kind (not a union).
+ * 3. That kind's factory can be called with zero arguments:
+ *    - Container shape with rest-params (multiple children) — always callable.
+ *    - Container shape with optional singular child — callable.
+ *    - Config-based factory where every non-auto-stamp field is optional and
+ *      every non-auto-stamp child is either auto-stamp-eligible or repeat-0+.
+ *
+ * @param field - The field slot to check.
+ * @param nodeMap - The assembled node map.
+ * @returns The target factory's `rawFactoryName` if it qualifies, or `null`.
+ */
+function canDefaultToEmpty(
+	field: AssembledNonterminal,
+	nodeMap: NodeMap
+): string | null {
+	if (!isRequired(field)) return null;
+	if (isHiddenInfraSlot(field, nodeMap)) return null;
+	const kinds = slotKindNames(field);
+	if (kinds.length !== 1) return null;
+	const targetKind = kinds[0]!;
+	const targetNode = nodeMap.nodes.get(targetKind);
+	if (!targetNode) return null;
+	if (!targetNode.rawFactoryName) return null;
+
+	// Container-shaped branches: rest-param signature can be called with
+	// zero args ONLY when no child is nonEmpty (requires ≥1 element).
+	if (targetNode instanceof AssembledBranch && targetNode.isContainerShape) {
+		const anyMultiple = targetNode.children.some((c) => isMultiple(c));
+		const anyNonEmpty = targetNode.children.some((c) => isNonEmpty(c));
+		if (anyMultiple && !anyNonEmpty) return targetNode.rawFactoryName;
+		// Singular child — callable only when the child is not required.
+		const firstChild = targetNode.children[0];
+		if (!firstChild || !isRequired(firstChild)) return targetNode.rawFactoryName;
+		return null;
+	}
+
+	// Branch / group with fields: check if the factory config is all-optional.
+	if (
+		targetNode.modelType !== 'branch' &&
+		targetNode.modelType !== 'group'
+	) {
+		return null;
+	}
+	const targetFields = targetNode.fields;
+	const targetChildren = targetNode.children;
+	const hasBlockingField = targetFields.some(
+		(f) => isRequired(f) && stampExpressionFor(f, nodeMap) === undefined
+	);
+	if (hasBlockingField) return null;
+	const hasBlockingChild = targetChildren.some(
+		(c) =>
+			isRequired(c) &&
+			!isAutoStampSlot(c, nodeMap) &&
+			!(isMultiple(c) && !isNonEmpty(c))
+	);
+	if (hasBlockingChild) return null;
+	return targetNode.rawFactoryName;
+}
+
 function emitBranchFrom(
 	node: BranchLikeNode,
 	nodeMap: NodeMap,
@@ -738,16 +819,16 @@ function emitBranchFrom(
 			: '?';
 	const typeName = node.typeName;
 	const lines: string[] = [];
-	const { inputType, returnType, inputOptional } = buildBranchSignatureParts(
+	const { inputType, inputOptional } = buildBranchSignatureParts(
 		node,
 		factory,
 		opt
 	);
 	lines.push(
-		`export function ${fn}(input${opt}: ${inputType}): ${returnType} {`
+		`export function ${fn}(input${opt}: ${inputType}) {`
 	);
 	if (fields.length > 0) {
-		emitBranchNodeDataPassthrough(lines, inputOptional, returnType);
+		emitBranchNodeDataPassthrough(lines, inputOptional);
 		const neName = (f: AssembledNonterminal) => `_ne_${f.propertyName}`;
 		// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
 		// the factory's Config surface — they're a `Bitflag<Const, T>` /
@@ -787,29 +868,59 @@ function emitBranchFrom(
 				node.kind
 			);
 		}
-		lines.push(`  return ${factory}({`);
-		for (const f of fields) {
-			if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
-			if (needsNonEmptyHoist(f)) {
-				lines.push(`    ${f.propertyName}: ${neName(f)},`);
-			} else {
-				lines.push(
-					`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional)},`
-				);
-			}
-		}
-		if (childSlots.length > 0) {
-			emitBranchChildrenEntry(
-				lines,
-				childSlots,
+		// Gap 5: single-field-no-children factories take the value directly.
+		// Emit `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
+		// Uses pre-computed slotClass for the sole-slot reference.
+		// Excluded: hidden kinds (inner polymorph children), keyword-presence,
+		// and multiple (array) fields.
+		const sc = node.slotClass;
+		const soleFieldDirect =
+			nonStampFields.length === 1 &&
+			childSlots.length === 0 &&
+			!node.kind.startsWith('_') &&
+			!nodeMap.polymorphFormKinds.has(node.kind) &&
+			sc?.tag === 'singleSlot' &&
+			sc.arity === 'singular';
+		if (soleFieldDirect) {
+			const soleField = sc.slot;
+			const call = resolveFieldFromTypedInput(
+				soleField,
 				nodeMap,
 				typeName,
 				intern,
-				inputOptional,
-				childrenNonEmpty
+				'input',
+				inputOptional
 			);
+			lines.push(`  return ${factory}(${call});`);
+		} else {
+			lines.push(`  return ${factory}({`);
+			for (const f of fields) {
+				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
+				if (needsNonEmptyHoist(f)) {
+					lines.push(`    ${f.propertyName}: ${neName(f)},`);
+				} else {
+					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
+					const defaultFactory = canDefaultToEmpty(f, nodeMap);
+					if (defaultFactory) {
+						lines.push(`    ${f.propertyName}: ${call} ?? F.${defaultFactory}(),`);
+					} else {
+						lines.push(`    ${f.propertyName}: ${call},`);
+					}
+				}
+			}
+			if (childSlots.length > 0) {
+				emitBranchChildrenEntry(
+					lines,
+					childSlots,
+					nodeMap,
+					typeName,
+					intern,
+					inputOptional,
+					childrenNonEmpty
+				);
+			}
+			lines.push('  });');
 		}
-		lines.push('  });');
 	} else {
 		// No fields: pass-through to the factory with a boundary cast — the
 		// Loose input shape is wider than the factory's strict Config, but the
@@ -876,8 +987,7 @@ function containerTypeCheck(
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
- * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
- * @param elementType - The `${childType}[number]` element type string.
+ * @param elementType - The child element type union string.
  * @param kind - The grammar kind string for the self-NodeData check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
@@ -887,7 +997,6 @@ function emitRepeatedContainerFrom(
 	fn: string,
 	factory: string,
 	tName: string,
-	_childType: string,
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -901,7 +1010,7 @@ function emitRepeatedContainerFrom(
 	// this point any `${tName}` element has been ruled out by structural
 	// selection (the only way to land here with the union is a single
 	// self-NodeData first arg, handled above). The unwrap branch's
-	// `data.$children` is typed as `readonly NodeChildValue[]` (the loose
+	// `data.$children` is typed as `readonly NodeMemberValue[]` (the loose
 	// generic shape on `AnyNodeData`); the same boundary cast funnels it
 	// into the factory's narrow children-element type.
 	const typeCheck = containerTypeCheck(kind, kindEntries, nodeMap);
@@ -922,7 +1031,7 @@ function emitRepeatedContainerFrom(
 		`export function ${fn}(...input: readonly (${elementType} | ${tName})[]) {`,
 		`  if (input.length === 1 && isNodeData(input[0]) && input[0].$type === ${typeCheck}) {`,
 		`    const data = input[0];`,
-		// as unknown as Parameters<>: data.$children is NodeChildValue[] (includes
+		// as unknown as Parameters<>: data.$children is NodeMemberValue[] (includes
 		// string|number + separator literals); factory accepts only semantic nodes.
 		`    return ${factory}(...((data.$children ?? []) as unknown as Parameters<typeof ${factory}>));`,
 		`  }`,
@@ -950,8 +1059,7 @@ function emitRepeatedContainerFrom(
  * @param fn - The `fromX` function name to emit.
  * @param factory - The `F.<factoryName>` reference string.
  * @param tName - The `T.<TypeName>` reference string.
- * @param childType - The `NonNullable<T.<TypeName>.Config['children']>` type string.
- * @param elementType - The `${childType}[number]` element type string.
+ * @param elementType - The child element type union string.
  * @param kind - The grammar kind string for the self-NodeData check.
  * @param kindEntries - Collected kind-enum entries for numeric $type comparison.
  * @param nodeMap - The assembled node map (used for member-name derivation).
@@ -961,7 +1069,6 @@ function emitSingularContainerFrom(
 	fn: string,
 	factory: string,
 	tName: string,
-	_childType: string,
 	elementType: string,
 	kind: string,
 	kindEntries: readonly KindEnumEntry[] | undefined,
@@ -1007,15 +1114,13 @@ function emitContainerFrom(
 	const fn = node.fromFunctionName!;
 	const factory = `F.${node.rawFactoryName!}`;
 	const tName = `T.${node.typeName}`;
-	const childType = `NonNullable<T.${node.typeName}.Config['children']>`;
-	const elementType = `${childType}[number]`;
+	const elementType = `NonNullable<T.${node.typeName}.Config['children']>[number]`;
 	const childrenMultiple = node.children.some((c) => isMultiple(c));
 	if (childrenMultiple) {
 		return emitRepeatedContainerFrom(
 			fn,
 			factory,
 			tName,
-			childType,
 			elementType,
 			node.kind,
 			kindEntries,
@@ -1026,7 +1131,6 @@ function emitContainerFrom(
 		fn,
 		factory,
 		tName,
-		childType,
 		elementType,
 		node.kind,
 		kindEntries,
@@ -1085,12 +1189,9 @@ function emitPolymorphDispatcher(
 ): string {
 	// Input union includes both Loose config + per-kind NodeData so the
 	// `isNodeData` generic overload narrows soundly in the pass-through branch.
-	const inputType = `T.${typeName}.Loose | T.${typeName}`;
-	// Same passthrough widening as `buildBranchSignatureParts` — see comment
-	// there for rationale.
-	const returnType = `ReturnType<typeof ${factory}> | T.${typeName}`;
+	const inputType = `T.${typeName}.Loose`;
 	const lines: string[] = [];
-	lines.push(`export function ${fn}(input?: ${inputType}): ${returnType} {`);
+	lines.push(`export function ${fn}(input?: ${inputType}) {`);
 	lines.push(`  if (input !== undefined && isNodeData(input)) return input;`);
 	// Bypass overload resolution via `_applyFactory`. The Loose input
 	// lacks `$variant` (FromInputOf doesn't project it), so direct
@@ -1436,7 +1537,7 @@ function classifyKindsForResolver(
 			continue;
 		}
 		switch (n.modelType) {
-			case 'leaf':
+			case 'pattern':
 			case 'enum':
 			case 'keyword':
 				leafKinds.push(t);
@@ -1534,39 +1635,6 @@ function buildInternedArrayResolverCall(
 	return `${helper}${tArg}(${prop}, ${leafArr}, ${branchArr})`;
 }
 
-/**
- * Resolve an AssembledNonterminal's element type to a concrete TS type expression
- * for the from() surface — each resolved node kind is prefixed with `T.` so
- * the reference resolves against the `import * as T from './types.js'` import.
- *
- * Mirrors `factories.ts::fieldElementType` and delegates to the shared
- * {@link fieldTypeComponents} walker so node-ref / literal / alias-source
- * / hidden-keyword / missing-kind handling stays in one place.
- */
-function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
-	const literals = slotLiteralValues(f);
-	const kindNames = slotKindNames(f);
-	if (literals.length > 0 && kindNames.length === 0) {
-		return literals.map((v) => JSON.stringify(v)).join(' | ');
-	}
-	if (kindNames.length === 0 && literals.length === 0) return 'string';
-	const components = fieldTypeComponents(f, nodeMap);
-	const parts: string[] = [];
-	for (const comp of components) {
-		if (comp.kind === 'literal') {
-			parts.push(JSON.stringify(comp.value));
-		} else if (comp.kind === 'nodeKind') {
-			parts.push(
-				isValidIdent(comp.value)
-					? `T.${comp.value}`
-					: JSON.stringify(comp.rawKind)
-			);
-		} else {
-			parts.push(`T.${comp.value}`);
-		}
-	}
-	return [...new Set(parts)].join(' | ');
-}
 
 function resolveFieldCall(
 	prop: string,
@@ -1689,7 +1757,7 @@ function buildLeafRegistryEntries(
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { values: [${JSON.stringify(node.text)}], factory: () => ${factory}() },`
 			);
-		} else if (node.modelType === 'leaf') {
+		} else if (node.modelType === 'pattern') {
 			registryEntries.push(
 				`  ${JSON.stringify(kind)}: { factory: ${factory} },`
 			);
@@ -1836,6 +1904,108 @@ function emitAssertNonEmptyHelper(lines: string[]): void {
 	lines.push('}');
 }
 
+// ---------------------------------------------------------------------------
+// Gap 3 + 4: _wrapWithChildren dispatch table
+// ---------------------------------------------------------------------------
+
+interface WrapChildrenEntry {
+	readonly kind: string;
+	readonly factoryName: string;
+	readonly isContainer: boolean;
+	readonly kindIdExpr: string;
+}
+
+/**
+ * Collects all branch kinds that accept `$children` — used by the
+ * `_wrapWithChildren` runtime dispatch table in generated from.ts.
+ *
+ * @remarks
+ * Container-shaped branches (rest-param factories) wrap as
+ * `F.parameters(...children)`. Mixed branches (config + children)
+ * wrap as `F.block({ children } as any)`. Hidden kinds (`_`-prefixed
+ * and non-userFacing) are excluded unless explicitly marked `userFacing`.
+ *
+ * @param nodeMap - The assembled node map.
+ * @param kindEntries - Kind enum entries for TSKindId emission.
+ * @returns Array of wrap-children descriptors.
+ */
+function collectWrapChildrenEntries(
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): WrapChildrenEntry[] {
+	const entries: WrapChildrenEntry[] = [];
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'branch') continue;
+		if (!node.rawFactoryName) continue;
+		if (node.children.length === 0) continue;
+		// Only container-shaped branches (no required named fields) —
+		// mixed branches with required fields can't be called with just { children }.
+		if (!node.isContainerShape) continue;
+		if (kind.startsWith('_') && !node.userFacing) continue;
+		if (!kindEntries) continue;
+		const entry = findKindEntry(kindEntries, kind);
+		if (!entry) continue;
+		entries.push({
+			kind,
+			factoryName: node.rawFactoryName,
+			isContainer: true,
+			kindIdExpr: `TSKindId.${entry.member}`
+		});
+	}
+	return entries;
+}
+
+/**
+ * Emits the `_wrapKindIds` map and `_wrapWithChildren` dispatcher into
+ * generated from.ts.
+ *
+ * @remarks
+ * Gap 3 (array auto-wrap): when `_resolveOneBranch` receives an array and
+ * the target kind is in `_wrapKindIds`, each element is resolved and the
+ * array is forwarded to the factory via `_wrapWithChildren`.
+ *
+ * Gap 4 (single-value auto-wrap): when `_resolveOneBranch` receives a
+ * NodeData whose `$type` differs from the target kind, it wraps the value
+ * as a single child if the target kind accepts children.
+ *
+ * @param lines - Output lines array to push into.
+ * @param nodeMap - The assembled node map.
+ * @param kindEntries - Kind enum entries for TSKindId emission.
+ */
+function emitWrapWithChildrenTable(
+	lines: string[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const entries = collectWrapChildrenEntries(nodeMap, kindEntries);
+	if (entries.length === 0) return;
+
+	// Emit _wrapKindIds map: kind string → TSKindId numeric value
+	lines.push('const _wrapKindIds: { readonly [kind: string]: number } = {');
+	for (const e of entries) {
+		lines.push(`  ${JSON.stringify(e.kind)}: ${e.kindIdExpr},`);
+	}
+	lines.push('};');
+	lines.push('');
+
+	// Emit _wrapWithChildren dispatcher
+	lines.push('function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown {');
+	lines.push('  switch (kind) {');
+	for (const e of entries) {
+		if (e.isContainer) {
+			// Container factories use rest-params: F.parameters(...children)
+			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}(...(children as Parameters<typeof F.${e.factoryName}>));`);
+		} else {
+			// Mixed factories use config with children key
+			lines.push(`    case ${JSON.stringify(e.kind)}: return F.${e.factoryName}({ children } as Parameters<typeof F.${e.factoryName}>[0]);`);
+		}
+	}
+	lines.push('    default: return undefined;');
+	lines.push('  }');
+	lines.push('}');
+	lines.push('');
+}
+
 function emitResolverHelpers(
 	lines: string[],
 	nodeMap: NodeMap,
@@ -1965,11 +2135,41 @@ function emitResolverHelpers(
 	lines.push('}');
 	lines.push('');
 
+	// Gap 3+4: emit _wrapWithChildren table before _resolveOneBranch
+	// since _resolveOneBranch references _wrapKindIds and _wrapWithChildren.
+	emitWrapWithChildrenTable(lines, nodeMap, kindEntries);
+
 	lines.push(
 		'function _resolveOneBranch<T>(v: _FromFieldInput, kind: string): T {'
 	);
 	lines.push('  if (v === undefined || v === null) return v as T;');
-	lines.push('  if (isNodeData(v)) return v as T;');
+	// Gap 4: NodeData pass-through if $type matches; wrap as single child
+	// when it doesn't and target kind supports children.
+	lines.push('  if (isNodeData(v)) {');
+	lines.push('    const wrapId = _wrapKindIds[kind];');
+	lines.push('    if (wrapId !== undefined && v.$type !== wrapId) {');
+	lines.push('      return _wrapWithChildren(kind, [v]) as T;');
+	lines.push('    }');
+	lines.push('    return v as T;');
+	lines.push('  }');
+	// Gap 3: Array at wrapper position — resolve each element, wrap in
+	// target kind via _wrapWithChildren.
+	lines.push('  if (Array.isArray(v) && kind in _wrapKindIds) {');
+	lines.push('    const resolved = v.map(e => {');
+	lines.push('      if (typeof e === "string" || typeof e === "number") return e;');
+	lines.push('      if (isNodeData(e)) return e;');
+	lines.push('      if (typeof e === "object" && e !== null && !Array.isArray(e)) {');
+	lines.push('        if ("kind" in e) {');
+	lines.push('          const { kind: k, ...rest } = e;');
+	lines.push('          if (typeof k === "string" && _isFromKind(k)) return _resolveByKind(k, rest);');
+	lines.push('        }');
+	lines.push('        if (_isFromKind(kind)) return _resolveByKind(kind, e);');
+	lines.push('      }');
+	lines.push('      return e;');
+	lines.push('    });');
+	lines.push('    return _wrapWithChildren(kind, resolved) as T;');
+	lines.push('  }');
+	// Existing object handling
 	lines.push('  if (typeof v === "object" && !Array.isArray(v)) {');
 	lines.push('    if ("kind" in v) {');
 	lines.push('      const { kind: k, ...rest } = v;');

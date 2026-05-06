@@ -10,42 +10,14 @@
 // ---------------------------------------------------------------------------
 
 /**
- * A value that can appear as a field entry on `AnyNodeData.fields` or as a
- * child slot on `AnyNodeData.children`. Runtime observed shapes:
- *
- *   - a nested `AnyNodeData` (the most common case: sub-node drilling)
- *   - a `string` (factory input for a leaf like `identifier('foo')`)
- *   - a `number` (numeric leaf input, occasionally used in templates)
- *   - an array of any of the above (multi-valued fields / children slots)
- *   - `undefined` (absent optional field)
- *
- * Union-typed so downstream consumers don't have to cast through `unknown`
- * to reach a NodeData shape. `AnyNodeData` is recursive via this alias.
- */
-export type NodeFieldValue =
-	| AnyNodeData
-	| string
-	| number
-	| readonly (AnyNodeData | string | number)[]
-	| undefined;
-
-/**
- * A child slot entry — same shape as a field value but without the
- * optional/array wrappers (children are already listed in a readonly array
- * on the parent).
- */
-export type NodeChildValue = AnyNodeData | string | number;
-
-/**
  * Unified named-member value type (ADR-0018 Phase 2).
  *
- * Replaces the split `NodeFieldValue` / `NodeChildValue` types on the
- * de-hoisted NodeData surface. A named slot's `_<name>` storage and its
- * accessor return type both resolve to `NodeMemberValue`.
+ * A named slot's `_<name>` storage and its accessor return type both
+ * resolve to `NodeMemberValue`.
  *
- * Note: unlike `NodeFieldValue`, this type does NOT include `undefined` or
- * arrays — the per-slot type annotations on generated interfaces carry those
- * modifiers directly (optional `?` for absent, `readonly T[]` for repeated).
+ * Does NOT include `undefined` or arrays — the per-slot type annotations
+ * on generated interfaces carry those modifiers directly (optional `?`
+ * for absent, `readonly T[]` for repeated).
  */
 export type NodeMemberValue = AnyNodeData | string | number;
 
@@ -75,16 +47,15 @@ export interface AnyNodeData {
 	$source?: 0 | 1 | 2;
 	/** Variant subtype name — set by factory, absent on readNode output. */
 	$variant?: string;
-	$fields?: { readonly [key: string]: NodeFieldValue };
-	$children?: readonly NodeChildValue[];
+	$children?: readonly NodeMemberValue[];
 	/**
 	 * Source text for this node.
 	 *
-	 * **Leaf nodes** (`$fields` and `$children` both absent): always
+	 * **Leaf nodes** (no `_<name>` storage and no `$children`): always
 	 * populated — the render fast-path short-circuits to `$text` without
 	 * walking children.
 	 *
-	 * **Branch nodes** (`$fields` and/or `$children` present): omitted by
+	 * **Branch nodes** (`_<name>` storage and/or `$children` present): omitted by
 	 * default. Branches reconstruct their text via the render template,
 	 * so carrying `$text` is redundant and confusing. Set the environment
 	 * variable `SITTIR_DEBUG_TEXT=1` before loading `@sittir/core` to
@@ -111,9 +82,9 @@ export interface AnyNodeData {
 	$format?: FormatRecord;
 
 	// -------------------------------------------------------------------------
-	// ADR-0018 non-enumerable methods — present on factory/wrap output only.
-	// These are attached via Object.defineProperty(enumerable: false) at
-	// factory construction time; absent on readNode / native JSON transport.
+	// $-prefixed methods — present on factory/wrap output only.
+	// Attached via per-grammar withMethods<T> (non-enumerable defineProperty).
+	// Absent on readNode / native JSON transport.
 	// -------------------------------------------------------------------------
 
 	/** Render this node to source text. Non-enumerable on factory/wrap output. */

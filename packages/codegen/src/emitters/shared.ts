@@ -7,12 +7,14 @@ import type { NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNonterminal,
 	NodeOrTerminal,
-	AssembledNode
+	AssembledNode,
+	BranchSlotClass
 } from '../compiler/node-map.ts';
 import {
 	AssembledKeyword,
 	AssembledToken,
 	AssembledEnum,
+	AssembledSupertype,
 	AssembledBranch,
 	AssembledGroup,
 	isNodeRef,
@@ -274,7 +276,37 @@ export function resolveHiddenKeywordLiteral(
 	// functionally identical to keywords for inlining purposes — a
 	// single literal text the field accepts.
 	if (node instanceof AssembledToken) return node.text;
+	// Single-subtype supertypes (e.g. `_semicolon` → `_automatic_semicolon`)
+	// — follow the chain so fields whose value is the supertype inherit the
+	// leaf/keyword/token literal for auto-stamp detection.
+	if (node instanceof AssembledSupertype && node.subtypes.length === 1) {
+		return resolveHiddenKeywordLiteral(node.subtypes[0]!, nodeMap);
+	}
 	return undefined;
+}
+
+/**
+ * Returns `true` when every kind a slot resolves to is hidden (`_`-prefixed).
+ * Such fields represent parser-inserted infrastructure (e.g. `_semicolon` →
+ * `_automatic_semicolon`) that shouldn't be exposed as a required user-facing
+ * factory parameter.
+ */
+export function isHiddenInfraSlot(
+	slot: AssembledNonterminal,
+	nodeMap: NodeMap
+): boolean {
+	const kinds = slotKindNames(slot);
+	if (kinds.length === 0) return false;
+	for (const k of kinds) {
+		if (!k.startsWith('_')) return false;
+		const node = nodeMap.nodes.get(k);
+		if (!node) return false;
+		if (node.modelType === 'supertype') {
+			const st = node as InstanceType<typeof AssembledSupertype>;
+			if (st.subtypes.some((s) => !s.startsWith('_'))) return false;
+		}
+	}
+	return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -777,4 +809,80 @@ export function keywordPresenceIsNonEmptyRepeat(
 ): boolean {
 	if (field.values.length === 0) return false;
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
+}
+
+// ---------------------------------------------------------------------------
+// Branch slot classification — single source of truth
+// ---------------------------------------------------------------------------
+
+export type { BranchSlotClass } from '../compiler/node-map.ts';
+
+/**
+ * Classify a branch or group node's user-facing slot count — the ONE
+ * source of truth for single-slot vs multi-slot detection.
+ *
+ * Filters out:
+ * - Auto-stamp fields (constant-valued, stamped by factory)
+ * - Hidden-infra fields (all-hidden-kind slots, parser infrastructure)
+ * - Keyword-presence fields (boolean / bitflag keyword toggles)
+ * - Auto-stamp children (constant-valued or parameterless children)
+ *
+ * Returns `multiSlot` when 0 or 2+ user-facing slots remain (0 maps to
+ * the parameterless factory path, which is a multi-slot degenerate).
+ * Returns `singleSlot` with full metadata when exactly 1 survives.
+ *
+ * @remarks
+ * Replaces ad-hoc `isSingleFieldDirect` checks in factories.ts,
+ * factory-map.ts, and from.ts. Those call sites should migrate to
+ * this function (Task 3).
+ *
+ * @param node - An AssembledNode (only `branch` and `group` modelTypes
+ *   produce meaningful results; other modelTypes always return `multiSlot`).
+ * @param nodeMap - The assembled node map, needed by the filtering helpers.
+ */
+export function classifyBranchSlots(
+	node: AssembledNode,
+	nodeMap: NodeMap
+): BranchSlotClass {
+	if (node.modelType !== 'branch' && node.modelType !== 'group') {
+		return { tag: 'multiSlot' };
+	}
+
+	const userSlots: AssembledNonterminal[] = [];
+
+	for (const f of node.fields) {
+		if (stampExpressionFor(f, nodeMap) !== undefined) continue;
+		if (isHiddenInfraSlot(f, nodeMap)) continue;
+		if (keywordPresenceKind(f, nodeMap) !== null) continue;
+		userSlots.push(f);
+	}
+
+	for (const c of node.children) {
+		if (isAutoStampSlot(c, nodeMap)) continue;
+		userSlots.push(c);
+	}
+
+	if (userSlots.length !== 1) return { tag: 'multiSlot' };
+
+	const sole = userSlots[0]!;
+	const multiple = isMultiple(sole);
+	return {
+		tag: 'singleSlot',
+		arity: multiple ? 'multiple' : 'singular',
+		optional: !isRequired(sole),
+		nonEmpty: isNonEmpty(sole),
+		slot: sole
+	};
+}
+
+/**
+ * Post-assembly pass: compute and store `slotClass` on every branch/group
+ * node in the node map. Called from `generate.ts` after `hydrateSlotRefs`.
+ */
+export function computeSlotClasses(nodeMap: NodeMap): void {
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType === 'branch' || node.modelType === 'group') {
+			node.slotClass = classifyBranchSlots(node, nodeMap);
+		}
+	}
 }

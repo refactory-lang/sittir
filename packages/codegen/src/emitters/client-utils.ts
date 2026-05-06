@@ -598,7 +598,7 @@ function collectTerminalTransportKinds(nodeMap: NodeMap): string[] {
 	const kinds: string[] = [];
 	for (const [, node] of nodeMap.nodes) {
 		switch (node.modelType) {
-			case 'leaf':
+			case 'pattern':
 			case 'keyword':
 			case 'token':
 			case 'enum':
@@ -627,7 +627,7 @@ function isFieldTerminalOnly(field: AssembledNonterminal, nodeMap: NodeMap): boo
 		const node = nodeMap.nodes.get(component.rawKind);
 		if (!node) return false;
 		switch (node.modelType) {
-			case 'leaf':
+			case 'pattern':
 			case 'keyword':
 			case 'token':
 			case 'enum':
