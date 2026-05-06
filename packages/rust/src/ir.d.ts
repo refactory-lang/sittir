@@ -2485,4 +2485,11 @@ export declare const ir: {
         };
     };
 };
+export declare namespace from {
+    function boolean(value: boolean): ReturnType<typeof F.booleanLiteral>;
+    function number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral>;
+    function string(value: string): ReturnType<typeof F.stringLiteral>;
+    function type(name: string): ReturnType<typeof F.typeIdentifier>;
+    function identifier(name: string): ReturnType<typeof F.identifier>;
+}
 //# sourceMappingURL=ir.d.ts.map

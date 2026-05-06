@@ -29,15 +29,17 @@ import {
 	camelCase as refineCamelCase
 } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
+import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
 export interface EmitIrConfig {
 	grammar: string;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
+	grammarRoles?: GrammarRoles;
 }
 
 export function emitIr(config: EmitIrConfig): string {
-	const { nodeMap, generatedIdTables } = config;
+	const { nodeMap, generatedIdTables, grammarRoles } = config;
 
 	const kindEntries = generatedIdTables
 		? collectKindEntries(
@@ -155,6 +157,23 @@ export function emitIr(config: EmitIrConfig): string {
 		lines.push(...groupBlocks);
 	}
 
+	// ------------------------------------------------------------------
+	// `from` — canonical factories for native-value → NodeData.
+	// Spec 023 US6: grammar-agnostic AST construction from boolean,
+	// number, string, comment, type, identifier values.
+	// Emitted BEFORE `ir` so it can be referenced as `ir.from`.
+	// Also exported standalone for tree-shakeable `from.boolean(...)`.
+	// ------------------------------------------------------------------
+	let hasFrom = false;
+	if (grammarRoles) {
+		const fromLines = emitFromNamespace(grammarRoles, nodeMap);
+		if (fromLines.length > 0) {
+			hasFrom = true;
+			lines.push(...fromLines);
+			lines.push('');
+		}
+	}
+
 	// ----------------------------------------------------------------------
 	// Flat `ir.*` namespace — every grammar kind by camelCase short name.
 	// ----------------------------------------------------------------------
@@ -197,13 +216,16 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 	}
-	if (groupNames.length > 0) {
+	if (groupNames.length > 0 || hasFrom) {
 		lines.push('');
 		lines.push(
 			'  // Supertype-grouped sub-namespaces (also exported standalone above)'
 		);
 		for (const g of groupNames) {
 			lines.push(`  ${g},`);
+		}
+		if (hasFrom) {
+			lines.push('  from,');
 		}
 	}
 	lines.push('} as const;');
@@ -289,6 +311,351 @@ function toCamel(snake: string): string {
 			.map((p) => p.charAt(0).toUpperCase() + p.slice(1))
 			.join('')
 	);
+}
+
+// ---------------------------------------------------------------------------
+// `from` namespace — canonical factory helpers (spec 023 US6)
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve role kinds to concrete AssembledNode entries that exist in the
+ * nodeMap. Filters out candidate kinds that don't have a node entry.
+ *
+ * Also probes the hidden (`_`-prefixed) variant of each kind name, since
+ * tree-sitter SCM captures reference unprefixed names but the grammar's
+ * internal representation may use the hidden prefix (e.g. `type_identifier`
+ * in SCM → `_type_identifier` in grammar).
+ */
+function resolveRoleNodes(
+	role: Role,
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+): AssembledNode[] {
+	const kindNames = grammarRoles.get(role);
+	const nodes: AssembledNode[] = [];
+	const seen = new Set<string>();
+	for (const kind of kindNames) {
+		const node = nodeMap.nodes.get(kind) ?? nodeMap.nodes.get(`_${kind}`);
+		if (node && node.rawFactoryName && !seen.has(node.kind)) {
+			seen.add(node.kind);
+			nodes.push(node);
+		}
+	}
+	return nodes;
+}
+
+/**
+ * Check if a node is a leaf factory (takes a text string, not a config object).
+ * Leaf modelTypes: pattern, enum, keyword.
+ */
+function isLeafFactory(node: AssembledNode): boolean {
+	return (
+		node.modelType === 'pattern' ||
+		node.modelType === 'enum' ||
+		node.modelType === 'keyword'
+	);
+}
+
+/**
+ * Build the ReturnType expression for a factory. Uses `ReturnType<typeof F.xxx>`
+ * so the type tracks the fluent methods attached by withMethods.
+ */
+function returnTypeExpr(node: AssembledNode): string {
+	return `ReturnType<typeof F.${node.rawFactoryName}>`;
+}
+
+/**
+ * Emit the `from` const — canonical factories that accept native JS values
+ * and resolve to grammar-specific NodeData kinds.
+ *
+ * Emitted as `export const from = { ... } as const` for tree-shakeable
+ * standalone access (`from.boolean(...)`) and also referenced inside the
+ * `ir` object for `ir.from.boolean(...)` access.
+ *
+ * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
+ */
+function emitFromNamespace(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+): string[] {
+	const fns: string[] = [];
+
+	emitFromBoolean(grammarRoles, nodeMap, fns);
+	emitFromNumber(grammarRoles, nodeMap, fns);
+	emitFromString(grammarRoles, nodeMap, fns);
+	emitFromComment(grammarRoles, nodeMap, fns);
+	emitFromType(grammarRoles, nodeMap, fns);
+	emitFromIdentifier(grammarRoles, nodeMap, fns);
+
+	if (fns.length === 0) return [];
+
+	const lines: string[] = [];
+	lines.push('// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.');
+	lines.push('// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.');
+	lines.push('export const from = {');
+	lines.push(...fns);
+	lines.push('} as const;');
+	return lines;
+}
+
+/**
+ * `from.boolean(value: boolean)` — resolves `true`/`false` to the grammar's
+ * boolean kind. Handles three shapes:
+ * - Enum leaf: `booleanLiteral('true' | 'false')` (Rust)
+ * - Keyword pair: `true_()` / `false_()` (Python, TypeScript)
+ * - Single leaf: direct factory call
+ */
+function emitFromBoolean(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
+	if (nodes.length === 0) return;
+
+	// Strategy 1: single leaf/enum factory that accepts text (e.g., booleanLiteral('true' | 'false'))
+	const leafNode = nodes.find(n => isLeafFactory(n) && n.modelType !== 'keyword');
+	if (leafNode) {
+		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
+		fns.push(`    return F.${leafNode.rawFactoryName}(value ? 'true' : 'false');`);
+		fns.push('  },');
+		return;
+	}
+
+	// Strategy 2: keyword pair — look for `true` and `false` keyword kinds
+	const trueNode = nodes.find(n => n.kind === 'true');
+	const falseNode = nodes.find(n => n.kind === 'false');
+	if (trueNode && falseNode) {
+		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
+		fns.push(`  boolean(value: boolean): ${retType} {`);
+		fns.push(`    return value ? F.${trueNode.rawFactoryName}() : F.${falseNode.rawFactoryName}();`);
+		fns.push('  },');
+		return;
+	}
+
+	// Strategy 3: single factory (whatever it is)
+	const first = nodes[0];
+	if (first && isLeafFactory(first)) {
+		fns.push(`  boolean(value: boolean): ${returnTypeExpr(first)} {`);
+		fns.push(`    return F.${first.rawFactoryName}(value ? 'true' : 'false');`);
+		fns.push('  },');
+	}
+}
+
+/**
+ * `from.number(value: number)` — resolves integers to integer-kind, floats to
+ * float-kind. When only one number kind exists, routes everything there.
+ */
+function emitFromNumber(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
+	const leafNodes = nodes.filter(isLeafFactory);
+	if (leafNodes.length === 0) return;
+
+	// Identify integer and float kinds via the number.float sub-role
+	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap).filter(isLeafFactory);
+	const floatSet = new Set(floatNodes.map(n => n.kind));
+	const intNodes = leafNodes.filter(n => !floatSet.has(n.kind));
+
+	const intNode = intNodes[0];
+	const floatNode = floatNodes[0];
+
+	if (intNode && floatNode) {
+		// Two-branch discriminator: Number.isInteger() → int, else → float
+		const retType = `${returnTypeExpr(intNode)} | ${returnTypeExpr(floatNode)}`;
+		fns.push(`  number(value: number): ${retType} {`);
+		fns.push(`    return Number.isInteger(value)`);
+		fns.push(`      ? F.${intNode.rawFactoryName}(String(value))`);
+		fns.push(`      : F.${floatNode.rawFactoryName}(String(value));`);
+		fns.push('  },');
+	} else {
+		// Single kind — route all numbers there
+		const node = intNode ?? floatNode ?? leafNodes[0];
+		if (!node) return;
+		fns.push(`  number(value: number): ${returnTypeExpr(node)} {`);
+		fns.push(`    return F.${node.rawFactoryName}(String(value));`);
+		fns.push('  },');
+	}
+}
+
+/**
+ * `from.string(value: string)` — routes to the primary string kind.
+ *
+ * Most grammars have branch string nodes (with escape sequences, content
+ * children). For these, the canonical factory composes the branch: it wraps
+ * the input text in a string-content leaf and passes it to the branch
+ * factory. Only emitted when a composition path exists.
+ *
+ * Heuristic for primary string kind: the first kind whose name contains
+ * `string` (not `char`, `raw`, `template`, `regex`). This picks
+ * `string_literal` for Rust and `string` for TypeScript/Python.
+ */
+function emitFromString(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
+	if (nodes.length === 0) return;
+
+	// Find the primary string kind — prefer kinds containing "string"
+	// but not "char", "raw", "template", "regex"
+	const primaryNode = nodes.find(n =>
+		/string/.test(n.kind) &&
+		!/char|raw|template|regex/.test(n.kind)
+	);
+	if (!primaryNode) return;
+
+	// If it's a leaf, emit directly
+	if (isLeafFactory(primaryNode)) {
+		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
+		fns.push(`    return F.${primaryNode.rawFactoryName}(value);`);
+		fns.push('  },');
+		return;
+	}
+
+	// Branch string: look for a string-content leaf child to compose
+	const contentNode = nodeMap.nodes.get('string_content');
+	if (contentNode && isLeafFactory(contentNode)) {
+		fns.push(`  string(value: string): ${returnTypeExpr(primaryNode)} {`);
+		fns.push(`    return F.${primaryNode.rawFactoryName}(F.${contentNode.rawFactoryName}(value) as never);`);
+		fns.push('  },');
+	}
+	// Otherwise: skip — too complex to auto-compose
+}
+
+/**
+ * `from.comment(text: string)` — routes to line/block comment kinds.
+ * Discriminates by prefix: `//` or `#` → line comment, `/*` → block comment.
+ * When only one comment kind exists, routes everything there.
+ */
+function emitFromComment(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
+	if (nodes.length === 0) return;
+
+	// Find leaf comment kinds (Python/TS: `comment(text)`)
+	const leafNodes = nodes.filter(isLeafFactory);
+
+	if (leafNodes.length === 1) {
+		// Single leaf comment kind — route everything there
+		const node = leafNodes[0]!;
+		fns.push(`  comment(text: string): ${returnTypeExpr(node)} {`);
+		fns.push(`    return F.${node.rawFactoryName}(text);`);
+		fns.push('  },');
+		return;
+	}
+
+	if (leafNodes.length > 1) {
+		// Multiple leaf comment kinds — discriminate by prefix
+		const retType = leafNodes.map(returnTypeExpr).join(' | ');
+		const lineNode = leafNodes.find(n => /line/.test(n.kind));
+		const blockNode = leafNodes.find(n => /block/.test(n.kind));
+		if (lineNode && blockNode) {
+			fns.push(`  comment(text: string): ${retType} {`);
+			fns.push(`    return text.startsWith('/*')`);
+			fns.push(`      ? F.${blockNode.rawFactoryName}(text)`);
+			fns.push(`      : F.${lineNode.rawFactoryName}(text);`);
+			fns.push('  },');
+			return;
+		}
+		// Fallback: use first leaf
+		const first = leafNodes[0]!;
+		fns.push(`  comment(text: string): ${returnTypeExpr(first)} {`);
+		fns.push(`    return F.${first.rawFactoryName}(text);`);
+		fns.push('  },');
+		return;
+	}
+
+	// No leaf comment kinds — branch/polymorph comment kinds (e.g. Rust's
+	// line_comment polymorph, block_comment branch) are too complex to
+	// auto-compose in a canonical factory. Skip emission.
+	// Users should call the grammar-specific `ir.lineComment(...)` /
+	// `ir.blockComment(...)` factories directly.
+}
+
+/**
+ * `from.type(name: string)` — routes to the grammar's type-identifier kind.
+ * Excludes `type.builtin` kinds. When the type kind is a branch that takes
+ * an identifier child, composes `F.typeIdentifier(F.identifier(name))`.
+ */
+function emitFromType(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	// Get type kinds, excluding builtin types
+	const typeKinds = grammarRoles.get('type');
+	const builtinKinds = new Set(grammarRoles.get('type.builtin'));
+	const filteredKinds = typeKinds.filter(k => !builtinKinds.has(k));
+
+	// Find the type-identifier node (not plain `identifier`).
+	// Probe both bare and hidden-prefixed names since SCM captures use
+	// unprefixed names but the grammar may use `_type_identifier`.
+	const resolveNode = (k: string) => nodeMap.nodes.get(k) ?? nodeMap.nodes.get(`_${k}`);
+	const typeIdKind = filteredKinds.find(k => k !== 'identifier' && resolveNode(k) !== undefined);
+	if (!typeIdKind) {
+		// No type-specific kind — check if `identifier` is the only option
+		const identKind = filteredKinds.find(k => k === 'identifier' && resolveNode(k) !== undefined);
+		if (identKind) {
+			const node = resolveNode(identKind)!;
+			if (isLeafFactory(node)) {
+				fns.push(`  type(name: string): ${returnTypeExpr(node)} {`);
+				fns.push(`    return F.${node.rawFactoryName}(name);`);
+				fns.push('  },');
+			}
+		}
+		return;
+	}
+
+	const typeNode = resolveNode(typeIdKind)!;
+
+	if (isLeafFactory(typeNode)) {
+		// Simple leaf type factory
+		fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
+		fns.push(`    return F.${typeNode.rawFactoryName}(name);`);
+		fns.push('  },');
+	} else {
+		// Branch type-identifier — compose with identifier factory
+		const identNode = nodeMap.nodes.get('identifier');
+		if (identNode && isLeafFactory(identNode)) {
+			fns.push(`  type(name: string): ${returnTypeExpr(typeNode)} {`);
+			fns.push(`    return F.${typeNode.rawFactoryName}(F.${identNode.rawFactoryName}(name) as never);`);
+			fns.push('  },');
+		}
+	}
+}
+
+/**
+ * `from.identifier(name: string)` — routes to the grammar's `identifier` kind.
+ *
+ * Looks for the `identifier` kind in the `variable` role. Does not exclude
+ * `variable.builtin` since some grammars (TypeScript) capture `identifier`
+ * under both `@variable` and `@variable.builtin`.
+ */
+function emitFromIdentifier(
+	grammarRoles: GrammarRoles,
+	nodeMap: NodeMap,
+	fns: string[],
+): void {
+	const varKinds = grammarRoles.get('variable');
+
+	// Find the `identifier` kind specifically — not `this`, `super`, `self`
+	const identKind = varKinds.find(k => k === 'identifier');
+	if (!identKind) return;
+
+	const node = nodeMap.nodes.get(identKind);
+	if (!node || !isLeafFactory(node)) return;
+
+	fns.push(`  identifier(name: string): ${returnTypeExpr(node)} {`);
+	fns.push(`    return F.${node.rawFactoryName}(name);`);
+	fns.push('  },');
 }
 
 // JS reserved words that can't be bare property accessors in some lint

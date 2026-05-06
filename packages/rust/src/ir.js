@@ -551,4 +551,31 @@ export const ir = {
     type,
     useClause,
 };
+// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
+// Spec 023 US6. Each function is tree-shakeable.
+export var from;
+(function (from) {
+    function boolean(value) {
+        return F.booleanLiteral(value ? 'true' : 'false');
+    }
+    from.boolean = boolean;
+    function number(value) {
+        return Number.isInteger(value)
+            ? F.integerLiteral(String(value))
+            : F.floatLiteral(String(value));
+    }
+    from.number = number;
+    function string(value) {
+        return F.stringLiteral(F.stringContent(value));
+    }
+    from.string = string;
+    function type(name) {
+        return F.typeIdentifier(F.identifier(name));
+    }
+    from.type = type;
+    function identifier(name) {
+        return F.identifier(name);
+    }
+    from.identifier = identifier;
+})(from || (from = {}));
 //# sourceMappingURL=ir.js.map

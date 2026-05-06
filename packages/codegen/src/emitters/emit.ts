@@ -17,6 +17,7 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
+import type { GrammarRoles } from '../scm/extract-roles.ts';
 
 import { factoryEmitter } from './factories.ts';
 import { fromEmitter } from './from.ts';
@@ -39,6 +40,7 @@ export interface EmitAllConfig {
 	synthesizedKinds?: ReadonlySet<string>;
 	strict?: boolean;
 	triviaKinds?: string[];
+	grammarRoles?: GrammarRoles;
 }
 
 export interface EmitAllResult {
@@ -71,7 +73,8 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		inlineKinds,
 		synthesizedKinds,
 		strict,
-		triviaKinds
+		triviaKinds,
+		grammarRoles
 	} = config;
 
 	// -----------------------------------------------------------------
@@ -122,7 +125,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	// -----------------------------------------------------------------
 	const types = emitTypes({ grammar, nodeMap, generatedIdTables });
 	const consts = emitConsts({ grammar, nodeMap, generatedIdTables });
-	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables });
+	const irNamespace = emitIr({ grammar, nodeMap, generatedIdTables, grammarRoles });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables });
 	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });

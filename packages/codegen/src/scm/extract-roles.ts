@@ -303,6 +303,54 @@ function baseRoleOf(role: Role): Role | undefined {
 }
 
 // ---------------------------------------------------------------------------
+// Well-known fallback probes
+// ---------------------------------------------------------------------------
+
+/**
+ * Well-known kind names that map to semantic roles across tree-sitter
+ * grammars. When SCM captures don't discover a role, these probes add
+ * the canonical kind names for that role so the `ir.from.*` surface
+ * can emit canonical factories.
+ *
+ * Each probe is a [role, candidate-kind-names] pair. The probe only
+ * fires if the role has no kinds after SCM extraction.
+ */
+const FALLBACK_PROBES: readonly [Role, readonly string[]][] = [
+	['boolean', ['boolean_literal', 'true', 'false']],
+	['number', ['integer_literal', 'float_literal', 'integer', 'float', 'number']],
+	['number.float', ['float_literal', 'float']],
+];
+
+/**
+ * Apply well-known kind probes for roles that SCM extraction missed.
+ *
+ * @remarks
+ * Some grammars don't use `@boolean` or `@number` captures — Rust
+ * captures them as `@constant.builtin` which doesn't map to any
+ * semantic role in our table. The probe adds well-known kind names
+ * that the downstream `ir.from.*` emitter can use to construct
+ * canonical factories.
+ *
+ * Only fires when the role has zero kinds from SCM extraction.
+ * Sub-role probes also contribute to their parent base role.
+ */
+function applyFallbackProbes(
+	roleKinds: Map<Role, Set<string>>,
+	addToRole: (role: Role, kindName: string) => void,
+): void {
+	for (const [role, candidates] of FALLBACK_PROBES) {
+		const existing = roleKinds.get(role);
+		if (existing && existing.size > 0) continue;
+
+		for (const kind of candidates) {
+			addToRole(role, kind);
+			const base = baseRoleOf(role);
+			if (base) addToRole(base, kind);
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
@@ -373,6 +421,13 @@ export function extractGrammarRoles(grammar: string): GrammarRoles {
 			break;
 		}
 	}
+
+	// Fallback: probe for well-known kind names when SCM captures didn't
+	// discover them. Some grammars (e.g. Rust) use @constant.builtin for
+	// booleans / numbers instead of @boolean / @number, so the capture-
+	// based extraction misses them. These probes add kinds that are
+	// universally recognized as belonging to a role.
+	applyFallbackProbes(roleKinds, addToRole);
 
 	const entries: RoleEntry[] = [];
 	for (const [role, kinds] of roleKinds) {

@@ -18,7 +18,10 @@ export declare function _arrayExpressionList(config: T.ArrayExpressionList.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         elements: (...values: T.Expression[]) => /*elided*/ any & {
             $render(): string;
@@ -26,7 +29,10 @@ export declare function _arrayExpressionList(config: T.ArrayExpressionList.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: T.AttributeItem[]) => /*elided*/ any & {
             $render(): string;
@@ -34,7 +40,10 @@ export declare function _arrayExpressionList(config: T.ArrayExpressionList.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -43,7 +52,10 @@ export declare function _arrayExpressionList(config: T.ArrayExpressionList.Confi
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config): {
     $type: TSKindId.ArrayExpressionSemi;
@@ -62,7 +74,10 @@ export declare function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         elements: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -70,7 +85,10 @@ export declare function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         length: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -78,7 +96,10 @@ export declare function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Confi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -87,7 +108,10 @@ export declare function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Confi
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config): {
     $type: TSKindId.ClosureExpressionBlock;
@@ -104,7 +128,10 @@ export declare function _closureExpressionBlock(config: T.ClosureExpressionBlock
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -112,7 +139,10 @@ export declare function _closureExpressionBlock(config: T.ClosureExpressionBlock
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -121,7 +151,10 @@ export declare function _closureExpressionBlock(config: T.ClosureExpressionBlock
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config): {
     $type: TSKindId._ClosureExpressionExpr;
@@ -136,7 +169,10 @@ export declare function _closureExpressionExpr(config: T._ClosureExpressionExpr.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -145,7 +181,10 @@ export declare function _closureExpressionExpr(config: T._ClosureExpressionExpr.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _delimTokenTreeBrace(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeBrace;
@@ -160,7 +199,10 @@ export declare function _delimTokenTreeBrace(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -169,7 +211,10 @@ export declare function _delimTokenTreeBrace(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _delimTokenTreeBracket(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeBracket;
@@ -184,7 +229,10 @@ export declare function _delimTokenTreeBracket(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -193,7 +241,10 @@ export declare function _delimTokenTreeBracket(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _delimTokenTreeParen(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeParen;
@@ -208,7 +259,10 @@ export declare function _delimTokenTreeParen(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -217,7 +271,10 @@ export declare function _delimTokenTreeParen(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock): {
     $type: TSKindId._ExpressionStatementBlockEnding;
@@ -232,7 +289,10 @@ export declare function _expressionStatementBlockEnding(child: T.ExpressionEndin
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -241,7 +301,10 @@ export declare function _expressionStatementBlockEnding(child: T.ExpressionEndin
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _expressionStatementWithSemi(child: T.Expression): {
     $type: TSKindId._ExpressionStatementWithSemi;
@@ -256,7 +319,10 @@ export declare function _expressionStatementWithSemi(child: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -265,7 +331,10 @@ export declare function _expressionStatementWithSemi(child: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldIdentifier(child: T.Identifier): {
     $type: TSKindId.FieldIdentifier;
@@ -280,7 +349,10 @@ export declare function fieldIdentifier(child: T.Identifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -289,7 +361,10 @@ export declare function fieldIdentifier(child: T.Identifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _fieldPatternNamed(config: T.FieldPatternNamed.Config): {
     $type: TSKindId.FieldPatternNamed;
@@ -306,7 +381,10 @@ export declare function _fieldPatternNamed(config: T.FieldPatternNamed.Config): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -314,7 +392,10 @@ export declare function _fieldPatternNamed(config: T.FieldPatternNamed.Config): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -323,7 +404,10 @@ export declare function _fieldPatternNamed(config: T.FieldPatternNamed.Config): 
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _fieldPatternShorthand(config: T._FieldPatternShorthand.Config): {
     $type: TSKindId._FieldPatternShorthand;
@@ -338,7 +422,10 @@ export declare function _fieldPatternShorthand(config: T._FieldPatternShorthand.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -347,7 +434,10 @@ export declare function _fieldPatternShorthand(config: T._FieldPatternShorthand.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _foreignModItemBody(config: T._ForeignModItemBody.Config): {
     $type: TSKindId._ForeignModItemBody;
@@ -362,7 +452,10 @@ export declare function _foreignModItemBody(config: T._ForeignModItemBody.Config
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -371,7 +464,10 @@ export declare function _foreignModItemBody(config: T._ForeignModItemBody.Config
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionTypeFnForm(child?: T.FunctionModifiers): {
     $type: TSKindId.FunctionTypeFnForm;
@@ -386,7 +482,10 @@ export declare function functionTypeFnForm(child?: T.FunctionModifiers): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -395,7 +494,10 @@ export declare function functionTypeFnForm(child?: T.FunctionModifiers): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config): {
     $type: TSKindId.FunctionTypeTraitForm;
@@ -410,7 +512,10 @@ export declare function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -419,7 +524,10 @@ export declare function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Co
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _implItemBody(config: T._ImplItemBody.Config): {
     $type: TSKindId._ImplItemBody;
@@ -434,7 +542,10 @@ export declare function _implItemBody(config: T._ImplItemBody.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -443,7 +554,10 @@ export declare function _implItemBody(config: T._ImplItemBody.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function letChain(child: (T.LetChain | T.LetCondition | T.Expression)): {
     $type: TSKindId.LetChain;
@@ -458,7 +572,10 @@ export declare function letChain(child: (T.LetChain | T.LetCondition | T.Express
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -467,7 +584,10 @@ export declare function letChain(child: (T.LetChain | T.LetCondition | T.Express
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineCommentContent(text: string): {
     $type: TSKindId.LineCommentContent;
@@ -480,7 +600,10 @@ export declare function lineCommentContent(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _lineCommentDoc(config: T.LineCommentDoc.Config): {
     $type: TSKindId.LineCommentDoc;
@@ -495,7 +618,10 @@ export declare function _lineCommentDoc(config: T.LineCommentDoc.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -504,7 +630,10 @@ export declare function _lineCommentDoc(config: T.LineCommentDoc.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineCommentRegularDslash(text: string): {
     $type: TSKindId.LineCommentRegularDslash;
@@ -517,7 +646,10 @@ export declare function lineCommentRegularDslash(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _macroDefinitionBrace(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionBrace;
@@ -532,7 +664,10 @@ export declare function _macroDefinitionBrace(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -541,7 +676,10 @@ export declare function _macroDefinitionBrace(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _macroDefinitionBracket(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionBracket;
@@ -556,7 +694,10 @@ export declare function _macroDefinitionBracket(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -565,7 +706,10 @@ export declare function _macroDefinitionBracket(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _macroDefinitionParen(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionParen;
@@ -580,7 +724,10 @@ export declare function _macroDefinitionParen(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -589,7 +736,10 @@ export declare function _macroDefinitionParen(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Config): {
     $type: TSKindId._MatchArmBlockEnding;
@@ -604,7 +754,10 @@ export declare function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Conf
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -613,7 +766,10 @@ export declare function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Conf
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _matchArmWithComma(config: T.MatchArmWithComma.Config): {
     $type: TSKindId.MatchArmWithComma;
@@ -628,7 +784,10 @@ export declare function _matchArmWithComma(config: T.MatchArmWithComma.Config): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -637,7 +796,10 @@ export declare function _matchArmWithComma(config: T.MatchArmWithComma.Config): 
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _modItemInline(config: T._ModItemInline.Config): {
     $type: TSKindId._ModItemInline;
@@ -652,7 +814,10 @@ export declare function _modItemInline(config: T._ModItemInline.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -661,7 +826,10 @@ export declare function _modItemInline(config: T._ModItemInline.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _orPatternBinary(config: T.OrPatternBinary.Config): {
     $type: TSKindId.OrPatternBinary;
@@ -678,7 +846,10 @@ export declare function _orPatternBinary(config: T.OrPatternBinary.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -686,7 +857,10 @@ export declare function _orPatternBinary(config: T.OrPatternBinary.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -695,7 +869,10 @@ export declare function _orPatternBinary(config: T.OrPatternBinary.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _orPatternPrefix(config: T.OrPatternPrefix.Config): {
     $type: TSKindId.OrPatternPrefix;
@@ -710,7 +887,10 @@ export declare function _orPatternPrefix(config: T.OrPatternPrefix.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -719,7 +899,10 @@ export declare function _orPatternPrefix(config: T.OrPatternPrefix.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _pointerTypeMut(child: T.MutableSpecifier): {
     $type: TSKindId._PointerTypeMut;
@@ -734,7 +917,10 @@ export declare function _pointerTypeMut(child: T.MutableSpecifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -743,7 +929,10 @@ export declare function _pointerTypeMut(child: T.MutableSpecifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangeExpressionBare(_config?: T._RangeExpressionBare.Config): {
     $type: TSKindId._RangeExpressionBare;
@@ -758,7 +947,10 @@ export declare function _rangeExpressionBare(_config?: T._RangeExpressionBare.Co
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config): {
     $type: TSKindId.RangeExpressionBinary;
@@ -777,7 +969,10 @@ export declare function _rangeExpressionBinary(config: T.RangeExpressionBinary.C
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         operator: (value: T.RangeExpressionBinaryOperator) => /*elided*/ any & {
             $render(): string;
@@ -785,7 +980,10 @@ export declare function _rangeExpressionBinary(config: T.RangeExpressionBinary.C
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         end: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -793,7 +991,10 @@ export declare function _rangeExpressionBinary(config: T.RangeExpressionBinary.C
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -802,7 +1003,10 @@ export declare function _rangeExpressionBinary(config: T.RangeExpressionBinary.C
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config): {
     $type: TSKindId.RangeExpressionPostfix;
@@ -819,7 +1023,10 @@ export declare function _rangeExpressionPostfix(config: T.RangeExpressionPostfix
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -828,7 +1035,10 @@ export declare function _rangeExpressionPostfix(config: T.RangeExpressionPostfix
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config): {
     $type: TSKindId.RangeExpressionPrefix;
@@ -845,7 +1055,10 @@ export declare function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.C
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -854,7 +1067,10 @@ export declare function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.C
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config): {
     $type: TSKindId.RangePatternLeftWithRight;
@@ -869,7 +1085,10 @@ export declare function _rangePatternLeftWithRight(config: T.RangePatternLeftWit
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -878,7 +1097,10 @@ export declare function _rangePatternLeftWithRight(config: T.RangePatternLeftWit
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _rangePatternPrefix(config: T.RangePatternPrefix.Config): {
     $type: TSKindId.RangePatternPrefix;
@@ -893,7 +1115,10 @@ export declare function _rangePatternPrefix(config: T.RangePatternPrefix.Config)
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -902,7 +1127,10 @@ export declare function _rangePatternPrefix(config: T.RangePatternPrefix.Config)
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function referenceExpressionRawConst(text: string): {
     $type: TSKindId.ReferenceExpressionRawConst;
@@ -915,7 +1143,10 @@ export declare function referenceExpressionRawConst(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function referenceExpressionRawMut(child: T.MutableSpecifier): {
     $type: TSKindId.ReferenceExpressionRawMut;
@@ -930,7 +1161,10 @@ export declare function referenceExpressionRawMut(child: T.MutableSpecifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -939,7 +1173,10 @@ export declare function referenceExpressionRawMut(child: T.MutableSpecifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _structItemBrace(config: T.StructItemBrace.Config): {
     $type: TSKindId.StructItemBrace;
@@ -956,7 +1193,10 @@ export declare function _structItemBrace(config: T.StructItemBrace.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -964,7 +1204,10 @@ export declare function _structItemBrace(config: T.StructItemBrace.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -973,7 +1216,10 @@ export declare function _structItemBrace(config: T.StructItemBrace.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _structItemTuple(config: T.StructItemTuple.Config): {
     $type: TSKindId.StructItemTuple;
@@ -990,7 +1236,10 @@ export declare function _structItemTuple(config: T.StructItemTuple.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -998,7 +1247,10 @@ export declare function _structItemTuple(config: T.StructItemTuple.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1007,7 +1259,10 @@ export declare function _structItemTuple(config: T.StructItemTuple.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreeBrace(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeBrace;
@@ -1022,7 +1277,10 @@ export declare function _tokenTreeBrace(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1031,7 +1289,10 @@ export declare function _tokenTreeBrace(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreeBracket(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeBracket;
@@ -1046,7 +1307,10 @@ export declare function _tokenTreeBracket(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1055,7 +1319,10 @@ export declare function _tokenTreeBracket(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreeParen(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeParen;
@@ -1070,7 +1337,10 @@ export declare function _tokenTreeParen(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1079,7 +1349,10 @@ export declare function _tokenTreeParen(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreePatternBrace(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternBrace;
@@ -1094,7 +1367,10 @@ export declare function _tokenTreePatternBrace(...children: T.TokenPattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1103,7 +1379,10 @@ export declare function _tokenTreePatternBrace(...children: T.TokenPattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreePatternBracket(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternBracket;
@@ -1118,7 +1397,10 @@ export declare function _tokenTreePatternBracket(...children: T.TokenPattern[]):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1127,7 +1409,10 @@ export declare function _tokenTreePatternBracket(...children: T.TokenPattern[]):
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _tokenTreePatternParen(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternParen;
@@ -1142,7 +1427,10 @@ export declare function _tokenTreePatternParen(...children: T.TokenPattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1151,7 +1439,10 @@ export declare function _tokenTreePatternParen(...children: T.TokenPattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeIdentifier(child: T.Identifier): {
     $type: TSKindId.TypeIdentifier;
@@ -1166,7 +1457,10 @@ export declare function typeIdentifier(child: T.Identifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1175,7 +1469,10 @@ export declare function typeIdentifier(child: T.Identifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _visibilityModifierCrate(child: T.Crate): {
     $type: TSKindId._VisibilityModifierCrate;
@@ -1190,7 +1487,10 @@ export declare function _visibilityModifierCrate(child: T.Crate): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1199,7 +1499,10 @@ export declare function _visibilityModifierCrate(child: T.Crate): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Config): {
     $type: TSKindId.VisibilityModifierInPath;
@@ -1216,7 +1519,10 @@ export declare function _visibilityModifierInPath(config: T.VisibilityModifierIn
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1225,7 +1531,10 @@ export declare function _visibilityModifierInPath(config: T.VisibilityModifierIn
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config): {
     $type: TSKindId.VisibilityModifierPub;
@@ -1242,7 +1551,10 @@ export declare function _visibilityModifierPub(config?: T.VisibilityModifierPub.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1251,7 +1563,10 @@ export declare function _visibilityModifierPub(config?: T.VisibilityModifierPub.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function abstractType(config: T.AbstractType.Config): {
     $type: TSKindId.AbstractType;
@@ -1268,7 +1583,10 @@ export declare function abstractType(config: T.AbstractType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) => /*elided*/ any & {
             $render(): string;
@@ -1276,7 +1594,10 @@ export declare function abstractType(config: T.AbstractType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1285,7 +1606,10 @@ export declare function abstractType(config: T.AbstractType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function arguments_(config: T.Arguments.Config): {
     $type: TSKindId.Arguments;
@@ -1300,7 +1624,10 @@ export declare function arguments_(config: T.Arguments.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1309,7 +1636,10 @@ export declare function arguments_(config: T.Arguments.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormSemi>): ReturnType<typeof arrayExpressionUFormSemi>;
 export declare function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormList>): ReturnType<typeof arrayExpressionUFormList>;
@@ -1335,7 +1665,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             elements: (value: T.Expression) => /*elided*/ any & {
                 $render(): string;
@@ -1343,7 +1676,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             length: (value: T.Expression) => /*elided*/ any & {
                 $render(): string;
@@ -1351,7 +1687,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -1360,7 +1699,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     attributes(): readonly T.AttributeItem[];
     elements(): T.Expression;
@@ -1372,7 +1714,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         elements: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1380,7 +1725,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         length: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1388,7 +1736,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1397,7 +1748,10 @@ export declare function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayEx
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>): {
     $type: TSKindId.ArrayExpression;
@@ -1421,7 +1775,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             elements: (...values: T.Expression[]) => /*elided*/ any & {
                 $render(): string;
@@ -1429,7 +1786,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             children: (...items: T.AttributeItem[]) => /*elided*/ any & {
                 $render(): string;
@@ -1437,7 +1797,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -1446,7 +1809,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     attributes(): readonly T.AttributeItem[];
     elements(): readonly T.Expression[];
@@ -1457,7 +1823,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         elements: (...values: T.Expression[]) => /*elided*/ any & {
             $render(): string;
@@ -1465,7 +1834,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1474,7 +1846,10 @@ export declare function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayEx
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function arrayType(config: T.ArrayType.Config): {
     $type: TSKindId.ArrayType;
@@ -1491,7 +1866,10 @@ export declare function arrayType(config: T.ArrayType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         length: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1499,7 +1877,10 @@ export declare function arrayType(config: T.ArrayType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1508,7 +1889,10 @@ export declare function arrayType(config: T.ArrayType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function assignmentExpression(config: T.AssignmentExpression.Config): {
     $type: TSKindId.AssignmentExpression;
@@ -1525,7 +1909,10 @@ export declare function assignmentExpression(config: T.AssignmentExpression.Conf
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1533,7 +1920,10 @@ export declare function assignmentExpression(config: T.AssignmentExpression.Conf
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1542,7 +1932,10 @@ export declare function assignmentExpression(config: T.AssignmentExpression.Conf
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function associatedType(config: T.AssociatedType.Config): {
     $type: TSKindId.AssociatedType;
@@ -1563,7 +1956,10 @@ export declare function associatedType(config: T.AssociatedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -1571,7 +1967,10 @@ export declare function associatedType(config: T.AssociatedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         bounds: (value?: T.TraitBounds) => /*elided*/ any & {
             $render(): string;
@@ -1579,7 +1978,10 @@ export declare function associatedType(config: T.AssociatedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -1587,7 +1989,10 @@ export declare function associatedType(config: T.AssociatedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1596,7 +2001,10 @@ export declare function associatedType(config: T.AssociatedType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function asyncBlock(config: T.AsyncBlock.Config): {
     $type: TSKindId.AsyncBlock;
@@ -1613,7 +2021,10 @@ export declare function asyncBlock(config: T.AsyncBlock.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         block: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -1621,7 +2032,10 @@ export declare function asyncBlock(config: T.AsyncBlock.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1630,7 +2044,10 @@ export declare function asyncBlock(config: T.AsyncBlock.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function attribute(config: T.Attribute.Config): {
     $type: TSKindId.Attribute;
@@ -1647,7 +2064,10 @@ export declare function attribute(config: T.Attribute.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.DelimTokenTree | T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1655,7 +2075,10 @@ export declare function attribute(config: T.Attribute.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1664,7 +2087,10 @@ export declare function attribute(config: T.Attribute.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function attributeItem(attribute: T.Attribute): {
     $type: TSKindId.AttributeItem;
@@ -1679,7 +2105,10 @@ export declare function attributeItem(attribute: T.Attribute): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1688,7 +2117,10 @@ export declare function attributeItem(attribute: T.Attribute): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function awaitExpression(child: T.Expression): {
     $type: TSKindId.AwaitExpression;
@@ -1703,7 +2135,10 @@ export declare function awaitExpression(child: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1712,7 +2147,10 @@ export declare function awaitExpression(child: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function baseFieldInitializer(child: T.Expression): {
     $type: TSKindId.BaseFieldInitializer;
@@ -1727,7 +2165,10 @@ export declare function baseFieldInitializer(child: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1736,7 +2177,10 @@ export declare function baseFieldInitializer(child: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function binaryExpression(config: T.BinaryExpression.Config): {
     $type: TSKindId.BinaryExpression;
@@ -1755,7 +2199,10 @@ export declare function binaryExpression(config: T.BinaryExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1763,7 +2210,10 @@ export declare function binaryExpression(config: T.BinaryExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1772,7 +2222,10 @@ export declare function binaryExpression(config: T.BinaryExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function block(config?: T.Block.Config): {
     $type: TSKindId.Block;
@@ -1791,7 +2244,10 @@ export declare function block(config?: T.Block.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         trailingExpression: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1799,7 +2255,10 @@ export declare function block(config?: T.Block.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: T.Statement[]) => /*elided*/ any & {
             $render(): string;
@@ -1807,7 +2266,10 @@ export declare function block(config?: T.Block.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1816,7 +2278,10 @@ export declare function block(config?: T.Block.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function blockComment(config?: T.BlockComment.Config): {
     $type: TSKindId.BlockComment;
@@ -1833,7 +2298,10 @@ export declare function blockComment(config?: T.BlockComment.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.InnerBlockDocCommentMarker | T.OuterBlockDocCommentMarker) => /*elided*/ any & {
             $render(): string;
@@ -1841,7 +2309,10 @@ export declare function blockComment(config?: T.BlockComment.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1850,7 +2321,10 @@ export declare function blockComment(config?: T.BlockComment.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function booleanLiteral(text: 'true' | 'false'): {
     $type: TSKindId.BooleanLiteral;
@@ -1863,7 +2337,10 @@ export declare function booleanLiteral(text: 'true' | 'false'): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function boundedType(config: T.BoundedType.Config): {
     $type: TSKindId.BoundedType;
@@ -1880,7 +2357,10 @@ export declare function boundedType(config: T.BoundedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Lifetime | T._Type | T.UseBounds) => /*elided*/ any & {
             $render(): string;
@@ -1888,7 +2368,10 @@ export declare function boundedType(config: T.BoundedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1897,7 +2380,10 @@ export declare function boundedType(config: T.BoundedType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function bracketedType(child: (T._Type | T.QualifiedType)): {
     $type: TSKindId.BracketedType;
@@ -1912,7 +2398,10 @@ export declare function bracketedType(child: (T._Type | T.QualifiedType)): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1921,7 +2410,10 @@ export declare function bracketedType(child: (T._Type | T.QualifiedType)): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function breakExpression(config?: T.BreakExpression.Config): {
     $type: TSKindId.BreakExpression;
@@ -1938,7 +2430,10 @@ export declare function breakExpression(config?: T.BreakExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -1946,7 +2441,10 @@ export declare function breakExpression(config?: T.BreakExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1955,7 +2453,10 @@ export declare function breakExpression(config?: T.BreakExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function callExpression(config: T.CallExpression.Config): {
     $type: TSKindId.CallExpression;
@@ -1972,7 +2473,10 @@ export declare function callExpression(config: T.CallExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         arguments: (value: T.Arguments) => /*elided*/ any & {
             $render(): string;
@@ -1980,7 +2484,10 @@ export declare function callExpression(config: T.CallExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -1989,7 +2496,10 @@ export declare function callExpression(config: T.CallExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function capturedPattern(config: T.CapturedPattern.Config): {
     $type: TSKindId.CapturedPattern;
@@ -2006,7 +2516,10 @@ export declare function capturedPattern(config: T.CapturedPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -2014,7 +2527,10 @@ export declare function capturedPattern(config: T.CapturedPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2023,7 +2539,10 @@ export declare function capturedPattern(config: T.CapturedPattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function charLiteral(text: string): {
     $type: TSKindId.CharLiteral;
@@ -2036,7 +2555,10 @@ export declare function charLiteral(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function closureExpressionExpr(body: T.Expression | "_"): {
     $type: TSKindId._ClosureExpressionExpr;
@@ -2051,7 +2573,10 @@ export declare function closureExpressionExpr(body: T.Expression | "_"): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2060,7 +2585,10 @@ export declare function closureExpressionExpr(body: T.Expression | "_"): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock>): ReturnType<typeof closureExpressionUFormBlock>;
 export declare function closureExpression(config: ConfigOf<T.ClosureExpressionUFormExpr>): ReturnType<typeof closureExpressionUFormExpr>;
@@ -2088,7 +2616,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             body: (value: T.Block) => /*elided*/ any & {
                 $render(): string;
@@ -2096,7 +2627,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2105,7 +2639,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     staticMarker(): "static" | undefined;
     asyncMarker(): "async" | undefined;
@@ -2120,7 +2657,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         asyncMarker: (value?: BooleanKeyword<T.ClosureExpressionAsyncMarker>) => /*elided*/ any & {
             $render(): string;
@@ -2128,7 +2668,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => /*elided*/ any & {
             $render(): string;
@@ -2136,7 +2679,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         parameters: (value: T.ClosureParameters) => /*elided*/ any & {
             $render(): string;
@@ -2144,7 +2690,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         returnType: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -2152,7 +2701,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -2160,7 +2712,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2169,7 +2724,10 @@ export declare function closureExpressionUFormBlock(config: Omit<ConfigOf<T.Clos
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>): {
     $type: TSKindId.ClosureExpression;
@@ -2193,7 +2751,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2202,7 +2763,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     staticMarker(): "static" | undefined;
     asyncMarker(): "async" | undefined;
@@ -2216,7 +2780,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         asyncMarker: (value?: BooleanKeyword<T.ClosureExpressionAsyncMarker>) => /*elided*/ any & {
             $render(): string;
@@ -2224,7 +2791,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         moveMarker: (value?: BooleanKeyword<T.MoveMarker>) => /*elided*/ any & {
             $render(): string;
@@ -2232,7 +2802,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         parameters: (value: T.ClosureParameters) => /*elided*/ any & {
             $render(): string;
@@ -2240,7 +2813,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Expression | "_") => /*elided*/ any & {
             $render(): string;
@@ -2248,7 +2824,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2257,7 +2836,10 @@ export declare function closureExpressionUFormExpr(config: Omit<ConfigOf<T.Closu
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function closureParameters(...children: (T.Pattern | T.Parameter)[]): {
     $type: TSKindId.ClosureParameters;
@@ -2272,7 +2854,10 @@ export declare function closureParameters(...children: (T.Pattern | T.Parameter)
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2281,7 +2866,10 @@ export declare function closureParameters(...children: (T.Pattern | T.Parameter)
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config): {
     $type: TSKindId.CompoundAssignmentExpr;
@@ -2300,7 +2888,10 @@ export declare function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         operator: (value: T.CompoundAssignmentExprOperator) => /*elided*/ any & {
             $render(): string;
@@ -2308,7 +2899,10 @@ export declare function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -2316,7 +2910,10 @@ export declare function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2325,7 +2922,10 @@ export declare function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function constBlock(body: T.Block): {
     $type: TSKindId.ConstBlock;
@@ -2340,7 +2940,10 @@ export declare function constBlock(body: T.Block): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2349,7 +2952,10 @@ export declare function constBlock(body: T.Block): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function constItem(config: T.ConstItem.Config): {
     $type: TSKindId.ConstItem;
@@ -2370,7 +2976,10 @@ export declare function constItem(config: T.ConstItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -2378,7 +2987,10 @@ export declare function constItem(config: T.ConstItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -2386,7 +2998,10 @@ export declare function constItem(config: T.ConstItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -2394,7 +3009,10 @@ export declare function constItem(config: T.ConstItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2403,7 +3021,10 @@ export declare function constItem(config: T.ConstItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function constParameter(config: T.ConstParameter.Config): {
     $type: TSKindId.ConstParameter;
@@ -2422,7 +3043,10 @@ export declare function constParameter(config: T.ConstParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -2430,7 +3054,10 @@ export declare function constParameter(config: T.ConstParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => /*elided*/ any & {
             $render(): string;
@@ -2438,7 +3065,10 @@ export declare function constParameter(config: T.ConstParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2447,7 +3077,10 @@ export declare function constParameter(config: T.ConstParameter.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function continueExpression(label?: T.Label): {
     $type: TSKindId.ContinueExpression;
@@ -2462,7 +3095,10 @@ export declare function continueExpression(label?: T.Label): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2471,7 +3107,10 @@ export declare function continueExpression(label?: T.Label): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function crate(): {
     $type: TSKindId.Crate;
@@ -2484,7 +3123,10 @@ export declare function crate(): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function declarationList(...children: T.DeclarationStatement[]): {
     $type: TSKindId.DeclarationList;
@@ -2499,7 +3141,10 @@ export declare function declarationList(...children: T.DeclarationStatement[]): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2508,7 +3153,10 @@ export declare function declarationList(...children: T.DeclarationStatement[]): 
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTreeParen(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeParen;
@@ -2523,7 +3171,10 @@ export declare function delimTokenTreeParen(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2532,7 +3183,10 @@ export declare function delimTokenTreeParen(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTreeBracket(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeBracket;
@@ -2547,7 +3201,10 @@ export declare function delimTokenTreeBracket(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2556,7 +3213,10 @@ export declare function delimTokenTreeBracket(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTreeBrace(...children: T.DelimTokens[]): {
     $type: TSKindId._DelimTokenTreeBrace;
@@ -2571,7 +3231,10 @@ export declare function delimTokenTreeBrace(...children: T.DelimTokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2580,7 +3243,10 @@ export declare function delimTokenTreeBrace(...children: T.DelimTokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen>): ReturnType<typeof delimTokenTreeUFormParen>;
 export declare function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormBracket>): ReturnType<typeof delimTokenTreeUFormBracket>;
@@ -2603,7 +3269,10 @@ export declare function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimT
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2612,7 +3281,10 @@ export declare function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimT
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -2621,7 +3293,10 @@ export declare function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimT
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBracket>, '$variant'>): {
     $type: TSKindId.DelimTokenTree;
@@ -2641,7 +3316,10 @@ export declare function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.Deli
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2650,7 +3328,10 @@ export declare function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.Deli
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -2659,7 +3340,10 @@ export declare function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.Deli
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBrace>, '$variant'>): {
     $type: TSKindId.DelimTokenTree;
@@ -2679,7 +3363,10 @@ export declare function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimT
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2688,7 +3375,10 @@ export declare function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimT
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -2697,7 +3387,10 @@ export declare function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimT
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function dynamicType(trait: T.HigherRankedTraitBound | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.FunctionType | T.TupleType): {
     $type: TSKindId.DynamicType;
@@ -2712,7 +3405,10 @@ export declare function dynamicType(trait: T.HigherRankedTraitBound | T.TypeIden
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2721,7 +3417,10 @@ export declare function dynamicType(trait: T.HigherRankedTraitBound | T.TypeIden
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function elseClause(child: (T.Block | T.IfExpression)): {
     $type: TSKindId.ElseClause;
@@ -2736,7 +3435,10 @@ export declare function elseClause(child: (T.Block | T.IfExpression)): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2745,7 +3447,10 @@ export declare function elseClause(child: (T.Block | T.IfExpression)): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function enumItem(config: T.EnumItem.Config): {
     $type: TSKindId.EnumItem;
@@ -2768,7 +3473,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -2776,7 +3484,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -2784,7 +3495,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -2792,7 +3506,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.EnumVariantList) => /*elided*/ any & {
             $render(): string;
@@ -2800,7 +3517,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2809,7 +3529,10 @@ export declare function enumItem(config: T.EnumItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function enumVariant(config: T.EnumVariant.Config): {
     $type: TSKindId.EnumVariant;
@@ -2830,7 +3553,10 @@ export declare function enumVariant(config: T.EnumVariant.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -2838,7 +3564,10 @@ export declare function enumVariant(config: T.EnumVariant.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -2846,7 +3575,10 @@ export declare function enumVariant(config: T.EnumVariant.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -2854,7 +3586,10 @@ export declare function enumVariant(config: T.EnumVariant.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2863,7 +3598,10 @@ export declare function enumVariant(config: T.EnumVariant.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]): {
     $type: TSKindId.EnumVariantList;
@@ -2878,7 +3616,10 @@ export declare function enumVariantList(...children: (T.AttributeItem | T.EnumVa
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2887,7 +3628,10 @@ export declare function enumVariantList(...children: (T.AttributeItem | T.EnumVa
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function escapeSequence(text: string): {
     $type: TSKindId.EscapeSequence;
@@ -2900,7 +3644,10 @@ export declare function escapeSequence(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function expressionStatementWithSemi(child: T.Expression): {
     $type: TSKindId._ExpressionStatementWithSemi;
@@ -2915,7 +3662,10 @@ export declare function expressionStatementWithSemi(child: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2924,7 +3674,10 @@ export declare function expressionStatementWithSemi(child: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock): {
     $type: TSKindId._ExpressionStatementBlockEnding;
@@ -2939,7 +3692,10 @@ export declare function expressionStatementBlockEnding(child: T.ExpressionEnding
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -2948,7 +3704,10 @@ export declare function expressionStatementBlockEnding(child: T.ExpressionEnding
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormWithSemi>): ReturnType<typeof expressionStatementUFormWithSemi>;
 export declare function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormBlockEnding>): ReturnType<typeof expressionStatementUFormBlockEnding>;
@@ -2970,7 +3729,10 @@ export declare function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -2979,7 +3741,10 @@ export declare function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -2988,7 +3753,10 @@ export declare function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>): {
     $type: TSKindId.ExpressionStatement;
@@ -3008,7 +3776,10 @@ export declare function expressionStatementUFormBlockEnding(config?: Omit<Config
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -3017,7 +3788,10 @@ export declare function expressionStatementUFormBlockEnding(config?: Omit<Config
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -3026,7 +3800,10 @@ export declare function expressionStatementUFormBlockEnding(config?: Omit<Config
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function externCrateDeclaration(config: T.ExternCrateDeclaration.Config): {
     $type: TSKindId.ExternCrateDeclaration;
@@ -3047,7 +3824,10 @@ export declare function externCrateDeclaration(config: T.ExternCrateDeclaration.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -3055,7 +3835,10 @@ export declare function externCrateDeclaration(config: T.ExternCrateDeclaration.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         alias: (value?: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -3063,7 +3846,10 @@ export declare function externCrateDeclaration(config: T.ExternCrateDeclaration.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3072,7 +3858,10 @@ export declare function externCrateDeclaration(config: T.ExternCrateDeclaration.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function externModifier(stringLiteral?: T.StringLiteral): {
     $type: TSKindId.ExternModifier;
@@ -3087,7 +3876,10 @@ export declare function externModifier(stringLiteral?: T.StringLiteral): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3096,7 +3888,10 @@ export declare function externModifier(stringLiteral?: T.StringLiteral): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldDeclaration(config: T.FieldDeclaration.Config): {
     $type: TSKindId.FieldDeclaration;
@@ -3115,7 +3910,10 @@ export declare function fieldDeclaration(config: T.FieldDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.FieldIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -3123,7 +3921,10 @@ export declare function fieldDeclaration(config: T.FieldDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -3131,7 +3932,10 @@ export declare function fieldDeclaration(config: T.FieldDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3140,7 +3944,10 @@ export declare function fieldDeclaration(config: T.FieldDeclaration.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]): {
     $type: TSKindId.FieldDeclarationList;
@@ -3155,7 +3962,10 @@ export declare function fieldDeclarationList(...children: (T.AttributeItem | T.F
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3164,7 +3974,10 @@ export declare function fieldDeclarationList(...children: (T.AttributeItem | T.F
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldExpression(config: T.FieldExpression.Config): {
     $type: TSKindId.FieldExpression;
@@ -3181,7 +3994,10 @@ export declare function fieldExpression(config: T.FieldExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         field: (value: T.FieldIdentifier | T.IntegerLiteral) => /*elided*/ any & {
             $render(): string;
@@ -3189,7 +4005,10 @@ export declare function fieldExpression(config: T.FieldExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3198,7 +4017,10 @@ export declare function fieldExpression(config: T.FieldExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldInitializer(config: T.FieldInitializer.Config): {
     $type: TSKindId.FieldInitializer;
@@ -3217,7 +4039,10 @@ export declare function fieldInitializer(config: T.FieldInitializer.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -3225,7 +4050,10 @@ export declare function fieldInitializer(config: T.FieldInitializer.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: T.AttributeItem[]) => /*elided*/ any & {
             $render(): string;
@@ -3233,7 +4061,10 @@ export declare function fieldInitializer(config: T.FieldInitializer.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3242,7 +4073,10 @@ export declare function fieldInitializer(config: T.FieldInitializer.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]): {
     $type: TSKindId.FieldInitializerList;
@@ -3257,7 +4091,10 @@ export declare function fieldInitializerList(...children: (T.ShorthandFieldIniti
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3266,7 +4103,10 @@ export declare function fieldInitializerList(...children: (T.ShorthandFieldIniti
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldPatternShorthand(name: T.Identifier): {
     $type: TSKindId._FieldPatternShorthand;
@@ -3281,7 +4121,10 @@ export declare function fieldPatternShorthand(name: T.Identifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3290,7 +4133,10 @@ export declare function fieldPatternShorthand(name: T.Identifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand>): ReturnType<typeof fieldPatternUFormShorthand>;
 export declare function fieldPattern(config: ConfigOf<T.FieldPatternUFormNamed>): ReturnType<typeof fieldPatternUFormNamed>;
@@ -3314,7 +4160,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -3323,7 +4172,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     refMarker(): "ref" | undefined;
     mutableSpecifier(): "mut" | undefined;
@@ -3335,7 +4187,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => /*elided*/ any & {
             $render(): string;
@@ -3343,7 +4198,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -3351,7 +4209,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3360,7 +4221,10 @@ export declare function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.Field
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>): {
     $type: TSKindId.FieldPattern;
@@ -3384,7 +4248,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             pattern: (value: T.Pattern) => /*elided*/ any & {
                 $render(): string;
@@ -3392,7 +4259,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -3401,7 +4271,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     refMarker(): "ref" | undefined;
     mutableSpecifier(): "mut" | undefined;
@@ -3414,7 +4287,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => /*elided*/ any & {
             $render(): string;
@@ -3422,7 +4298,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.FieldIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -3430,7 +4309,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -3438,7 +4320,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3447,7 +4332,10 @@ export declare function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatt
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function forExpression(config: T.ForExpression.Config): {
     $type: TSKindId.ForExpression;
@@ -3468,7 +4356,10 @@ export declare function forExpression(config: T.ForExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -3476,7 +4367,10 @@ export declare function forExpression(config: T.ForExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -3484,7 +4378,10 @@ export declare function forExpression(config: T.ForExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -3492,7 +4389,10 @@ export declare function forExpression(config: T.ForExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3501,7 +4401,10 @@ export declare function forExpression(config: T.ForExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function forLifetimes(...children: T.Lifetime[]): {
     $type: TSKindId.ForLifetimes;
@@ -3516,7 +4419,10 @@ export declare function forLifetimes(...children: T.Lifetime[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3525,7 +4431,10 @@ export declare function forLifetimes(...children: T.Lifetime[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function foreignModItemBody(body: T.DeclarationList): {
     $type: TSKindId._ForeignModItemBody;
@@ -3540,7 +4449,10 @@ export declare function foreignModItemBody(body: T.DeclarationList): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3549,7 +4461,10 @@ export declare function foreignModItemBody(body: T.DeclarationList): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function foreignModItem(config: ConfigOf<T.ForeignModItemUFormSemi>): ReturnType<typeof foreignModItemUFormSemi>;
 export declare function foreignModItem(config: ConfigOf<T.ForeignModItemUFormBody>): ReturnType<typeof foreignModItemUFormBody>;
@@ -3569,7 +4484,10 @@ export declare function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignM
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         externModifier: (value: T.ExternModifier) => /*elided*/ any & {
             $render(): string;
@@ -3577,7 +4495,10 @@ export declare function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignM
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3586,7 +4507,10 @@ export declare function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignM
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>): {
     $type: TSKindId.ForeignModItem;
@@ -3608,7 +4532,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -3617,7 +4544,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     visibilityModifier(): T.VisibilityModifier | undefined;
     externModifier(): T.ExternModifier;
@@ -3629,7 +4559,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         externModifier: (value: T.ExternModifier) => /*elided*/ any & {
             $render(): string;
@@ -3637,7 +4570,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.DeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -3645,7 +4581,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3654,7 +4593,10 @@ export declare function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignM
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis'): {
     $type: TSKindId.FragmentSpecifier;
@@ -3667,7 +4609,10 @@ export declare function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' |
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionItem(config: T.FunctionItem.Config): {
     $type: TSKindId.FunctionItem;
@@ -3696,7 +4641,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         functionModifiers: (value?: T.FunctionModifiers) => /*elided*/ any & {
             $render(): string;
@@ -3704,7 +4652,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier | T.Metavariable) => /*elided*/ any & {
             $render(): string;
@@ -3712,7 +4663,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -3720,7 +4674,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         parameters: (value: T.Parameters) => /*elided*/ any & {
             $render(): string;
@@ -3728,7 +4685,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         returnType: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -3736,7 +4696,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -3744,7 +4707,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -3752,7 +4718,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3761,7 +4730,10 @@ export declare function functionItem(config: T.FunctionItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionModifiers(config: T.FunctionModifiers.Config): {
     $type: TSKindId.FunctionModifiers;
@@ -3776,7 +4748,10 @@ export declare function functionModifiers(config: T.FunctionModifiers.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3785,7 +4760,10 @@ export declare function functionModifiers(config: T.FunctionModifiers.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionSignatureItem(config: T.FunctionSignatureItem.Config): {
     $type: TSKindId.FunctionSignatureItem;
@@ -3812,7 +4790,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         functionModifiers: (value?: T.FunctionModifiers) => /*elided*/ any & {
             $render(): string;
@@ -3820,7 +4801,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier | T.Metavariable) => /*elided*/ any & {
             $render(): string;
@@ -3828,7 +4812,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -3836,7 +4823,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         parameters: (value: T.Parameters) => /*elided*/ any & {
             $render(): string;
@@ -3844,7 +4834,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         returnType: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -3852,7 +4845,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -3860,7 +4856,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3869,7 +4868,10 @@ export declare function functionSignatureItem(config: T.FunctionSignatureItem.Co
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function functionType(config: T.FunctionType.Config): {
     $type: TSKindId.FunctionType;
@@ -3890,7 +4892,10 @@ export declare function functionType(config: T.FunctionType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         parameters: (value: T.Parameters) => /*elided*/ any & {
             $render(): string;
@@ -3898,7 +4903,10 @@ export declare function functionType(config: T.FunctionType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         returnType: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -3906,7 +4914,10 @@ export declare function functionType(config: T.FunctionType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.FunctionTypeFnForm | T.FunctionTypeTraitForm) => /*elided*/ any & {
             $render(): string;
@@ -3914,7 +4925,10 @@ export declare function functionType(config: T.FunctionType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3923,7 +4937,10 @@ export declare function functionType(config: T.FunctionType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function genBlock(config: T.GenBlock.Config): {
     $type: TSKindId.GenBlock;
@@ -3940,7 +4957,10 @@ export declare function genBlock(config: T.GenBlock.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         block: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -3948,7 +4968,10 @@ export declare function genBlock(config: T.GenBlock.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3957,7 +4980,10 @@ export declare function genBlock(config: T.GenBlock.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function genericFunction(config: T.GenericFunction.Config): {
     $type: TSKindId.GenericFunction;
@@ -3974,7 +5000,10 @@ export declare function genericFunction(config: T.GenericFunction.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeArguments: (value: T.TypeArguments) => /*elided*/ any & {
             $render(): string;
@@ -3982,7 +5011,10 @@ export declare function genericFunction(config: T.GenericFunction.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -3991,7 +5023,10 @@ export declare function genericFunction(config: T.GenericFunction.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function genericPattern(config: T.GenericPattern.Config): {
     $type: TSKindId.GenericPattern;
@@ -4008,7 +5043,10 @@ export declare function genericPattern(config: T.GenericPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.Identifier | T.ScopedIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -4016,7 +5054,10 @@ export declare function genericPattern(config: T.GenericPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4025,7 +5066,10 @@ export declare function genericPattern(config: T.GenericPattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function genericType(config: T.GenericType.Config): {
     $type: TSKindId.GenericType;
@@ -4042,7 +5086,10 @@ export declare function genericType(config: T.GenericType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeArguments: (value: T.TypeArguments) => /*elided*/ any & {
             $render(): string;
@@ -4050,7 +5097,10 @@ export declare function genericType(config: T.GenericType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4059,7 +5109,10 @@ export declare function genericType(config: T.GenericType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config): {
     $type: TSKindId.GenericTypeWithTurbofish;
@@ -4078,7 +5131,10 @@ export declare function genericTypeWithTurbofish(config: T.GenericTypeWithTurbof
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeArguments: (value: T.TypeArguments) => /*elided*/ any & {
             $render(): string;
@@ -4086,7 +5142,10 @@ export declare function genericTypeWithTurbofish(config: T.GenericTypeWithTurbof
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4095,7 +5154,10 @@ export declare function genericTypeWithTurbofish(config: T.GenericTypeWithTurbof
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config): {
     $type: TSKindId.HigherRankedTraitBound;
@@ -4112,7 +5174,10 @@ export declare function higherRankedTraitBound(config: T.HigherRankedTraitBound.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -4120,7 +5185,10 @@ export declare function higherRankedTraitBound(config: T.HigherRankedTraitBound.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4129,7 +5197,10 @@ export declare function higherRankedTraitBound(config: T.HigherRankedTraitBound.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function identifier(text: string): {
     $type: TSKindId.Identifier;
@@ -4142,7 +5213,10 @@ export declare function identifier(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function ifExpression(config: T.IfExpression.Config): {
     $type: TSKindId.IfExpression;
@@ -4161,7 +5235,10 @@ export declare function ifExpression(config: T.IfExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         consequence: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -4169,7 +5246,10 @@ export declare function ifExpression(config: T.IfExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         alternative: (value?: T.ElseClause) => /*elided*/ any & {
             $render(): string;
@@ -4177,7 +5257,10 @@ export declare function ifExpression(config: T.IfExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4186,7 +5269,10 @@ export declare function ifExpression(config: T.IfExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function implItemBody(body: T.DeclarationList): {
     $type: TSKindId._ImplItemBody;
@@ -4201,7 +5287,10 @@ export declare function implItemBody(body: T.DeclarationList): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4210,7 +5299,10 @@ export declare function implItemBody(body: T.DeclarationList): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function implItem(config: ConfigOf<T.ImplItemUFormBody>): ReturnType<typeof implItemUFormBody>;
 export declare function implItem(config: ConfigOf<T.ImplItemUFormSemi>): ReturnType<typeof implItemUFormSemi>;
@@ -4238,7 +5330,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -4247,7 +5342,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     unsafeMarker(): "unsafe" | undefined;
     typeParameters(): T.TypeParameters | undefined;
@@ -4263,7 +5361,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -4271,7 +5372,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         negative: (value?: BooleanKeyword<T.ImplItemNegative>) => /*elided*/ any & {
             $render(): string;
@@ -4279,7 +5383,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         trait: (value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => /*elided*/ any & {
             $render(): string;
@@ -4287,7 +5394,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         type: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -4295,7 +5405,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -4303,7 +5416,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.DeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -4311,7 +5427,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4320,7 +5439,10 @@ export declare function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormB
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>): {
     $type: TSKindId.ImplItem;
@@ -4346,7 +5468,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -4354,7 +5479,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         negative: (value?: BooleanKeyword<T.ImplItemNegative>) => /*elided*/ any & {
             $render(): string;
@@ -4362,7 +5490,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         trait: (value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => /*elided*/ any & {
             $render(): string;
@@ -4370,7 +5501,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -4378,7 +5512,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -4386,7 +5523,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4395,7 +5535,10 @@ export declare function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormS
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function indexExpression(config: T.IndexExpression.Config): {
     $type: TSKindId.IndexExpression;
@@ -4412,7 +5555,10 @@ export declare function indexExpression(config: T.IndexExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         index: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -4420,7 +5566,10 @@ export declare function indexExpression(config: T.IndexExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4429,7 +5578,10 @@ export declare function indexExpression(config: T.IndexExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function innerAttributeItem(attribute: T.Attribute): {
     $type: TSKindId.InnerAttributeItem;
@@ -4444,7 +5596,10 @@ export declare function innerAttributeItem(attribute: T.Attribute): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4453,7 +5608,10 @@ export declare function innerAttributeItem(attribute: T.Attribute): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function integerLiteral(text: string): {
     $type: TSKindId.IntegerLiteral;
@@ -4466,7 +5624,10 @@ export declare function integerLiteral(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function label(identifier: T.Identifier): {
     $type: TSKindId.Label;
@@ -4481,7 +5642,10 @@ export declare function label(identifier: T.Identifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4490,7 +5654,10 @@ export declare function label(identifier: T.Identifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lastMatchArm(config: T.LastMatchArm.Config): {
     $type: TSKindId.LastMatchArm;
@@ -4509,7 +5676,10 @@ export declare function lastMatchArm(config: T.LastMatchArm.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -4517,7 +5687,10 @@ export declare function lastMatchArm(config: T.LastMatchArm.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: ((T.AttributeItem | T.InnerAttributeItem))[]) => /*elided*/ any & {
             $render(): string;
@@ -4525,7 +5698,10 @@ export declare function lastMatchArm(config: T.LastMatchArm.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4534,7 +5710,10 @@ export declare function lastMatchArm(config: T.LastMatchArm.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function letCondition(config: T.LetCondition.Config): {
     $type: TSKindId.LetCondition;
@@ -4551,7 +5730,10 @@ export declare function letCondition(config: T.LetCondition.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -4559,7 +5741,10 @@ export declare function letCondition(config: T.LetCondition.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4568,7 +5753,10 @@ export declare function letCondition(config: T.LetCondition.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function letDeclaration(config: T.LetDeclaration.Config): {
     $type: TSKindId.LetDeclaration;
@@ -4591,7 +5779,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -4599,7 +5790,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -4607,7 +5801,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -4615,7 +5812,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         alternative: (value?: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -4623,7 +5823,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4632,7 +5835,10 @@ export declare function letDeclaration(config: T.LetDeclaration.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lifetime(identifier: T.Identifier): {
     $type: TSKindId.Lifetime;
@@ -4647,7 +5853,10 @@ export declare function lifetime(identifier: T.Identifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4656,7 +5865,10 @@ export declare function lifetime(identifier: T.Identifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lifetimeParameter(config: T.LifetimeParameter.Config): {
     $type: TSKindId.LifetimeParameter;
@@ -4673,7 +5885,10 @@ export declare function lifetimeParameter(config: T.LifetimeParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         bounds: (value?: T.TraitBounds) => /*elided*/ any & {
             $render(): string;
@@ -4681,7 +5896,10 @@ export declare function lifetimeParameter(config: T.LifetimeParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4690,7 +5908,10 @@ export declare function lifetimeParameter(config: T.LifetimeParameter.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineComment(config: ConfigOf<T.LineCommentUFormRegularDslash>): ReturnType<typeof lineCommentUFormRegularDslash>;
 export declare function lineComment(config: ConfigOf<T.LineCommentUFormDoc>): ReturnType<typeof lineCommentUFormDoc>;
@@ -4709,7 +5930,10 @@ export declare function lineCommentUFormRegularDslash(config: Omit<ConfigOf<T.Li
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4718,7 +5942,10 @@ export declare function lineCommentUFormRegularDslash(config: Omit<ConfigOf<T.Li
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>): {
     $type: TSKindId.LineComment;
@@ -4738,7 +5965,10 @@ export declare function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -4747,7 +5977,10 @@ export declare function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentU
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     doc(): string;
     $with: {
@@ -4757,7 +5990,10 @@ export declare function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4766,7 +6002,10 @@ export declare function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentU
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUFormContent>, '$variant'>): {
     $type: TSKindId.LineComment;
@@ -4782,7 +6021,10 @@ export declare function lineCommentUFormContent(config: Omit<ConfigOf<T.LineComm
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4791,7 +6033,10 @@ export declare function lineCommentUFormContent(config: Omit<ConfigOf<T.LineComm
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function loopExpression(config: T.LoopExpression.Config): {
     $type: TSKindId.LoopExpression;
@@ -4808,7 +6053,10 @@ export declare function loopExpression(config: T.LoopExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -4816,7 +6064,10 @@ export declare function loopExpression(config: T.LoopExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4825,7 +6076,10 @@ export declare function loopExpression(config: T.LoopExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinitionParen(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionParen;
@@ -4840,7 +6094,10 @@ export declare function macroDefinitionParen(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4849,7 +6106,10 @@ export declare function macroDefinitionParen(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinitionBracket(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionBracket;
@@ -4864,7 +6124,10 @@ export declare function macroDefinitionBracket(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4873,7 +6136,10 @@ export declare function macroDefinitionBracket(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinitionBrace(...children: T.MacroRule[]): {
     $type: TSKindId._MacroDefinitionBrace;
@@ -4888,7 +6154,10 @@ export declare function macroDefinitionBrace(...children: T.MacroRule[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4897,7 +6166,10 @@ export declare function macroDefinitionBrace(...children: T.MacroRule[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinition(config: ConfigOf<T.MacroDefinitionUFormParen>): ReturnType<typeof macroDefinitionUFormParen>;
 export declare function macroDefinition(config: ConfigOf<T.MacroDefinitionUFormBracket>): ReturnType<typeof macroDefinitionUFormBracket>;
@@ -4921,7 +6193,10 @@ export declare function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroD
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -4930,7 +6205,10 @@ export declare function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroD
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     name(): T.Identifier | T.ReservedIdentifier;
     $with: {
@@ -4940,7 +6218,10 @@ export declare function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroD
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4949,7 +6230,10 @@ export declare function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroD
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinitionUFormBracket>, '$variant'>): {
     $type: TSKindId.MacroDefinition;
@@ -4970,7 +6254,10 @@ export declare function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.Macr
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -4979,7 +6266,10 @@ export declare function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.Macr
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     name(): T.Identifier | T.ReservedIdentifier;
     $with: {
@@ -4989,7 +6279,10 @@ export declare function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.Macr
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -4998,7 +6291,10 @@ export declare function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.Macr
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitionUFormBrace>, '$variant'>): {
     $type: TSKindId.MacroDefinition;
@@ -5019,7 +6315,10 @@ export declare function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroD
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5028,7 +6327,10 @@ export declare function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroD
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     name(): T.Identifier | T.ReservedIdentifier;
     $with: {
@@ -5038,7 +6340,10 @@ export declare function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroD
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5047,7 +6352,10 @@ export declare function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroD
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroInvocation(config: T.MacroInvocation.Config): {
     $type: TSKindId.MacroInvocation;
@@ -5064,7 +6372,10 @@ export declare function macroInvocation(config: T.MacroInvocation.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         tokenTree: (value: T.DelimTokenTree) => /*elided*/ any & {
             $render(): string;
@@ -5072,7 +6383,10 @@ export declare function macroInvocation(config: T.MacroInvocation.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5081,7 +6395,10 @@ export declare function macroInvocation(config: T.MacroInvocation.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function macroRule(config: T.MacroRule.Config): {
     $type: TSKindId.MacroRule;
@@ -5098,7 +6415,10 @@ export declare function macroRule(config: T.MacroRule.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.TokenTree) => /*elided*/ any & {
             $render(): string;
@@ -5106,7 +6426,10 @@ export declare function macroRule(config: T.MacroRule.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5115,7 +6438,10 @@ export declare function macroRule(config: T.MacroRule.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchArmBlockEnding(value: T.ExpressionEndingWithBlock): {
     $type: TSKindId._MatchArmBlockEnding;
@@ -5130,7 +6456,10 @@ export declare function matchArmBlockEnding(value: T.ExpressionEndingWithBlock):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5139,7 +6468,10 @@ export declare function matchArmBlockEnding(value: T.ExpressionEndingWithBlock):
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchArm(config: ConfigOf<T.MatchArmUFormWithComma>): ReturnType<typeof matchArmUFormWithComma>;
 export declare function matchArm(config: ConfigOf<T.MatchArmUFormBlockEnding>): ReturnType<typeof matchArmUFormBlockEnding>;
@@ -5163,7 +6495,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5172,7 +6507,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     attributes(): readonly (T.AttributeItem | T.InnerAttributeItem)[];
     pattern(): T.MatchPattern;
@@ -5184,7 +6522,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.MatchPattern) => /*elided*/ any & {
             $render(): string;
@@ -5192,7 +6533,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -5200,7 +6544,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5209,7 +6556,10 @@ export declare function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmU
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>): {
     $type: TSKindId.MatchArm;
@@ -5231,7 +6581,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5240,7 +6593,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     attributes(): readonly (T.AttributeItem | T.InnerAttributeItem)[];
     pattern(): T.MatchPattern;
@@ -5252,7 +6608,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.MatchPattern) => /*elided*/ any & {
             $render(): string;
@@ -5260,7 +6619,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value: T.ExpressionEndingWithBlock) => /*elided*/ any & {
             $render(): string;
@@ -5268,7 +6630,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5277,7 +6642,10 @@ export declare function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchAr
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[]): {
     $type: TSKindId.MatchBlock;
@@ -5292,7 +6660,10 @@ export declare function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[])
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5301,7 +6672,10 @@ export declare function matchBlock(...children: (T.MatchArm | T.LastMatchArm)[])
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchExpression(config: T.MatchExpression.Config): {
     $type: TSKindId.MatchExpression;
@@ -5318,7 +6692,10 @@ export declare function matchExpression(config: T.MatchExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.MatchBlock) => /*elided*/ any & {
             $render(): string;
@@ -5326,7 +6703,10 @@ export declare function matchExpression(config: T.MatchExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5335,7 +6715,10 @@ export declare function matchExpression(config: T.MatchExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function matchPattern(config: T.MatchPattern.Config): {
     $type: TSKindId.MatchPattern;
@@ -5352,7 +6735,10 @@ export declare function matchPattern(config: T.MatchPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -5360,7 +6746,10 @@ export declare function matchPattern(config: T.MatchPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5369,7 +6758,10 @@ export declare function matchPattern(config: T.MatchPattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function metavariable(text: string): {
     $type: TSKindId.Metavariable;
@@ -5382,7 +6774,10 @@ export declare function metavariable(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function modItemInline(body: T.DeclarationList): {
     $type: TSKindId._ModItemInline;
@@ -5397,7 +6792,10 @@ export declare function modItemInline(body: T.DeclarationList): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5406,7 +6804,10 @@ export declare function modItemInline(body: T.DeclarationList): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function modItem(config: ConfigOf<T.ModItemUFormExternal>): ReturnType<typeof modItemUFormExternal>;
 export declare function modItem(config: ConfigOf<T.ModItemUFormInline>): ReturnType<typeof modItemUFormInline>;
@@ -5426,7 +6827,10 @@ export declare function modItemUFormExternal(config: Omit<ConfigOf<T.ModItemUFor
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -5434,7 +6838,10 @@ export declare function modItemUFormExternal(config: Omit<ConfigOf<T.ModItemUFor
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5443,7 +6850,10 @@ export declare function modItemUFormExternal(config: Omit<ConfigOf<T.ModItemUFor
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, '$variant'>): {
     $type: TSKindId.ModItem;
@@ -5465,7 +6875,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5474,7 +6887,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     visibilityModifier(): T.VisibilityModifier | undefined;
     name(): string;
@@ -5486,7 +6902,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -5494,7 +6913,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.DeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -5502,7 +6924,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5511,7 +6936,10 @@ export declare function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormI
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function mutPattern(config: T.MutPattern.Config): {
     $type: TSKindId.MutPattern;
@@ -5528,7 +6956,10 @@ export declare function mutPattern(config: T.MutPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5537,7 +6968,10 @@ export declare function mutPattern(config: T.MutPattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function mutableSpecifier(): {
     $type: TSKindId.MutableSpecifier;
@@ -5550,7 +6984,10 @@ export declare function mutableSpecifier(): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function negativeLiteral(value: T.IntegerLiteral | T.FloatLiteral): {
     $type: TSKindId.NegativeLiteral;
@@ -5565,7 +7002,10 @@ export declare function negativeLiteral(value: T.IntegerLiteral | T.FloatLiteral
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5574,7 +7014,10 @@ export declare function negativeLiteral(value: T.IntegerLiteral | T.FloatLiteral
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function orPattern(config: ConfigOf<T.OrPatternUFormBinary>): ReturnType<typeof orPatternUFormBinary>;
 export declare function orPattern(config: ConfigOf<T.OrPatternUFormPrefix>): ReturnType<typeof orPatternUFormPrefix>;
@@ -5598,7 +7041,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             right: (value: T.Pattern) => /*elided*/ any & {
                 $render(): string;
@@ -5606,7 +7052,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5615,7 +7064,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     left(): T.Pattern;
     right(): T.Pattern;
@@ -5626,7 +7078,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -5634,7 +7089,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5643,7 +7101,10 @@ export declare function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUF
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>): {
     $type: TSKindId.OrPattern;
@@ -5663,7 +7124,10 @@ export declare function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUF
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5672,7 +7136,10 @@ export declare function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUF
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     right(): T.Pattern;
     $with: {
@@ -5682,7 +7149,10 @@ export declare function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5691,7 +7161,10 @@ export declare function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUF
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config): {
     $type: TSKindId.OrderedFieldDeclarationList;
@@ -5708,7 +7181,10 @@ export declare function orderedFieldDeclarationList(config: T.OrderedFieldDeclar
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => /*elided*/ any & {
             $render(): string;
@@ -5716,7 +7192,10 @@ export declare function orderedFieldDeclarationList(config: T.OrderedFieldDeclar
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5725,7 +7204,10 @@ export declare function orderedFieldDeclarationList(config: T.OrderedFieldDeclar
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function parameter(config: T.Parameter.Config): {
     $type: TSKindId.Parameter;
@@ -5744,7 +7226,10 @@ export declare function parameter(config: T.Parameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern | T.Self) => /*elided*/ any & {
             $render(): string;
@@ -5752,7 +7237,10 @@ export declare function parameter(config: T.Parameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -5760,7 +7248,10 @@ export declare function parameter(config: T.Parameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5769,7 +7260,10 @@ export declare function parameter(config: T.Parameter.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]): {
     $type: TSKindId.Parameters;
@@ -5784,7 +7278,10 @@ export declare function parameters(...children: (T.AttributeItem | T.Parameter |
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5793,7 +7290,10 @@ export declare function parameters(...children: (T.AttributeItem | T.Parameter |
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function parenthesizedExpression(child: T.Expression): {
     $type: TSKindId.ParenthesizedExpression;
@@ -5808,7 +7308,10 @@ export declare function parenthesizedExpression(child: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5817,7 +7320,10 @@ export declare function parenthesizedExpression(child: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function pointerTypeMut(child: T.MutableSpecifier): {
     $type: TSKindId._PointerTypeMut;
@@ -5832,7 +7338,10 @@ export declare function pointerTypeMut(child: T.MutableSpecifier): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5841,7 +7350,10 @@ export declare function pointerTypeMut(child: T.MutableSpecifier): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function pointerType(config: ConfigOf<T.PointerTypeUFormConst>): ReturnType<typeof pointerTypeUFormConst>;
 export declare function pointerType(config: ConfigOf<T.PointerTypeUFormMut>): ReturnType<typeof pointerTypeUFormMut>;
@@ -5859,7 +7371,10 @@ export declare function pointerTypeUFormConst(config: Omit<ConfigOf<T.PointerTyp
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5868,7 +7383,10 @@ export declare function pointerTypeUFormConst(config: Omit<ConfigOf<T.PointerTyp
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>, '$variant'>): {
     $type: TSKindId.PointerType;
@@ -5889,7 +7407,10 @@ export declare function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -5898,7 +7419,10 @@ export declare function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeU
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     typeField(): T._Type;
     $with: {
@@ -5908,7 +7432,10 @@ export declare function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5917,7 +7444,10 @@ export declare function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeU
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function qualifiedType(config: T.QualifiedType.Config): {
     $type: TSKindId.QualifiedType;
@@ -5934,7 +7464,10 @@ export declare function qualifiedType(config: T.QualifiedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         alias: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -5942,7 +7475,10 @@ export declare function qualifiedType(config: T.QualifiedType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -5951,7 +7487,10 @@ export declare function qualifiedType(config: T.QualifiedType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangeExpressionBare(_config?: T.RangeExpressionBare.Config): {
     $type: TSKindId._RangeExpressionBare;
@@ -5966,7 +7505,10 @@ export declare function rangeExpressionBare(_config?: T.RangeExpressionBare.Conf
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangeExpression(config: ConfigOf<T.RangeExpressionUFormBinary>): ReturnType<typeof rangeExpressionUFormBinary>;
 export declare function rangeExpression(config: ConfigOf<T.RangeExpressionUFormPostfix>): ReturnType<typeof rangeExpressionUFormPostfix>;
@@ -5994,7 +7536,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             operator: (value: T.RangeExpressionBinaryOperator) => /*elided*/ any & {
                 $render(): string;
@@ -6002,7 +7547,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             end: (value: T.Expression) => /*elided*/ any & {
                 $render(): string;
@@ -6010,7 +7558,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -6019,7 +7570,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     start(): T.Expression;
     operator(): ".." | "..." | "..=";
@@ -6031,7 +7585,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         operator: (value: T.RangeExpressionBinaryOperator) => /*elided*/ any & {
             $render(): string;
@@ -6039,7 +7596,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         end: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -6047,7 +7607,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6056,7 +7619,10 @@ export declare function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.Range
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>): {
     $type: TSKindId.RangeExpression;
@@ -6078,7 +7644,10 @@ export declare function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.Rang
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -6087,7 +7656,10 @@ export declare function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.Rang
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     start(): T.Expression;
     operator(): "..";
@@ -6098,7 +7670,10 @@ export declare function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.Rang
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6107,7 +7682,10 @@ export declare function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.Rang
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>): {
     $type: TSKindId.RangeExpression;
@@ -6129,7 +7707,10 @@ export declare function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.Range
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -6138,7 +7719,10 @@ export declare function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.Range
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     operator(): "..";
     end(): T.Expression;
@@ -6149,7 +7733,10 @@ export declare function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.Range
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6158,7 +7745,10 @@ export declare function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.Range
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>): {
     $type: TSKindId.RangeExpression;
@@ -6178,7 +7768,10 @@ export declare function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeE
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     operator(): "..";
     $with: {};
@@ -6188,7 +7781,10 @@ export declare function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeE
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangePattern(config: ConfigOf<T.RangePatternUFormLeftWithRight>): ReturnType<typeof rangePatternUFormLeftWithRight>;
 export declare function rangePattern(config: ConfigOf<T.RangePatternUFormLeftBare>): ReturnType<typeof rangePatternUFormLeftBare>;
@@ -6212,7 +7808,10 @@ export declare function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.R
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -6221,7 +7820,10 @@ export declare function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.R
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     left(): T.LiteralPattern | T.Path;
     right(): T.LiteralPattern | T.Path;
@@ -6232,7 +7834,10 @@ export declare function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.R
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         right: (value: T.LiteralPattern | T.Path) => /*elided*/ any & {
             $render(): string;
@@ -6240,7 +7845,10 @@ export declare function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.R
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6249,7 +7857,10 @@ export declare function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.R
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>): {
     $type: TSKindId.RangePattern;
@@ -6265,7 +7876,10 @@ export declare function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangeP
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6274,7 +7888,10 @@ export declare function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangeP
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>): {
     $type: TSKindId.RangePattern;
@@ -6294,7 +7911,10 @@ export declare function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePat
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -6303,7 +7923,10 @@ export declare function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePat
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     right(): T.LiteralPattern | T.Path;
     $with: {
@@ -6313,7 +7936,10 @@ export declare function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePat
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6322,7 +7948,10 @@ export declare function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePat
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rawStringLiteral(config: T.RawStringLiteral.Config): {
     $type: TSKindId.RawStringLiteral;
@@ -6341,7 +7970,10 @@ export declare function rawStringLiteral(config: T.RawStringLiteral.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         stringContent: (value: T.RawStringLiteralContent) => /*elided*/ any & {
             $render(): string;
@@ -6349,7 +7981,10 @@ export declare function rawStringLiteral(config: T.RawStringLiteral.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         rawStringLiteralEnd: (value?: string) => /*elided*/ any & {
             $render(): string;
@@ -6357,7 +7992,10 @@ export declare function rawStringLiteral(config: T.RawStringLiteral.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6366,7 +8004,10 @@ export declare function rawStringLiteral(config: T.RawStringLiteral.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function refPattern(child: T.Pattern): {
     $type: TSKindId.RefPattern;
@@ -6381,7 +8022,10 @@ export declare function refPattern(child: T.Pattern): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6390,7 +8034,10 @@ export declare function refPattern(child: T.Pattern): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function referenceExpression(config: T.ReferenceExpression.Config): {
     $type: TSKindId.ReferenceExpression;
@@ -6407,7 +8054,10 @@ export declare function referenceExpression(config: T.ReferenceExpression.Config
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (items_0: T.MutableSpecifier | T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut) => /*elided*/ any & {
             $render(): string;
@@ -6415,7 +8065,10 @@ export declare function referenceExpression(config: T.ReferenceExpression.Config
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6424,7 +8077,10 @@ export declare function referenceExpression(config: T.ReferenceExpression.Config
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function referencePattern(config: T.ReferencePattern.Config): {
     $type: TSKindId.ReferencePattern;
@@ -6441,7 +8097,10 @@ export declare function referencePattern(config: T.ReferencePattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -6449,7 +8108,10 @@ export declare function referencePattern(config: T.ReferencePattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6458,7 +8120,10 @@ export declare function referencePattern(config: T.ReferencePattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function referenceType(config: T.ReferenceType.Config): {
     $type: TSKindId.ReferenceType;
@@ -6477,7 +8142,10 @@ export declare function referenceType(config: T.ReferenceType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => /*elided*/ any & {
             $render(): string;
@@ -6485,7 +8153,10 @@ export declare function referenceType(config: T.ReferenceType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -6493,7 +8164,10 @@ export declare function referenceType(config: T.ReferenceType.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6502,7 +8176,10 @@ export declare function referenceType(config: T.ReferenceType.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function removedTraitBound(child: T._Type): {
     $type: TSKindId.RemovedTraitBound;
@@ -6517,7 +8194,10 @@ export declare function removedTraitBound(child: T._Type): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6526,7 +8206,10 @@ export declare function removedTraitBound(child: T._Type): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function returnExpression(child?: T.Expression): {
     $type: TSKindId.ReturnExpression;
@@ -6541,7 +8224,10 @@ export declare function returnExpression(child?: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6550,7 +8236,10 @@ export declare function returnExpression(child?: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function scopedIdentifier(config: T.ScopedIdentifier.Config): {
     $type: TSKindId.ScopedIdentifier;
@@ -6567,7 +8256,10 @@ export declare function scopedIdentifier(config: T.ScopedIdentifier.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier | T.Super) => /*elided*/ any & {
             $render(): string;
@@ -6575,7 +8267,10 @@ export declare function scopedIdentifier(config: T.ScopedIdentifier.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6584,7 +8279,10 @@ export declare function scopedIdentifier(config: T.ScopedIdentifier.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): {
     $type: TSKindId.ScopedTypeIdentifier;
@@ -6601,7 +8299,10 @@ export declare function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Conf
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -6609,7 +8310,10 @@ export declare function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Conf
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6618,7 +8322,10 @@ export declare function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Conf
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIdentifierInExpressionPosition.Config): {
     $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
@@ -6635,7 +8342,10 @@ export declare function scopedTypeIdentifierInExpressionPosition(config: T.Scope
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -6643,7 +8353,10 @@ export declare function scopedTypeIdentifierInExpressionPosition(config: T.Scope
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6652,7 +8365,10 @@ export declare function scopedTypeIdentifierInExpressionPosition(config: T.Scope
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function scopedUseList(config: T.ScopedUseList.Config): {
     $type: TSKindId.ScopedUseList;
@@ -6669,7 +8385,10 @@ export declare function scopedUseList(config: T.ScopedUseList.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         list: (value: T.UseList) => /*elided*/ any & {
             $render(): string;
@@ -6677,7 +8396,10 @@ export declare function scopedUseList(config: T.ScopedUseList.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6686,7 +8408,10 @@ export declare function scopedUseList(config: T.ScopedUseList.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function self(): {
     $type: TSKindId.Self;
@@ -6699,7 +8424,10 @@ export declare function self(): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function selfParameter(config?: T.SelfParameter.Config): {
     $type: TSKindId.SelfParameter;
@@ -6720,7 +8448,10 @@ export declare function selfParameter(config?: T.SelfParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         lifetime: (value?: T.Lifetime) => /*elided*/ any & {
             $render(): string;
@@ -6728,7 +8459,10 @@ export declare function selfParameter(config?: T.SelfParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => /*elided*/ any & {
             $render(): string;
@@ -6736,7 +8470,10 @@ export declare function selfParameter(config?: T.SelfParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6745,7 +8482,10 @@ export declare function selfParameter(config?: T.SelfParameter.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function shebang(text: string): {
     $type: TSKindId.Shebang;
@@ -6758,7 +8498,10 @@ export declare function shebang(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config): {
     $type: TSKindId.ShorthandFieldInitializer;
@@ -6775,7 +8518,10 @@ export declare function shorthandFieldInitializer(config: T.ShorthandFieldInitia
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         identifier: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -6783,7 +8529,10 @@ export declare function shorthandFieldInitializer(config: T.ShorthandFieldInitia
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6792,7 +8541,10 @@ export declare function shorthandFieldInitializer(config: T.ShorthandFieldInitia
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function slicePattern(...children: T.Pattern[]): {
     $type: TSKindId.SlicePattern;
@@ -6807,7 +8559,10 @@ export declare function slicePattern(...children: T.Pattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6816,7 +8571,10 @@ export declare function slicePattern(...children: T.Pattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function sourceFile(config: T.SourceFile.Config): {
     $type: TSKindId.SourceFile;
@@ -6833,7 +8591,10 @@ export declare function sourceFile(config: T.SourceFile.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         statements: (...values: T.Statement[]) => /*elided*/ any & {
             $render(): string;
@@ -6841,7 +8602,10 @@ export declare function sourceFile(config: T.SourceFile.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6850,7 +8614,10 @@ export declare function sourceFile(config: T.SourceFile.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function staticItem(config: T.StaticItem.Config): {
     $type: TSKindId.StaticItem;
@@ -6873,7 +8640,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         mutableSpecifier: (value?: T.RefMarker | T._MutableSpecifier) => /*elided*/ any & {
             $render(): string;
@@ -6881,7 +8651,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -6889,7 +8662,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -6897,7 +8673,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         value: (value?: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -6905,7 +8684,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6914,7 +8696,10 @@ export declare function staticItem(config: T.StaticItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]): {
     $type: TSKindId.StringLiteral;
@@ -6929,7 +8714,10 @@ export declare function stringLiteral(...children: (T.EscapeSequence | T.StringC
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6938,7 +8726,10 @@ export declare function stringLiteral(...children: (T.EscapeSequence | T.StringC
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function structExpression(config: T.StructExpression.Config): {
     $type: TSKindId.StructExpression;
@@ -6955,7 +8746,10 @@ export declare function structExpression(config: T.StructExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.FieldInitializerList) => /*elided*/ any & {
             $render(): string;
@@ -6963,7 +8757,10 @@ export declare function structExpression(config: T.StructExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -6972,7 +8769,10 @@ export declare function structExpression(config: T.StructExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function structItem(config: ConfigOf<T.StructItemUFormBrace>): ReturnType<typeof structItemUFormBrace>;
 export declare function structItem(config: ConfigOf<T.StructItemUFormTuple>): ReturnType<typeof structItemUFormTuple>;
@@ -7000,7 +8800,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             children: (items_0: T.WhereClause) => /*elided*/ any & {
                 $render(): string;
@@ -7008,7 +8811,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7017,7 +8823,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     visibilityModifier(): T.VisibilityModifier | undefined;
     name(): T.TypeIdentifier;
@@ -7030,7 +8839,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -7038,7 +8850,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -7046,7 +8861,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.FieldDeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -7054,7 +8872,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7063,7 +8884,10 @@ export declare function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemU
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemUFormTuple>, '$variant'>): {
     $type: TSKindId.StructItem;
@@ -7088,7 +8912,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
             children: (items_0: T.WhereClause) => /*elided*/ any & {
                 $render(): string;
@@ -7096,7 +8923,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7105,7 +8935,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     visibilityModifier(): T.VisibilityModifier | undefined;
     name(): T.TypeIdentifier;
@@ -7118,7 +8951,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -7126,7 +8962,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -7134,7 +8973,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.OrderedFieldDeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -7142,7 +8984,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7151,7 +8996,10 @@ export declare function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemU
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUFormUnit>, '$variant'>): {
     $type: TSKindId.StructItem;
@@ -7171,7 +9019,10 @@ export declare function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -7179,7 +9030,10 @@ export declare function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -7187,7 +9041,10 @@ export declare function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUF
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7196,7 +9053,10 @@ export declare function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUF
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function structPattern(config: T.StructPattern.Config): {
     $type: TSKindId.StructPattern;
@@ -7213,7 +9073,10 @@ export declare function structPattern(config: T.StructPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: ((T.FieldPattern | T.RemainingFieldPattern))[]) => /*elided*/ any & {
             $render(): string;
@@ -7221,7 +9084,10 @@ export declare function structPattern(config: T.StructPattern.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7230,7 +9096,10 @@ export declare function structPattern(config: T.StructPattern.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function super_(): {
     $type: TSKindId.Super;
@@ -7243,7 +9112,10 @@ export declare function super_(): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenBindingPattern(config: T.TokenBindingPattern.Config): {
     $type: TSKindId.TokenBindingPattern;
@@ -7260,7 +9132,10 @@ export declare function tokenBindingPattern(config: T.TokenBindingPattern.Config
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T.TokenBindingPatternType) => /*elided*/ any & {
             $render(): string;
@@ -7268,7 +9143,10 @@ export declare function tokenBindingPattern(config: T.TokenBindingPattern.Config
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7277,7 +9155,10 @@ export declare function tokenBindingPattern(config: T.TokenBindingPattern.Config
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenRepetition(...children: T.Tokens[]): {
     $type: TSKindId.TokenRepetition;
@@ -7292,7 +9173,10 @@ export declare function tokenRepetition(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7301,7 +9185,10 @@ export declare function tokenRepetition(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenRepetitionPattern(...children: T.TokenPattern[]): {
     $type: TSKindId.TokenRepetitionPattern;
@@ -7316,7 +9203,10 @@ export declare function tokenRepetitionPattern(...children: T.TokenPattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7325,7 +9215,10 @@ export declare function tokenRepetitionPattern(...children: T.TokenPattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreeParen(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeParen;
@@ -7340,7 +9233,10 @@ export declare function tokenTreeParen(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7349,7 +9245,10 @@ export declare function tokenTreeParen(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreeBracket(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeBracket;
@@ -7364,7 +9263,10 @@ export declare function tokenTreeBracket(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7373,7 +9275,10 @@ export declare function tokenTreeBracket(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreeBrace(...children: T.Tokens[]): {
     $type: TSKindId._TokenTreeBrace;
@@ -7388,7 +9293,10 @@ export declare function tokenTreeBrace(...children: T.Tokens[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7397,7 +9305,10 @@ export declare function tokenTreeBrace(...children: T.Tokens[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTree(config: ConfigOf<T.TokenTreeUFormParen>): ReturnType<typeof tokenTreeUFormParen>;
 export declare function tokenTree(config: ConfigOf<T.TokenTreeUFormBracket>): ReturnType<typeof tokenTreeUFormBracket>;
@@ -7420,7 +9331,10 @@ export declare function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUF
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7429,7 +9343,10 @@ export declare function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUF
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7438,7 +9355,10 @@ export declare function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUF
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTreeUFormBracket>, '$variant'>): {
     $type: TSKindId.TokenTree;
@@ -7458,7 +9378,10 @@ export declare function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTree
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7467,7 +9390,10 @@ export declare function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTree
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7476,7 +9402,10 @@ export declare function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTree
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace>, '$variant'>): {
     $type: TSKindId.TokenTree;
@@ -7496,7 +9425,10 @@ export declare function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUF
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7505,7 +9437,10 @@ export declare function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUF
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7514,7 +9449,10 @@ export declare function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUF
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePatternParen(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternParen;
@@ -7529,7 +9467,10 @@ export declare function tokenTreePatternParen(...children: T.TokenPattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7538,7 +9479,10 @@ export declare function tokenTreePatternParen(...children: T.TokenPattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePatternBracket(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternBracket;
@@ -7553,7 +9497,10 @@ export declare function tokenTreePatternBracket(...children: T.TokenPattern[]): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7562,7 +9509,10 @@ export declare function tokenTreePatternBracket(...children: T.TokenPattern[]): 
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePatternBrace(...children: T.TokenPattern[]): {
     $type: TSKindId._TokenTreePatternBrace;
@@ -7577,7 +9527,10 @@ export declare function tokenTreePatternBrace(...children: T.TokenPattern[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7586,7 +9539,10 @@ export declare function tokenTreePatternBrace(...children: T.TokenPattern[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen>): ReturnType<typeof tokenTreePatternUFormParen>;
 export declare function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormBracket>): ReturnType<typeof tokenTreePatternUFormBracket>;
@@ -7609,7 +9565,10 @@ export declare function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.Toke
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7618,7 +9577,10 @@ export declare function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.Toke
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7627,7 +9589,10 @@ export declare function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.Toke
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.TokenTreePatternUFormBracket>, '$variant'>): {
     $type: TSKindId.TokenTreePattern;
@@ -7647,7 +9612,10 @@ export declare function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.To
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7656,7 +9624,10 @@ export declare function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.To
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7665,7 +9636,10 @@ export declare function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.To
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.TokenTreePatternUFormBrace>, '$variant'>): {
     $type: TSKindId.TokenTreePattern;
@@ -7685,7 +9659,10 @@ export declare function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.Toke
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -7694,7 +9671,10 @@ export declare function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.Toke
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -7703,7 +9683,10 @@ export declare function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.Toke
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]): {
     $type: TSKindId.TraitBounds;
@@ -7718,7 +9701,10 @@ export declare function traitBounds(...children: (T._Type | T.Lifetime | T.Highe
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7727,7 +9713,10 @@ export declare function traitBounds(...children: (T._Type | T.Lifetime | T.Highe
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function traitItem(config: T.TraitItem.Config): {
     $type: TSKindId.TraitItem;
@@ -7754,7 +9743,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         unsafeMarker: (value?: BooleanKeyword<T.UnsafeMarker>) => /*elided*/ any & {
             $render(): string;
@@ -7762,7 +9754,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -7770,7 +9765,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -7778,7 +9776,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         bounds: (value?: T.TraitBounds) => /*elided*/ any & {
             $render(): string;
@@ -7786,7 +9787,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -7794,7 +9798,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.DeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -7802,7 +9809,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7811,7 +9821,10 @@ export declare function traitItem(config: T.TraitItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tryBlock(block: T.Block): {
     $type: TSKindId.TryBlock;
@@ -7826,7 +9839,10 @@ export declare function tryBlock(block: T.Block): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7835,7 +9851,10 @@ export declare function tryBlock(block: T.Block): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tryExpression(value: T.Expression): {
     $type: TSKindId.TryExpression;
@@ -7850,7 +9869,10 @@ export declare function tryExpression(value: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7859,7 +9881,10 @@ export declare function tryExpression(value: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tupleExpression(config: T.TupleExpression.Config): {
     $type: TSKindId.TupleExpression;
@@ -7876,7 +9901,10 @@ export declare function tupleExpression(config: T.TupleExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         elements: (...values: T.Expression[]) => /*elided*/ any & {
             $render(): string;
@@ -7884,7 +9912,10 @@ export declare function tupleExpression(config: T.TupleExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7893,7 +9924,10 @@ export declare function tupleExpression(config: T.TupleExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]): {
     $type: TSKindId.TuplePattern;
@@ -7908,7 +9942,10 @@ export declare function tuplePattern(...children: (T.Pattern | T.ClosureExpressi
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7917,7 +9954,10 @@ export declare function tuplePattern(...children: (T.Pattern | T.ClosureExpressi
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tupleStructPattern(config: T.TupleStructPattern.Config): {
     $type: TSKindId.TupleStructPattern;
@@ -7934,7 +9974,10 @@ export declare function tupleStructPattern(config: T.TupleStructPattern.Config):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         children: (...items: T.Pattern[]) => /*elided*/ any & {
             $render(): string;
@@ -7942,7 +9985,10 @@ export declare function tupleStructPattern(config: T.TupleStructPattern.Config):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7951,7 +9997,10 @@ export declare function tupleStructPattern(config: T.TupleStructPattern.Config):
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function tupleType(...children: T._Type[]): {
     $type: TSKindId.TupleType;
@@ -7966,7 +10015,10 @@ export declare function tupleType(...children: T._Type[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7975,7 +10027,10 @@ export declare function tupleType(...children: T._Type[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]): {
     $type: TSKindId.TypeArguments;
@@ -7990,7 +10045,10 @@ export declare function typeArguments(...children: (T._Type | T.TypeBinding | T.
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -7999,7 +10057,10 @@ export declare function typeArguments(...children: (T._Type | T.TypeBinding | T.
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeBinding(config: T.TypeBinding.Config): {
     $type: TSKindId.TypeBinding;
@@ -8018,7 +10079,10 @@ export declare function typeBinding(config: T.TypeBinding.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeArguments: (value?: T.TypeArguments) => /*elided*/ any & {
             $render(): string;
@@ -8026,7 +10090,10 @@ export declare function typeBinding(config: T.TypeBinding.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -8034,7 +10101,10 @@ export declare function typeBinding(config: T.TypeBinding.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8043,7 +10113,10 @@ export declare function typeBinding(config: T.TypeBinding.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeCastExpression(config: T.TypeCastExpression.Config): {
     $type: TSKindId.TypeCastExpression;
@@ -8060,7 +10133,10 @@ export declare function typeCastExpression(config: T.TypeCastExpression.Config):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -8068,7 +10144,10 @@ export declare function typeCastExpression(config: T.TypeCastExpression.Config):
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8077,7 +10156,10 @@ export declare function typeCastExpression(config: T.TypeCastExpression.Config):
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeItem(config: T.TypeItem.Config): {
     $type: TSKindId.TypeItem;
@@ -8102,7 +10184,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -8110,7 +10195,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -8118,7 +10206,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -8126,7 +10217,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeField: (value: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -8134,7 +10228,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         trailingWhereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -8142,7 +10239,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8151,7 +10251,10 @@ export declare function typeItem(config: T.TypeItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeParameter(config: T.TypeParameter.Config): {
     $type: TSKindId.TypeParameter;
@@ -8170,7 +10273,10 @@ export declare function typeParameter(config: T.TypeParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         bounds: (value?: T.TraitBounds) => /*elided*/ any & {
             $render(): string;
@@ -8178,7 +10284,10 @@ export declare function typeParameter(config: T.TypeParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         defaultType: (value?: T._Type) => /*elided*/ any & {
             $render(): string;
@@ -8186,7 +10295,10 @@ export declare function typeParameter(config: T.TypeParameter.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8195,7 +10307,10 @@ export declare function typeParameter(config: T.TypeParameter.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function typeParameters(config: T.TypeParameters.Config): {
     $type: TSKindId.TypeParameters;
@@ -8210,7 +10325,10 @@ export declare function typeParameters(config: T.TypeParameters.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8219,7 +10337,10 @@ export declare function typeParameters(config: T.TypeParameters.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function unaryExpression(config: T.UnaryExpression.Config): {
     $type: TSKindId.UnaryExpression;
@@ -8236,7 +10357,10 @@ export declare function unaryExpression(config: T.UnaryExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         operand: (value: T.Expression) => /*elided*/ any & {
             $render(): string;
@@ -8244,7 +10368,10 @@ export declare function unaryExpression(config: T.UnaryExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8253,7 +10380,10 @@ export declare function unaryExpression(config: T.UnaryExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function unionItem(config: T.UnionItem.Config): {
     $type: TSKindId.UnionItem;
@@ -8276,7 +10406,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         name: (value: T.TypeIdentifier) => /*elided*/ any & {
             $render(): string;
@@ -8284,7 +10417,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         typeParameters: (value?: T.TypeParameters) => /*elided*/ any & {
             $render(): string;
@@ -8292,7 +10428,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         whereClause: (value?: T.WhereClause) => /*elided*/ any & {
             $render(): string;
@@ -8300,7 +10439,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.FieldDeclarationList) => /*elided*/ any & {
             $render(): string;
@@ -8308,7 +10450,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8317,7 +10462,10 @@ export declare function unionItem(config: T.UnionItem.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function unitExpression(text: string): {
     $type: TSKindId.UnitExpression;
@@ -8330,7 +10478,10 @@ export declare function unitExpression(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function unitType(text: string): {
     $type: TSKindId.UnitType;
@@ -8343,7 +10494,10 @@ export declare function unitType(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function unsafeBlock(block: T.Block): {
     $type: TSKindId.UnsafeBlock;
@@ -8358,7 +10512,10 @@ export declare function unsafeBlock(block: T.Block): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8367,7 +10524,10 @@ export declare function unsafeBlock(block: T.Block): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function useAsClause(config: T.UseAsClause.Config): {
     $type: TSKindId.UseAsClause;
@@ -8384,7 +10544,10 @@ export declare function useAsClause(config: T.UseAsClause.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         alias: (value: T.Identifier) => /*elided*/ any & {
             $render(): string;
@@ -8392,7 +10555,10 @@ export declare function useAsClause(config: T.UseAsClause.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8401,7 +10567,10 @@ export declare function useAsClause(config: T.UseAsClause.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]): {
     $type: TSKindId.UseBounds;
@@ -8416,7 +10585,10 @@ export declare function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8425,7 +10597,10 @@ export declare function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function useDeclaration(config: T.UseDeclaration.Config): {
     $type: TSKindId.UseDeclaration;
@@ -8442,7 +10617,10 @@ export declare function useDeclaration(config: T.UseDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         argument: (value: T.UseClause) => /*elided*/ any & {
             $render(): string;
@@ -8450,7 +10628,10 @@ export declare function useDeclaration(config: T.UseDeclaration.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8459,7 +10640,10 @@ export declare function useDeclaration(config: T.UseDeclaration.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function useList(...children: T.UseClause[]): {
     $type: TSKindId.UseList;
@@ -8474,7 +10658,10 @@ export declare function useList(...children: T.UseClause[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8483,7 +10670,10 @@ export declare function useList(...children: T.UseClause[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function useWildcard(path?: T.Path): {
     $type: TSKindId.UseWildcard;
@@ -8498,7 +10688,10 @@ export declare function useWildcard(path?: T.Path): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8507,7 +10700,10 @@ export declare function useWildcard(path?: T.Path): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function variadicParameter(config?: T.VariadicParameter.Config): {
     $type: TSKindId.VariadicParameter;
@@ -8524,7 +10720,10 @@ export declare function variadicParameter(config?: T.VariadicParameter.Config): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         pattern: (value?: T.Pattern) => /*elided*/ any & {
             $render(): string;
@@ -8532,7 +10731,10 @@ export declare function variadicParameter(config?: T.VariadicParameter.Config): 
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8541,7 +10743,10 @@ export declare function variadicParameter(config?: T.VariadicParameter.Config): 
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function visibilityModifierCrate(child: T.Crate): {
     $type: TSKindId._VisibilityModifierCrate;
@@ -8556,7 +10761,10 @@ export declare function visibilityModifierCrate(child: T.Crate): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8565,7 +10773,10 @@ export declare function visibilityModifierCrate(child: T.Crate): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormInPath>): ReturnType<typeof visibilityModifierUFormInPath>;
 export declare function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate>): ReturnType<typeof visibilityModifierUFormCrate>;
@@ -8590,7 +10801,10 @@ export declare function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.V
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -8599,7 +10813,10 @@ export declare function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.V
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     in(): "in";
     $with: {};
@@ -8609,7 +10826,10 @@ export declare function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.V
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>): {
     $type: TSKindId.VisibilityModifier;
@@ -8629,7 +10849,10 @@ export declare function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Vi
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -8638,7 +10861,10 @@ export declare function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Vi
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     $with: {};
 } & {
@@ -8647,7 +10873,10 @@ export declare function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Vi
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>): {
     $type: TSKindId.VisibilityModifier;
@@ -8669,7 +10898,10 @@ export declare function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.Visi
                 $replace(target: {
                     range(): import("@sittir/types").ByteRange;
                 }): import("@sittir/types").Edit;
-                $trivia(...args: unknown[]): AnyNodeData;
+                $trivia(...args: (T.BlockComment | T.LineComment | {
+                    leading?: (T.BlockComment | T.LineComment)[];
+                    trailing?: (T.BlockComment | T.LineComment)[];
+                })[]): AnyNodeData;
             };
         };
     } & {
@@ -8678,7 +10910,10 @@ export declare function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.Visi
         $replace(target: {
             range(): import("@sittir/types").ByteRange;
         }): import("@sittir/types").Edit;
-        $trivia(...args: unknown[]): AnyNodeData;
+        $trivia(...args: (T.BlockComment | T.LineComment | {
+            leading?: (T.BlockComment | T.LineComment)[];
+            trailing?: (T.BlockComment | T.LineComment)[];
+        })[]): AnyNodeData;
     }];
     pub(): "pub";
     $with: {};
@@ -8688,7 +10923,10 @@ export declare function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.Visi
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function whereClause(...children: T.WherePredicate[]): {
     $type: TSKindId.WhereClause;
@@ -8703,7 +10941,10 @@ export declare function whereClause(...children: T.WherePredicate[]): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8712,7 +10953,10 @@ export declare function whereClause(...children: T.WherePredicate[]): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function wherePredicate(config: T.WherePredicate.Config): {
     $type: TSKindId.WherePredicate;
@@ -8729,7 +10973,10 @@ export declare function wherePredicate(config: T.WherePredicate.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         bounds: (value: T.TraitBounds) => /*elided*/ any & {
             $render(): string;
@@ -8737,7 +10984,10 @@ export declare function wherePredicate(config: T.WherePredicate.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8746,7 +10996,10 @@ export declare function wherePredicate(config: T.WherePredicate.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function whileExpression(config: T.WhileExpression.Config): {
     $type: TSKindId.WhileExpression;
@@ -8765,7 +11018,10 @@ export declare function whileExpression(config: T.WhileExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         condition: (value: T.Condition) => /*elided*/ any & {
             $render(): string;
@@ -8773,7 +11029,10 @@ export declare function whileExpression(config: T.WhileExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
         body: (value: T.Block) => /*elided*/ any & {
             $render(): string;
@@ -8781,7 +11040,10 @@ export declare function whileExpression(config: T.WhileExpression.Config): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8790,7 +11052,10 @@ export declare function whileExpression(config: T.WhileExpression.Config): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function yieldExpression(child?: T.Expression): {
     $type: TSKindId.YieldExpression;
@@ -8805,7 +11070,10 @@ export declare function yieldExpression(child?: T.Expression): {
             $replace(target: {
                 range(): import("@sittir/types").ByteRange;
             }): import("@sittir/types").Edit;
-            $trivia(...args: unknown[]): AnyNodeData;
+            $trivia(...args: (T.BlockComment | T.LineComment | {
+                leading?: (T.BlockComment | T.LineComment)[];
+                trailing?: (T.BlockComment | T.LineComment)[];
+            })[]): AnyNodeData;
         };
     };
 } & {
@@ -8814,7 +11082,10 @@ export declare function yieldExpression(child?: T.Expression): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function stringContent(text: string): {
     $type: TSKindId.StringContent;
@@ -8827,7 +11098,10 @@ export declare function stringContent(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function rawStringLiteralContent(text: string): {
     $type: TSKindId.RawStringLiteralContent;
@@ -8840,7 +11114,10 @@ export declare function rawStringLiteralContent(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function floatLiteral(text: string): {
     $type: TSKindId.FloatLiteral;
@@ -8853,7 +11130,10 @@ export declare function floatLiteral(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function outerBlockDocCommentMarker(text: string): {
     $type: TSKindId.OuterBlockDocCommentMarker;
@@ -8866,7 +11146,10 @@ export declare function outerBlockDocCommentMarker(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function innerBlockDocCommentMarker(text: string): {
     $type: TSKindId.InnerBlockDocCommentMarker;
@@ -8879,7 +11162,10 @@ export declare function innerBlockDocCommentMarker(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function lineDocContent(text: string): {
     $type: TSKindId.LineDocContent;
@@ -8892,7 +11178,10 @@ export declare function lineDocContent(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export declare function errorSentinel(text: string): {
     $type: TSKindId.ErrorSentinel;
@@ -8905,7 +11194,10 @@ export declare function errorSentinel(text: string): {
     $replace(target: {
         range(): import("@sittir/types").ByteRange;
     }): import("@sittir/types").Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (T.BlockComment | T.LineComment | {
+        leading?: (T.BlockComment | T.LineComment)[];
+        trailing?: (T.BlockComment | T.LineComment)[];
+    })[]): AnyNodeData;
 };
 export type FluentKindMap = {
     "_array_expression_list": T.ArrayExpressionList;

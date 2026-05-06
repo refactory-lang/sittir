@@ -171,6 +171,28 @@ export const primaryExpression = {
   listSplat: _attach(F.listSplatPattern, { from: FR.listSplatPatternFrom }),
 } as const;
 
+// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
+// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
+export const from = {
+  boolean(value: boolean): ReturnType<typeof F.true_> | ReturnType<typeof F.false_> {
+    return value ? F.true_() : F.false_();
+  },
+  number(value: number): ReturnType<typeof F.integer> | ReturnType<typeof F.float> {
+    return Number.isInteger(value)
+      ? F.integer(String(value))
+      : F.float(String(value));
+  },
+  comment(text: string): ReturnType<typeof F.comment> {
+    return F.comment(text);
+  },
+  type(name: string): ReturnType<typeof F.identifier> {
+    return F.identifier(name);
+  },
+  identifier(name: string): ReturnType<typeof F.identifier> {
+    return F.identifier(name);
+  },
+} as const;
+
 export const ir = {
   // Node factories
   aliasedImport: _attach(F.aliasedImport, { from: FR.aliasedImportFrom }),
@@ -317,4 +339,5 @@ export const ir = {
   parameter,
   pattern,
   primaryExpression,
+  from,
 } as const;

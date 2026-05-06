@@ -369,6 +369,28 @@ export const useClause = {
   scopedUse: _attach(F.scopedUseList, { from: FR.scopedUseListFrom }),
 } as const;
 
+// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
+// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
+export const from = {
+  boolean(value: boolean): ReturnType<typeof F.booleanLiteral> {
+    return F.booleanLiteral(value ? 'true' : 'false');
+  },
+  number(value: number): ReturnType<typeof F.integerLiteral> | ReturnType<typeof F.floatLiteral> {
+    return Number.isInteger(value)
+      ? F.integerLiteral(String(value))
+      : F.floatLiteral(String(value));
+  },
+  string(value: string): ReturnType<typeof F.stringLiteral> {
+    return F.stringLiteral(F.stringContent(value) as never);
+  },
+  type(name: string): ReturnType<typeof F.typeIdentifier> {
+    return F.typeIdentifier(F.identifier(name) as never);
+  },
+  identifier(name: string): ReturnType<typeof F.identifier> {
+    return F.identifier(name);
+  },
+} as const;
+
 export const ir = {
   // Node factories
   abstractType: _attach(F.abstractType, { from: FR.abstractTypeFrom }),
@@ -572,4 +594,5 @@ export const ir = {
   tokens,
   type,
   useClause,
+  from,
 } as const;

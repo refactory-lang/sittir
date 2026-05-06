@@ -55,7 +55,17 @@ export function buildWithNamespace(config, factory, slotKeys) {
  */
 export function withMethods(node) {
     return Object.assign(node, {
-        $render() { return render(this); },
+        $render() {
+            let text = render(this);
+            const td = this.$triviaData;
+            if (td) {
+                if (td.leading)
+                    text = td.leading.map(t => render(t)).join("\n") + "\n" + text;
+                if (td.trailing)
+                    text = text + "\n" + td.trailing.map(t => render(t)).join("\n");
+            }
+            return text;
+        },
         $toEdit(startOrRange, endPos) {
             return toEdit(this, startOrRange, endPos);
         },

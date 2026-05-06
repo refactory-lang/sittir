@@ -192,6 +192,26 @@ export const type = {
   infer: _attach(F.inferType, { from: FR.inferTypeFrom }),
 } as const;
 
+// Canonical factories — `from.*` resolves native JS values to grammar-specific NodeData.
+// Spec 023 US6. Tree-shakeable via standalone `from` export; also `ir.from.*`.
+export const from = {
+  boolean(value: boolean): ReturnType<typeof F.true_> | ReturnType<typeof F.false_> {
+    return value ? F.true_() : F.false_();
+  },
+  number(value: number): ReturnType<typeof F.number> {
+    return F.number(String(value));
+  },
+  comment(text: string): ReturnType<typeof F.comment> {
+    return F.comment(text);
+  },
+  type(name: string): ReturnType<typeof F.typeIdentifier> {
+    return F.typeIdentifier(F.identifier(name) as never);
+  },
+  identifier(name: string): ReturnType<typeof F.identifier> {
+    return F.identifier(name);
+  },
+} as const;
+
 export const ir = {
   // Node factories
   abstractClass: _attach(F.abstractClassDeclaration, { from: FR.abstractClassDeclarationFrom }),
@@ -411,4 +431,5 @@ export const ir = {
   primaryType,
   statement,
   type,
+  from,
 } as const;

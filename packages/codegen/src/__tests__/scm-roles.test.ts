@@ -1,6 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { extractGrammarRoles, extractTriviaRoles } from '../scm/extract-roles.ts';
 
+// Dynamic imports use computed paths to prevent TypeScript from following
+// cross-package references during type-check (codegen's tsconfig doesn't
+// include grammar package source files).
+const RUST_IR = '../../../rust/src/ir.ts';
+const TS_IR = '../../../typescript/src/ir.ts';
+const PY_IR = '../../../python/src/ir.ts';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadFrom(path: string): Promise<{ from: any }> {
+	return import(path);
+}
+
 describe('general role extraction', () => {
 	it('extracts string role from rust', () => {
 		const roles = extractGrammarRoles('rust');
@@ -173,5 +185,136 @@ describe('GrammarRoles interface', () => {
 	it('grammar field is set correctly', () => {
 		const roles = extractGrammarRoles('python');
 		expect(roles.grammar).toBe('python');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// ir.from.* canonical factory integration tests (spec 023 US6)
+// ---------------------------------------------------------------------------
+
+describe('ir.from.* canonical factories — Rust', () => {
+	it('from.boolean(true) produces boolean_literal', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.boolean(true);
+		expect(node.$text).toBe('true');
+	});
+
+	it('from.boolean(false) produces boolean_literal', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.boolean(false);
+		expect(node.$text).toBe('false');
+	});
+
+	it('from.number(42) produces integer_literal', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.number(42);
+		expect(node.$text).toBe('42');
+	});
+
+	it('from.number(3.14) produces float_literal', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.number(3.14);
+		expect(node.$text).toBe('3.14');
+	});
+
+	it('from.string("hello") produces string_literal', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.string('hello');
+		// string_literal is a branch; verify it has a valid $type
+		expect(node.$type).toBeTruthy();
+	});
+
+	it('from.type("String") produces type_identifier', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.type('String');
+		expect(node.$type).toBeTruthy();
+	});
+
+	it('from.identifier("main") produces identifier', async () => {
+		const { from } = await loadFrom(RUST_IR);
+		const node = from.identifier('main');
+		expect(node.$text).toBe('main');
+	});
+});
+
+describe('ir.from.* canonical factories — TypeScript', () => {
+	it('from.boolean(true) produces true keyword', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.boolean(true);
+		expect(node.$text).toBe('true');
+	});
+
+	it('from.boolean(false) produces false keyword', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.boolean(false);
+		expect(node.$text).toBe('false');
+	});
+
+	it('from.number(42) produces number', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.number(42);
+		expect(node.$text).toBe('42');
+	});
+
+	it('from.comment("// hello") produces comment', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.comment('// hello');
+		expect(node.$text).toBe('// hello');
+	});
+
+	it('from.type("String") produces type_identifier', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.type('String');
+		expect(node.$type).toBeTruthy();
+	});
+
+	it('from.identifier("main") produces identifier', async () => {
+		const { from } = await loadFrom(TS_IR);
+		const node = from.identifier('main');
+		expect(node.$text).toBe('main');
+	});
+});
+
+describe('ir.from.* canonical factories — Python', () => {
+	it('from.boolean(true) produces true keyword', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.boolean(true);
+		expect(node.$text).toBe('True');
+	});
+
+	it('from.boolean(false) produces false keyword', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.boolean(false);
+		expect(node.$text).toBe('False');
+	});
+
+	it('from.number(42) produces integer', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.number(42);
+		expect(node.$text).toBe('42');
+	});
+
+	it('from.number(3.14) produces float', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.number(3.14);
+		expect(node.$text).toBe('3.14');
+	});
+
+	it('from.comment("# hello") produces comment', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.comment('# hello');
+		expect(node.$text).toBe('# hello');
+	});
+
+	it('from.type("str") produces identifier', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.type('str');
+		expect(node.$text).toBe('str');
+	});
+
+	it('from.identifier("main") produces identifier', async () => {
+		const { from } = await loadFrom(PY_IR);
+		const node = from.identifier('main');
+		expect(node.$text).toBe('main');
 	});
 });

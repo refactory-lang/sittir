@@ -1,5 +1,5 @@
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
-import type { AnyTransport, NamespaceMap } from './types.js';
+import type { BlockComment, LineComment, AnyTransport, NamespaceMap } from './types.js';
 /**
  * Freeze a NodeData object and all its array-valued `_*` storage slots.
  *
@@ -43,7 +43,10 @@ export declare function withMethods<T extends object>(node: T): T & {
     $replace(target: {
         range(): ByteRange;
     }): Edit;
-    $trivia(...args: unknown[]): AnyNodeData;
+    $trivia(...args: (BlockComment | LineComment | {
+        leading?: (BlockComment | LineComment)[];
+        trailing?: (BlockComment | LineComment)[];
+    })[]): AnyNodeData;
 };
 /**
  * Type guard: returns true if `v` is a NodeData.
