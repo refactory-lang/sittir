@@ -71,8 +71,14 @@ export interface RustRenderModuleEmit {
 	hashRs: { path: string; contents: string };
 	/** `packages/{lang}/src/hash.ts` */
 	hashTs: { path: string; contents: string };
-	/** `rust/crates/sittir-{lang}/src/render/templates.rs` (T027/T028/T029) */
+	/** `rust/crates/sittir-{lang}/src/render/templates.rs` — per-kind Template structs + render functions */
 	templatesRs: { path: string; contents: string };
+	/** `rust/crates/sittir-{lang}/src/render/dispatch.rs` — render_dispatch match table */
+	dispatchRs: { path: string; contents: string };
+	/** `rust/crates/sittir-{lang}/src/render/transport.rs` — AnyTransport + FromNapiValue + typed dispatch + transport bridge */
+	transportRs: { path: string; contents: string };
+	/** `rust/crates/sittir-{lang}/src/render/bridge.rs` — field/child resolution helpers */
+	bridgeRs: { path: string; contents: string };
 	/** `rust/crates/sittir-{lang}/src/render/mod.rs` (T028 — exposes render_dispatch) */
 	libRs: { path: string; contents: string };
 }
@@ -101,23 +107,45 @@ function hashTsHeader(lang: Grammar): string {
 `;
 }
 
-function templatesRsHeader(lang: Grammar): string {
+function generatedHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 and packages/${lang}/templates/*.jinja — do not hand-edit.
-// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
+// Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src`;
+}
+
+function templatesRsHeader(lang: Grammar): string {
+	return `${generatedHeader(lang)}
 //
-// Per-kind askama template structs + direct render helpers + render_dispatch
-// for the ${lang} grammar. Every struct in this file is backed by a
-// sibling \`.jinja\` template under \`templates/\`, copied from
-// \`packages/${lang}/templates/\` at codegen time (spec 012 T030).
-//
-// Templates and fields are derived from:
-//   - template bodies in packages/${lang}/templates/*.jinja
-//   - node-model metadata assembled by the codegen pipeline
+// Per-kind askama template structs + render functions for the ${lang}
+// grammar. Every struct in this file is backed by a sibling \`.jinja\`
+// template under \`templates/\`, copied from \`packages/${lang}/templates/\`
+// at codegen time (spec 012 T030).
 //
 // Askama parses each \`.jinja\` at \`cargo build\` time — any mismatch
 // between a template's referenced variables and its backing struct's
 // fields is caught at compile time (FR-008). If you see a build error
 // here, the codegen is out of sync: regenerate via the command above.`;
+}
+
+function dispatchRsHeader(lang: Grammar): string {
+	return `${generatedHeader(lang)}
+//
+// render_dispatch match table — routes KindId to per-kind render functions
+// in the sibling templates module.`;
+}
+
+function transportRsHeader(lang: Grammar): string {
+	return `${generatedHeader(lang)}
+//
+// AnyTransport enum + FromNapiValue impls + per-kind transport structs +
+// typed dispatch (render_transport_dispatch) + transport bridge helpers.`;
+}
+
+function bridgeRsHeader(lang: Grammar): string {
+	return `${generatedHeader(lang)}
+//
+// Field and child resolution helpers — ResolvedField, resolve_field,
+// resolve_children, separator_for, variant_for, etc. Used by both
+// dispatch and templates modules.`;
 }
 
 type EmittedNonterminalView = 'scalar' | 'list' | 'field';
@@ -353,6 +381,13 @@ function renderFnName(kind: string): string {
 }
 
 /**
+ * Per-kind render functions need `pub(crate)` visibility so that
+ * `dispatch.rs` (sibling module) can call them. This prefix is
+ * applied during emission of per-kind functions.
+ */
+const PER_KIND_FN_VIS = 'pub(crate) ';
+
+/**
  * Pick the per-cardinality nonterminal-view type for an emitted slot.
  *
  * The four-type taxonomy:
@@ -382,7 +417,7 @@ function renderDirectSupport(
 	lines.push(`use ::askama::Template as _AskamaTemplate;`);
 	lines.push('');
 	lines.push(`#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]`);
-	lines.push(`enum ResolvedFieldKind {`);
+	lines.push(`pub(crate) enum ResolvedFieldKind {`);
 	lines.push(`    #[default]`);
 	lines.push(`    Missing,`);
 	lines.push(`    Scalar,`);
@@ -390,17 +425,17 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`#[derive(Debug, Default)]`);
-	lines.push(`struct ResolvedField {`);
-	lines.push(`    kind: ResolvedFieldKind,`);
-	lines.push(`    scalar: String,`);
-	lines.push(`    items: Vec<String>,`);
-	lines.push(`    separator: &'static str,`);
-	lines.push(`    leading_sep: bool,`);
-	lines.push(`    trailing_sep: bool,`);
+	lines.push(`pub(crate) struct ResolvedField {`);
+	lines.push(`    pub(crate) kind: ResolvedFieldKind,`);
+	lines.push(`    pub(crate) scalar: String,`);
+	lines.push(`    pub(crate) items: Vec<String>,`);
+	lines.push(`    pub(crate) separator: &'static str,`);
+	lines.push(`    pub(crate) leading_sep: bool,`);
+	lines.push(`    pub(crate) trailing_sep: bool,`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`impl ResolvedField {`);
-	lines.push(`    fn from_scalar(value: String) -> Self {`);
+	lines.push(`    pub(crate) fn from_scalar(value: String) -> Self {`);
 	lines.push(`        Self {`);
 	lines.push(`            kind: ResolvedFieldKind::Scalar,`);
 	lines.push(`            scalar: value,`);
@@ -412,7 +447,7 @@ function renderDirectSupport(
 	lines.push(`    }`);
 	lines.push('');
 	lines.push(
-		`    fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {`
+		`    pub(crate) fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {`
 	);
 	lines.push(`        let mut scalar = String::new();`);
 	lines.push(`        if leading_sep && !items.is_empty() {`);
@@ -439,11 +474,11 @@ function renderDirectSupport(
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push('');
-	lines.push(`    fn as_scalar(&self) -> &str {`);
+	lines.push(`    pub(crate) fn as_scalar(&self) -> &str {`);
 	lines.push(`        self.scalar.as_str()`);
 	lines.push(`    }`);
 	lines.push('');
-	lines.push(`    fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {`);
+	lines.push(`    pub(crate) fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {`);
 	lines.push(`        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()`);
 	lines.push(`    }`);
 	lines.push(`}`);
@@ -452,7 +487,7 @@ function renderDirectSupport(
 		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
 		// T016: Deduplicate match arms — alias-collapsed kinds that share the same
 		// KindId emit only the first arm.
-		lines.push(`fn separator_for(kind_id: u16) -> &'static str {`);
+		lines.push(`pub(crate) fn separator_for(kind_id: u16) -> &'static str {`);
 		lines.push(`    match kind_id {`);
 		const emittedSepIds = new Set<number>();
 		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
@@ -470,7 +505,7 @@ function renderDirectSupport(
 		lines.push(`}`);
 		lines.push('');
 		lines.push(
-			`fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
+			`pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
 		);
 		lines.push(`    match (parent_id, child_id) {`);
 		const sortedVariants: [string, string, string][] = [];
@@ -515,7 +550,7 @@ function renderDirectSupport(
 		// Fallback: no kindEntries (parser.c unavailable). Emit numeric functions
 		// with only a `_ =>` arm — no IDs available to populate match arms.
 		// NodeData.type_ is KindId regardless, so the functions take u16.
-		lines.push(`fn separator_for(_kind_id: u16) -> &'static str {`);
+		lines.push(`pub(crate) fn separator_for(_kind_id: u16) -> &'static str {`);
 		lines.push(`    ""`);
 		lines.push(`}`);
 		lines.push('');
@@ -898,7 +933,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
 		lines.push(
-			`fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`
+			`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`
 		);
 		const consumedFieldArgs =
 			s.fields.length === 0
@@ -2097,13 +2132,17 @@ function libRsContents(lang: Grammar): string {
 	return `// @generated from packages/${lang}/node-model.json5 — do not hand-edit.
 // Regenerate via: npx tsx packages/codegen/src/cli.ts --grammar ${lang} --all --output packages/${lang}/src
 
+pub mod bridge;
+pub mod dispatch;
 pub mod hash;
 pub mod kind_ids;
 pub mod templates;
+pub mod transport;
 
+pub use dispatch::render_dispatch;
+pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 pub use hash::TEMPLATE_BUNDLE_HASH;
 pub use kind_ids::*;
-pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 `;
 }
 
@@ -2190,150 +2229,85 @@ export function emitRenderModule(
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
+	const kindIdByKind = generatedIdTables
+		? buildKindIdByKind(
+				collectKindEntries(
+					collectCatalogKinds(generatedIdTables),
+					nodeMap,
+					generatedIdTables
+				)
+			)
+		: undefined;
+
+	// --- bridge.rs ---
+	// Field/child resolution helpers used by dispatch and templates.
+	const bridgeRs = [
+		bridgeRsHeader(lang),
+		'',
+		commonRustUseImports(hasNumericDispatch),
+		renderDirectSupport(meta, kindIdByKind)
+	].join('\n');
+
+	// --- templates.rs ---
+	// Per-kind Template structs + render functions. The `filters` module
+	// must live here because Askama resolves custom filters by searching
+	// for a sibling `filters` module at the `#[derive(Template)]` site.
 	const templatesRs = [
 		templatesRsHeader(lang),
 		'',
-		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]',
+		commonRustUseImports(hasNumericDispatch),
+		'use super::bridge::*;',
 		'',
-		// Module-level `use` imports: bring sittir_core types and filters into
-		// scope so per-kind fns, struct defs, and template bodies use short names
-		// instead of fully-qualified `::sittir_core::filters::X` paths (~3000 refs).
-		//
-		// Note: `Renderable` is deliberately NOT imported here — this module
-		// defines a local `pub enum Renderable<'a> { Text, Joined }` (via
-		// renderGrammarRenderable) that would collide with `sittir_core::filters::Renderable`.
-		// The typed-dispatch path uses `::sittir_core::filters::Renderable` explicitly.
-		'use ::sittir_core::filters::{',
-		'    SingleNonterminalView, ListNonterminalView,',
-		'    OptionalNonterminalView,',
-		'};',
-		'use ::sittir_core::types::{',
-		'    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia,',
-		'};',
-		'',
-		// Phase B: `#[napi(object)]` / `#[napi(js_name)]` proc-macro attrs and the
-		// custom `impl FromNapiValue` blocks are gated behind the napi-bindings
-		// feature.  Struct/field attributes use `#[cfg_attr(feature =
-		// "napi-bindings", napi(...))]` so they compile cleanly without the
-		// feature; but for `cfg_attr` to resolve the `napi` ident when the
-		// feature IS active we still need to import the proc-macro in scope.
-		...(hasNumericDispatch
-			? ['#[cfg(feature = "napi-bindings")]', 'use ::napi_derive::napi;', '']
-			: []),
-		// Askama resolves custom filters by looking for a sibling
-		// `filters` module at the derive-macro's call site. Re-export the
-		// canonical `sittir_core::filters::*` here; flank-aware joins read
-		// their optional anon-token side channel from Askama's per-render
-		// `Values` bag while `joinby` consumes the generated boolean flank
-		// fields directly.
-		//
-		// `joinby`, `join`, `joinWithTrailing`, `joinWithLeading`, and
-		// `joinWithFlanks` now return `Safe<Joined<'a>>` (streaming, zero-alloc).
-		// `joinWithTrailing/Leading/Flanks` in `sittir_core` are plain
-		// functions (no `#[askama::filter_fn]`); the grammar-local wrappers
-		// below add the `#[askama::filter_fn]` attribute so Askama's derive
-		// macro can resolve them by name.
-		'pub mod filters {',
-		'    //! Askama resolves custom-filter names by searching for a',
-		'    //! sibling `filters` module at the derive-macro site. This',
-		'    //! module wraps the canonical sittir_core implementations with',
-		'    //! the `#[askama::filter_fn]` attribute so Askama can call them',
-		'    //! from templates.',
-		'    use ::sittir_core::filters::{Joined, JoinSource};',
-		'',
-		'    #[::askama::filter_fn]',
-		'    pub fn joinby<\'a, T: JoinSource<\'a> + ?Sized>(',
-		'        xs: &\'a T,',
-		'        _values: &dyn ::askama::Values,',
-		'        sep: &\'a str,',
-		'        leading: bool,',
-		'        trailing: bool,',
-		'    ) -> Result<::askama::filters::Safe<Joined<\'a>>, ::askama::Error> {',
-		'        ::sittir_core::filters::joinby(xs, sep, leading, trailing)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    pub fn join<\'a, T: JoinSource<\'a> + ?Sized>(',
-		'        xs: &\'a T,',
-		'        _values: &dyn ::askama::Values,',
-		'        sep: &\'a str,',
-		'    ) -> Result<::askama::filters::Safe<Joined<\'a>>, ::askama::Error> {',
-		'        ::sittir_core::filters::joinby(xs, sep, false, false)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		'    pub fn joinWithTrailing<\'a, T: JoinSource<\'a> + ?Sized>(',
-		'        xs: &\'a T,',
-		'        values: &dyn ::askama::Values,',
-		'        sep: &\'a str,',
-		'    ) -> Result<::askama::filters::Safe<Joined<\'a>>, ::askama::Error> {',
-		'        ::sittir_core::filters::joinWithTrailing(xs, values, sep)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		'    pub fn joinWithLeading<\'a, T: JoinSource<\'a> + ?Sized>(',
-		'        xs: &\'a T,',
-		'        values: &dyn ::askama::Values,',
-		'        sep: &\'a str,',
-		'    ) -> Result<::askama::filters::Safe<Joined<\'a>>, ::askama::Error> {',
-		'        ::sittir_core::filters::joinWithLeading(xs, values, sep)',
-		'    }',
-		'',
-		'    #[::askama::filter_fn]',
-		'    #[allow(non_snake_case)]',
-		'    pub fn joinWithFlanks<\'a, T: JoinSource<\'a> + ?Sized>(',
-		'        xs: &\'a T,',
-		'        values: &dyn ::askama::Values,',
-		'        sep: &\'a str,',
-		'    ) -> Result<::askama::filters::Safe<Joined<\'a>>, ::askama::Error> {',
-		'        ::sittir_core::filters::joinWithFlanks(xs, values, sep)',
-		'    }',
-		'',
-		'    pub use ::sittir_core::filters::{',
-		'        upper, lower,',
-		'        isBlank, isPresent,',
-		'    };',
-		'}',
-		'',
-		renderTransportSupport(nodeMap, structs, meta, generatedIdTables),
+		filtersModule(),
 		'',
 		renderStructDefs(structs),
-		renderDirectSupport(
-			meta,
-			generatedIdTables
-				? buildKindIdByKind(
-						collectKindEntries(
-							collectCatalogKinds(generatedIdTables),
-							nodeMap,
-							generatedIdTables
-						)
-					)
-				: undefined
-		),
-		'',
-		renderPerKindFns(structs),
-		'',
-		renderDispatchFn(
-			structs,
-			generatedIdTables
-				? buildKindIdByKind(
-						collectKindEntries(
-							collectCatalogKinds(generatedIdTables),
-							nodeMap,
-							generatedIdTables
-						)
-					)
-				: undefined
-		)
+		renderPerKindFns(structs)
 	].join('\n');
+
+	// --- dispatch.rs ---
+	// render_dispatch match table routing KindId to per-kind render fns.
+	const dispatchRs = [
+		dispatchRsHeader(lang),
+		'',
+		commonRustUseImports(hasNumericDispatch),
+		'use super::bridge::*;',
+		'use super::templates::*;',
+		'',
+		renderDispatchFn(structs, kindIdByKind)
+	].join('\n');
+
+	// --- transport.rs ---
+	// AnyTransport enum + FromNapiValue + per-kind transport structs +
+	// typed dispatch + transport bridge helpers.
+	const transportRs = [
+		transportRsHeader(lang),
+		'',
+		commonRustUseImports(hasNumericDispatch),
+		'use super::bridge::*;',
+		'use super::dispatch::render_dispatch;',
+		'use super::templates::*;',
+		'',
+		renderTransportSupport(nodeMap, structs, meta, generatedIdTables)
+	].join('\n');
+
 	return {
 		hashRs,
 		hashTs,
 		templatesRs: {
 			path: `${renderModuleSrcDir(lang)}/templates.rs`,
 			contents: templatesRs + '\n'
+		},
+		dispatchRs: {
+			path: `${renderModuleSrcDir(lang)}/dispatch.rs`,
+			contents: dispatchRs + '\n'
+		},
+		transportRs: {
+			path: `${renderModuleSrcDir(lang)}/transport.rs`,
+			contents: transportRs + '\n'
+		},
+		bridgeRs: {
+			path: `${renderModuleSrcDir(lang)}/bridge.rs`,
+			contents: bridgeRs + '\n'
 		},
 		libRs: {
 			path: `${renderModuleSrcDir(lang)}/mod.rs`,
@@ -2409,6 +2383,104 @@ function renderTransportSupport(
 		// and BEFORE renderTransportBridge() so render_transport can call render_transport_dispatch.
 		...renderTypedDispatch(structs, nodes, projection.literals, meta, nodeMap, usedSupertypeNames),
 		...renderTransportBridge(nodes, projection.literals, kidByKind, nodeMap)
+	].join('\n');
+}
+
+/**
+ * Common Rust `use` imports shared across templates.rs, bridge.rs, dispatch.rs,
+ * and transport.rs. Each file gets the full set — Rust's module system deduplicates
+ * and the `#![allow(unused_imports)]` suppresses warnings for imports not needed
+ * in a particular file.
+ */
+function commonRustUseImports(hasNumericDispatch: boolean): string {
+	const lines: string[] = [];
+	lines.push('#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]');
+	lines.push('');
+	lines.push('use ::sittir_core::filters::{');
+	lines.push('    SingleNonterminalView, ListNonterminalView,');
+	lines.push('    OptionalNonterminalView,');
+	lines.push('};');
+	lines.push('use ::sittir_core::types::{');
+	lines.push('    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
+	lines.push('};');
+	lines.push('');
+	if (hasNumericDispatch) {
+		lines.push('#[cfg(feature = "napi-bindings")]');
+		lines.push('use ::napi_derive::napi;');
+		lines.push('');
+	}
+	return lines.join('\n');
+}
+
+/**
+ * The Askama `filters` module — must live in the same module as `#[derive(Template)]`
+ * structs so Askama's derive macro can resolve custom filter names at build time.
+ */
+function filtersModule(): string {
+	return [
+		'pub mod filters {',
+		'    //! Askama resolves custom-filter names by searching for a',
+		'    //! sibling `filters` module at the derive-macro site. This',
+		'    //! module wraps the canonical sittir_core implementations with',
+		'    //! the `#[askama::filter_fn]` attribute so Askama can call them',
+		'    //! from templates.',
+		'    use ::sittir_core::filters::{Joined, JoinSource};',
+		'',
+		'    #[::askama::filter_fn]',
+		"    pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(",
+		"        xs: &'a T,",
+		'        _values: &dyn ::askama::Values,',
+		"        sep: &'a str,",
+		'        leading: bool,',
+		'        trailing: bool,',
+		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
+		'        ::sittir_core::filters::joinby(xs, sep, leading, trailing)',
+		'    }',
+		'',
+		'    #[::askama::filter_fn]',
+		"    pub fn join<'a, T: JoinSource<'a> + ?Sized>(",
+		"        xs: &'a T,",
+		'        _values: &dyn ::askama::Values,',
+		"        sep: &'a str,",
+		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
+		'        ::sittir_core::filters::joinby(xs, sep, false, false)',
+		'    }',
+		'',
+		'    #[::askama::filter_fn]',
+		'    #[allow(non_snake_case)]',
+		"    pub fn joinWithTrailing<'a, T: JoinSource<'a> + ?Sized>(",
+		"        xs: &'a T,",
+		'        values: &dyn ::askama::Values,',
+		"        sep: &'a str,",
+		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
+		'        ::sittir_core::filters::joinWithTrailing(xs, values, sep)',
+		'    }',
+		'',
+		'    #[::askama::filter_fn]',
+		'    #[allow(non_snake_case)]',
+		"    pub fn joinWithLeading<'a, T: JoinSource<'a> + ?Sized>(",
+		"        xs: &'a T,",
+		'        values: &dyn ::askama::Values,',
+		"        sep: &'a str,",
+		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
+		'        ::sittir_core::filters::joinWithLeading(xs, values, sep)',
+		'    }',
+		'',
+		'    #[::askama::filter_fn]',
+		'    #[allow(non_snake_case)]',
+		"    pub fn joinWithFlanks<'a, T: JoinSource<'a> + ?Sized>(",
+		"        xs: &'a T,",
+		'        values: &dyn ::askama::Values,',
+		"        sep: &'a str,",
+		"    ) -> Result<::askama::filters::Safe<Joined<'a>>, ::askama::Error> {",
+		'        ::sittir_core::filters::joinWithFlanks(xs, values, sep)',
+		'    }',
+		'',
+		'    pub use ::sittir_core::filters::{',
+		'        upper, lower,',
+		'        isBlank, isPresent,',
+		'    };',
+		'}'
 	].join('\n');
 }
 
@@ -3426,7 +3498,7 @@ function renderTransportDataToNodeFn(
 	}
 	lines.push('    let fields = if fields.is_empty() { None } else { Some(fields) };');
 	lines.push(...renderTransportChildrenBinding(children, nodeMap, ownerTypeName));
-	lines.push('    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());');
+	lines.push('    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());');
 	lines.push('    Ok(transport_node_data(');
 	lines.push(`        ${kindArg},`);
 	lines.push('        transport.transport_source,');
@@ -3762,7 +3834,7 @@ function renderTerminalTransportToNodeFn(
 
 	return [
 		`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-		'    let trivia_data = transport.transport_trivia_data.and_then(|v| ::serde_json::from_value::<NodeTrivia>(v).ok());',
+		'    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());',
 		'    Ok(transport_node_data(',
 		`        ${kindArg},`,
 		'        transport.transport_source,',
@@ -4043,7 +4115,7 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
  * bridge function. When absent the field is passed through directly.
  * `needsExplicitTypeAnnotation` flags fields whose `obj.get(...)` call
  * in the manual `FromNapiValue` impl requires a leading type annotation
- * (e.g. `let x: Option<serde_json::Value> = obj.get(...)?;`).
+ * (e.g. `let x: Option<Foo> = obj.get(...)?;`).
  */
 interface TransportMetadataField {
 	jsName: string;
@@ -4069,10 +4141,9 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
 	{ jsName: '$nodeHandle', rustName: 'transport_node_handle', rustType: 'Option<f64>', bridgeMap: '.map(|v| v as u32)' },
 	{ jsName: '$childIndex', rustName: 'transport_child_index', rustType: 'Option<f64>', bridgeMap: '.map(|v| v as u16)' },
-	// $triviaData is a deep nested structure (NodeTrivia { leading: Vec<NodeData>, ... }).
-	// Using serde_json::Value avoids requiring FromNapiValue impls on all NodeData subtypes;
-	// the bridge function deserializes to NodeTrivia via serde_json::from_value.
-	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<::serde_json::Value>', needsExplicitTypeAnnotation: true },
+	// $triviaData carries trivia text strings. TransportTrivia has a manual FromNapiValue
+	// impl that extracts $text from each JS array element — no serde_json needed.
+	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
 ];
 
 /**
