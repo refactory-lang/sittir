@@ -1,108 +1,145 @@
-# Feature Specification: Streaming Render Architecture
+# Feature Specification: Render Pipeline Cleanup & Streaming
 
 **Feature Branch**: `024-streaming-render`
 **Created**: 2026-05-06
 **Status**: Draft
-**Input**: ADR 0019 — migrate to full streaming on render side, eliminate redundant dead Rust code.
+**Input**: ADR 0019 — streaming render, code smell elimination, file organization.
 
 ## User Scenarios & Testing
 
-### User Story 1 — Trivia renders without intermediate allocations (Priority: P1)
+### User Story 1 — Transport render streams directly (Priority: P1)
 
-When a developer attaches trivia to a node via `$trivia()` and renders it, the leading/trailing comment text is written directly to the output buffer — no intermediate String collection, no `Vec<String>`, no `format!()` concatenation.
-
-**Why this priority**: Trivia rendering is the newest code path and the simplest to fix. Establishes the streaming pattern for subsequent phases.
-
-**Independent Test**: Render a node with trivia attached. Verify output is correct and the render path writes directly to the buffer (no `render_trivia_items` function call).
+Transport render functions write to `dest` instead of allocating and returning `String`. Minimal surgery: change signature + swap `template.render()` → `template.write_into(dest)`.
 
 **Acceptance Scenarios**:
 
-1. **Given** a node with leading trivia, **When** rendered via native engine, **Then** the trivia text is written directly to the output buffer before the node's rendered text.
-2. **Given** a node with trailing trivia, **When** rendered, **Then** trailing text is appended directly after the node — no intermediate String allocation for trivia items.
+1. **Given** any transport render function, **When** rendering, **Then** it takes `dest: &mut dyn fmt::Write` and calls `template.write_into(dest)`.
+2. **Given** `RenderableTransport::render_into`, **When** called, **Then** it passes `dest` through to the transport function (no intermediate String).
+3. **Given** rendered output, **When** compared to pre-migration, **Then** byte-identical.
 
 ---
 
-### User Story 2 — Per-kind render functions stream to output buffer (Priority: P1)
+### User Story 2 — File split: templates.rs → 4 files (Priority: P1)
 
-Each generated per-kind render function writes its template output directly to a provided output buffer instead of allocating and returning a String. The render dispatch table passes the buffer through the call chain.
-
-**Why this priority**: This is the core allocation elimination — every tree node currently allocates its own String. Streaming removes N allocations for an N-node tree.
-
-**Independent Test**: Render a complex node (e.g., `function_item` with parameters, body, return type). Verify output matches the pre-migration output byte-for-byte. Benchmark confirms reduced allocation count.
+Split the ~40K-line `templates.rs` monolith per grammar into focused files.
 
 **Acceptance Scenarios**:
 
-1. **Given** a per-kind render function, **When** rendering a node, **Then** it calls `template.write_into(dest)` instead of `template.render()`.
-2. **Given** the render dispatch table, **When** dispatching, **Then** it passes `dest: &mut dyn Write` to each per-kind function.
-3. **Given** any rendered output, **When** compared to pre-migration output, **Then** results are byte-identical.
+1. **Given** each grammar crate, **When** the render module is inspected, **Then** it has `dispatch.rs`, `transport.rs`, `templates.rs`, `bridge.rs`.
+2. **Given** the split, **When** built, **Then** no behavioral change — same rendered output.
 
 ---
 
-### User Story 3 — Unified dispatch table (Priority: P2)
+### User Story 3 — Module-level `use` imports (Priority: P1)
 
-The two separate dispatch tables (`render_dispatch` for `NodeData` and `render_transport_dispatch` for `AnyTransport`) are merged into one streaming path. Transport `FromNapiValue` produces `NodeData` and the single dispatch handles both.
-
-**Why this priority**: Simplifies the render module emitter and removes duplicated per-kind match arms. But depends on US2 completing first.
-
-**Independent Test**: Render via both the `NodeData` path and the napi transport path. Both produce identical output through the same dispatch table.
+Replace 2000+ fully-qualified `::sittir_core::filters::` paths with module-level `use` imports.
 
 **Acceptance Scenarios**:
 
-1. **Given** a `NodeData` input, **When** rendered, **Then** it goes through the unified `render_into(node, dest)` function.
-2. **Given** a napi `AnyTransport` input, **When** rendered, **Then** it converts to `NodeData` and goes through the same unified function.
-3. **Given** the generated render module, **When** inspected, **Then** only ONE dispatch table exists (not two).
+1. **Given** generated render files, **When** inspected, **Then** `use sittir_core::{filters, types}` imports appear at the top.
+2. **Given** inline code, **When** referencing core types, **Then** short names like `Renderable::Transport(...)` are used.
 
 ---
 
-### User Story 4 — Zero warnings on Rust build (Priority: P1)
+### User Story 4 — Remove redundant trait object casts (Priority: P2)
 
-All generated Rust render crates compile with zero warnings in release mode. Unreachable match arms, dead render functions, and unused transport fields are eliminated.
-
-**Why this priority**: Warnings mask real issues and signal code quality problems. Zero-warning builds are a professional baseline.
-
-**Independent Test**: Run `cargo build --release` across all three grammar crates. Exit code 0, zero lines containing "warning:".
+Drop `as &dyn RenderableTransport` where Rust auto-coercion works.
 
 **Acceptance Scenarios**:
 
-1. **Given** all three grammar crates (rust, typescript, python), **When** built with `cargo build --release`, **Then** zero warnings are emitted.
-2. **Given** alias-collapsed kinds that share numeric IDs, **When** the dispatch match is generated, **Then** duplicate arms are deduplicated or suppressed.
-3. **Given** render functions for alias-collapsed kinds, **When** the function is never reachable, **Then** it is not emitted.
+1. **Given** transport field references in template construction, **When** the concrete type implements `RenderableTransport`, **Then** no explicit `as &dyn` cast is emitted.
+
+---
+
+### User Story 5 — Zero warnings on Rust build (Priority: P1)
+
+Deduplicate match arms for alias-collapsed kinds. Eliminate dead render functions.
+
+**Acceptance Scenarios**:
+
+1. **Given** `cargo build --release`, **When** run on all three grammar crates, **Then** zero warnings.
+2. **Given** alias-collapsed kinds sharing KindId, **When** dispatch emitted, **Then** one arm with comment listing both names.
+
+---
+
+### User Story 6 — Trivia transport without serde_json (Priority: P1)
+
+Replace `Option<serde_json::Value>` on transport structs with `TransportTrivia { leading: Option<Vec<String>>, trailing: Option<Vec<String>> }`.
+
+**Acceptance Scenarios**:
+
+1. **Given** transport structs, **When** inspected, **Then** no `serde_json` dependency for trivia.
+2. **Given** trivia attached via `$trivia()`, **When** rendered through native transport, **Then** trivia text appears correctly.
+
+---
+
+### User Story 7 — Inline trivia writes (Priority: P2)
+
+Trivia render writes `$text` directly to dest — no `render_trivia_items`, no `Vec<String>`, no `format!`.
+
+**Acceptance Scenarios**:
+
+1. **Given** a node with leading trivia, **When** rendered, **Then** each trivia item's text is written directly via `dest.write_str()`.
+
+---
+
+### User Story 8 — DRY: consolidate buffer emission (Priority: P2)
+
+Merge `emitSingleChildBuffer` and `emitListSlotBuffer` in the emitter — they emit near-identical patterns.
+
+**Acceptance Scenarios**:
+
+1. **Given** the emitter, **When** inspected, **Then** one shared helper generates the `.map(|t| Renderable::Transport(t)).collect()` pattern.
+
+---
+
+### User Story 9 — Decompose oversized emitter functions (Priority: P3)
+
+Break `renderDirectSupport` (512 lines), `renderTypedDispatch` (146 lines) into focused sub-functions.
+
+---
+
+### User Story 10 — Shared transport metadata via macro (Priority: P1)
+
+The 7 metadata fields (`$source`, `$named`, `$text`, `$span`, `$nodeHandle`, `$childIndex`, `$triviaData`) repeated on every transport struct (700+) are extracted into a `transport_metadata_fields!()` macro in `sittir-core`.
+
+**Acceptance Scenarios**:
+
+1. **Given** any transport struct, **When** inspected, **Then** it calls `transport_metadata_fields!()` instead of listing 7 fields inline.
+2. **Given** the macro, **When** defined, **Then** it lives in `sittir-core` (not generated).
+3. **Given** a new metadata field added in the future, **When** added to the macro, **Then** all 700+ structs pick it up automatically.
 
 ---
 
 ### Edge Cases
 
-- What if a grammar has zero alias-collapsed kinds? The deduplication logic should be a no-op — no behavioral change.
-- What if `write_into` fails mid-render (I/O error)? Errors propagate via `Result` — partial output may exist in the buffer. Callers using String buffers won't observe partial results (the error prevents returning the String).
-- What about the `RenderableTransport::render_into` circular delegation? The impl currently calls `render_xxx_transport(self)` which returns String. After unification, it should call the streaming path directly.
+- Zero alias-collapsed kinds → deduplication is a no-op.
+- `write_into` failure mid-render → error propagates via `Result`.
+- Grammar with no transport structs → file split still works (empty transport.rs).
 
 ## Requirements
 
 ### Functional Requirements
 
-- **FR-001**: Per-kind render functions MUST write output via `write_into(dest)` instead of `template.render()` returning String.
-- **FR-002**: The render dispatch function MUST accept `dest: &mut dyn Write` and pass it through to per-kind functions.
-- **FR-003**: Trivia rendering MUST write directly to the output buffer — no intermediate String collection.
-- **FR-004**: Callers that need a String MUST use a `String` buffer adapter (`let mut buf = String::new(); render_into(node, &mut buf)?;`).
-- **FR-005**: Rendered output MUST be byte-identical before and after the migration for all corpus test cases.
-- **FR-006**: The codegen emitter (render-module.ts) MUST generate the streaming render functions — no hand-editing of generated Rust.
-- **FR-007**: `cargo build --release` MUST produce zero warnings for all three grammar crates.
-- **FR-008**: Unreachable match arms from alias-collapsed kinds MUST be deduplicated or eliminated.
-- **FR-009**: Dead render functions (never called from dispatch) MUST not be emitted.
-- **FR-010**: The `render_dispatch` and `render_transport_dispatch` tables SHOULD be unified into one streaming function (P2 — may ship separately).
-
-### Key Entities
-
-- **RenderDispatch**: The match table routing `KindId` → per-kind render function.
-- **PerKindRender**: A generated function that resolves template fields and writes output.
-- **TransportDispatch**: The napi transport → render path (currently separate from RenderDispatch).
+- **FR-001**: Transport render functions MUST write via `template.write_into(dest)` instead of `template.render()`.
+- **FR-002**: Generated render modules MUST be split into `dispatch.rs`, `transport.rs`, `templates.rs`, `bridge.rs`.
+- **FR-003**: Generated code MUST use module-level `use` imports for `sittir_core` types.
+- **FR-004**: Redundant `as &dyn RenderableTransport` casts MUST be eliminated.
+- **FR-005**: `cargo build --release` MUST produce zero warnings for all grammar crates.
+- **FR-006**: Trivia transport MUST use `TransportTrivia { leading: Option<Vec<String>>, trailing: Option<Vec<String>> }` — no `serde_json`.
+- **FR-007**: Trivia rendering MUST write text directly to dest — no intermediate allocation.
+- **FR-008**: Duplicate buffer emission logic MUST be consolidated into one helper.
+- **FR-009**: Rendered output MUST be byte-identical before/after for all corpus nodes.
+- **FR-010**: ALL changes MUST be in the emitter (`render-module.ts`) — no hand-editing generated Rust.
 
 ## Success Criteria
 
 ### Measurable Outcomes
 
-- **SC-001**: Native render benchmark shows reduced memory allocation (heap-per-render metric in bench-render) compared to pre-migration baseline.
-- **SC-002**: Rendered output is byte-identical for all corpus nodes across all three grammars.
-- **SC-003**: `cargo build --release` produces zero warnings for sittir-rust, sittir-typescript, sittir-python.
-- **SC-004**: The render module emitter change is one codegen commit — all per-kind functions are generated, not hand-edited.
-- **SC-005**: All existing validator counts hold or improve.
+- **SC-001**: `cargo build --release` produces zero warnings across all three grammar crates.
+- **SC-002**: Rendered output is byte-identical for all corpus nodes.
+- **SC-003**: No `serde_json::Value` appears in transport struct definitions.
+- **SC-004**: No `as &dyn RenderableTransport` casts in generated code.
+- **SC-005**: No `::sittir_core::filters::` fully-qualified paths in generated code (use imports instead).
+- **SC-006**: `templates.rs` per grammar is under 25K lines (split into 4 files).
+- **SC-007**: All existing validator counts hold.
