@@ -409,10 +409,16 @@ function slotFieldType(f: EmittedField): string {
 	return `OptionalNonterminalView<'a>`;
 }
 
-function renderDirectSupport(
-	meta: MetaData,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string {
+/**
+ * Emit the `ResolvedFieldKind` enum, `ResolvedField` struct, its impl block,
+ * and all field/children resolution functions (`render_node_value`,
+ * `missing_required_field`, `resolve_text`, `resolve_leaf`, `resolve_optional`,
+ * `resolve_required`, `is_join_flank_token`, `detect_field_trailing_sep`,
+ * `resolve_field`, `resolve_children`).
+ *
+ * @returns Rust source lines for the field resolution helpers.
+ */
+function renderFieldResolutionHelpers(): string[] {
 	const lines: string[] = [];
 	lines.push(`#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]`);
 	lines.push(`pub(crate) enum ResolvedFieldKind {`);
@@ -480,96 +486,6 @@ function renderDirectSupport(
 	lines.push(`        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()`);
 	lines.push(`    }`);
 	lines.push(`}`);
-	lines.push('');
-	if (kindIdByKind !== undefined) {
-		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
-		// T016: Deduplicate match arms — alias-collapsed kinds that share the same
-		// KindId emit only the first arm.
-		lines.push(`pub(crate) fn separator_for(kind_id: u16) -> &'static str {`);
-		lines.push(`    match kind_id {`);
-		const emittedSepIds = new Set<number>();
-		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
-			a.localeCompare(b)
-		)) {
-			const id = kindIdByKind.get(k);
-			if (id !== undefined) {
-				if (emittedSepIds.has(id)) continue; // T016: skip duplicate KindId
-				emittedSepIds.add(id);
-				lines.push(`        ${id} => ${JSON.stringify(s)}, // ${JSON.stringify(k)}`);
-			}
-		}
-		lines.push(`        _ => "",`);
-		lines.push(`    }`);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(
-			`pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
-		);
-		lines.push(`    match (parent_id, child_id) {`);
-		const sortedVariants: [string, string, string][] = [];
-		for (const [parent, map] of meta.variants) {
-			for (const [child, label] of map)
-				sortedVariants.push([parent, child, label]);
-		}
-		sortedVariants.sort(
-			(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
-		);
-		const emittedVariantPairs = new Set<string>();
-		for (const [parent, child, label] of sortedVariants) {
-			const parentId = kindIdByKind.get(parent);
-			const childId = kindIdByKind.get(child);
-			if (parentId !== undefined && childId !== undefined) {
-				const pairKey = `${parentId},${childId}`;
-				if (emittedVariantPairs.has(pairKey)) continue; // T016: skip duplicate pair
-				emittedVariantPairs.add(pairKey);
-				lines.push(
-					`        (${parentId}, ${childId}) => Some(${JSON.stringify(label)}), // (${JSON.stringify(parent)}, ${JSON.stringify(child)})`
-				);
-			}
-		}
-		lines.push(`        _ => None,`);
-		lines.push(`    }`);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
-		lines.push(
-			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
-		);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
-		lines.push(`    first_named_child_kind_id(node)`);
-		lines.push(
-			`        .and_then(|child_id| variant_for(node.type_.0, child_id))`
-		);
-		lines.push(`        .unwrap_or("")`);
-		lines.push(`}`);
-	} else {
-		// Fallback: no kindEntries (parser.c unavailable). Emit numeric functions
-		// with only a `_ =>` arm — no IDs available to populate match arms.
-		// NodeData.type_ is KindId regardless, so the functions take u16.
-		lines.push(`pub(crate) fn separator_for(_kind_id: u16) -> &'static str {`);
-		lines.push(`    ""`);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(
-			`pub(crate) fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
-		);
-		lines.push(`    None`);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
-		lines.push(
-			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
-		);
-		lines.push(`}`);
-		lines.push('');
-		lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
-		lines.push(`    first_named_child_kind_id(node)`);
-		lines.push(`        .and_then(|child_id| variant_for(node.type_.0, child_id))`);
-		lines.push(`        .unwrap_or("")`);
-		lines.push(`}`);
-	}
 	lines.push('');
 	lines.push(
 		`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
@@ -863,7 +779,129 @@ function renderDirectSupport(
 	lines.push(`        trailing_sep,`);
 	lines.push(`    ))`);
 	lines.push(`}`);
+	return lines;
+}
+
+/**
+ * Emit the `separator_for(kind_id)` match function.
+ *
+ * When `kindIdByKind` is provided, emits a match on numeric KindId values.
+ * Otherwise emits a stub that always returns `""`.
+ *
+ * @param meta - Grammar metadata containing separator mappings.
+ * @param kindIdByKind - Optional map from kind string to numeric KindId.
+ * @returns Rust source lines for the separator lookup function.
+ */
+function renderSeparatorLookup(
+	meta: MetaData,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string[] {
+	const lines: string[] = [];
+	if (kindIdByKind !== undefined) {
+		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
+		// T016: Deduplicate match arms — alias-collapsed kinds that share the same
+		// KindId emit only the first arm.
+		lines.push(`pub(crate) fn separator_for(kind_id: u16) -> &'static str {`);
+		lines.push(`    match kind_id {`);
+		const emittedSepIds = new Set<number>();
+		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
+			a.localeCompare(b)
+		)) {
+			const id = kindIdByKind.get(k);
+			if (id !== undefined) {
+				if (emittedSepIds.has(id)) continue; // T016: skip duplicate KindId
+				emittedSepIds.add(id);
+				lines.push(`        ${id} => ${JSON.stringify(s)}, // ${JSON.stringify(k)}`);
+			}
+		}
+		lines.push(`        _ => "",`);
+		lines.push(`    }`);
+		lines.push(`}`);
+	} else {
+		lines.push(`pub(crate) fn separator_for(_kind_id: u16) -> &'static str {`);
+		lines.push(`    ""`);
+		lines.push(`}`);
+	}
+	return lines;
+}
+
+/**
+ * Emit the `variant_for(parent_id, child_id)` match function, along with
+ * `first_named_child_kind_id` and `resolve_variant`.
+ *
+ * When `kindIdByKind` is provided, emits a match on numeric (parent, child)
+ * KindId pairs. Otherwise emits stubs that always return `None` / `""`.
+ *
+ * @param meta - Grammar metadata containing variant mappings.
+ * @param kindIdByKind - Optional map from kind string to numeric KindId.
+ * @returns Rust source lines for the variant lookup functions.
+ */
+function renderVariantLookup(
+	meta: MetaData,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string[] {
+	const lines: string[] = [];
+	if (kindIdByKind !== undefined) {
+		lines.push(
+			`pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
+		);
+		lines.push(`    match (parent_id, child_id) {`);
+		const sortedVariants: [string, string, string][] = [];
+		for (const [parent, map] of meta.variants) {
+			for (const [child, label] of map)
+				sortedVariants.push([parent, child, label]);
+		}
+		sortedVariants.sort(
+			(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
+		);
+		const emittedVariantPairs = new Set<string>();
+		for (const [parent, child, label] of sortedVariants) {
+			const parentId = kindIdByKind.get(parent);
+			const childId = kindIdByKind.get(child);
+			if (parentId !== undefined && childId !== undefined) {
+				const pairKey = `${parentId},${childId}`;
+				if (emittedVariantPairs.has(pairKey)) continue; // T016: skip duplicate pair
+				emittedVariantPairs.add(pairKey);
+				lines.push(
+					`        (${parentId}, ${childId}) => Some(${JSON.stringify(label)}), // (${JSON.stringify(parent)}, ${JSON.stringify(child)})`
+				);
+			}
+		}
+		lines.push(`        _ => None,`);
+		lines.push(`    }`);
+		lines.push(`}`);
+	} else {
+		lines.push(
+			`pub(crate) fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
+		);
+		lines.push(`    None`);
+		lines.push(`}`);
+	}
 	lines.push('');
+	lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
+	lines.push(
+		`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
+	);
+	lines.push(`}`);
+	lines.push('');
+	lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
+	lines.push(`    first_named_child_kind_id(node)`);
+	lines.push(
+		`        .and_then(|child_id| variant_for(node.type_.0, child_id))`
+	);
+	lines.push(`        .unwrap_or("")`);
+	lines.push(`}`);
+	return lines;
+}
+
+/**
+ * Emit the `token_shaped_fallback` function — renders nodes that have no
+ * dedicated template by concatenating anonymous child text.
+ *
+ * @returns Rust source lines for the token-shaped fallback function.
+ */
+function renderTokenFallback(): string[] {
+	const lines: string[] = [];
 	lines.push(
 		`pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
@@ -924,7 +962,35 @@ function renderDirectSupport(
 	);
 	lines.push(`    ))`);
 	lines.push(`}`);
-	return lines.join('\n');
+	return lines;
+}
+
+/**
+ * Emit all direct-path support functions for the Rust render module:
+ * field resolution types/helpers, separator lookup, variant lookup, and
+ * token-shaped fallback.
+ *
+ * Delegates to {@link renderFieldResolutionHelpers},
+ * {@link renderSeparatorLookup}, {@link renderVariantLookup}, and
+ * {@link renderTokenFallback}.
+ *
+ * @param meta - Grammar metadata (separators, variants).
+ * @param kindIdByKind - Optional map from kind string to numeric KindId.
+ * @returns Complete Rust source string for the support section.
+ */
+function renderDirectSupport(
+	meta: MetaData,
+	kindIdByKind?: ReadonlyMap<string, number>
+): string {
+	return [
+		...renderFieldResolutionHelpers(),
+		'',
+		...renderSeparatorLookup(meta, kindIdByKind),
+		'',
+		...renderVariantLookup(meta, kindIdByKind),
+		'',
+		...renderTokenFallback(),
+	].join('\n');
 }
 
 function renderPerKindFns(structs: EmittedStruct[]): string {
@@ -1381,8 +1447,8 @@ function buildSlotWriteCall(cls: SlotClass, expr: string): string {
  * concrete subtype render fn is already declared when the supertype match arm
  * references it.
  *
- * Legacy `render_dispatch(&NodeData)` / `transport_to_node` / etc. are
- * retained as the inverse bridge for callers that still want `NodeData`.
+ * The `render_dispatch(&NodeData)` path is retained as the inverse bridge
+ * for callers that resolve through `NodeData` rather than typed transport.
  *
  * @param usedSupertypeNames - supertype typeNames actually used as slot types;
  *   only these get render helpers emitted. Passed from renderTransportSupport
@@ -1846,49 +1912,74 @@ function renderTypedFormFn(
  * @param required - When `true`, the slot type is `T`; when `false` it is `Option<T>`.
  * @param cls      - slot classification (Rust auto-coerces `&T` to `&dyn RT`).
  */
+/**
+ * Fully-qualified prefix for the core `Renderable` enum.
+ *
+ * This module defines a local `pub enum Renderable` (Text+Joined) that
+ * shadows `sittir_core::filters::Renderable` (Text+Joined+Transport).
+ * The typed dispatch path constructs `::sittir_core::filters::Renderable::Transport`
+ * values that feed into `ListNonterminalView.items`, so the full path is
+ * required to avoid resolving to the wrong local type.
+ */
+const RENDERABLE_PREFIX = '::sittir_core::filters::';
+
+/**
+ * Emit the iter/map/collect pattern that wraps each element in
+ * `Renderable::Transport`. Shared by both single-child and list-slot
+ * buffer emitters.
+ *
+ * @param ident      - Rust identifier base (e.g. `"children"`, `"parameters"`)
+ * @param sourceExpr - The iterable expression to `.iter()` over
+ * @param mapBody    - The closure body inside `.map(|t| ...)` (e.g. `Renderable::Transport(t)`)
+ */
+function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string): string[] {
+	const R = RENDERABLE_PREFIX;
+	return [
+		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
+		`        .map(|t| ${mapBody})`,
+		`        .collect();`,
+	];
+}
+
+/**
+ * Emit the Rust boilerplate that converts a single-child transport slot
+ * into a `*_buf: Vec<Renderable>` ready for `ListNonterminalView`.
+ *
+ * For required (T): wraps the single value in a `vec![...]`.
+ *
+ * For optional (Option<T>): uses `.iter().map(...).collect()` which
+ * produces a 0-or-1-element Vec. This avoids `std::slice::from_ref` /
+ * `Option::as_slice()` which trigger the `str_as_str` unstable feature
+ * (issue #130366) on current stable Rust.
+ *
+ * @param ident    - Rust identifier base (e.g. `"children"`)
+ * @param required - When `true`, the slot type is `T`; when `false` it is `Option<T>`.
+ * @param cls      - slot classification (Rust auto-coerces `&T` to `&dyn RT`).
+ */
 function emitSingleChildBuffer(
 	ident: string,
 	required: boolean,
 	cls: SlotClass = { tag: 'heterogeneous' }
 ): string[] {
-	const lines: string[] = [];
-	// `R` is the fully-qualified prefix for `Renderable` — this module defines
-	// a local `pub enum Renderable` (Text+Joined) that shadows the
-	// `sittir_core::filters::Renderable` (Text+Joined+Transport). The typed
-	// dispatch path constructs `::sittir_core::filters::Renderable::Transport`
-	// values that feed into `ListNonterminalView.items`, so the full path is
-	// required here to avoid resolving to the wrong local type.
-	const R = '::sittir_core::filters::';
-	// Use Vec<Renderable<'_>> (matching emitListSlotBuffer's output type) to
-	// avoid std::slice::from_ref / Option::as_slice() which trigger the
-	// str_as_str unstable feature (issue #130366) on current stable Rust.
-	//
+	const R = RENDERABLE_PREFIX;
 	// useBox=true: type is Box<AnyTransport> — use .as_ref() to deref through Box.
 	// All other paths (per-slot enum, concrete, supertype): Rust auto-coerces
 	// &T to &dyn RenderableTransport when all types implement the trait.
 	const isBox = cls.tag === 'heterogeneous' && cls.useBox === true;
 	if (isBox) {
 		if (required) {
-			lines.push(
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`
-			);
-		} else {
-			lines.push(
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter().map(|c| ${R}Renderable::Transport(c.as_ref())).collect();`
-			);
+			return [
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`,
+			];
 		}
-	} else {
-		if (required) {
-			lines.push(
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`
-			);
-		} else {
-			lines.push(
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter().map(|c| ${R}Renderable::Transport(c)).collect();`
-			);
-		}
+		return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t.as_ref())`);
 	}
-	return lines;
+	if (required) {
+		return [
+			`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`,
+		];
+	}
+	return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t)`);
 }
 
 /**
@@ -1907,23 +1998,15 @@ function emitSingleChildBuffer(
  * @returns Lines to splice into the parent function body.
  */
 function emitListSlotBuffer(ident: string, required: boolean): string[] {
-	const lines: string[] = [];
-	const R = '::sittir_core::filters::';
-
-	// All paths: AnyTransport (sized enum, no Box), per-slot child enum, concrete,
-	// supertype — all implement RenderableTransport. Rust auto-coerces &T to
-	// &dyn RenderableTransport; no explicit cast needed.
+	const R = RENDERABLE_PREFIX;
+	const mapBody = `${R}Renderable::Transport(t)`;
 	if (required) {
-		lines.push(`    let ${ident}_buf: Vec<${R}Renderable<'_>> = node.${ident}.iter()`);
-		lines.push(`        .map(|t| ${R}Renderable::Transport(t))`);
-		lines.push(`        .collect();`);
-	} else {
-		lines.push(`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`);
-		lines.push(`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${ident}_owned.iter()`);
-		lines.push(`        .map(|t| ${R}Renderable::Transport(t))`);
-		lines.push(`        .collect();`);
+		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody);
 	}
-	return lines;
+	return [
+		`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`,
+		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody),
+	];
 }
 
 /**
@@ -1962,9 +2045,7 @@ function buildTypedTemplateBody(
 	const lines: string[] = [];
 	const templateName = struct.name;
 	const sepLiteral = JSON.stringify(separator);
-	// `R` is the fully-qualified prefix for `Renderable` — see comment in
-	// emitSingleChildBuffer for why the local `Renderable` enum requires this.
-	const R = '::sittir_core::filters::';
+	const R = RENDERABLE_PREFIX;
 
 	// Classify helper — use classifySlotForEmit when nodeMap is available so
 	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
@@ -2579,8 +2660,8 @@ function buildKindIdByKind(kindEntries: readonly KindEnumEntry[]): ReadonlyMap<s
 }
 
 /**
- * Emit `AnyTransport` with the legacy string-tagged `#[serde(tag = "$type")]` derive.
- * Used as a fallback when `generatedIdTables` is unavailable (no parser.c).
+ * Emit `AnyTransport` with the string-tagged `#[serde(tag = "$type")]` derive.
+ * Fallback path when `generatedIdTables` is unavailable (no parser.c).
  */
 function renderAnyTransportWithStringTag(
 	nodes: readonly AssembledNode[],

@@ -83,87 +83,6 @@ impl ResolvedField {
     }
 }
 
-pub(crate) fn separator_for(kind_id: u16) -> &'static str {
-    match kind_id {
-        282 => ",", // "closure_parameters"
-        179 => ",", // "enum_variant_list"
-        181 => ",", // "field_declaration_list"
-        263 => ",", // "field_initializer_list"
-        210 => ",", // "parameters"
-        297 => ",", // "slice_pattern"
-        196 => "+", // "trait_bounds"
-        296 => ",", // "tuple_pattern"
-        223 => ",", // "tuple_type"
-        230 => ",", // "type_arguments"
-        207 => ",", // "use_list"
-        _ => "",
-    }
-}
-
-pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
-    match (parent_id, child_id) {
-        (258, 322) => Some("semi"), // ("array_expression", "array_expression_list")
-        (258, 321) => Some("semi"), // ("array_expression", "array_expression_semi")
-        (281, 323) => Some("block"), // ("closure_expression", "closure_expression_block")
-        (281, 324) => Some("block"), // ("closure_expression", "closure_expression_expr")
-        (240, 381) => Some("paren"), // ("delim_token_tree", "delim_token_tree_brace")
-        (240, 380) => Some("paren"), // ("delim_token_tree", "delim_token_tree_bracket")
-        (240, 379) => Some("paren"), // ("delim_token_tree", "delim_token_tree_paren")
-        (160, 366) => Some("with_semi"), // ("expression_statement", "expression_statement_block_ending")
-        (160, 365) => Some("with_semi"), // ("expression_statement", "expression_statement_with_semi")
-        (300, 326) => Some("shorthand"), // ("field_pattern", "field_pattern_named")
-        (300, 325) => Some("shorthand"), // ("field_pattern", "field_pattern_shorthand")
-        (174, 368) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_body")
-        (174, 367) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
-        (193, 329) => Some("body"), // ("impl_item", "impl_item_body")
-        (193, 330) => Some("body"), // ("impl_item", "impl_item_semi")
-        (314, 146) => Some("regular_dslash"), // ("line_comment", "line_comment_content")
-        (314, 372) => Some("regular_dslash"), // ("line_comment", "line_comment_doc")
-        (314, 371) => Some("regular_dslash"), // ("line_comment", "line_comment_regular_dslash")
-        (161, 333) => Some("paren"), // ("macro_definition", "macro_definition_brace")
-        (161, 332) => Some("paren"), // ("macro_definition", "macro_definition_bracket")
-        (161, 331) => Some("paren"), // ("macro_definition", "macro_definition_paren")
-        (274, 370) => Some("with_comma"), // ("match_arm", "match_arm_block_ending")
-        (274, 369) => Some("with_comma"), // ("match_arm", "match_arm_with_comma")
-        (173, 334) => Some("external"), // ("mod_item", "mod_item_external")
-        (173, 335) => Some("external"), // ("mod_item", "mod_item_inline")
-        (307, 336) => Some("binary"), // ("or_pattern", "or_pattern_binary")
-        (307, 337) => Some("binary"), // ("or_pattern", "or_pattern_prefix")
-        (233, 358) => Some("const"), // ("pointer_type", "pointer_type_const")
-        (233, 359) => Some("const"), // ("pointer_type", "pointer_type_mut")
-        (246, 341) => Some("binary"), // ("range_expression", "range_expression_bare")
-        (246, 338) => Some("binary"), // ("range_expression", "range_expression_binary")
-        (246, 339) => Some("binary"), // ("range_expression", "range_expression_postfix")
-        (246, 340) => Some("binary"), // ("range_expression", "range_expression_prefix")
-        (303, 344) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_bare")
-        (303, 343) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_with_right")
-        (303, 342) => Some("left_with_right"), // ("range_pattern", "range_pattern_prefix")
-        (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
-        (176, 346) => Some("brace"), // ("struct_item", "struct_item_tuple")
-        (176, 347) => Some("brace"), // ("struct_item", "struct_item_unit")
-        (168, 378) => Some("paren"), // ("token_tree", "token_tree_brace")
-        (168, 377) => Some("paren"), // ("token_tree", "token_tree_bracket")
-        (168, 376) => Some("paren"), // ("token_tree", "token_tree_paren")
-        (164, 375) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_brace")
-        (164, 374) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_bracket")
-        (164, 373) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
-        (215, 348) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_crate")
-        (215, 350) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_in_path")
-        (215, 349) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_pub")
-        _ => None,
-    }
-}
-
-pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
-    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
-}
-
-pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
-    first_named_child_kind_id(node)
-        .and_then(|child_id| variant_for(node.type_.0, child_id))
-        .unwrap_or("")
-}
-
 pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {
     super::dispatch::render_dispatch(node)
 }
@@ -391,6 +310,87 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
         leading_sep,
         trailing_sep,
     ))
+}
+
+pub(crate) fn separator_for(kind_id: u16) -> &'static str {
+    match kind_id {
+        282 => ",", // "closure_parameters"
+        179 => ",", // "enum_variant_list"
+        181 => ",", // "field_declaration_list"
+        263 => ",", // "field_initializer_list"
+        210 => ",", // "parameters"
+        297 => ",", // "slice_pattern"
+        196 => "+", // "trait_bounds"
+        296 => ",", // "tuple_pattern"
+        223 => ",", // "tuple_type"
+        230 => ",", // "type_arguments"
+        207 => ",", // "use_list"
+        _ => "",
+    }
+}
+
+pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
+    match (parent_id, child_id) {
+        (258, 322) => Some("semi"), // ("array_expression", "array_expression_list")
+        (258, 321) => Some("semi"), // ("array_expression", "array_expression_semi")
+        (281, 323) => Some("block"), // ("closure_expression", "closure_expression_block")
+        (281, 324) => Some("block"), // ("closure_expression", "closure_expression_expr")
+        (240, 381) => Some("paren"), // ("delim_token_tree", "delim_token_tree_brace")
+        (240, 380) => Some("paren"), // ("delim_token_tree", "delim_token_tree_bracket")
+        (240, 379) => Some("paren"), // ("delim_token_tree", "delim_token_tree_paren")
+        (160, 366) => Some("with_semi"), // ("expression_statement", "expression_statement_block_ending")
+        (160, 365) => Some("with_semi"), // ("expression_statement", "expression_statement_with_semi")
+        (300, 326) => Some("shorthand"), // ("field_pattern", "field_pattern_named")
+        (300, 325) => Some("shorthand"), // ("field_pattern", "field_pattern_shorthand")
+        (174, 368) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_body")
+        (174, 367) => Some("semi"), // ("foreign_mod_item", "foreign_mod_item_semi")
+        (193, 329) => Some("body"), // ("impl_item", "impl_item_body")
+        (193, 330) => Some("body"), // ("impl_item", "impl_item_semi")
+        (314, 146) => Some("regular_dslash"), // ("line_comment", "line_comment_content")
+        (314, 372) => Some("regular_dslash"), // ("line_comment", "line_comment_doc")
+        (314, 371) => Some("regular_dslash"), // ("line_comment", "line_comment_regular_dslash")
+        (161, 333) => Some("paren"), // ("macro_definition", "macro_definition_brace")
+        (161, 332) => Some("paren"), // ("macro_definition", "macro_definition_bracket")
+        (161, 331) => Some("paren"), // ("macro_definition", "macro_definition_paren")
+        (274, 370) => Some("with_comma"), // ("match_arm", "match_arm_block_ending")
+        (274, 369) => Some("with_comma"), // ("match_arm", "match_arm_with_comma")
+        (173, 334) => Some("external"), // ("mod_item", "mod_item_external")
+        (173, 335) => Some("external"), // ("mod_item", "mod_item_inline")
+        (307, 336) => Some("binary"), // ("or_pattern", "or_pattern_binary")
+        (307, 337) => Some("binary"), // ("or_pattern", "or_pattern_prefix")
+        (233, 358) => Some("const"), // ("pointer_type", "pointer_type_const")
+        (233, 359) => Some("const"), // ("pointer_type", "pointer_type_mut")
+        (246, 341) => Some("binary"), // ("range_expression", "range_expression_bare")
+        (246, 338) => Some("binary"), // ("range_expression", "range_expression_binary")
+        (246, 339) => Some("binary"), // ("range_expression", "range_expression_postfix")
+        (246, 340) => Some("binary"), // ("range_expression", "range_expression_prefix")
+        (303, 344) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_bare")
+        (303, 343) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_with_right")
+        (303, 342) => Some("left_with_right"), // ("range_pattern", "range_pattern_prefix")
+        (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
+        (176, 346) => Some("brace"), // ("struct_item", "struct_item_tuple")
+        (176, 347) => Some("brace"), // ("struct_item", "struct_item_unit")
+        (168, 378) => Some("paren"), // ("token_tree", "token_tree_brace")
+        (168, 377) => Some("paren"), // ("token_tree", "token_tree_bracket")
+        (168, 376) => Some("paren"), // ("token_tree", "token_tree_paren")
+        (164, 375) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_brace")
+        (164, 374) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_bracket")
+        (164, 373) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
+        (215, 348) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_crate")
+        (215, 350) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_in_path")
+        (215, 349) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_pub")
+        _ => None,
+    }
+}
+
+pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
+    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
+}
+
+pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
+    first_named_child_kind_id(node)
+        .and_then(|child_id| variant_for(node.type_.0, child_id))
+        .unwrap_or("")
 }
 
 pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {

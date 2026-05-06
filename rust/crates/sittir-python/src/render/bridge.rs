@@ -83,43 +83,6 @@ impl ResolvedField {
     }
 }
 
-pub(crate) fn separator_for(kind_id: u16) -> &'static str {
-    match kind_id {
-        245 => ",", // "_with_clause_paren"
-        169 => ",", // "dict_pattern"
-        218 => ",", // "dictionary"
-        162 => ".", // "dotted_name"
-        243 => ",", // "expression_statement_tuple"
-        147 => ",", // "lambda_parameters"
-        216 => ",", // "set"
-        155 => ",", // "type_parameter"
-        244 => ",", // "with_clause_bare"
-        _ => "",
-    }
-}
-
-pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
-    match (parent_id, child_id) {
-        (198, 240) => Some("eq"), // ("assignment", "assignment_eq")
-        (198, 241) => Some("eq"), // ("assignment", "assignment_type")
-        (198, 242) => Some("eq"), // ("assignment", "assignment_typed")
-        (122, 243) => Some("tuple"), // ("expression_statement", "expression_statement_tuple")
-        (143, 244) => Some("bare"), // ("with_clause", "with_clause_bare")
-        (143, 245) => Some("bare"), // ("with_clause", "with_clause_paren")
-        _ => None,
-    }
-}
-
-pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
-    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
-}
-
-pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
-    first_named_child_kind_id(node)
-        .and_then(|child_id| variant_for(node.type_.0, child_id))
-        .unwrap_or("")
-}
-
 pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {
     super::dispatch::render_dispatch(node)
 }
@@ -347,6 +310,43 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
         leading_sep,
         trailing_sep,
     ))
+}
+
+pub(crate) fn separator_for(kind_id: u16) -> &'static str {
+    match kind_id {
+        245 => ",", // "_with_clause_paren"
+        169 => ",", // "dict_pattern"
+        218 => ",", // "dictionary"
+        162 => ".", // "dotted_name"
+        243 => ",", // "expression_statement_tuple"
+        147 => ",", // "lambda_parameters"
+        216 => ",", // "set"
+        155 => ",", // "type_parameter"
+        244 => ",", // "with_clause_bare"
+        _ => "",
+    }
+}
+
+pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
+    match (parent_id, child_id) {
+        (198, 240) => Some("eq"), // ("assignment", "assignment_eq")
+        (198, 241) => Some("eq"), // ("assignment", "assignment_type")
+        (198, 242) => Some("eq"), // ("assignment", "assignment_typed")
+        (122, 243) => Some("tuple"), // ("expression_statement", "expression_statement_tuple")
+        (143, 244) => Some("bare"), // ("with_clause", "with_clause_bare")
+        (143, 245) => Some("bare"), // ("with_clause", "with_clause_paren")
+        _ => None,
+    }
+}
+
+pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
+    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
+}
+
+pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
+    first_named_child_kind_id(node)
+        .and_then(|child_id| variant_for(node.type_.0, child_id))
+        .unwrap_or("")
 }
 
 pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {

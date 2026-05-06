@@ -22600,7 +22600,9 @@ fn render_foreign_mod_item_semi_transport(t: &ForeignModItemSemiTransport, dest:
 }
 
 fn render_function_type_fn_form_transport(node: &FunctionTypeFnFormTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = FunctionTypeFnFormTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -22939,7 +22941,9 @@ fn render__self_transport(t: &bool, dest: &mut dyn ::std::fmt::Write) -> Result<
 }
 
 fn render_struct_item_brace_transport(node: &StructItemBraceTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = StructItemBraceTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -22953,7 +22957,9 @@ fn render_struct_item_brace_transport(node: &StructItemBraceTransport, dest: &mu
 }
 
 fn render_struct_item_tuple_transport(node: &StructItemTupleTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = StructItemTupleTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -23115,7 +23121,9 @@ fn render_visibility_modifier_in_path_transport(node: &VisibilityModifierInPathT
 }
 
 fn render_visibility_modifier_pub_transport(node: &VisibilityModifierPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = VisibilityModifierPubTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -23363,7 +23371,9 @@ fn render_bracketed_type_transport(node: &BracketedTypeTransport, dest: &mut dyn
 }
 
 fn render_break_expression_transport(node: &BreakExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = BreakExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -25048,7 +25058,9 @@ fn render_ref_pattern_transport(node: &RefPatternTransport, dest: &mut dyn ::std
 }
 
 fn render_reference_expression_transport(node: &ReferenceExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ReferenceExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -25105,7 +25117,9 @@ fn render_removed_trait_bound_transport(node: &RemovedTraitBoundTransport, dest:
 }
 
 fn render_return_expression_transport(node: &ReturnExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ReturnExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -26029,7 +26043,9 @@ fn render_while_expression_transport(node: &WhileExpressionTransport, dest: &mut
 }
 
 fn render_yield_expression_transport(node: &YieldExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = YieldExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),

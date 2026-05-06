@@ -15015,7 +15015,9 @@ fn render_positional_separator_transport(t: &PositionalSeparatorTransport, dest:
 }
 
 fn render_print_statement_transport(node: &PrintStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let argument_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.argument.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -15037,7 +15039,9 @@ fn render_print_statement_transport(node: &PrintStatementTransport, dest: &mut d
 }
 
 fn render_raise_statement_transport(node: &RaiseStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = RaiseStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15065,7 +15069,9 @@ fn render_relative_import_transport(node: &RelativeImportTransport, dest: &mut d
 }
 
 fn render_return_statement_transport(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ReturnStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -15437,7 +15443,9 @@ fn render_with_statement_transport(node: &WithStatementTransport, dest: &mut dyn
 }
 
 fn render_yield_transport(node: &YieldTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c.as_ref())).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t.as_ref()))
+        .collect();
     let template = YieldTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),

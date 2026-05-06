@@ -24416,7 +24416,9 @@ fn render_for_header_transport(node: &ForHeaderTransport, dest: &mut dyn ::std::
 }
 
 fn render_for_header_let_const_kind_transport(node: &ForHeaderLetConstKindTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ForHeaderLetConstKindTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -24735,7 +24737,9 @@ fn render_public_field_definition_accessor_opt_transport(node: &PublicFieldDefin
 }
 
 fn render_public_field_definition_declare_first_transport(node: &PublicFieldDefinitionDeclareFirstTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = PublicFieldDefinitionDeclareFirstTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -24765,7 +24769,9 @@ fn render_public_field_definition_readonly_first_transport(node: &PublicFieldDef
 }
 
 fn render_public_field_definition_static_mods_transport(node: &PublicFieldDefinitionStaticModsTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = PublicFieldDefinitionStaticModsTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -25408,7 +25414,9 @@ fn render_class_heritage_uform_implements_clause_transport(node: &ClassHeritageU
 }
 
 fn render_class_static_block_transport(node: &ClassStaticBlockTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ClassStaticBlockTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -25900,7 +25908,9 @@ fn render_formal_parameters_transport(node: &FormalParametersTransport, dest: &m
 }
 
 fn render_function_declaration_transport(node: &FunctionDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = FunctionDeclarationTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -26016,7 +26026,9 @@ fn render_generator_function_transport(node: &GeneratorFunctionTransport, dest: 
 }
 
 fn render_generator_function_declaration_transport(node: &GeneratorFunctionDeclarationTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = GeneratorFunctionDeclarationTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -26443,7 +26455,9 @@ fn render_jsx_element_transport(node: &JsxElementTransport, dest: &mut dyn ::std
 }
 
 fn render_jsx_expression_transport(node: &JsxExpressionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = JsxExpressionTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),
@@ -26843,7 +26857,9 @@ fn render_opting_type_annotation_transport(node: &OptingTypeAnnotationTransport,
 }
 
 fn render_optional_parameter_transport(node: &OptionalParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.decorator.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -27024,7 +27040,9 @@ fn render_property_signature_transport(node: &PropertySignatureTransport, dest: 
 }
 
 fn render_public_field_definition_transport(node: &PublicFieldDefinitionTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.decorator.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -27085,7 +27103,9 @@ fn render_regex_pattern_transport(t: &RegexPatternTransport, dest: &mut dyn ::st
 }
 
 fn render_required_parameter_transport(node: &RequiredParameterTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let decorator_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.decorator.iter()
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
@@ -27140,7 +27160,9 @@ fn render_rest_type_transport(node: &RestTypeTransport, dest: &mut dyn ::std::fm
 }
 
 fn render_return_statement_transport(node: &ReturnStatementTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter().map(|c| ::sittir_core::filters::Renderable::Transport(c)).collect();
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .map(|t| ::sittir_core::filters::Renderable::Transport(t))
+        .collect();
     let template = ReturnStatementTemplate {
         children: ListNonterminalView {
             items: children_buf.as_slice(),

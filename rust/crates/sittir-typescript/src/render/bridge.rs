@@ -83,61 +83,6 @@ impl ResolvedField {
     }
 }
 
-pub(crate) fn separator_for(kind_id: u16) -> &'static str {
-    match kind_id {
-        252 => ",", // "arguments"
-        217 => ",", // "array"
-        218 => ",", // "array_pattern"
-        169 => ",", // "export_clause"
-        178 => ",", // "named_imports"
-        246 => ",", // "sequence_expression"
-        347 => ",", // "tuple_type"
-        336 => ",", // "type_arguments"
-        340 => ",", // "type_parameters"
-        _ => "",
-    }
-}
-
-pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
-    match (parent_id, child_id) {
-        (227, 357) => Some("parameter"), // ("arrow_function", "arrow_function__call_signature")
-        (227, 356) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
-        (231, 387) => Some("call"), // ("call_expression", "call_expression_call")
-        (231, 389) => Some("call"), // ("call_expression", "call_expression_member")
-        (231, 388) => Some("call"), // ("call_expression", "call_expression_template_call")
-        (222, 358) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
-        (222, 359) => Some("extends_clause"), // ("class_heritage", "class_heritage_implements_clause")
-        (167, 352) => Some("default"), // ("export_statement", "export_statement_default")
-        (167, 385) => Some("default"), // ("export_statement", "export_statement_equals_export")
-        (167, 386) => Some("default"), // ("export_statement", "export_statement_namespace_export")
-        (167, 384) => Some("default"), // ("export_statement", "export_statement_type_export")
-        (175, 362) => Some("namespace_import"), // ("import_clause", "import_clause_default_import")
-        (175, 361) => Some("namespace_import"), // ("import_clause", "import_clause_named_imports")
-        (175, 360) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
-        (179, 364) => Some("name"), // ("import_specifier", "import_specifier_as")
-        (179, 363) => Some("name"), // ("import_specifier", "import_specifier_name")
-        (345, 365) => Some("colon"), // ("index_signature", "index_signature_colon")
-        (345, 366) => Some("colon"), // ("index_signature", "index_signature_mapped_type_clause")
-        (209, 383) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_sequence")
-        (209, 382) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
-        (247, 390) => Some("double"), // ("string", "string_double")
-        (247, 391) => Some("double"), // ("string", "string_single")
-        (245, 392) => Some("postfix"), // ("update_expression", "update_expression_postfix")
-        (245, 393) => Some("postfix"), // ("update_expression", "update_expression_prefix")
-        _ => None,
-    }
-}
-
-pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
-    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
-}
-
-pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
-    first_named_child_kind_id(node)
-        .and_then(|child_id| variant_for(node.type_.0, child_id))
-        .unwrap_or("")
-}
-
 pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {
     super::dispatch::render_dispatch(node)
 }
@@ -365,6 +310,61 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
         leading_sep,
         trailing_sep,
     ))
+}
+
+pub(crate) fn separator_for(kind_id: u16) -> &'static str {
+    match kind_id {
+        252 => ",", // "arguments"
+        217 => ",", // "array"
+        218 => ",", // "array_pattern"
+        169 => ",", // "export_clause"
+        178 => ",", // "named_imports"
+        246 => ",", // "sequence_expression"
+        347 => ",", // "tuple_type"
+        336 => ",", // "type_arguments"
+        340 => ",", // "type_parameters"
+        _ => "",
+    }
+}
+
+pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
+    match (parent_id, child_id) {
+        (227, 357) => Some("parameter"), // ("arrow_function", "arrow_function__call_signature")
+        (227, 356) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
+        (231, 387) => Some("call"), // ("call_expression", "call_expression_call")
+        (231, 389) => Some("call"), // ("call_expression", "call_expression_member")
+        (231, 388) => Some("call"), // ("call_expression", "call_expression_template_call")
+        (222, 358) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
+        (222, 359) => Some("extends_clause"), // ("class_heritage", "class_heritage_implements_clause")
+        (167, 352) => Some("default"), // ("export_statement", "export_statement_default")
+        (167, 385) => Some("default"), // ("export_statement", "export_statement_equals_export")
+        (167, 386) => Some("default"), // ("export_statement", "export_statement_namespace_export")
+        (167, 384) => Some("default"), // ("export_statement", "export_statement_type_export")
+        (175, 362) => Some("namespace_import"), // ("import_clause", "import_clause_default_import")
+        (175, 361) => Some("namespace_import"), // ("import_clause", "import_clause_named_imports")
+        (175, 360) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
+        (179, 364) => Some("name"), // ("import_specifier", "import_specifier_as")
+        (179, 363) => Some("name"), // ("import_specifier", "import_specifier_name")
+        (345, 365) => Some("colon"), // ("index_signature", "index_signature_colon")
+        (345, 366) => Some("colon"), // ("index_signature", "index_signature_mapped_type_clause")
+        (209, 383) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_sequence")
+        (209, 382) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
+        (247, 390) => Some("double"), // ("string", "string_double")
+        (247, 391) => Some("double"), // ("string", "string_single")
+        (245, 392) => Some("postfix"), // ("update_expression", "update_expression_postfix")
+        (245, 393) => Some("postfix"), // ("update_expression", "update_expression_prefix")
+        _ => None,
+    }
+}
+
+pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
+    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
+}
+
+pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
+    first_named_child_kind_id(node)
+        .and_then(|child_id| variant_for(node.type_.0, child_id))
+        .unwrap_or("")
 }
 
 pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {
