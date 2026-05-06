@@ -36,7 +36,8 @@ import {
 	keywordPresenceKind,
 	resolveHoistedForm,
 	stampExpressionFor,
-	isHiddenInfraSlot
+	isHiddenInfraSlot,
+	type BranchSlotClass
 } from './shared.ts';
 import { fieldElementType } from './factories.ts';
 import {
@@ -527,6 +528,7 @@ interface BranchLikeNode {
 	readonly fromFunctionName?: string;
 	readonly fields: readonly AssembledNonterminal[];
 	readonly children: readonly AssembledNonterminal[];
+	readonly slotClass?: BranchSlotClass;
 }
 
 function _emitVariantFrom(
@@ -873,18 +875,19 @@ function emitBranchFrom(
 		}
 		// Gap 5: single-field-no-children factories take the value directly.
 		// Emit `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
+		// Uses pre-computed slotClass for the sole-slot reference.
 		// Excluded: hidden kinds (inner polymorph children), keyword-presence,
 		// and multiple (array) fields.
+		const sc = node.slotClass;
 		const soleFieldDirect =
 			nonStampFields.length === 1 &&
 			childSlots.length === 0 &&
 			!node.kind.startsWith('_') &&
 			!nodeMap.polymorphFormKinds.has(node.kind) &&
-			!isMultiple(nonStampFields[0]!) &&
-			keywordPresenceKind(nonStampFields[0]!, nodeMap) === null &&
-			!isHiddenInfraSlot(nonStampFields[0]!, nodeMap);
+			sc?.tag === 'singleSlot' &&
+			sc.arity === 'singular';
 		if (soleFieldDirect) {
-			const soleField = nonStampFields[0]!;
+			const soleField = sc.slot;
 			const call = resolveFieldFromTypedInput(
 				soleField,
 				nodeMap,

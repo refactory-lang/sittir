@@ -19,11 +19,9 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNode, AssembledGroup } from '../compiler/node-map.ts';
 import { allSlotsOf } from '../compiler/node-map.ts';
 import {
-	isAutoStampField,
-	isMultiple,
-	keywordPresenceKind,
-	isHiddenInfraSlot
+	isAutoStampField
 } from './shared.ts';
+import type { BranchSlotClass } from './shared.ts';
 import type {
 	PolymorphVariantDescriptor,
 	PolymorphVariantMap
@@ -207,10 +205,11 @@ function shapeOf(
  * single-field direct-value factory signature.
  *
  * @remarks
- * Must mirror the detection logic in `emitFieldCarryingFactory` so the
- * validator dispatches the same way as the emitted factory. Hidden kinds
- * (`_`-prefixed), polymorph forms, multiple fields, and keyword-presence
- * fields are excluded.
+ * Uses the pre-computed `slotClass` attribute (set by
+ * `computeSlotClasses`) for the core classification, with
+ * compatibility guards (non-stamp field count, children count)
+ * that preserve the existing dispatch. Hidden kinds (`_`-prefixed)
+ * and container-shape branches are excluded.
  */
 function isSingleFieldDirect(
 	node: AssembledNode,
@@ -222,8 +221,8 @@ function isSingleFieldDirect(
 	if (node.children.length > 0) return false;
 	const nonStamp = node.fields.filter((f) => !isAutoStampField(f, nodeMap));
 	if (nonStamp.length !== 1) return false;
-	const sole = nonStamp[0]!;
-	return !isMultiple(sole) && keywordPresenceKind(sole, nodeMap) === null && !isHiddenInfraSlot(sole, nodeMap);
+	const sc = (node as { slotClass?: BranchSlotClass }).slotClass;
+	return sc?.tag === 'singleSlot' && sc.arity === 'singular';
 }
 
 function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {

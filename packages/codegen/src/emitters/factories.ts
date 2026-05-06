@@ -44,8 +44,7 @@ import {
 	keywordPresenceKind,
 	keywordPresenceValue,
 	keywordPresenceValues,
-	resolveHiddenKeywordLiteral,
-	isHiddenInfraSlot
+	resolveHiddenKeywordLiteral
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -1282,9 +1281,10 @@ function emitFieldCarryingFactory(
 	const configType = resolveConfigType(node, isPolymorphForm);
 
 	// Gap 5: Single-field-no-children factories take the value directly
-	// instead of a config object. Detection: exactly one non-stamp field
-	// (that is not keyword-presence) and no children. The signature becomes
-	// `fn(fieldName: T)` and the $with setter rebuilds via `fn(value)`.
+	// instead of a config object. Uses the pre-computed slotClass
+	// (set by computeSlotClasses) for the sole-slot reference. The
+	// signature becomes `fn(fieldName: T)` and the $with setter rebuilds
+	// via `fn(value)`.
 	const nonStampFields = fields.filter(
 		(f) => autoStampExpression(f, nodeMap) === undefined
 	);
@@ -1292,16 +1292,16 @@ function emitFieldCarryingFactory(
 	// (inner children of polymorph dispatchers) whose factories are called
 	// with config objects by the polymorph form wrapper. Also exclude
 	// polymorph forms and keyword-presence / multiple fields.
-	const isSingleFieldDirect =
+	const sc = 'slotClass' in node ? node.slotClass : undefined;
+	if (
 		nonStampFields.length === 1 &&
 		!hasChildren &&
 		!isPolymorphForm &&
 		!node.kind.startsWith('_') &&
-		!isMultiple(nonStampFields[0]!) &&
-		keywordPresenceKind(nonStampFields[0]!, nodeMap) === null &&
-		!isHiddenInfraSlot(nonStampFields[0]!, nodeMap);
-	if (isSingleFieldDirect) {
-		return emitSingleFieldFactory(node, fields, nonStampFields[0]!, nodeMap, kindEntries);
+		sc?.tag === 'singleSlot' &&
+		sc.arity === 'singular'
+	) {
+		return emitSingleFieldFactory(node, fields, sc.slot, nodeMap, kindEntries);
 	}
 
 	// `childrenUserConfigurable` is false when every required child
