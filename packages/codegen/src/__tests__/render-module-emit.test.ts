@@ -147,7 +147,8 @@ async function getRustTemplatesRs(): Promise<string> {
 	}
 
 	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
-	_rustTemplatesRs = emit.templatesRs.contents;
+	// Transport structs and render fns now live in transport.rs (spec 024 split).
+	_rustTemplatesRs = emit.transportRs.contents;
 	return _rustTemplatesRs;
 }
 

@@ -414,8 +414,6 @@ function renderDirectSupport(
 	kindIdByKind?: ReadonlyMap<string, number>
 ): string {
 	const lines: string[] = [];
-	lines.push(`use ::askama::Template as _AskamaTemplate;`);
-	lines.push('');
 	lines.push(`#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]`);
 	lines.push(`pub(crate) enum ResolvedFieldKind {`);
 	lines.push(`    #[default]`);
@@ -533,13 +531,13 @@ function renderDirectSupport(
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push('');
-		lines.push(`fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
+		lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
 		lines.push(
 			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
 		);
 		lines.push(`}`);
 		lines.push('');
-		lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
+		lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
 		lines.push(`    first_named_child_kind_id(node)`);
 		lines.push(
 			`        .and_then(|child_id| variant_for(node.type_.0, child_id))`
@@ -555,18 +553,18 @@ function renderDirectSupport(
 		lines.push(`}`);
 		lines.push('');
 		lines.push(
-			`fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
+			`pub(crate) fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
 		);
 		lines.push(`    None`);
 		lines.push(`}`);
 		lines.push('');
-		lines.push(`fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
+		lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
 		lines.push(
 			`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
 		);
 		lines.push(`}`);
 		lines.push('');
-		lines.push(`fn resolve_variant(node: &NodeData) -> &'static str {`);
+		lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
 		lines.push(`    first_named_child_kind_id(node)`);
 		lines.push(`        .and_then(|child_id| variant_for(node.type_.0, child_id))`);
 		lines.push(`        .unwrap_or("")`);
@@ -574,13 +572,13 @@ function renderDirectSupport(
 	}
 	lines.push('');
 	lines.push(
-		`fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
+		`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
-	lines.push(`    render_dispatch(node)`);
+	lines.push(`    super::dispatch::render_dispatch(node)`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {`
+		`pub(crate) fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {`
 	);
 	lines.push(`    ::askama::Error::Custom(`);
 	lines.push(
@@ -590,7 +588,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`
+		`pub(crate) fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(`    if let Some(text) = &node.text {`);
 	lines.push(`        return Ok(text.to_owned());`);
@@ -622,7 +620,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {`
+		`pub(crate) fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {`
 	);
 	lines.push(
 		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
@@ -636,7 +634,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {`
+		`pub(crate) fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {`
 	);
 	lines.push(
 		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
@@ -659,7 +657,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`
+		`pub(crate) fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(
 		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
@@ -671,12 +669,12 @@ function renderDirectSupport(
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(`fn is_join_flank_token(text: &str) -> bool {`);
+	lines.push(`pub(crate) fn is_join_flank_token(text: &str) -> bool {`);
 	lines.push(`    matches!(text, "," | ";")`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bool {`
+		`pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bool {`
 	);
 	lines.push(`    let fields = match &node.fields {`);
 	lines.push(`        Some(fields) => fields,`);
@@ -740,7 +738,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {`
+		`pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {`
 	);
 	lines.push(
 		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
@@ -778,7 +776,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {`
+		`pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {`
 	);
 	lines.push(
 		`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`
@@ -867,7 +865,7 @@ function renderDirectSupport(
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
-		`fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`
+		`pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
 	lines.push(
 		`    let fields_all_anon = node.fields.as_ref().map_or(true, |fields| {`
@@ -2241,6 +2239,10 @@ export function emitRenderModule(
 
 	// --- bridge.rs ---
 	// Field/child resolution helpers used by dispatch and templates.
+	// render_node_value calls render_dispatch — but that creates a circular
+	// dependency (bridge → dispatch → templates → bridge). Break the cycle
+	// by having render_node_value call super::dispatch::render_dispatch
+	// directly. The `use` import below makes this possible.
 	const bridgeRs = [
 		bridgeRsHeader(lang),
 		'',
@@ -2256,6 +2258,7 @@ export function emitRenderModule(
 		templatesRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
+		'use ::askama::Template as _AskamaTemplate;',
 		'use super::bridge::*;',
 		'',
 		filtersModule(),
@@ -2283,6 +2286,7 @@ export function emitRenderModule(
 		transportRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
+		'use ::askama::Template as _AskamaTemplate;',
 		'use super::bridge::*;',
 		'use super::dispatch::render_dispatch;',
 		'use super::templates::*;',

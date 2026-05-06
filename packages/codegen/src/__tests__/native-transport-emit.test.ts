@@ -351,7 +351,7 @@ describe('native transport emission', () => {
 				}
 			],
 			nodeMap
-		).templatesRs.contents;
+		).transportRs.contents;
 
 		expect(types).toContain(
 			'readonly $children?: readonly [Identifier.Transport];'
@@ -407,46 +407,51 @@ describe('native transport emission', () => {
 			makeMinimalNodeMap()
 		);
 
-		expect(emitted.templatesRs.contents).toContain('pub enum AnyTransport');
-		expect(emitted.templatesRs.contents).toContain('#[serde(tag = "$type")]');
-		expect(emitted.templatesRs.contents).toContain(
+		// Transport types live in transport.rs (spec 024 split).
+		expect(emitted.transportRs.contents).toContain('pub enum AnyTransport');
+		expect(emitted.transportRs.contents).toContain('#[serde(tag = "$type")]');
+		expect(emitted.transportRs.contents).toContain(
 			'CallExpression(CallExpressionTransport),'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'pub struct CallExpressionTransport'
 		);
 		// Phase 1/2 typed transport: single-kind fields use concrete types.
 		// callee references _expression (supertype) → ExpressionTransport.
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'pub callee: ExpressionTransport,'
 		);
 		// Literal variants are unit variants — no LiteralTransport payload.
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'#[serde(rename = ";")]\n    Literal0_3b,'
 		);
-		expect(emitted.templatesRs.contents).not.toContain(
+		expect(emitted.transportRs.contents).not.toContain(
 			'pub struct LiteralTransport'
 		);
-		expect(emitted.templatesRs.contents).toContain('from_transport');
-		expect(emitted.templatesRs.contents).toContain('pub fn render_transport');
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain('from_transport');
+		expect(emitted.transportRs.contents).toContain('pub fn render_transport');
+		expect(emitted.transportRs.contents).toContain(
 			'pub fn render_transport_parts'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'let node = node_data_from_transport(transport)?;'
 		);
-		expect(emitted.templatesRs.contents).toContain('render_dispatch(&node)');
-		expect(emitted.templatesRs.contents).not.toContain(
+		expect(emitted.transportRs.contents).toContain('render_dispatch(&node)');
+		expect(emitted.transportRs.contents).not.toContain(
 			'renderable native transport bridge pending'
 		);
+		// mod.rs re-exports from dispatch and transport (spec 024 split).
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use dispatch::render_dispatch;'
 		);
-		expect(emitted.templatesRs.contents).not.toContain(
+		expect(emitted.libRs.contents).toContain(
+			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
+		);
+		expect(emitted.transportRs.contents).not.toContain(
 			'AnyTransport::NodeData'
 		);
-		expect(emitted.templatesRs.contents).not.toContain('node_json');
-		expect(emitted.templatesRs.contents).not.toContain('JSON');
+		expect(emitted.transportRs.contents).not.toContain('node_json');
+		expect(emitted.transportRs.contents).not.toContain('JSON');
 	});
 
 	it('emits keyword-safe Rust transport identifiers with serde kind renames', () => {
@@ -461,11 +466,12 @@ describe('native transport emission', () => {
 			makeMinimalNodeMap()
 		);
 
-		expect(emitted.templatesRs.contents).toContain(
+		// Transport types live in transport.rs (spec 024 split).
+		expect(emitted.transportRs.contents).toContain(
 			'#[serde(rename = "self")]\n    Self_(Self_Transport),'
 		);
-		expect(emitted.templatesRs.contents).toContain('pub struct Self_Transport');
-		expect(emitted.templatesRs.contents).not.toContain(
+		expect(emitted.transportRs.contents).toContain('pub struct Self_Transport');
+		expect(emitted.transportRs.contents).not.toContain(
 			'\n    Self(SelfTransport),'
 		);
 	});
@@ -481,11 +487,12 @@ describe('native transport emission', () => {
 			],
 			makeRequiredChildrenNodeMap()
 		);
-		const start = emitted.templatesRs.contents.indexOf(
+		// Transport structs live in transport.rs (spec 024 split).
+		const start = emitted.transportRs.contents.indexOf(
 			'pub struct ChildParentTransport'
 		);
-		const end = emitted.templatesRs.contents.indexOf('}', start);
-		const structBody = emitted.templatesRs.contents.slice(start, end);
+		const end = emitted.transportRs.contents.indexOf('}', start);
+		const structBody = emitted.transportRs.contents.slice(start, end);
 
 		// Phase 1/2 typed transport: single-kind children use concrete type.
 		// Required single-child slots use bare T — not Vec<T> or Option<T>.
@@ -512,29 +519,30 @@ describe('native transport emission', () => {
 			makePolymorphNodeMap()
 		);
 
-		expect(emitted.templatesRs.contents).toContain(
+		// Transport types live in transport.rs (spec 024 split).
+		expect(emitted.transportRs.contents).toContain(
 			'pub enum ExpressionTransport'
 		);
 		// Phase D: polymorph transport uses custom FromNapiValue dispatch on "$variant"
 		// instead of serde tag (napi-bindings take over the JS boundary in Phase B/C).
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'impl ::napi::bindgen_prelude::FromNapiValue for ExpressionTransport'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'"left_form" => Ok(Self::ExpressionUFormLeft('
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'ExpressionUFormLeft(ExpressionUFormLeftTransport),'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'pub struct ExpressionUFormLeftTransport'
 		);
 		// Phase 1: single-kind fields emit concrete types instead of Box<AnyTransport>.
 		// left and right both reference only 'identifier' → IdentifierTransport.
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'pub left: IdentifierTransport,'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.transportRs.contents).toContain(
 			'pub right: IdentifierTransport,'
 		);
 	});
@@ -551,7 +559,7 @@ describe('native transport emission', () => {
 				}
 			],
 			nodeMap
-		).templatesRs.contents;
+		).transportRs.contents;
 
 		expect(types).toContain(
 			'export type Transport = TerminalTransport<number, "true">;'
