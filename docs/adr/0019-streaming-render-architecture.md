@@ -109,6 +109,29 @@ Phase 1 lands with the trivia follow-up. Phases 2+3 are a separate
 spec (render perf optimization) — they touch every per-kind render
 function and the emitter that generates them.
 
+## Phase 4: Lint and warning cleanup
+
+The generated Rust render crates carry ~80 warnings (46 rust, 30
+typescript, 6 python) — primarily unreachable `match` arms where
+the codegen emitter produces duplicate kind-id entries (e.g.,
+alias-collapsed kinds that share the same numeric id as their
+canonical source).
+
+These should be addressed as part of the render module cleanup:
+
+- **Unreachable match arms**: the emitter should deduplicate kind-id
+  entries or emit `#[allow(unreachable_patterns)]` selectively on
+  the affected match block (not file-wide).
+- **Dead code warnings**: `render_xxx` functions for alias-collapsed
+  kinds that are never called from `render_dispatch`. The emitter
+  should skip emission for these kinds.
+- **Unused variable warnings**: generated transport structs with
+  fields that are only read in debug mode. Use `let _ = field;`
+  or conditional compilation.
+
+Goal: `cargo build --release` with zero warnings across all three
+grammar crates.
+
 ## Alternatives considered
 
 - **Keep `String` returns everywhere** — simpler API, but 6-7x more
