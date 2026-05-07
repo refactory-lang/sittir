@@ -91,6 +91,107 @@ pub struct NodeTrivia {
     pub trailing: Option<Vec<NodeData>>,
 }
 
+/// Trivia data for transport — carries only the text strings.
+/// The JS side sends `$triviaData: { leading: [{$text: "..."},…], trailing: [{$text: "..."},…] }`.
+/// `TransportTrivia` extracts just the `$text` from each entry, avoiding the need for
+/// full `NodeData` deserialization (and `serde_json::Value`) in the transport layer.
+///
+/// The bridge function converts `TransportTrivia` → `NodeTrivia` by wrapping
+/// each text string in a minimal `NodeData { text: Some(text), type_: KindId(0), … }`.
+#[derive(Debug, Clone, Default)]
+pub struct TransportTrivia {
+    pub leading: Option<Vec<String>>,
+    pub trailing: Option<Vec<String>>,
+}
+
+impl TransportTrivia {
+    /// Convert to `NodeTrivia` by wrapping each text string in a minimal
+    /// `NodeData` with `type_: KindId(0)` (trivia items render as raw text).
+    fn trivia_texts_to_nodes(texts: Vec<String>) -> Vec<NodeData> {
+        texts.into_iter().map(|text| NodeData {
+            type_: KindId(0),
+            source: Source::Factory,
+            named: false,
+            fields: None,
+            children: None,
+            text: Some(text),
+            span: None,
+            node_handle: None,
+            child_index: None,
+            trivia_data: None,
+        }).collect()
+    }
+
+    /// Convert this transport trivia into the engine's `NodeTrivia` type.
+    pub fn into_node_trivia(self) -> NodeTrivia {
+        NodeTrivia {
+            leading: self.leading.map(Self::trivia_texts_to_nodes),
+            trailing: self.trailing.map(Self::trivia_texts_to_nodes),
+        }
+    }
+}
+
+/// Read an array of JS objects, extracting the `$text` string from each.
+/// Returns `None` if the array is absent or empty.
+#[cfg(feature = "napi-bindings")]
+fn read_trivia_texts(obj: &::napi::bindgen_prelude::Object, key: &str) -> ::napi::Result<Option<Vec<String>>> {
+    let arr: Option<Vec<::napi::bindgen_prelude::Object>> = obj.get(key)?;
+    match arr {
+        None => Ok(None),
+        Some(items) => {
+            let mut texts = Vec::with_capacity(items.len());
+            for item in &items {
+                let text: Option<String> = item.get("$text")?;
+                if let Some(t) = text {
+                    texts.push(t);
+                }
+            }
+            if texts.is_empty() {
+                Ok(None)
+            } else {
+                Ok(Some(texts))
+            }
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::FromNapiValue for TransportTrivia {
+    unsafe fn from_napi_value(
+        env: ::napi::sys::napi_env,
+        napi_val: ::napi::sys::napi_value,
+    ) -> ::napi::Result<Self> {
+        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;
+        let leading = read_trivia_texts(&obj, "leading")?;
+        let trailing = read_trivia_texts(&obj, "trailing")?;
+        Ok(TransportTrivia { leading, trailing })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ToNapiValue for TransportTrivia {
+    unsafe fn to_napi_value(
+        env: ::napi::sys::napi_env,
+        _val: Self,
+    ) -> ::napi::Result<::napi::sys::napi_value> {
+        // Transport is receive-only (JS→Rust); stub satisfies trait bounds.
+        ::napi::bindgen_prelude::ToNapiValue::to_napi_value(env, ())
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::ValidateNapiValue for TransportTrivia {}
+
+#[cfg(feature = "napi-bindings")]
+impl ::napi::bindgen_prelude::TypeName for TransportTrivia {
+    fn type_name() -> &'static str {
+        "TransportTrivia"
+    }
+    fn value_type() -> ::napi::ValueType {
+        ::napi::ValueType::Object
+    }
+}
+
 /// Primitive NodeData — the wire shape. Ten `$`-prefixed top-level
 /// fields (nine structural + `$triviaData`). Enrichment (`$variant`,
 /// etc.) is TS-side only.

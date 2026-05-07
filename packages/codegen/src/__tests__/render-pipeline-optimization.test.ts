@@ -111,13 +111,14 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 			"pub struct FunctionItemTemplate<'a> {"
 		);
 		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
+		// T009: module-level `use` imports — short names.
 		expect(emitted.templatesRs.contents).toContain(
-			"    pub name: ::sittir_core::filters::SingleNonterminalView<'a>,"
+			"    pub name: SingleNonterminalView<'a>,"
 		);
 		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain(
-			"    pub children: ::sittir_core::filters::ListView<'a>,"
+			"    pub children: ListView<'a>,"
 		);
 		expect(emitted.templatesRs.contents).not.toContain("    pub name_list: &'a [String],");
 		expect(emitted.templatesRs.contents).not.toContain("    pub name_leading_sep: bool,");
@@ -175,31 +176,37 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.templatesRs.contents).toContain(
 			'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
 		);
-		expect(emitted.templatesRs.contents).toContain('fn resolve_leaf');
-		expect(emitted.templatesRs.contents).toContain('fn resolve_optional');
-		expect(emitted.templatesRs.contents).toContain('fn resolve_required');
-		expect(emitted.templatesRs.contents).toContain('fn missing_required_field');
-		expect(emitted.templatesRs.contents).toContain('fn resolve_children');
-		expect(emitted.templatesRs.contents).toContain(
-			'pub fn render_dispatch(node: &::sittir_core::types::NodeData)'
+		// Bridge helpers live in bridge.rs (spec 024 split).
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_leaf');
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_optional');
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
+		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
+		expect(emitted.bridgeRs.contents).toContain('fn resolve_children');
+		// render_dispatch lives in dispatch.rs (spec 024 split).
+		expect(emitted.dispatchRs.contents).toContain(
+			'pub fn render_dispatch(node: &NodeData)'
 		);
 		expect(emitted.templatesRs.contents).toContain('fn render_function_item(');
 		// Phase D: dispatch uses numeric KindId (42) not string "function_item".
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.dispatchRs.contents).toContain(
 			'42 => render_function_item(node)'
 		);
 		expect(emitted.templatesRs.contents).toContain(
 			'resolve_field(node, "name", true)'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		expect(emitted.bridgeRs.contents).toContain(
 			`format!("render_dispatch: missing required field '{}' on '{}'", name, node.type_)`
 		);
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain(
 			'pub struct RustGrammarMeta'
 		);
+		// mod.rs re-exports from dispatch and transport (spec 024 split).
 		expect(emitted.libRs.contents).toContain(
-			'pub use templates::{render_dispatch, render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
+			'pub use dispatch::render_dispatch;'
+		);
+		expect(emitted.libRs.contents).toContain(
+			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
 		expect(emitted.libRs.contents).not.toContain('RustGrammarMeta');
 	});

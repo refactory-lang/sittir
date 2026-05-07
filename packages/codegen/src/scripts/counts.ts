@@ -24,7 +24,7 @@ async function runGrammar(grammar: string): Promise<string> {
 	const tp = templatesPath(grammar);
 	const [from, rt, cov, fac] = await Promise.all([
 		validateFrom(grammar),
-		validateRoundTrip(grammar, tp),
+		validateRoundTrip(grammar, tp, { backend: 'native' }),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
 		validateFactoryRoundTrip(grammar, tp)
 	]);

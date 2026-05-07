@@ -1,0 +1,225 @@
+# Research: Streaming Render Architecture
+
+## R0: File split — templates.rs monolith
+
+**Decision**: Split each grammar's `templates.rs` (~40K lines) into 4 files.
+
+**Current**: One `templates.rs` per grammar containing:
+- Askama template structs + per-kind render functions (~60%)
+- `AnyTransport` enum + `FromNapiValue` impls (~25%)
+- Dispatch tables (`render_dispatch`, `render_transport_dispatch`) (~5%)
+- Bridge helpers (`transport_node_data`, field/child resolution) (~10%)
+
+**After split**:
+
+| File | Contents | ~Lines |
+|---|---|---|
+| `templates.rs` | Template structs + per-kind render functions | ~25K |
+| `transport.rs` | `AnyTransport` enum + `FromNapiValue` + transport dispatch | ~10K |
+| `dispatch.rs` | `render_dispatch` / `render_into` match table | ~1K |
+| `bridge.rs` | `transport_node_data` + field/child helpers | ~2K |
+
+**Rationale**: 40K-line files are unmaintainable. The split aligns with
+the streaming migration — `dispatch.rs` gets the new streaming signatures,
+`templates.rs` gets `write_into`, `transport.rs` can be simplified after
+unification. Each file has one clear responsibility.
+
+**Emitter impact**: `render-module.ts` currently emits one string for all
+of `templates.rs`. After split, it emits 4 strings keyed by filename.
+The `RustRenderModuleEmit` return type gains new fields.
+
+## R0b: Simplify core module references with `use` imports
+
+**Decision**: Add `use sittir_core::{filters, types}` imports at the top
+of each generated file. Replace `::sittir_core::filters::Renderable` with
+`Renderable`, etc.
+
+**Current**: 3,170+ fully-qualified `::sittir_core::` paths in Rust's
+`templates.rs` alone. Every field reference, every filter call, every
+type annotation uses the full path.
+
+**After**: Module-level imports at the top of each generated file:
+```rust
+use sittir_core::filters::{
+    Renderable, SingleNonterminalView, ListNonterminalView,
+    joinby, joinWithTrailing, Joined, JoinSource,
+};
+use sittir_core::types::{
+    NodeData, FieldValue, KindId, Source, RenderableTransport,
+};
+```
+
+Then inline references shorten from:
+```rust
+::sittir_core::filters::SingleNonterminalView(::sittir_core::filters::Renderable::Transport(...))
+```
+to:
+```rust
+SingleNonterminalView(Renderable::Transport(...))
+```
+
+**Rationale**: Fully-qualified paths are defensive against name collisions
+but these are generated files in dedicated render modules — no collision
+risk. The short names make the generated code more readable and reduce
+file size by ~30%.
+
+**Emitter impact**: One-time change in `render-module.ts` — emit a `use`
+block at the top of each file, then reference short names everywhere.
+
+## R0d: Inline render_xxx_transport into RenderableTransport::render_into
+
+**Decision**: Eliminate standalone `render_xxx_transport` functions. Inline
+template construction directly into each transport struct's `render_into` impl.
+
+**Current** (two functions, two String allocations):
+```rust
+impl RenderableTransport for IndexExpressionTransport {
+    fn render_into(&self, dest: &mut dyn Write) -> Result<(), Error> {
+        let s = render_index_expression_transport(self)?;
+        dest.write_str(&s)
+    }
+}
+fn render_index_expression_transport(t: &IndexExpressionTransport) -> Result<String, Error> {
+    let template = IndexExpressionTemplate { /* from t */ };
+    template.render()
+}
+```
+
+**After** (one impl, zero allocation):
+```rust
+impl RenderableTransport for IndexExpressionTransport {
+    fn render_into(&self, dest: &mut dyn Write) -> Result<(), Error> {
+        let template = IndexExpressionTemplate { /* from self */ };
+        template.write_into(dest)
+    }
+}
+```
+
+**Rationale**: The standalone functions exist only because the emitter
+generates them as a convenience. After streaming, they're dead code —
+`render_transport_dispatch` calls `t.render_into(dest)` directly, and
+`render_into` should construct the template and stream. No intermediate
+function, no String, no indirection.
+
+**Emitter impact**: In `render-module.ts`, change per-kind transport
+emission from "emit standalone function + impl calling it" to "emit impl
+with inline template construction."
+
+## R0e: Redundant trait object casts
+
+**Decision**: Remove `as &dyn RenderableTransport` casts from generated
+transport field references.
+
+**Current**:
+```rust
+SingleNonterminalView(Renderable::Transport(&node.argument as &dyn RenderableTransport))
+```
+
+**After**:
+```rust
+SingleNonterminalView(Renderable::Transport(&node.argument))
+```
+
+**Rationale**: Rust auto-coerces `&T` to `&dyn Trait` when `T: Trait` is
+in scope. Every transport struct implements `RenderableTransport`, so the
+explicit cast is noise. The emitter generates these casts defensively —
+they should be dropped.
+
+**Emitter impact**: One-line change in `render-module.ts` where field
+references are emitted for transport template construction.
+
+## R1: Askama write_into vs render
+
+**Decision**: Use `template.write_into(dest)` instead of `template.render()`.
+
+**Rationale**: Askama `Template` trait provides both:
+- `fn render(&self) -> Result<String>` — allocates a new `String`
+- `fn write_into(&self, dest: &mut dyn Write) -> Result<()>` — writes directly
+
+`render()` internally creates a `String` and calls `write_into` on it.
+Using `write_into` directly skips the intermediate allocation.
+
+**Constraint**: `write_into` uses `std::fmt::Write`, not `std::io::Write`.
+`String` implements `std::fmt::Write`, so the caller pattern is:
+```rust
+let mut buf = String::new();
+template.write_into(&mut buf)?;
+```
+
+## R2: Per-kind function signature migration
+
+**Decision**: Change from `fn render_xxx(node) -> Result<String>` to
+`fn render_xxx(node, dest: &mut dyn fmt::Write) -> Result<()>`.
+
+**Impact**: ~200+ per-kind functions per grammar, all generated by
+`render-module.ts`. One emitter change, three grammar outputs.
+
+**Key finding**: The existing `render_dispatch` returns `Result<String>`.
+Callers (`render_node_data`, `EngineGrammar::render`) call it and get a
+String. After migration:
+- `render_dispatch_into(node, dest)` writes to dest
+- A wrapper `render_dispatch(node) -> Result<String>` calls `render_dispatch_into`
+  with a `String` buffer for backward compatibility
+
+## R3: Dispatch table unification
+
+**Decision**: Merge `render_dispatch` (for `NodeData`) and
+`render_transport_dispatch` (for `AnyTransport`) into one path.
+
+**Current state**:
+- `render_dispatch(node: &NodeData) -> Result<String>` — matches on `node.type_.0`
+- `render_transport_dispatch(transport: AnyTransport, dest: &mut dyn Write)` — matches enum variants
+
+**After unification**: Transport `FromNapiValue` produces `NodeData`.
+One dispatch function handles both paths:
+```rust
+pub fn render_into(node: &NodeData, dest: &mut dyn fmt::Write) -> Result<(), Error> {
+    match node.type_.0 {
+        42 => render_function_item(node, dest),
+        ...
+    }
+}
+```
+
+**Blocker**: The `RenderableTransport::render_into` impl currently calls
+`render_xxx_transport(self)` which returns String — circular. After
+unification, the transport structs convert to `NodeData` and go through
+the single dispatch.
+
+## R4: Warning sources
+
+**Decision**: Fix in the codegen emitter, not with `#[allow(...)]`.
+
+**Inventory** (from `cargo build --release`):
+- **Rust**: 46 warnings — unreachable match arms from alias-collapsed kinds
+- **TypeScript**: 30 warnings — same pattern
+- **Python**: 6 warnings — same pattern
+
+**Root cause**: The emitter generates separate match arms for both the
+canonical hidden kind (`_as_pattern`) and its visible alias (`as_pattern`)
+using the same numeric KindId. Tree-sitter collapses them to one id.
+
+**Fix**: In `render-module.ts`, deduplicate match arms by KindId. When
+two kinds share an id, emit one arm with a comment listing both names.
+
+## R5: Trivia inlining
+
+**Decision**: Write trivia `$text` directly to dest — no dispatch, no
+function call, no allocation.
+
+**Current path**: `render_node_data` → `render_trivia_items` → `Vec<String>` → `format!("{leading}\n{result}")`.
+
+**After**: Inline in `render_node_data`:
+```rust
+if let Some(ref t) = node.trivia_data {
+    if let Some(ref leading) = t.leading {
+        for item in leading {
+            dest.write_str(item.text.as_deref().unwrap_or(""))?;
+            dest.write_str("\n")?;
+        }
+    }
+}
+```
+
+Comments are always leaves — `$text` is the entire rendered content.
+No template dispatch needed.
