@@ -63,7 +63,7 @@ export interface RenderHandle {
 
 function createRenderHandle(
 	renderText: () => string,
-	saveImpl?: (path: string, text: string) => void
+	saveImpl?: (path: string) => boolean
 ): RenderHandle {
 	let cached: string | undefined;
 	function getText(): string {
@@ -72,11 +72,10 @@ function createRenderHandle(
 	}
 	return {
 		save(path: string): void {
-			const text = getText();
-			if (saveImpl) {
-				saveImpl(path, text);
+			if (saveImpl?.(path) === true) {
 				return;
 			}
+			const text = getText();
 			writeFileSync(path, text, 'utf8');
 		},
 		toString(): string {
@@ -180,12 +179,12 @@ function getNativeEngine(
 			}
 			return createRenderHandle(
 				() => engine.render(transport),
-				(path, text) => {
+				(path) => {
 					if (engine.renderToFile) {
 						engine.renderToFile(transport, path);
-						return;
+						return true;
 					}
-					writeFileSync(path, text, 'utf8');
+					return false;
 				}
 			);
 		}

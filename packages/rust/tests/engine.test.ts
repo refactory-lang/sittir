@@ -201,14 +201,15 @@ describe('engine', () => {
 
 	it('native render handle save delegates to engine-side renderToFile', async () => {
 		const renderToFile = vi.fn();
+		const render = vi.fn((_node: Record<string, unknown>) => 'fn main() {}');
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'fn main() {}';
+						render(node: Record<string, unknown>): string {
+							return render(node);
 						}
 						renderToFile(nodeData: Record<string, unknown>, path: string): void {
 							renderToFile(nodeData, path);
@@ -240,6 +241,7 @@ describe('engine', () => {
 
 		rendered.save('/tmp/sittir-rust-render.txt');
 		expect(renderToFile).toHaveBeenCalledOnce();
+		expect(render).not.toHaveBeenCalled();
 		expect(renderToFile).toHaveBeenCalledWith(
 			expect.objectContaining({ $type: TSKindId.Identifier }),
 			'/tmp/sittir-rust-render.txt'
