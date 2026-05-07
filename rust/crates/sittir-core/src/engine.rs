@@ -190,12 +190,12 @@ impl<G: EngineGrammar> ParsedTree<G> {
         node: &NodeData,
         canonical: String,
     ) -> Result<String, String> {
-        let effective_format =
-            resolve_render_format(node, None, self.format.as_ref());
-        Ok(match effective_format {
-            Some(format) => apply_format(&canonical, format),
-            None => canonical,
-        })
+        Ok(apply_render_format(
+            node.source,
+            canonical,
+            None,
+            self.format.as_ref(),
+        ))
     }
 
     /// Access the detected format record (if any).
@@ -246,6 +246,11 @@ impl<G: EngineGrammar> Engine<G> {
         self.grammar.template_bundle_hash()
     }
 
+    /// Access the engine-level format override (if any).
+    pub fn engine_format(&self) -> Option<&FormatRecord> {
+        self.engine_format.as_ref()
+    }
+
     /// Parse source and return an owned `ParsedTree`.
     pub fn parse(&mut self, source: String) -> Result<ParsedTree<G>, String> {
         let tree = self.parser.parse(&source, None).ok_or_else(|| {
@@ -274,15 +279,12 @@ impl<G: EngineGrammar> Engine<G> {
         canonical: String,
         tree_format: Option<&FormatRecord>,
     ) -> Result<String, String> {
-        let effective_format = resolve_render_format(
-            node,
+        Ok(apply_render_format(
+            node.source,
+            canonical,
             self.engine_format.as_ref(),
             tree_format,
-        );
-        Ok(match effective_format {
-            Some(format) => apply_format(&canonical, format),
-            None => canonical,
-        })
+        ))
     }
 
     pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String, String> {
@@ -290,18 +292,47 @@ impl<G: EngineGrammar> Engine<G> {
     }
 }
 
-fn resolve_render_format<'a>(
-    node: &NodeData,
+/// Resolve the effective format from source provenance alone — no NodeData
+/// required. Engine-level format takes priority; tree-level format applies
+/// only to non-factory nodes (readNode output). Factory-constructed nodes
+/// get no tree format (they had no original source to preserve).
+fn resolve_render_format_from_source<'a>(
+    source: Source,
     engine_format: Option<&'a FormatRecord>,
     tree_format: Option<&'a FormatRecord>,
 ) -> Option<&'a FormatRecord> {
     if let Some(format) = engine_format {
         return Some(format);
     }
-    if !matches!(node.source, Source::Factory) {
+    if !matches!(source, Source::Factory) {
         return tree_format;
     }
     None
+}
+
+/// Apply format to a pre-rendered canonical string using scalar parameters
+/// instead of `&NodeData`. This is the public standalone API for format
+/// application — callers that have KindId + Source + Span from any source
+/// (transport structs, readNode output, etc.) can apply format without
+/// constructing a full `NodeData`.
+///
+/// Parameters:
+/// - `source` — provenance of the node (Ts/Sg/Factory). Controls whether
+///   tree-level format is applied.
+/// - `canonical` — the template-rendered string to format.
+/// - `engine_format` — engine-wide format override (highest priority).
+/// - `tree_format` — tree-level format detected from parsed source.
+pub fn apply_render_format(
+    source: Source,
+    canonical: String,
+    engine_format: Option<&FormatRecord>,
+    tree_format: Option<&FormatRecord>,
+) -> String {
+    let effective_format = resolve_render_format_from_source(source, engine_format, tree_format);
+    match effective_format {
+        Some(format) => apply_format(&canonical, format),
+        None => canonical,
+    }
 }
 
 pub fn panic_msg(payload: Box<dyn std::any::Any + Send>, fallback: &str) -> String {

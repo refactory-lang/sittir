@@ -29,4 +29,4 @@ pub use types::KindId;
 pub use types::RenderableTransport;
 // ADR-0017: ParsedTree is the owned parse result; StoredNode is the
 // node handle enum. ParseResult is the JSON envelope for parse_and_read.
-pub use engine::{panic_msg, ParseResult, ParsedTree, StoredNode};
+pub use engine::{apply_render_format, panic_msg, ParseResult, ParsedTree, StoredNode};
