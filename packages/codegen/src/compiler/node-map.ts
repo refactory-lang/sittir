@@ -233,8 +233,8 @@ export function snakeToCamel(name: string): string {
  * stays singular (tree-sitter facing).
  */
 export function pluralize(name: string): string {
-	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children')) return name;
-	if (name.endsWith('child')) return name.slice(0, -5) + 'children';
+	if (name.endsWith('s') || name.endsWith('List') || name.endsWith('children') || name.endsWith('Children')) return name;
+	if (/[Cc]hild$/.test(name)) return name.slice(0, -5) + (name.endsWith('Child') ? 'Children' : 'children');
 	if (name.endsWith('y') && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + 'ies';
 	return name + 's';
 }

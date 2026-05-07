@@ -1588,9 +1588,9 @@ function renderTypedDispatch(
 		const isEnumNode = node instanceof AssembledEnum && !isSingleMemberEnum(node);
 		const isSingleBoolEnum = node instanceof AssembledEnum && isSingleMemberEnum(node);
 		if (isLeafLikeNode) {
-			// Leaf/keyword/token: write text field directly — no String intermediate.
+			// Leaf/keyword/token: route through render_into so render_with_trivia! fires.
 			lines.push(
-				`            AnyTransport::${variant}(t) => dest.write_str(&t.text).map_err(::askama::Error::from),`
+				`            AnyTransport::${variant}(t) => t.render_into(dest),`
 			);
 		} else if (isEnumNode) {
 			// Multi-member enum: delegate to its RenderableTransport impl which

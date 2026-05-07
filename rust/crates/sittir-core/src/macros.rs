@@ -13,7 +13,7 @@
 ///
 /// ```rust,ignore
 /// fn render_into(&self, dest: &mut dyn std::fmt::Write) -> Result<(), ::askama::Error> {
-///     render_with_trivia!(self, dest, render_xxx_transport(self, dest))
+///     render_with_trivia!(self, dest, render_xxx(self, dest))
 /// }
 /// ```
 ///
