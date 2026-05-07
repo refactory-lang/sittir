@@ -98,19 +98,11 @@ When a parent node renders a child that has `$trivia` attached, the child's triv
 - **FR-004**: Per-kind `render_xxx(node: &NodeData)` functions in `templates.ts` MUST be removed — only template struct definitions remain.
 - **FR-005**: `EngineGrammar::render` trait method MUST be updated to render via streaming (construct template from NodeData fields inline, call `write_into`).
 - **FR-006**: `node_data_from_transport` MUST be removed after all callers are eliminated.
-- **FR-007**: Trivia wrapping MUST occur AFTER format application at the top level (correct order: render → format → trivia).
+- **FR-007**: Trivia wrapping MUST occur AFTER format application at the top level (`render_node_data` path only — children don't get format, only trivia via macro).
 - **FR-011**: Nested trivia MUST be applied during child rendering via `render_with_trivia!` macro in every `RenderableTransport::render_into` impl.
 - **FR-012**: A single `render_with_trivia!` macro in `sittir-core` MUST handle trivia wrapping per child node (write leading → render → write trailing). Each `RenderableTransport::render_into` impl is one macro call. Format is decoupled (top-level only, not per-child).
 - **FR-013**: Trivia and format MUST be decoupled. Trivia streams directly (no buffer). Format uses buffer approach for parsed nodes only (top-level, not threaded through children).
 - **FR-014**: `Renderable::Transport` does NOT carry a RenderContext for now. Trivia is handled by the macro reading `transport_trivia_data` directly. Format stays in `render_node_data` (parsed path only).
-## Follow-up (post-implementation)
-
-**Streaming format via template variables**: `indent`/`dedent` are existing
-grammar kinds whose positions are already known in the rule tree. The template
-already renders `{{ indent }}` at those positions. A future format config
-supplies the text value (`"\n    "` or `""`) — no post-processing, no buffer,
-fully streaming. Detection is free (kinds already exist in overrides). This
-eliminates the buffer-based format approach entirely.
 - **FR-008**: All existing validator counts MUST hold or improve.
 - **FR-009**: `cargo build --release` MUST produce zero warnings.
 - **FR-010**: Rendered output MUST be byte-identical for all corpus nodes.
@@ -132,3 +124,12 @@ eliminates the buffer-based format approach entirely.
 - **SC-005**: All validator counts hold (native backend).
 - **SC-006**: Zero Rust warnings.
 - **SC-007**: Trivia order is correct: render → format → trivia (matching TS renderer).
+
+## Follow-up (post-implementation)
+
+**Streaming format via template variables**: `indent`/`dedent` are existing
+grammar kinds whose positions are already known in the rule tree. The template
+already renders `{{ indent }}` at those positions. A future format config
+supplies the text value (`"\n    "` or `""`) — no post-processing, no buffer,
+fully streaming. Detection is free (kinds already exist in overrides). This
+eliminates the buffer-based format approach entirely.

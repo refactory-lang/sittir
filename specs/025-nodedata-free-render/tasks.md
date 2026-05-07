@@ -41,7 +41,7 @@
 
 - [ ] T010 [US3] In emitter, stop emitting per-kind `render_xxx(node: &NodeData) -> Result<String>` functions in templates.ts output. Templates.ts becomes struct definitions only.
 - [ ] T011 [US3] In emitter, stop emitting `render_dispatch` match table in `dispatch.rs`. Delete `dispatch.rs` output entirely.
-- [ ] T012 [US3] Emit a new `render_nodedata_into(node: &NodeData, dest: &mut dyn Write) -> Result<()>` in `bridge.rs` (or inline in dispatch.rs replacement) — constructs template from NodeData fields and calls `write_into(dest)`. This replaces `render_dispatch`.
+- [ ] T012 [US3] Emit `render_nodedata_into(node: &NodeData, dest: &mut dyn Write) -> Result<()>` in `rust/crates/sittir-{lang}/src/render/bridge.rs` — constructs template from NodeData fields and calls `write_into(dest)`. This replaces `render_dispatch`.
 - [ ] T013 [US3] Update `EngineGrammar::render` trait impl to call `render_nodedata_into` with a String buffer instead of `render_dispatch`.
 - [ ] T014 [US3] Regen all grammars + `cargo build --release` — zero warnings, zero errors. Validator counts hold (native backend).
 
