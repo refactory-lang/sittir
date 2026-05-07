@@ -491,7 +491,9 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(
 		`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
-	lines.push(`    super::dispatch::render_dispatch(node)`);
+	lines.push(`    let mut buf = String::new();`);
+	lines.push(`    render_nodedata_into(node, &mut buf)?;`);
+	lines.push(`    Ok(buf)`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(
@@ -499,7 +501,7 @@ function renderFieldResolutionHelpers(): string[] {
 	);
 	lines.push(`    ::askama::Error::Custom(`);
 	lines.push(
-		`        format!("render_dispatch: missing required field '{}' on '{}'", name, node.type_).into(),`
+		`        format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_).into(),`
 	);
 	lines.push(`    )`);
 	lines.push(`}`);
@@ -906,61 +908,67 @@ function renderTokenFallback(): string[] {
 	lines.push(
 		`pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`
 	);
+	lines.push(`    let mut buf = String::new();`);
+	lines.push(`    token_shaped_fallback_into(node, &mut buf)?;`);
+	lines.push(`    Ok(buf)`);
+	lines.push(`}`);
+	return lines;
+}
+
+function renderTokenFallbackInto(): string[] {
+	const lines: string[] = [];
 	lines.push(
-		`    let fields_all_anon = node.fields.as_ref().map_or(true, |fields| {`
+		`pub(crate) fn token_shaped_fallback_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`
 	);
+	lines.push(`    let fields_all_anon = node.fields.as_ref().map_or(true, |fields| {`);
 	lines.push(`        fields.values().all(|value| match value {`);
 	lines.push(`            FieldValue::Single(item) => !item.named,`);
-	lines.push(
-		`            FieldValue::Multiple(items) => items.iter().all(|item| !item.named),`
-	);
+	lines.push(`            FieldValue::Multiple(items) => items.iter().all(|item| !item.named),`);
 	lines.push(`            FieldValue::Text(_) => true,`);
 	lines.push(`        })`);
 	lines.push(`    });`);
-	lines.push(
-		`    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));`
-	);
+	lines.push(`    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));`);
 	lines.push(`    if fields_all_anon && children_all_anon {`);
 	lines.push(`        if let Some(text) = &node.text {`);
-	lines.push(`            return Ok(text.to_owned());`);
+	lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
 	lines.push(`        }`);
-	lines.push(`        let mut parts = Vec::new();`);
+	lines.push(`        let mut wrote_any = false;`);
 	lines.push(`        if let Some(fields) = &node.fields {`);
 	lines.push(`            for value in fields.values() {`);
 	lines.push(`                match value {`);
 	lines.push(`                    FieldValue::Single(item) => {`);
 	lines.push(`                        if let Some(text) = &item.text {`);
-	lines.push(`                            parts.push(text.to_owned());`);
+	lines.push(`                            dest.write_str(text).map_err(::askama::Error::from)?;`);
+	lines.push(`                            wrote_any = true;`);
 	lines.push(`                        }`);
 	lines.push(`                    }`);
 	lines.push(`                    FieldValue::Multiple(items) => {`);
 	lines.push(`                        for item in items {`);
 	lines.push(`                            if let Some(text) = &item.text {`);
-	lines.push(`                                parts.push(text.to_owned());`);
+	lines.push(`                                dest.write_str(text).map_err(::askama::Error::from)?;`);
+	lines.push(`                                wrote_any = true;`);
 	lines.push(`                            }`);
 	lines.push(`                        }`);
 	lines.push(`                    }`);
-	lines.push(
-		`                    FieldValue::Text(text) => parts.push(text.to_owned()),`
-	);
+	lines.push(`                    FieldValue::Text(text) => {`);
+	lines.push(`                        dest.write_str(text).map_err(::askama::Error::from)?;`);
+	lines.push(`                        wrote_any = true;`);
+	lines.push(`                    }`);
 	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(`        if let Some(children) = &node.children {`);
 	lines.push(`            for child in children {`);
 	lines.push(`                if let Some(text) = &child.text {`);
-	lines.push(`                    parts.push(text.to_owned());`);
+	lines.push(`                    dest.write_str(text).map_err(::askama::Error::from)?;`);
+	lines.push(`                    wrote_any = true;`);
 	lines.push(`                }`);
 	lines.push(`            }`);
 	lines.push(`        }`);
-	lines.push(`        if !parts.is_empty() {`);
-	lines.push(`            return Ok(parts.join(""));`);
-	lines.push(`        }`);
+	lines.push(`        if wrote_any { return Ok(()); }`);
 	lines.push(`    }`);
 	lines.push(`    Err(::askama::Error::Custom(`);
-	lines.push(
-		`        format!("render_dispatch: no template for kind '{}'", node.type_).into(),`
-	);
+	lines.push(`        format!("render_nodedata_into: no template for kind '{}'", node.type_).into(),`);
 	lines.push(`    ))`);
 	lines.push(`}`);
 	return lines;
@@ -989,6 +997,8 @@ function renderDirectSupport(
 		...renderSeparatorLookup(meta, kindIdByKind),
 		'',
 		...renderVariantLookup(meta, kindIdByKind),
+		'',
+		...renderTokenFallbackInto(),
 		'',
 		...renderTokenFallback(),
 	].join('\n');
@@ -1079,31 +1089,35 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 }
 
 function renderDispatchFn(
+	_structs: EmittedStruct[],
+	_kindIdByKind?: ReadonlyMap<string, number>
+): string {
+	const lines: string[] = [];
+	lines.push(`pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {`);
+	lines.push(`    let mut buf = String::new();`);
+	lines.push(`    render_nodedata_into(node, &mut buf)?;`);
+	lines.push(`    Ok(buf)`);
+	lines.push(`}`);
+	return lines.join('\n');
+}
+
+function renderNodedataIntoFn(
 	structs: EmittedStruct[],
 	kindIdByKind?: ReadonlyMap<string, number>
 ): string {
 	const lines: string[] = [];
-	lines.push(
-		`pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {`
-	);
+	lines.push(`pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    if node.fields.is_none() && node.children.is_none() {`);
 	lines.push(`        if let Some(text) = &node.text {`);
-	lines.push(`            return Ok(text.to_owned());`);
+	lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	if (kindIdByKind !== undefined) {
-		// Phase C: NodeData.type_ is KindId — match on numeric id.
-		// T016: Track emitted KindIds to skip duplicate arms from alias-collapsed
-		// kinds (e.g. _closure_expression_expr and closure_expression_expr share 324).
 		const emittedDispatchIds = new Set<number>();
 		lines.push(`    match node.type_.0 {`);
 		for (const s of structs) {
-			// Collect all string aliases for this kind (hidden + visible forms)
-			// and resolve each to its numeric id. Emit a multi-arm pattern for
-			// each distinct id, comment-annotated with the string kind name.
 			const kindAliases: string[] = [s.kind];
 			if (s.kind.startsWith('_')) {
-				// Some hidden kinds are aliased to a visible name — include both.
 				const visible = s.kind.replace(/^_+/, '');
 				if (kindIdByKind.has(visible)) kindAliases.push(visible);
 			}
@@ -1112,27 +1126,75 @@ function renderDispatchFn(
 					.map((k) => kindIdByKind.get(k))
 					.filter((id): id is number => id !== undefined)
 			);
-			if (ids.size === 0) continue; // no parser symbol — skip
-			// T016: Skip if ALL ids for this struct have already been emitted.
+			if (ids.size === 0) continue;
 			const newIds = [...ids].filter((id) => !emittedDispatchIds.has(id));
 			if (newIds.length === 0) continue;
 			for (const id of ids) emittedDispatchIds.add(id);
 			const patternParts = [...ids].map((id) => String(id));
 			const comment = kindAliases.map((k) => JSON.stringify(k)).join(' | ');
-			lines.push(
-				`        ${patternParts.join(' | ')} => ${renderFnName(s.kind)}(node), // ${comment}`
-			);
+			lines.push(`        ${patternParts.join(' | ')} => { // ${comment}`);
+			lines.push(...renderInlinedMatchArm(s));
+			lines.push(`        }`);
 		}
-		lines.push(`        _ => token_shaped_fallback(node),`);
+		lines.push(`        _ => token_shaped_fallback_into(node, dest),`);
 	} else {
-		// Fallback: no kindEntries — cannot emit numeric dispatch.
-		// Emit an always-fallback match; correct rendering requires kindEntries.
 		lines.push(`    match node.type_.0 {`);
-		lines.push(`        _ => token_shaped_fallback(node),`);
+		lines.push(`        _ => token_shaped_fallback_into(node, dest),`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
 	return lines.join('\n');
+}
+
+function renderInlinedMatchArm(s: EmittedStruct): string[] {
+	const lines: string[] = [];
+	const indent = '            ';
+	const consumedFieldArgs = s.fields.length === 0
+		? '&[]'
+		: `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
+	lines.push(`${indent}let children = resolve_children(node, ${consumedFieldArgs})?;`);
+	for (const [index, f] of s.fields.entries()) {
+		lines.push(`${indent}let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
+	}
+	if (s.hasVariant) lines.push(`${indent}let variant = resolve_variant(node);`);
+	if (s.hasText) lines.push(`${indent}let text = resolve_text(node)?;`);
+	if (s.hasChildren) lines.push(`${indent}let children_renderables = children.renderable_items();`);
+	for (const [index, f] of s.fields.entries()) {
+		if (f.view === 'scalar') continue;
+		lines.push(`${indent}let field_${index}_renderables = field_${index}.renderable_items();`);
+	}
+	lines.push(`${indent}let template = ${s.name} {`);
+	if (s.hasChildren) {
+		lines.push(`${indent}    children: ListNonterminalView {`);
+		lines.push(`${indent}        items: children_renderables.as_slice(),`);
+		lines.push(`${indent}        separator: children.separator,`);
+		lines.push(`${indent}        leading: children.leading_sep,`);
+		lines.push(`${indent}        trailing: children.trailing_sep,`);
+		lines.push(`${indent}    },`);
+	}
+	if (s.hasVariant) lines.push(`${indent}    variant,`);
+	if (s.hasText) lines.push(`${indent}    text: text.as_str(),`);
+	for (const [index, f] of s.fields.entries()) {
+		const rIdent = rustFieldIdent(f.name);
+		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
+			lines.push(`${indent}    ${rIdent}: ListNonterminalView {`);
+			lines.push(`${indent}        items: field_${index}_renderables.as_slice(),`);
+			lines.push(`${indent}        separator: field_${index}.separator,`);
+			lines.push(`${indent}        leading: field_${index}.leading_sep,`);
+			lines.push(`${indent}        trailing: field_${index}.trailing_sep,`);
+			lines.push(`${indent}    },`);
+		} else if (f.required) {
+			lines.push(`${indent}    ${rIdent}: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+		} else {
+			lines.push(`${indent}    ${rIdent}: match field_${index}.kind {`);
+			lines.push(`${indent}        ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
+			lines.push(`${indent}        ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+			lines.push(`${indent}    },`);
+		}
+	}
+	lines.push(`${indent}};`);
+	lines.push(`${indent}template.render_into(dest)`);
+	return lines;
 }
 
 // ----------------------------------------------------------------------
@@ -2226,6 +2288,7 @@ pub mod kind_ids;
 pub mod templates;
 pub mod transport;
 
+pub use bridge::render_nodedata_into;
 pub use dispatch::render_dispatch;
 pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};
 pub use hash::TEMPLATE_BUNDLE_HASH;
@@ -2327,20 +2390,24 @@ export function emitRenderModule(
 		: undefined;
 
 	// --- bridge.rs ---
-	// Field/child resolution helpers used by dispatch and templates.
-	// render_node_value calls render_dispatch — but that creates a circular
-	// dependency (bridge → dispatch → templates → bridge). Break the cycle
-	// by having render_node_value call super::dispatch::render_dispatch
-	// directly. The `use` import below makes this possible.
+	// Field/child resolution helpers + render_nodedata_into (the unified
+	// streaming render entry point). render_node_value calls
+	// render_nodedata_into directly — no cross-module dispatch needed.
 	const bridgeRs = [
 		bridgeRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
-		renderDirectSupport(meta, kindIdByKind)
+		'use ::askama::Template as _AskamaTemplate;',
+		'use super::templates::*;',
+		'',
+		renderDirectSupport(meta, kindIdByKind),
+		'',
+		renderNodedataIntoFn(structs, kindIdByKind)
 	].join('\n');
 
 	// --- templates.rs ---
-	// Per-kind Template structs + render functions. The `filters` module
+	// Per-kind Template structs (no render functions — those are inlined
+	// into bridge::render_nodedata_into match arms). The `filters` module
 	// must live here because Askama resolves custom filters by searching
 	// for a sibling `filters` module at the `#[derive(Template)]` site.
 	const templatesRs = [
@@ -2352,18 +2419,16 @@ export function emitRenderModule(
 		'',
 		filtersModule(),
 		'',
-		renderStructDefs(structs),
-		renderPerKindFns(structs)
+		renderStructDefs(structs)
 	].join('\n');
 
 	// --- dispatch.rs ---
-	// render_dispatch match table routing KindId to per-kind render fns.
+	// Thin wrapper: render_dispatch delegates to bridge::render_nodedata_into.
 	const dispatchRs = [
 		dispatchRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
-		'use super::bridge::*;',
-		'use super::templates::*;',
+		'use super::bridge::render_nodedata_into;',
 		'',
 		renderDispatchFn(structs, kindIdByKind)
 	].join('\n');

@@ -14,7 +14,7 @@ use sittir_core::types::{Edit, FormatRecord, NodeData};
 use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_dispatch, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+use render::{render_nodedata_into, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
@@ -37,7 +37,9 @@ impl EngineGrammar for PythonGrammar {
     }
 
     fn render(self, node: &NodeData) -> std::result::Result<String, String> {
-        render_dispatch(node).map_err(|e| e.to_string())
+        let mut buf = String::new();
+        render_nodedata_into(node, &mut buf).map_err(|e| e.to_string())?;
+        Ok(buf)
     }
 }
 
