@@ -102,15 +102,16 @@ When a parent node renders a child that has `$trivia` attached, the child's triv
 - **FR-011**: Nested trivia MUST be applied during child rendering via `render_with_trivia!` macro in every `RenderableTransport::render_into` impl.
 - **FR-012**: The `render_with_trivia!` macro MUST live in `sittir-core` (not generated) and handle `Option<TransportTrivia>` gracefully (no-op when `None`).
 - **FR-013**: Format (indentation/whitespace) MUST be applicable to nested nodes by threading the `FormatRecord` + node `Span` through the render chain. Each child's `render_into` applies format using its own span within the parent's format context.
-- **FR-014**: The render context (format config + trivia) MUST be threadable through Askama's template rendering — either via thread-local state, a context parameter on `RenderableTransport::render_into`, or a wrapper that intercepts `FastWritable::write_into`.
+- **FR-014**: `RenderContext { format: Option<&FormatRecord> }` MUST be carried in the `Renderable::Transport` enum variant and passed to `RenderableTransport::render_into(dest, ctx)`. No thread-local state — context threads through the enum alongside each child reference.
 - **FR-008**: All existing validator counts MUST hold or improve.
 - **FR-009**: `cargo build --release` MUST produce zero warnings.
 - **FR-010**: Rendered output MUST be byte-identical for all corpus nodes.
 
 ### Key Entities
 
-- **TransportTrivia**: `{ leading: Option<Vec<String>>, trailing: Option<Vec<String>> }` — trivia text, no NodeData.
-- **FormatParams**: `(kind_id: KindId, span: Option<Span>)` — the two scalars needed for format application.
+- **RenderContext**: `{ format: Option<&FormatRecord> }` — threaded through the render chain via `Renderable::Transport(&child, &ctx)`. Carries format config for nested indentation application.
+- **TransportTrivia**: `{ leading: Option<Vec<String>>, trailing: Option<Vec<String>> }` — trivia text, no NodeData. Read by `render_with_trivia!` macro directly from each transport struct.
+- **Renderable**: Enum gains context: `Transport(&'a dyn RenderableTransport, &'a RenderContext)` — context travels alongside each child reference through Askama template rendering.
 - **AnyTransport**: The transport enum — the ONLY render input after unification.
 
 ## Success Criteria
