@@ -17,6 +17,7 @@ use ::sittir_core::types::{
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
+use ::sittir_core::render_with_trivia;
 use ::askama::Template as _AskamaTemplate;
 use super::bridge::*;
 use super::dispatch::render_dispatch;
@@ -3276,7 +3277,7 @@ impl RenderableTransport for _AsPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render__as_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render__as_pattern_transport(self, dest))
     }
 }
 
@@ -3305,7 +3306,7 @@ impl RenderableTransport for AssignmentEqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_eq_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_eq_transport(self, dest))
     }
 }
 
@@ -3335,7 +3336,7 @@ impl RenderableTransport for AssignmentTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_type_transport(self, dest))
     }
 }
 
@@ -3366,7 +3367,7 @@ impl RenderableTransport for AssignmentTypedTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_typed_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_typed_transport(self, dest))
     }
 }
 
@@ -3494,7 +3495,7 @@ impl RenderableTransport for ComprehensionClausesTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_comprehension_clauses_transport(self, dest)
+        render_with_trivia!(self, dest, render_comprehension_clauses_transport(self, dest))
     }
 }
 
@@ -3577,7 +3578,7 @@ impl RenderableTransport for ImportListTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_import_list_transport(self, dest)
+        render_with_trivia!(self, dest, render_import_list_transport(self, dest))
     }
 }
 
@@ -3597,7 +3598,7 @@ impl RenderableTransport for IsNotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -3682,7 +3683,7 @@ impl RenderableTransport for KeyValuePatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_key_value_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_key_value_pattern_transport(self, dest))
     }
 }
 
@@ -3702,7 +3703,7 @@ impl RenderableTransport for KwAsyncMarkerTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -3777,7 +3778,7 @@ impl RenderableTransport for KwTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -3862,7 +3863,7 @@ impl RenderableTransport for _ListPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render__list_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render__list_pattern_transport(self, dest))
     }
 }
 
@@ -3892,7 +3893,7 @@ impl RenderableTransport for MatchBlockTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_match_block_transport(self, dest)
+        render_with_trivia!(self, dest, render_match_block_transport(self, dest))
     }
 }
 
@@ -3921,7 +3922,7 @@ impl RenderableTransport for MatchBlockBlockTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_match_block_block_transport(self, dest)
+        render_with_trivia!(self, dest, render_match_block_block_transport(self, dest))
     }
 }
 
@@ -3941,7 +3942,7 @@ impl RenderableTransport for NotEscapeSequenceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -4016,7 +4017,7 @@ impl RenderableTransport for NotInTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -4101,7 +4102,7 @@ impl RenderableTransport for SimplePatternNegativeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_simple_pattern_negative_transport(self, dest)
+        render_with_trivia!(self, dest, render_simple_pattern_negative_transport(self, dest))
     }
 }
 
@@ -4131,7 +4132,7 @@ impl RenderableTransport for SimpleStatementsTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_simple_statements_transport(self, dest)
+        render_with_trivia!(self, dest, render_simple_statements_transport(self, dest))
     }
 }
 
@@ -4161,7 +4162,7 @@ impl RenderableTransport for SuiteTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_suite_transport(self, dest)
+        render_with_trivia!(self, dest, render_suite_transport(self, dest))
     }
 }
 
@@ -4191,7 +4192,7 @@ impl RenderableTransport for _TuplePatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render__tuple_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render__tuple_pattern_transport(self, dest))
     }
 }
 
@@ -4279,7 +4280,7 @@ impl RenderableTransport for _WithClauseParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render__with_clause_paren_transport(self, dest)
+        render_with_trivia!(self, dest, render__with_clause_paren_transport(self, dest))
     }
 }
 
@@ -4309,7 +4310,7 @@ impl RenderableTransport for AliasedImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_aliased_import_transport(self, dest)
+        render_with_trivia!(self, dest, render_aliased_import_transport(self, dest))
     }
 }
 
@@ -4339,7 +4340,7 @@ impl RenderableTransport for ArgumentListTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_argument_list_transport(self, dest)
+        render_with_trivia!(self, dest, render_argument_list_transport(self, dest))
     }
 }
 
@@ -4369,7 +4370,7 @@ impl RenderableTransport for AsPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_as_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_as_pattern_transport(self, dest))
     }
 }
 
@@ -4399,7 +4400,7 @@ impl RenderableTransport for AssertStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assert_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_assert_statement_transport(self, dest))
     }
 }
 
@@ -4473,7 +4474,7 @@ impl RenderableTransport for AssignmentUFormEqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_uform_eq_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_uform_eq_transport(self, dest))
     }
 }
 
@@ -4504,7 +4505,7 @@ impl RenderableTransport for AssignmentUFormTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_uform_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_uform_type_transport(self, dest))
     }
 }
 
@@ -4535,7 +4536,7 @@ impl RenderableTransport for AssignmentUFormTypedTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_assignment_uform_typed_transport(self, dest)
+        render_with_trivia!(self, dest, render_assignment_uform_typed_transport(self, dest))
     }
 }
 
@@ -4565,7 +4566,7 @@ impl RenderableTransport for AttributeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_attribute_transport(self, dest)
+        render_with_trivia!(self, dest, render_attribute_transport(self, dest))
     }
 }
 
@@ -4596,7 +4597,7 @@ impl RenderableTransport for AugmentedAssignmentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_augmented_assignment_transport(self, dest)
+        render_with_trivia!(self, dest, render_augmented_assignment_transport(self, dest))
     }
 }
 
@@ -4625,7 +4626,7 @@ impl RenderableTransport for AwaitTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_await_transport(self, dest)
+        render_with_trivia!(self, dest, render_await_transport(self, dest))
     }
 }
 
@@ -4656,7 +4657,7 @@ impl RenderableTransport for BinaryOperatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_binary_operator_transport(self, dest)
+        render_with_trivia!(self, dest, render_binary_operator_transport(self, dest))
     }
 }
 
@@ -4686,7 +4687,7 @@ impl RenderableTransport for BlockTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_block_transport(self, dest)
+        render_with_trivia!(self, dest, render_block_transport(self, dest))
     }
 }
 
@@ -4717,7 +4718,7 @@ impl RenderableTransport for BooleanOperatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_boolean_operator_transport(self, dest)
+        render_with_trivia!(self, dest, render_boolean_operator_transport(self, dest))
     }
 }
 
@@ -4737,7 +4738,7 @@ impl RenderableTransport for BreakStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -4822,7 +4823,7 @@ impl RenderableTransport for CallTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_call_transport(self, dest)
+        render_with_trivia!(self, dest, render_call_transport(self, dest))
     }
 }
 
@@ -4854,7 +4855,7 @@ impl RenderableTransport for CaseClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_case_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_case_clause_transport(self, dest))
     }
 }
 
@@ -4884,7 +4885,7 @@ impl RenderableTransport for CasePatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_case_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_case_pattern_transport(self, dest))
     }
 }
 
@@ -4913,7 +4914,7 @@ impl RenderableTransport for ChevronTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_chevron_transport(self, dest)
+        render_with_trivia!(self, dest, render_chevron_transport(self, dest))
     }
 }
 
@@ -4945,7 +4946,7 @@ impl RenderableTransport for ClassDefinitionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_class_definition_transport(self, dest)
+        render_with_trivia!(self, dest, render_class_definition_transport(self, dest))
     }
 }
 
@@ -4975,7 +4976,7 @@ impl RenderableTransport for ClassPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_class_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_class_pattern_transport(self, dest))
     }
 }
 
@@ -4995,7 +4996,7 @@ impl RenderableTransport for CommentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -5082,7 +5083,7 @@ impl RenderableTransport for ComparisonOperatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_comparison_operator_transport(self, dest)
+        render_with_trivia!(self, dest, render_comparison_operator_transport(self, dest))
     }
 }
 
@@ -5114,7 +5115,7 @@ impl RenderableTransport for ComplexPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_complex_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_complex_pattern_transport(self, dest))
     }
 }
 
@@ -5144,7 +5145,7 @@ impl RenderableTransport for ConcatenatedStringTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_concatenated_string_transport(self, dest)
+        render_with_trivia!(self, dest, render_concatenated_string_transport(self, dest))
     }
 }
 
@@ -5175,7 +5176,7 @@ impl RenderableTransport for ConditionalExpressionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_conditional_expression_transport(self, dest)
+        render_with_trivia!(self, dest, render_conditional_expression_transport(self, dest))
     }
 }
 
@@ -5205,7 +5206,7 @@ impl RenderableTransport for ConstrainedTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_constrained_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_constrained_type_transport(self, dest))
     }
 }
 
@@ -5225,7 +5226,7 @@ impl RenderableTransport for ContinueStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -5311,7 +5312,7 @@ impl RenderableTransport for DecoratedDefinitionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_decorated_definition_transport(self, dest)
+        render_with_trivia!(self, dest, render_decorated_definition_transport(self, dest))
     }
 }
 
@@ -5341,7 +5342,7 @@ impl RenderableTransport for DecoratorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_decorator_transport(self, dest)
+        render_with_trivia!(self, dest, render_decorator_transport(self, dest))
     }
 }
 
@@ -5371,7 +5372,7 @@ impl RenderableTransport for DefaultParameterTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_default_parameter_transport(self, dest)
+        render_with_trivia!(self, dest, render_default_parameter_transport(self, dest))
     }
 }
 
@@ -5401,7 +5402,7 @@ impl RenderableTransport for DeleteStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_delete_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_delete_statement_transport(self, dest))
     }
 }
 
@@ -5431,7 +5432,7 @@ impl RenderableTransport for DictPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dict_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_dict_pattern_transport(self, dest))
     }
 }
 
@@ -5461,7 +5462,7 @@ impl RenderableTransport for DictionaryTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dictionary_transport(self, dest)
+        render_with_trivia!(self, dest, render_dictionary_transport(self, dest))
     }
 }
 
@@ -5492,7 +5493,7 @@ impl RenderableTransport for DictionaryComprehensionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dictionary_comprehension_transport(self, dest)
+        render_with_trivia!(self, dest, render_dictionary_comprehension_transport(self, dest))
     }
 }
 
@@ -5521,7 +5522,7 @@ impl RenderableTransport for DictionarySplatTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dictionary_splat_transport(self, dest)
+        render_with_trivia!(self, dest, render_dictionary_splat_transport(self, dest))
     }
 }
 
@@ -5551,7 +5552,7 @@ impl RenderableTransport for DictionarySplatPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dictionary_splat_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_dictionary_splat_pattern_transport(self, dest))
     }
 }
 
@@ -5581,7 +5582,7 @@ impl RenderableTransport for DottedNameTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_dotted_name_transport(self, dest)
+        render_with_trivia!(self, dest, render_dotted_name_transport(self, dest))
     }
 }
 
@@ -5611,7 +5612,7 @@ impl RenderableTransport for ElifClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_elif_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_elif_clause_transport(self, dest))
     }
 }
 
@@ -5631,7 +5632,7 @@ impl RenderableTransport for Ellipsis2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -5715,7 +5716,7 @@ impl RenderableTransport for ElseClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_else_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_else_clause_transport(self, dest))
     }
 }
 
@@ -5735,7 +5736,7 @@ impl RenderableTransport for EscapeSequenceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -5822,7 +5823,7 @@ impl RenderableTransport for ExceptClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_except_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_except_clause_transport(self, dest))
     }
 }
 
@@ -5852,7 +5853,7 @@ impl RenderableTransport for ExecStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_exec_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_exec_statement_transport(self, dest))
     }
 }
 
@@ -5882,7 +5883,7 @@ impl RenderableTransport for ExpressionListTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_expression_list_transport(self, dest)
+        render_with_trivia!(self, dest, render_expression_list_transport(self, dest))
     }
 }
 
@@ -5912,7 +5913,7 @@ impl RenderableTransport for ExpressionStatementTupleTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_expression_statement_tuple_transport(self, dest)
+        render_with_trivia!(self, dest, render_expression_statement_tuple_transport(self, dest))
     }
 }
 
@@ -5977,7 +5978,7 @@ impl RenderableTransport for ExpressionStatementUFormTupleTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_expression_statement_uform_tuple_transport(self, dest)
+        render_with_trivia!(self, dest, render_expression_statement_uform_tuple_transport(self, dest))
     }
 }
 
@@ -5997,7 +5998,7 @@ impl RenderableTransport for FalseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6081,7 +6082,7 @@ impl RenderableTransport for FinallyClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_finally_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_finally_clause_transport(self, dest))
     }
 }
 
@@ -6101,7 +6102,7 @@ impl RenderableTransport for FloatTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6187,7 +6188,7 @@ impl RenderableTransport for ForInClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_for_in_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_for_in_clause_transport(self, dest))
     }
 }
 
@@ -6220,7 +6221,7 @@ impl RenderableTransport for ForStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_for_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_for_statement_transport(self, dest))
     }
 }
 
@@ -6250,7 +6251,7 @@ impl RenderableTransport for FormatSpecifierTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_format_specifier_transport(self, dest)
+        render_with_trivia!(self, dest, render_format_specifier_transport(self, dest))
     }
 }
 
@@ -6284,7 +6285,7 @@ impl RenderableTransport for FunctionDefinitionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_function_definition_transport(self, dest)
+        render_with_trivia!(self, dest, render_function_definition_transport(self, dest))
     }
 }
 
@@ -6313,7 +6314,7 @@ impl RenderableTransport for FutureImportStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_future_import_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_future_import_statement_transport(self, dest))
     }
 }
 
@@ -6344,7 +6345,7 @@ impl RenderableTransport for GeneratorExpressionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_generator_expression_transport(self, dest)
+        render_with_trivia!(self, dest, render_generator_expression_transport(self, dest))
     }
 }
 
@@ -6374,7 +6375,7 @@ impl RenderableTransport for GenericTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_generic_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_generic_type_transport(self, dest))
     }
 }
 
@@ -6404,7 +6405,7 @@ impl RenderableTransport for GlobalStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_global_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_global_statement_transport(self, dest))
     }
 }
 
@@ -6424,7 +6425,7 @@ impl RenderableTransport for IdentifierTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6508,7 +6509,7 @@ impl RenderableTransport for IfClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_if_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_if_clause_transport(self, dest))
     }
 }
 
@@ -6539,7 +6540,7 @@ impl RenderableTransport for IfStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_if_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_if_statement_transport(self, dest))
     }
 }
 
@@ -6570,7 +6571,7 @@ impl RenderableTransport for ImportFromStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_import_from_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_import_from_statement_transport(self, dest))
     }
 }
 
@@ -6590,7 +6591,7 @@ impl RenderableTransport for ImportPrefixTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6674,7 +6675,7 @@ impl RenderableTransport for ImportStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_import_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_import_statement_transport(self, dest))
     }
 }
 
@@ -6694,7 +6695,7 @@ impl RenderableTransport for IntegerTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6780,7 +6781,7 @@ impl RenderableTransport for InterpolationTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_interpolation_transport(self, dest)
+        render_with_trivia!(self, dest, render_interpolation_transport(self, dest))
     }
 }
 
@@ -6810,7 +6811,7 @@ impl RenderableTransport for KeywordArgumentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_keyword_argument_transport(self, dest)
+        render_with_trivia!(self, dest, render_keyword_argument_transport(self, dest))
     }
 }
 
@@ -6840,7 +6841,7 @@ impl RenderableTransport for KeywordPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_keyword_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_keyword_pattern_transport(self, dest))
     }
 }
 
@@ -6860,7 +6861,7 @@ impl RenderableTransport for KeywordSeparatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -6945,7 +6946,7 @@ impl RenderableTransport for LambdaTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_lambda_transport(self, dest)
+        render_with_trivia!(self, dest, render_lambda_transport(self, dest))
     }
 }
 
@@ -6975,7 +6976,7 @@ impl RenderableTransport for LambdaParametersTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_lambda_parameters_transport(self, dest)
+        render_with_trivia!(self, dest, render_lambda_parameters_transport(self, dest))
     }
 }
 
@@ -7005,7 +7006,7 @@ impl RenderableTransport for LambdaWithinForInClauseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_lambda_within_for_in_clause_transport(self, dest)
+        render_with_trivia!(self, dest, render_lambda_within_for_in_clause_transport(self, dest))
     }
 }
 
@@ -7025,7 +7026,7 @@ impl RenderableTransport for LineContinuationTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -7110,7 +7111,7 @@ impl RenderableTransport for ListTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_list_transport(self, dest)
+        render_with_trivia!(self, dest, render_list_transport(self, dest))
     }
 }
 
@@ -7141,7 +7142,7 @@ impl RenderableTransport for ListComprehensionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_list_comprehension_transport(self, dest)
+        render_with_trivia!(self, dest, render_list_comprehension_transport(self, dest))
     }
 }
 
@@ -7171,7 +7172,7 @@ impl RenderableTransport for ListPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_list_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_list_pattern_transport(self, dest))
     }
 }
 
@@ -7200,7 +7201,7 @@ impl RenderableTransport for ListSplatTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_list_splat_transport(self, dest)
+        render_with_trivia!(self, dest, render_list_splat_transport(self, dest))
     }
 }
 
@@ -7230,7 +7231,7 @@ impl RenderableTransport for ListSplatPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_list_splat_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_list_splat_pattern_transport(self, dest))
     }
 }
 
@@ -7260,7 +7261,7 @@ impl RenderableTransport for MatchStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_match_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_match_statement_transport(self, dest))
     }
 }
 
@@ -7290,7 +7291,7 @@ impl RenderableTransport for MemberTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_member_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_member_type_transport(self, dest))
     }
 }
 
@@ -7320,7 +7321,7 @@ impl RenderableTransport for ModuleTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_module_transport(self, dest)
+        render_with_trivia!(self, dest, render_module_transport(self, dest))
     }
 }
 
@@ -7350,7 +7351,7 @@ impl RenderableTransport for NamedExpressionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_named_expression_transport(self, dest)
+        render_with_trivia!(self, dest, render_named_expression_transport(self, dest))
     }
 }
 
@@ -7370,7 +7371,7 @@ impl RenderableTransport for NoneTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -7455,7 +7456,7 @@ impl RenderableTransport for NonlocalStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_nonlocal_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_nonlocal_statement_transport(self, dest))
     }
 }
 
@@ -7484,7 +7485,7 @@ impl RenderableTransport for NotOperatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_not_operator_transport(self, dest)
+        render_with_trivia!(self, dest, render_not_operator_transport(self, dest))
     }
 }
 
@@ -7514,7 +7515,7 @@ impl RenderableTransport for PairTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_pair_transport(self, dest)
+        render_with_trivia!(self, dest, render_pair_transport(self, dest))
     }
 }
 
@@ -7544,7 +7545,7 @@ impl RenderableTransport for ParametersTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_parameters_transport(self, dest)
+        render_with_trivia!(self, dest, render_parameters_transport(self, dest))
     }
 }
 
@@ -7574,7 +7575,7 @@ impl RenderableTransport for ParenthesizedExpressionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_parenthesized_expression_transport(self, dest)
+        render_with_trivia!(self, dest, render_parenthesized_expression_transport(self, dest))
     }
 }
 
@@ -7604,7 +7605,7 @@ impl RenderableTransport for ParenthesizedListSplatTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_parenthesized_list_splat_transport(self, dest)
+        render_with_trivia!(self, dest, render_parenthesized_list_splat_transport(self, dest))
     }
 }
 
@@ -7624,7 +7625,7 @@ impl RenderableTransport for PassStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -7709,7 +7710,7 @@ impl RenderableTransport for PatternListTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_pattern_list_transport(self, dest)
+        render_with_trivia!(self, dest, render_pattern_list_transport(self, dest))
     }
 }
 
@@ -7729,7 +7730,7 @@ impl RenderableTransport for PositionalSeparatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -7815,7 +7816,7 @@ impl RenderableTransport for PrintStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_print_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_print_statement_transport(self, dest))
     }
 }
 
@@ -7846,7 +7847,7 @@ impl RenderableTransport for RaiseStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_raise_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_raise_statement_transport(self, dest))
     }
 }
 
@@ -7876,7 +7877,7 @@ impl RenderableTransport for RelativeImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_relative_import_transport(self, dest)
+        render_with_trivia!(self, dest, render_relative_import_transport(self, dest))
     }
 }
 
@@ -7906,7 +7907,7 @@ impl RenderableTransport for ReturnStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_return_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_return_statement_transport(self, dest))
     }
 }
 
@@ -7936,7 +7937,7 @@ impl RenderableTransport for SetTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_set_transport(self, dest)
+        render_with_trivia!(self, dest, render_set_transport(self, dest))
     }
 }
 
@@ -7967,7 +7968,7 @@ impl RenderableTransport for SetComprehensionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_set_comprehension_transport(self, dest)
+        render_with_trivia!(self, dest, render_set_comprehension_transport(self, dest))
     }
 }
 
@@ -7998,7 +7999,7 @@ impl RenderableTransport for SliceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_slice_transport(self, dest)
+        render_with_trivia!(self, dest, render_slice_transport(self, dest))
     }
 }
 
@@ -8027,7 +8028,7 @@ impl RenderableTransport for SplatPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_splat_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_splat_pattern_transport(self, dest))
     }
 }
 
@@ -8056,7 +8057,7 @@ impl RenderableTransport for SplatTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_splat_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_splat_type_transport(self, dest))
     }
 }
 
@@ -8087,7 +8088,7 @@ impl RenderableTransport for StringTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_string_transport(self, dest)
+        render_with_trivia!(self, dest, render_string_transport(self, dest))
     }
 }
 
@@ -8117,7 +8118,7 @@ impl RenderableTransport for StringContentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_string_content_transport(self, dest)
+        render_with_trivia!(self, dest, render_string_content_transport(self, dest))
     }
 }
 
@@ -8147,7 +8148,7 @@ impl RenderableTransport for SubscriptTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_subscript_transport(self, dest)
+        render_with_trivia!(self, dest, render_subscript_transport(self, dest))
     }
 }
 
@@ -8167,7 +8168,7 @@ impl RenderableTransport for TrueTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -8254,7 +8255,7 @@ impl RenderableTransport for TryStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_try_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_try_statement_transport(self, dest))
     }
 }
 
@@ -8284,7 +8285,7 @@ impl RenderableTransport for TupleTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_tuple_transport(self, dest)
+        render_with_trivia!(self, dest, render_tuple_transport(self, dest))
     }
 }
 
@@ -8314,7 +8315,7 @@ impl RenderableTransport for TuplePatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_tuple_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_tuple_pattern_transport(self, dest))
     }
 }
 
@@ -8344,7 +8345,7 @@ impl RenderableTransport for TypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_type_transport(self, dest))
     }
 }
 
@@ -8376,7 +8377,7 @@ impl RenderableTransport for TypeAliasStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_type_alias_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_type_alias_statement_transport(self, dest))
     }
 }
 
@@ -8396,7 +8397,7 @@ impl RenderableTransport for TypeConversionTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -8481,7 +8482,7 @@ impl RenderableTransport for TypeParameterTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_type_parameter_transport(self, dest)
+        render_with_trivia!(self, dest, render_type_parameter_transport(self, dest))
     }
 }
 
@@ -8513,7 +8514,7 @@ impl RenderableTransport for TypedDefaultParameterTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_typed_default_parameter_transport(self, dest)
+        render_with_trivia!(self, dest, render_typed_default_parameter_transport(self, dest))
     }
 }
 
@@ -8545,7 +8546,7 @@ impl RenderableTransport for TypedParameterTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_typed_parameter_transport(self, dest)
+        render_with_trivia!(self, dest, render_typed_parameter_transport(self, dest))
     }
 }
 
@@ -8575,7 +8576,7 @@ impl RenderableTransport for UnaryOperatorTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_unary_operator_transport(self, dest)
+        render_with_trivia!(self, dest, render_unary_operator_transport(self, dest))
     }
 }
 
@@ -8605,7 +8606,7 @@ impl RenderableTransport for UnionPatternTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_union_pattern_transport(self, dest)
+        render_with_trivia!(self, dest, render_union_pattern_transport(self, dest))
     }
 }
 
@@ -8635,7 +8636,7 @@ impl RenderableTransport for UnionTypeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_union_type_transport(self, dest)
+        render_with_trivia!(self, dest, render_union_type_transport(self, dest))
     }
 }
 
@@ -8666,7 +8667,7 @@ impl RenderableTransport for WhileStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_while_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_while_statement_transport(self, dest))
     }
 }
 
@@ -8686,7 +8687,7 @@ impl RenderableTransport for WildcardImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -8771,7 +8772,7 @@ impl RenderableTransport for WithClauseBareTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_clause_bare_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_clause_bare_transport(self, dest))
     }
 }
 
@@ -8801,7 +8802,7 @@ impl RenderableTransport for WithClauseParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_clause_paren_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_clause_paren_transport(self, dest))
     }
 }
 
@@ -8870,7 +8871,7 @@ impl RenderableTransport for WithClauseUFormBareTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_clause_uform_bare_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_clause_uform_bare_transport(self, dest))
     }
 }
 
@@ -8900,7 +8901,7 @@ impl RenderableTransport for WithClauseUFormParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_clause_uform_paren_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_clause_uform_paren_transport(self, dest))
     }
 }
 
@@ -8929,7 +8930,7 @@ impl RenderableTransport for WithItemTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_item_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_item_transport(self, dest))
     }
 }
 
@@ -8960,7 +8961,7 @@ impl RenderableTransport for WithStatementTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_with_statement_transport(self, dest)
+        render_with_trivia!(self, dest, render_with_statement_transport(self, dest))
     }
 }
 
@@ -8990,7 +8991,7 @@ impl RenderableTransport for YieldTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        render_yield_transport(self, dest)
+        render_with_trivia!(self, dest, render_yield_transport(self, dest))
     }
 }
 
@@ -9010,7 +9011,7 @@ impl RenderableTransport for NewlineTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9085,7 +9086,7 @@ impl RenderableTransport for IndentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9160,7 +9161,7 @@ impl RenderableTransport for DedentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9235,7 +9236,7 @@ impl RenderableTransport for StringStartTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9310,7 +9311,7 @@ impl RenderableTransport for _StringContentTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9385,7 +9386,7 @@ impl RenderableTransport for EscapeInterpolationTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9460,7 +9461,7 @@ impl RenderableTransport for StringEndTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9535,7 +9536,7 @@ impl RenderableTransport for CloseBracketTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9610,7 +9611,7 @@ impl RenderableTransport for CloseParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9685,7 +9686,7 @@ impl RenderableTransport for CloseBraceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9760,7 +9761,7 @@ impl RenderableTransport for ExceptTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9835,7 +9836,7 @@ impl RenderableTransport for AsTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9910,7 +9911,7 @@ impl RenderableTransport for EqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -9985,7 +9986,7 @@ impl RenderableTransport for ColonTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10060,7 +10061,7 @@ impl RenderableTransport for AsyncTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10135,7 +10136,7 @@ impl RenderableTransport for BracketTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10210,7 +10211,7 @@ impl RenderableTransport for TokBsTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10285,7 +10286,7 @@ impl RenderableTransport for MinusTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10360,7 +10361,7 @@ impl RenderableTransport for ParenTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10435,7 +10436,7 @@ impl RenderableTransport for CommaTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10510,7 +10511,7 @@ impl RenderableTransport for AssertTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10585,7 +10586,7 @@ impl RenderableTransport for DotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10660,7 +10661,7 @@ impl RenderableTransport for BreakTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10735,7 +10736,7 @@ impl RenderableTransport for CaseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10810,7 +10811,7 @@ impl RenderableTransport for ShrTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10885,7 +10886,7 @@ impl RenderableTransport for ClassTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -10960,7 +10961,7 @@ impl RenderableTransport for IfTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11035,7 +11036,7 @@ impl RenderableTransport for ElseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11110,7 +11111,7 @@ impl RenderableTransport for ContinueTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11185,7 +11186,7 @@ impl RenderableTransport for AtTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11260,7 +11261,7 @@ impl RenderableTransport for DelTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11335,7 +11336,7 @@ impl RenderableTransport for BraceTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11410,7 +11411,7 @@ impl RenderableTransport for StarstarTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11485,7 +11486,7 @@ impl RenderableTransport for ElifTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11560,7 +11561,7 @@ impl RenderableTransport for EllipsisTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11635,7 +11636,7 @@ impl RenderableTransport for StarTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11710,7 +11711,7 @@ impl RenderableTransport for ExecTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11785,7 +11786,7 @@ impl RenderableTransport for InTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11860,7 +11861,7 @@ impl RenderableTransport for False2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -11935,7 +11936,7 @@ impl RenderableTransport for FinallyTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12010,7 +12011,7 @@ impl RenderableTransport for ForTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12085,7 +12086,7 @@ impl RenderableTransport for DefTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12160,7 +12161,7 @@ impl RenderableTransport for ArrowTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12235,7 +12236,7 @@ impl RenderableTransport for FromTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12310,7 +12311,7 @@ impl RenderableTransport for FutureUTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12385,7 +12386,7 @@ impl RenderableTransport for ImportTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12460,7 +12461,7 @@ impl RenderableTransport for GlobalTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12535,7 +12536,7 @@ impl RenderableTransport for MatchTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12610,7 +12611,7 @@ impl RenderableTransport for ColoneqTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12685,7 +12686,7 @@ impl RenderableTransport for None2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12760,7 +12761,7 @@ impl RenderableTransport for NonlocalTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12835,7 +12836,7 @@ impl RenderableTransport for NotTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12910,7 +12911,7 @@ impl RenderableTransport for PassTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -12985,7 +12986,7 @@ impl RenderableTransport for SlashTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13060,7 +13061,7 @@ impl RenderableTransport for PrintTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13135,7 +13136,7 @@ impl RenderableTransport for RaiseTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13210,7 +13211,7 @@ impl RenderableTransport for ReturnTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13285,7 +13286,7 @@ impl RenderableTransport for AnonymousTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13360,7 +13361,7 @@ impl RenderableTransport for True2Transport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13435,7 +13436,7 @@ impl RenderableTransport for TryTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13510,7 +13511,7 @@ impl RenderableTransport for PipeTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13585,7 +13586,7 @@ impl RenderableTransport for WhileTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 
@@ -13660,7 +13661,7 @@ impl RenderableTransport for WithTransport {
         &self,
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
-        dest.write_str(&self.text).map_err(::askama::Error::from)
+        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))
     }
 }
 

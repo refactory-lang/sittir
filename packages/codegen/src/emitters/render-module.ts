@@ -2375,6 +2375,7 @@ export function emitRenderModule(
 		transportRsHeader(lang),
 		'',
 		commonRustUseImports(hasNumericDispatch),
+		'use ::sittir_core::render_with_trivia;',
 		'use ::askama::Template as _AskamaTemplate;',
 		'use super::bridge::*;',
 		'use super::dispatch::render_dispatch;',
@@ -4099,19 +4100,19 @@ function renderTransportDataStruct(
 	// (Box<AnyTransport>) slots can call .render_to_string() without routing
 	// through the top-level render_transport_dispatch match.
 	//
-	// Leaf/keyword/token structs write directly to `dest` — no String intermediate.
-	// Branch/container/group nodes delegate to the per-kind render fn which
-	// streams directly into dest via Askama's template.render_into(dest).
+	// All struct impls wrap the render call with render_with_trivia! to stream
+	// leading/trailing trivia text around the node content. Bool/enum variants
+	// don't have transport_trivia_data and are handled separately (no macro).
 	lines.push(`impl RenderableTransport for ${structName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
 	lines.push(`        dest: &mut dyn ::std::fmt::Write,`);
 	lines.push(`    ) -> Result<(), ::askama::Error> {`);
 	if (isLeafNode) {
-		lines.push(`        dest.write_str(&self.text).map_err(::askama::Error::from)`);
+		lines.push(`        render_with_trivia!(self, dest, dest.write_str(&self.text).map_err(::askama::Error::from))`);
 	} else {
 		const renderFn = rustTypedRenderFnName(node.typeName);
-		lines.push(`        ${renderFn}(self, dest)`);
+		lines.push(`        render_with_trivia!(self, dest, ${renderFn}(self, dest))`);
 	}
 	lines.push(`    }`);
 	lines.push(`}`);
