@@ -67,11 +67,26 @@ The `node_data_from_transport` bridge function is deleted. No render code path c
 
 ---
 
+### User Story 5 — Nested trivia via render_with_trivia! macro (Priority: P1)
+
+When a parent node renders a child that has `$trivia` attached, the child's trivia is emitted correctly — not just top-level trivia. Every `RenderableTransport::render_into` impl wraps rendering with a `render_with_trivia!` macro that checks `transport_trivia_data`.
+
+**Why this priority**: Without this, nested trivia is silently dropped — a data loss bug.
+
+**Acceptance Scenarios**:
+
+1. **Given** a function with a body that has trivia attached, **When** the function is rendered, **Then** the body's trivia appears in the correct position within the function output.
+2. **Given** any `RenderableTransport::render_into` impl, **When** inspected, **Then** it calls `render_with_trivia!(self, dest, render_xxx(self, dest))`.
+3. **Given** the `render_with_trivia!` macro, **When** defined, **Then** it lives in `sittir-core` (shared, not generated).
+
+---
+
 ### Edge Cases
 
 - `EngineGrammar::render(&NodeData)` trait is still needed for the `ParsedTree::render_node_data` path (readNode-derived data). That path constructs templates directly from NodeData fields — no transport conversion.
 - If a grammar adds a new metadata field in the future, it goes into `TransportTrivia`/format scalars — not into NodeData.
 - The `render_canonical_node` function in `engine.rs` may become just `apply_format` after this spec.
+- Bool/enum transport variants (keyword presence) don't have `transport_trivia_data` — the macro handles this via `Option` (always `None` for these).
 
 ## Requirements
 
@@ -83,7 +98,9 @@ The `node_data_from_transport` bridge function is deleted. No render code path c
 - **FR-004**: Per-kind `render_xxx(node: &NodeData)` functions in `templates.ts` MUST be removed — only template struct definitions remain.
 - **FR-005**: `EngineGrammar::render` trait method MUST be updated to render via streaming (construct template from NodeData fields inline, call `write_into`).
 - **FR-006**: `node_data_from_transport` MUST be removed after all callers are eliminated.
-- **FR-007**: Trivia wrapping MUST occur AFTER format application (correct order: render → format → trivia).
+- **FR-007**: Trivia wrapping MUST occur AFTER format application at the top level (correct order: render → format → trivia).
+- **FR-011**: Nested trivia MUST be applied during child rendering via `render_with_trivia!` macro in every `RenderableTransport::render_into` impl.
+- **FR-012**: The `render_with_trivia!` macro MUST live in `sittir-core` (not generated) and handle `Option<TransportTrivia>` gracefully (no-op when `None`).
 - **FR-008**: All existing validator counts MUST hold or improve.
 - **FR-009**: `cargo build --release` MUST produce zero warnings.
 - **FR-010**: Rendered output MUST be byte-identical for all corpus nodes.
