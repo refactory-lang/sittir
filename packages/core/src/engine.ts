@@ -180,12 +180,12 @@ function getNativeEngine(
 			}
 			return createRenderHandle(
 				() => engine.render(transport),
-				(path) => {
+				(path, text) => {
 					if (engine.renderToFile) {
 						engine.renderToFile(transport, path);
 						return;
 					}
-					writeFileSync(path, engine.render(transport), 'utf8');
+					writeFileSync(path, text, 'utf8');
 				}
 			);
 		}

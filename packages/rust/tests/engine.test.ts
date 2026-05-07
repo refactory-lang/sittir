@@ -210,8 +210,8 @@ describe('engine', () => {
 						render(_node: Record<string, unknown>): string {
 							return 'fn main() {}';
 						}
-						renderToFile(node: Record<string, unknown>, path: string): void {
-							renderToFile(node, path);
+						renderToFile(nodeData: Record<string, unknown>, path: string): void {
+							renderToFile(nodeData, path);
 						}
 						applyEdits(
 							source: string,

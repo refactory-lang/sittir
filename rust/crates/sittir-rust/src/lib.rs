@@ -1,8 +1,6 @@
 //! Thin N-API binding for the Rust grammar.
 
 pub mod render;
-#[cfg(feature = "napi-bindings")]
-use std::fs;
 
 #[cfg(feature = "napi-bindings")]
 use napi::bindgen_prelude::*;
@@ -135,7 +133,7 @@ impl SittirEngine {
     #[napi]
     pub fn render_to_file(&self, transport: AnyTransport, path: String) -> Result<()> {
         let rendered = self.render(transport)?;
-        fs::write(&path, rendered)
+        std::fs::write(&path, rendered)
             .map_err(|e| Error::from_reason(format!("render_to_file failed for {path}: {e}")))
     }
 
