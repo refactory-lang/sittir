@@ -37529,29 +37529,13 @@ fn transport_to_node_yield(transport: YieldTransport) -> Result<TransportNodeDat
 }
 
 pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportSource, String), ::askama::Error> {
-    let node = transport_to_node(transport)?;
-    let source = node.source;
-    let mut rendered = render_dispatch(&node)?;
-    if let Some(ref trivia) = node.trivia_data {
-        if let Some(ref leading) = trivia.leading {
-            if !leading.is_empty() {
-                let mut buf = String::new();
-                for item in leading {
-                    if let Some(ref text) = item.text { buf.push_str(text); }
-                    buf.push('\n');
-                }
-                buf.push_str(&rendered);
-                rendered = buf;
-            }
-        }
-        if let Some(ref trailing) = trivia.trailing {
-            for item in trailing {
-                rendered.push('\n');
-                if let Some(ref text) = item.text { rendered.push_str(text); }
-            }
-        }
-    }
+    let rendered = render_transport_dispatch(&transport)?;
+    let source = transport_source(&transport);
     Ok((source, rendered))
+}
+
+fn transport_source(transport: &AnyTransport) -> TransportSource {
+    TransportSource::Factory
 }
 
 pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {
