@@ -198,4 +198,51 @@ describe('engine', () => {
 			/ignoreFormat option not yet supported by native engine/
 		);
 	});
+
+	it('native render handle save delegates to engine-side renderToFile', async () => {
+		const renderToFile = vi.fn();
+		vi.doMock('../src/backend.js', () => ({
+			getActiveBackend: () => ({
+				name: 'native',
+				hashMatch: true,
+				native: {
+					SittirEngine: class {
+						render(_node: Record<string, unknown>): string {
+							return 'fn main() {}';
+						}
+						renderToFile(node: Record<string, unknown>, path: string): void {
+							renderToFile(node, path);
+						}
+						applyEdits(
+							source: string,
+							_edits: {
+								startPos: number;
+								endPos: number;
+								insertedText: string;
+							}[]
+						): string {
+							return source;
+						}
+						dispose(): void {}
+					}
+				}
+			})
+		}));
+
+		const { createEngine } = await import('../src/engine.js');
+		const engine = createEngine();
+		const rendered = engine.render({
+			$type: TSKindId.Identifier,
+			$source: 2 as const,
+			$named: true,
+			$text: 'x'
+		});
+
+		rendered.save('/tmp/sittir-rust-render.txt');
+		expect(renderToFile).toHaveBeenCalledOnce();
+		expect(renderToFile).toHaveBeenCalledWith(
+			expect.objectContaining({ $type: TSKindId.Identifier }),
+			'/tmp/sittir-rust-render.txt'
+		);
+	});
 });

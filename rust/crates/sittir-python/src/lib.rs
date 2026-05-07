@@ -1,6 +1,8 @@
 //! Thin N-API binding for the Python grammar.
 
 pub mod render;
+#[cfg(feature = "napi-bindings")]
+use std::fs;
 
 #[cfg(feature = "napi-bindings")]
 use napi::bindgen_prelude::*;
@@ -128,6 +130,13 @@ impl SittirEngine {
             self.engine.engine_format(),
             tree_format,
         ))
+    }
+
+    #[napi]
+    pub fn render_to_file(&self, transport: AnyTransport, path: String) -> Result<()> {
+        let rendered = self.render(transport)?;
+        fs::write(&path, rendered)
+            .map_err(|e| Error::from_reason(format!("render_to_file failed for {path}: {e}")))
     }
 
     #[napi]

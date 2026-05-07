@@ -27,7 +27,7 @@ function getDefaultEngine(): SittirEngineLike {
  * Render a NodeData to source. Dispatches through the default engine.
  */
 export function render(node: AnyNodeData): string {
-	return getDefaultEngine().render(node);
+	return getDefaultEngine().render(node).toString();
 }
 
 /**

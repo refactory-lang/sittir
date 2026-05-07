@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { createJsEngine, type SittirEngineLike } from '../src/engine.ts';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -37,7 +39,11 @@ describe('Engine API shape', () => {
 	it('reader is optional (renderer-only engines are valid)', () => {
 		// Verify type system allows missing reader
 		const engineWithoutReader: SittirEngineLike = {
-			render: () => '',
+			render: () => ({
+				save: () => {},
+				toString: () => '',
+				print: () => ''
+			}),
 			applyEdits: (source) => source,
 			dispose: () => {}
 			// reader intentionally omitted
@@ -80,6 +86,32 @@ describe('Engine API shape', () => {
 
 		// Verify ignoreFormat option is accepted (no type error)
 		const result = engine.render(node, { ignoreFormat: true });
-		expect(typeof result).toBe('string');
+		expect(typeof result.toString()).toBe('string');
+		expect(typeof result.save).toBe('function');
+		expect(typeof result.print).toBe('function');
+	});
+
+	it('JS render handle can save and stringify output', () => {
+		const engine = createJsEngine({
+			templatesPath: join(__dirname, '..', '..', 'rust', 'templates')
+		});
+
+		const node = {
+			$type: 'identifier',
+			$source: 2 as const,
+			$named: true,
+			$text: 'x'
+		};
+		const rendered = engine.render(node);
+		const dir = mkdtempSync(join(tmpdir(), 'sittir-render-'));
+		const out = join(dir, 'out.txt');
+
+		try {
+			rendered.save(out);
+			expect(rendered.toString()).toBe('x');
+			expect(readFileSync(out, 'utf8')).toBe('x');
+		} finally {
+			rmSync(dir, { recursive: true, force: true });
+		}
 	});
 });
