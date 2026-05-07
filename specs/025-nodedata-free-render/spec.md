@@ -100,7 +100,7 @@ When a parent node renders a child that has `$trivia` attached, the child's triv
 - **FR-006**: `node_data_from_transport` MUST be removed after all callers are eliminated.
 - **FR-007**: Trivia wrapping MUST occur AFTER format application at the top level (correct order: render → format → trivia).
 - **FR-011**: Nested trivia MUST be applied during child rendering via `render_with_trivia!` macro in every `RenderableTransport::render_into` impl.
-- **FR-012**: A single `render_with_context!` macro in `sittir-core` MUST handle all three concerns (render → format → trivia) per child node. Each `RenderableTransport::render_into` impl is one macro call.
+- **FR-012**: A single `render_with_trivia!` macro in `sittir-core` MUST handle trivia wrapping per child node (write leading → render → write trailing). Each `RenderableTransport::render_into` impl is one macro call. Format is decoupled (top-level only, not per-child).
 - **FR-013**: Trivia and format MUST be decoupled. Trivia streams directly (no buffer). Format uses buffer approach for parsed nodes only (top-level, not threaded through children).
 - **FR-014**: `Renderable::Transport` does NOT carry a RenderContext for now. Trivia is handled by the macro reading `transport_trivia_data` directly. Format stays in `render_node_data` (parsed path only).
 ## Follow-up (post-implementation)
