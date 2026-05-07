@@ -195,7 +195,7 @@
       "kind": "False",
       "modelType": "keyword",
       "typeName": "False2",
-      "irKey": "false_",
+      "irKey": "false",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"False\" as const",
@@ -215,7 +215,7 @@
       "kind": "True",
       "modelType": "keyword",
       "typeName": "True2",
-      "irKey": "true_",
+      "irKey": "true",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"True\" as const",
@@ -662,8 +662,8 @@
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -811,7 +811,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -863,8 +863,8 @@
       "fields": [
         {
           "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
+          "propertyName": "alternatives",
+          "paramName": "alternatives",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1056,7 +1056,7 @@
       "children": [
         {
           "name": "simple_statement",
-          "propertyName": "simpleStatement",
+          "propertyName": "simpleStatements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1147,7 +1147,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1212,7 +1212,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1453,7 +1453,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1639,7 +1639,7 @@
       "kind": "async",
       "modelType": "keyword",
       "typeName": "Async",
-      "irKey": "async_",
+      "irKey": "async",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -1787,7 +1787,7 @@
       "modelType": "branch",
       "typeName": "Await",
       "factoryName": "await_",
-      "irKey": "await_",
+      "irKey": "await",
       "hidden": false,
       "fields": [
         {
@@ -1907,7 +1907,7 @@
       "children": [
         {
           "name": "statement",
-          "propertyName": "statement",
+          "propertyName": "statements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2017,7 +2017,7 @@
       "modelType": "keyword",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "breakStatement",
+      "irKey": "break",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -2155,7 +2155,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2246,7 +2246,7 @@
       "kind": "class",
       "modelType": "keyword",
       "typeName": "Class",
-      "irKey": "class_",
+      "irKey": "class",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"class\" as const",
@@ -2257,7 +2257,7 @@
       "modelType": "branch",
       "typeName": "ClassDefinition",
       "factoryName": "classDefinition",
-      "irKey": "classDefinition",
+      "irKey": "class",
       "hidden": false,
       "fields": [
         {
@@ -2525,7 +2525,7 @@
       "children": [
         {
           "name": "primary_expression",
-          "propertyName": "primaryExpression",
+          "propertyName": "primaryExpressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2807,7 +2807,7 @@
       "modelType": "keyword",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continueStatement",
+      "irKey": "continue",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -2855,7 +2855,7 @@
       "children": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
+          "propertyName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3007,7 +3007,7 @@
       "modelType": "branch",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
-      "irKey": "deleteStatement",
+      "irKey": "delete",
       "hidden": false,
       "fields": [],
       "children": [
@@ -3039,7 +3039,7 @@
       "children": [
         {
           "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKv",
+          "propertyName": "dictPatternKvs",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3066,7 +3066,7 @@
       "children": [
         {
           "name": "pair",
-          "propertyName": "pair",
+          "propertyName": "pairs",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3227,7 +3227,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3398,8 +3398,8 @@
       "fields": [
         {
           "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "propertyName": "values",
+          "paramName": "values",
           "required": false,
           "multiple": true,
           "nonEmpty": true,
@@ -3517,8 +3517,8 @@
         },
         {
           "name": "in_clause",
-          "propertyName": "inClause",
-          "paramName": "inClause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": false,
           "multiple": true,
           "nonEmpty": true,
@@ -3652,7 +3652,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3673,7 +3673,7 @@
       "modelType": "keyword",
       "typeName": "False",
       "factoryName": "false_",
-      "irKey": "false_",
+      "irKey": "false",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"False\" as const",
@@ -3797,8 +3797,8 @@
         },
         {
           "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
+          "propertyName": "rights",
+          "paramName": "rights",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3826,7 +3826,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "forStatement",
+      "irKey": "for",
       "hidden": false,
       "fields": [
         {
@@ -3958,7 +3958,7 @@
       "children": [
         {
           "name": "interpolation",
-          "propertyName": "interpolation",
+          "propertyName": "interpolations",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3988,7 +3988,7 @@
       "modelType": "branch",
       "typeName": "FunctionDefinition",
       "factoryName": "functionDefinition",
-      "irKey": "functionDefinition",
+      "irKey": "function",
       "hidden": false,
       "fields": [
         {
@@ -4142,8 +4142,8 @@
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4301,7 +4301,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4374,7 +4374,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "ifStatement",
+      "irKey": "if",
       "hidden": false,
       "fields": [
         {
@@ -4425,8 +4425,8 @@
         },
         {
           "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
+          "propertyName": "alternatives",
+          "paramName": "alternatives",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4460,7 +4460,7 @@
       "kind": "import",
       "modelType": "keyword",
       "typeName": "Import",
-      "irKey": "import_",
+      "irKey": "import",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
@@ -4508,7 +4508,7 @@
       "children": [
         {
           "name": "wildcard_import",
-          "propertyName": "wildcardImport",
+          "propertyName": "wildcardImports",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4548,13 +4548,13 @@
       "modelType": "branch",
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
-      "irKey": "importStatement",
+      "irKey": "import",
       "hidden": false,
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4588,7 +4588,7 @@
       "kind": "in",
       "modelType": "keyword",
       "typeName": "In",
-      "irKey": "in_",
+      "irKey": "in",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -4891,7 +4891,7 @@
       "children": [
         {
           "name": "parameter",
-          "propertyName": "parameter",
+          "propertyName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4983,7 +4983,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5077,7 +5077,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5190,8 +5190,8 @@
       "fields": [
         {
           "name": "subject",
-          "propertyName": "subject",
-          "paramName": "subject",
+          "propertyName": "subjects",
+          "paramName": "subjects",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5308,7 +5308,7 @@
       "children": [
         {
           "name": "statement",
-          "propertyName": "statement",
+          "propertyName": "statements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5412,7 +5412,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5557,7 +5557,7 @@
       "children": [
         {
           "name": "parameter",
-          "propertyName": "parameter",
+          "propertyName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5775,8 +5775,8 @@
       "fields": [
         {
           "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5942,7 +5942,7 @@
       "kind": "return",
       "modelType": "keyword",
       "typeName": "Return",
-      "irKey": "return_",
+      "irKey": "return",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -5953,7 +5953,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "returnStatement",
+      "irKey": "return",
       "hidden": false,
       "fields": [],
       "children": [
@@ -5985,7 +5985,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6269,8 +6269,8 @@
         },
         {
           "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6334,7 +6334,7 @@
       "children": [
         {
           "name": "escape_interpolation",
-          "propertyName": "escapeInterpolation",
+          "propertyName": "escapeInterpolations",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6416,8 +6416,8 @@
         },
         {
           "name": "subscript",
-          "propertyName": "subscript",
-          "paramName": "subscript",
+          "propertyName": "subscripts",
+          "paramName": "subscripts",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6452,7 +6452,7 @@
       "modelType": "keyword",
       "typeName": "True",
       "factoryName": "true_",
-      "irKey": "true_",
+      "irKey": "true",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"True\" as const",
@@ -6473,7 +6473,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "tryStatement",
+      "irKey": "try",
       "hidden": false,
       "fields": [
         {
@@ -6582,7 +6582,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6626,7 +6626,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6797,7 +6797,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7116,7 +7116,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "whileStatement",
+      "irKey": "while",
       "hidden": false,
       "fields": [
         {
@@ -7290,7 +7290,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7317,7 +7317,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7338,7 +7338,7 @@
       "modelType": "branch",
       "typeName": "WithItem",
       "factoryName": "withItem",
-      "irKey": "withItem",
+      "irKey": "with",
       "hidden": false,
       "fields": [
         {
@@ -7452,7 +7452,7 @@
       "modelType": "branch",
       "typeName": "Yield",
       "factoryName": "yield_",
-      "irKey": "yield_",
+      "irKey": "yield",
       "hidden": false,
       "fields": [],
       "children": [

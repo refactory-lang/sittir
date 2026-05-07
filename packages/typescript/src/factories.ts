@@ -165,10 +165,10 @@ export function _classBodyMethod(config: T.ClassBodyMethod.Config) {
     $named: true as const,
     _decorator,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => _classBodyMethod({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => _classBodyMethod({ ...config, decorator: values }),
       children: (...items: readonly [((T.MethodDefinition | T.Semicolon))]) => _classBodyMethod({ ...config, children: items }),
     },
   });
@@ -219,10 +219,10 @@ export function _exportStatementDefaultDeclArm(config: T.ExportStatementDefaultD
     $named: true as const,
     _decorator,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => _exportStatementDefaultDeclArm({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => _exportStatementDefaultDeclArm({ ...config, decorator: values }),
       children: (...items: readonly [((T.Declaration | T.ExportStatementDefaultDeclArmDefaultKw))]) => _exportStatementDefaultDeclArm({ ...config, children: items }),
     },
   });
@@ -636,12 +636,12 @@ export function _parameterName(config: T.ParameterName.Config) {
     _readonly_marker,
     _pattern,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     readonlyMarker() { return _readonly_marker; },
     pattern() { return _pattern; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => _parameterName({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => _parameterName({ ...config, decorator: values }),
       readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => _parameterName({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => _parameterName({ ...config, pattern: value }),
       children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => _parameterName({ ...config, children: items }),
@@ -670,10 +670,10 @@ export function _parenthesizedExpressionTyped(config: T.ParenthesizedExpressionT
     $named: true as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    type() { return _type; },
     children() { return children; },
     $with: {
-      typeField: (value?: T.TypeAnnotation) => _parenthesizedExpressionTyped({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => _parenthesizedExpressionTyped({ ...config, type: value }),
       children: (...items: readonly [T.Expression]) => _parenthesizedExpressionTyped({ ...config, children: items }),
     },
   });
@@ -973,13 +973,13 @@ export function abstractClassDeclaration(config: T.AbstractClassDeclaration.Conf
     _type_parameters,
     _class_heritage,
     _body,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     classHeritage() { return _class_heritage; },
     body() { return _body; },
     $with: {
-      decorator: (...values: T.Decorator[]) => abstractClassDeclaration({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => abstractClassDeclaration({ ...config, decorator: values }),
       name: (value: T.TypeIdentifier) => abstractClassDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => abstractClassDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => abstractClassDeclaration({ ...config, classHeritage: value }),
@@ -1046,9 +1046,9 @@ export function addingTypeAnnotation(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => addingTypeAnnotation(value),
+      type: (value: T.Type) => addingTypeAnnotation(value),
     },
   });
 }
@@ -1470,11 +1470,11 @@ export function catchClause(config: T.CatchClause.Config) {
     _type,
     _body,
     parameter() { return _parameter; },
-    typeField() { return _type; },
+    type() { return _type; },
     body() { return _body; },
     $with: {
       parameter: (value?: T.Identifier | T.DestructuringPattern) => catchClause({ ...config, parameter: value }),
-      typeField: (value?: T.TypeAnnotation) => catchClause({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => catchClause({ ...config, type: value }),
       body: (value: T.StatementBlock) => catchClause({ ...config, body: value }),
     },
   });
@@ -1495,13 +1495,13 @@ export function class_(config: T.Class.Config) {
     _type_parameters,
     _class_heritage,
     _body,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     classHeritage() { return _class_heritage; },
     body() { return _body; },
     $with: {
-      decorator: (...values: T.Decorator[]) => class_({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => class_({ ...config, decorator: values }),
       name: (value?: T.TypeIdentifier) => class_({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => class_({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => class_({ ...config, classHeritage: value }),
@@ -1538,14 +1538,14 @@ export function classDeclaration(config: T.ClassDeclaration.Config) {
     _class_heritage,
     _body,
     _automatic_semicolon,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     classHeritage() { return _class_heritage; },
     body() { return _body; },
     automaticSemicolon() { return _automatic_semicolon; },
     $with: {
-      decorator: (...values: T.Decorator[]) => classDeclaration({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => classDeclaration({ ...config, decorator: values }),
       name: (value: T.TypeIdentifier) => classDeclaration({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => classDeclaration({ ...config, typeParameters: value }),
       classHeritage: (value?: T.ClassHeritage) => classDeclaration({ ...config, classHeritage: value }),
@@ -1688,9 +1688,9 @@ export function constraint(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => constraint(value),
+      type: (value: T.Type) => constraint(value),
     },
   });
 }
@@ -1711,12 +1711,12 @@ export function constructSignature(config: T.ConstructSignature.Config) {
     abstractMarker() { return _abstract_marker; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       abstractMarker: (value?: BooleanKeyword<T.AbstractMarker>) => constructSignature({ ...config, abstractMarker: value }),
       typeParameters: (value?: T.TypeParameters) => constructSignature({ ...config, typeParameters: value }),
       parameters: (value: T.FormalParameters) => constructSignature({ ...config, parameters: value }),
-      typeField: (value?: T.TypeAnnotation) => constructSignature({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => constructSignature({ ...config, type: value }),
     },
   });
 }
@@ -1737,12 +1737,12 @@ export function constructorType(config: T.ConstructorType.Config) {
     abstractMarker() { return _abstract_marker; },
     typeParameters() { return _type_parameters; },
     parameters() { return _parameters; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       abstractMarker: (value?: BooleanKeyword<T.AbstractMarker>) => constructorType({ ...config, abstractMarker: value }),
       typeParameters: (value?: T.TypeParameters) => constructorType({ ...config, typeParameters: value }),
       parameters: (value: T.FormalParameters) => constructorType({ ...config, parameters: value }),
-      typeField: (value: T.Type) => constructorType({ ...config, type: value }),
+      type: (value: T.Type) => constructorType({ ...config, type: value }),
     },
   });
 }
@@ -1850,9 +1850,9 @@ export function defaultType(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => defaultType(value),
+      type: (value: T.Type) => defaultType(value),
     },
   });
 }
@@ -2127,10 +2127,10 @@ export function extendsClause(config: T.ExtendsClause.Config) {
     $named: true as const,
     _value,
     _type_arguments,
-    value() { return _value; },
+    values() { return _value; },
     typeArguments() { return _type_arguments; },
     $with: {
-      value: (...values: NonEmptyArray<T.Expression>) => extendsClause({ ...config, value: values }),
+      values: (...values: NonEmptyArray<T.Expression>) => extendsClause({ ...config, value: values }),
       typeArguments: (value?: T.TypeArguments) => extendsClause({ ...config, typeArguments: value }),
     },
   });
@@ -2143,9 +2143,9 @@ export function extendsTypeClause(config: T.ExtendsTypeClause.Config) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    types() { return _type; },
     $with: {
-      typeField: (...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
+      types: (...values: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => extendsTypeClause({ ...config, type: values }),
     },
   });
 }
@@ -2798,7 +2798,7 @@ export function indexSignatureUFormColon(config: Omit<ConfigOf<T.IndexSignatureU
     _type,
     $children: children,
     sign() { return _sign; },
-    typeField() { return _type; },
+    type() { return _type; },
     name() { return inner.name(); },
     indexType() { return inner.indexType(); },
     $with: {
@@ -2823,7 +2823,7 @@ export function indexSignatureUFormMappedTypeClause(config: Omit<ConfigOf<T.Inde
     _type,
     $children: children,
     sign() { return _sign; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       sign: (value?: "-" | "+") => indexSignatureUFormMappedTypeClause({ ...config, sign: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
       type: (value: T.TypeAnnotation | T.OmittingTypeAnnotation | T.AddingTypeAnnotation | T.OptingTypeAnnotation) => indexSignatureUFormMappedTypeClause({ ...config, type: value } as Parameters<typeof indexSignatureUFormMappedTypeClause>[0]),
@@ -2855,10 +2855,10 @@ export function inferType(config: T.InferType.Config) {
     _type_identifier,
     _type,
     typeIdentifier() { return _type_identifier; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       typeIdentifier: (value: T.TypeIdentifier) => inferType({ ...config, typeIdentifier: value }),
-      typeField: (value?: T.Type) => inferType({ ...config, type: value }),
+      type: (value?: T.Type) => inferType({ ...config, type: value }),
     },
   });
 }
@@ -3025,11 +3025,11 @@ export function mappedTypeClause(config: T.MappedTypeClause.Config) {
     _type,
     _alias,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     alias() { return _alias; },
     $with: {
       name: (value: T.TypeIdentifier) => mappedTypeClause({ ...config, name: value }),
-      typeField: (value: T.Type) => mappedTypeClause({ ...config, type: value }),
+      type: (value: T.Type) => mappedTypeClause({ ...config, type: value }),
       alias: (value?: T.Type) => mappedTypeClause({ ...config, alias: value }),
     },
   });
@@ -3438,9 +3438,9 @@ export function omittingTypeAnnotation(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => omittingTypeAnnotation(value),
+      type: (value: T.Type) => omittingTypeAnnotation(value),
     },
   });
 }
@@ -3452,9 +3452,9 @@ export function optingTypeAnnotation(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => optingTypeAnnotation(value),
+      type: (value: T.Type) => optingTypeAnnotation(value),
     },
   });
 }
@@ -3476,17 +3476,17 @@ export function optionalParameter(config: T.OptionalParameter.Config) {
     _type,
     _value,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     readonlyMarker() { return _readonly_marker; },
     pattern() { return _pattern; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => optionalParameter({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => optionalParameter({ ...config, decorator: values }),
       readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => optionalParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => optionalParameter({ ...config, pattern: value }),
-      typeField: (value?: T.TypeAnnotation) => optionalParameter({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => optionalParameter({ ...config, type: value }),
       value: (value?: T.Expression) => optionalParameter({ ...config, value: value }),
       children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => optionalParameter({ ...config, children: items }),
     },
@@ -3503,10 +3503,10 @@ export function optionalTupleParameter(config: T.OptionalTupleParameter.Config) 
     _name,
     _type,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       name: (value: T.Identifier) => optionalTupleParameter({ ...config, name: value }),
-      typeField: (value: T.TypeAnnotation) => optionalTupleParameter({ ...config, type: value }),
+      type: (value: T.TypeAnnotation) => optionalTupleParameter({ ...config, type: value }),
     },
   });
 }
@@ -3518,9 +3518,9 @@ export function optionalType(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => optionalType(value),
+      type: (value: T.Type) => optionalType(value),
     },
   });
 }
@@ -3600,7 +3600,7 @@ export function parenthesizedExpressionUFormTyped(config?: Omit<ConfigOf<T.Paren
     $named: true as const,
     $variant: 'typed' as const,
     $children: children,
-    typeField() { return inner.typeField(); },
+    type() { return inner.type(); },
     $with: {
       type: (value?: T.TypeAnnotation) => parenthesizedExpressionUFormTyped({ ...config, type: value } as Parameters<typeof parenthesizedExpressionUFormTyped>[0]),
     },
@@ -3626,9 +3626,9 @@ export function parenthesizedType(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => parenthesizedType(value),
+      type: (value: T.Type) => parenthesizedType(value),
     },
   });
 }
@@ -3696,7 +3696,7 @@ export function propertySignature(config: T.PropertySignature.Config) {
     readonlyMarker() { return _readonly_marker; },
     name() { return _name; },
     optionalMarker() { return _optional_marker; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       accessibilityModifier: (value?: T._AccessibilityModifier) => propertySignature({ ...config, accessibilityModifier: value }),
       staticMarker: (value?: BooleanKeyword<T.StaticMarker>) => propertySignature({ ...config, staticMarker: value }),
@@ -3704,7 +3704,7 @@ export function propertySignature(config: T.PropertySignature.Config) {
       readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => propertySignature({ ...config, readonlyMarker: value }),
       name: (value: T.PropertyName) => propertySignature({ ...config, name: value }),
       optionalMarker: (value?: BooleanKeyword<T.OptionalMarker>) => propertySignature({ ...config, optionalMarker: value }),
-      typeField: (value?: T.TypeAnnotation) => propertySignature({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => propertySignature({ ...config, type: value }),
     },
   });
 }
@@ -3726,17 +3726,17 @@ export function publicFieldDefinition(config: T.PublicFieldDefinition.Config) {
     _type,
     _value,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     name() { return _name; },
     optionalityMarker() { return _optionality_marker; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => publicFieldDefinition({ ...config, decorator: values }),
       name: (value: T.PropertyName) => publicFieldDefinition({ ...config, name: value }),
       optionalityMarker: (value?: T.PublicFieldDefinitionOptionalityMarker) => publicFieldDefinition({ ...config, optionalityMarker: value }),
-      typeField: (value?: T.TypeAnnotation) => publicFieldDefinition({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => publicFieldDefinition({ ...config, type: value }),
       value: (value?: T.Expression) => publicFieldDefinition({ ...config, value: value }),
       children: (...items: readonly [((T.PublicFieldDefinitionDeclareFirst | T.PublicFieldDefinitionAccessFirst | T.PublicFieldDefinitionStaticMods | T.PublicFieldDefinitionAbstractFirst | T.PublicFieldDefinitionReadonlyFirst | T.PublicFieldDefinitionAccessorOpt))]) => publicFieldDefinition({ ...config, children: items }),
     },
@@ -3750,9 +3750,9 @@ export function readonlyType(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => readonlyType(value),
+      type: (value: T.Type) => readonlyType(value),
     },
   });
 }
@@ -3812,17 +3812,17 @@ export function requiredParameter(config: T.RequiredParameter.Config) {
     _type,
     _value,
     $children: children,
-    decorator() { return _decorator; },
+    decorators() { return _decorator; },
     readonlyMarker() { return _readonly_marker; },
     pattern() { return _pattern; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     children() { return children; },
     $with: {
-      decorator: (...values: T.Decorator[]) => requiredParameter({ ...config, decorator: values }),
+      decorators: (...values: T.Decorator[]) => requiredParameter({ ...config, decorator: values }),
       readonlyMarker: (value?: BooleanKeyword<T.ReadonlyMarker>) => requiredParameter({ ...config, readonlyMarker: value }),
       pattern: (value: T.Pattern | T.This) => requiredParameter({ ...config, pattern: value }),
-      typeField: (value?: T.TypeAnnotation) => requiredParameter({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => requiredParameter({ ...config, type: value }),
       value: (value?: T.Expression) => requiredParameter({ ...config, value: value }),
       children: (...items: readonly [((T.AccessibilityModifier | T.OverrideModifier))]) => requiredParameter({ ...config, children: items }),
     },
@@ -3848,9 +3848,9 @@ export function restType(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => restType(value),
+      type: (value: T.Type) => restType(value),
     },
   });
 }
@@ -4043,10 +4043,10 @@ export function switchCase(config: T.SwitchCase.Config) {
     _value,
     _body,
     value() { return _value; },
-    body() { return _body; },
+    bodies() { return _body; },
     $with: {
       value: (value: T.Expressions) => switchCase({ ...config, value: value }),
-      body: (...values: T.Statement[]) => switchCase({ ...config, body: values }),
+      bodies: (...values: T.Statement[]) => switchCase({ ...config, body: values }),
     },
   });
 }
@@ -4058,9 +4058,9 @@ export function switchDefault(config: T.SwitchDefault.Config) {
     $source: 2 as const,
     $named: true as const,
     _body,
-    body() { return _body; },
+    bodies() { return _body; },
     $with: {
-      body: (...values: T.Statement[]) => switchDefault({ ...config, body: values }),
+      bodies: (...values: T.Statement[]) => switchDefault({ ...config, body: values }),
     },
   });
 }
@@ -4219,10 +4219,10 @@ export function tupleParameter(config: T.TupleParameter.Config) {
     _name,
     _type,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       name: (value: T.Identifier | T.RestPattern) => tupleParameter({ ...config, name: value }),
-      typeField: (value: T.TypeAnnotation) => tupleParameter({ ...config, type: value }),
+      type: (value: T.TypeAnnotation) => tupleParameter({ ...config, type: value }),
     },
   });
 }
@@ -4271,9 +4271,9 @@ export function typeAnnotation(type: T.Type) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => typeAnnotation(value),
+      type: (value: T.Type) => typeAnnotation(value),
     },
   });
 }
@@ -4356,10 +4356,10 @@ export function typePredicate(config: T.TypePredicate.Config) {
     _name,
     _type,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       name: (value: T.PredefinedType | T.This) => typePredicate({ ...config, name: value }),
-      typeField: (value: T.Type) => typePredicate({ ...config, type: value }),
+      type: (value: T.Type) => typePredicate({ ...config, type: value }),
     },
   });
 }
@@ -4529,11 +4529,11 @@ export function variableDeclarator(config: T.VariableDeclarator.Config) {
     _type,
     _value,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     $with: {
       name: (value: T.Identifier | T.DestructuringPattern) => variableDeclarator({ ...config, name: value }),
-      typeField: (value?: T.TypeAnnotation) => variableDeclarator({ ...config, type: value }),
+      type: (value?: T.TypeAnnotation) => variableDeclarator({ ...config, type: value }),
       value: (value?: T.Expression) => variableDeclarator({ ...config, value: value }),
     },
   });

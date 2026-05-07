@@ -1088,8 +1088,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1314,8 +1314,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2748,8 +2748,8 @@
         },
         {
           "name": "attribute",
-          "propertyName": "attribute",
-          "paramName": "attribute",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2783,7 +2783,7 @@
       "children": [
         {
           "name": "unescaped_double_jsx_string_fragment",
-          "propertyName": "unescapedDoubleJsxStringFragment",
+          "propertyName": "unescapedDoubleJsxStringFragments",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3234,8 +3234,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3853,7 +3853,7 @@
       "children": [
         {
           "name": "unescaped_double_string_fragment",
-          "propertyName": "unescapedDoubleStringFragment",
+          "propertyName": "unescapedDoubleStringFragments",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3885,7 +3885,7 @@
       "children": [
         {
           "name": "unescaped_single_string_fragment",
-          "propertyName": "unescapedSingleStringFragment",
+          "propertyName": "unescapedSingleStringFragments",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -4651,8 +4651,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5119,7 +5119,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5152,7 +5152,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5185,7 +5185,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5854,7 +5854,7 @@
       "kind": "async",
       "modelType": "keyword",
       "typeName": "Async",
-      "irKey": "async_",
+      "irKey": "async",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -5982,7 +5982,7 @@
       "kind": "await",
       "modelType": "keyword",
       "typeName": "Await",
-      "irKey": "await_",
+      "irKey": "await",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
@@ -5993,7 +5993,7 @@
       "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
-      "irKey": "awaitExpression",
+      "irKey": "await",
       "hidden": false,
       "fields": [
         {
@@ -6124,7 +6124,7 @@
       "modelType": "branch",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "breakStatement",
+      "irKey": "break",
       "hidden": false,
       "fields": [
         {
@@ -6480,13 +6480,13 @@
       "modelType": "branch",
       "typeName": "Class",
       "factoryName": "class_",
-      "irKey": "class_",
+      "irKey": "class",
       "hidden": false,
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6612,7 +6612,7 @@
       "children": [
         {
           "name": "class_body_method",
-          "propertyName": "classBodyMethod",
+          "propertyName": "classBodyMethods",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6660,8 +6660,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -7133,7 +7133,7 @@
       "kind": "const",
       "modelType": "keyword",
       "typeName": "Const",
-      "irKey": "const_",
+      "irKey": "const",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
@@ -7394,7 +7394,7 @@
       "modelType": "branch",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continueStatement",
+      "irKey": "continue",
       "hidden": false,
       "fields": [
         {
@@ -7464,7 +7464,7 @@
       "modelType": "branch",
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
-      "irKey": "debuggerStatement",
+      "irKey": "debugger",
       "hidden": false,
       "fields": [
         {
@@ -7767,7 +7767,7 @@
       "kind": "default",
       "modelType": "keyword",
       "typeName": "Default",
-      "irKey": "default_",
+      "irKey": "default",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
@@ -7822,7 +7822,7 @@
       "modelType": "branch",
       "typeName": "DoStatement",
       "factoryName": "doStatement",
-      "irKey": "doStatement",
+      "irKey": "do",
       "hidden": false,
       "fields": [
         {
@@ -8029,7 +8029,7 @@
       "children": [
         {
           "name": "property_name",
-          "propertyName": "propertyName",
+          "propertyName": "propertyNames",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -8055,7 +8055,7 @@
       "modelType": "branch",
       "typeName": "EnumDeclaration",
       "factoryName": "enumDeclaration",
-      "irKey": "enumDeclaration",
+      "irKey": "enum",
       "hidden": false,
       "fields": [
         {
@@ -8152,7 +8152,7 @@
       "kind": "export",
       "modelType": "keyword",
       "typeName": "Export",
-      "irKey": "export_",
+      "irKey": "export",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"export\" as const",
@@ -8169,7 +8169,7 @@
       "children": [
         {
           "name": "export_specifier",
-          "propertyName": "exportSpecifier",
+          "propertyName": "exportSpecifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -8270,7 +8270,7 @@
       "modelType": "polymorph",
       "typeName": "ExportStatement",
       "factoryName": "exportStatement",
-      "irKey": "exportStatement",
+      "irKey": "export",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -8628,8 +8628,8 @@
       "fields": [
         {
           "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "propertyName": "values",
+          "paramName": "values",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -8685,8 +8685,8 @@
       "fields": [
         {
           "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -8728,7 +8728,7 @@
       "modelType": "keyword",
       "typeName": "False",
       "factoryName": "false_",
-      "irKey": "false_",
+      "irKey": "false",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"false\" as const",
@@ -8744,8 +8744,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -9061,7 +9061,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "forStatement",
+      "irKey": "for",
       "hidden": false,
       "fields": [
         {
@@ -9198,7 +9198,7 @@
       "children": [
         {
           "name": "formal_parameter",
-          "propertyName": "formalParameter",
+          "propertyName": "formalParameters",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -9227,7 +9227,7 @@
       "kind": "function",
       "modelType": "keyword",
       "typeName": "Function",
-      "irKey": "function_",
+      "irKey": "function",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"function\" as const",
@@ -9238,7 +9238,7 @@
       "modelType": "branch",
       "typeName": "FunctionDeclaration",
       "factoryName": "functionDeclaration",
-      "irKey": "functionDeclaration",
+      "irKey": "function",
       "hidden": false,
       "fields": [
         {
@@ -10304,7 +10304,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "ifStatement",
+      "irKey": "if",
       "hidden": false,
       "fields": [
         {
@@ -10383,7 +10383,7 @@
       "kind": "implements",
       "modelType": "keyword",
       "typeName": "Implements",
-      "irKey": "implements_",
+      "irKey": "implements",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"implements\" as const",
@@ -10400,7 +10400,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -10420,7 +10420,7 @@
       "modelType": "keyword",
       "typeName": "Import",
       "factoryName": "import_",
-      "irKey": "import_",
+      "irKey": "import",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
@@ -11083,7 +11083,7 @@
       "kind": "in",
       "modelType": "keyword",
       "typeName": "In",
-      "irKey": "in_",
+      "irKey": "in",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -11485,7 +11485,7 @@
       "kind": "interface",
       "modelType": "keyword",
       "typeName": "Interface",
-      "irKey": "interface_",
+      "irKey": "interface",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"interface\" as const",
@@ -11868,7 +11868,7 @@
       "children": [
         {
           "name": "jsx_child",
-          "propertyName": "jsxChild",
+          "propertyName": "jsxChildren",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -12036,8 +12036,8 @@
         },
         {
           "name": "attribute",
-          "propertyName": "attribute",
-          "paramName": "attribute",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -12140,8 +12140,8 @@
         },
         {
           "name": "attribute",
-          "propertyName": "attribute",
-          "paramName": "attribute",
+          "propertyName": "attributes",
+          "paramName": "attributes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13292,7 +13292,7 @@
       "children": [
         {
           "name": "import_specifier",
-          "propertyName": "importSpecifier",
+          "propertyName": "importSpecifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13516,7 +13516,7 @@
       "kind": "new",
       "modelType": "keyword",
       "typeName": "New",
-      "irKey": "new_",
+      "irKey": "new",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"new\" as const",
@@ -13527,7 +13527,7 @@
       "modelType": "branch",
       "typeName": "NewExpression",
       "factoryName": "newExpression",
-      "irKey": "newExpression",
+      "irKey": "new",
       "hidden": false,
       "fields": [
         {
@@ -13641,7 +13641,7 @@
       "modelType": "keyword",
       "typeName": "Null",
       "factoryName": "null_",
-      "irKey": "null_",
+      "irKey": "null",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"null\" as const",
@@ -14078,8 +14078,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -14903,8 +14903,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -15212,8 +15212,8 @@
       "fields": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
-          "paramName": "decorator",
+          "propertyName": "decorators",
+          "paramName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -15430,7 +15430,7 @@
       "kind": "return",
       "modelType": "keyword",
       "typeName": "Return",
-      "irKey": "return_",
+      "irKey": "return",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -15441,7 +15441,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "returnStatement",
+      "irKey": "return",
       "hidden": false,
       "fields": [
         {
@@ -15564,7 +15564,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -15704,7 +15704,7 @@
       "kind": "static",
       "modelType": "keyword",
       "typeName": "Static",
-      "irKey": "static_",
+      "irKey": "static",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
@@ -15789,7 +15789,7 @@
       "children": [
         {
           "name": "unescaped_double_string_fragment",
-          "propertyName": "unescapedDoubleStringFragment",
+          "propertyName": "unescapedDoubleStringFragments",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -15821,7 +15821,7 @@
       "children": [
         {
           "name": "unescaped_single_string_fragment",
-          "propertyName": "unescapedSingleStringFragment",
+          "propertyName": "unescapedSingleStringFragments",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -15961,7 +15961,7 @@
       "children": [
         {
           "name": "switch_case",
-          "propertyName": "switchCase",
+          "propertyName": "switchCases",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16015,8 +16015,8 @@
         },
         {
           "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
+          "propertyName": "bodies",
+          "paramName": "bodies",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16049,8 +16049,8 @@
       "fields": [
         {
           "name": "body",
-          "propertyName": "body",
-          "paramName": "body",
+          "propertyName": "bodies",
+          "paramName": "bodies",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16078,7 +16078,7 @@
       "modelType": "branch",
       "typeName": "SwitchStatement",
       "factoryName": "switchStatement",
-      "irKey": "switchStatement",
+      "irKey": "switch",
       "hidden": false,
       "fields": [
         {
@@ -16353,7 +16353,7 @@
       "kind": "throw",
       "modelType": "keyword",
       "typeName": "Throw",
-      "irKey": "throw_",
+      "irKey": "throw",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"throw\" as const",
@@ -16364,7 +16364,7 @@
       "modelType": "branch",
       "typeName": "ThrowStatement",
       "factoryName": "throwStatement",
-      "irKey": "throwStatement",
+      "irKey": "throw",
       "hidden": false,
       "fields": [
         {
@@ -16414,7 +16414,7 @@
       "modelType": "keyword",
       "typeName": "True",
       "factoryName": "true_",
-      "irKey": "true_",
+      "irKey": "true",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"true\" as const",
@@ -16435,7 +16435,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "tryStatement",
+      "irKey": "try",
       "hidden": false,
       "fields": [
         {
@@ -16585,7 +16585,7 @@
       "children": [
         {
           "name": "tuple_type_member",
-          "propertyName": "tupleTypeMember",
+          "propertyName": "tupleTypeMembers",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -16765,7 +16765,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -16952,7 +16952,7 @@
       "children": [
         {
           "name": "type_parameter",
-          "propertyName": "typeParameter",
+          "propertyName": "typeParameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -17143,7 +17143,7 @@
       "kind": "typeof",
       "modelType": "keyword",
       "typeName": "Typeof",
-      "irKey": "typeof_",
+      "irKey": "typeof",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"typeof\" as const",
@@ -17392,7 +17392,7 @@
       "kind": "var",
       "modelType": "keyword",
       "typeName": "Var",
-      "irKey": "var_",
+      "irKey": "var",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"var\" as const",
@@ -17563,7 +17563,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "whileStatement",
+      "irKey": "while",
       "hidden": false,
       "fields": [
         {
@@ -17630,7 +17630,7 @@
       "modelType": "branch",
       "typeName": "WithStatement",
       "factoryName": "withStatement",
-      "irKey": "withStatement",
+      "irKey": "with",
       "hidden": false,
       "fields": [
         {
@@ -17686,7 +17686,7 @@
       "kind": "yield",
       "modelType": "keyword",
       "typeName": "Yield",
-      "irKey": "yield_",
+      "irKey": "yield",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"yield\" as const",
@@ -17697,7 +17697,7 @@
       "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
-      "irKey": "yieldExpression",
+      "irKey": "yield",
       "hidden": false,
       "fields": [
         {

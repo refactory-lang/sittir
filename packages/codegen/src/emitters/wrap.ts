@@ -353,7 +353,7 @@ function emitFieldCarryingWrap(
 
 	// Inline method shorthand accessors: `name()` returns drilled value via `this._<name>`.
 	for (const f of fields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		const { accessorBody } = resolveFieldDrillExprs(f, nodeMap);
 		lines.push(`    ${propName}() { ${accessorBody}; },`);
 	}
@@ -428,7 +428,7 @@ function emitInlineWithProperty(
 	// with the factory version's setter signatures.
 	lines.push('    $with: {');
 	for (const f of fields) {
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const method = f.propertyName;
 		const elemType = fieldElementType(f, nodeMap);
 		if (isMultiple(f)) {
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;

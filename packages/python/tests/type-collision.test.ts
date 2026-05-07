@@ -8,8 +8,8 @@
  * Post ADR-0010: `type` is an auto-stamp field (always the literal "type"),
  * so it is omitted from Config and stamped directly by the factory via `_type`.
  * Post ADR-0018: fields are stored directly as `_<name>` keys on the node
- * (de-hoisted), not under `$fields`. The accessor is `typeField()` to avoid
- * the reserved-word collision.
+ * (de-hoisted), not under `$fields`. The accessor is `type()` — valid as
+ * an object literal method name.
  */
 
 import { describe, it, expect } from 'vitest';

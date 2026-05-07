@@ -87,12 +87,12 @@ describe('augmented_assignment', () => {
 
 describe('await', () => {
   it('factory produces correct type', () => {
-    const node = ir.await_({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.await({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.Await);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.await_({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.await({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -131,7 +131,7 @@ describe('boolean_operator', () => {
 
 describe("break_statement", () => {
   it('factory produces keyword', () => {
-    const node = ir.breakStatement();
+    const node = ir.break();
     expect(node.$type).toBe(TSKindId.BreakStatement);
     expect(node.$source).toBe(2);
     expect(node.$text).toBe("break");
@@ -184,12 +184,12 @@ describe('chevron', () => {
 
 describe('class_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.classDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.class({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ClassDefinition);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.classDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.class({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -273,7 +273,7 @@ describe('constrained_type', () => {
 
 describe("continue_statement", () => {
   it('factory produces keyword', () => {
-    const node = ir.continueStatement();
+    const node = ir.continue();
     expect(node.$type).toBe(TSKindId.ContinueStatement);
     expect(node.$source).toBe(2);
     expect(node.$text).toBe("continue");
@@ -318,7 +318,7 @@ describe('default_parameter', () => {
 
 describe('delete_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.deleteStatement({ type: "_expressions" } as never);
+    const node = ir.delete({ type: "_expressions" } as never);
     expect(node.$type).toBe(TSKindId.DeleteStatement);
     expect(node.$source).toBe(2);
   });
@@ -463,7 +463,7 @@ describe('expression_statement', () => {
 
 describe("false", () => {
   it('factory produces keyword', () => {
-    const node = ir.false_();
+    const node = ir.false();
     expect(node.$type).toBe(TSKindId.False);
     expect(node.$source).toBe(2);
     expect(node.$text).toBe("False");
@@ -505,12 +505,12 @@ describe('for_in_clause', () => {
 
 describe('for_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.forStatement({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.for({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.ForStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.forStatement({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.for({ left: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, right: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -525,12 +525,12 @@ describe('format_specifier', () => {
 
 describe('function_definition', () => {
   it('factory produces correct type', () => {
-    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, parameters: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.function({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, parameters: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.FunctionDefinition);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.functionDefinition({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, parameters: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.function({ name: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, parameters: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -602,12 +602,12 @@ describe('if_clause', () => {
 
 describe('if_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.ifStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.if({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.IfStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.ifStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.if({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, consequence: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -635,12 +635,12 @@ describe('import_prefix', () => {
 
 describe('import_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.importStatement({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.import({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$type).toBe(TSKindId.ImportStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.importStatement({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.import({ name: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -943,7 +943,7 @@ describe('relative_import', () => {
 
 describe('return_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.returnStatement();
+    const node = ir.return();
     expect(node.$type).toBe(TSKindId.ReturnStatement);
     expect(node.$source).toBe(2);
   });
@@ -1039,7 +1039,7 @@ describe('subscript', () => {
 
 describe("true", () => {
   it('factory produces keyword', () => {
-    const node = ir.true_();
+    const node = ir.true();
     expect(node.$type).toBe(TSKindId.True);
     expect(node.$source).toBe(2);
     expect(node.$text).toBe("True");
@@ -1048,12 +1048,12 @@ describe("true", () => {
 
 describe('try_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.tryStatement({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, exceptClauses: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.try({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, exceptClauses: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$type).toBe(TSKindId.TryStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.tryStatement({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, exceptClauses: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
+    const node = ir.try({ body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, exceptClauses: [{ $type: 'identifier', $text: 'test', $source: 'factory', $named: true } as any] });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1160,12 +1160,12 @@ describe('union_type', () => {
 
 describe('while_statement', () => {
   it('factory produces correct type', () => {
-    const node = ir.whileStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.while({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$type).toBe(TSKindId.WhileStatement);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.whileStatement({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
+    const node = ir.while({ condition: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any, body: { $type: 'identifier', $text: 'test', $source: 2, $named: true } as any });
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1201,12 +1201,12 @@ describe('with_clause', () => {
 
 describe('with_item', () => {
   it('factory produces correct type', () => {
-    const node = ir.withItem({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.with({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$type).toBe(TSKindId.WithItem);
     expect(node.$source).toBe(2);
   });
   it('render produces non-empty string', () => {
-    const node = ir.withItem({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
+    const node = ir.with({ $type: 'identifier', $text: 'test', $source: 2, $named: true } as any);
     expect(node.$render!().length).toBeGreaterThan(0);
   });
 });
@@ -1225,7 +1225,7 @@ describe('with_statement', () => {
 
 describe('yield', () => {
   it('factory produces correct type', () => {
-    const node = ir.yield_();
+    const node = ir.yield();
     expect(node.$type).toBe(TSKindId.Yield);
     expect(node.$source).toBe(2);
   });

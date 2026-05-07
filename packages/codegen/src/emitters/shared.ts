@@ -634,11 +634,11 @@ export function resolveHoistedForm(
 	// would produce an ambiguous hoisted Config surface. Bail out —
 	// caller keeps the non-hoisted shape.
 	if (form.fields.length > 0) {
-		const formNames = new Set(form.fields.map((f) => f.propertyName));
+		const formNames = new Set(form.fields.map((f) => f.configKey));
 		for (const f of innerFields) {
-			if (formNames.has(f.propertyName)) {
+			if (formNames.has(f.configKey)) {
 				console.warn(
-					`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.propertyName}' shadows form-level field; falling back to non-hoisted Config shape.`
+					`[resolveHoistedForm] name collision on form '${form.kind}': inner field '${f.configKey}' shadows form-level field; falling back to non-hoisted Config shape.`
 				);
 				return undefined;
 			}

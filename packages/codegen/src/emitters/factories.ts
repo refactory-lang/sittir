@@ -979,7 +979,7 @@ function keywordPresenceAssignmentExpr(
 ): string | undefined {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === null) return undefined;
-	const access = `${configAccess}.${f.propertyName}`;
+	const access = `${configAccess}.${f.configKey}`;
 	if (kw === 'boolean') {
 		const lit = keywordPresenceValue(f, nodeMap);
 		if (lit === undefined) return undefined;
@@ -1056,7 +1056,7 @@ function slotStorageExpr(
 	configAccess: string,
 	nodeMap: NodeMap
 ): string {
-	const base = `${configAccess}.${f.propertyName}`;
+	const base = `${configAccess}.${f.configKey}`;
 	if (!isAllLeafSlot(f, nodeMap)) return base;
 	// Optional field → optional chaining on `.$text` so absent values stay
 	// undefined rather than throwing on the property access.
@@ -1096,7 +1096,7 @@ function setterElemType(
 ): string {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === 'boolean') return `BooleanKeyword<${elemType}>`;
-	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.propertyName}']`;
+	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.configKey}']`;
 	return elemType;
 }
 
@@ -1321,7 +1321,7 @@ function emitFieldCarryingFactory(
 
 	// Pure getters — method shorthand, body returns the local const.
 	for (const f of fields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	if (hasChildren) {
@@ -1337,7 +1337,7 @@ function emitFieldCarryingFactory(
 	lines.push('    $with: {');
 	for (const f of fields) {
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const method = f.propertyName;
 		// Bitflag fields: even though storage is `NonEmptyArray<...>`, the
 		// Config (per ConfigOf) flattens to a single bitflag enum value, so
 		// the setter takes ONE value — not a rest-array.
@@ -1349,12 +1349,12 @@ function emitFieldCarryingFactory(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.propertyName}: values }),`
+				`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 			);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.propertyName}: value }),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
 			);
 		}
 	}
@@ -1441,13 +1441,13 @@ function emitSingleFieldFactory(
 
 	// Pure getters.
 	for (const f of allFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 
 	// $with: setter calls the factory directly with the new value.
 	lines.push('    $with: {');
-	const method = soleField.propertyName === 'type' ? 'typeField' : soleField.propertyName;
+	const method = soleField.propertyName;
 	const setterType = setterElemType(soleField, elemType, fn, nodeMap);
 	lines.push(`      ${method}: (${setterValueSignature(soleField, setterType)}) => ${fn}(value),`);
 	lines.push('    },');
@@ -1585,7 +1585,7 @@ function emitRefineFormFactory(
 	}
 	if (hasChildren) lines.push('    $children: children,');
 	for (const f of fields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	if (hasChildren) {
@@ -1597,7 +1597,7 @@ function emitRefineFormFactory(
 		// their value is fixed by the form, no setter is exposed.
 		if (narrowed.has(f.name)) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const method = f.propertyName;
 		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
 		if (isMultiple(f) && !isBitflag) {
 			const elemType = fieldElementType(f, nodeMap);
@@ -1606,12 +1606,12 @@ function emitRefineFormFactory(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.propertyName}: values }),`
+				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`
 			);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), formFn, nodeMap);
 			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.propertyName}: value }),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.configKey}: value }),`
 			);
 		}
 	}
@@ -2113,7 +2113,7 @@ function emitHoistedPolymorphFormFactory(
 			lines.push(`    _${f.name},`);
 		}
 		for (const f of hoist.innerFields) {
-			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const propName = f.propertyName;
 			lines.push(`    ${propName}() { return _${f.name}; },`);
 		}
 		lines.push('  });');
@@ -2143,7 +2143,7 @@ function emitHoistedPolymorphFormFactory(
 	lines.push('    $children: children,');
 	// Form-field getters: read the local const directly.
 	for (const f of formFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	// Inner-field getters: close over `inner` and read via the inner node's
@@ -2151,7 +2151,7 @@ function emitHoistedPolymorphFormFactory(
 	// withMethods<T>-wrapped object literal, so `inner.<propName>()`
 	// resolves through the getter method emitted on inner.
 	for (const f of hoist.innerFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return inner.${propName}(); },`);
 	}
 
@@ -2179,7 +2179,7 @@ function emitHoistedPolymorphFormFactory(
 		const rebuild = buildHoistedRebuildExpr(
 			formFields,
 			hoist.innerFields,
-			f.propertyName,
+			f.configKey,
 			fMultiple ? 'values' : 'value',
 			patchSource,
 			nodeMap

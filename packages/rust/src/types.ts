@@ -2632,7 +2632,7 @@ export interface ConstItem {
   readonly _value?: Expression;
   visibilityModifier(): VisibilityModifier | undefined;
   name(): Identifier;
-  typeField(): _Type;
+  type(): _Type;
   value(): Expression | undefined;
 }
 
@@ -2642,7 +2642,7 @@ export interface ConstParameter {
   readonly _type: _Type;
   readonly _value?: Block | Identifier | Literal | NegativeLiteral;
   name(): Identifier;
-  typeField(): _Type;
+  type(): _Type;
   value(): Block | Identifier | Literal | NegativeLiteral | undefined;
 }
 
@@ -2781,7 +2781,7 @@ export interface FieldDeclaration {
   readonly _type: _Type;
   visibilityModifier(): VisibilityModifier | undefined;
   name(): FieldIdentifier;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface FieldDeclarationList {
@@ -2904,7 +2904,7 @@ export interface FunctionItem {
 export interface FunctionModifiers {
   readonly $type: TSKindId.FunctionModifiers;
   readonly _modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
-  modifier(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
+  modifiers(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
 }
 
 export interface FunctionSignatureItem {
@@ -2963,7 +2963,7 @@ export interface GenericType {
   readonly $type: TSKindId.GenericType;
   readonly _type: TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
   readonly _type_arguments: TypeArguments;
-  typeField(): TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
+  type(): TypeIdentifier | ReservedIdentifier | ScopedTypeIdentifier;
   typeArguments(): TypeArguments;
 }
 
@@ -2972,7 +2972,7 @@ export interface GenericTypeWithTurbofish {
   readonly _type: TypeIdentifier | ScopedIdentifier;
   readonly _turbofish: AutoStamp<GenericTypeWithTurbofishTurbofish>;
   readonly _type_arguments: TypeArguments;
-  typeField(): TypeIdentifier | ScopedIdentifier;
+  type(): TypeIdentifier | ScopedIdentifier;
   turbofish(): AutoStamp<GenericTypeWithTurbofishTurbofish>;
   typeArguments(): TypeArguments;
 }
@@ -2982,7 +2982,7 @@ export interface HigherRankedTraitBound {
   readonly _type_parameters: TypeParameters;
   readonly _type: _Type;
   typeParameters(): TypeParameters;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface IfExpression {
@@ -3014,7 +3014,7 @@ export interface ImplItemUFormBody {
   typeParameters(): TypeParameters | undefined;
   negative(): BooleanKeyword<ImplItemNegative> | undefined;
   trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType | undefined;
-  typeField(): _Type;
+  type(): _Type;
   whereClause(): WhereClause | undefined;
   readonly $children: readonly [_ImplItemBody];
 }
@@ -3032,7 +3032,7 @@ export interface ImplItemUFormSemi {
   typeParameters(): TypeParameters | undefined;
   negative(): BooleanKeyword<ImplItemNegative> | undefined;
   trait(): TypeIdentifier | ScopedTypeIdentifier | GenericType | undefined;
-  typeField(): _Type;
+  type(): _Type;
   whereClause(): WhereClause | undefined;
 }
 
@@ -3083,7 +3083,7 @@ export interface LetDeclaration {
   readonly _alternative?: Block;
   mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
   pattern(): Pattern;
-  typeField(): _Type | undefined;
+  type(): _Type | undefined;
   value(): Expression | undefined;
   alternative(): Block | undefined;
 }
@@ -3287,7 +3287,7 @@ export type OrPattern = OrPatternUFormBinary | OrPatternUFormPrefix;
 export interface OrderedFieldDeclarationList {
   readonly $type: TSKindId.OrderedFieldDeclarationList;
   readonly _type: readonly (_Type)[];
-  typeField(): readonly (_Type)[];
+  types(): readonly (_Type)[];
   readonly $children: readonly (AttributeItem | VisibilityModifier)[];
 }
 
@@ -3298,7 +3298,7 @@ export interface Parameter {
   readonly _type: _Type;
   mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
   pattern(): Pattern | Self;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface Parameters {
@@ -3320,14 +3320,14 @@ export interface PointerTypeUFormConst {
   readonly $type: TSKindId.PointerType;
   readonly $variant: 'const';
   readonly _type: _Type;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface PointerTypeUFormMut {
   readonly $type: TSKindId.PointerType;
   readonly $variant: 'mut';
   readonly _type: _Type;
-  typeField(): _Type;
+  type(): _Type;
   readonly $children: readonly [_PointerTypeMut];
 }
 
@@ -3336,7 +3336,7 @@ export interface QualifiedType {
   readonly $type: TSKindId.QualifiedType;
   readonly _type: _Type;
   readonly _alias: _Type;
-  typeField(): _Type;
+  type(): _Type;
   alias(): _Type;
 }
 
@@ -3430,7 +3430,7 @@ export interface ReferenceType {
   readonly _type: _Type;
   lifetime(): Lifetime | undefined;
   mutableSpecifier(): BooleanKeyword<_MutableSpecifier> | undefined;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface RemovedTraitBound {
@@ -3518,7 +3518,7 @@ export interface StaticItem {
   visibilityModifier(): VisibilityModifier | undefined;
   mutableSpecifier(): RefMarker | _MutableSpecifier | undefined;
   name(): Identifier;
-  typeField(): _Type;
+  type(): _Type;
   value(): Expression | undefined;
 }
 
@@ -3574,7 +3574,7 @@ export type StructItem = StructItemUFormBrace | StructItemUFormTuple | StructIte
 export interface StructPattern {
   readonly $type: TSKindId.StructPattern;
   readonly _type: TypeIdentifier | ScopedTypeIdentifier;
-  typeField(): TypeIdentifier | ScopedTypeIdentifier;
+  type(): TypeIdentifier | ScopedTypeIdentifier;
   readonly $children: readonly (FieldPattern | RemainingFieldPattern)[];
 }
 
@@ -3583,7 +3583,7 @@ export interface TokenBindingPattern {
   readonly _name: Metavariable;
   readonly _type: TokenBindingPatternType;
   name(): Metavariable;
-  typeField(): TokenBindingPatternType;
+  type(): TokenBindingPatternType;
 }
 
 export interface TokenRepetition {
@@ -3715,7 +3715,7 @@ export interface TuplePattern {
 export interface TupleStructPattern {
   readonly $type: TSKindId.TupleStructPattern;
   readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-  typeField(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
+  type(): Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
   readonly $children: readonly (Pattern)[];
 }
 
@@ -3736,7 +3736,7 @@ export interface TypeBinding {
   readonly _type: _Type;
   name(): TypeIdentifier;
   typeArguments(): TypeArguments | undefined;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface TypeCastExpression {
@@ -3744,7 +3744,7 @@ export interface TypeCastExpression {
   readonly _value: Expression;
   readonly _type: _Type;
   value(): Expression;
-  typeField(): _Type;
+  type(): _Type;
 }
 
 export interface TypeItem {
@@ -3759,7 +3759,7 @@ export interface TypeItem {
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
   whereClause(): WhereClause | undefined;
-  typeField(): _Type;
+  type(): _Type;
   trailingWhereClause(): WhereClause | undefined;
 }
 

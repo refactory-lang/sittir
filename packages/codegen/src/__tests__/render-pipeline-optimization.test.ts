@@ -182,21 +182,25 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_required');
 		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_children');
-		// render_dispatch lives in dispatch.rs (spec 024 split).
+		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
 		expect(emitted.dispatchRs.contents).toContain(
 			'pub fn render_dispatch(node: &NodeData)'
 		);
-		expect(emitted.templatesRs.contents).toContain('fn render_function_item(');
-		// Phase D: dispatch uses numeric KindId (42) not string "function_item".
 		expect(emitted.dispatchRs.contents).toContain(
-			'42 => render_function_item(node)'
+			'render_nodedata_into(node, &mut buf)'
 		);
-		expect(emitted.templatesRs.contents).toContain(
+		// Per-kind render functions are inlined into bridge::render_nodedata_into.
+		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
+		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
+		expect(emitted.bridgeRs.contents).toContain('42 =>');
+		expect(emitted.bridgeRs.contents).toContain(
 			'resolve_field(node, "name", true)'
 		);
 		expect(emitted.bridgeRs.contents).toContain(
-			`format!("render_dispatch: missing required field '{}' on '{}'", name, node.type_)`
+			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
 		);
+		// templates.rs has no render functions — only struct definitions.
+		expect(emitted.templatesRs.contents).not.toContain('fn render_function_item(');
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
 		expect(emitted.templatesRs.contents).not.toContain(
 			'pub struct RustGrammarMeta'
@@ -219,9 +223,24 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 			}
 		] as const;
 
-		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
+		const generatedIdTables: GeneratedIdTables = {
+			kindIds: {
+				function_item: {
+					id: 42,
+					parser: {
+						cSymbol: 'sym_function_item',
+						parserName: 'function_item',
+						anon: false, aux: false, alias: false, hidden: false
+					}
+				}
+			},
+			sourceArtifact: 'parser.wasm'
+		};
 
-		expect(emitted.templatesRs.contents).toContain(
+		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
+
+		// Per-kind render logic is inlined into bridge::render_nodedata_into.
+		expect(emitted.bridgeRs.contents).toContain(
 			'resolve_field(node, "name", true)'
 		);
 	});
@@ -237,7 +256,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		);
 
 		expect(coreLib).not.toContain('pub mod prepare;');
-		expect(rustNapi).toContain('render_dispatch(node)');
+		expect(rustNapi).toContain('render_nodedata_into(node');
 		expect(rustNapi).not.toContain('build_template_context');
 	});
 });

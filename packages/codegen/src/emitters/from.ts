@@ -514,11 +514,11 @@ function _emitVariantFrom(
 			'input',
 			false
 		);
-		configParts.push(`    ${f.propertyName}: ${call},`);
+		configParts.push(`    ${f.configKey}: ${call},`);
 	}
 
 	// Collect all variant field names for the config
-	const seenProps = new Set(parentFields.map((f) => f.propertyName));
+	const seenProps = new Set(parentFields.map((f) => f.configKey));
 	for (const pv of polymorphVariants) {
 		const fullName = `${pv.parent}_${pv.child}`;
 		const vNode = nodeMap.nodes.get(fullName);
@@ -528,8 +528,8 @@ function _emitVariantFrom(
 				? (vNode as { fields: readonly AssembledNonterminal[] }).fields
 				: [];
 		for (const vf of vFields) {
-			if (seenProps.has(vf.propertyName)) continue;
-			seenProps.add(vf.propertyName);
+			if (seenProps.has(vf.configKey)) continue;
+			seenProps.add(vf.configKey);
 			if (isAutoStampField(vf, nodeMap)) continue; // factory stamps these; no Config slot
 			const call = resolveFieldFromTypedInput(
 				vf,
@@ -539,7 +539,7 @@ function _emitVariantFrom(
 				'input',
 				true
 			);
-			configParts.push(`    ${vf.propertyName}: ${call},`);
+			configParts.push(`    ${vf.configKey}: ${call},`);
 		}
 	}
 
@@ -851,14 +851,14 @@ function emitBranchFrom(
 			for (const f of fields) {
 				if (isAutoStampField(f, nodeMap)) continue; // factory stamps these; no Config slot
 				if (needsNonEmptyHoist(f)) {
-					lines.push(`    ${f.propertyName}: ${neName(f)},`);
+					lines.push(`    ${f.configKey}: ${neName(f)},`);
 				} else {
 					const call = resolveFieldFromTypedInput(f, nodeMap, typeName, intern, 'input', inputOptional);
 					const defaultFactory = canDefaultToEmpty(f, nodeMap);
 					if (defaultFactory) {
-						lines.push(`    ${f.propertyName}: ${call} ?? F.${defaultFactory}(),`);
+						lines.push(`    ${f.configKey}: ${call} ?? F.${defaultFactory}(),`);
 					} else {
-						lines.push(`    ${f.propertyName}: ${call},`);
+						lines.push(`    ${f.configKey}: ${call},`);
 					}
 				}
 			}
@@ -1217,7 +1217,7 @@ function emitPolymorphFormFrom(
 		for (const f of form.fields) {
 			if (isAutoStampField(f, nodeMap)) continue;
 			fLines.push(
-				`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
+				`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, form.typeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
 			);
 		}
 		// Hoisted inner-child fields surface flat on the form's Config —
@@ -1227,7 +1227,7 @@ function emitPolymorphFormFrom(
 			for (const f of hoist.innerFields) {
 				if (isAutoStampField(f, nodeMap)) continue;
 				fLines.push(
-					`    ${f.propertyName}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
+					`    ${f.configKey}: ${resolveFieldFromTypedInput(f, nodeMap, hoist.innerTypeName, intern, 'input', formInputOptional, /* isPolymorphForm */ true)},`
 				);
 			}
 		}
@@ -1356,7 +1356,7 @@ function resolveFieldFromTypedInput(
 	 * real type error, not something to paper over.
 	 */
 	const optChain = inputOptional ? '?' : '';
-	const access = `${sourceVar}${optChain}.${field.propertyName}`;
+	const access = `${sourceVar}${optChain}.${field.configKey}`;
 	return resolveFieldCall(access, field, isMultiple(field), nodeMap, intern);
 }
 

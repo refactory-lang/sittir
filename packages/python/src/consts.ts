@@ -1174,12 +1174,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'except_clause': [
-    { name: 'value', required: false, multiple: true },
+    { name: 'values', required: false, multiple: true },
     { name: 'alias', required: false, multiple: false },
   ],
   'exec_statement': [
     { name: 'code', required: true, multiple: false },
-    { name: 'inClause', required: false, multiple: true },
+    { name: 'inClauses', required: false, multiple: true },
   ],
   'expression_list': [
   ],
@@ -1193,7 +1193,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'for_in_clause': [
     { name: 'asyncMarker', required: false, multiple: false },
     { name: 'left', required: true, multiple: false },
-    { name: 'right', required: true, multiple: true },
+    { name: 'rights', required: true, multiple: true },
   ],
   'for_statement': [
     { name: 'asyncMarker', required: false, multiple: false },
@@ -1213,7 +1213,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'future_import_statement': [
-    { name: 'name', required: true, multiple: true },
+    { name: 'names', required: true, multiple: true },
   ],
   'generator_expression': [
     { name: 'body', required: true, multiple: false },
@@ -1230,13 +1230,13 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'if_statement': [
     { name: 'condition', required: true, multiple: false },
     { name: 'consequence', required: true, multiple: false },
-    { name: 'alternative', required: false, multiple: true },
+    { name: 'alternatives', required: false, multiple: true },
   ],
   'import_from_statement': [
     { name: 'moduleName', required: true, multiple: false },
   ],
   'import_statement': [
-    { name: 'name', required: true, multiple: true },
+    { name: 'names', required: true, multiple: true },
   ],
   'interpolation': [
     { name: 'expression', required: true, multiple: false },
@@ -1274,7 +1274,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'list_splat_pattern': [
   ],
   'match_statement': [
-    { name: 'subject', required: true, multiple: true },
+    { name: 'subjects', required: true, multiple: true },
     { name: 'body', required: true, multiple: false },
   ],
   'member_type': [
@@ -1305,7 +1305,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'pattern_list': [
   ],
   'print_statement': [
-    { name: 'argument', required: true, multiple: true },
+    { name: 'arguments', required: true, multiple: true },
   ],
   'raise_statement': [
     { name: 'cause', required: false, multiple: false },
@@ -1334,14 +1334,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'string': [
     { name: 'stringStart', required: true, multiple: false },
-    { name: 'content', required: true, multiple: true },
+    { name: 'contents', required: true, multiple: true },
     { name: 'stringEnd', required: true, multiple: false },
   ],
   'string_content': [
   ],
   'subscript': [
     { name: 'value', required: true, multiple: false },
-    { name: 'subscript', required: true, multiple: true },
+    { name: 'subscripts', required: true, multiple: true },
   ],
   'try_statement': [
     { name: 'body', required: true, multiple: false },

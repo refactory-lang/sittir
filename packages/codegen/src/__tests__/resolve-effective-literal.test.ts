@@ -28,6 +28,7 @@ function makeField(
 	return {
 		name: 'field',
 		propertyName: 'field',
+		configKey: 'field',
 		paramName: 'field',
 		source: 'grammar',
 		hasTrailing: false,

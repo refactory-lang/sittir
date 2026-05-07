@@ -416,10 +416,22 @@ export type KindOf<T> = T extends { readonly $type: infer K extends string }
 
 import type { Edit, ReplaceTarget } from './core-types.ts';
 
-/** Rename 'type' → 'typeField' to avoid collision with the `type` discriminant. */
-export type SetterKey<K extends string> = K extends 'type'
-	? 'typeField'
-	: CamelCase<K>;
+export type SetterKey<K extends string> = CamelCase<K>;
+
+type Vowel = 'a' | 'e' | 'i' | 'o' | 'u';
+type Pluralize<S extends string> =
+	S extends `${string}s` ? S :
+	S extends `${string}List` ? S :
+	S extends `${string}children` ? S :
+	S extends `${string}Children` ? S :
+	S extends `${infer Pre}Child` ? `${Pre}Children` :
+	S extends `${infer Pre}child` ? `${Pre}children` :
+	S extends `${infer Pre}${Vowel}y` ? `${S}s` :
+	S extends `${infer Pre}y` ? `${Pre}ies` :
+	`${S}s`;
+
+type FieldKey<K extends string, V> =
+	NonNullable<V> extends readonly any[] ? Pluralize<CamelCase<K>> : CamelCase<K>;
 
 /** Common render/edit methods attached to every fluent node. */
 export type NodeMethods<K extends string> = {
@@ -445,7 +457,7 @@ export type FluentSetters<
 	Excluded extends string = never,
 	Self = unknown
 > = {
-	[P in keyof Omit<Fields, Excluded> & string as SetterKey<P>]: NonNullable<
+	[P in keyof Omit<Fields, Excluded> & string as FieldKey<P, Omit<Fields, Excluded>[P]>]: NonNullable<
 		Omit<Fields, Excluded>[P]
 	> extends readonly (infer E)[]
 		? (...value: E[] | [E[]]) => Self
@@ -574,7 +586,7 @@ type RuntimeChildSlots<T> = T extends { readonly $children: infer C }
  */
 export type WrappedNode<T> = Simplify<
 	T & {
-		readonly [K in keyof FieldsOf<T> as SetterKey<K & string>]: FieldsOf<T>[K];
+		readonly [K in keyof FieldsOf<T> & string as FieldKey<K, FieldsOf<T>[K]>]: FieldsOf<T>[K];
 	} & (T extends {
 			readonly $children: infer C;
 		}

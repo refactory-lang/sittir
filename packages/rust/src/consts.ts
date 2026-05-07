@@ -1726,7 +1726,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'function_modifiers': [
-    { name: 'modifier', required: true, multiple: true },
+    { name: 'modifiers', required: true, multiple: true },
   ],
   'function_signature_item': [
     { name: 'visibilityModifier', required: false, multiple: false },
@@ -1869,7 +1869,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'or_pattern': [
   ],
   'ordered_field_declaration_list': [
-    { name: 'type', required: true, multiple: true },
+    { name: 'types', required: true, multiple: true },
   ],
   'parameter': [
     { name: 'mutableSpecifier', required: false, multiple: false },

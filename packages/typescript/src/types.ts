@@ -2142,7 +2142,7 @@ export interface ClassBodyMember {
 export interface ClassBodyMethod {
   readonly $type: TSKindId.ClassBodyMethod;
   readonly _decorator: readonly (Decorator)[];
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonly $children: readonly [MethodDefinition | Semicolon];
 }
 
@@ -2164,7 +2164,7 @@ export interface _ClassHeritageImplementsClause {
 export interface ExportStatementDefaultDeclArm {
   readonly $type: TSKindId.ExportStatementDefaultDeclArm;
   readonly _decorator: readonly (Decorator)[];
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKw];
 }
 
@@ -2324,7 +2324,7 @@ export interface JsxStartOpeningElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxString {
@@ -2358,7 +2358,7 @@ export interface ParameterName {
   readonly _decorator: readonly (Decorator)[];
   readonly _readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   readonly _pattern: Pattern | This;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
@@ -2372,7 +2372,7 @@ export interface _ParenthesizedExpressionSequence {
 export interface ParenthesizedExpressionTyped {
   readonly $type: TSKindId.ParenthesizedExpressionTyped;
   readonly _type?: TypeAnnotation;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   readonly $children: readonly [Expression];
 }
 
@@ -2505,7 +2505,7 @@ export interface AbstractClassDeclaration {
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2535,7 +2535,7 @@ export interface AbstractMethodSignature {
 export interface AddingTypeAnnotation {
   readonly $type: TSKindId.AddingTypeAnnotation;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface AmbientDeclaration {
@@ -2708,7 +2708,7 @@ export interface CatchClause {
   readonly _type?: TypeAnnotation;
   readonly _body: StatementBlock;
   parameter(): Identifier | DestructuringPattern | undefined;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   body(): StatementBlock;
 }
 
@@ -2719,7 +2719,7 @@ export interface Class {
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier | undefined;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2739,7 +2739,7 @@ export interface ClassDeclaration {
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
   readonly _automatic_semicolon?: AutomaticSemicolon;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2798,7 +2798,7 @@ export interface ConditionalType {
 export interface Constraint {
   readonly $type: TSKindId.Constraint;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface ConstructSignature {
@@ -2810,7 +2810,7 @@ export interface ConstructSignature {
   abstractMarker(): BooleanKeyword<AbstractMarker> | undefined;
   typeParameters(): TypeParameters | undefined;
   parameters(): FormalParameters;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
 }
 
 export interface ConstructorType {
@@ -2822,7 +2822,7 @@ export interface ConstructorType {
   abstractMarker(): BooleanKeyword<AbstractMarker> | undefined;
   typeParameters(): TypeParameters | undefined;
   parameters(): FormalParameters;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface ContinueStatement {
@@ -2870,7 +2870,7 @@ export interface DecoratorParenthesizedExpression {
 export interface DefaultType {
   readonly $type: TSKindId.DefaultType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface DoStatement {
@@ -2980,14 +2980,14 @@ export interface ExtendsClause {
   readonly $type: TSKindId.ExtendsClause;
   readonly _value: NonEmptyArray<Expression>;
   readonly _type_arguments?: TypeArguments;
-  value(): NonEmptyArray<Expression>;
+  values(): NonEmptyArray<Expression>;
   typeArguments(): TypeArguments | undefined;
 }
 
 export interface ExtendsTypeClause {
   readonly $type: TSKindId.ExtendsTypeClause;
   readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
-  typeField(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+  types(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
 }
 
 export interface FieldDefinition {
@@ -2996,7 +2996,7 @@ export interface FieldDefinition {
   readonly _static_marker?: BooleanKeyword<StaticMarker>;
   readonly _property: PropertyName;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   staticMarker(): BooleanKeyword<StaticMarker> | undefined;
   property(): PropertyName;
   value(): Expression | undefined;
@@ -3263,7 +3263,7 @@ export interface IndexSignatureUFormColon {
   readonly _sign?: "-" | "+";
   readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   sign(): "-" | "+" | undefined;
-  typeField(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
+  type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   readonly $children: readonly [IndexSignatureColon];
 }
 
@@ -3273,7 +3273,7 @@ export interface IndexSignatureUFormMappedTypeClause {
   readonly _sign?: "-" | "+";
   readonly _type: TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   sign(): "-" | "+" | undefined;
-  typeField(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
+  type(): TypeAnnotation | OmittingTypeAnnotation | AddingTypeAnnotation | OptingTypeAnnotation;
   readonly $children: readonly [_IndexSignatureMappedTypeClause];
 }
 
@@ -3289,7 +3289,7 @@ export interface InferType {
   readonly _type_identifier: TypeIdentifier;
   readonly _type?: Type;
   typeIdentifier(): TypeIdentifier;
-  typeField(): Type | undefined;
+  type(): Type | undefined;
 }
 
 export interface InstantiationExpression {
@@ -3365,7 +3365,7 @@ export interface JsxOpeningElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxSelfClosingElement {
@@ -3375,7 +3375,7 @@ export interface JsxSelfClosingElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface LabeledStatement {
@@ -3415,7 +3415,7 @@ export interface MappedTypeClause {
   readonly _type: Type;
   readonly _alias?: Type;
   name(): TypeIdentifier;
-  typeField(): Type;
+  type(): Type;
   alias(): Type | undefined;
 }
 
@@ -3569,13 +3569,13 @@ export interface ObjectType {
 export interface OmittingTypeAnnotation {
   readonly $type: TSKindId.OmittingTypeAnnotation;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface OptingTypeAnnotation {
   readonly $type: TSKindId.OptingTypeAnnotation;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface OptionalParameter {
@@ -3585,10 +3585,10 @@ export interface OptionalParameter {
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   value(): Expression | undefined;
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
 }
@@ -3598,13 +3598,13 @@ export interface OptionalTupleParameter {
   readonly _name: Identifier;
   readonly _type: TypeAnnotation;
   name(): Identifier;
-  typeField(): TypeAnnotation;
+  type(): TypeAnnotation;
 }
 
 export interface OptionalType {
   readonly $type: TSKindId.OptionalType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface Pair {
@@ -3644,7 +3644,7 @@ export type ParenthesizedExpression = ParenthesizedExpressionUFormTyped | Parent
 export interface ParenthesizedType {
   readonly $type: TSKindId.ParenthesizedType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface Program {
@@ -3670,7 +3670,7 @@ export interface PropertySignature {
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   name(): PropertyName;
   optionalMarker(): BooleanKeyword<OptionalMarker> | undefined;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
 }
 
 export interface PublicFieldDefinition {
@@ -3680,10 +3680,10 @@ export interface PublicFieldDefinition {
   readonly _optionality_marker?: PublicFieldDefinitionOptionalityMarker;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): PropertyName;
   optionalityMarker(): PublicFieldDefinitionOptionalityMarker | undefined;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   value(): Expression | undefined;
   readonly $children: readonly [PublicFieldDefinitionDeclareFirst | PublicFieldDefinitionAccessFirst | PublicFieldDefinitionStaticMods | PublicFieldDefinitionAbstractFirst | PublicFieldDefinitionReadonlyFirst | PublicFieldDefinitionAccessorOpt];
 }
@@ -3691,7 +3691,7 @@ export interface PublicFieldDefinition {
 export interface ReadonlyType {
   readonly $type: TSKindId.ReadonlyType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface Regex {
@@ -3709,10 +3709,10 @@ export interface RequiredParameter {
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   value(): Expression | undefined;
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
 }
@@ -3725,7 +3725,7 @@ export interface RestPattern {
 export interface RestType {
   readonly $type: TSKindId.RestType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface ReturnStatement {
@@ -3805,13 +3805,13 @@ export interface SwitchCase {
   readonly _value: Expressions;
   readonly _body: readonly (Statement)[];
   value(): Expressions;
-  body(): readonly (Statement)[];
+  bodies(): readonly (Statement)[];
 }
 
 export interface SwitchDefault {
   readonly $type: TSKindId.SwitchDefault;
   readonly _body: readonly (Statement)[];
-  body(): readonly (Statement)[];
+  bodies(): readonly (Statement)[];
 }
 
 export interface SwitchStatement {
@@ -3874,7 +3874,7 @@ export interface TupleParameter {
   readonly _name: Identifier | RestPattern;
   readonly _type: TypeAnnotation;
   name(): Identifier | RestPattern;
-  typeField(): TypeAnnotation;
+  type(): TypeAnnotation;
 }
 
 export interface TupleType {
@@ -3897,7 +3897,7 @@ export interface TypeAliasDeclaration {
 export interface TypeAnnotation {
   readonly $type: TSKindId.TypeAnnotation;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface TypeArguments {
@@ -3935,7 +3935,7 @@ export interface TypePredicate {
   readonly _name: PredefinedType | This;
   readonly _type: Type;
   name(): PredefinedType | This;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface TypePredicateAnnotation {
@@ -3992,7 +3992,7 @@ export interface VariableDeclarator {
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
   name(): Identifier | DestructuringPattern;
-  typeField(): TypeAnnotation | undefined;
+  type(): TypeAnnotation | undefined;
   value(): Expression | undefined;
 }
 

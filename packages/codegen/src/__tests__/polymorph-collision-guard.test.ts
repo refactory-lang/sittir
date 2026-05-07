@@ -93,6 +93,7 @@ describe('resolveHoistedForm — collision guard', () => {
 		const collidingField: AssembledNonterminal = {
 			name: 'left',
 			propertyName: 'left',
+			configKey: 'left',
 			storageName: 'left',
 			paramName: 'left',
 			values: [],
@@ -135,6 +136,7 @@ describe('resolveHoistedForm — collision guard', () => {
 		const nonCollidingField: AssembledNonterminal = {
 			name: 'operator',
 			propertyName: 'operator',
+			configKey: 'operator',
 			storageName: 'operator',
 			paramName: 'operator',
 			values: [],

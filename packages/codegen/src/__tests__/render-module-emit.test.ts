@@ -4,7 +4,7 @@
  * Tests cover:
  * - `classifySlot` / `buildSupertypeTransportSet` / `deriveChildrenKinds` exported helpers
  * - Phase 1: single-concrete-kind field and children slots emit typed Rust types
- * - Phase 1: render functions call typed `render_<kind>_transport`, not `render_transport_dispatch`
+ * - Phase 1: render functions call typed `render_<kind>`, not `render_transport_dispatch`
  *
  * These tests use the REAL rust grammar pipeline (evaluate → link → optimize → assemble →
  * emitRenderModule) so they exercise the full codegen path including the emitter.
@@ -232,23 +232,23 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(nameLine).toContain('PathTransport');
 	});
 
-	it('render_const_item_transport uses Renderable::Transport for name (zero-alloc)', async () => {
+	it('render_const_item uses Renderable::Transport for name (zero-alloc)', async () => {
 		const src = await getRustTemplatesRs();
-		const fnBody = extractFnBody(src, 'render_const_item_transport');
+		const fnBody = extractFnBody(src, 'render_const_item');
 		expect(fnBody).not.toBe('');
 		// name is single-kind (IdentifierTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_identifier_transport.
+		// no intermediate String allocation via render_identifier.
 		expect(fnBody).toContain('Renderable::Transport(&node.name');
-		expect(fnBody).not.toContain('render_identifier_transport');
+		expect(fnBody).not.toContain('render_identifier');
 	});
 
-	it('render_function_item_transport uses Renderable::Transport for body (zero-alloc)', async () => {
+	it('render_function_item uses Renderable::Transport for body (zero-alloc)', async () => {
 		const src = await getRustTemplatesRs();
-		const fnBody = extractFnBody(src, 'render_function_item_transport');
+		const fnBody = extractFnBody(src, 'render_function_item');
 		expect(fnBody).not.toBe('');
 		// body is single-kind (BlockTransport) → zero-alloc Transport coercion,
-		// no intermediate String allocation via render_block_transport.
+		// no intermediate String allocation via render_block.
 		expect(fnBody).toContain('Renderable::Transport(&node.body');
-		expect(fnBody).not.toContain('render_block_transport');
+		expect(fnBody).not.toContain('render_block');
 	});
 });

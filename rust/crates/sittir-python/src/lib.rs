@@ -11,10 +11,10 @@ use sittir_core::engine::{Engine, EngineGrammar};
 #[cfg(feature = "napi-bindings")]
 use sittir_core::types::{Edit, FormatRecord, NodeData};
 #[cfg(feature = "napi-bindings")]
-use sittir_core::{panic_msg, ParseResult, ParsedTree};
+use sittir_core::{apply_render_format, panic_msg, ParseResult, ParsedTree};
 
 #[cfg(feature = "napi-bindings")]
-use render::{render_dispatch, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
+use render::{render_nodedata_into, render_transport_parts, AnyTransport, TEMPLATE_BUNDLE_HASH};
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_TRANSPORT_ABI: u32 = 1;
@@ -37,7 +37,9 @@ impl EngineGrammar for PythonGrammar {
     }
 
     fn render(self, node: &NodeData) -> std::result::Result<String, String> {
-        render_dispatch(node).map_err(|e| e.to_string())
+        let mut buf = String::new();
+        render_nodedata_into(node, &mut buf).map_err(|e| e.to_string())?;
+        Ok(buf)
     }
 }
 
@@ -117,12 +119,15 @@ impl SittirEngine {
     /// Render a typed transport object (napi-native, numeric `$type`).
     #[napi]
     pub fn render(&self, transport: AnyTransport) -> Result<String> {
-        let (node, canonical) = render_transport_parts(transport)
+        let (source, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
         let tree_format = self.parsed.as_ref().and_then(|pt| pt.format());
-        self.engine
-            .render_canonical_node(&node, canonical, tree_format)
-            .map_err(Error::from_reason)
+        Ok(apply_render_format(
+            source,
+            canonical,
+            self.engine.engine_format(),
+            tree_format,
+        ))
     }
 
     #[napi]

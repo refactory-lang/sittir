@@ -1104,10 +1104,10 @@ export function functionItemFrom(input: T.FunctionItem.Loose) {
 
 export function functionModifiersFrom(input: T.FunctionModifiers.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_modifier = _resolveManyBranch<"async" | "default" | "const" | "unsafe" | T.ExternModifier>(input.modifier, "extern_modifier");
-  _assertNonEmpty(_ne_modifier, 'function_modifiers.modifier');
+  const _ne_modifiers = _resolveManyBranch<"async" | "default" | "const" | "unsafe" | T.ExternModifier>(input.modifier, "extern_modifier");
+  _assertNonEmpty(_ne_modifiers, 'function_modifiers.modifiers');
   return F.functionModifiers({
-    modifier: _ne_modifier,
+    modifier: _ne_modifiers,
   });
 }
 

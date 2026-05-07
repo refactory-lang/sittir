@@ -1640,7 +1640,7 @@ function emitInterface(
 		// declared here for type-safety so consumers can call node.name()).
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const propName = f.propertyName;
 			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f)) {
@@ -1816,7 +1816,7 @@ function emitFormInterface(
 		// Accessor function types: `name(): T`
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
-			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const propName = f.propertyName;
 			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
 			const opt = isRequired(f) ? '' : '?';
 			if (isMultiple(f)) {
@@ -2026,7 +2026,7 @@ function quoteKey(key: string): string {
  * the parse shape — the tree produced by tree-sitter is identical
  * regardless of which form constructed the node. The per-form Tree
  * alias therefore points at the base kind's Tree type; it exists so
- * method return types (`curly().typeField(...)`) can name a form-
+ * method return types (`curly().type(...)`) can name a form-
  * specific Tree type at compile time without a structural duplicate.
  */
 function emitRefineFormTreeAliases(
