@@ -2904,7 +2904,7 @@ export interface FunctionItem {
 export interface FunctionModifiers {
   readonly $type: TSKindId.FunctionModifiers;
   readonly _modifier: NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
-  modifier(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
+  modifiers(): NonEmptyArray<"async" | "default" | "const" | "unsafe" | ExternModifier>;
 }
 
 export interface FunctionSignatureItem {
@@ -3287,7 +3287,7 @@ export type OrPattern = OrPatternUFormBinary | OrPatternUFormPrefix;
 export interface OrderedFieldDeclarationList {
   readonly $type: TSKindId.OrderedFieldDeclarationList;
   readonly _type: readonly (_Type)[];
-  typeField(): readonly (_Type)[];
+  types(): readonly (_Type)[];
   readonly $children: readonly (AttributeItem | VisibilityModifier)[];
 }
 

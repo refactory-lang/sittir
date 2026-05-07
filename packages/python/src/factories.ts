@@ -103,9 +103,9 @@ export function _importList(config: T.ImportList.Config) {
     $source: 2 as const,
     $named: true as const,
     _name,
-    name() { return _name; },
+    names() { return _name; },
     $with: {
-      name: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => _importList({ ...config, name: values }),
+      names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => _importList({ ...config, name: values }),
     },
   });
 }
@@ -168,9 +168,9 @@ export function _matchBlockBlock(config: T.MatchBlockBlock.Config) {
     $source: 2 as const,
     $named: true as const,
     _alternative,
-    alternative() { return _alternative; },
+    alternatives() { return _alternative; },
     $with: {
-      alternative: (...values: T.CaseClause[]) => _matchBlockBlock({ ...config, alternative: values }),
+      alternatives: (...values: T.CaseClause[]) => _matchBlockBlock({ ...config, alternative: values }),
     },
   });
 }
@@ -900,11 +900,11 @@ export function exceptClause(config: T.ExceptClause.Config) {
     _value,
     _alias,
     $children: children,
-    value() { return _value; },
+    values() { return _value; },
     alias() { return _alias; },
     children() { return children; },
     $with: {
-      value: (...values: NonEmptyArray<T.Expression>) => exceptClause({ ...config, value: values }),
+      values: (...values: NonEmptyArray<T.Expression>) => exceptClause({ ...config, value: values }),
       alias: (value?: T.Expression) => exceptClause({ ...config, alias: value }),
       children: (...items: readonly [T.Suite]) => exceptClause({ ...config, children: items }),
     },
@@ -921,10 +921,10 @@ export function execStatement(config: T.ExecStatement.Config) {
     _code,
     _in_clause,
     code() { return _code; },
-    inClause() { return _in_clause; },
+    inClauses() { return _in_clause; },
     $with: {
       code: (value: T.String | T.Identifier) => execStatement({ ...config, code: value }),
-      inClause: (...values: NonEmptyArray<"in" | T.Expression>) => execStatement({ ...config, inClause: values }),
+      inClauses: (...values: NonEmptyArray<"in" | T.Expression>) => execStatement({ ...config, inClause: values }),
     },
   });
 }
@@ -1013,11 +1013,11 @@ export function forInClause(config: T.ForInClause.Config) {
     _right,
     asyncMarker() { return _async_marker; },
     left() { return _left; },
-    right() { return _right; },
+    rights() { return _right; },
     $with: {
       asyncMarker: (value?: BooleanKeyword<T.AsyncMarker>) => forInClause({ ...config, asyncMarker: value }),
       left: (value: T.LeftHandSide) => forInClause({ ...config, left: value }),
-      right: (...values: NonEmptyArray<T.ExpressionWithinForInClause>) => forInClause({ ...config, right: values }),
+      rights: (...values: NonEmptyArray<T.ExpressionWithinForInClause>) => forInClause({ ...config, right: values }),
     },
   });
 }
@@ -1104,9 +1104,9 @@ export function futureImportStatement(config: T.FutureImportStatement.Config) {
     $source: 2 as const,
     $named: true as const,
     _name,
-    name() { return _name; },
+    names() { return _name; },
     $with: {
-      name: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => futureImportStatement({ ...config, name: values }),
+      names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => futureImportStatement({ ...config, name: values }),
     },
   });
 }
@@ -1196,11 +1196,11 @@ export function ifStatement(config: T.IfStatement.Config) {
     _alternative,
     condition() { return _condition; },
     consequence() { return _consequence; },
-    alternative() { return _alternative; },
+    alternatives() { return _alternative; },
     $with: {
       condition: (value: T.Expression) => ifStatement({ ...config, condition: value }),
       consequence: (value: T.Suite) => ifStatement({ ...config, consequence: value }),
-      alternative: (...values: (T.ElifClause | T.ElseClause)[]) => ifStatement({ ...config, alternative: values }),
+      alternatives: (...values: (T.ElifClause | T.ElseClause)[]) => ifStatement({ ...config, alternative: values }),
     },
   });
 }
@@ -1240,9 +1240,9 @@ export function importStatement(config: T.ImportStatement.Config) {
     $source: 2 as const,
     $named: true as const,
     _name,
-    name() { return _name; },
+    names() { return _name; },
     $with: {
-      name: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => importStatement({ ...config, name: values }),
+      names: (...values: NonEmptyArray<T.DottedName | T.AliasedImport>) => importStatement({ ...config, name: values }),
     },
   });
 }
@@ -1448,10 +1448,10 @@ export function matchStatement(config: T.MatchStatement.Config) {
     $named: true as const,
     _subject,
     _body,
-    subject() { return _subject; },
+    subjects() { return _subject; },
     body() { return _body; },
     $with: {
-      subject: (...values: NonEmptyArray<T.Expression>) => matchStatement({ ...config, subject: values }),
+      subjects: (...values: NonEmptyArray<T.Expression>) => matchStatement({ ...config, subject: values }),
       body: (value: T.MatchBlock) => matchStatement({ ...config, body: value }),
     },
   });
@@ -1622,10 +1622,10 @@ export function printStatement(config: T.PrintStatement.Config) {
     $named: true as const,
     _argument,
     $children: children,
-    argument() { return _argument; },
+    arguments() { return _argument; },
     children() { return children; },
     $with: {
-      argument: (...values: T.Expression[]) => printStatement({ ...config, argument: values }),
+      arguments: (...values: T.Expression[]) => printStatement({ ...config, argument: values }),
       children: (...items: readonly [T.Chevron]) => printStatement({ ...config, children: items }),
     },
   });
@@ -1773,11 +1773,11 @@ export function string(config: T.String.Config) {
     _content,
     _string_end,
     stringStart() { return _string_start; },
-    content() { return _content; },
+    contents() { return _content; },
     stringEnd() { return _string_end; },
     $with: {
       stringStart: (value: T.StringStart) => string({ ...config, stringStart: value }),
-      content: (...values: (T.Interpolation | T.StringContent)[]) => string({ ...config, content: values }),
+      contents: (...values: (T.Interpolation | T.StringContent)[]) => string({ ...config, content: values }),
       stringEnd: (value: T.StringEnd) => string({ ...config, stringEnd: value }),
     },
   });
@@ -1805,10 +1805,10 @@ export function subscript(config: T.Subscript.Config) {
     _value,
     _subscript,
     value() { return _value; },
-    subscript() { return _subscript; },
+    subscripts() { return _subscript; },
     $with: {
       value: (value: T.PrimaryExpression) => subscript({ ...config, value: value }),
-      subscript: (...values: NonEmptyArray<T.Expression | T.Slice>) => subscript({ ...config, subscript: values }),
+      subscripts: (...values: NonEmptyArray<T.Expression | T.Slice>) => subscript({ ...config, subscript: values }),
     },
   });
 }

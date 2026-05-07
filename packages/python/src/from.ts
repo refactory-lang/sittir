@@ -782,10 +782,10 @@ export function escapeSequenceFrom(input: string | T.EscapeSequence) {
 
 export function exceptClauseFrom(input: T.ExceptClause.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_value = _resolveMany<T.Expression>(input.value, _K0, _super_expression);
-  _assertNonEmpty(_ne_value, 'except_clause.value');
+  const _ne_values = _resolveMany<T.Expression>(input.value, _K0, _super_expression);
+  _assertNonEmpty(_ne_values, 'except_clause.values');
   return F.exceptClause({
-    value: _ne_value,
+    value: _ne_values,
     alias: _resolveOne<T.Expression>(input.alias, _K0, _super_expression),
     children: _resolveOneBranch(input.children, "_suite"),
   });
@@ -793,11 +793,11 @@ export function exceptClauseFrom(input: T.ExceptClause.Loose) {
 
 export function execStatementFrom(input: T.ExecStatement.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_inClause = _resolveMany<"in" | T.Expression>(input.inClause, _K0, _super_expression);
-  _assertNonEmpty(_ne_inClause, 'exec_statement.inClause');
+  const _ne_inClauses = _resolveMany<"in" | T.Expression>(input.inClause, _K0, _super_expression);
+  _assertNonEmpty(_ne_inClauses, 'exec_statement.inClauses');
   return F.execStatement({
     code: _resolveOne<T.String | T.Identifier>(input.code, _super_keyword_identifier, _K7),
-    inClause: _ne_inClause,
+    inClause: _ne_inClauses,
   });
 }
 
@@ -841,12 +841,12 @@ export function floatFrom(input: string | T.Float) {
 
 export function forInClauseFrom(input: T.ForInClause.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_right = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _super_expression_within_for_in_clause);
-  _assertNonEmpty(_ne_right, 'for_in_clause.right');
+  const _ne_rights = _resolveMany<T.ExpressionWithinForInClause>(input.right, _K0, _super_expression_within_for_in_clause);
+  _assertNonEmpty(_ne_rights, 'for_in_clause.rights');
   return F.forInClause({
     asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
     left: _resolveOne<T.LeftHandSide>(input.left, _K0, _super_left_hand_side),
-    right: _ne_right,
+    right: _ne_rights,
   });
 }
 
@@ -883,10 +883,10 @@ export function functionDefinitionFrom(input: T.FunctionDefinition.Loose) {
 
 export function futureImportStatementFrom(input: T.FutureImportStatement.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
-  _assertNonEmpty(_ne_name, 'future_import_statement.name');
+  const _ne_names = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
+  _assertNonEmpty(_ne_names, 'future_import_statement.names');
   return F.futureImportStatement({
-    name: _ne_name,
+    name: _ne_names,
   });
 }
 
@@ -950,10 +950,10 @@ export function importPrefixFrom(input: string | T.ImportPrefix) {
 
 export function importStatementFrom(input: T.ImportStatement.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_name = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
-  _assertNonEmpty(_ne_name, 'import_statement.name');
+  const _ne_names = _resolveMany<T.DottedName | T.AliasedImport>(input.name, _K0, _K8);
+  _assertNonEmpty(_ne_names, 'import_statement.names');
   return F.importStatement({
-    name: _ne_name,
+    name: _ne_names,
   });
 }
 
@@ -1056,10 +1056,10 @@ export function listSplatPatternFrom(input?: NonNullable<T.ListSplatPattern.Conf
 
 export function matchStatementFrom(input: T.MatchStatement.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_subject = _resolveMany<T.Expression>(input.subject, _K0, _super_expression);
-  _assertNonEmpty(_ne_subject, 'match_statement.subject');
+  const _ne_subjects = _resolveMany<T.Expression>(input.subject, _K0, _super_expression);
+  _assertNonEmpty(_ne_subjects, 'match_statement.subjects');
   return F.matchStatement({
-    subject: _ne_subject,
+    subject: _ne_subjects,
     body: _resolveOneBranch<T.MatchBlock>(input.body, "_match_block"),
   });
 }
@@ -1240,11 +1240,11 @@ export function stringContentFrom(...input: readonly (NonNullable<T.StringConten
 
 export function subscriptFrom(input: T.Subscript.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_subscript = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K16);
-  _assertNonEmpty(_ne_subscript, 'subscript.subscript');
+  const _ne_subscripts = _resolveMany<T.Expression | T.Slice>(input.subscript, _K0, _K16);
+  _assertNonEmpty(_ne_subscripts, 'subscript.subscripts');
   return F.subscript({
     value: _resolveOne<T.PrimaryExpression>(input.value, _K1, _K2),
-    subscript: _ne_subscript,
+    subscript: _ne_subscripts,
   });
 }
 

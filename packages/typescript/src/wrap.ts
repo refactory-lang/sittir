@@ -366,13 +366,13 @@ export function wrapAbstractClassDeclaration(data: T.AbstractClassDeclaration, t
     _class_heritage: data._class_heritage,
     _body: data._body,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
     body() { return drillIn<T.ClassBody>(this._body, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapAbstractClassDeclaration({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapAbstractClassDeclaration({ ...data, _decorator: v }, tree),
       name: (v: T.TypeIdentifier) => wrapAbstractClassDeclaration({ ...data, _name: v }, tree),
       typeParameters: (v: T.TypeParameters) => wrapAbstractClassDeclaration({ ...data, _type_parameters: v }, tree),
       classHeritage: (v: T.ClassHeritage) => wrapAbstractClassDeclaration({ ...data, _class_heritage: v }, tree),
@@ -756,13 +756,13 @@ export function wrapClass(data: T.Class, tree: TreeHandle) {
     _class_heritage: data._class_heritage,
     _body: data._body,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     name() { return drillIn<T.TypeIdentifier | undefined>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
     body() { return drillIn<T.ClassBody>(this._body, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapClass({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapClass({ ...data, _decorator: v }, tree),
       name: (v: T.TypeIdentifier) => wrapClass({ ...data, _name: v }, tree),
       typeParameters: (v: T.TypeParameters) => wrapClass({ ...data, _type_parameters: v }, tree),
       classHeritage: (v: T.ClassHeritage) => wrapClass({ ...data, _class_heritage: v }, tree),
@@ -794,14 +794,14 @@ export function wrapClassDeclaration(data: T.ClassDeclaration, tree: TreeHandle)
     _body: data._body,
     _automatic_semicolon: data._automatic_semicolon,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     classHeritage() { return drillIn<T.ClassHeritage | undefined>(this._class_heritage, tree); },
     body() { return drillIn<T.ClassBody>(this._body, tree); },
     automaticSemicolon() { return drillIn<T.AutomaticSemicolon | undefined>(this._automatic_semicolon, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapClassDeclaration({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapClassDeclaration({ ...data, _decorator: v }, tree),
       name: (v: T.TypeIdentifier) => wrapClassDeclaration({ ...data, _name: v }, tree),
       typeParameters: (v: T.TypeParameters) => wrapClassDeclaration({ ...data, _type_parameters: v }, tree),
       classHeritage: (v: T.ClassHeritage) => wrapClassDeclaration({ ...data, _class_heritage: v }, tree),
@@ -1248,10 +1248,10 @@ export function wrapExtendsClause(data: T.ExtendsClause, tree: TreeHandle) {
     _value: data._value,
     _type_arguments: data._type_arguments,
 
-    value() { return drillInAll<T.Expression>(this._value, tree); },
+    values() { return drillInAll<T.Expression>(this._value, tree); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
     $with: {
-      value: (...v: NonEmptyArray<T.Expression>) => wrapExtendsClause({ ...data, _value: v }, tree),
+      values: (...v: NonEmptyArray<T.Expression>) => wrapExtendsClause({ ...data, _value: v }, tree),
       typeArguments: (v: T.TypeArguments) => wrapExtendsClause({ ...data, _type_arguments: v }, tree),
     },
   });
@@ -1264,9 +1264,9 @@ export function wrapExtendsTypeClause(data: T.ExtendsTypeClause, tree: TreeHandl
     $type: TSKindId.ExtendsTypeClause as const,
     _type: data._type,
 
-    typeField() { return drillInAll<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this._type, tree); },
+    types() { return drillInAll<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(this._type, tree); },
     $with: {
-      typeField: (...v: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => wrapExtendsTypeClause({ ...data, _type: v }, tree),
+      types: (...v: NonEmptyArray<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>) => wrapExtendsTypeClause({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -2270,13 +2270,13 @@ export function wrapOptionalParameter(data: T.OptionalParameter, tree: TreeHandl
     _value: data._value,
     $children: data.$children,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     readonlyMarker() { return drillIn<T.ReadonlyMarker | undefined>(this._readonly_marker, tree); },
     pattern() { return drillIn<T.Pattern | T.This>(this._pattern, tree); },
     typeField() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapOptionalParameter({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapOptionalParameter({ ...data, _decorator: v }, tree),
       readonlyMarker: (v: T.ReadonlyMarker) => wrapOptionalParameter({ ...data, _readonly_marker: v }, tree),
       pattern: (v: T.Pattern | T.This) => wrapOptionalParameter({ ...data, _pattern: v }, tree),
       typeField: (v: T.TypeAnnotation) => wrapOptionalParameter({ ...data, _type: v }, tree),
@@ -2449,13 +2449,13 @@ export function wrapPublicFieldDefinition(data: T.PublicFieldDefinition, tree: T
     _value: data._value,
     $children: data.$children,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     name() { return drillIn<T.PropertyName>(this._name, tree); },
     optionalityMarker() { return drillIn<T.PublicFieldDefinitionOptionalityMarker | undefined>(this._optionality_marker, tree); },
     typeField() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapPublicFieldDefinition({ ...data, _decorator: v }, tree),
       name: (v: T.PropertyName) => wrapPublicFieldDefinition({ ...data, _name: v }, tree),
       optionalityMarker: (v: T.PublicFieldDefinitionOptionalityMarker) => wrapPublicFieldDefinition({ ...data, _optionality_marker: v }, tree),
       typeField: (v: T.TypeAnnotation) => wrapPublicFieldDefinition({ ...data, _type: v }, tree),
@@ -2508,13 +2508,13 @@ export function wrapRequiredParameter(data: T.RequiredParameter, tree: TreeHandl
     _value: data._value,
     $children: data.$children,
 
-    decorator() { return drillInAll<T.Decorator>(this._decorator, tree); },
+    decorators() { return drillInAll<T.Decorator>(this._decorator, tree); },
     readonlyMarker() { return drillIn<T.ReadonlyMarker | undefined>(this._readonly_marker, tree); },
     pattern() { return drillIn<T.Pattern | T.This>(this._pattern, tree); },
     typeField() { return drillIn<T.TypeAnnotation | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
-      decorator: (...v: T.Decorator[]) => wrapRequiredParameter({ ...data, _decorator: v }, tree),
+      decorators: (...v: T.Decorator[]) => wrapRequiredParameter({ ...data, _decorator: v }, tree),
       readonlyMarker: (v: T.ReadonlyMarker) => wrapRequiredParameter({ ...data, _readonly_marker: v }, tree),
       pattern: (v: T.Pattern | T.This) => wrapRequiredParameter({ ...data, _pattern: v }, tree),
       typeField: (v: T.TypeAnnotation) => wrapRequiredParameter({ ...data, _type: v }, tree),
@@ -2697,10 +2697,10 @@ export function wrapSwitchCase(data: T.SwitchCase, tree: TreeHandle) {
     _body: data._body,
 
     value() { return drillIn<T.Expressions>(this._value, tree); },
-    body() { return drillInAll<T.Statement>(this._body, tree); },
+    bodies() { return drillInAll<T.Statement>(this._body, tree); },
     $with: {
       value: (v: T.Expressions) => wrapSwitchCase({ ...data, _value: v }, tree),
-      body: (...v: T.Statement[]) => wrapSwitchCase({ ...data, _body: v }, tree),
+      bodies: (...v: T.Statement[]) => wrapSwitchCase({ ...data, _body: v }, tree),
     },
   });
   return _node;
@@ -2712,9 +2712,9 @@ export function wrapSwitchDefault(data: T.SwitchDefault, tree: TreeHandle) {
     $type: TSKindId.SwitchDefault as const,
     _body: data._body,
 
-    body() { return drillInAll<T.Statement>(this._body, tree); },
+    bodies() { return drillInAll<T.Statement>(this._body, tree); },
     $with: {
-      body: (...v: T.Statement[]) => wrapSwitchDefault({ ...data, _body: v }, tree),
+      bodies: (...v: T.Statement[]) => wrapSwitchDefault({ ...data, _body: v }, tree),
     },
   });
   return _node;

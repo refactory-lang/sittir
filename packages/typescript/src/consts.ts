@@ -1612,7 +1612,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   '_type_identifier': [
   ],
   'abstract_class_declaration': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1703,7 +1703,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'body', required: true, multiple: false },
   ],
   'class': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'name', required: false, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1712,7 +1712,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'class_body': [
   ],
   'class_declaration': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'typeParameters', required: false, multiple: false },
     { name: 'classHeritage', required: false, multiple: false },
@@ -1814,14 +1814,14 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'semicolon', required: true, multiple: false },
   ],
   'extends_clause': [
-    { name: 'value', required: true, multiple: true },
+    { name: 'values', required: true, multiple: true },
     { name: 'typeArguments', required: false, multiple: false },
   ],
   'extends_type_clause': [
-    { name: 'type', required: true, multiple: true },
+    { name: 'types', required: true, multiple: true },
   ],
   'field_definition': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'staticMarker', required: false, multiple: false },
     { name: 'property', required: true, multiple: false },
     { name: 'value', required: false, multiple: false },
@@ -1981,12 +1981,12 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   'jsx_opening_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attribute', required: true, multiple: true },
+    { name: 'attributes', required: true, multiple: true },
   ],
   'jsx_self_closing_element': [
     { name: 'name', required: false, multiple: false },
     { name: 'typeArguments', required: false, multiple: false },
-    { name: 'attribute', required: true, multiple: true },
+    { name: 'attributes', required: true, multiple: true },
   ],
   'labeled_statement': [
     { name: 'label', required: true, multiple: false },
@@ -2086,7 +2086,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: true, multiple: false },
   ],
   'optional_parameter': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2128,7 +2128,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'type', required: false, multiple: false },
   ],
   'public_field_definition': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'name', required: true, multiple: false },
     { name: 'optionalityMarker', required: false, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2142,7 +2142,7 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
     { name: 'flags', required: false, multiple: false },
   ],
   'required_parameter': [
-    { name: 'decorator', required: true, multiple: true },
+    { name: 'decorators', required: true, multiple: true },
     { name: 'readonlyMarker', required: false, multiple: false },
     { name: 'pattern', required: true, multiple: false },
     { name: 'type', required: false, multiple: false },
@@ -2184,10 +2184,10 @@ export const FIELD_MAP: Record<NodeKind, ReadonlyArray<{
   ],
   'switch_case': [
     { name: 'value', required: true, multiple: false },
-    { name: 'body', required: true, multiple: true },
+    { name: 'bodies', required: true, multiple: true },
   ],
   'switch_default': [
-    { name: 'body', required: true, multiple: true },
+    { name: 'bodies', required: true, multiple: true },
   ],
   'switch_statement': [
     { name: 'value', required: true, multiple: false },

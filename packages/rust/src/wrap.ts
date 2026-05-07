@@ -1253,9 +1253,9 @@ export function wrapFunctionModifiers(data: T.FunctionModifiers, tree: TreeHandl
     $type: TSKindId.FunctionModifiers as const,
     _modifier: data._modifier,
 
-    modifier() { return drillInAll<"async" | "default" | "const" | "unsafe" | T.ExternModifier>(this._modifier, tree); },
+    modifiers() { return drillInAll<"async" | "default" | "const" | "unsafe" | T.ExternModifier>(this._modifier, tree); },
     $with: {
-      modifier: (...v: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => wrapFunctionModifiers({ ...data, _modifier: v }, tree),
+      modifiers: (...v: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => wrapFunctionModifiers({ ...data, _modifier: v }, tree),
     },
   });
   return _node;
@@ -1889,9 +1889,9 @@ export function wrapOrderedFieldDeclarationList(data: T.OrderedFieldDeclarationL
     _type: data._type,
     $children: data.$children,
 
-    typeField() { return drillInAll<T._Type>(this._type, tree); },
+    types() { return drillInAll<T._Type>(this._type, tree); },
     $with: {
-      typeField: (...v: T._Type[]) => wrapOrderedFieldDeclarationList({ ...data, _type: v }, tree),
+      types: (...v: T._Type[]) => wrapOrderedFieldDeclarationList({ ...data, _type: v }, tree),
       children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => wrapOrderedFieldDeclarationList({ ...data, $children: items }, tree),
     },
   });

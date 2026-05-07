@@ -665,10 +665,10 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
     _alias: data._alias,
     $children: data.$children,
 
-    value() { return drillInAll<T.Expression>(this._value, tree); },
+    values() { return drillInAll<T.Expression>(this._value, tree); },
     alias() { return drillIn<T.Expression | undefined>(this._alias, tree); },
     $with: {
-      value: (...v: NonEmptyArray<T.Expression>) => wrapExceptClause({ ...data, _value: v }, tree),
+      values: (...v: NonEmptyArray<T.Expression>) => wrapExceptClause({ ...data, _value: v }, tree),
       alias: (v: T.Expression) => wrapExceptClause({ ...data, _alias: v }, tree),
       children: (...items: readonly [T.Suite]) => wrapExceptClause({ ...data, $children: items }, tree),
     },
@@ -684,10 +684,10 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
     _in_clause: data._in_clause,
 
     code() { return drillIn<T.String | T.Identifier>(this._code, tree); },
-    inClause() { return drillInAll<"in" | T.Expression>(this._in_clause, tree); },
+    inClauses() { return drillInAll<"in" | T.Expression>(this._in_clause, tree); },
     $with: {
       code: (v: T.String | T.Identifier) => wrapExecStatement({ ...data, _code: v }, tree),
-      inClause: (...v: NonEmptyArray<"in" | T.Expression>) => wrapExecStatement({ ...data, _in_clause: v }, tree),
+      inClauses: (...v: NonEmptyArray<"in" | T.Expression>) => wrapExecStatement({ ...data, _in_clause: v }, tree),
     },
   });
   return _node;
@@ -751,11 +751,11 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
 
     asyncMarker() { return drillIn<T.AsyncMarker | undefined>(this._async_marker, tree); },
     left() { return drillIn<T.LeftHandSide>(this._left, tree); },
-    right() { return drillInAll<T.ExpressionWithinForInClause>(this._right, tree); },
+    rights() { return drillInAll<T.ExpressionWithinForInClause>(this._right, tree); },
     $with: {
       asyncMarker: (v: T.AsyncMarker) => wrapForInClause({ ...data, _async_marker: v }, tree),
       left: (v: T.LeftHandSide) => wrapForInClause({ ...data, _left: v }, tree),
-      right: (...v: NonEmptyArray<T.ExpressionWithinForInClause>) => wrapForInClause({ ...data, _right: v }, tree),
+      rights: (...v: NonEmptyArray<T.ExpressionWithinForInClause>) => wrapForInClause({ ...data, _right: v }, tree),
     },
   });
   return _node;
@@ -833,9 +833,9 @@ export function wrapFutureImportStatement(data: T.FutureImportStatement, tree: T
     $type: TSKindId.FutureImportStatement as const,
     _name: data._name,
 
-    name() { return drillInAll<T.DottedName | T.AliasedImport>(this._name, tree); },
+    names() { return drillInAll<T.DottedName | T.AliasedImport>(this._name, tree); },
     $with: {
-      name: (...v: NonEmptyArray<T.DottedName | T.AliasedImport>) => wrapFutureImportStatement({ ...data, _name: v }, tree),
+      names: (...v: NonEmptyArray<T.DottedName | T.AliasedImport>) => wrapFutureImportStatement({ ...data, _name: v }, tree),
     },
   });
   return _node;
@@ -909,11 +909,11 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
 
     condition() { return drillIn<T.Expression>(this._condition, tree); },
     consequence() { return drillIn<T.Suite>(this._consequence, tree); },
-    alternative() { return drillInAll<T.ElifClause | T.ElseClause>(this._alternative, tree); },
+    alternatives() { return drillInAll<T.ElifClause | T.ElseClause>(this._alternative, tree); },
     $with: {
       condition: (v: T.Expression) => wrapIfStatement({ ...data, _condition: v }, tree),
       consequence: (v: T.Suite) => wrapIfStatement({ ...data, _consequence: v }, tree),
-      alternative: (...v: (T.ElifClause | T.ElseClause)[]) => wrapIfStatement({ ...data, _alternative: v }, tree),
+      alternatives: (...v: (T.ElifClause | T.ElseClause)[]) => wrapIfStatement({ ...data, _alternative: v }, tree),
     },
   });
   return _node;
@@ -941,9 +941,9 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
     $type: TSKindId.ImportStatement as const,
     _name: data._name,
 
-    name() { return drillInAll<T.DottedName | T.AliasedImport>(this._name, tree); },
+    names() { return drillInAll<T.DottedName | T.AliasedImport>(this._name, tree); },
     $with: {
-      name: (...v: NonEmptyArray<T.DottedName | T.AliasedImport>) => wrapImportStatement({ ...data, _name: v }, tree),
+      names: (...v: NonEmptyArray<T.DottedName | T.AliasedImport>) => wrapImportStatement({ ...data, _name: v }, tree),
     },
   });
   return _node;
@@ -1118,10 +1118,10 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
     _subject: data._subject,
     _body: data._body,
 
-    subject() { return drillInAll<T.Expression>(this._subject, tree); },
+    subjects() { return drillInAll<T.Expression>(this._subject, tree); },
     body() { return drillAs<T.MatchBlock>(this._body, tree, "block", "_match_block"); },
     $with: {
-      subject: (...v: NonEmptyArray<T.Expression>) => wrapMatchStatement({ ...data, _subject: v }, tree),
+      subjects: (...v: NonEmptyArray<T.Expression>) => wrapMatchStatement({ ...data, _subject: v }, tree),
       body: (v: T.MatchBlock) => wrapMatchStatement({ ...data, _body: v }, tree),
     },
   });
@@ -1266,9 +1266,9 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle) {
     _argument: data._argument,
     $children: data.$children,
 
-    argument() { return drillInAll<T.Expression>(this._argument, tree); },
+    arguments() { return drillInAll<T.Expression>(this._argument, tree); },
     $with: {
-      argument: (...v: T.Expression[]) => wrapPrintStatement({ ...data, _argument: v }, tree),
+      arguments: (...v: T.Expression[]) => wrapPrintStatement({ ...data, _argument: v }, tree),
       children: (...items: readonly [T.Chevron]) => wrapPrintStatement({ ...data, $children: items }, tree),
     },
   });
@@ -1403,11 +1403,11 @@ export function wrapString(data: T.String, tree: TreeHandle) {
     _string_end: data._string_end,
 
     stringStart() { return drillIn<T.StringStart>(this._string_start, tree); },
-    content() { return drillInAll<T.Interpolation | T.StringContent>(this._content, tree); },
+    contents() { return drillInAll<T.Interpolation | T.StringContent>(this._content, tree); },
     stringEnd() { return drillIn<T.StringEnd>(this._string_end, tree); },
     $with: {
       stringStart: (v: T.StringStart) => wrapString({ ...data, _string_start: v }, tree),
-      content: (...v: (T.Interpolation | T.StringContent)[]) => wrapString({ ...data, _content: v }, tree),
+      contents: (...v: (T.Interpolation | T.StringContent)[]) => wrapString({ ...data, _content: v }, tree),
       stringEnd: (v: T.StringEnd) => wrapString({ ...data, _string_end: v }, tree),
     },
   });
@@ -1433,10 +1433,10 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
     _subscript: data._subscript,
 
     value() { return drillIn<T.PrimaryExpression>(this._value, tree); },
-    subscript() { return drillInAll<T.Expression | T.Slice>(this._subscript, tree); },
+    subscripts() { return drillInAll<T.Expression | T.Slice>(this._subscript, tree); },
     $with: {
       value: (v: T.PrimaryExpression) => wrapSubscript({ ...data, _value: v }, tree),
-      subscript: (...v: NonEmptyArray<T.Expression | T.Slice>) => wrapSubscript({ ...data, _subscript: v }, tree),
+      subscripts: (...v: NonEmptyArray<T.Expression | T.Slice>) => wrapSubscript({ ...data, _subscript: v }, tree),
     },
   });
   return _node;

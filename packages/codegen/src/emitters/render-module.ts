@@ -1457,10 +1457,10 @@ function buildSlotRenderCall(cls: SlotClass, expr: string): string {
 			// Use typeName (PascalCase, no leading underscore) so the generated
 			// fn call matches what renderTypedLeafFn/renderTypedBranchFn emit.
 			// Example: _kw_abstract_marker → typeName=KwAbstractMarker →
-			// render_kw_abstract_marker_transport (NOT render__kw_…_transport).
-			return `render_${rustSnakeIdent(cls.typeName)}_transport(${expr})`;
+			// render_kw_abstract_marker (NOT render__kw_…).
+			return `render_${rustSnakeIdent(cls.typeName)}(${expr})`;
 		case 'supertype':
-			return `render_${rustSnakeIdent(cls.supertypeName)}_transport(${expr})`;
+			return `render_${rustSnakeIdent(cls.supertypeName)}(${expr})`;
 		case 'heterogeneous':
 			if (cls.useBox === true) {
 				// Box<AnyTransport> single-value fallback — deref through Box to reach
@@ -1485,9 +1485,9 @@ function buildSlotRenderCall(cls: SlotClass, expr: string): string {
 function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 	switch (cls.tag) {
 		case 'concrete':
-			return `render_${rustSnakeIdent(cls.typeName)}_transport(${expr}, dest)?;`;
+			return `render_${rustSnakeIdent(cls.typeName)}(${expr}, dest)?;`;
 		case 'supertype':
-			return `render_${rustSnakeIdent(cls.supertypeName)}_transport(${expr}, dest)?;`;
+			return `render_${rustSnakeIdent(cls.supertypeName)}(${expr}, dest)?;`;
 		case 'heterogeneous':
 			if (cls.useBox === true) {
 				return `${expr}.as_ref().render_into(dest)?;`;
@@ -1503,7 +1503,7 @@ function buildSlotWriteCall(cls: SlotClass, expr: string): string {
 // ----------------------------------------------------------------------
 
 /**
- * Emit per-kind `render_<kind>_transport` functions, per-supertype render
+ * Emit per-kind `render_<kind>` functions, per-supertype render
  * helpers, plus the top-level `render_transport_dispatch` that routes
  * `&AnyTransport` to the right fn.
  *
@@ -1630,11 +1630,11 @@ function renderTypedDispatch(
 
 /** Rust function name for the typed render fn of a given typeName. */
 function rustTypedRenderFnName(typeName: string): string {
-	return `render_${rustSnakeIdent(typeName)}_transport`;
+	return `render_${rustSnakeIdent(typeName)}`;
 }
 
 /**
- * Emit the `render_<kind>_transport(t: &<Kind>Transport, dest: &mut dyn fmt::Write)`
+ * Emit the `render_<kind>(t: &<Kind>Transport, dest: &mut dyn fmt::Write)`
  * function for a single node. Dispatches based on modelType:
  *
  * - polymorph → match on enum variants, delegate to per-form fns
@@ -2088,7 +2088,7 @@ function emitListSlotBuffer(ident: string, required: boolean): string[] {
  * `&dyn RenderableTransport` since every concrete transport struct and
  * supertype enum implements the trait.  This avoids the intermediate
  * `String` allocation that the old path incurred
- * (render_*_transport → String → borrow as &str → Renderable::Text).
+ * (render_* → String → borrow as &str → Renderable::Text).
  *
  * Heterogeneous (Box<AnyTransport>) fields follow the same pattern using
  * `node.field.as_ref()` (Box::as_ref → &dyn RenderableTransport) — unchanged
@@ -2955,7 +2955,7 @@ function emitSupertypeTransportEnum(
 	// RenderableTransport for the supertype enum — delegates to the per-supertype
 	// render helper (declared later by emitSupertypeRenderHelper; forward fn
 	// references are fine at Rust module scope).
-	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}_transport`;
+	const supertypeRenderFn = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	lines.push(`impl RenderableTransport for ${enumName} {`);
 	lines.push(`    fn render_into(`);
 	lines.push(`        &self,`);
@@ -2970,7 +2970,7 @@ function emitSupertypeTransportEnum(
 }
 
 /**
- * Emit `render_<supertype>_transport(t: &<Supertype>Transport, dest: &mut dyn fmt::Write) -> Result<(), ::askama::Error>`
+ * Emit `render_<supertype>(t: &<Supertype>Transport, dest: &mut dyn fmt::Write) -> Result<(), ::askama::Error>`
  * as a bounded match over the enum variants.
  *
  * Each arm delegates to the concrete kind's render fn — same pattern as
@@ -2985,7 +2985,7 @@ function emitSupertypeRenderHelper(
 	nodeMap: NodeMap
 ): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
-	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}_transport`;
+	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
 
 	const isLeafLike = (n: AssembledNode): boolean =>
@@ -3516,12 +3516,9 @@ function renderTransportBridge(
 		'}',
 		'',
 		...nodes.flatMap((node) => renderTransportToNodeFns(node, kindIdByKind, nodeMap)),
-		'pub fn node_data_from_transport(transport: AnyTransport) -> Result<TransportNodeData, ::askama::Error> {',
-		'    transport_to_node(transport)',
-		'}',
-		'',
-		'pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportNodeData, String), ::askama::Error> {',
-		'    let node = node_data_from_transport(transport)?;',
+		'pub fn render_transport_parts(transport: AnyTransport) -> Result<(TransportSource, String), ::askama::Error> {',
+		'    let node = transport_to_node(transport)?;',
+		'    let source = node.source;',
 		'    let mut rendered = render_dispatch(&node)?;',
 		'    if let Some(ref trivia) = node.trivia_data {',
 		'        if let Some(ref leading) = trivia.leading {',
@@ -3542,11 +3539,11 @@ function renderTransportBridge(
 		'            }',
 		'        }',
 		'    }',
-		'    Ok((node, rendered))',
+		'    Ok((source, rendered))',
 		'}',
 		'',
 		'pub fn from_transport(transport: AnyTransport) -> Result<String, ::askama::Error> {',
-		'    let (_node, rendered) = render_transport_parts(transport)?;',
+		'    let (_source, rendered) = render_transport_parts(transport)?;',
 		'    Ok(rendered)',
 		'}',
 		'',

@@ -152,7 +152,7 @@ function emitBranchTest(
 	const typeConfigParts: string[] = [];
 	for (const f of node.fields) {
 		if (isRequired(f) && !isAutoStampField(f, nodeMap)) {
-			typeConfigParts.push(`${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
+			typeConfigParts.push(`${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
 		}
 	}
 	if (node.children && node.children.length > 0) {
@@ -318,7 +318,7 @@ function emitPolymorphTest(
 		if (hoist) allFields.push(...hoist.innerFields);
 		const configParts = allFields
 			.filter((f) => isRequired(f) && !isAutoStampField(f, nodeMap))
-			.map((f) => `${f.propertyName}: ${dummyValue(f, nodeMap, kindEntries)}`);
+			.map((f) => `${f.configKey}: ${dummyValue(f, nodeMap, kindEntries)}`);
 		// Container-shaped hoist targets: inner factory accepts `...children`
 		// via the form's `children` surface. The inner container may assert
 		// non-empty so supply a single dummy child of the slot's first kind.

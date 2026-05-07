@@ -51,18 +51,18 @@
 
 **Goal**: Dead code cleanup.
 
-- [ ] T015 [US4] In emitter, stop emitting `node_data_from_transport` in `bridge.rs`. Remove the function entirely from generated output.
-- [ ] T016 [US4] Update `render_transport_parts` — no longer calls `node_data_from_transport`. Instead, read KindId + Span from the transport directly (emitter adds accessors or reads from napi pre-construction).
-- [ ] T017 [US4] Regen + verify no references to `node_data_from_transport` remain. `cargo check` clean.
+- [X] T015 [US4] In emitter, stop emitting `node_data_from_transport` in `bridge.rs`. Remove the function entirely from generated output.
+- [X] T016 [US4] Update `render_transport_parts` — no longer calls `node_data_from_transport`. Instead, read KindId + Span from the transport directly (emitter adds accessors or reads from napi pre-construction).
+- [X] T017 [US4] Regen + verify no references to `node_data_from_transport` remain. `cargo check` clean.
 
 ---
 
 ## Phase 6: Polish
 
-- [ ] T018 Run full validator suite with native backend — counts hold or improve.
-- [ ] T019 `cargo build --release` — zero warnings across all grammar crates.
-- [ ] T020 Bench-render — verify heap-per-render decreased vs pre-migration baseline.
-- [ ] T021 Update ADR 0020/0021 status to "Accepted (shipped)".
+- [X] T018 Run full validator suite with native backend — counts hold or improve.
+- [X] T019 `cargo build --release` — zero warnings across all grammar crates.
+- [X] T020 Bench-render — verify heap-per-render decreased vs pre-migration baseline.
+- [X] T021 Update ADR 0020/0021 status to "Accepted (shipped)".
 
 ---
 

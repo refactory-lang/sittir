@@ -662,8 +662,8 @@
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -811,7 +811,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -863,8 +863,8 @@
       "fields": [
         {
           "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
+          "propertyName": "alternatives",
+          "paramName": "alternatives",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1056,7 +1056,7 @@
       "children": [
         {
           "name": "simple_statement",
-          "propertyName": "simpleStatement",
+          "propertyName": "simpleStatements",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1147,7 +1147,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1212,7 +1212,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1453,7 +1453,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -1907,7 +1907,7 @@
       "children": [
         {
           "name": "statement",
-          "propertyName": "statement",
+          "propertyName": "statements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -2155,7 +2155,7 @@
       "children": [
         {
           "name": "case_pattern",
-          "propertyName": "casePattern",
+          "propertyName": "casePatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2525,7 +2525,7 @@
       "children": [
         {
           "name": "primary_expression",
-          "propertyName": "primaryExpression",
+          "propertyName": "primaryExpressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -2855,7 +2855,7 @@
       "children": [
         {
           "name": "decorator",
-          "propertyName": "decorator",
+          "propertyName": "decorators",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3039,7 +3039,7 @@
       "children": [
         {
           "name": "dict_pattern_kv",
-          "propertyName": "dictPatternKv",
+          "propertyName": "dictPatternKvs",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3066,7 +3066,7 @@
       "children": [
         {
           "name": "pair",
-          "propertyName": "pair",
+          "propertyName": "pairs",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3227,7 +3227,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3398,8 +3398,8 @@
       "fields": [
         {
           "name": "value",
-          "propertyName": "value",
-          "paramName": "value",
+          "propertyName": "values",
+          "paramName": "values",
           "required": false,
           "multiple": true,
           "nonEmpty": true,
@@ -3517,8 +3517,8 @@
         },
         {
           "name": "in_clause",
-          "propertyName": "inClause",
-          "paramName": "inClause",
+          "propertyName": "inClauses",
+          "paramName": "inClauses",
           "required": false,
           "multiple": true,
           "nonEmpty": true,
@@ -3652,7 +3652,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3797,8 +3797,8 @@
         },
         {
           "name": "right",
-          "propertyName": "right",
-          "paramName": "right",
+          "propertyName": "rights",
+          "paramName": "rights",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3958,7 +3958,7 @@
       "children": [
         {
           "name": "interpolation",
-          "propertyName": "interpolation",
+          "propertyName": "interpolations",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -4142,8 +4142,8 @@
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4301,7 +4301,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4425,8 +4425,8 @@
         },
         {
           "name": "alternative",
-          "propertyName": "alternative",
-          "paramName": "alternative",
+          "propertyName": "alternatives",
+          "paramName": "alternatives",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -4508,7 +4508,7 @@
       "children": [
         {
           "name": "wildcard_import",
-          "propertyName": "wildcardImport",
+          "propertyName": "wildcardImports",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4553,8 +4553,8 @@
       "fields": [
         {
           "name": "name",
-          "propertyName": "name",
-          "paramName": "name",
+          "propertyName": "names",
+          "paramName": "names",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4891,7 +4891,7 @@
       "children": [
         {
           "name": "parameter",
-          "propertyName": "parameter",
+          "propertyName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -4983,7 +4983,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5077,7 +5077,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5190,8 +5190,8 @@
       "fields": [
         {
           "name": "subject",
-          "propertyName": "subject",
-          "paramName": "subject",
+          "propertyName": "subjects",
+          "paramName": "subjects",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5308,7 +5308,7 @@
       "children": [
         {
           "name": "statement",
-          "propertyName": "statement",
+          "propertyName": "statements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5412,7 +5412,7 @@
       "children": [
         {
           "name": "identifier",
-          "propertyName": "identifier",
+          "propertyName": "identifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -5557,7 +5557,7 @@
       "children": [
         {
           "name": "parameter",
-          "propertyName": "parameter",
+          "propertyName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5775,8 +5775,8 @@
       "fields": [
         {
           "name": "argument",
-          "propertyName": "argument",
-          "paramName": "argument",
+          "propertyName": "arguments",
+          "paramName": "arguments_",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5985,7 +5985,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6269,8 +6269,8 @@
         },
         {
           "name": "content",
-          "propertyName": "content",
-          "paramName": "content",
+          "propertyName": "contents",
+          "paramName": "contents",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6334,7 +6334,7 @@
       "children": [
         {
           "name": "escape_interpolation",
-          "propertyName": "escapeInterpolation",
+          "propertyName": "escapeInterpolations",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6416,8 +6416,8 @@
         },
         {
           "name": "subscript",
-          "propertyName": "subscript",
-          "paramName": "subscript",
+          "propertyName": "subscripts",
+          "paramName": "subscripts",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -6582,7 +6582,7 @@
       "children": [
         {
           "name": "expression",
-          "propertyName": "expression",
+          "propertyName": "expressions",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6626,7 +6626,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6797,7 +6797,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7290,7 +7290,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7317,7 +7317,7 @@
       "children": [
         {
           "name": "with_item",
-          "propertyName": "withItem",
+          "propertyName": "withItems",
           "required": true,
           "multiple": true,
           "nonEmpty": true,

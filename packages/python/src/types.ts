@@ -1376,7 +1376,7 @@ export interface ComprehensionClauses {
 export interface ImportList {
   readonly $type: TSKindId.ImportList;
   readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-  name(): NonEmptyArray<DottedName | AliasedImport>;
+  names(): NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface KeyValuePattern {
@@ -1400,7 +1400,7 @@ export interface MatchBlock {
 export interface MatchBlockBlock {
   readonly $type: TSKindId.MatchBlockBlock;
   readonly _alternative: readonly (CaseClause)[];
-  alternative(): readonly (CaseClause)[];
+  alternatives(): readonly (CaseClause)[];
 }
 
 export interface SimplePatternNegative {
@@ -1696,7 +1696,7 @@ export interface ExceptClause {
   readonly $type: TSKindId.ExceptClause;
   readonly _value?: NonEmptyArray<Expression>;
   readonly _alias?: Expression;
-  value(): NonEmptyArray<Expression>;
+  values(): NonEmptyArray<Expression>;
   alias(): Expression | undefined;
   readonly $children: readonly [Suite];
 }
@@ -1706,7 +1706,7 @@ export interface ExecStatement {
   readonly _code: String | Identifier;
   readonly _in_clause?: NonEmptyArray<"in" | Expression>;
   code(): String | Identifier;
-  inClause(): NonEmptyArray<"in" | Expression>;
+  inClauses(): NonEmptyArray<"in" | Expression>;
 }
 
 export interface ExpressionList {
@@ -1738,7 +1738,7 @@ export interface ForInClause {
   readonly _right: NonEmptyArray<ExpressionWithinForInClause>;
   asyncMarker(): BooleanKeyword<AsyncMarker> | undefined;
   left(): LeftHandSide;
-  right(): NonEmptyArray<ExpressionWithinForInClause>;
+  rights(): NonEmptyArray<ExpressionWithinForInClause>;
 }
 
 export interface ForStatement {
@@ -1779,7 +1779,7 @@ export interface FunctionDefinition {
 export interface FutureImportStatement {
   readonly $type: TSKindId.FutureImportStatement;
   readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-  name(): NonEmptyArray<DottedName | AliasedImport>;
+  names(): NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface GeneratorExpression {
@@ -1815,7 +1815,7 @@ export interface IfStatement {
   readonly _alternative?: readonly (ElifClause | ElseClause)[];
   condition(): Expression;
   consequence(): Suite;
-  alternative(): readonly (ElifClause | ElseClause)[];
+  alternatives(): readonly (ElifClause | ElseClause)[];
 }
 
 export interface ImportFromStatement {
@@ -1828,7 +1828,7 @@ export interface ImportFromStatement {
 export interface ImportStatement {
   readonly $type: TSKindId.ImportStatement;
   readonly _name: NonEmptyArray<DottedName | AliasedImport>;
-  name(): NonEmptyArray<DottedName | AliasedImport>;
+  names(): NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface Interpolation {
@@ -1910,7 +1910,7 @@ export interface MatchStatement {
   readonly $type: TSKindId.MatchStatement;
   readonly _subject: NonEmptyArray<Expression>;
   readonly _body: MatchBlock;
-  subject(): NonEmptyArray<Expression>;
+  subjects(): NonEmptyArray<Expression>;
   body(): MatchBlock;
 }
 
@@ -1977,7 +1977,7 @@ export interface PatternList {
 export interface PrintStatement {
   readonly $type: TSKindId.PrintStatement;
   readonly _argument: readonly (Expression)[];
-  argument(): readonly (Expression)[];
+  arguments(): readonly (Expression)[];
   readonly $children: readonly [Chevron];
 }
 
@@ -2041,7 +2041,7 @@ export interface String {
   readonly _content: readonly (Interpolation | StringContent)[];
   readonly _string_end: StringEnd;
   stringStart(): StringStart;
-  content(): readonly (Interpolation | StringContent)[];
+  contents(): readonly (Interpolation | StringContent)[];
   stringEnd(): StringEnd;
 }
 
@@ -2055,7 +2055,7 @@ export interface Subscript {
   readonly _value: PrimaryExpression;
   readonly _subscript: NonEmptyArray<Expression | Slice>;
   value(): PrimaryExpression;
-  subscript(): NonEmptyArray<Expression | Slice>;
+  subscripts(): NonEmptyArray<Expression | Slice>;
 }
 
 export interface TryStatement {

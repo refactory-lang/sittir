@@ -979,7 +979,7 @@ function keywordPresenceAssignmentExpr(
 ): string | undefined {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === null) return undefined;
-	const access = `${configAccess}.${f.propertyName}`;
+	const access = `${configAccess}.${f.configKey}`;
 	if (kw === 'boolean') {
 		const lit = keywordPresenceValue(f, nodeMap);
 		if (lit === undefined) return undefined;
@@ -1056,7 +1056,7 @@ function slotStorageExpr(
 	configAccess: string,
 	nodeMap: NodeMap
 ): string {
-	const base = `${configAccess}.${f.propertyName}`;
+	const base = `${configAccess}.${f.configKey}`;
 	if (!isAllLeafSlot(f, nodeMap)) return base;
 	// Optional field → optional chaining on `.$text` so absent values stay
 	// undefined rather than throwing on the property access.
@@ -1096,7 +1096,7 @@ function setterElemType(
 ): string {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === 'boolean') return `BooleanKeyword<${elemType}>`;
-	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.propertyName}']`;
+	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.configKey}']`;
 	return elemType;
 }
 
@@ -1349,12 +1349,12 @@ function emitFieldCarryingFactory(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.propertyName}: values }),`
+				`      ${method}: (...values: ${restType}) => ${fn}({ ...${configAccess}, ${f.configKey}: values }),`
 			);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), fn, nodeMap);
 			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.propertyName}: value }),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${fn}({ ...${configAccess}, ${f.configKey}: value }),`
 			);
 		}
 	}
@@ -1606,12 +1606,12 @@ function emitRefineFormFactory(
 				? `NonEmptyArray<${elemType}>`
 				: `${elemForArray}[]`;
 			lines.push(
-				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.propertyName}: values }),`
+				`      ${method}: (...values: ${restType}) => ${formFn}({ ...config, ${f.configKey}: values }),`
 			);
 		} else {
 			const elemType = setterElemType(f, fieldElementType(f, nodeMap), formFn, nodeMap);
 			lines.push(
-				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.propertyName}: value }),`
+				`      ${method}: (${setterValueSignature(f, elemType)}) => ${formFn}({ ...config, ${f.configKey}: value }),`
 			);
 		}
 	}
@@ -2179,7 +2179,7 @@ function emitHoistedPolymorphFormFactory(
 		const rebuild = buildHoistedRebuildExpr(
 			formFields,
 			hoist.innerFields,
-			f.propertyName,
+			f.configKey,
 			fMultiple ? 'values' : 'value',
 			patchSource,
 			nodeMap

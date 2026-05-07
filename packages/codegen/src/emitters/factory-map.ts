@@ -131,7 +131,7 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 			const fields: Record<string, readonly string[]> = {};
 			const seenSignatures = new Map<string, string>();
 			for (const form of node.forms) {
-				const fieldNames = form.fields.map((f) => f.propertyName);
+				const fieldNames = form.fields.map((f) => f.configKey);
 				const signature = [...fieldNames].sort().join(',');
 				const prior = seenSignatures.get(signature);
 				if (prior !== undefined) {

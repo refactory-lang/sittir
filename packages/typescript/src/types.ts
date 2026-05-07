@@ -2142,7 +2142,7 @@ export interface ClassBodyMember {
 export interface ClassBodyMethod {
   readonly $type: TSKindId.ClassBodyMethod;
   readonly _decorator: readonly (Decorator)[];
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonly $children: readonly [MethodDefinition | Semicolon];
 }
 
@@ -2164,7 +2164,7 @@ export interface _ClassHeritageImplementsClause {
 export interface ExportStatementDefaultDeclArm {
   readonly $type: TSKindId.ExportStatementDefaultDeclArm;
   readonly _decorator: readonly (Decorator)[];
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonly $children: readonly [Declaration | ExportStatementDefaultDeclArmDefaultKw];
 }
 
@@ -2324,7 +2324,7 @@ export interface JsxStartOpeningElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxString {
@@ -2358,7 +2358,7 @@ export interface ParameterName {
   readonly _decorator: readonly (Decorator)[];
   readonly _readonly_marker?: BooleanKeyword<ReadonlyMarker>;
   readonly _pattern: Pattern | This;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
   readonly $children: readonly [AccessibilityModifier | OverrideModifier];
@@ -2505,7 +2505,7 @@ export interface AbstractClassDeclaration {
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2719,7 +2719,7 @@ export interface Class {
   readonly _type_parameters?: TypeParameters;
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier | undefined;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2739,7 +2739,7 @@ export interface ClassDeclaration {
   readonly _class_heritage?: ClassHeritage;
   readonly _body: ClassBody;
   readonly _automatic_semicolon?: AutomaticSemicolon;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): TypeIdentifier;
   typeParameters(): TypeParameters | undefined;
   classHeritage(): ClassHeritage | undefined;
@@ -2980,14 +2980,14 @@ export interface ExtendsClause {
   readonly $type: TSKindId.ExtendsClause;
   readonly _value: NonEmptyArray<Expression>;
   readonly _type_arguments?: TypeArguments;
-  value(): NonEmptyArray<Expression>;
+  values(): NonEmptyArray<Expression>;
   typeArguments(): TypeArguments | undefined;
 }
 
 export interface ExtendsTypeClause {
   readonly $type: TSKindId.ExtendsTypeClause;
   readonly _type: NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
-  typeField(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
+  types(): NonEmptyArray<TypeIdentifier | NestedTypeIdentifier | GenericType>;
 }
 
 export interface FieldDefinition {
@@ -2996,7 +2996,7 @@ export interface FieldDefinition {
   readonly _static_marker?: BooleanKeyword<StaticMarker>;
   readonly _property: PropertyName;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   staticMarker(): BooleanKeyword<StaticMarker> | undefined;
   property(): PropertyName;
   value(): Expression | undefined;
@@ -3365,7 +3365,7 @@ export interface JsxOpeningElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface JsxSelfClosingElement {
@@ -3375,7 +3375,7 @@ export interface JsxSelfClosingElement {
   readonly _attribute: readonly (_JsxAttribute)[];
   name(): _JsxIdentifier | JsxNamespaceName | Identifier | NestedIdentifier | undefined;
   typeArguments(): TypeArguments | undefined;
-  attribute(): readonly (_JsxAttribute)[];
+  attributes(): readonly (_JsxAttribute)[];
 }
 
 export interface LabeledStatement {
@@ -3585,7 +3585,7 @@ export interface OptionalParameter {
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
   typeField(): TypeAnnotation | undefined;
@@ -3680,7 +3680,7 @@ export interface PublicFieldDefinition {
   readonly _optionality_marker?: PublicFieldDefinitionOptionalityMarker;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   name(): PropertyName;
   optionalityMarker(): PublicFieldDefinitionOptionalityMarker | undefined;
   typeField(): TypeAnnotation | undefined;
@@ -3709,7 +3709,7 @@ export interface RequiredParameter {
   readonly _pattern: Pattern | This;
   readonly _type?: TypeAnnotation;
   readonly _value?: Expression;
-  decorator(): readonly (Decorator)[];
+  decorators(): readonly (Decorator)[];
   readonlyMarker(): BooleanKeyword<ReadonlyMarker> | undefined;
   pattern(): Pattern | This;
   typeField(): TypeAnnotation | undefined;
@@ -3805,13 +3805,13 @@ export interface SwitchCase {
   readonly _value: Expressions;
   readonly _body: readonly (Statement)[];
   value(): Expressions;
-  body(): readonly (Statement)[];
+  bodies(): readonly (Statement)[];
 }
 
 export interface SwitchDefault {
   readonly $type: TSKindId.SwitchDefault;
   readonly _body: readonly (Statement)[];
-  body(): readonly (Statement)[];
+  bodies(): readonly (Statement)[];
 }
 
 export interface SwitchStatement {

@@ -227,6 +227,18 @@ export function snakeToCamel(name: string): string {
 	return name.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
+/**
+ * Pluralize a camelCase property name for array/nonEmptyArray slots.
+ * Only `propertyName` and `paramName` get pluralized — `storageName`
+ * stays singular (tree-sitter facing).
+ */
+export function pluralize(name: string): string {
+	if (name.endsWith('s') || name.endsWith('list') || name.endsWith('children')) return name;
+	if (name.endsWith('child')) return name.slice(0, -5) + 'children';
+	if (name.endsWith('y') && !/[aeiou]y$/.test(name)) return name.slice(0, -1) + 'ies';
+	return name + 's';
+}
+
 // TypeScript reserved words that must be avoided as parameter names.
 const TS_RESERVED = new Set([
 	'arguments',
@@ -715,7 +727,7 @@ function deriveFieldsRaw(
 			}
 
 			const aliasSources = deriveAliasSources(rule.content);
-			const propertyName = snakeToCamel(rule.name);
+			const basePropertyName = snakeToCamel(rule.name);
 
 			// Determine the multiplicity for this field's content. The
 			// field's own content rule (repeat/optional wrapper) takes
@@ -740,9 +752,12 @@ function deriveFieldsRaw(
 				isMultiSlot && findRepeatFlag(rule.content, 'trailing');
 			const hasLeading = isMultiSlot && findRepeatFlag(rule.content, 'leading');
 
+			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
+
 			const outerField: AssembledNonterminal = {
 				name: rule.name,
 				propertyName,
+				configKey: basePropertyName,
 				storageName: rule.name,
 				paramName: safeParamName(propertyName),
 				values,
@@ -806,11 +821,13 @@ function deriveFieldsRaw(
 				: isMultiSlot
 					? 'children'
 					: 'child';
-			const propertyName = snakeToCamel(baseName);
+			const basePropertyName = snakeToCamel(baseName);
+			const propertyName = isMultiSlot ? pluralize(basePropertyName) : basePropertyName;
 			return [
 				{
 					name: baseName,
 					propertyName,
+					configKey: basePropertyName,
 					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values,
@@ -835,11 +852,14 @@ function deriveFieldsRaw(
 			// `aliasedFrom` so only source kinds appear in the values list.
 			const refName = rule.aliasedFrom ?? rule.name;
 			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-			const propertyName = snakeToCamel(cleanName);
+			const isMulti = outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray';
+			const basePropertyName = snakeToCamel(cleanName);
+			const propertyName = isMulti ? pluralize(basePropertyName) : basePropertyName;
 			return [
 				{
 					name: cleanName,
 					propertyName,
+					configKey: basePropertyName,
 					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values: [
@@ -860,11 +880,14 @@ function deriveFieldsRaw(
 			// a valid concrete kind the slot can hold;
 			// they share the slot, named after the supertype.
 			const cleanName = rule.name.replace(/^_+/, '') || rule.name;
-			const propertyName = snakeToCamel(cleanName);
+			const isMulti = outerMultiplicity === 'array' || outerMultiplicity === 'nonEmptyArray';
+			const basePropertyName = snakeToCamel(cleanName);
+			const propertyName = isMulti ? pluralize(basePropertyName) : basePropertyName;
 			return [
 				{
 					name: cleanName,
 					propertyName,
+					configKey: basePropertyName,
 					storageName: 'children',
 					paramName: safeParamName(propertyName),
 					values: rule.subtypes.map((name) => ({
@@ -1574,6 +1597,8 @@ export abstract class AssembledNodeBase<R extends Rule = Rule> {
 export interface AssembledNonterminal {
 	readonly name: string;
 	readonly propertyName: string;
+	/** Config key — matches ConfigOf projection (CamelCase of name). Always singular. */
+	readonly configKey: string;
 	readonly storageName: string;
 	readonly values: readonly NodeOrTerminal[];
 	readonly paramName: string;

@@ -501,7 +501,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -1730,7 +1730,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1762,7 +1762,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1794,7 +1794,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -1985,7 +1985,7 @@
       "children": [
         {
           "name": "literal",
-          "propertyName": "literal",
+          "propertyName": "literals",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -3335,7 +3335,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3361,7 +3361,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -3387,7 +3387,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -4475,7 +4475,7 @@
       "children": [
         {
           "name": "statement",
-          "propertyName": "statement",
+          "propertyName": "statements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5157,7 +5157,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -5605,7 +5605,7 @@
       "children": [
         {
           "name": "declaration_statement",
-          "propertyName": "declarationStatement",
+          "propertyName": "declarationStatements",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6191,7 +6191,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6206,7 +6206,7 @@
         },
         {
           "name": "enum_variant",
-          "propertyName": "enumVariant",
+          "propertyName": "enumVariants",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6588,7 +6588,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6603,7 +6603,7 @@
         },
         {
           "name": "field_declaration",
-          "propertyName": "fieldDeclaration",
+          "propertyName": "fieldDeclarations",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6748,7 +6748,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -6774,7 +6774,7 @@
       "children": [
         {
           "name": "shorthand_field_initializer",
-          "propertyName": "shorthandFieldInitializer",
+          "propertyName": "shorthandFieldInitializers",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -7143,7 +7143,7 @@
       "children": [
         {
           "name": "lifetime",
-          "propertyName": "lifetime",
+          "propertyName": "lifetimes",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -7591,8 +7591,8 @@
       "fields": [
         {
           "name": "modifier",
-          "propertyName": "modifier",
-          "paramName": "modifier",
+          "propertyName": "modifiers",
+          "paramName": "modifiers",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -9043,7 +9043,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -9709,7 +9709,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -9741,7 +9741,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -9773,7 +9773,7 @@
       "children": [
         {
           "name": "macro_rule",
-          "propertyName": "macroRule",
+          "propertyName": "macroRules",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10156,7 +10156,7 @@
       "children": [
         {
           "name": "match_arm",
-          "propertyName": "matchArm",
+          "propertyName": "matchArms",
           "required": false,
           "multiple": true,
           "nonEmpty": false,
@@ -10709,8 +10709,8 @@
       "fields": [
         {
           "name": "type",
-          "propertyName": "type",
-          "paramName": "type",
+          "propertyName": "types",
+          "paramName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -10734,7 +10734,7 @@
       "children": [
         {
           "name": "attribute_item",
-          "propertyName": "attributeItem",
+          "propertyName": "attributeItems",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -10877,7 +10877,7 @@
         },
         {
           "name": "parameter",
-          "propertyName": "parameter",
+          "propertyName": "parameters",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -12334,7 +12334,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -12569,7 +12569,7 @@
       "children": [
         {
           "name": "escape_sequence",
-          "propertyName": "escapeSequence",
+          "propertyName": "escapeSequences",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13021,7 +13021,7 @@
       "children": [
         {
           "name": "field_pattern",
-          "propertyName": "fieldPattern",
+          "propertyName": "fieldPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13147,7 +13147,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13441,7 +13441,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13467,7 +13467,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13493,7 +13493,7 @@
       "children": [
         {
           "name": "token_pattern",
-          "propertyName": "tokenPattern",
+          "propertyName": "tokenPatterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13529,7 +13529,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -13887,7 +13887,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13961,7 +13961,7 @@
       "children": [
         {
           "name": "pattern",
-          "propertyName": "pattern",
+          "propertyName": "patterns",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -13987,7 +13987,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -14024,7 +14024,7 @@
       "children": [
         {
           "name": "type",
-          "propertyName": "type",
+          "propertyName": "types",
           "required": true,
           "multiple": true,
           "nonEmpty": true,
@@ -14838,7 +14838,7 @@
       "children": [
         {
           "name": "lifetime",
-          "propertyName": "lifetime",
+          "propertyName": "lifetimes",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -14927,7 +14927,7 @@
       "children": [
         {
           "name": "use_clause",
-          "propertyName": "useClause",
+          "propertyName": "useClauses",
           "required": true,
           "multiple": true,
           "nonEmpty": false,
@@ -15178,7 +15178,7 @@
       "children": [
         {
           "name": "where_predicate",
-          "propertyName": "wherePredicate",
+          "propertyName": "wherePredicates",
           "required": true,
           "multiple": true,
           "nonEmpty": false,

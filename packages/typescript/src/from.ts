@@ -1060,20 +1060,20 @@ export function expressionStatementFrom(input: T.ExpressionStatement.Loose) {
 
 export function extendsClauseFrom(input: T.ExtendsClause.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_value = _resolveMany<T.Expression>(input.value, _K2, _super_expression);
-  _assertNonEmpty(_ne_value, 'extends_clause.value');
+  const _ne_values = _resolveMany<T.Expression>(input.value, _K2, _super_expression);
+  _assertNonEmpty(_ne_values, 'extends_clause.values');
   return F.extendsClause({
-    value: _ne_value,
+    value: _ne_values,
     typeArguments: _resolveOneBranch<T.TypeArguments>(input.typeArguments, "type_arguments"),
   });
 }
 
 export function extendsTypeClauseFrom(input: T.ExtendsTypeClause.Loose) {
   if (isNodeData(input)) return input;
-  const _ne_type = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K2, _K21);
-  _assertNonEmpty(_ne_type, 'extends_type_clause.type');
+  const _ne_types = _resolveMany<T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType>(input.type, _K2, _K21);
+  _assertNonEmpty(_ne_types, 'extends_type_clause.types');
   return F.extendsTypeClause({
-    type: _ne_type,
+    type: _ne_types,
   });
 }
 

@@ -1892,9 +1892,9 @@ export function functionModifiers(config: T.FunctionModifiers.Config) {
     $source: 2 as const,
     $named: true as const,
     _modifier,
-    modifier() { return _modifier; },
+    modifiers() { return _modifier; },
     $with: {
-      modifier: (...values: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => functionModifiers({ ...config, modifier: values }),
+      modifiers: (...values: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => functionModifiers({ ...config, modifier: values }),
     },
   });
 }
@@ -2849,10 +2849,10 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
     $named: true as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    types() { return _type; },
     children() { return children; },
     $with: {
-      typeField: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
+      types: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
       children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ...config, children: items }),
     },
   });

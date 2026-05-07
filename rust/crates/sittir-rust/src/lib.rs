@@ -119,11 +119,11 @@ impl SittirEngine {
     /// Render a typed transport object (napi-native, numeric `$type`).
     #[napi]
     pub fn render(&self, transport: AnyTransport) -> Result<String> {
-        let (node, canonical) = render_transport_parts(transport)
+        let (source, canonical) = render_transport_parts(transport)
             .map_err(|e| Error::from_reason(format!("render_transport failed: {e}")))?;
         let tree_format = self.parsed.as_ref().and_then(|pt| pt.format());
         Ok(apply_render_format(
-            node.source,
+            source,
             canonical,
             self.engine.engine_format(),
             tree_format,
