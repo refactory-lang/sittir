@@ -60,9 +60,9 @@ export function _assignmentType(config: T.AssignmentType.Config) {
     $source: 2 as const,
     $named: true as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T.Type) => _assignmentType({ ...config, type: value }),
+      type: (value: T.Type) => _assignmentType({ ...config, type: value }),
     },
   });
 }
@@ -76,10 +76,10 @@ export function _assignmentTyped(config: T.AssignmentTyped.Config) {
     $named: true as const,
     _type,
     _right,
-    typeField() { return _type; },
+    type() { return _type; },
     right() { return _right; },
     $with: {
-      typeField: (value: T.Type) => _assignmentTyped({ ...config, type: value }),
+      type: (value: T.Type) => _assignmentTyped({ ...config, type: value }),
       right: (value: T.RightHandSide) => _assignmentTyped({ ...config, right: value }),
     },
   });
@@ -333,7 +333,7 @@ export function assignmentUFormType(config: Omit<ConfigOf<T.AssignmentUFormType>
     _left,
     $children: children,
     left() { return _left; },
-    typeField() { return inner.typeField(); },
+    type() { return inner.type(); },
     $with: {
       left: (value: T.LeftHandSide) => assignmentUFormType({ ...config, left: value } as Parameters<typeof assignmentUFormType>[0]),
       type: (value: T.Type) => assignmentUFormType({ ...config, type: value } as Parameters<typeof assignmentUFormType>[0]),
@@ -352,7 +352,7 @@ export function assignmentUFormTyped(config: Omit<ConfigOf<T.AssignmentUFormType
     _left,
     $children: children,
     left() { return _left; },
-    typeField() { return inner.typeField(); },
+    type() { return inner.type(); },
     right() { return inner.right(); },
     $with: {
       left: (value: T.LeftHandSide) => assignmentUFormTyped({ ...config, left: value } as Parameters<typeof assignmentUFormTyped>[0]),
@@ -1893,7 +1893,7 @@ export function typeAliasStatement(config: T.TypeAliasStatement.Config) {
     _type,
     _left,
     _right,
-    typeField() { return _type; },
+    type() { return _type; },
     left() { return _left; },
     right() { return _right; },
     $with: {
@@ -1937,11 +1937,11 @@ export function typedDefaultParameter(config: T.TypedDefaultParameter.Config) {
     _type,
     _value,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     $with: {
       name: (value: T.Identifier) => typedDefaultParameter({ ...config, name: value }),
-      typeField: (value: T.Type) => typedDefaultParameter({ ...config, type: value }),
+      type: (value: T.Type) => typedDefaultParameter({ ...config, type: value }),
       value: (value: T.Expression) => typedDefaultParameter({ ...config, value: value }),
     },
   });
@@ -1956,10 +1956,10 @@ export function typedParameter(config: T.TypedParameter.Config) {
     $named: true as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    type() { return _type; },
     children() { return children; },
     $with: {
-      typeField: (value: T.Type) => typedParameter({ ...config, type: value }),
+      type: (value: T.Type) => typedParameter({ ...config, type: value }),
       children: (...items: readonly [((T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern))]) => typedParameter({ ...config, children: items }),
     },
   });

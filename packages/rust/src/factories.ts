@@ -1227,12 +1227,12 @@ export function constItem(config: T.ConstItem.Config) {
     _value,
     visibilityModifier() { return _visibility_modifier; },
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => constItem({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => constItem({ ...config, name: value }),
-      typeField: (value: T._Type) => constItem({ ...config, type: value }),
+      type: (value: T._Type) => constItem({ ...config, type: value }),
       value: (value?: T.Expression) => constItem({ ...config, value: value }),
     },
   });
@@ -1250,11 +1250,11 @@ export function constParameter(config: T.ConstParameter.Config) {
     _type,
     _value,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     $with: {
       name: (value: T.Identifier) => constParameter({ ...config, name: value }),
-      typeField: (value: T._Type) => constParameter({ ...config, type: value }),
+      type: (value: T._Type) => constParameter({ ...config, type: value }),
       value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => constParameter({ ...config, value: value }),
     },
   });
@@ -1588,11 +1588,11 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
     _type,
     visibilityModifier() { return _visibility_modifier; },
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => fieldDeclaration({ ...config, visibilityModifier: value }),
       name: (value: T.FieldIdentifier) => fieldDeclaration({ ...config, name: value }),
-      typeField: (value: T._Type) => fieldDeclaration({ ...config, type: value }),
+      type: (value: T._Type) => fieldDeclaration({ ...config, type: value }),
     },
   });
 }
@@ -2026,10 +2026,10 @@ export function genericType(config: T.GenericType.Config) {
     $named: true as const,
     _type,
     _type_arguments,
-    typeField() { return _type; },
+    type() { return _type; },
     typeArguments() { return _type_arguments; },
     $with: {
-      typeField: (value: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
+      type: (value: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
     },
   });
@@ -2046,11 +2046,11 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
     _type,
     _turbofish,
     _type_arguments,
-    typeField() { return _type; },
+    type() { return _type; },
     turbofish() { return _turbofish; },
     typeArguments() { return _type_arguments; },
     $with: {
-      typeField: (value: T.TypeIdentifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
+      type: (value: T.TypeIdentifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericTypeWithTurbofish({ ...config, typeArguments: value }),
     },
   });
@@ -2066,10 +2066,10 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
     _type_parameters,
     _type,
     typeParameters() { return _type_parameters; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       typeParameters: (value: T.TypeParameters) => higherRankedTraitBound({ ...config, typeParameters: value }),
-      typeField: (value: T._Type) => higherRankedTraitBound({ ...config, type: value }),
+      type: (value: T._Type) => higherRankedTraitBound({ ...config, type: value }),
     },
   });
 }
@@ -2154,7 +2154,7 @@ export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$
     typeParameters() { return _type_parameters; },
     negative() { return _negative; },
     trait() { return _trait; },
-    typeField() { return _type; },
+    type() { return _type; },
     whereClause() { return _where_clause; },
     body() { return inner.body(); },
     $with: {
@@ -2190,14 +2190,14 @@ export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$
     typeParameters() { return _type_parameters; },
     negative() { return _negative; },
     trait() { return _trait; },
-    typeField() { return _type; },
+    type() { return _type; },
     whereClause() { return _where_clause; },
     $with: {
       unsafeMarker: (value?: BooleanKeyword<T.UnsafeMarker>) => implItemUFormSemi({ ...config, unsafeMarker: value }),
       typeParameters: (value?: T.TypeParameters) => implItemUFormSemi({ ...config, typeParameters: value }),
       negative: (value?: BooleanKeyword<T.ImplItemNegative>) => implItemUFormSemi({ ...config, negative: value }),
       trait: (value?: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => implItemUFormSemi({ ...config, trait: value }),
-      typeField: (value: T._Type) => implItemUFormSemi({ ...config, type: value }),
+      type: (value: T._Type) => implItemUFormSemi({ ...config, type: value }),
       whereClause: (value?: T.WhereClause) => implItemUFormSemi({ ...config, whereClause: value }),
     },
   });
@@ -2316,13 +2316,13 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
     _alternative,
     mutableSpecifier() { return _mutable_specifier; },
     pattern() { return _pattern; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     alternative() { return _alternative; },
     $with: {
       mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => letDeclaration({ ...config, mutableSpecifier: value }),
       pattern: (value: T.Pattern) => letDeclaration({ ...config, pattern: value }),
-      typeField: (value?: T._Type) => letDeclaration({ ...config, type: value }),
+      type: (value?: T._Type) => letDeclaration({ ...config, type: value }),
       value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
       alternative: (value?: T.Block) => letDeclaration({ ...config, alternative: value }),
     },
@@ -2871,11 +2871,11 @@ export function parameter(config: T.Parameter.Config) {
     _type,
     mutableSpecifier() { return _mutable_specifier; },
     pattern() { return _pattern; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => parameter({ ...config, mutableSpecifier: value }),
       pattern: (value: T.Pattern | T.Self) => parameter({ ...config, pattern: value }),
-      typeField: (value: T._Type) => parameter({ ...config, type: value }),
+      type: (value: T._Type) => parameter({ ...config, type: value }),
     },
   });
 }
@@ -2932,9 +2932,9 @@ export function pointerTypeUFormConst(config: Omit<ConfigOf<T.PointerTypeUFormCo
     $named: true as const,
     $variant: 'const' as const,
     _type,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
-      typeField: (value: T._Type) => pointerTypeUFormConst({ ...config, type: value }),
+      type: (value: T._Type) => pointerTypeUFormConst({ ...config, type: value }),
     },
   });
 }
@@ -2949,7 +2949,7 @@ export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>
     $variant: 'mut' as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       type: (value: T._Type) => pointerTypeUFormMut({ ...config, type: value } as Parameters<typeof pointerTypeUFormMut>[0]),
     },
@@ -2965,10 +2965,10 @@ export function qualifiedType(config: T.QualifiedType.Config) {
     $named: true as const,
     _type,
     _alias,
-    typeField() { return _type; },
+    type() { return _type; },
     alias() { return _alias; },
     $with: {
-      typeField: (value: T._Type) => qualifiedType({ ...config, type: value }),
+      type: (value: T._Type) => qualifiedType({ ...config, type: value }),
       alias: (value: T._Type) => qualifiedType({ ...config, alias: value }),
     },
   });
@@ -3208,11 +3208,11 @@ export function referenceType(config: T.ReferenceType.Config) {
     _type,
     lifetime() { return _lifetime; },
     mutableSpecifier() { return _mutable_specifier; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       lifetime: (value?: T.Lifetime) => referenceType({ ...config, lifetime: value }),
       mutableSpecifier: (value?: BooleanKeyword<T._MutableSpecifier>) => referenceType({ ...config, mutableSpecifier: value }),
-      typeField: (value: T._Type) => referenceType({ ...config, type: value }),
+      type: (value: T._Type) => referenceType({ ...config, type: value }),
     },
   });
 }
@@ -3423,13 +3423,13 @@ export function staticItem(config: T.StaticItem.Config) {
     visibilityModifier() { return _visibility_modifier; },
     mutableSpecifier() { return _mutable_specifier; },
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     value() { return _value; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => staticItem({ ...config, visibilityModifier: value }),
       mutableSpecifier: (value?: T.RefMarker | T._MutableSpecifier) => staticItem({ ...config, mutableSpecifier: value }),
       name: (value: T.Identifier) => staticItem({ ...config, name: value }),
-      typeField: (value: T._Type) => staticItem({ ...config, type: value }),
+      type: (value: T._Type) => staticItem({ ...config, type: value }),
       value: (value?: T.Expression) => staticItem({ ...config, value: value }),
     },
   });
@@ -3561,10 +3561,10 @@ export function structPattern(config: T.StructPattern.Config) {
     $named: true as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    type() { return _type; },
     children() { return children; },
     $with: {
-      typeField: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
+      type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
       children: (...items: ((T.FieldPattern | T.RemainingFieldPattern))[]) => structPattern({ ...config, children: items }),
     },
   });
@@ -3589,10 +3589,10 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
     _name,
     _type,
     name() { return _name; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       name: (value: T.Metavariable) => tokenBindingPattern({ ...config, name: value }),
-      typeField: (value: T.TokenBindingPatternType) => tokenBindingPattern({ ...config, type: value }),
+      type: (value: T.TokenBindingPatternType) => tokenBindingPattern({ ...config, type: value }),
     },
   });
 }
@@ -3897,10 +3897,10 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
     $named: true as const,
     _type,
     $children: children,
-    typeField() { return _type; },
+    type() { return _type; },
     children() { return children; },
     $with: {
-      typeField: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => tupleStructPattern({ ...config, type: value }),
+      type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => tupleStructPattern({ ...config, type: value }),
       children: (...items: T.Pattern[]) => tupleStructPattern({ ...config, children: items }),
     },
   });
@@ -3943,11 +3943,11 @@ export function typeBinding(config: T.TypeBinding.Config) {
     _type,
     name() { return _name; },
     typeArguments() { return _type_arguments; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       name: (value: T.TypeIdentifier) => typeBinding({ ...config, name: value }),
       typeArguments: (value?: T.TypeArguments) => typeBinding({ ...config, typeArguments: value }),
-      typeField: (value: T._Type) => typeBinding({ ...config, type: value }),
+      type: (value: T._Type) => typeBinding({ ...config, type: value }),
     },
   });
 }
@@ -3962,10 +3962,10 @@ export function typeCastExpression(config: T.TypeCastExpression.Config) {
     _value,
     _type,
     value() { return _value; },
-    typeField() { return _type; },
+    type() { return _type; },
     $with: {
       value: (value: T.Expression) => typeCastExpression({ ...config, value: value }),
-      typeField: (value: T._Type) => typeCastExpression({ ...config, type: value }),
+      type: (value: T._Type) => typeCastExpression({ ...config, type: value }),
     },
   });
 }
@@ -3991,14 +3991,14 @@ export function typeItem(config: T.TypeItem.Config) {
     name() { return _name; },
     typeParameters() { return _type_parameters; },
     whereClause() { return _where_clause; },
-    typeField() { return _type; },
+    type() { return _type; },
     trailingWhereClause() { return _trailing_where_clause; },
     $with: {
       visibilityModifier: (value?: T.VisibilityModifier) => typeItem({ ...config, visibilityModifier: value }),
       name: (value: T.TypeIdentifier) => typeItem({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => typeItem({ ...config, typeParameters: value }),
       whereClause: (value?: T.WhereClause) => typeItem({ ...config, whereClause: value }),
-      typeField: (value: T._Type) => typeItem({ ...config, type: value }),
+      type: (value: T._Type) => typeItem({ ...config, type: value }),
       trailingWhereClause: (value?: T.WhereClause) => typeItem({ ...config, trailingWhereClause: value }),
     },
   });

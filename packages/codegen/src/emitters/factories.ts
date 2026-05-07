@@ -1321,7 +1321,7 @@ function emitFieldCarryingFactory(
 
 	// Pure getters — method shorthand, body returns the local const.
 	for (const f of fields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	if (hasChildren) {
@@ -1337,7 +1337,7 @@ function emitFieldCarryingFactory(
 	lines.push('    $with: {');
 	for (const f of fields) {
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const method = f.propertyName;
 		// Bitflag fields: even though storage is `NonEmptyArray<...>`, the
 		// Config (per ConfigOf) flattens to a single bitflag enum value, so
 		// the setter takes ONE value — not a rest-array.
@@ -1441,13 +1441,13 @@ function emitSingleFieldFactory(
 
 	// Pure getters.
 	for (const f of allFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 
 	// $with: setter calls the factory directly with the new value.
 	lines.push('    $with: {');
-	const method = soleField.propertyName === 'type' ? 'typeField' : soleField.propertyName;
+	const method = soleField.propertyName;
 	const setterType = setterElemType(soleField, elemType, fn, nodeMap);
 	lines.push(`      ${method}: (${setterValueSignature(soleField, setterType)}) => ${fn}(value),`);
 	lines.push('    },');
@@ -1585,7 +1585,7 @@ function emitRefineFormFactory(
 	}
 	if (hasChildren) lines.push('    $children: children,');
 	for (const f of fields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	if (hasChildren) {
@@ -1597,7 +1597,7 @@ function emitRefineFormFactory(
 		// their value is fixed by the form, no setter is exposed.
 		if (narrowed.has(f.name)) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
-		const method = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const method = f.propertyName;
 		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
 		if (isMultiple(f) && !isBitflag) {
 			const elemType = fieldElementType(f, nodeMap);
@@ -2113,7 +2113,7 @@ function emitHoistedPolymorphFormFactory(
 			lines.push(`    _${f.name},`);
 		}
 		for (const f of hoist.innerFields) {
-			const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+			const propName = f.propertyName;
 			lines.push(`    ${propName}() { return _${f.name}; },`);
 		}
 		lines.push('  });');
@@ -2143,7 +2143,7 @@ function emitHoistedPolymorphFormFactory(
 	lines.push('    $children: children,');
 	// Form-field getters: read the local const directly.
 	for (const f of formFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return _${f.name}; },`);
 	}
 	// Inner-field getters: close over `inner` and read via the inner node's
@@ -2151,7 +2151,7 @@ function emitHoistedPolymorphFormFactory(
 	// withMethods<T>-wrapped object literal, so `inner.<propName>()`
 	// resolves through the getter method emitted on inner.
 	for (const f of hoist.innerFields) {
-		const propName = f.propertyName === 'type' ? 'typeField' : f.propertyName;
+		const propName = f.propertyName;
 		lines.push(`    ${propName}() { return inner.${propName}(); },`);
 	}
 

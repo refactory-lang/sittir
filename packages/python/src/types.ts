@@ -1357,14 +1357,14 @@ export interface AssignmentEq {
 export interface AssignmentType {
   readonly $type: TSKindId.AssignmentType;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
 }
 
 export interface AssignmentTyped {
   readonly $type: TSKindId.AssignmentTyped;
   readonly _type: Type;
   readonly _right: RightHandSide;
-  typeField(): Type;
+  type(): Type;
   right(): RightHandSide;
 }
 
@@ -2090,7 +2090,7 @@ export interface TypeAliasStatement {
   readonly _type: AutoStamp<TypeAliasStatementType>;
   readonly _left: Type;
   readonly _right: Type;
-  typeField(): AutoStamp<TypeAliasStatementType>;
+  type(): AutoStamp<TypeAliasStatementType>;
   left(): Type;
   right(): Type;
 }
@@ -2106,14 +2106,14 @@ export interface TypedDefaultParameter {
   readonly _type: Type;
   readonly _value: Expression;
   name(): Identifier;
-  typeField(): Type;
+  type(): Type;
   value(): Expression;
 }
 
 export interface TypedParameter {
   readonly $type: TSKindId.TypedParameter;
   readonly _type: Type;
-  typeField(): Type;
+  type(): Type;
   readonly $children: readonly [Identifier | ListSplatPattern | DictionarySplatPattern];
 }
 

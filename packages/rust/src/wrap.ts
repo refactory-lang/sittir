@@ -781,12 +781,12 @@ export function wrapConstItem(data: T.ConstItem, tree: TreeHandle) {
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     name() { return drillIn<T.Identifier>(this._name, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       visibilityModifier: (v: T.VisibilityModifier) => wrapConstItem({ ...data, _visibility_modifier: v }, tree),
       name: (v: T.Identifier) => wrapConstItem({ ...data, _name: v }, tree),
-      typeField: (v: T._Type) => wrapConstItem({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapConstItem({ ...data, _type: v }, tree),
       value: (v: T.Expression) => wrapConstItem({ ...data, _value: v }, tree),
     },
   });
@@ -802,11 +802,11 @@ export function wrapConstParameter(data: T.ConstParameter, tree: TreeHandle) {
     _value: data._value,
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     value() { return drillIn<T.Block | T.Identifier | T.Literal | T.NegativeLiteral | undefined>(this._value, tree); },
     $with: {
       name: (v: T.Identifier) => wrapConstParameter({ ...data, _name: v }, tree),
-      typeField: (v: T._Type) => wrapConstParameter({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapConstParameter({ ...data, _type: v }, tree),
       value: (v: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => wrapConstParameter({ ...data, _value: v }, tree),
     },
   });
@@ -1046,11 +1046,11 @@ export function wrapFieldDeclaration(data: T.FieldDeclaration, tree: TreeHandle)
 
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     name() { return drillIn<T.FieldIdentifier>(this._name, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       visibilityModifier: (v: T.VisibilityModifier) => wrapFieldDeclaration({ ...data, _visibility_modifier: v }, tree),
       name: (v: T.FieldIdentifier) => wrapFieldDeclaration({ ...data, _name: v }, tree),
-      typeField: (v: T._Type) => wrapFieldDeclaration({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapFieldDeclaration({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -1372,10 +1372,10 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
     _type: data._type,
     _type_arguments: data._type_arguments,
 
-    typeField() { return drillIn<T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
+    type() { return drillIn<T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
-      typeField: (v: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => wrapGenericType({ ...data, _type: v }, tree),
+      type: (v: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => wrapGenericType({ ...data, _type: v }, tree),
       typeArguments: (v: T.TypeArguments) => wrapGenericType({ ...data, _type_arguments: v }, tree),
     },
   });
@@ -1390,11 +1390,11 @@ export function wrapGenericTypeWithTurbofish(data: T.GenericTypeWithTurbofish, t
     _turbofish: data._turbofish,
     _type_arguments: data._type_arguments,
 
-    typeField() { return drillIn<T.TypeIdentifier | T.ScopedIdentifier>(this._type, tree); },
+    type() { return drillIn<T.TypeIdentifier | T.ScopedIdentifier>(this._type, tree); },
     turbofish() { return drillIn<T.GenericTypeWithTurbofishTurbofish>(this._turbofish, tree); },
     typeArguments() { return drillIn<T.TypeArguments>(this._type_arguments, tree); },
     $with: {
-      typeField: (v: T.TypeIdentifier | T.ScopedIdentifier) => wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
+      type: (v: T.TypeIdentifier | T.ScopedIdentifier) => wrapGenericTypeWithTurbofish({ ...data, _type: v }, tree),
       turbofish: (v: T.GenericTypeWithTurbofishTurbofish) => wrapGenericTypeWithTurbofish({ ...data, _turbofish: v }, tree),
       typeArguments: (v: T.TypeArguments) => wrapGenericTypeWithTurbofish({ ...data, _type_arguments: v }, tree),
     },
@@ -1410,10 +1410,10 @@ export function wrapHigherRankedTraitBound(data: T.HigherRankedTraitBound, tree:
     _type: data._type,
 
     typeParameters() { return drillIn<T.TypeParameters>(this._type_parameters, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       typeParameters: (v: T.TypeParameters) => wrapHigherRankedTraitBound({ ...data, _type_parameters: v }, tree),
-      typeField: (v: T._Type) => wrapHigherRankedTraitBound({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapHigherRankedTraitBound({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -1468,14 +1468,14 @@ export function wrapImplItem(data: T.ImplItem, tree: TreeHandle) {
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     negative() { return drillIn<T.ImplItemNegative | undefined>(this._negative, tree); },
     trait() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | undefined>(this._trait, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
     $with: {
       unsafeMarker: (v: T.UnsafeMarker) => wrapImplItem({ ...(data as any), _unsafe_marker: v }, tree),
       typeParameters: (v: T.TypeParameters) => wrapImplItem({ ...(data as any), _type_parameters: v }, tree),
       negative: (v: T.ImplItemNegative) => wrapImplItem({ ...(data as any), _negative: v }, tree),
       trait: (v: T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType) => wrapImplItem({ ...(data as any), _trait: v }, tree),
-      typeField: (v: T._Type) => wrapImplItem({ ...(data as any), _type: v }, tree),
+      type: (v: T._Type) => wrapImplItem({ ...(data as any), _type: v }, tree),
       whereClause: (v: T.WhereClause) => wrapImplItem({ ...(data as any), _where_clause: v }, tree),
       children: (...items: readonly [((T._ImplItemBody | ";"))]) => wrapImplItem({ ...(data as any), $children: items }, tree),
     },
@@ -1576,13 +1576,13 @@ export function wrapLetDeclaration(data: T.LetDeclaration, tree: TreeHandle) {
 
     mutableSpecifier() { return drillIn<T._MutableSpecifier | undefined>(this._mutable_specifier, tree); },
     pattern() { return drillIn<T.Pattern>(this._pattern, tree); },
-    typeField() { return drillIn<T._Type | undefined>(this._type, tree); },
+    type() { return drillIn<T._Type | undefined>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     alternative() { return drillIn<T.Block | undefined>(this._alternative, tree); },
     $with: {
       mutableSpecifier: (v: T._MutableSpecifier) => wrapLetDeclaration({ ...data, _mutable_specifier: v }, tree),
       pattern: (v: T.Pattern) => wrapLetDeclaration({ ...data, _pattern: v }, tree),
-      typeField: (v: T._Type) => wrapLetDeclaration({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapLetDeclaration({ ...data, _type: v }, tree),
       value: (v: T.Expression) => wrapLetDeclaration({ ...data, _value: v }, tree),
       alternative: (v: T.Block) => wrapLetDeclaration({ ...data, _alternative: v }, tree),
     },
@@ -1908,11 +1908,11 @@ export function wrapParameter(data: T.Parameter, tree: TreeHandle) {
 
     mutableSpecifier() { return drillIn<T._MutableSpecifier | undefined>(this._mutable_specifier, tree); },
     pattern() { return drillIn<T.Pattern | T.Self>(this._pattern, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       mutableSpecifier: (v: T._MutableSpecifier) => wrapParameter({ ...data, _mutable_specifier: v }, tree),
       pattern: (v: T.Pattern | T.Self) => wrapParameter({ ...data, _pattern: v }, tree),
-      typeField: (v: T._Type) => wrapParameter({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapParameter({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -1957,9 +1957,9 @@ export function wrapPointerType(data: T.PointerType, tree: TreeHandle) {
     _type: (data as any)._type,
     $children: (data as any).$children,
 
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
-      typeField: (v: T._Type) => wrapPointerType({ ...(data as any), _type: v }, tree),
+      type: (v: T._Type) => wrapPointerType({ ...(data as any), _type: v }, tree),
       children: (...items: readonly [(("const" | T._PointerTypeMut))]) => wrapPointerType({ ...(data as any), $children: items }, tree),
     },
   });
@@ -1973,10 +1973,10 @@ export function wrapQualifiedType(data: T.QualifiedType, tree: TreeHandle) {
     _type: data._type,
     _alias: data._alias,
 
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     alias() { return drillIn<T._Type>(this._alias, tree); },
     $with: {
-      typeField: (v: T._Type) => wrapQualifiedType({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapQualifiedType({ ...data, _type: v }, tree),
       alias: (v: T._Type) => wrapQualifiedType({ ...data, _alias: v }, tree),
     },
   });
@@ -2099,11 +2099,11 @@ export function wrapReferenceType(data: T.ReferenceType, tree: TreeHandle) {
 
     lifetime() { return drillIn<T.Lifetime | undefined>(this._lifetime, tree); },
     mutableSpecifier() { return drillIn<T._MutableSpecifier | undefined>(this._mutable_specifier, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       lifetime: (v: T.Lifetime) => wrapReferenceType({ ...data, _lifetime: v }, tree),
       mutableSpecifier: (v: T._MutableSpecifier) => wrapReferenceType({ ...data, _mutable_specifier: v }, tree),
-      typeField: (v: T._Type) => wrapReferenceType({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapReferenceType({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -2280,13 +2280,13 @@ export function wrapStaticItem(data: T.StaticItem, tree: TreeHandle) {
     visibilityModifier() { return drillIn<T.VisibilityModifier | undefined>(this._visibility_modifier, tree); },
     mutableSpecifier() { return drillIn<T.RefMarker | T._MutableSpecifier | undefined>(this._mutable_specifier, tree); },
     name() { return drillIn<T.Identifier>(this._name, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     value() { return drillIn<T.Expression | undefined>(this._value, tree); },
     $with: {
       visibilityModifier: (v: T.VisibilityModifier) => wrapStaticItem({ ...data, _visibility_modifier: v }, tree),
       mutableSpecifier: (v: T.RefMarker | T._MutableSpecifier) => wrapStaticItem({ ...data, _mutable_specifier: v }, tree),
       name: (v: T.Identifier) => wrapStaticItem({ ...data, _name: v }, tree),
-      typeField: (v: T._Type) => wrapStaticItem({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapStaticItem({ ...data, _type: v }, tree),
       value: (v: T.Expression) => wrapStaticItem({ ...data, _value: v }, tree),
     },
   });
@@ -2350,9 +2350,9 @@ export function wrapStructPattern(data: T.StructPattern, tree: TreeHandle) {
     _type: data._type,
     $children: data.$children,
 
-    typeField() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
+    type() { return drillIn<T.TypeIdentifier | T.ScopedTypeIdentifier>(this._type, tree); },
     $with: {
-      typeField: (v: T.TypeIdentifier | T.ScopedTypeIdentifier) => wrapStructPattern({ ...data, _type: v }, tree),
+      type: (v: T.TypeIdentifier | T.ScopedTypeIdentifier) => wrapStructPattern({ ...data, _type: v }, tree),
       children: (...items: ((T.FieldPattern | T.RemainingFieldPattern))[]) => wrapStructPattern({ ...data, $children: items }, tree),
     },
   });
@@ -2367,10 +2367,10 @@ export function wrapTokenBindingPattern(data: T.TokenBindingPattern, tree: TreeH
     _type: data._type,
 
     name() { return drillIn<T.Metavariable>(this._name, tree); },
-    typeField() { return drillIn<T.TokenBindingPatternType>(this._type, tree); },
+    type() { return drillIn<T.TokenBindingPatternType>(this._type, tree); },
     $with: {
       name: (v: T.Metavariable) => wrapTokenBindingPattern({ ...data, _name: v }, tree),
-      typeField: (v: T.TokenBindingPatternType) => wrapTokenBindingPattern({ ...data, _type: v }, tree),
+      type: (v: T.TokenBindingPatternType) => wrapTokenBindingPattern({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -2590,9 +2590,9 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
     _type: data._type,
     $children: data.$children,
 
-    typeField() { return drillAs<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(this._type, tree, "generic_type", "generic_type_with_turbofish"); },
+    type() { return drillAs<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(this._type, tree, "generic_type", "generic_type_with_turbofish"); },
     $with: {
-      typeField: (v: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => wrapTupleStructPattern({ ...data, _type: v }, tree),
+      type: (v: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => wrapTupleStructPattern({ ...data, _type: v }, tree),
       children: (...items: T.Pattern[]) => wrapTupleStructPattern({ ...data, $children: items }, tree),
     },
   });
@@ -2631,11 +2631,11 @@ export function wrapTypeBinding(data: T.TypeBinding, tree: TreeHandle) {
 
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeArguments() { return drillIn<T.TypeArguments | undefined>(this._type_arguments, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       name: (v: T.TypeIdentifier) => wrapTypeBinding({ ...data, _name: v }, tree),
       typeArguments: (v: T.TypeArguments) => wrapTypeBinding({ ...data, _type_arguments: v }, tree),
-      typeField: (v: T._Type) => wrapTypeBinding({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapTypeBinding({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -2649,10 +2649,10 @@ export function wrapTypeCastExpression(data: T.TypeCastExpression, tree: TreeHan
     _type: data._type,
 
     value() { return drillIn<T.Expression>(this._value, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     $with: {
       value: (v: T.Expression) => wrapTypeCastExpression({ ...data, _value: v }, tree),
-      typeField: (v: T._Type) => wrapTypeCastExpression({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapTypeCastExpression({ ...data, _type: v }, tree),
     },
   });
   return _node;
@@ -2673,14 +2673,14 @@ export function wrapTypeItem(data: T.TypeItem, tree: TreeHandle) {
     name() { return drillIn<T.TypeIdentifier>(this._name, tree); },
     typeParameters() { return drillIn<T.TypeParameters | undefined>(this._type_parameters, tree); },
     whereClause() { return drillIn<T.WhereClause | undefined>(this._where_clause, tree); },
-    typeField() { return drillIn<T._Type>(this._type, tree); },
+    type() { return drillIn<T._Type>(this._type, tree); },
     trailingWhereClause() { return drillIn<T.WhereClause | undefined>(this._trailing_where_clause, tree); },
     $with: {
       visibilityModifier: (v: T.VisibilityModifier) => wrapTypeItem({ ...data, _visibility_modifier: v }, tree),
       name: (v: T.TypeIdentifier) => wrapTypeItem({ ...data, _name: v }, tree),
       typeParameters: (v: T.TypeParameters) => wrapTypeItem({ ...data, _type_parameters: v }, tree),
       whereClause: (v: T.WhereClause) => wrapTypeItem({ ...data, _where_clause: v }, tree),
-      typeField: (v: T._Type) => wrapTypeItem({ ...data, _type: v }, tree),
+      type: (v: T._Type) => wrapTypeItem({ ...data, _type: v }, tree),
       trailingWhereClause: (v: T.WhereClause) => wrapTypeItem({ ...data, _trailing_where_clause: v }, tree),
     },
   });

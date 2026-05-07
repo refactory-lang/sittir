@@ -1506,11 +1506,11 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
     _left: data._left,
     _right: data._right,
 
-    typeField() { return drillIn<T.TypeAliasStatementType>(this._type, tree); },
+    type() { return drillIn<T.TypeAliasStatementType>(this._type, tree); },
     left() { return drillIn<T.Type>(this._left, tree); },
     right() { return drillIn<T.Type>(this._right, tree); },
     $with: {
-      typeField: (v: T.TypeAliasStatementType) => wrapTypeAliasStatement({ ...data, _type: v }, tree),
+      type: (v: T.TypeAliasStatementType) => wrapTypeAliasStatement({ ...data, _type: v }, tree),
       left: (v: T.Type) => wrapTypeAliasStatement({ ...data, _left: v }, tree),
       right: (v: T.Type) => wrapTypeAliasStatement({ ...data, _right: v }, tree),
     },
@@ -1538,11 +1538,11 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
     _value: data._value,
 
     name() { return drillIn<T.Identifier>(this._name, tree); },
-    typeField() { return drillIn<T.Type>(this._type, tree); },
+    type() { return drillIn<T.Type>(this._type, tree); },
     value() { return drillIn<T.Expression>(this._value, tree); },
     $with: {
       name: (v: T.Identifier) => wrapTypedDefaultParameter({ ...data, _name: v }, tree),
-      typeField: (v: T.Type) => wrapTypedDefaultParameter({ ...data, _type: v }, tree),
+      type: (v: T.Type) => wrapTypedDefaultParameter({ ...data, _type: v }, tree),
       value: (v: T.Expression) => wrapTypedDefaultParameter({ ...data, _value: v }, tree),
     },
   });
@@ -1556,9 +1556,9 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle) {
     _type: data._type,
     $children: data.$children,
 
-    typeField() { return drillIn<T.Type>(this._type, tree); },
+    type() { return drillIn<T.Type>(this._type, tree); },
     $with: {
-      typeField: (v: T.Type) => wrapTypedParameter({ ...data, _type: v }, tree),
+      type: (v: T.Type) => wrapTypedParameter({ ...data, _type: v }, tree),
       children: (...items: readonly [((T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern))]) => wrapTypedParameter({ ...data, $children: items }, tree),
     },
   });
