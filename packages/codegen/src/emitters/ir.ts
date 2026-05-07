@@ -298,7 +298,7 @@ function memberKeyFor(memberKind: string, supertypeKind: string): string {
 	// Avoid collision with the group name itself (e.g. if a subtype happens
 	// to strip down to the same key as the group). Fall back to full name.
 	if (camel === groupNameFor(supertypeKind)) return toCamel(bareMember);
-	return RESERVED_WORDS.has(camel) ? `${camel}_` : camel;
+	return camel;
 }
 
 function toCamel(snake: string): string {
@@ -697,53 +697,3 @@ function emitFromAliases(
 	}
 }
 
-// JS reserved words that can't be bare property accessors in some lint
-// configs / older toolchains. We suffix with `_` defensively per FR-029.
-const RESERVED_WORDS = new Set([
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'new',
-	'null',
-	'return',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	// Strict-mode reserved
-	'let',
-	'static',
-	'implements',
-	'interface',
-	'package',
-	'private',
-	'protected',
-	'public'
-]);

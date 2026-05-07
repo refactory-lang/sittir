@@ -1181,59 +1181,12 @@ function shortenIrKey(kind: string): string {
 		.replace(/_declaration$/, '')
 		.replace(/_definition$/, '');
 	const parts = stripped.split('_').filter(Boolean);
-	if (parts.length === 0) return nameNode(kind).factoryName;
+	if (parts.length === 0) return nameNode(kind).irKey;
 	const camel = parts
 		.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
 		.join('');
-	// Reserved-word names fall back to the factory name, which already
-	// carries the `_` suffix from nameNode.
-	if (IR_KEY_RESERVED.has(camel)) return nameNode(kind).factoryName;
 	return camel;
 }
-
-const IR_KEY_RESERVED = new Set([
-	'break',
-	'case',
-	'catch',
-	'class',
-	'const',
-	'continue',
-	'debugger',
-	'default',
-	'delete',
-	'do',
-	'else',
-	'enum',
-	'export',
-	'extends',
-	'false',
-	'finally',
-	'for',
-	'function',
-	'if',
-	'import',
-	'in',
-	'instanceof',
-	'let',
-	'new',
-	'null',
-	'return',
-	'static',
-	'super',
-	'switch',
-	'this',
-	'throw',
-	'true',
-	'try',
-	'typeof',
-	'var',
-	'void',
-	'while',
-	'with',
-	'yield',
-	'async',
-	'await'
-]);
 
 // ---------------------------------------------------------------------------
 // collectAnonymousNodes — extract string literals from rules as token/keyword entries

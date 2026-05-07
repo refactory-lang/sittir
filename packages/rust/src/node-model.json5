@@ -4122,7 +4122,7 @@
       "kind": "async",
       "modelType": "keyword",
       "typeName": "Async",
-      "irKey": "async_",
+      "irKey": "async",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -4279,7 +4279,7 @@
       "kind": "await",
       "modelType": "keyword",
       "typeName": "Await",
-      "irKey": "await_",
+      "irKey": "await",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"await\" as const",
@@ -4290,7 +4290,7 @@
       "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
-      "irKey": "awaitExpression",
+      "irKey": "await",
       "hidden": false,
       "fields": [],
       "children": [
@@ -4693,7 +4693,7 @@
       "modelType": "branch",
       "typeName": "BreakExpression",
       "factoryName": "breakExpression",
-      "irKey": "breakExpression",
+      "irKey": "break",
       "hidden": false,
       "fields": [
         {
@@ -5295,7 +5295,7 @@
       "kind": "const",
       "modelType": "keyword",
       "typeName": "Const",
-      "irKey": "const_",
+      "irKey": "const",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
@@ -5340,7 +5340,7 @@
       "modelType": "branch",
       "typeName": "ConstItem",
       "factoryName": "constItem",
-      "irKey": "constItem",
+      "irKey": "const",
       "hidden": false,
       "fields": [
         {
@@ -5554,7 +5554,7 @@
       "modelType": "branch",
       "typeName": "ContinueExpression",
       "factoryName": "continueExpression",
-      "irKey": "continueExpression",
+      "irKey": "continue",
       "hidden": false,
       "fields": [
         {
@@ -5624,7 +5624,7 @@
       "kind": "default",
       "modelType": "keyword",
       "typeName": "Default",
-      "irKey": "default_",
+      "irKey": "default",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"default\" as const",
@@ -5949,7 +5949,7 @@
       "modelType": "branch",
       "typeName": "EnumItem",
       "factoryName": "enumItem",
-      "irKey": "enumItem",
+      "irKey": "enum",
       "hidden": false,
       "fields": [
         {
@@ -7034,7 +7034,7 @@
       "modelType": "branch",
       "typeName": "ForExpression",
       "factoryName": "forExpression",
-      "irKey": "forExpression",
+      "irKey": "for",
       "hidden": false,
       "fields": [
         {
@@ -7384,7 +7384,7 @@
       "modelType": "branch",
       "typeName": "FunctionItem",
       "factoryName": "functionItem",
-      "irKey": "functionItem",
+      "irKey": "function",
       "hidden": false,
       "fields": [
         {
@@ -8349,7 +8349,7 @@
       "modelType": "branch",
       "typeName": "IfExpression",
       "factoryName": "ifExpression",
-      "irKey": "ifExpression",
+      "irKey": "if",
       "hidden": false,
       "fields": [
         {
@@ -8846,7 +8846,7 @@
       "kind": "in",
       "modelType": "keyword",
       "typeName": "In",
-      "irKey": "in_",
+      "irKey": "in",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -9068,7 +9068,7 @@
       "kind": "let",
       "modelType": "keyword",
       "typeName": "Let",
-      "irKey": "let_",
+      "irKey": "let",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"let\" as const",
@@ -9136,7 +9136,7 @@
       "modelType": "branch",
       "typeName": "LetDeclaration",
       "factoryName": "letDeclaration",
-      "irKey": "letDeclaration",
+      "irKey": "let",
       "hidden": false,
       "fields": [
         {
@@ -11826,7 +11826,7 @@
       "kind": "return",
       "modelType": "keyword",
       "typeName": "Return",
-      "irKey": "return_",
+      "irKey": "return",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -11837,7 +11837,7 @@
       "modelType": "branch",
       "typeName": "ReturnExpression",
       "factoryName": "returnExpression",
-      "irKey": "returnExpression",
+      "irKey": "return",
       "hidden": false,
       "fields": [],
       "children": [
@@ -12411,7 +12411,7 @@
       "kind": "static",
       "modelType": "keyword",
       "typeName": "Static",
-      "irKey": "static_",
+      "irKey": "static",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
@@ -12422,7 +12422,7 @@
       "modelType": "branch",
       "typeName": "StaticItem",
       "factoryName": "staticItem",
-      "irKey": "staticItem",
+      "irKey": "static",
       "hidden": false,
       "fields": [
         {
@@ -13778,7 +13778,7 @@
       "modelType": "branch",
       "typeName": "TryExpression",
       "factoryName": "tryExpression",
-      "irKey": "tryExpression",
+      "irKey": "try",
       "hidden": false,
       "fields": [
         {
@@ -15331,7 +15331,7 @@
       "modelType": "branch",
       "typeName": "WhileExpression",
       "factoryName": "whileExpression",
-      "irKey": "whileExpression",
+      "irKey": "while",
       "hidden": false,
       "fields": [
         {
@@ -15410,7 +15410,7 @@
       "kind": "yield",
       "modelType": "keyword",
       "typeName": "Yield",
-      "irKey": "yield_",
+      "irKey": "yield",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"yield\" as const",
@@ -15421,7 +15421,7 @@
       "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
-      "irKey": "yieldExpression",
+      "irKey": "yield",
       "hidden": false,
       "fields": [],
       "children": [

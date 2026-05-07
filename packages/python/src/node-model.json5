@@ -195,7 +195,7 @@
       "kind": "False",
       "modelType": "keyword",
       "typeName": "False2",
-      "irKey": "false_",
+      "irKey": "false",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"False\" as const",
@@ -215,7 +215,7 @@
       "kind": "True",
       "modelType": "keyword",
       "typeName": "True2",
-      "irKey": "true_",
+      "irKey": "true",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"True\" as const",
@@ -1639,7 +1639,7 @@
       "kind": "async",
       "modelType": "keyword",
       "typeName": "Async",
-      "irKey": "async_",
+      "irKey": "async",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
@@ -1787,7 +1787,7 @@
       "modelType": "branch",
       "typeName": "Await",
       "factoryName": "await_",
-      "irKey": "await_",
+      "irKey": "await",
       "hidden": false,
       "fields": [
         {
@@ -2017,7 +2017,7 @@
       "modelType": "keyword",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "breakStatement",
+      "irKey": "break",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -2246,7 +2246,7 @@
       "kind": "class",
       "modelType": "keyword",
       "typeName": "Class",
-      "irKey": "class_",
+      "irKey": "class",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"class\" as const",
@@ -2257,7 +2257,7 @@
       "modelType": "branch",
       "typeName": "ClassDefinition",
       "factoryName": "classDefinition",
-      "irKey": "classDefinition",
+      "irKey": "class",
       "hidden": false,
       "fields": [
         {
@@ -2807,7 +2807,7 @@
       "modelType": "keyword",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continueStatement",
+      "irKey": "continue",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -3007,7 +3007,7 @@
       "modelType": "branch",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
-      "irKey": "deleteStatement",
+      "irKey": "delete",
       "hidden": false,
       "fields": [],
       "children": [
@@ -3673,7 +3673,7 @@
       "modelType": "keyword",
       "typeName": "False",
       "factoryName": "false_",
-      "irKey": "false_",
+      "irKey": "false",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"False\" as const",
@@ -3826,7 +3826,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "forStatement",
+      "irKey": "for",
       "hidden": false,
       "fields": [
         {
@@ -3988,7 +3988,7 @@
       "modelType": "branch",
       "typeName": "FunctionDefinition",
       "factoryName": "functionDefinition",
-      "irKey": "functionDefinition",
+      "irKey": "function",
       "hidden": false,
       "fields": [
         {
@@ -4374,7 +4374,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "ifStatement",
+      "irKey": "if",
       "hidden": false,
       "fields": [
         {
@@ -4460,7 +4460,7 @@
       "kind": "import",
       "modelType": "keyword",
       "typeName": "Import",
-      "irKey": "import_",
+      "irKey": "import",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"import\" as const",
@@ -4548,7 +4548,7 @@
       "modelType": "branch",
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
-      "irKey": "importStatement",
+      "irKey": "import",
       "hidden": false,
       "fields": [
         {
@@ -4588,7 +4588,7 @@
       "kind": "in",
       "modelType": "keyword",
       "typeName": "In",
-      "irKey": "in_",
+      "irKey": "in",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"in\" as const",
@@ -5942,7 +5942,7 @@
       "kind": "return",
       "modelType": "keyword",
       "typeName": "Return",
-      "irKey": "return_",
+      "irKey": "return",
       "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"return\" as const",
@@ -5953,7 +5953,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "returnStatement",
+      "irKey": "return",
       "hidden": false,
       "fields": [],
       "children": [
@@ -6452,7 +6452,7 @@
       "modelType": "keyword",
       "typeName": "True",
       "factoryName": "true_",
-      "irKey": "true_",
+      "irKey": "true",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"True\" as const",
@@ -6473,7 +6473,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "tryStatement",
+      "irKey": "try",
       "hidden": false,
       "fields": [
         {
@@ -7116,7 +7116,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "whileStatement",
+      "irKey": "while",
       "hidden": false,
       "fields": [
         {
@@ -7338,7 +7338,7 @@
       "modelType": "branch",
       "typeName": "WithItem",
       "factoryName": "withItem",
-      "irKey": "withItem",
+      "irKey": "with",
       "hidden": false,
       "fields": [
         {
@@ -7452,7 +7452,7 @@
       "modelType": "branch",
       "typeName": "Yield",
       "factoryName": "yield_",
-      "irKey": "yield_",
+      "irKey": "yield",
       "hidden": false,
       "fields": [],
       "children": [

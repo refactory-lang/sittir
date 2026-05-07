@@ -35,7 +35,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	// functionItem requires typed Identifier | Metavariable for name, Parameters for
 	// parameters, and Block for body. Cast config to `any` — we are testing the runtime
 	// _-storage shape, not input type validation.
-	const node = ir.functionItem({
+	const node = ir.function({
 		name: 'my_fn',
 		parameters: [],
 		body: minimalBlock,
@@ -115,7 +115,7 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 // ---------- $with namespace ----------
 
 describe('ADR-0018 Phase 2 — $with namespace', () => {
-	const original = ir.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
+	const original = ir.function({ name: 'original', parameters: [], body: minimalBlock } as any);
 
 	it('$with is non-enumerable on the node', () => {
 		expect(isNonEnumerable(original, '$with')).toBe(true);
@@ -153,7 +153,7 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 // ---------- JSON serialization (SC-007) ----------
 
 describe('ADR-0018 Phase 2 — JSON serialization (SC-007)', () => {
-	const node = ir.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
+	const node = ir.function({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
 
 	it('SC-007: JSON.stringify includes $type, $source, _<field> keys', () => {
 		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
@@ -211,7 +211,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () => {
 	// Test a variety of node kinds to confirm $fields is never present
 	const nodes = [
-		ir.functionItem({ name: 'f', parameters: [], body: minimalBlock } as any),
+		ir.function({ name: 'f', parameters: [], body: minimalBlock } as any),
 		ir.declarationList(),
 		ir.integerLiteral('1'),
 	];

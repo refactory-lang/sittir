@@ -1316,8 +1316,8 @@ export function nameNode(kind: string): {
 			.join('') || 'Anonymous';
 	if (/^\d/.test(typeName)) typeName = `Tok_${typeName}`;
 	let factoryName = typeName.charAt(0).toLowerCase() + typeName.slice(1);
-	if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`;
 	const irKey = factoryName;
+	if (FACTORY_NAME_RESERVED.has(factoryName)) factoryName = `${factoryName}_`;
 	return { typeName, factoryName, irKey };
 }
 

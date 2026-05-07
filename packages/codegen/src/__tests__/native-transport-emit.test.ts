@@ -433,10 +433,7 @@ describe('native transport emission', () => {
 		expect(emitted.transportRs.contents).toContain(
 			'pub fn render_transport_parts'
 		);
-		expect(emitted.transportRs.contents).toContain(
-			'let node = node_data_from_transport(transport)?;'
-		);
-		expect(emitted.transportRs.contents).toContain('render_dispatch(&node)');
+		expect(emitted.transportRs.contents).toContain('render_transport_dispatch');
 		expect(emitted.transportRs.contents).not.toContain(
 			'renderable native transport bridge pending'
 		);
