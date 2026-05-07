@@ -103,7 +103,7 @@ When a parent node renders a child that has `$trivia` attached, the child's triv
 - **FR-012**: A single `render_with_context!` macro in `sittir-core` MUST handle all three concerns (render → format → trivia) per child node. Each `RenderableTransport::render_into` impl is one macro call.
 - **FR-013**: Trivia and format MUST be decoupled. Trivia streams directly (no buffer). Format uses buffer approach for parsed nodes only (top-level, not threaded through children).
 - **FR-014**: `Renderable::Transport` does NOT carry a RenderContext for now. Trivia is handled by the macro reading `transport_trivia_data` directly. Format stays in `render_node_data` (parsed path only).
-- **FR-015**: (Future) Format should become a template-level variable for formattable kinds (inject `indent`/`dedent` into template context). Eliminates post-processing buffer entirely — templates render indentation natively.
+- **FR-015**: (Future) Format via template variables: `indent`/`dedent` are existing grammar kinds whose positions are already known in the rule tree. The template already renders `{{ indent }}` at those positions. The format config supplies the text value (`"\n    "` or `""`) — no post-processing, no buffer, fully streaming. Detection is free (kinds already exist in overrides).
 - **FR-008**: All existing validator counts MUST hold or improve.
 - **FR-009**: `cargo build --release` MUST produce zero warnings.
 - **FR-010**: Rendered output MUST be byte-identical for all corpus nodes.
