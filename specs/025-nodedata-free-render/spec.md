@@ -101,17 +101,17 @@ When a parent node renders a child that has `$trivia` attached, the child's triv
 - **FR-007**: Trivia wrapping MUST occur AFTER format application at the top level (correct order: render → format → trivia).
 - **FR-011**: Nested trivia MUST be applied during child rendering via `render_with_trivia!` macro in every `RenderableTransport::render_into` impl.
 - **FR-012**: A single `render_with_context!` macro in `sittir-core` MUST handle all three concerns (render → format → trivia) per child node. Each `RenderableTransport::render_into` impl is one macro call.
-- **FR-013**: Format (indentation/whitespace) MUST be applicable to nested nodes by threading the `FormatRecord` + node `Span` through the render chain. Each child's `render_into` applies format using its own span within the parent's format context.
-- **FR-014**: `RenderContext { format: Option<&FormatRecord> }` MUST be carried in the `Renderable::Transport` enum variant and passed to `RenderableTransport::render_into(dest, ctx)`. No thread-local state — context threads through the enum alongside each child reference.
+- **FR-013**: Trivia and format MUST be decoupled. Trivia streams directly (no buffer). Format uses buffer approach for parsed nodes only (top-level, not threaded through children).
+- **FR-014**: `Renderable::Transport` does NOT carry a RenderContext for now. Trivia is handled by the macro reading `transport_trivia_data` directly. Format stays in `render_node_data` (parsed path only).
+- **FR-015**: (Future) Format should become a template-level variable for formattable kinds (inject `indent`/`dedent` into template context). Eliminates post-processing buffer entirely — templates render indentation natively.
 - **FR-008**: All existing validator counts MUST hold or improve.
 - **FR-009**: `cargo build --release` MUST produce zero warnings.
 - **FR-010**: Rendered output MUST be byte-identical for all corpus nodes.
 
 ### Key Entities
 
-- **RenderContext**: `{ format: Option<&FormatRecord> }` — threaded through the render chain via `Renderable::Transport(&child, &ctx)`. Carries format config for nested indentation application.
 - **TransportTrivia**: `{ leading: Option<Vec<String>>, trailing: Option<Vec<String>> }` — trivia text, no NodeData. Read by `render_with_trivia!` macro directly from each transport struct.
-- **Renderable**: Enum gains context: `Transport(&'a dyn RenderableTransport, &'a RenderContext)` — context travels alongside each child reference through Askama template rendering.
+- **Renderable**: Enum unchanged — `Transport(&'a dyn RenderableTransport)`. No context threading needed (trivia is per-struct, format is top-level only).
 - **AnyTransport**: The transport enum — the ONLY render input after unification.
 
 ## Success Criteria
