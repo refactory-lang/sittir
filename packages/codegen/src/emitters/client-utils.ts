@@ -53,7 +53,7 @@ return [
 
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 return [
-'export function withMethods<T extends object>(',
+'export function withMethods<T extends AnyNodeData>(',
 '  node: T,',
 '  engine: typeof methodsEngine',
 '): T & {',
