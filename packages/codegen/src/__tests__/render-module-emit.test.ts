@@ -29,7 +29,7 @@ import { link } from '../compiler/link.ts';
 import { optimize } from '../compiler/optimize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
-import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
+import { loadGeneratedIdTables, deriveGeneratedIdTablesFromParserCSource } from '../compiler/generated-metadata.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
 import type { TemplateFile } from '../emitters/template-hash.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -282,10 +282,48 @@ async function buildRustFixtureForParity() {
 	const linked = link(raw);
 	const optimized = optimize(linked);
 	const nodeMap = assemble(optimized);
-	const generatedIdTables = await loadGeneratedIdTables(grammar);
+
+	// loadGeneratedIdTables uses process.cwd() which is packages/codegen when vitest runs.
+	// Use the repo root (anchored to this file) to reliably locate parser.c.
+	const parserCPath = resolve(repoRoot, 'packages', grammar, '.sittir', 'src', 'parser.c');
+	const generatedIdTables = existsSync(parserCPath)
+		? await deriveGeneratedIdTablesFromParserCSource(
+				readFileSync(parserCPath, 'utf8'),
+				`packages/${grammar}/.sittir/src/parser.c`
+			)
+		: await loadGeneratedIdTables(grammar);
+
 	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
 	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
 }
+
+// ---------------------------------------------------------------------------
+// Regression: override-polymorph variant pairing must use index order
+// ---------------------------------------------------------------------------
+//
+// Both collectRenderModuleEntry and collectMetaData previously contained
+// `|| true` in the `find()` predicate, causing every variantChildKind to
+// be paired with forms[0] instead of its positionally-corresponding form.
+// array_expression has two forms — semi (index 0) and list (index 1) —
+// so the bug mapped array_expression_list → "semi" instead of "list".
+
+it('override-polymorph variant pairing: array_expression_list maps to "list" (not "semi")', async () => {
+	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
+	const templateFiles: TemplateFile[] = [];
+	for (const [kind, body] of jinjaTemplates.bodies) {
+		templateFiles.push({ filename: `${kind}.jinja`, content: body });
+	}
+	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const bridge = emit.bridgeRs.contents;
+
+	// variant_for emits lines of the form:
+	//   (parent_id, child_id) => Some("label"), // ("parent_kind", "child_kind")
+	// Verify array_expression_list → "list", NOT "semi"
+	expect(bridge).toContain(`Some("list"), // ("array_expression", "array_expression_list")`);
+	expect(bridge).toContain(`Some("semi"), // ("array_expression", "array_expression_semi")`);
+	// The key regression guard: list must NOT be paired to the first form's label "semi"
+	expect(bridge).not.toContain(`Some("semi"), // ("array_expression", "array_expression_list")`);
+}, 60_000);
 
 it('collectMetaData path matches buildMetaDataFromEntries path (render metadata parity)', async () => {
 	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();

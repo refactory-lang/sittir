@@ -124,10 +124,15 @@ function collectRenderModuleEntry(node: AssembledNode): RenderModuleCollectedEnt
 			for (const form of node.forms) {
 				map.set(form.kind, form.name);
 			}
-			for (const childKind of node.variantChildKinds) {
-				if (!map.has(childKind)) {
-					const unpaired = node.forms.find((f) => !Array.from(map.values()).includes(f.name) || true);
-					if (unpaired) map.set(childKind, unpaired.name);
+			// Override polymorphs have visible child kinds (e.g. 'array_expression_list')
+			// whose real parse-tree names differ from the internal form kinds
+			// ('array_expression__form_list'). Pair them by position: variantChildKinds[i]
+			// corresponds to the i-th non-passthrough form in polyForms order.
+			const nonPassthroughForms = node.forms.filter((f) => !f.overridePassthrough);
+			for (let i = 0; i < node.variantChildKinds.length; i++) {
+				const childKind = node.variantChildKinds[i]!;
+				if (!map.has(childKind) && i < nonPassthroughForms.length) {
+					map.set(childKind, nonPassthroughForms[i]!.name);
 				}
 			}
 			if (map.size > 0) variants = map;
@@ -1369,12 +1374,15 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 				// alias-target kind too so runtime dispatch hits either
 				// spelling.
 			}
-			for (const childKind of node.variantChildKinds) {
-				// Heuristic pairing: first form that hasn't been paired
-				// yet with a variantChildKind.
-				if (!map.has(childKind)) {
-					const unpaired = node.forms.find((f) => !Array.from(map.values()).includes(f.name) || true);
-					if (unpaired) map.set(childKind, unpaired.name);
+			// Override polymorphs have visible child kinds (e.g. 'array_expression_list')
+			// whose real parse-tree names differ from the internal form kinds
+			// ('array_expression__form_list'). Pair them by position: variantChildKinds[i]
+			// corresponds to the i-th non-passthrough form in polyForms order.
+			const nonPassthroughForms = node.forms.filter((f) => !f.overridePassthrough);
+			for (let i = 0; i < node.variantChildKinds.length; i++) {
+				const childKind = node.variantChildKinds[i]!;
+				if (!map.has(childKind) && i < nonPassthroughForms.length) {
+					map.set(childKind, nonPassthroughForms[i]!.name);
 				}
 			}
 			if (map.size > 0) variants.set(kind, map);
