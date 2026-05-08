@@ -98,10 +98,58 @@ export interface RenderModuleEmitterConfig {
 	generatedIdTables?: GeneratedIdTables;
 }
 
-type RenderModuleCollectedEntry = AssembledNode;
+interface RenderModuleCollectedEntry {
+	node: AssembledNode;
+	separator: string | undefined;
+	isListContainer: boolean;
+	variants: Map<string, string> | undefined;
+}
 
 function collectRenderModuleEntry(node: AssembledNode): RenderModuleCollectedEntry {
-	return node;
+	let separator: string | undefined;
+	let isListContainer = false;
+	let variants: Map<string, string> | undefined;
+	if (node.userFacing) {
+		if (node instanceof AssembledBranch) {
+			separator = node.separator ?? findRepeatSeparator(node.simplifiedRule);
+			if (node.isContainerShape) {
+				const childCount = node.children?.length ?? 0;
+				if (childCount > 0) isListContainer = true;
+			}
+		} else if (node instanceof AssembledGroup) {
+			separator = findRepeatSeparator(node.simplifiedRule);
+		}
+		if (node instanceof AssembledPolymorph) {
+			const map = new Map<string, string>();
+			for (const form of node.forms) {
+				map.set(form.kind, form.name);
+			}
+			for (const childKind of node.variantChildKinds) {
+				if (!map.has(childKind)) {
+					const unpaired = node.forms.find((f) => !Array.from(map.values()).includes(f.name) || true);
+					if (unpaired) map.set(childKind, unpaired.name);
+				}
+			}
+			if (map.size > 0) variants = map;
+		}
+	}
+	return { node, separator, isListContainer, variants };
+}
+
+/** Derives MetaData from collected emitter entries — same derivation as
+ *  `collectMetaData` but operating on the pre-extracted per-entry fields. */
+function buildMetaDataFromEntries(entries: readonly RenderModuleCollectedEntry[]): MetaData {
+	const separators = new Map<string, string>();
+	const listContainers = new Set<string>();
+	const variants = new Map<string, Map<string, string>>();
+	for (const entry of entries) {
+		if (!entry.node.userFacing) continue;
+		const kind = entry.node.kind;
+		if (entry.separator !== undefined) separators.set(kind, entry.separator);
+		if (entry.isListContainer) listContainers.add(kind);
+		if (entry.variants !== undefined) variants.set(kind, entry.variants);
+	}
+	return { separators, listContainers, variants };
 }
 
 interface SynthesizeRenderModuleBundleConfig {
@@ -114,8 +162,13 @@ interface SynthesizeRenderModuleBundleConfig {
 
 function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
 	const { grammar, nodeMap, generatedIdTables, entries, templates } = config;
-	void entries;
-	return emitRenderModuleBundle(grammar, templates, nodeMap, generatedIdTables);
+	const meta = buildMetaDataFromEntries(entries);
+	const nodesByKind = new Map<string, AssembledNode>(entries.map((e) => [e.node.kind, e.node]));
+	const files = templateFilesFromEmittedTemplates(templates);
+	return {
+		emit: emitRenderModule(grammar, files, nodeMap, generatedIdTables, { meta, nodesByKind }),
+		templateCopies: planRenderModuleTemplateCopies(grammar, templates)
+	};
 }
 
 export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, EmittedTemplates> {
@@ -2178,6 +2231,13 @@ export function emitHashFiles(
 	};
 }
 
+/** Pre-computed state passed from `RenderModuleEmitter` to avoid
+ *  redundant traversals — when present, `collectMetaData` is skipped. */
+interface PrecomputedState {
+	meta: MetaData;
+	nodesByKind: ReadonlyMap<string, AssembledNode>;
+}
+
 /**
  * Emit the full render module for a grammar — hash files, per-kind
  * template structs, direct-render helpers, render_dispatch, lib.rs,
@@ -2188,6 +2248,9 @@ export function emitHashFiles(
  *   Used for the hash input AND for per-kind struct-field derivation.
  * @param nodeMap — the assembled node map, source of direct-render
  *   metadata tables and typeName lookups.
+ * @param generatedIdTables — optional numeric KindID tables (T021+).
+ * @param precomputed — optional pre-derived state from `RenderModuleEmitter`.
+ *   When present, skips `collectMetaData` and uses the emitter-collected maps.
  * @returns paired file contents. The CLI writes them + handles the
  *   `.jinja` directory copy separately (T030).
  */
@@ -2195,7 +2258,8 @@ export function emitRenderModule(
 	lang: Grammar,
 	files: readonly TemplateFile[],
 	nodeMap: NodeMap,
-	generatedIdTables?: GeneratedIdTables
+	generatedIdTables?: GeneratedIdTables,
+	precomputed?: PrecomputedState
 ): RustRenderModuleEmit {
 	const { hashRs, hashTs } = emitHashFiles(lang, files);
 	const structs: EmittedStruct[] = [];
@@ -2205,7 +2269,7 @@ export function emitRenderModule(
 	for (const f of sortedFiles) {
 		if (!f.filename.endsWith('.jinja')) continue;
 		const kind = f.filename.slice(0, -'.jinja'.length);
-		const node = nodeMap.nodes.get(kind);
+		const node = precomputed?.nodesByKind.get(kind) ?? nodeMap.nodes.get(kind);
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
@@ -2218,7 +2282,7 @@ export function emitRenderModule(
 			)
 		);
 	}
-	const meta = collectMetaData(nodeMap);
+	const meta = precomputed?.meta ?? collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
 	const kindIdByKind = generatedIdTables
 		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
