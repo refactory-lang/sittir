@@ -17,17 +17,7 @@
  */
 
 import type { Rule, ChoiceRule, FieldRule, EnumRule, SymbolRule } from './rule.ts';
-import {
-	isChoice,
-	isEnum,
-	isField,
-	isString,
-	isSeq,
-	isOptional,
-	isRepeat,
-	isRepeat1,
-	isSymbol
-} from './rule.ts';
+import { isChoice, isEnum, isField, isString, isSeq, isOptional, isRepeat, isRepeat1, isSymbol } from './rule.ts';
 import type { RefineForm } from './types.ts';
 import { parsePath } from '../dsl/transform/transform-path.ts';
 import type { PathSegment } from '../dsl/transform/transform-path.ts';
@@ -101,9 +91,7 @@ export function resolveRefinePath(
 ): RefinePathResolution {
 	const segments = parsePath(pathStr);
 	if (segments.length === 0) {
-		throw new Error(
-			`refine(${kind}) form '${formName}': path '${pathStr}' is empty`
-		);
+		throw new Error(`refine(${kind}) form '${formName}': path '${pathStr}' is empty`);
 	}
 	let cur: Rule = rule;
 	let fieldName: string | undefined;
@@ -130,13 +118,7 @@ export function resolveRefinePath(
  * unsupported for refine paths, and `fieldName` descends through a
  * `field(name, ...)` wrapper.
  */
-function stepPath(
-	rule: Rule,
-	seg: PathSegment,
-	kind: string,
-	formName: string,
-	pathStr: string
-): { next: Rule } {
+function stepPath(rule: Rule, seg: PathSegment, kind: string, formName: string, pathStr: string): { next: Rule } {
 	switch (seg.kind) {
 		case 'fieldName': {
 			const target = findFieldByName(rule, seg.name);
@@ -203,10 +185,7 @@ function stepPath(
  * @returns The underlying choice or enum, or `undefined` when the rule
  *   does not reduce to one.
  */
-function unwrapToChoice(
-	rule: Rule,
-	rules?: Readonly<Record<string, Rule>>
-): ChoiceRule | EnumRule | undefined {
+function unwrapToChoice(rule: Rule, rules?: Readonly<Record<string, Rule>>): ChoiceRule | EnumRule | undefined {
 	let cur = rule;
 	for (;;) {
 		if (isChoice(cur)) return cur;
@@ -222,8 +201,7 @@ function unwrapToChoice(
 		// SymbolRule and fail validation.
 		if (isSymbol(cur) && rules !== undefined) {
 			const target = rules[cur.name];
-			if (target !== undefined && (isEnum(target) || isChoice(target)))
-				return target;
+			if (target !== undefined && (isEnum(target) || isChoice(target))) return target;
 		}
 		return undefined;
 	}
@@ -276,9 +254,7 @@ function validateSelection(
 		}
 		return;
 	}
-	const stringValues = arms
-		.map(unwrapToStringValue)
-		.filter((v): v is string => v !== undefined);
+	const stringValues = arms.map(unwrapToStringValue).filter((v): v is string => v !== undefined);
 	if (!stringValues.includes(selection)) {
 		throw new Error(
 			`refine(${kind}) form '${formName}': path '${pathStr}' selection '${selection}' does not match any string branch of the choice (available: ${stringValues.map((v) => `'${v}'`).join(', ') || '<none>'})`
@@ -343,10 +319,7 @@ export function narrowedFieldLiteralsForForm(
  * value it selects. Returns `undefined` when the index points at a
  * non-string branch.
  */
-export function resolveSelectionLiteral(
-	choice: ChoiceRule | EnumRule,
-	selection: number | string
-): string | undefined {
+export function resolveSelectionLiteral(choice: ChoiceRule | EnumRule, selection: number | string): string | undefined {
 	if (typeof selection === 'string') return selection;
 	const arm = choice.members[selection];
 	if (!arm) return undefined;

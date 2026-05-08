@@ -50,9 +50,7 @@ export interface RefineFormInfo {
  * intended behavior for selections that target anonymous structural
  * literals.
  */
-export function collectRefineKindInfos(
-	nodeMap: NodeMap
-): RefineKindInfo[] | undefined {
+export function collectRefineKindInfos(nodeMap: NodeMap): RefineKindInfo[] | undefined {
 	const forms = nodeMap.refineForms;
 	if (!forms || forms.size === 0) return undefined;
 	const out: RefineKindInfo[] = [];
@@ -103,10 +101,7 @@ export function camelCase(s: string): string {
  * Per-form TS type name: `<ParentTypeName><FormPascal>`.
  * Example: `InterfaceBody` + `curly` → `InterfaceBodyCurly`.
  */
-export function refineFormTypeName(
-	parentTypeName: string,
-	formName: string
-): string {
+export function refineFormTypeName(parentTypeName: string, formName: string): string {
 	return `${parentTypeName}${pascalCase(formName)}`;
 }
 
@@ -114,9 +109,6 @@ export function refineFormTypeName(
  * Per-form factory function name: `<kind-camel><FormPascal>`, matching
  * the base factory-naming convention already used for polymorph forms.
  */
-export function refineFormFactoryName(
-	baseFactoryName: string,
-	formName: string
-): string {
+export function refineFormFactoryName(baseFactoryName: string, formName: string): string {
 	return `${baseFactoryName}${pascalCase(formName)}`;
 }

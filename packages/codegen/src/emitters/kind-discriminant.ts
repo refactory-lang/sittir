@@ -72,9 +72,7 @@ export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
  * `TSKindId` / `kindIdFromName` / `kind_ids.rs` / `AnyTransport`
  * dispatch — they MUST share the same kind universe.
  */
-export function collectCatalogKinds(
-	generatedIdTables: GeneratedIdTables
-): readonly string[] {
+export function collectCatalogKinds(generatedIdTables: GeneratedIdTables): readonly string[] {
 	return [...toIdMap(generatedIdTables.kindIds).keys()];
 }
 
@@ -111,9 +109,7 @@ export function collectKindEntries(
 		}
 		seenMembers.set(member, kind);
 		const symbolName =
-			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind
-				? row.parser.symbolName
-				: undefined;
+			row.parser?.symbolName !== undefined && row.parser.symbolName !== kind ? row.parser.symbolName : undefined;
 		const anon = row.parser?.anon ?? false;
 		entries.push({ kind, member, id: row.id, symbolName, anon: anon || undefined });
 	}
@@ -137,10 +133,7 @@ export function collectKindEntries(
  * @param kind - The nodeMap kind name to look up.
  * @returns The matching entry, or `undefined` if the kind has no parser symbol.
  */
-export function findKindEntry(
-	kindEntries: readonly KindEnumEntry[],
-	kind: string
-): KindEnumEntry | undefined {
+export function findKindEntry(kindEntries: readonly KindEnumEntry[], kind: string): KindEnumEntry | undefined {
 	// 1. Exact catalog key match (the canonical case).
 	// 2. Hidden-source fallback: visible variant-child kinds (e.g.
 	//    `closure_expression_expr`) are emitted by sittir from hidden alias
@@ -174,10 +167,7 @@ export function findKindEntry(
  * @param kindEntries - The catalog entries from `collectKindEntries`.
  * @param kind - The nodeMap kind name to check.
  */
-export function hasCatalogEntry(
-	kindEntries: readonly KindEnumEntry[] | undefined,
-	kind: string
-): boolean {
+export function hasCatalogEntry(kindEntries: readonly KindEnumEntry[] | undefined, kind: string): boolean {
 	if (!kindEntries) return false;
 	return findKindEntry(kindEntries, kind) !== undefined;
 }
@@ -200,11 +190,7 @@ export function hasCatalogEntry(
  * `factories.ts` for factory body `$type` values, so both surfaces
  * resolve to the same expression.
  */
-export function kindDiscriminantExpr(
-	kind: string,
-	nodeMap: NodeMap,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
+export function kindDiscriminantExpr(kind: string, nodeMap: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
 	if (!kindEntries) {
 		throw new Error(
 			`kindDiscriminantExpr: kindEntries is required (KindID runtime migration, 2026-04-30). ` +
@@ -230,9 +216,7 @@ export function kindDiscriminantExpr(
  * runtime (silent never-match). Filter them here so the catalog only
  * contains real parser-symbol ids.
  */
-function toIdMap(
-	ids: GeneratedIdTables['kindIds']
-): Map<string, number> {
+function toIdMap(ids: GeneratedIdTables['kindIds']): Map<string, number> {
 	const result = new Map<string, number>();
 	for (const [name, row] of toCatalogMap(ids)) {
 		if (row.id !== undefined) result.set(name, row.id);
@@ -253,9 +237,7 @@ interface CatalogRow {
 	};
 }
 
-function toCatalogMap(
-	ids: GeneratedIdTables['kindIds']
-): Map<string, CatalogRow> {
+function toCatalogMap(ids: GeneratedIdTables['kindIds']): Map<string, CatalogRow> {
 	if (!ids) return new Map();
 	const entries = ids instanceof Map ? [...ids.entries()] : Object.entries(ids);
 	const result = new Map<string, CatalogRow>();

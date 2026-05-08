@@ -54,9 +54,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	// Resolve include defaults: undefined means "include everything".
 	// Explicit empty arrays mean "include nothing of this category".
 	const includeRules = new Set(include?.rules ?? (['promoted'] as const));
-	const _includeFields = new Set(
-		include?.fields ?? (['enriched', 'inferred', 'inlined'] as const)
-	);
+	const _includeFields = new Set(include?.fields ?? (['enriched', 'inferred', 'inlined'] as const));
 	const applyPromotedRules = includeRules.has('promoted');
 
 	// Derivation log — populated unconditionally; each entry records
@@ -79,14 +77,7 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
 	// Map hidden rules to alias targets before resolveRule collapses them.
 	const aliasedHiddenKinds = collectAliasedHiddenKinds(raw.rules);
 
-	classifyAndLogHiddenRules(
-		rules,
-		raw.inline,
-		supertypes,
-		references,
-		derivations,
-		applyPromotedRules
-	);
+	classifyAndLogHiddenRules(rules, raw.inline, supertypes, references, derivations, applyPromotedRules);
 	promoteAndLogTerminalRules(rules, derivations, applyPromotedRules);
 	runFieldNameInferencePass(rules, references, derivations);
 
@@ -142,12 +133,8 @@ export function link(raw: RawGrammar, include?: IncludeFilter): LinkedGrammar {
  *   back to the legacy structural-detection path in `resolveRule` for grammars
  *   that still declare `_indent: ($) => role('indent')` style dummy rules.
  */
-function buildExternalRolesMap(
-	rawExternalRoles: Map<string, ExternalRole> | undefined
-): Map<string, ExternalRole> {
-	return rawExternalRoles
-		? new Map<string, ExternalRole>(rawExternalRoles)
-		: new Map<string, ExternalRole>();
+function buildExternalRolesMap(rawExternalRoles: Map<string, ExternalRole> | undefined): Map<string, ExternalRole> {
+	return rawExternalRoles ? new Map<string, ExternalRole>(rawExternalRoles) : new Map<string, ExternalRole>();
 }
 
 /**
@@ -180,10 +167,7 @@ function stripResolvedRoleRules(rules: Record<string, Rule>): void {
  *   Per design: Link creates empty pattern leaf rules for them so downstream
  *   phases (Assemble, codegen) see them as known leaf kinds.
  */
-function createSyntheticExternalRules(
-	rules: Record<string, Rule>,
-	externals: readonly string[]
-): void {
+function createSyntheticExternalRules(rules: Record<string, Rule>, externals: readonly string[]): void {
 	for (const ext of externals) {
 		if (!rules[ext]) {
 			rules[ext] = { type: 'pattern', value: '' } as Rule;
@@ -298,13 +282,7 @@ function runFieldNameInferencePass(
 ): void {
 	const inferredFieldNames = inferFieldNames(references);
 	for (const [name, rule] of Object.entries(rules)) {
-		applyInferredFields(
-			rule,
-			name,
-			inferredFieldNames,
-			false,
-			derivations.inferredFields
-		);
+		applyInferredFields(rule, name, inferredFieldNames, false, derivations.inferredFields);
 	}
 }
 
@@ -323,10 +301,7 @@ function runFieldNameInferencePass(
  *   choices that a grammar author could promote with an explicit `variant()`
  *   override.
  */
-function detectAndLogPolymorphs(
-	rules: Record<string, Rule>,
-	derivations: DerivationLog
-): void {
+function detectAndLogPolymorphs(rules: Record<string, Rule>, derivations: DerivationLog): void {
 	for (const [name, rule] of Object.entries(rules)) {
 		const result = promotePolymorph(rule);
 		if (result !== rule) {
@@ -345,9 +320,7 @@ function detectAndLogPolymorphs(
 				applied: false,
 				polymorphCandidates: allCandidates.map((c) => ({
 					choiceArmCount: c.choice.members.length,
-					armNames: c.choice.members.map((m, i) =>
-						m.type === 'variant' ? m.name : `form${i}`
-					),
+					armNames: c.choice.members.map((m, i) => (m.type === 'variant' ? m.name : `form${i}`)),
 					path: c.path,
 					fieldWrapperName: c.fieldWrapperName
 				}))
@@ -364,9 +337,7 @@ function detectAndLogPolymorphs(
  * Link's alias-collapse would leave downstream passes thinking the
  * hidden rule still produces the original kind.
  */
-function collectAliasedHiddenKinds(
-	rawRules: Record<string, Rule>
-): Map<string, string> {
+function collectAliasedHiddenKinds(rawRules: Record<string, Rule>): Map<string, string> {
 	const out = new Map<string, string>();
 	for (const [name, rule] of Object.entries(rawRules)) {
 		if (!name.startsWith('_')) continue;
@@ -414,10 +385,7 @@ function extractTopLevelAliasTarget(rule: Rule): string | undefined {
  *   this slot, label the result `as_pattern_target`". Using the supertype as
  *   canonical would strip the concrete kind the runtime actually produces.
  */
-function extractAliasedFromName(
-	content: Rule,
-	supertypes: Set<string>
-): string | undefined {
+function extractAliasedFromName(content: Rule, supertypes: Set<string>): string | undefined {
 	if (content.type === 'symbol') {
 		if (supertypes.has(content.name)) return undefined;
 		return content.name;
@@ -429,10 +397,7 @@ function extractAliasedFromName(
 		content.type === 'token' ||
 		content.type === 'terminal'
 	) {
-		return extractAliasedFromName(
-			(content as { content: Rule }).content,
-			supertypes
-		);
+		return extractAliasedFromName((content as { content: Rule }).content, supertypes);
 	}
 	return undefined;
 }
@@ -454,16 +419,12 @@ function extractAliasedFromName(
  * reference at parse time and is opaque to the parent's structural
  * shape.
  */
-function _wouldInlineAtAssemble(
-	kindName: string,
-	rules: Record<string, Rule>
-): boolean {
+function _wouldInlineAtAssemble(kindName: string, rules: Record<string, Rule>): boolean {
 	const target = rules[kindName];
 	if (!target) return false;
 	if (target.type === 'group') return true;
 	// Pure repeat/repeat1 (possibly wrapped in optional/variant) = multi.
-	const unwrap = (r: Rule): Rule =>
-		r.type === 'optional' || r.type === 'variant' ? unwrap(r.content) : r;
+	const unwrap = (r: Rule): Rule => (r.type === 'optional' || r.type === 'variant' ? unwrap(r.content) : r);
 	const bare = unwrap(target);
 	return bare.type === 'repeat' || bare.type === 'repeat1';
 }
@@ -508,11 +469,7 @@ export function deduplicateVariants(variants: Rule[]): Rule[] {
 	return result;
 }
 
-export function nameVariant(
-	variant: Rule,
-	index: number,
-	_all: Rule[]
-): string {
+export function nameVariant(variant: Rule, index: number, _all: Rule[]): string {
 	// Find a distinguishing string literal in this branch.
 	const detectToken = findDetectToken(variant);
 	if (detectToken) return tokenToName(detectToken);
@@ -569,8 +526,7 @@ function rulesEqualForVariant(a: Rule, b: Rule): boolean {
 		case 'choice': {
 			const bn = b as typeof a;
 			return (
-				a.members.length === bn.members.length &&
-				a.members.every((m, i) => rulesEqualForVariant(m, bn.members[i]!))
+				a.members.length === bn.members.length && a.members.every((m, i) => rulesEqualForVariant(m, bn.members[i]!))
 			);
 		}
 		case 'optional':
@@ -613,9 +569,7 @@ export function promotePolymorph(rule: Rule): Rule {
 	if (!found) return rule;
 	const { choice, prefix, suffix } = found;
 
-	const contents = choice.members.map((m) =>
-		m.type === 'variant' ? m.content : m
-	);
+	const contents = choice.members.map((m) => (m.type === 'variant' ? m.content : m));
 	if (!allVariantContentsAreDistinguishable(contents)) return rule;
 	if (variantFieldSetsAreHomogeneous(contents)) return rule;
 	return buildPolymorphFromFusedForms(choice, prefix, suffix);
@@ -642,10 +596,7 @@ export function promotePolymorph(rule: Rule): Rule {
  */
 function allVariantContentsAreDistinguishable(contents: Rule[]): boolean {
 	const isDistinguishable = (c: Rule): boolean =>
-		hasAnyField(c) ||
-		hasAnyChild(c) ||
-		(c.type === 'symbol' && !c.hidden) ||
-		c.type === 'supertype';
+		hasAnyField(c) || hasAnyChild(c) || (c.type === 'symbol' && !c.hidden) || c.type === 'supertype';
 	return contents.every(isDistinguishable);
 }
 
@@ -677,11 +628,7 @@ function variantFieldSetsAreHomogeneous(contents: Rule[]): boolean {
  *   all three variants because the `field('left', ...)` member sits before the
  *   choice in the enclosing seq and would otherwise be omitted from each form.
  */
-function buildPolymorphFromFusedForms(
-	choice: ChoiceRule,
-	prefix: Rule[],
-	suffix: Rule[]
-): PolymorphRule {
+function buildPolymorphFromFusedForms(choice: ChoiceRule, prefix: Rule[], suffix: Rule[]): PolymorphRule {
 	const fuse = (inner: Rule): Rule => {
 		if (prefix.length === 0 && suffix.length === 0) return inner;
 		const members = [...prefix, inner, ...suffix];
@@ -737,9 +684,7 @@ export function applyOverridePolymorphs(
 		// Deep choice: push ambient scaffold into variant children instead.
 		emitVariantChildDerivations(parentKind, children, derivations);
 
-		const variantChildSymbolNames = new Set(
-			children.map((c) => `${parentKind}_${c}`)
-		);
+		const variantChildSymbolNames = new Set(children.map((c) => `${parentKind}_${c}`));
 		const anyChildMemberInFoundChoice = found.choice.members.some((m) => {
 			const inner = m.type === 'variant' ? m.content : m;
 			return inner.type === 'symbol' && variantChildSymbolNames.has(inner.name);
@@ -760,9 +705,7 @@ export function applyOverridePolymorphs(
 			});
 
 			// Extract from SEQ arm if variant symbol isn't a direct choice member.
-			const seqArmContent = variantMember
-				? null
-				: findVariantSymbolInSeqArm(found.choice, fullName, rules);
+			const seqArmContent = variantMember ? null : findVariantSymbolInSeqArm(found.choice, fullName, rules);
 
 			const content =
 				variantMember?.type === 'variant'
@@ -816,11 +759,7 @@ export function applyOverridePolymorphs(
  *   `readNode` would have to infer polymorph-internal shape from
  *   grammar-specific knowledge.
  */
-function emitVariantChildDerivations(
-	parentKind: string,
-	children: string[],
-	derivations: DerivationLog
-): void {
+function emitVariantChildDerivations(parentKind: string, children: string[], derivations: DerivationLog): void {
 	for (const child of children) {
 		const variantChildKind = `${parentKind}_${child}`;
 		derivations.promotedRules.push({
@@ -861,9 +800,7 @@ function pushAmbientScaffoldIntoVariantChildren(
 	parentKind: string,
 	children: readonly string[]
 ): void {
-	const variantChildVisibleNames = new Set(
-		children.map((c) => `${parentKind}_${c}`)
-	);
+	const variantChildVisibleNames = new Set(children.map((c) => `${parentKind}_${c}`));
 	const parentRule = rules[parentKind];
 	if (!parentRule) return;
 
@@ -872,11 +809,7 @@ function pushAmbientScaffoldIntoVariantChildren(
 	// literal prefix/suffix inside that seq, and strip them. For each
 	// matched alias, rewrite its `_${parent}_${child}` hidden-rule body
 	// to wrap with the same prefix/suffix.
-	const rewritten = rewriteSeqWithVariantAliasChoice(
-		parentRule,
-		rules,
-		variantChildVisibleNames
-	);
+	const rewritten = rewriteSeqWithVariantAliasChoice(parentRule, rules, variantChildVisibleNames);
 	if (rewritten !== parentRule) rules[parentKind] = rewritten;
 }
 
@@ -897,21 +830,15 @@ function rewriteSeqWithVariantAliasChoice(
 	switch (rule.type) {
 		case 'seq': {
 			// Does this seq directly contain the alias-choice?
-			const choiceIdx = rule.members.findIndex((m) =>
-				isAllAliasChoice(m, variantChildVisibleNames)
-			);
+			const choiceIdx = rule.members.findIndex((m) => isAllAliasChoice(m, variantChildVisibleNames));
 			if (choiceIdx !== -1) {
 				return applyVariantScaffoldPushDown(rule, choiceIdx, rules);
 			}
-			const members = rule.members.map((m) =>
-				rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames)
-			);
+			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
 			return { type: 'seq', members };
 		}
 		case 'choice': {
-			const members = rule.members.map((m) =>
-				rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames)
-			);
+			const members = rule.members.map((m) => rewriteSeqWithVariantAliasChoice(m, rules, variantChildVisibleNames));
 			return { type: 'choice', members };
 		}
 		case 'optional':
@@ -943,10 +870,7 @@ function rewriteSeqWithVariantAliasChoice(
  * this pass runs — so both raw `alias` rules AND collapsed symbol refs
  * need to count.
  */
-function isAllAliasChoice(
-	rule: Rule,
-	variantChildVisibleNames: Set<string>
-): boolean {
+function isAllAliasChoice(rule: Rule, variantChildVisibleNames: Set<string>): boolean {
 	if (rule.type !== 'choice' || rule.members.length === 0) return false;
 	return rule.members.every((m) => {
 		const core = m.type === 'variant' ? m.content : m;
@@ -962,17 +886,9 @@ function isAllAliasChoice(
  * alias's `_${parent}_${child}` hidden-rule body. Return the seq with the
  * literals removed (single-member seq collapses to its inner content).
  */
-function applyVariantScaffoldPushDown(
-	seq: SeqRule,
-	choiceIdx: number,
-	rules: Record<string, Rule>
-): Rule {
-	const prefix = seq.members
-		.slice(0, choiceIdx)
-		.filter((m) => m.type === 'string') as StringRule[];
-	const suffix = seq.members
-		.slice(choiceIdx + 1)
-		.filter((m) => m.type === 'string') as StringRule[];
+function applyVariantScaffoldPushDown(seq: SeqRule, choiceIdx: number, rules: Record<string, Rule>): Rule {
+	const prefix = seq.members.slice(0, choiceIdx).filter((m) => m.type === 'string') as StringRule[];
+	const suffix = seq.members.slice(choiceIdx + 1).filter((m) => m.type === 'string') as StringRule[];
 	if (prefix.length === 0 && suffix.length === 0) return seq; // nothing to push
 	const choice = seq.members[choiceIdx] as ChoiceRule;
 	for (const member of choice.members) {
@@ -1003,9 +919,7 @@ function applyVariantScaffoldPushDown(
 	}
 	// Strip the literals we just pushed down, keep everything else (the
 	// choice itself plus any non-string members).
-	const remaining = seq.members.filter(
-		(m, i) => i === choiceIdx || m.type !== 'string'
-	);
+	const remaining = seq.members.filter((m, i) => i === choiceIdx || m.type !== 'string');
 	if (remaining.length === 1) return remaining[0]!;
 	return { type: 'seq', members: remaining };
 }
@@ -1019,9 +933,7 @@ export function findVariantChoice(rule: Rule): VariantChoiceLocation | null {
 		const choiceIdx = rule.members.findIndex((m) => m.type === 'choice');
 		if (choiceIdx === -1) return null;
 		// More than one choice in the seq is ambiguous — bail.
-		const more = rule.members.findIndex(
-			(m, i) => i !== choiceIdx && m.type === 'choice'
-		);
+		const more = rule.members.findIndex((m, i) => i !== choiceIdx && m.type === 'choice');
 		if (more !== -1) return null;
 		return {
 			choice: rule.members[choiceIdx] as ChoiceRule,
@@ -1076,12 +988,8 @@ function findVariantSymbolInSeqArm(
 			? { type: 'symbol', name: targetSymbolName, aliasedFrom: hiddenAlias }
 			: { type: 'symbol', name: targetSymbolName };
 		// Reconstruct the SEQ with the matched position replaced by the resolved symbol.
-		const newMembers: Rule[] = arm.members.map((m, i) =>
-			i === foundIdx ? resolvedSymbol : m
-		);
-		return newMembers.length === 1
-			? newMembers[0]!
-			: { type: 'seq', members: newMembers };
+		const newMembers: Rule[] = arm.members.map((m, i) => (i === foundIdx ? resolvedSymbol : m));
+		return newMembers.length === 1 ? newMembers[0]! : { type: 'seq', members: newMembers };
 	}
 	return null;
 }
@@ -1122,9 +1030,7 @@ export interface PolymorphCandidateLocation {
  */
 function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
 	if (choice.members.length < 2) return false;
-	const contents = choice.members.map((m) =>
-		m.type === 'variant' ? m.content : m
-	);
+	const contents = choice.members.map((m) => (m.type === 'variant' ? m.content : m));
 	// A branch is "distinguishable" when tree-sitter produces enough
 	// information to tell it apart from its siblings at parse time:
 	//   - inner fields or named children → explicit structural distinction
@@ -1144,15 +1050,9 @@ function looksLikePolymorphCandidate(choice: ChoiceRule): boolean {
 		// decl_list), ';')` from being flagged as a polymorph at all.
 		if (c.type === 'string' || c.type === 'pattern') return true;
 		if (c.type === 'seq') return c.members.some(isDistinguishable);
-		if (
-			c.type === 'optional' ||
-			c.type === 'group' ||
-			c.type === 'variant' ||
-			c.type === 'clause'
-		)
+		if (c.type === 'optional' || c.type === 'group' || c.type === 'variant' || c.type === 'clause')
 			return isDistinguishable(c.content);
-		if (c.type === 'repeat' || c.type === 'repeat1')
-			return isDistinguishable(c.content);
+		if (c.type === 'repeat' || c.type === 'repeat1') return isDistinguishable(c.content);
 		return false;
 	};
 	if (contents.some((c) => !isDistinguishable(c))) return false;
@@ -1232,9 +1132,7 @@ function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
 		// only way to give rendering a stable handle for the arm.
 		return true;
 	};
-	const contents = choice.members.map((m) =>
-		m.type === 'variant' ? m.content : m
-	);
+	const contents = choice.members.map((m) => (m.type === 'variant' ? m.content : m));
 	return contents.some(armNeedsVariant);
 }
 
@@ -1252,18 +1150,14 @@ function choiceNeedsVariantWrapping(choice: ChoiceRule): boolean {
  *     ...)))`, the prec is stripped, and the inner seq surfaces as a
  *     member of the outer seq.
  *   - `field(X, choice(...))` wrappers — since `tagVariants` auto-wraps
- *     choice members, the distinction "explicit variant() in override"
  *     vs "auto-tagged" can't be recovered by inspecting the choice alone.
  *
  * Path reflects how `applyPath` in transform-path.ts consumes segments:
  * one per seq-member descent; field wrappers are consumed (their content
  * takes the next segment); prec wrappers are transparent.
  */
-export function findAllPolymorphCandidates(
-	rule: Rule
-): PolymorphCandidateLocation[] {
-	const qualifies = (c: ChoiceRule): boolean =>
-		looksLikePolymorphCandidate(c) && choiceNeedsVariantWrapping(c);
+export function findAllPolymorphCandidates(rule: Rule): PolymorphCandidateLocation[] {
+	const qualifies = (c: ChoiceRule): boolean => looksLikePolymorphCandidate(c) && choiceNeedsVariantWrapping(c);
 
 	const out: PolymorphCandidateLocation[] = [];
 
@@ -1282,21 +1176,12 @@ export function findAllPolymorphCandidates(
 	//     enclosing seq (used by tryHoistSiblingVariants to preserve
 	//     the scaffolding around each hoisted variant body).
 	//   - `path` is what `applyPath` would consume to reach this rule.
-	const walk = (
-		r: Rule,
-		path: string,
-		prefix: Rule[],
-		suffix: Rule[]
-	): void => {
+	const walk = (r: Rule, path: string, prefix: Rule[], suffix: Rule[]): void => {
 		if (isChoice(r) && qualifies(r)) {
 			pushCandidate(r, prefix, suffix, path);
 			return;
 		}
-		if (
-			r.type === 'field' &&
-			r.content.type === 'choice' &&
-			qualifies(r.content)
-		) {
+		if (r.type === 'field' && r.content.type === 'choice' && qualifies(r.content)) {
 			pushCandidate(r.content, prefix, suffix, path, r.name);
 			return;
 		}
@@ -1434,10 +1319,7 @@ function charFallback(token: string): string {
 		'\n': 'nl',
 		'\r': 'cr'
 	};
-	return (
-		'tok_' +
-		[...token].map((c) => CHAR_NAMES[c] ?? (/[\w]/.test(c) ? c : 'x')).join('_')
-	);
+	return 'tok_' + [...token].map((c) => CHAR_NAMES[c] ?? (/[\w]/.test(c) ? c : 'x')).join('_');
 }
 
 export function tokenToName(token: string): string {
@@ -1557,27 +1439,17 @@ function resolveRule(
 		case 'seq':
 			return {
 				type: 'seq',
-				members: rule.members.map((m) =>
-					resolveRule(m, currentName, allRules, supertypes, externalRoles)
-				)
+				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
 		case 'choice':
 			return {
 				type: 'choice',
-				members: rule.members.map((m) =>
-					resolveRule(m, currentName, allRules, supertypes, externalRoles)
-				)
+				members: rule.members.map((m) => resolveRule(m, currentName, allRules, supertypes, externalRoles))
 			};
 
 		case 'optional': {
-			const content = resolveRule(
-				rule.content,
-				currentName,
-				allRules,
-				supertypes,
-				externalRoles
-			);
+			const content = resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 			// Clause detection: optional(seq(STRING, FIELD, ...))
 			return detectClause(content, currentName);
 		}
@@ -1585,53 +1457,25 @@ function resolveRule(
 		case 'repeat':
 			return {
 				...rule,
-				content: resolveRule(
-					rule.content,
-					currentName,
-					allRules,
-					supertypes,
-					externalRoles
-				)
+				content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 			};
 
 		case 'repeat1':
-			return resolveRepeat1PreservingNonEmpty(
-				rule,
-				currentName,
-				allRules,
-				supertypes,
-				externalRoles
-			);
+			return resolveRepeat1PreservingNonEmpty(rule, currentName, allRules, supertypes, externalRoles);
 
 		case 'field':
 			return {
 				...rule,
-				content: resolveRule(
-					rule.content,
-					currentName,
-					allRules,
-					supertypes,
-					externalRoles
-				)
+				content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 			};
 
 		case 'token':
 			// Flatten: extract content
-			return resolveRule(
-				rule.content,
-				currentName,
-				allRules,
-				supertypes,
-				externalRoles
-			);
+			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 
 		case 'alias':
 			if (rule.named && rule.value && !rule.value.startsWith('_')) {
-				return resolveNamedAliasWithProvenance(
-					rule.content,
-					rule.value,
-					supertypes
-				);
+				return resolveNamedAliasWithProvenance(rule.content, rule.value, supertypes);
 			}
 			// Unnamed alias with a non-word literal value (e.g. typescript
 			// `alias(_ternary_qmark, '?')` — relabels a hidden external-
@@ -1651,13 +1495,7 @@ function resolveRule(
 			) {
 				return { type: 'string', value: rule.value };
 			}
-			return resolveRule(
-				rule.content,
-				currentName,
-				allRules,
-				supertypes,
-				externalRoles
-			);
+			return resolveRule(rule.content, currentName, allRules, supertypes, externalRoles);
 
 		case 'symbol':
 			return resolveSymbolRoleOrPass(rule, allRules, externalRoles);
@@ -1705,13 +1543,7 @@ function resolveRepeat1PreservingNonEmpty(
 ): Rule {
 	return {
 		...rule,
-		content: resolveRule(
-			rule.content,
-			currentName,
-			allRules,
-			supertypes,
-			externalRoles
-		)
+		content: resolveRule(rule.content, currentName, allRules, supertypes, externalRoles)
 	};
 }
 
@@ -1730,11 +1562,7 @@ function resolveRepeat1PreservingNonEmpty(
  *   Preserving alias provenance lets the wrap emitter rewrite `$type` at
  *   drill-in via `drillAs()` for alias-target rewrites.
  */
-function resolveNamedAliasWithProvenance(
-	content: Rule,
-	targetName: string,
-	supertypes: Set<string>
-): Rule {
+function resolveNamedAliasWithProvenance(content: Rule, targetName: string, supertypes: Set<string>): Rule {
 	const aliasedFrom = extractAliasedFromName(content, supertypes);
 	const sym: SymbolRule = aliasedFrom
 		? { type: 'symbol', name: targetName, aliasedFrom }
@@ -1772,12 +1600,7 @@ function resolveSymbolRoleOrPass(
 		return { type: preBound.role } as Rule;
 	}
 	const target = allRules[rule.name];
-	if (
-		target &&
-		(target.type === 'indent' ||
-			target.type === 'dedent' ||
-			target.type === 'newline')
-	) {
+	if (target && (target.type === 'indent' || target.type === 'dedent' || target.type === 'newline')) {
 		externalRoles.set(rule.name, { role: target.type });
 		return target;
 	}
@@ -1788,18 +1611,9 @@ function resolveSymbolRoleOrPass(
 // classifyHiddenRule — determine what a hidden rule IS
 // ---------------------------------------------------------------------------
 
-function classifyHiddenRule(
-	name: string,
-	rule: Rule,
-	supertypes: Set<string>,
-	_references: SymbolRef[]
-): Rule {
+function classifyHiddenRule(name: string, rule: Rule, supertypes: Set<string>, _references: SymbolRef[]): Rule {
 	// Already classified (e.g., enum from Evaluate)
-	if (
-		rule.type === 'enum' ||
-		rule.type === 'supertype' ||
-		rule.type === 'group'
-	) {
+	if (rule.type === 'enum' || rule.type === 'supertype' || rule.type === 'group') {
 		return rule;
 	}
 
@@ -1838,11 +1652,7 @@ function classifyHiddenRule(
  *   ($.foo), a named `alias(..., $.foo)`, or an `enum`/`string`. Mixed
  *   structural members (seq, field, nested choice/optional/repeat) disqualify.
  */
-function classifyHiddenChoiceRule(
-	name: string,
-	rule: ChoiceRule,
-	supertypes: Set<string>
-): Rule {
+function classifyHiddenChoiceRule(name: string, rule: ChoiceRule, supertypes: Set<string>): Rule {
 	if (rule.members.every((m): m is StringRule => m.type === 'string')) {
 		return {
 			type: 'enum',
@@ -1852,10 +1662,7 @@ function classifyHiddenChoiceRule(
 	}
 
 	const supertypeCompatible = (m: Rule): boolean =>
-		m.type === 'symbol' ||
-		(m.type === 'alias' && m.named) ||
-		m.type === 'enum' ||
-		m.type === 'string';
+		m.type === 'symbol' || (m.type === 'alias' && m.named) || m.type === 'enum' || m.type === 'string';
 	const allCompatible = rule.members.every(supertypeCompatible);
 	if (allCompatible || supertypes.has(name)) {
 		const subtypes = collectSubtypeNames(rule);
@@ -1937,16 +1744,11 @@ function collectSubtypeNames(rule: Rule): string[] {
 // enrichPositions — walk SEQ members to assign position to SymbolRefs
 // ---------------------------------------------------------------------------
 
-export function enrichPositions(
-	rules: Record<string, Rule>,
-	refs: SymbolRef[]
-): void {
+export function enrichPositions(rules: Record<string, Rule>, refs: SymbolRef[]): void {
 	for (const ref of refs) {
 		const rule = rules[ref.from];
 		if (!rule || rule.type !== 'seq') continue;
-		const idx = rule.members.findIndex(
-			(m) => m.type === 'symbol' && m.name === ref.to
-		);
+		const idx = rule.members.findIndex((m) => m.type === 'symbol' && m.name === ref.to);
 		if (idx >= 0) ref.position = idx;
 	}
 }
@@ -2033,14 +1835,9 @@ function walkForIndentHoist(rule: Rule, rules: Record<string, Rule>): void {
  * (seq/optional/group/field). `visited` guards against recursive hidden
  * chains so a left-recursive helper doesn't stack-overflow. Idempotent.
  */
-function assignRepeatSeparator(
-	rule: Rule,
-	rules: Record<string, Rule>,
-	visited: Set<string>
-): boolean {
+function assignRepeatSeparator(rule: Rule, rules: Record<string, Rule>, visited: Set<string>): boolean {
 	if (rule.type === 'repeat' || rule.type === 'repeat1') {
-		if (!rule.separator)
-			(rule as { separator?: string }).separator = BLOCK_SEPARATOR;
+		if (!rule.separator) (rule as { separator?: string }).separator = BLOCK_SEPARATOR;
 		return true;
 	}
 	if (rule.type === 'symbol') {
@@ -2058,11 +1855,7 @@ function assignRepeatSeparator(
 		}
 		return false;
 	}
-	if (
-		rule.type === 'optional' ||
-		rule.type === 'group' ||
-		rule.type === 'field'
-	) {
+	if (rule.type === 'optional' || rule.type === 'group' || rule.type === 'field') {
 		return assignRepeatSeparator(rule.content, rules, visited);
 	}
 	return false;
@@ -2273,8 +2066,7 @@ function inferFieldNames(references: SymbolRef[]): Map<string, InferredName> {
 		}
 		const agreement = bestCount / namedRefs.length;
 		if (agreement < 0.8) continue;
-		const confidence: InferredName['confidence'] =
-			agreement >= 0.95 ? 'high' : agreement >= 0.85 ? 'medium' : 'low';
+		const confidence: InferredName['confidence'] = agreement >= 0.95 ? 'high' : agreement >= 0.85 ? 'medium' : 'low';
 		inferred.set(to, {
 			name: bestName,
 			confidence,
@@ -2347,14 +2139,7 @@ function applyInferredFields(
 					members.push(m);
 					continue;
 				}
-				const r = applyInferredFields(
-					m,
-					ruleName,
-					inferred,
-					apply,
-					log,
-					_insideField
-				);
+				const r = applyInferredFields(m, ruleName, inferred, apply, log, _insideField);
 				members.push(r.rule);
 				any = any || r.applied;
 			}
@@ -2365,14 +2150,7 @@ function applyInferredFields(
 			const members: Rule[] = [];
 			let any = false;
 			for (const m of rule.members) {
-				const r = applyInferredFields(
-					m,
-					ruleName,
-					inferred,
-					apply,
-					log,
-					_insideField
-				);
+				const r = applyInferredFields(m, ruleName, inferred, apply, log, _insideField);
 				members.push(r.rule);
 				any = any || r.applied;
 			}
@@ -2385,14 +2163,7 @@ function applyInferredFields(
 		case 'variant':
 		case 'clause':
 		case 'group': {
-			const r = applyInferredFields(
-				rule.content,
-				ruleName,
-				inferred,
-				apply,
-				log,
-				_insideField
-			);
+			const r = applyInferredFields(rule.content, ruleName, inferred, apply, log, _insideField);
 			return {
 				rule: r.applied ? ({ ...rule, content: r.rule } as Rule) : rule,
 				applied: r.applied
@@ -2436,12 +2207,7 @@ function collectSeqSiblingDuplicates(members: Rule[]): Set<string> {
  */
 function unwrapSymRef(r: Rule): string | null {
 	if (r.type === 'symbol') return r.name;
-	if (
-		r.type === 'optional' ||
-		r.type === 'variant' ||
-		r.type === 'clause' ||
-		r.type === 'group'
-	) {
+	if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group') {
 		return unwrapSymRef(r.content);
 	}
 	return null;
@@ -2472,10 +2238,7 @@ function unwrapSymRef(r: Rule): string | null {
  *     named visible rule (candidates for a choice-of-symbols),
  *     `group` otherwise.
  */
-function collectRepeatedShapes(
-	rules: Record<string, Rule>,
-	out: RepeatedShapeEntry[]
-): void {
+function collectRepeatedShapes(rules: Record<string, Rule>, out: RepeatedShapeEntry[]): void {
 	// Build the set of already-declared supertype signatures so we
 	// don't duplicate-suggest what the grammar author already wrote.
 	const existingSupertypeKeys = new Set<string>();
@@ -2508,9 +2271,7 @@ function collectRepeatedShapes(
 		// Suggest a `supertype` when every kind looks like a named
 		// rule kind (letters/underscores/digits, not operator
 		// punctuation). Otherwise fall back to `group`.
-		const shape: 'supertype' | 'group' = kinds.every((k) => /^[\w]+$/.test(k))
-			? 'supertype'
-			: 'group';
+		const shape: 'supertype' | 'group' = kinds.every((k) => /^[\w]+$/.test(k)) ? 'supertype' : 'group';
 		out.push({
 			suggestedName: suggestSharedName(kinds),
 			kinds,
@@ -2526,10 +2287,7 @@ function collectRepeatedShapes(
  * before yielding, matching the way the from emitter classifies
  * resolver kind lists.
  */
-function collectFieldKindSets(
-	rule: Rule,
-	yield_: (kinds: readonly string[]) => void
-): void {
+function collectFieldKindSets(rule: Rule, yield_: (kinds: readonly string[]) => void): void {
 	switch (rule.type) {
 		case 'field': {
 			const kinds = directContentKinds(rule.content);
@@ -2591,12 +2349,7 @@ function suggestSharedName(kinds: readonly string[]): string {
 	let suffix: string[] = [];
 	for (let i = 1; i <= first.length; i++) {
 		const tail = first.slice(first.length - i);
-		if (
-			words.every(
-				(w) =>
-					w.length >= i && w.slice(w.length - i).join('_') === tail.join('_')
-			)
-		) {
+		if (words.every((w) => w.length >= i && w.slice(w.length - i).join('_') === tail.join('_'))) {
 			suffix = tail;
 		} else break;
 	}

@@ -10,10 +10,7 @@
 
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
-import {
-	simplifyRule,
-	hoistInnerFieldOutOfFieldWrapper
-} from '../compiler/simplify.ts';
+import { simplifyRule, hoistInnerFieldOutOfFieldWrapper } from '../compiler/simplify.ts';
 
 const str = (value: string): Rule => ({ type: 'string', value });
 const sym = (name: string): Rule => ({ type: 'symbol', name });
@@ -32,9 +29,7 @@ const variant = (name: string, content: Rule): Rule => ({
 });
 const optional = (content: Rule): Rule => ({ type: 'optional', content });
 const repeat1 = (content: Rule, separator?: string): Rule =>
-	separator !== undefined
-		? { type: 'repeat1', content, separator }
-		: { type: 'repeat1', content };
+	separator !== undefined ? { type: 'repeat1', content, separator } : { type: 'repeat1', content };
 const clause = (name: string, content: Rule): Rule => ({
 	type: 'clause',
 	name,
@@ -46,21 +41,9 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 		// Pattern: binary_expression. Each arm same seq shape with
 		// different literal for operator.
 		const input = choice(
-			seq(
-				field('left', sym('expr')),
-				field('op', str('&&')),
-				field('right', sym('expr'))
-			),
-			seq(
-				field('left', sym('expr')),
-				field('op', str('||')),
-				field('right', sym('expr'))
-			),
-			seq(
-				field('left', sym('expr')),
-				field('op', str('+')),
-				field('right', sym('expr'))
-			)
+			seq(field('left', sym('expr')), field('op', str('&&')), field('right', sym('expr'))),
+			seq(field('left', sym('expr')), field('op', str('||')), field('right', sym('expr'))),
+			seq(field('left', sym('expr')), field('op', str('+')), field('right', sym('expr')))
 		);
 		const expected = seq(
 			field('left', sym('expr')),
@@ -76,10 +59,7 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 			seq(field('kind', str('let'))),
 			seq(field('kind', str('const')))
 		);
-		const expected = field(
-			'kind',
-			choice(str('var'), str('let'), str('const'))
-		);
+		const expected = field('kind', choice(str('var'), str('let'), str('const')));
 		// seq of one member collapses to the member.
 		expect(simplifyRule(input)).toEqual(expected);
 	});
@@ -89,11 +69,7 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 			seq(sym('expr'), field('op', str('+')), sym('expr')),
 			seq(sym('expr'), field('op', str('-')), sym('expr'))
 		);
-		const expected = seq(
-			sym('expr'),
-			field('op', choice(str('+'), str('-'))),
-			sym('expr')
-		);
+		const expected = seq(sym('expr'), field('op', choice(str('+'), str('-'))), sym('expr'));
 		expect(simplifyRule(input)).toEqual(expected);
 	});
 
@@ -102,10 +78,7 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 		// that differ in length when they share a field name. Field
 		// `a` is common to both branches; the second branch's extra
 		// `field('b', ...)` becomes the optional residual.
-		const input = choice(
-			seq(field('a', sym('x'))),
-			seq(field('a', sym('x')), field('b', sym('y')))
-		);
+		const input = choice(seq(field('a', sym('x'))), seq(field('a', sym('x')), field('b', sym('y'))));
 		const result = simplifyRule(input) as { type: 'seq'; members: Rule[] };
 		expect(result.type).toBe('seq');
 		// Member 0: hoisted field('a', choice(sym('x'), sym('x')))
@@ -131,10 +104,7 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 
 	it('does NOT merge when branches differ in MEMBER KIND at a position', () => {
 		// One branch has field, another has symbol at same position.
-		const input = choice(
-			seq(field('op', str('='))),
-			seq(sym('assignment_expression'))
-		);
+		const input = choice(seq(field('op', str('='))), seq(sym('assignment_expression')));
 		const result = simplifyRule(input) as { type: 'choice'; members: Rule[] };
 		expect(result.type).toBe('choice');
 	});
@@ -163,10 +133,7 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 			seq(field('op', str('+')), field('r', sym('expr'))),
 			seq(field('op', str('-')), field('r', sym('expr')))
 		);
-		const expected = seq(
-			field('op', choice(str('+'), str('-'))),
-			field('r', sym('expr'))
-		);
+		const expected = seq(field('op', choice(str('+'), str('-'))), field('r', sym('expr')));
 		expect(simplifyRule(input)).toEqual(expected);
 	});
 
@@ -196,31 +163,15 @@ describe('simplifyRule — mergeChoiceBranches', () => {
 		// top-level seq with all fields as direct members.
 		const input = seq(
 			field('outer', sym('x')),
-			choice(
-				seq(field('op', str('+')), field('r', sym('y'))),
-				seq(field('op', str('-')), field('r', sym('y')))
-			)
+			choice(seq(field('op', str('+')), field('r', sym('y'))), seq(field('op', str('-')), field('r', sym('y'))))
 		);
-		const expected = seq(
-			field('outer', sym('x')),
-			field('op', choice(str('+'), str('-'))),
-			field('r', sym('y'))
-		);
+		const expected = seq(field('outer', sym('x')), field('op', choice(str('+'), str('-'))), field('r', sym('y')));
 		expect(simplifyRule(input)).toEqual(expected);
 	});
 
 	it("recurses into a field's content — inner choice gets merged", () => {
-		const input = field(
-			'x',
-			choice(
-				seq(sym('a'), field('y', str('v'))),
-				seq(sym('a'), field('y', str('w')))
-			)
-		);
-		const expected = field(
-			'x',
-			seq(sym('a'), field('y', choice(str('v'), str('w'))))
-		);
+		const input = field('x', choice(seq(sym('a'), field('y', str('v'))), seq(sym('a'), field('y', str('w')))));
+		const expected = field('x', seq(sym('a'), field('y', choice(str('v'), str('w')))));
 		expect(simplifyRule(input)).toEqual(expected);
 	});
 });
@@ -239,24 +190,15 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 
 	it('hoists an inner field out of `field(outer, optional(seq(literal, field(inner))))`', () => {
 		// Pre-clause-detection shape of typescript `infer_type`.
-		const input = field(
-			'constraint',
-			optional(seq(str('extends'), field('type', sym('type'))))
-		);
+		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const expected = optional(seq(str('extends'), field('type', sym('type'))));
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
 	});
 
 	it('hoists through a `clause` wrapper', () => {
 		// Post-Link-detectClause shape of typescript `infer_type`.
-		const input = field(
-			'constraint',
-			clause('type', seq(str('extends'), field('type', sym('type'))))
-		);
-		const expected = clause(
-			'type',
-			seq(str('extends'), field('type', sym('type')))
-		);
+		const input = field('constraint', clause('type', seq(str('extends'), field('type', sym('type')))));
+		const expected = clause('type', seq(str('extends'), field('type', sym('type'))));
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(expected);
 	});
 
@@ -266,12 +208,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// named sibling and proceeds.
 		const input = field(
 			'opening',
-			optional(
-				repeat1(
-					choice(field('name', sym('_property_name')), sym('enum_assignment')),
-					','
-				)
-			)
+			optional(repeat1(choice(field('name', sym('_property_name')), sym('enum_assignment')), ','))
 		);
 		const result = hoistInnerFieldOutOfFieldWrapper(input);
 		expect(result.type).toBe('optional');
@@ -285,12 +222,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// expression children would render via `$$$CHILDREN`.
 		const input = field(
 			'comparators',
-			repeat1(
-				seq(
-					field('operators', choice(str('<'), str('>'))),
-					sym('primary_expression')
-				)
-			)
+			repeat1(seq(field('operators', choice(str('<'), str('>'))), sym('primary_expression')))
 		);
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
 	});
@@ -323,10 +255,7 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 		// The structural literal that previously rode inside the
 		// outer field's content must survive the hoist — the walker
 		// emits it as template text.
-		const input = field(
-			'constraint',
-			optional(seq(str('extends'), field('type', sym('type'))))
-		);
+		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const result = hoistInnerFieldOutOfFieldWrapper(input);
 		// Walk into the optional → seq → first member: the literal.
 		expect(result.type).toBe('optional');
@@ -340,28 +269,19 @@ describe('simplifyRule — hoistInnerFieldOutOfFieldWrapper', () => {
 	it('integration: simplifyRule applies the hoist as part of its field case', () => {
 		// End-to-end via simplifyRule — confirms wiring into the
 		// simplify pipeline (not just the standalone function).
-		const input = field(
-			'constraint',
-			optional(seq(str('extends'), field('type', sym('type'))))
-		);
+		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const result = simplifyRule(input);
 		// After hoist + simplify's optional case, the outer field wrapper is gone.
 		expect(result.type).not.toBe('field');
 	});
 
 	it('integration: a NAMED supertype sibling also blocks the hoist', () => {
-		const input = field(
-			'outer',
-			seq(sup('expression'), field('inner', sym('identifier')))
-		);
+		const input = field('outer', seq(sup('expression'), field('inner', sym('identifier'))));
 		expect(hoistInnerFieldOutOfFieldWrapper(input)).toEqual(input);
 	});
 
 	it('idempotent: running the hoist twice is a no-op on the hoisted shape', () => {
-		const input = field(
-			'constraint',
-			optional(seq(str('extends'), field('type', sym('type'))))
-		);
+		const input = field('constraint', optional(seq(str('extends'), field('type', sym('type')))));
 		const once = hoistInnerFieldOutOfFieldWrapper(input);
 		const twice = hoistInnerFieldOutOfFieldWrapper(once);
 		expect(twice).toEqual(once);

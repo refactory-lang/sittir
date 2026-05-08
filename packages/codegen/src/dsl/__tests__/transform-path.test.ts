@@ -87,21 +87,15 @@ describe('parsePath()', () => {
 	});
 
 	it('rejects * with migration error — use _ instead', () => {
-		expect(() => parsePath('*')).toThrow(
-			/path segment '\*' is no longer valid — use '_' for wildcard; see ADR-0010/
-		);
-		expect(() => parsePath('0/*/1')).toThrow(
-			/path segment '\*' is no longer valid/
-		);
+		expect(() => parsePath('*')).toThrow(/path segment '\*' is no longer valid — use '_' for wildcard; see ADR-0010/);
+		expect(() => parsePath('0/*/1')).toThrow(/path segment '\*' is no longer valid/);
 	});
 
 	it('rejects bare kind name with migration error — use (name) instead', () => {
 		expect(() => parsePath('foo')).toThrow(
 			/bare kind name 'foo' is no longer valid as a path segment — use '\(foo\)' instead; see ADR-0010/
 		);
-		expect(() => parsePath('0/_expression/1')).toThrow(
-			/bare kind name '_expression' is no longer valid/
-		);
+		expect(() => parsePath('0/_expression/1')).toThrow(/bare kind name '_expression' is no longer valid/);
 	});
 
 	it('rejects segments that match neither index/wildcard/kind-name/field-name', () => {
@@ -112,11 +106,7 @@ describe('parsePath()', () => {
 describe('applyPath()', () => {
 	it('replaces at a single top-level index', () => {
 		const rule = seq(str('('), sym('expr'), str(')'));
-		const result = applyPath(
-			rule,
-			[{ kind: 'index', value: 1 }],
-			fld('content', sym('expr'))
-		);
+		const result = applyPath(rule, [{ kind: 'index', value: 1 }], fld('content', sym('expr')));
 		expect((result as any).members[1]).toMatchObject({
 			type: 'field',
 			name: 'content'
@@ -157,26 +147,22 @@ describe('applyPath()', () => {
 
 	it('throws on out-of-bounds index', () => {
 		const rule = seq(sym('a'), sym('b'));
-		expect(() =>
-			applyPath(rule, [{ kind: 'index', value: 5 }], fld('x', sym('a')))
-		).toThrow(/index 5 out of bounds in seq of length 2/);
+		expect(() => applyPath(rule, [{ kind: 'index', value: 5 }], fld('x', sym('a')))).toThrow(
+			/index 5 out of bounds in seq of length 2/
+		);
 	});
 
 	it('throws on out-of-bounds in wrapper', () => {
 		const rule = optional(sym('inner'));
-		expect(() =>
-			applyPath(rule, [{ kind: 'index', value: 1 }], fld('x', sym('inner')))
-		).toThrow(/index 1 out of bounds.*optional.*single content/);
+		expect(() => applyPath(rule, [{ kind: 'index', value: 1 }], fld('x', sym('inner')))).toThrow(
+			/index 1 out of bounds.*optional.*single content/
+		);
 	});
 
 	describe('wildcards (_)', () => {
 		it('applies to every member of a choice', () => {
 			const rule = choice(seq(sym('a'), sym('b')), seq(sym('c'), sym('d')));
-			const result = applyPath(
-				rule,
-				[{ kind: 'wildcard' }, { kind: 'index', value: 0 }],
-				(m) => fld('first', m)
-			);
+			const result = applyPath(rule, [{ kind: 'wildcard' }, { kind: 'index', value: 0 }], (m) => fld('first', m));
 			const branches = (result as any).members;
 			expect(branches[0].members[0]).toMatchObject({
 				type: 'field',
@@ -201,22 +187,15 @@ describe('applyPath()', () => {
 			const rule = seq(str('('), str(')'));
 			// Wildcard at position 0 is fine, but trying to descend further
 			// into string members will fail every time → zero applied → throw.
-			expect(() =>
-				applyPath(
-					rule,
-					[{ kind: 'wildcard' }, { kind: 'index', value: 0 }],
-					fld('x', sym('y'))
-				)
-			).toThrow(/wildcard matched zero/);
+			expect(() => applyPath(rule, [{ kind: 'wildcard' }, { kind: 'index', value: 0 }], fld('x', sym('y')))).toThrow(
+				/wildcard matched zero/
+			);
 		});
 	});
 
 	describe('field traversal (fieldName segment)', () => {
 		it('descends through a field wrapper when name matches', () => {
-			const rule = seq(
-				fld('name', sym('identifier')),
-				fld('body', sym('block'))
-			);
+			const rule = seq(fld('name', sym('identifier')), fld('body', sym('block')));
 			const result = applyPath(
 				rule,
 				[
@@ -244,20 +223,12 @@ describe('applyPath()', () => {
 					],
 					sym('new_body')
 				)
-			).toThrow(
-				/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'symbol'/
-			);
+			).toThrow(/path segment 'body:' at this level expects a field\('body', \.\.\.\) wrapper; got type 'symbol'/);
 		});
 
 		it('throws when the field name at that position does not match', () => {
 			const rule = fld('name', sym('identifier'));
-			expect(() =>
-				applyPath(
-					rule,
-					[{ kind: 'fieldName', name: 'body' }],
-					sym('new_identifier')
-				)
-			).toThrow(
+			expect(() => applyPath(rule, [{ kind: 'fieldName', name: 'body' }], sym('new_identifier'))).toThrow(
 				/path segment 'body:' doesn't match field name 'name' at this position/
 			);
 		});
@@ -269,10 +240,7 @@ describe('transform() — object form with path keys', () => {
 		const rule = seq(sym('a'), sym('b'));
 		// The path key '_' marks this as path mode (not flat positional).
 		// Use the wildcard to apply to all members for the smoke test.
-		const flat = transform(rule, { _: fld('any', sym('a')) } as Record<
-			string,
-			Rule
-		>);
+		const flat = transform(rule, { _: fld('any', sym('a')) } as Record<string, Rule>);
 		const r = flat as any;
 		expect(r.members[0]).toMatchObject({
 			type: 'field',
@@ -363,11 +331,7 @@ describe('applyPath() — kind-match + negative index', () => {
 	it('kind-match wraps every occurrence recursively (new (name) syntax)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');
 		// seq(expr, ',', seq(expr, ',', expr)) — three _expression refs.
-		const rule = seq(
-			sym('_expression'),
-			str(','),
-			seq(sym('_expression'), str(','), sym('_expression'))
-		);
+		const rule = seq(sym('_expression'), str(','), seq(sym('_expression'), str(','), sym('_expression')));
 		const result = transform(rule, {
 			'(_expression)': oneArgField('elements') as Rule
 		});

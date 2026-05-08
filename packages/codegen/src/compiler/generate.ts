@@ -10,10 +10,7 @@ import { evaluate } from './evaluate.ts';
 import { link } from './link.ts';
 import { optimize } from './optimize.ts';
 import { assemble, hydrateSlotRefs } from './assemble.ts';
-import {
-	resolveGrammarJsPath,
-	resolveOverridesPath
-} from './resolve-grammar.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from './resolve-grammar.ts';
 import { tracePhaseRules, traceAssembleNodes } from './trace.ts';
 
 import { emitGrammar } from '../emitters/grammar.ts';
@@ -230,9 +227,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			roundTripFailures: cfg.roundTripFailures
 		}),
 		is: emitted.is,
-		kindIds: generatedIdTables
-			? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables })
-			: '',
+		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 		nodeMap,
 		generatedIdTables
 	};
@@ -257,14 +252,7 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
  * @returns The `inline` string array from grammar.json, or `undefined`.
  */
 function loadGrammarJsonInlineList(grammar: string): readonly string[] | undefined {
-	const grammarJsonPath = join(
-		process.cwd(),
-		'packages',
-		grammar,
-		'.sittir',
-		'src',
-		'grammar.json'
-	);
+	const grammarJsonPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'grammar.json');
 	if (!existsSync(grammarJsonPath)) return undefined;
 	try {
 		const parsed = JSON.parse(readFileSync(grammarJsonPath, 'utf8')) as {

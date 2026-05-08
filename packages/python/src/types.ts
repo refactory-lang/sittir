@@ -4014,7 +4014,7 @@ export namespace _AsPattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [CasePattern.Transport | Identifier.Transport];
+    readonly $children: CasePattern.Transport | Identifier.Transport;
   }
 }
 
@@ -4171,7 +4171,7 @@ export namespace MatchBlock {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [MatchBlockBlock.Transport];
+    readonly $children: MatchBlockBlock.Transport;
   }
 }
 
@@ -4205,7 +4205,7 @@ export namespace SimplePatternNegative {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Integer.Transport | Float.Transport];
+    readonly $children: Integer.Transport | Float.Transport;
   }
 }
 
@@ -4231,7 +4231,7 @@ export namespace Suite {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [SimpleStatements.Transport | Block.Transport | Newline.Transport];
+    readonly $children: SimpleStatements.Transport | Block.Transport | Newline.Transport;
   }
 }
 
@@ -4339,7 +4339,7 @@ export namespace AssignmentUFormEq {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
-    readonly $children: readonly [AssignmentEq.Transport];
+    readonly $children: AssignmentEq.Transport;
   }
 }
 
@@ -4354,7 +4354,7 @@ export namespace AssignmentUFormType {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
-    readonly $children: readonly [AssignmentType.Transport];
+    readonly $children: AssignmentType.Transport;
   }
 }
 
@@ -4369,7 +4369,7 @@ export namespace AssignmentUFormTyped {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly left: LeftHandSide.Transport;
-    readonly $children: readonly [AssignmentTyped.Transport];
+    readonly $children: AssignmentTyped.Transport;
   }
 }
 
@@ -4504,7 +4504,7 @@ export namespace CasePattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [_AsPattern.Transport | KeywordPattern.Transport | SimplePattern.Transport];
+    readonly $children: _AsPattern.Transport | KeywordPattern.Transport | SimplePattern.Transport;
   }
 }
 
@@ -4581,7 +4581,7 @@ export namespace ComplexPattern {
     readonly $childIndex?: number;
     readonly real?: LiteralTransport<TSKindId.Dash, "-">;
     readonly imaginary: Integer.Transport | Float.Transport;
-    readonly $children: readonly [Integer.Transport | Float.Transport];
+    readonly $children: Integer.Transport | Float.Transport;
   }
 }
 
@@ -4682,7 +4682,7 @@ export namespace DeleteStatement {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Expressions.Transport];
+    readonly $children: Expressions.Transport;
   }
 }
 
@@ -4722,7 +4722,7 @@ export namespace DictionaryComprehension {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly body: Pair.Transport;
-    readonly $children: readonly [ComprehensionClauses.Transport];
+    readonly $children: ComprehensionClauses.Transport;
   }
 }
 
@@ -4748,7 +4748,7 @@ export namespace DictionarySplatPattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
+    readonly $children: Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport;
   }
 }
 
@@ -4811,7 +4811,7 @@ export namespace ExceptClause {
     readonly $childIndex?: number;
     readonly value?: readonly (Expression.Transport)[];
     readonly alias?: Expression.Transport;
-    readonly $children: readonly [Suite.Transport];
+    readonly $children: Suite.Transport;
   }
 }
 
@@ -4865,7 +4865,7 @@ export namespace ExpressionStatementUFormTuple {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [ExpressionStatementTuple.Transport];
+    readonly $children: ExpressionStatementTuple.Transport;
   }
 }
 
@@ -4980,7 +4980,7 @@ export namespace GeneratorExpression {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly body: Expression.Transport;
-    readonly $children: readonly [ComprehensionClauses.Transport];
+    readonly $children: ComprehensionClauses.Transport;
   }
 }
 
@@ -5193,7 +5193,7 @@ export namespace ListComprehension {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly body: Expression.Transport;
-    readonly $children: readonly [ComprehensionClauses.Transport];
+    readonly $children: ComprehensionClauses.Transport;
   }
 }
 
@@ -5232,7 +5232,7 @@ export namespace ListSplatPattern {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport];
+    readonly $children: Identifier.Transport | KeywordIdentifier.Transport | Subscript.Transport | Attribute.Transport;
   }
 }
 
@@ -5357,7 +5357,7 @@ export namespace ParenthesizedExpression {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Expression.Transport | Yield.Transport];
+    readonly $children: Expression.Transport | Yield.Transport;
   }
 }
 
@@ -5370,7 +5370,7 @@ export namespace ParenthesizedListSplat {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [ParenthesizedListSplat.Transport | ListSplat.Transport];
+    readonly $children: ParenthesizedListSplat.Transport | ListSplat.Transport;
   }
 }
 
@@ -5405,7 +5405,7 @@ export namespace PrintStatement {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly argument: readonly (Expression.Transport)[];
-    readonly $children?: readonly [Chevron.Transport];
+    readonly $children?: Chevron.Transport;
   }
 }
 
@@ -5419,7 +5419,7 @@ export namespace RaiseStatement {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly cause?: Expression.Transport;
-    readonly $children?: readonly [Expressions.Transport];
+    readonly $children?: Expressions.Transport;
   }
 }
 
@@ -5446,7 +5446,7 @@ export namespace ReturnStatement {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children?: readonly [Expressions.Transport];
+    readonly $children?: Expressions.Transport;
   }
 }
 
@@ -5473,7 +5473,7 @@ export namespace SetComprehension {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly body: Expression.Transport;
-    readonly $children: readonly [ComprehensionClauses.Transport];
+    readonly $children: ComprehensionClauses.Transport;
   }
 }
 
@@ -5615,7 +5615,7 @@ export namespace Type {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [Expression.Transport | SplatType.Transport | GenericType.Transport | UnionType.Transport | ConstrainedType.Transport | MemberType.Transport];
+    readonly $children: Expression.Transport | SplatType.Transport | GenericType.Transport | UnionType.Transport | ConstrainedType.Transport | MemberType.Transport;
   }
 }
 
@@ -5676,7 +5676,7 @@ export namespace TypedParameter {
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
     readonly type: Type.Transport;
-    readonly $children: readonly [Identifier.Transport | ListSplatPattern.Transport | DictionarySplatPattern.Transport];
+    readonly $children: Identifier.Transport | ListSplatPattern.Transport | DictionarySplatPattern.Transport;
   }
 }
 
@@ -5776,7 +5776,7 @@ export namespace WithClauseUFormBare {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [WithClauseBare.Transport];
+    readonly $children: WithClauseBare.Transport;
   }
 }
 
@@ -5790,7 +5790,7 @@ export namespace WithClauseUFormParen {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children: readonly [_WithClauseParen.Transport];
+    readonly $children: _WithClauseParen.Transport;
   }
 }
 
@@ -5835,7 +5835,7 @@ export namespace Yield {
     readonly $span?: { readonly start: number; readonly end: number };
     readonly $nodeHandle?: number;
     readonly $childIndex?: number;
-    readonly $children?: readonly [LiteralTransport<TSKindId.From, "from"> | Expression.Transport | Expressions.Transport];
+    readonly $children?: LiteralTransport<TSKindId.From, "from"> | Expression.Transport | Expressions.Transport;
   }
 }
 

@@ -28,8 +28,9 @@ const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof SUPPORTED_GRAMMARS)[number];
 
 const args = process.argv.slice(2);
-const grammarArg = args.find((_, i) => args[i - 1] === '--grammar' || args[i - 1] === '-g') ??
-	(args.find((a) => a.startsWith('--grammar='))?.split('=')[1]);
+const grammarArg =
+	args.find((_, i) => args[i - 1] === '--grammar' || args[i - 1] === '-g') ??
+	args.find((a) => a.startsWith('--grammar='))?.split('=')[1];
 
 if (!grammarArg) {
 	console.error('Usage: regen-templates-rs --grammar <rust|typescript|python|rust,typescript,python>');

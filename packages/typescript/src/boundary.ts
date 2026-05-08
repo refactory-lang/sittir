@@ -34,25 +34,17 @@ export function render(node: AnyNodeData): string {
  * Render `node` and return an Edit that splices the rendered text
  * into the given range. Uses the default engine's render method.
  */
-export function toEdit(
-	node: AnyNodeData,
-	startOrRange: number | ByteRange,
-	end?: number
-): Edit {
+export function toEdit(node: AnyNodeData, startOrRange: number | ByteRange, end?: number): Edit {
 	const insertedText = render(node);
 	if (typeof startOrRange === 'number') {
 		if (typeof end !== 'number') {
 			throw new Error('endPos is required when startPos is a number');
 		}
 		if (startOrRange < 0 || end < 0) {
-			throw new Error(
-				`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`
-			);
+			throw new Error(`Edit positions must be non-negative (got start=${startOrRange}, end=${end})`);
 		}
 		if (startOrRange > end) {
-			throw new Error(
-				`Edit startPos (${startOrRange}) must not exceed endPos (${end})`
-			);
+			throw new Error(`Edit startPos (${startOrRange}) must not exceed endPos (${end})`);
 		}
 		return { startPos: startOrRange, endPos: end, insertedText };
 	}

@@ -88,13 +88,9 @@ const FIXTURES_DIR = new URL('../../fixtures', import.meta.url).pathname;
 
 function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter(
-		(f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt')
-	);
+	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
 	for (const file of files) {
-		entries.push(
-			...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8'))
-		);
+		entries.push(...parseCorpus(readFileSync(join(FIXTURES_DIR, file), 'utf-8')));
 	}
 	return entries;
 }
@@ -280,16 +276,10 @@ function checkNodeData(
 		}
 	}
 
-	const dataChildrenCount = (data.$children ?? []).filter(
-		(c: any) => c?.$named !== false
-	).length;
+	const dataChildrenCount = (data.$children ?? []).filter((c: any) => c?.$named !== false).length;
 
 	const expectedNamedUnfielded = countUnfieldedNamedChildren(node);
-	const promotedChildCount = countPromotedOverrideChildren(
-		data,
-		liveFieldNames,
-		overrideFields
-	);
+	const promotedChildCount = countPromotedOverrideChildren(data, liveFieldNames, overrideFields);
 
 	if (dataChildrenCount + promotedChildCount < expectedNamedUnfielded) {
 		return (
@@ -316,9 +306,7 @@ export interface ReadNodeRoundTripResult {
 	issues: NodeIssue[];
 }
 
-export async function validateReadNodeRoundTrip(
-	grammar: string
-): Promise<ReadNodeRoundTripResult> {
+export async function validateReadNodeRoundTrip(grammar: string): Promise<ReadNodeRoundTripResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -332,9 +320,12 @@ export async function validateReadNodeRoundTrip(
 	// returns undefined, not when it throws.
 	const kindIdFromName = rawKindIdFromName
 		? (name: string): number | undefined => {
-			try { return rawKindIdFromName(name); }
-			catch { return undefined; }
-		}
+				try {
+					return rawKindIdFromName(name);
+				} catch {
+					return undefined;
+				}
+			}
 		: rawKindIdFromName;
 
 	const rawEntries = loadRawEntries(grammar);
@@ -398,9 +389,7 @@ export async function validateReadNodeRoundTrip(
 	return { grammar, total, pass, fail: total - pass - skip, skip, issues };
 }
 
-export function formatReadNodeRoundTripReport(
-	result: ReadNodeRoundTripResult
-): string {
+export function formatReadNodeRoundTripReport(result: ReadNodeRoundTripResult): string {
 	const lines: string[] = [];
 	const icon = result.issues.length === 0 ? 'v' : 'x';
 	lines.push(

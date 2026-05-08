@@ -36,15 +36,14 @@ import {
 	type WrappedNodeData
 } from './common.ts';
 
-/** Find a node anywhere in the tree by its numeric id. Used by the
- * wrap-aware kind resolution path (ADR-0006) to recover a TSNode for
- * an alias-source kind first encountered via the wrapped-tree walk. */
-function findNodeById(node: TSNode, nodeId: number): TSNode | null {
-	if (node.id === nodeId) return node;
+/** Find a node anywhere in the tree by its exact byte span. */
+function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSNode | null {
+	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
 	for (let i = 0; i < node.childCount; i++) {
 		const c = node.child(i);
 		if (!c) continue;
-		const hit = findNodeById(c, nodeId);
+		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
+		const hit = findNodeBySpan(c, startIndex, endIndex);
 		if (hit) return hit;
 	}
 	return null;
@@ -55,11 +54,7 @@ function findNodeById(node: TSNode, nodeId: number): TSNode | null {
  * Anonymous tokens compared byte-exactly so silently dropped content
  * (commas, operators, terminators) fails the check.
  */
-function astStructuralDiff(
-	a: TSNode,
-	b: TSNode,
-	path: string = ''
-): string | null {
+function astStructuralDiff(a: TSNode, b: TSNode, path: string = ''): string | null {
 	if (a.type !== b.type) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
@@ -106,6 +101,16 @@ function findNodeAt(node: TSNode, kind: string, offset: number): TSNode | null {
 	return null;
 }
 
+/** Return the named tree-sitter child kinds for a parsed CST node, in source order. */
+function namedChildKinds(node: TSNode): string[] {
+	const kinds: string[] = [];
+	for (let i = 0; i < node.childCount; i++) {
+		const child = node.child(i);
+		if (child?.isNamed) kinds.push(child.type);
+	}
+	return kinds;
+}
+
 // ---------------------------------------------------------------------------
 // Strip runtime metadata to simulate factory output
 // ---------------------------------------------------------------------------
@@ -132,9 +137,7 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 	const stripFieldValue = (value: unknown): NodeMemberValue | readonly (AnyNodeData | string | number)[] => {
 		if (Array.isArray(value)) {
 			return value.map((v) =>
-				typeof v === 'object' && v !== null
-					? stripToFactory(v as AnyNodeData)
-					: v
+				typeof v === 'object' && v !== null ? stripToFactory(v as AnyNodeData) : v
 			) as readonly (AnyNodeData | string | number)[];
 		}
 		if (typeof value === 'object' && value !== null) {
@@ -152,11 +155,7 @@ function stripToFactory(data: AnyNodeData): AnyNodeData {
 		// Factory nodes only have named children — filter anonymous
 		result.$children = (data.$children as AnyNodeData[])
 			.filter((c) => c.$named !== false)
-			.map((c) =>
-				typeof c === 'object' && c !== null
-					? stripToFactory(c as AnyNodeData)
-					: c
-			);
+			.map((c) => (typeof c === 'object' && c !== null ? stripToFactory(c as AnyNodeData) : c));
 	}
 
 	return result;
@@ -277,11 +276,9 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
 	let factoryFields: Record<string, readonly string[]> = {};
 	let polymorphVariants: PolymorphVariantMap = {};
-	let kindNameFromId: ((id: number) => string | undefined) | undefined =
-		undefined;
+	let kindNameFromId: ((id: number) => string | undefined) | undefined = undefined;
 	let kindNames: ReadonlyMap<number, string> | undefined = undefined;
-	let kindIdFromName: ((name: string) => number | undefined) | undefined =
-		undefined;
+	let kindIdFromName: ((name: string) => number | undefined) | undefined = undefined;
 	if (!factoryModulePath) {
 		return {
 			factoryMap,
@@ -296,9 +293,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		};
 	}
 	try {
-		const factoryModule = await import(
-			new URL(factoryModulePath, import.meta.url).pathname
-		);
+		const factoryModule = await import(new URL(factoryModulePath, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata lives in factory-map.json5 — pure
 		// data, loaded separately from the factory functions.
@@ -312,19 +307,13 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
 		const typesModulePath = TYPES_MODULE_PATHS[grammar];
 		if (typesModulePath) {
 			try {
-				const typesModule = await import(
-					new URL(typesModulePath, import.meta.url).pathname
-				);
-				const kindNamesMap = typesModule.KIND_NAMES as
-					| ReadonlyMap<number, string>
-					| undefined;
+				const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
+				const kindNamesMap = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 				if (kindNamesMap) {
 					kindNames = kindNamesMap;
 					kindNameFromId = (id: number) => kindNamesMap.get(id);
 				}
-				const rawNameFn = typesModule.kindIdFromName as
-					| ((name: string) => number)
-					| undefined;
+				const rawNameFn = typesModule.kindIdFromName as ((name: string) => number) | undefined;
 				if (rawNameFn) {
 					kindIdFromName = (name: string) => {
 						try {
@@ -378,9 +367,7 @@ async function loadFactoryModuleForGrammar(grammar: string): Promise<{
  * @returns The `readTreeNode` function bound to the grammar, or `null` if the
  *   wrap layer is not available.
  */
-async function loadWrapperBasedAliasResolver(
-	grammar: string
-): Promise<((handle: any) => any) | null> {
+async function loadWrapperBasedAliasResolver(grammar: string): Promise<((handle: any) => any) | null> {
 	return loadReadTreeNode(grammar);
 }
 
@@ -437,15 +424,14 @@ function recordFactoryModuleLoadFailure(
  * @param nodeIdToEffectiveType - Map from tree-sitter node id to walker-resolved kind.
  * @returns The first matching `TSNode`, or `null` if none is found.
  */
-function resolveNodeForKind(
-	kind: string,
-	rootNode: TSNode,
-	nodeIdToEffectiveType: Map<number, string>
-): TSNode | null {
+function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveType: Map<string, string>): TSNode | null {
 	let node1: TSNode | null = null;
-	for (const [nid, et] of nodeIdToEffectiveType) {
+	for (const [spanKey, et] of nodeIdToEffectiveType) {
 		if (et === kind) {
-			node1 = findNodeById(rootNode, nid);
+			const colon = spanKey.indexOf(':');
+			const startIdx = parseInt(spanKey.slice(0, colon), 10);
+			const endIdx = parseInt(spanKey.slice(colon + 1), 10);
+			node1 = findNodeBySpan(rootNode, startIdx, endIdx);
 			if (node1) break;
 		}
 	}
@@ -467,6 +453,8 @@ function resolveNodeForKind(
  *
  * @param readData - NodeData produced by `readNode`, possibly with `$type` overridden.
  * @param renderedKind - The walker-resolved kind (used for factory + shape lookup).
+ * @param firstNamedChildKindHint - First CST named-child fallback for legacy callers.
+ * @param namedChildKindHints - Ordered CST named-child fallback candidates.
  * @param factoryMap - Map from kind to factory function.
  * @param factoryShapes - Codegen-produced calling-convention map per kind.
  * @param fieldAliasMap - Camel→snake alias map used by `nodeToConfig`.
@@ -485,6 +473,8 @@ function resolveNodeForKind(
 function buildFactoryNodeData(
 	readData: AnyNodeData,
 	renderedKind: string,
+	firstNamedChildKindHint: string | undefined,
+	namedChildKindHints: readonly string[],
 	factoryMap: Record<string, (config?: any) => unknown>,
 	factoryShapes: Record<string, FactoryShape>,
 	fieldAliasMap: Record<string, Record<string, string>>,
@@ -503,8 +493,8 @@ function buildFactoryNodeData(
 	kindNameFromId?: (id: number) => string | undefined
 ): AnyNodeData | null {
 	// Leaf check: no named fields (_<name> keys or legacy $fields) and no $children.
-	const hasLegacyFields = !!(readData as unknown as Record<string,unknown>)['$fields'];
-	const hasDehoistedFields = Object.keys(readData as unknown as Record<string,unknown>).some((k) => k.startsWith('_'));
+	const hasLegacyFields = !!(readData as unknown as Record<string, unknown>)['$fields'];
+	const hasDehoistedFields = Object.keys(readData as unknown as Record<string, unknown>).some((k) => k.startsWith('_'));
 	if (!hasLegacyFields && !hasDehoistedFields && !readData.$children) {
 		// Leaf — render its text directly by preserving the original.
 		return readData;
@@ -515,7 +505,7 @@ function buildFactoryNodeData(
 	}
 	try {
 		const shape = factoryShapes[renderedKind] ?? 'config';
-		if (shape === 'config' || shape === 'single-field') {
+		if (shape === 'config' || shape === 'direct') {
 			const recursive = process?.env?.SITTIR_VALIDATE_RECURSIVE === '1';
 			const config = recursive
 				? nodeToConfig(readData, {
@@ -525,20 +515,25 @@ function buildFactoryNodeData(
 						fieldAliasMap,
 						factoryFields,
 						polymorphVariants,
+						firstNamedChildKindHint,
+						namedChildKindHints,
 						kindNameFromId
 					})
-				: nodeToConfig(readData, { polymorphVariants, kindNameFromId });
-			if (shape === 'single-field') {
-				// Gap 5: single-field-no-children factory takes the value directly.
-				// Extract the sole field value from the config object.
-				// factoryFields stores raw snake_case names; nodeToConfig
-				// returns camelCase keys — convert for the lookup.
+				: nodeToConfig(readData, {
+						polymorphVariants,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					});
+			if (shape === 'direct') {
+				// Direct-call shape: extract the sole field value when metadata
+				// names one, otherwise treat it as a single child call.
 				const fieldNames = factoryFields[renderedKind];
 				const rawName = fieldNames?.[0];
-				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
-					c.toUpperCase()
-				);
-				const value = camelName ? (config as Record<string, unknown>)[camelName] : undefined;
+				const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+				const value = camelName
+					? (config as Record<string, unknown>)[camelName]
+					: ((config.children ?? []) as unknown[])[0];
 				return (factory as (v: unknown) => AnyNodeData)(value);
 			}
 			return factory(config) as AnyNodeData;
@@ -550,10 +545,8 @@ function buildFactoryNodeData(
 			const text = (readData as { $text?: string }).$text ?? '';
 			return (factory as (text: string) => AnyNodeData)(text);
 		} else {
-			// shape === 'children' — container factory.
-			const namedChildren = (readData.$children ?? []).filter(
-				(c: any) => c?.$named !== false
-			);
+			// shape === 'spread' — child-spread factory.
+			const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
 			return (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 		}
 	} catch (e) {
@@ -593,12 +586,7 @@ function wrapAndReparseRendered(
 	kindToSupertypes: Map<string, string[]>,
 	parser: { parse(text: string): TSTree | null }
 ): { wrapped: { text: string; offset: number } | null; tree2: TSTree | null } {
-	const wrapped = wrapForReparse(
-		rendered,
-		renderedKind,
-		grammar,
-		kindToSupertypes
-	);
+	const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes);
 	if (wrapped === null) {
 		return { wrapped: null, tree2: null };
 	}
@@ -627,10 +615,7 @@ function locateNodeInReparsedTree(
 	targetKind: string,
 	wrapped: { text: string; offset: number }
 ): TSNode | null {
-	return (
-		findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ??
-		findFirst(tree2.rootNode, targetKind)
-	);
+	return findNodeAt(tree2.rootNode, targetKind, wrapped.offset) ?? findFirst(tree2.rootNode, targetKind);
 }
 
 /**
@@ -752,7 +737,7 @@ export async function validateFactoryRoundTrip(
 
 		const handle = buildReadHandle(grammar, tree1, entry.source, backend, kindIdFromName);
 		const kinds = new Set(collectKinds(tree1.rootNode));
-		const nodeIdToEffectiveType = new Map<number, string>();
+		const nodeIdToEffectiveType = new Map<string, string>();
 		if (readTreeNodeFn) {
 			const wrappedRoot = readTreeNodeFn(handle);
 			walkWrappedTree(wrappedRoot, (w: WrappedNodeData) => {
@@ -760,9 +745,9 @@ export async function validateFactoryRoundTrip(
 				// ruleKinds.has() and nodeIdToEffectiveType string-keyed maps.
 				const kindStr = kindNameFromId ? kindNameFromId(w.$type) : undefined;
 				if (kindStr === undefined) return; // unknown id — skip
-				// ADR-0017: use $span.start as stable identity key
-				const span = (w as { $span?: { start: number } }).$span;
-				if (span != null) nodeIdToEffectiveType.set(span.start, kindStr);
+				// ADR-0017: use "${start}:${end}" composite span as collision-free identity key.
+				const span = (w as { $span?: { start: number; end: number } }).$span;
+				if (span != null) nodeIdToEffectiveType.set(`${span.start}:${span.end}`, kindStr);
 				kinds.add(kindStr);
 			});
 		}
@@ -773,11 +758,7 @@ export async function validateFactoryRoundTrip(
 			testedPairs.add(pairKey);
 			total++;
 
-			const node1 = resolveNodeForKind(
-				kind,
-				tree1.rootNode,
-				nodeIdToEffectiveType
-			);
+			const node1 = resolveNodeForKind(kind, tree1.rootNode, nodeIdToEffectiveType);
 			if (!node1) continue;
 			const inputSource = node1.text;
 
@@ -792,11 +773,12 @@ export async function validateFactoryRoundTrip(
 			if (nativeCoords === null && handle.read) continue;
 			const rawReadData = readNodeAt(handle, adaptNode(node1), nativeCoords);
 			// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
-			const rawKindName = typeof rawReadData.$type === 'number' && kindNameFromId
-				? kindNameFromId(rawReadData.$type)
-				: typeof rawReadData.$type === 'string'
-					? rawReadData.$type
-					: undefined;
+			const rawKindName =
+				typeof rawReadData.$type === 'number' && kindNameFromId
+					? kindNameFromId(rawReadData.$type)
+					: typeof rawReadData.$type === 'string'
+						? rawReadData.$type
+						: undefined;
 			// canonicalKind: sittir internal form, may have leading underscore
 			// (e.g. '_type_identifier') or may have an alias suffix
 			// ('scoped_type_identifier_in_expression_position'). Used for factory
@@ -809,17 +791,19 @@ export async function validateFactoryRoundTrip(
 			// 'scoped_type_identifier'). Use node1.type as the ground truth — it's
 			// the actual string tree-sitter reported for this node.
 			const targetKind = node1.type;
-			const effective = nodeIdToEffectiveType.get(node1.id);
+			const effective = nodeIdToEffectiveType.get(`${node1.startIndex}:${node1.endIndex}`);
 			// Apply alias rewriting only when effective kind differs from the canonical kind.
-			const readData = effective && effective !== canonicalKind
-				? { ...rawReadData, $type: rawReadData.$type }
-				: rawReadData;
+			const readData =
+				effective && effective !== canonicalKind ? { ...rawReadData, $type: rawReadData.$type } : rawReadData;
 			// renderedKind: canonical form used for factory lookup and error messages.
 			const renderedKind = effective ?? canonicalKind;
+			const cstNamedChildKinds = namedChildKinds(node1);
 
 			const factoryData = buildFactoryNodeData(
 				readData,
 				renderedKind,
+				cstNamedChildKinds[0],
+				cstNamedChildKinds,
 				factoryMap,
 				factoryShapes,
 				fieldAliasMap,
@@ -840,13 +824,7 @@ export async function validateFactoryRoundTrip(
 					continue;
 				}
 
-				const { wrapped, tree2 } = wrapAndReparseRendered(
-					rendered,
-					renderedKind,
-					grammar,
-					kindToSupertypes,
-					parser
-				);
+				const { wrapped, tree2 } = wrapAndReparseRendered(rendered, renderedKind, grammar, kindToSupertypes, parser);
 
 				if (wrapped === null) {
 					// No wrapper registered — validator can't make a claim.
@@ -880,15 +858,7 @@ export async function validateFactoryRoundTrip(
 				pass++;
 
 				if (
-					recordAstStructuralComparison(
-						node1,
-						node2,
-						renderedKind,
-						entry.name,
-						inputSource,
-						rendered,
-						astMismatches
-					)
+					recordAstStructuralComparison(node1, node2, renderedKind, entry.name, inputSource, rendered, astMismatches)
 				) {
 					astMatchPass++;
 				}
@@ -916,9 +886,7 @@ export async function validateFactoryRoundTrip(
 	};
 }
 
-export function formatFactoryRoundTripReport(
-	result: FactoryRoundTripResult
-): string {
+export function formatFactoryRoundTripReport(result: FactoryRoundTripResult): string {
 	const lines: string[] = [];
 	const icon = result.fail === 0 ? 'v' : 'x';
 	lines.push(

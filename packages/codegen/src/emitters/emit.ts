@@ -6,9 +6,9 @@
  * dispatches to every emitter per node.
  *
  * Emitters that already have `init()`/`collect()` namespace APIs
- * (factory, from, wrap) get true per-node dispatch in the loop.
+ * (factory, from, wrap, templates) get true per-node dispatch in the loop.
  * Emitters that use category collection or complex multi-pass patterns
- * (types, ir, is, consts, test, templates, factoryMap, clientUtils,
+ * (types, ir, is, consts, test, factoryMap, clientUtils,
  * typeTests) run their existing `emitXxx()` function during finalize —
  * they keep their own internal loops for now, but the architecture is
  * set up for future migration to per-node dispatch.
@@ -28,7 +28,7 @@ import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { emitTypeTests } from './type-test.ts';
-import { emitJinjaTemplates } from './templates.ts';
+import { templateEmitter } from './templates.ts';
 import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
 
@@ -66,16 +66,8 @@ export interface EmitAllResult {
  * @returns An object with every emitter's final output string.
  */
 export function emitAll(config: EmitAllConfig): EmitAllResult {
-	const {
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		inlineKinds,
-		synthesizedKinds,
-		strict,
-		triviaKinds,
-		grammarRoles
-	} = config;
+	const { grammar, nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, strict, triviaKinds, grammarRoles } =
+		config;
 
 	// -----------------------------------------------------------------
 	// 1. Initialize per-node-dispatch emitters (preamble, internal state)
@@ -103,13 +95,49 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		synthesizedKinds
 	});
 
+	templateEmitter.init({
+		grammar,
+		nodeMap
+	});
+
 	// -----------------------------------------------------------------
-	// 2. ONE loop — dispatch to all per-node emitters
+	// 2. ONE loop — taxonomy dispatch happens HERE
 	// -----------------------------------------------------------------
 	for (const [kind, node] of nodeMap.nodes) {
-		factoryEmitter.dispatchNode(kind, node);
-		fromEmitter.dispatchNode(kind, node);
-		wrapEmitter.dispatchNode(kind, node);
+		const emitFactory = factoryEmitter.shouldEmit(kind, node);
+		const emitFrom = fromEmitter.shouldEmit(kind, node);
+		const emitWrap = wrapEmitter.shouldEmit(kind, node);
+		const emitTemplate = templateEmitter.shouldEmit(kind, node);
+
+		switch (node.modelType) {
+			case 'pattern':
+			case 'keyword':
+			case 'enum':
+				if (emitFactory) factoryEmitter.emitLeaf(kind, node);
+				if (emitFrom) fromEmitter.emitLeaf(node);
+				if (emitTemplate) templateEmitter.emitLeaf(kind, node);
+				break;
+			case 'branch':
+				if (emitFactory) factoryEmitter.emitBranch(kind, node);
+				if (emitFrom) fromEmitter.emitBranch(node);
+				if (emitWrap) wrapEmitter.emitBranch(node);
+				if (emitTemplate) templateEmitter.emitBranch(kind, node);
+				break;
+			case 'polymorph':
+				if (emitFactory) factoryEmitter.emitPolymorph(kind, node);
+				if (emitFrom) fromEmitter.emitPolymorph(node);
+				if (emitWrap) wrapEmitter.emitPolymorph(node);
+				if (emitTemplate) templateEmitter.emitPolymorph(kind, node);
+				break;
+			case 'group':
+				if (emitFactory) factoryEmitter.emitGroup(kind, node);
+				if (emitTemplate) templateEmitter.emitGroup(kind, node);
+				break;
+			case 'token':
+			case 'supertype':
+			case 'multi':
+				break;
+		}
 	}
 
 	// -----------------------------------------------------------------
@@ -118,6 +146,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const factories = factoryEmitter.finalize();
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
+	const jinjaTemplates = templateEmitter.finalize();
 
 	// -----------------------------------------------------------------
 	// 4. Run emitters that use their own internal iteration
@@ -129,7 +158,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables });
 	const typeTests = emitTypeTests({ nodeMap, generatedIdTables });
-	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
 	const factoryMap = emitFactoryMap({ grammar, nodeMap });
 	const utils = emitClientUtils({ nodeMap, generatedIdTables, triviaKinds });
 

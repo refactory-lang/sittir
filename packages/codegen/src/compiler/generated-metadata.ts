@@ -53,17 +53,8 @@ export interface TreeSitterLanguageMetadata {
 	fieldNameForId(id: number): string | null;
 }
 
-export async function loadGeneratedIdTables(
-	grammar: string
-): Promise<GeneratedIdTables | undefined> {
-	const parserCPath = join(
-		process.cwd(),
-		'packages',
-		grammar,
-		'.sittir',
-		'src',
-		'parser.c'
-	);
+export async function loadGeneratedIdTables(grammar: string): Promise<GeneratedIdTables | undefined> {
+	const parserCPath = join(process.cwd(), 'packages', grammar, '.sittir', 'src', 'parser.c');
 	if (existsSync(parserCPath)) {
 		return deriveGeneratedIdTablesFromParserCSource(
 			readFileSync(parserCPath, 'utf8'),
@@ -71,23 +62,12 @@ export async function loadGeneratedIdTables(
 		);
 	}
 
-	const wasmPath = join(
-		process.cwd(),
-		'packages',
-		grammar,
-		'.sittir',
-		'parser.wasm'
-	);
+	const wasmPath = join(process.cwd(), 'packages', grammar, '.sittir', 'parser.wasm');
 	if (!existsSync(wasmPath)) return undefined;
 
 	const { Language } = await loadWebTreeSitter();
-	const language = (await Language.load(
-		wasmPath
-	)) as TreeSitterLanguageMetadata;
-	return deriveGeneratedIdTablesFromLanguage(
-		language,
-		`packages/${grammar}/.sittir/parser.wasm`
-	);
+	const language = (await Language.load(wasmPath)) as TreeSitterLanguageMetadata;
+	return deriveGeneratedIdTablesFromLanguage(language, `packages/${grammar}/.sittir/parser.wasm`);
 }
 
 export function deriveGeneratedIdTablesFromLanguage(
@@ -106,22 +86,10 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	sourceArtifact: string
 ): Promise<GeneratedIdTables> {
 	const parser = await loadCParser();
-	const symbolIds = collectEnumIds(
-		parser,
-		source,
-		'enum ts_symbol_identifiers'
-	);
+	const symbolIds = collectEnumIds(parser, source, 'enum ts_symbol_identifiers');
 	const fieldIds = collectEnumIds(parser, source, 'enum ts_field_identifiers');
-	const symbolNames = collectNameTable(
-		parser,
-		source,
-		'static const char * const ts_symbol_names[]'
-	);
-	const fieldNames = collectNameTable(
-		parser,
-		source,
-		'static const char * const ts_field_names[]'
-	);
+	const symbolNames = collectNameTable(parser, source, 'static const char * const ts_symbol_names[]');
+	const fieldNames = collectNameTable(parser, source, 'static const char * const ts_field_names[]');
 
 	return {
 		kindIds: joinIdNames(symbolIds, symbolNames, deriveSymbolRuntimeName),
@@ -130,10 +98,7 @@ export async function deriveGeneratedIdTablesFromParserCSource(
 	};
 }
 
-export function deriveGeneratedMetadata(
-	ruleCatalog: RuleCatalog,
-	tables: GeneratedIdTables
-): GeneratedMetadataCatalog {
+export function deriveGeneratedMetadata(ruleCatalog: RuleCatalog, tables: GeneratedIdTables): GeneratedMetadataCatalog {
 	const kindByName = new Map<string, GeneratedMetadata>();
 	const fieldByName = new Map<string, GeneratedMetadata>();
 	const kindIds = toEntries(tables.kindIds);
@@ -180,9 +145,7 @@ export function deriveGeneratedMetadata(
 	return { kindByName, fieldByName };
 }
 
-function collectKindIds(
-	language: TreeSitterLanguageMetadata
-): Map<string, number> {
+function collectKindIds(language: TreeSitterLanguageMetadata): Map<string, number> {
 	const result = new Map<string, number>();
 	const namedness = new Map<string, boolean>();
 
@@ -203,9 +166,7 @@ function collectKindIds(
 	return result;
 }
 
-function collectFieldIds(
-	language: TreeSitterLanguageMetadata
-): Map<string, number> {
+function collectFieldIds(language: TreeSitterLanguageMetadata): Map<string, number> {
 	const result = new Map<string, number>();
 
 	for (let id = 1; id <= language.fieldCount; id += 1) {
@@ -224,16 +185,10 @@ function collectEdgeNames(ruleCatalog: RuleCatalog): Set<string> {
 	return names;
 }
 
-function toEntries(
-	input: GeneratedIdTable | undefined
-): readonly (readonly [string, GeneratedIdEntry])[] {
+function toEntries(input: GeneratedIdTable | undefined): readonly (readonly [string, GeneratedIdEntry])[] {
 	if (!input) return [];
-	const entries =
-		input instanceof Map ? [...input.entries()] : Object.entries(input);
-	return entries.map(([name, entry]) => [
-		name,
-		typeof entry === 'number' ? { id: entry } : entry
-	]);
+	const entries = input instanceof Map ? [...input.entries()] : Object.entries(input);
+	return entries.map(([name, entry]) => [name, typeof entry === 'number' ? { id: entry } : entry]);
 }
 
 type CParser = TS.Parser;
@@ -247,9 +202,7 @@ interface CEnumEntry {
 async function loadCParser(): Promise<CParser> {
 	const { Parser, Language } = await loadWebTreeSitter();
 	const parser = new Parser();
-	const language = (await Language.load(
-		resolveTreeSitterCWasmPath()
-	)) as TS.Language;
+	const language = (await Language.load(resolveTreeSitterCWasmPath())) as TS.Language;
 	parser.setLanguage(language);
 	return parser;
 }
@@ -259,10 +212,7 @@ function resolveTreeSitterCWasmPath(): string {
 	try {
 		return require.resolve('tree-sitter-c/tree-sitter-c.wasm');
 	} catch {
-		const packageJsonPath = findPnpmPackageFile(
-			'tree-sitter-c',
-			'package.json'
-		);
+		const packageJsonPath = findPnpmPackageFile('tree-sitter-c', 'package.json');
 		return join(dirname(packageJsonPath), 'tree-sitter-c.wasm');
 	}
 }
@@ -271,23 +221,13 @@ function findPnpmPackageFile(packageName: string, fileName: string): string {
 	const pnpmDir = join(process.cwd(), 'node_modules', '.pnpm');
 	for (const entry of readdirSync(pnpmDir)) {
 		if (!entry.startsWith(`${packageName}@`)) continue;
-		const candidate = join(
-			pnpmDir,
-			entry,
-			'node_modules',
-			packageName,
-			fileName
-		);
+		const candidate = join(pnpmDir, entry, 'node_modules', packageName, fileName);
 		if (existsSync(candidate)) return candidate;
 	}
 	throw new Error(`Could not locate ${packageName}/${fileName}`);
 }
 
-function collectEnumIds(
-	parser: CParser,
-	source: string,
-	marker: string
-): Map<string, CEnumEntry> {
+function collectEnumIds(parser: CParser, source: string, marker: string): Map<string, CEnumEntry> {
 	const block = sliceCBlock(source, marker);
 	if (!block) return new Map();
 	const tree = parser.parse(block);
@@ -307,11 +247,7 @@ function collectEnumIds(
 	return result;
 }
 
-function collectNameTable(
-	parser: CParser,
-	source: string,
-	marker: string
-): Map<string, string> {
+function collectNameTable(parser: CParser, source: string, marker: string): Map<string, string> {
 	const block = sliceCBlock(source, marker);
 	if (!block) return new Map();
 	const tree = parser.parse(block);
@@ -322,9 +258,7 @@ function collectNameTable(
 		if (node.type !== 'initializer_pair') return;
 		const designator = node.childForFieldName('designator');
 		const value = node.childForFieldName('value');
-		const cName = designator
-			? firstChildText(designator, 'identifier')
-			: undefined;
+		const cName = designator ? firstChildText(designator, 'identifier') : undefined;
 		if (!cName || !value || value.type !== 'string_literal') return;
 		result.set(cName, decodeCStringLiteral(value.text));
 	});
@@ -367,14 +301,9 @@ function joinIdNames(
 	return result;
 }
 
-function shouldReplaceSymbol(
-	existingCName: string | undefined,
-	nextCName: string
-): boolean {
+function shouldReplaceSymbol(existingCName: string | undefined, nextCName: string): boolean {
 	if (!existingCName) return true;
-	return (
-		existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_')
-	);
+	return existingCName.startsWith('anon_sym_') && !nextCName.startsWith('anon_sym_');
 }
 
 function deriveSymbolRuntimeName(cName: string): string {

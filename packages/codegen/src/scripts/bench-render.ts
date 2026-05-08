@@ -58,19 +58,14 @@ const WARMUP_ITERATIONS = 1;
 // Path helpers
 // ---------------------------------------------------------------------------
 
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
-	/\/$/,
-	''
-);
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 function templatesPathFor(grammar: Grammar): string {
 	return resolve(repoRoot, `packages/${grammar}/templates`);
 }
 
 function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(
-		resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)
-	).href;
+	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
 }
 
 // ---------------------------------------------------------------------------
@@ -134,7 +129,7 @@ async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
 				} catch {
 					return undefined;
 				}
-		  }
+			}
 		: undefined;
 
 	const nodes: AnyNodeData[] = [];
@@ -147,11 +142,7 @@ async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
 		}
 		if (tree.rootNode.hasError) continue;
 
-		const handle = treeHandle(
-			tree as Parameters<typeof treeHandle>[0],
-			entry.source,
-			safeKindIdFromName
-		);
+		const handle = treeHandle(tree as Parameters<typeof treeHandle>[0], entry.source, safeKindIdFromName);
 		try {
 			nodes.push(readNode(handle));
 		} catch {
@@ -170,9 +161,7 @@ async function collectNodeData(grammar: Grammar): Promise<AnyNodeData[]> {
  * the native binary is unavailable (not compiled, wrong platform, etc.).
  * Never throws.
  */
-async function loadNativeRender(
-	grammar: Grammar
-): Promise<((node: unknown) => string) | null> {
+async function loadNativeRender(grammar: Grammar): Promise<((node: unknown) => string) | null> {
 	const path = boundaryPathFor(grammar);
 	try {
 		const mod = await import(path);
@@ -207,16 +196,11 @@ function captureMemory(): NodeJS.MemoryUsage {
 	return process.memoryUsage();
 }
 
-function memoryDelta(
-	before: NodeJS.MemoryUsage,
-	after: NodeJS.MemoryUsage,
-	totalRenders: number
-): MemoryDelta {
+function memoryDelta(before: NodeJS.MemoryUsage, after: NodeJS.MemoryUsage, totalRenders: number): MemoryDelta {
 	const heapUsedDelta = after.heapUsed - before.heapUsed;
 	const heapTotalDelta = after.heapTotal - before.heapTotal;
 	const rssDelta = after.rss - before.rss;
-	const heapPerRender =
-		totalRenders > 0 ? heapUsedDelta / totalRenders : 0;
+	const heapPerRender = totalRenders > 0 ? heapUsedDelta / totalRenders : 0;
 	return { heapUsedDelta, heapTotalDelta, rssDelta, heapPerRender };
 }
 
@@ -292,8 +276,7 @@ function runBench(
 	const memory = memoryDelta(memBefore, memAfter, totalRenders);
 
 	const totalMs = bigintToMs(totalNs);
-	const rendersPerSec =
-		totalMs > 0 ? Math.round((totalRenders / totalMs) * 1000) : 0;
+	const rendersPerSec = totalMs > 0 ? Math.round((totalRenders / totalMs) * 1000) : 0;
 	const meanMs = totalRenders > 0 ? totalMs / totalRenders : 0;
 
 	return {
@@ -318,9 +301,7 @@ async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
 
 	process.stderr.write(`[bench] ${grammar}: collecting corpus nodes...\n`);
 	const nodes = await collectNodeData(grammar);
-	process.stderr.write(
-		`[bench] ${grammar}: ${nodes.length} nodes from corpus\n`
-	);
+	process.stderr.write(`[bench] ${grammar}: ${nodes.length} nodes from corpus\n`);
 
 	if (nodes.length === 0) {
 		process.stderr.write(`[bench] ${grammar}: no nodes — skipping\n`);
@@ -331,20 +312,14 @@ async function benchGrammar(grammar: Grammar): Promise<BenchResult[]> {
 	process.stderr.write(`[bench] ${grammar}: JS path (N=${N})...\n`);
 	const kindNames = await loadKindNames(grammar);
 	const jsRenderer = createRenderer(templatesPathFor(grammar), { kindNames });
-	const jsStats = runBench(
-		nodes,
-		(node) => jsRenderer.render(node as AnyNodeData),
-		N
-	);
+	const jsStats = runBench(nodes, (node) => jsRenderer.render(node as AnyNodeData), N);
 	results.push({ grammar, backend: 'js', ...jsStats });
 
 	// --- Native / Askama path ---
 	process.stderr.write(`[bench] ${grammar}: loading native backend...\n`);
 	const nativeRender = await loadNativeRender(grammar);
 	if (nativeRender === null) {
-		process.stderr.write(
-			`[bench] ${grammar}: native backend not available — skipping\n`
-		);
+		process.stderr.write(`[bench] ${grammar}: native backend not available — skipping\n`);
 	} else {
 		process.stderr.write(`[bench] ${grammar}: native path (N=${N})...\n`);
 		const nativeStats = runBench(nodes, nativeRender, N);
@@ -398,31 +373,21 @@ function formatTable(results: BenchResult[]): string {
 		r.memory != null ? fmtBytes(r.memory.heapPerRender) : 'n/a',
 		r.memory != null ? fmtBytes(r.memory.rssDelta) : 'n/a'
 	]);
-	const widths = cols.map((c, i) =>
-		Math.max(c.length, ...rows.map((r) => (r[i] ?? '').length))
-	);
+	const widths = cols.map((c, i) => Math.max(c.length, ...rows.map((r) => (r[i] ?? '').length)));
 	const line = widths.map((w) => '-'.repeat(w)).join('-+-');
 	const header = cols.map((c, i) => c.padStart(widths[i]!)).join(' | ');
-	const body = rows
-		.map((r) => r.map((v, i) => v.padStart(widths[i]!)).join(' | '))
-		.join('\n');
+	const body = rows.map((r) => r.map((v, i) => v.padStart(widths[i]!)).join(' | ')).join('\n');
 	return `${header}\n${line}\n${body}`;
 }
 
 function formatSpeedupColumn(results: BenchResult[]): string {
 	const lines: string[] = [];
 	for (const grammar of GRAMMARS) {
-		const js = results.find(
-			(r) => r.grammar === grammar && r.backend === 'js'
-		);
-		const native = results.find(
-			(r) => r.grammar === grammar && r.backend === 'native'
-		);
+		const js = results.find((r) => r.grammar === grammar && r.backend === 'js');
+		const native = results.find((r) => r.grammar === grammar && r.backend === 'native');
 		if (js && native && js.meanMs > 0) {
 			const speedup = js.meanMs / native.meanMs;
-			lines.push(
-				`  ${grammar}: native is ${speedup.toFixed(2)}x ${speedup >= 1 ? 'faster' : 'slower'} than JS`
-			);
+			lines.push(`  ${grammar}: native is ${speedup.toFixed(2)}x ${speedup >= 1 ? 'faster' : 'slower'} than JS`);
 		}
 	}
 	return lines.join('\n');
@@ -443,9 +408,7 @@ const isCli = (() => {
 
 if (isCli) {
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
-	process.stderr.write(
-		`bench-render: N=${N} iterations per backend per grammar\n`
-	);
+	process.stderr.write(`bench-render: N=${N} iterations per backend per grammar\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
 	process.stderr.write(
 		`bench-render: gc=${gcAvailable ? 'available (--expose-gc)' : 'unavailable — pass node --expose-gc for cleaner memory snapshots'}\n\n`

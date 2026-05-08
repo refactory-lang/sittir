@@ -101,10 +101,7 @@ export interface BackendBaseline {
 // Repo-relative path helpers
 // ---------------------------------------------------------------------------
 
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
-	/\/$/,
-	''
-);
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 function templatesPathFor(grammar: Grammar): string {
 	return resolve(repoRoot, `packages/${grammar}/templates`);
@@ -152,10 +149,7 @@ interface ParityFixtureLike {
 function loadRenderFixtures(grammar: Grammar): RenderFixture[] {
 	const raw = readFileSync(fixturesPathFor(grammar), 'utf-8');
 	const all = JSON.parse(raw) as ParityFixtureLike[];
-	return all.filter(
-		(f): f is RenderFixture =>
-			f.kind === 'render' && typeof f.input?.$type === 'number'
-	);
+	return all.filter((f): f is RenderFixture => f.kind === 'render' && typeof f.input?.$type === 'number');
 }
 
 interface ParityRenderer {
@@ -164,8 +158,7 @@ interface ParityRenderer {
 
 /** Resolved per-grammar boundary path used for native parity render. */
 function boundaryPathFor(grammar: Grammar): string {
-	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`))
-		.href;
+	return pathToFileURL(resolve(repoRoot, `packages/${grammar}/src/boundary.ts`)).href;
 }
 
 /**
@@ -199,15 +192,11 @@ export async function loadBoundaryRender(
 		mod = await importFn(boundaryPath);
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e);
-		throw new Error(
-			`failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`
-		);
+		throw new Error(`failed to import native boundary for grammar '${grammar}' from ${boundaryPath}: ${msg}`);
 	}
 	const render = (mod as { render?: unknown }).render;
 	if (typeof render !== 'function') {
-		throw new Error(
-			`native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`
-		);
+		throw new Error(`native boundary for grammar '${grammar}' at ${boundaryPath} does not export a 'render' function`);
 	}
 	return render as (node: unknown) => string;
 }
@@ -269,9 +258,7 @@ export async function collectParityFixtures(
 			actual = renderer.render(fx.input);
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			throw new Error(
-				`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`
-			);
+			throw new Error(`[${grammar}][${backend}][render #${idx}] ${fx.input.$type}: ${message}`);
 		}
 		if (actual === fx.expectedOutput) {
 			pass++;
@@ -309,17 +296,13 @@ export async function collectParityFixtures(
 // Validator collection
 // ---------------------------------------------------------------------------
 
-async function collectValidatorsForGrammar(
-	grammar: Grammar,
-	backend: Backend
-): Promise<GrammarEntry['validators']> {
+async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): Promise<GrammarEntry['validators']> {
 	const tp = templatesPathFor(grammar);
 
 	// Pass backend explicitly so each validator uses the correct engine
 	// without touching process.env — avoids cross-contamination when
 	// collectBaseline() is called concurrently.
-	const backendArg: 'native' | 'typescript' =
-		backend === 'native' ? 'native' : 'typescript';
+	const backendArg: 'native' | 'typescript' = backend === 'native' ? 'native' : 'typescript';
 	const [from, cov, rt, fac] = await Promise.all([
 		validateFrom(grammar, backendArg),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
@@ -363,9 +346,7 @@ async function collectValidatorsForGrammar(
 			pass: fac.pass,
 			total: fac.total,
 			astMatchPass: fac.astMatchPass,
-			failingKinds: uniqSorted(
-				[...fac.errors, ...fac.astMismatches].map((e) => e.kind)
-			),
+			failingKinds: uniqSorted([...fac.errors, ...fac.astMismatches].map((e) => e.kind)),
 			formatDeferredKinds: empty
 		}
 	};
@@ -394,9 +375,7 @@ function resolveBackend(input: string | undefined): Backend {
 	return 'typescript';
 }
 
-function computeTotals(
-	grammars: BackendBaseline['grammars']
-): BackendBaseline['totals'] {
+function computeTotals(grammars: BackendBaseline['grammars']): BackendBaseline['totals'] {
 	let pass = 0;
 	let total = 0;
 	for (const g of GRAMMARS) {
@@ -419,10 +398,7 @@ function computeTotals(
 	return { pass, fail: total - pass, total };
 }
 
-async function collectGrammarEntry(
-	grammar: Grammar,
-	backend: Backend
-): Promise<GrammarEntry> {
+async function collectGrammarEntry(grammar: Grammar, backend: Backend): Promise<GrammarEntry> {
 	const [validators, parityFixtures] = await Promise.all([
 		collectValidatorsForGrammar(grammar, backend),
 		collectParityFixtures(grammar, backend)
@@ -430,9 +406,7 @@ async function collectGrammarEntry(
 	return { validators, parityFixtures };
 }
 
-export async function collectBaseline(
-	backendInput?: string
-): Promise<BackendBaseline> {
+export async function collectBaseline(backendInput?: string): Promise<BackendBaseline> {
 	const backend = resolveBackend(backendInput);
 	const commit = shortSha();
 
@@ -509,8 +483,7 @@ const isCli = (() => {
 })();
 
 if (isCli) {
-	const metricsBackend: 'ts' | 'native' =
-		process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
+	const metricsBackend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
 	process.stdout.write(serialiseBaseline(baseline));
 

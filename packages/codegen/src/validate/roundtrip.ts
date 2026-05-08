@@ -75,18 +75,16 @@ function _deepReadNode(
 	const data = readNode(tree, handle, childIndex);
 	// NodeMemberValue = AnyNodeData | string | number.
 	// Narrow to NodeData before reading $nodeHandle / $type.
-	const isNodeData = (v: unknown): v is AnyNodeData =>
-		typeof v === 'object' && v !== null && '$type' in v;
-	const shouldDrill = (
-		entry: unknown
-	): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
+	const isNodeData = (v: unknown): v is AnyNodeData => typeof v === 'object' && v !== null && '$type' in v;
+	const shouldDrill = (entry: unknown): entry is AnyNodeData & { $nodeHandle: number; $childIndex: number } =>
 		isNodeData(entry) &&
 		entry.$named === true &&
 		typeof entry.$nodeHandle === 'number' &&
 		typeof entry.$childIndex === 'number' &&
 		// $type is numeric for parser.c-derived kinds; hidden kinds have string $type.
 		// deepReadKinds is Set<number> — only numeric entries can be drilled.
-		typeof entry.$type === 'number' && deepReadKinds.has(entry.$type);
+		typeof entry.$type === 'number' &&
+		deepReadKinds.has(entry.$type);
 	if (data.$children) {
 		const drilled = data.$children.map((c) =>
 			shouldDrill(c) ? _deepReadNode(tree, c.$nodeHandle, c.$childIndex, deepReadKinds) : c
@@ -101,9 +99,7 @@ function _deepReadNode(
 			const value = rec[rawKey];
 			if (Array.isArray(value)) {
 				rec[rawKey] = value.map((entry) =>
-					shouldDrill(entry)
-						? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds)
-						: entry
+					shouldDrill(entry) ? _deepReadNode(tree, entry.$nodeHandle, entry.$childIndex, deepReadKinds) : entry
 				);
 			} else if (shouldDrill(value)) {
 				rec[rawKey] = _deepReadNode(tree, value.$nodeHandle, value.$childIndex, deepReadKinds);
@@ -124,9 +120,7 @@ function _deepReadNode(
  * kinds went through Link's push-down). Returns an empty set when no
  * variant adoption exists in the grammar.
  */
-async function loadVariantAdoptedKinds(
-	grammar: string
-): Promise<ReadonlySet<string>> {
+async function loadVariantAdoptedKinds(grammar: string): Promise<ReadonlySet<string>> {
 	// factory-map.json5 lives at packages/<grammar>/factory-map.json5.
 	// 3x `..` resolves from .../packages/codegen/src/validate/roundtrip.ts
 	// up to `packages/` (validate → src → codegen → packages). A
@@ -134,10 +128,7 @@ async function loadVariantAdoptedKinds(
 	// the 012-merge introducing a top-level `rust/` directory, that
 	// mis-path silently hit `rust/factory-map.json5` (non-existent) and
 	// the catch{} swallowed the ENOENT.
-	const factoryMapPath = new URL(
-		`../../../${grammar}/factory-map.json5`,
-		import.meta.url
-	).pathname;
+	const factoryMapPath = new URL(`../../../${grammar}/factory-map.json5`, import.meta.url).pathname;
 	try {
 		const fs = await import('node:fs');
 		const content = fs.readFileSync(factoryMapPath, 'utf-8');
@@ -254,10 +245,7 @@ const NAMED_EXTRAS_BY_GRAMMAR: Record<string, ReadonlySet<string>> = {
 	python: new Set(['comment', 'line_continuation'])
 };
 
-function collectVisibleChildren(
-	n: TSNode,
-	namedExtras: ReadonlySet<string>
-): TSNode[] {
+function collectVisibleChildren(n: TSNode, namedExtras: ReadonlySet<string>): TSNode[] {
 	const out: TSNode[] = [];
 	for (let i = 0; i < n.childCount; i++) {
 		const c = n.child(i);
@@ -268,24 +256,15 @@ function collectVisibleChildren(
 	return out;
 }
 
-function astStructuralDiff(
-	a: TSNode,
-	b: TSNode,
-	namedExtras: ReadonlySet<string>,
-	path: string = ''
-): string | null {
+function astStructuralDiff(a: TSNode, b: TSNode, namedExtras: ReadonlySet<string>, path: string = ''): string | null {
 	if (a.type !== b.type) {
 		return `${path || 'root'}: type ${a.type} ≠ ${b.type}`;
 	}
 	const aChildren = collectVisibleChildren(a, namedExtras);
 	const bChildren = collectVisibleChildren(b, namedExtras);
 	if (aChildren.length !== bChildren.length) {
-		const aDesc = aChildren
-			.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text)))
-			.join(',');
-		const bDesc = bChildren
-			.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text)))
-			.join(',');
+		const aDesc = aChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
+		const bDesc = bChildren.map((c) => (c.isNamed ? c.type : JSON.stringify(c.text))).join(',');
 		return `${path || a.type}: childCount ${aChildren.length} ≠ ${bChildren.length} [${aDesc}] vs [${bDesc}]`;
 	}
 	for (let i = 0; i < aChildren.length; i++) {
@@ -302,12 +281,7 @@ function astStructuralDiff(
 			continue;
 		}
 		// Named child — recurse.
-		const sub = astStructuralDiff(
-			ac,
-			bc,
-			namedExtras,
-			`${path || a.type}[${i}].${ac.type}`
-		);
+		const sub = astStructuralDiff(ac, bc, namedExtras, `${path || a.type}[${i}].${ac.type}`);
 		if (sub) return sub;
 	}
 	return null;
@@ -425,11 +399,7 @@ function discoverAliasSourceKinds(
  * @param tree - The parsed tree-sitter tree to search in.
  * @returns The matching TSNode, or null if none found.
  */
-function _resolveNodeForKind(
-	kind: string,
-	nodeIdToEffectiveType: Map<string, string>,
-	tree: TSTree
-): TSNode | null {
+function _resolveNodeForKind(kind: string, nodeIdToEffectiveType: Map<string, string>, tree: TSTree): TSNode | null {
 	// ADR-0017: map is keyed by "${start}:${end}" composite span; parse and
 	// use findNodeBySpan to locate the exact node (avoids start-only collisions).
 	for (const [spanKey, et] of nodeIdToEffectiveType) {
@@ -466,11 +436,7 @@ function _resolveNodeForKind(
  * preserves the pre-fix entry-level pass count while still surfacing
  * the per-kind failures in the issue list.
  */
-function resolveAllNodesForKind(
-	kind: string,
-	nodeIdToEffectiveType: Map<string, string>,
-	tree: TSTree
-): TSNode[] {
+function resolveAllNodesForKind(kind: string, nodeIdToEffectiveType: Map<string, string>, tree: TSTree): TSNode[] {
 	const nodes: TSNode[] = [];
 	const seenIds = new Set<number>();
 	// ADR-0017: map keyed by "${start}:${end}" composite span. Walker-found
@@ -548,16 +514,12 @@ function applyAliasResolution(
 ): { data: typeof rawData; renderedKind: string; targetKind: string } {
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind). Resolve to
 	// a string kind name for renderedKind / template lookup.
-	const canonicalKind = typeof rawData.$type === 'number'
-		? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type))
-		: rawData.$type;
+	const canonicalKind =
+		typeof rawData.$type === 'number' ? (kindNameFromId?.(rawData.$type) ?? String(rawData.$type)) : rawData.$type;
 	// ADR-0017: map keyed by "${start}:${end}" composite span (collision-free).
 	const effective = nodeIdToEffectiveType.get(`${nodeStartIndex}:${nodeEndIndex}`);
 	// Apply alias rewriting only when the effective kind differs from the canonical kind.
-	const data =
-		effective && effective !== canonicalKind
-			? { ...rawData, $type: rawData.$type }
-			: rawData;
+	const data = effective && effective !== canonicalKind ? { ...rawData, $type: rawData.$type } : rawData;
 	const renderedKind = effective ?? canonicalKind;
 	// targetKind: used for post-reparse node.type lookup (tree-sitter visible form).
 	// Phase D: kindNameFromId may return canonical sittir forms that differ from
@@ -704,9 +666,12 @@ export async function validateRoundTrip(
 	// returns undefined, not when it throws.
 	const kindIdFromName = rawKindIdFromName
 		? (name: string): number | undefined => {
-			try { return rawKindIdFromName(name); }
-			catch { return undefined; }
-		}
+				try {
+					return rawKindIdFromName(name);
+				} catch {
+					return undefined;
+				}
+			}
 		: rawKindIdFromName;
 	// Phase D: $type is numeric; translate string kind names to numeric IDs for
 	// _deepReadNode's Set<number> membership check.
@@ -715,11 +680,7 @@ export async function validateRoundTrip(
 	const deepReadKinds: KindMembership = recursive
 		? { has: (_id: number): boolean => true }
 		: kindIdFromName
-			? new Set(
-					[...deepReadKindNames]
-						.map((k) => kindIdFromName(k))
-						.filter((id): id is number => id !== undefined)
-			  )
+			? new Set([...deepReadKindNames].map((k) => kindIdFromName(k)).filter((id): id is number => id !== undefined))
 			: new Set<number>();
 
 	const entries = loadCorpusEntries(grammar);
@@ -783,11 +744,7 @@ export async function validateRoundTrip(
 				// entry as passing when ANY node round-trips successfully.
 				// Per-node failures still land in the kind-level error
 				// list so genuine bugs remain visible.
-				const candidates = resolveAllNodesForKind(
-					kind,
-					nodeIdToEffectiveType,
-					tree1
-				);
+				const candidates = resolveAllNodesForKind(kind, nodeIdToEffectiveType, tree1);
 				if (candidates.length === 0) continue;
 
 				let kindOk = false;
@@ -832,16 +789,10 @@ export async function validateRoundTrip(
 						// Wrap for reparse using supertype context
 						// Pass the original string-named deepReadKindNames to wrapForReparse
 						// (which uses string kind names internally), not the numeric deepReadKinds.
-						const wrapped = wrapForReparse(
-							rendered,
-							renderedKind,
-							grammar,
-							kindToSupertypes,
-							{
-								adoptedVariantKinds: deepReadKindNames,
-								targetKind
-							}
-						);
+						const wrapped = wrapForReparse(rendered, renderedKind, grammar, kindToSupertypes, {
+							adoptedVariantKinds: deepReadKindNames,
+							targetKind
+						});
 						if (wrapped === null) continue; // no supertype - skip this candidate
 						kindHadCandidate = true;
 
@@ -865,9 +816,7 @@ export async function validateRoundTrip(
 						// at the rendered offset.
 						const node2 =
 							findReparsedNodeAtOffset(tree2, targetKind, wrapped) ??
-							(renderedKind !== targetKind
-								? findReparsedNodeAtOffset(tree2, renderedKind, wrapped)
-								: null);
+							(renderedKind !== targetKind ? findReparsedNodeAtOffset(tree2, renderedKind, wrapped) : null);
 						if (!node2) {
 							kindErrors.push({
 								name: `${entry.name} [${renderedKind}]`,
@@ -879,8 +828,7 @@ export async function validateRoundTrip(
 						}
 
 						kindOk = true;
-						const namedExtras =
-							NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
+						const namedExtras = NAMED_EXTRAS_BY_GRAMMAR[grammar] ?? new Set<string>();
 						const diff = astStructuralDiff(node1, node2, namedExtras);
 						if (diff) {
 							kindAstMismatches.push({
@@ -938,8 +886,7 @@ export async function validateRoundTrip(
 					break;
 				}
 				if (!kindAstMatch) {
-					if (kindAstMismatches.length > 0)
-						astMismatches.push(kindAstMismatches[0]!);
+					if (kindAstMismatches.length > 0) astMismatches.push(kindAstMismatches[0]!);
 					entryAstMatch = false;
 				}
 			}

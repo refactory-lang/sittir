@@ -2956,7 +2956,7 @@
       "modelType": "branch",
       "typeName": "LhsExpression",
       "factoryName": "lhsExpression",
-      "irKey": "lhs",
+      "irKey": "lhsExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -4646,7 +4646,7 @@
       "modelType": "branch",
       "typeName": "AbstractClassDeclaration",
       "factoryName": "abstractClassDeclaration",
-      "irKey": "abstractClass",
+      "irKey": "abstractClassDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -5038,7 +5038,7 @@
       "modelType": "branch",
       "typeName": "AmbientDeclaration",
       "factoryName": "ambientDeclaration",
-      "irKey": "ambient",
+      "irKey": "ambientDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -5570,7 +5570,7 @@
       "modelType": "branch",
       "typeName": "AsExpression",
       "factoryName": "asExpression",
-      "irKey": "as",
+      "irKey": "asExpression",
       "hidden": false,
       "fields": [
         {
@@ -5711,7 +5711,7 @@
       "modelType": "branch",
       "typeName": "AssignmentExpression",
       "factoryName": "assignmentExpression",
-      "irKey": "assignment",
+      "irKey": "assignmentExpression",
       "hidden": false,
       "fields": [
         {
@@ -5865,7 +5865,7 @@
       "modelType": "branch",
       "typeName": "AugmentedAssignmentExpression",
       "factoryName": "augmentedAssignmentExpression",
-      "irKey": "augmentedAssignment",
+      "irKey": "augmentedAssignmentExpression",
       "hidden": false,
       "fields": [
         {
@@ -5993,7 +5993,7 @@
       "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
-      "irKey": "await",
+      "irKey": "awaitExpression",
       "hidden": false,
       "fields": [
         {
@@ -6027,7 +6027,7 @@
       "modelType": "branch",
       "typeName": "BinaryExpression",
       "factoryName": "binaryExpression",
-      "irKey": "binary",
+      "irKey": "binaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -6124,7 +6124,7 @@
       "modelType": "branch",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "break",
+      "irKey": "breakStatement",
       "hidden": false,
       "fields": [
         {
@@ -6184,7 +6184,7 @@
       "modelType": "polymorph",
       "typeName": "CallExpression",
       "factoryName": "callExpression",
-      "irKey": "call",
+      "irKey": "callExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -7394,7 +7394,7 @@
       "modelType": "branch",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continue",
+      "irKey": "continueStatement",
       "hidden": false,
       "fields": [
         {
@@ -7464,7 +7464,7 @@
       "modelType": "branch",
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
-      "irKey": "debugger",
+      "irKey": "debuggerStatement",
       "hidden": false,
       "fields": [
         {
@@ -7570,7 +7570,7 @@
       "modelType": "branch",
       "typeName": "DecoratorCallExpression",
       "factoryName": "decoratorCallExpression",
-      "irKey": "decoratorCall",
+      "irKey": "decoratorCallExpression",
       "hidden": false,
       "fields": [
         {
@@ -7660,7 +7660,7 @@
       "modelType": "branch",
       "typeName": "DecoratorMemberExpression",
       "factoryName": "decoratorMemberExpression",
-      "irKey": "decoratorMember",
+      "irKey": "decoratorMemberExpression",
       "hidden": false,
       "fields": [
         {
@@ -7730,7 +7730,7 @@
       "modelType": "branch",
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
-      "irKey": "decoratorParenthesized",
+      "irKey": "decoratorParenthesizedExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -7822,7 +7822,7 @@
       "modelType": "branch",
       "typeName": "DoStatement",
       "factoryName": "doStatement",
-      "irKey": "do",
+      "irKey": "doStatement",
       "hidden": false,
       "fields": [
         {
@@ -8055,7 +8055,7 @@
       "modelType": "branch",
       "typeName": "EnumDeclaration",
       "factoryName": "enumDeclaration",
-      "irKey": "enum",
+      "irKey": "enumDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -8270,7 +8270,7 @@
       "modelType": "polymorph",
       "typeName": "ExportStatement",
       "factoryName": "exportStatement",
-      "irKey": "export",
+      "irKey": "exportStatement",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -8739,7 +8739,7 @@
       "modelType": "branch",
       "typeName": "FieldDefinition",
       "factoryName": "fieldDefinition",
-      "irKey": "field",
+      "irKey": "fieldDefinition",
       "hidden": false,
       "fields": [
         {
@@ -8930,7 +8930,7 @@
       "modelType": "branch",
       "typeName": "ForInStatement",
       "factoryName": "forInStatement",
-      "irKey": "forIn",
+      "irKey": "forInStatement",
       "hidden": false,
       "fields": [
         {
@@ -9061,7 +9061,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "for",
+      "irKey": "forStatement",
       "hidden": false,
       "fields": [
         {
@@ -9238,7 +9238,7 @@
       "modelType": "branch",
       "typeName": "FunctionDeclaration",
       "factoryName": "functionDeclaration",
-      "irKey": "function",
+      "irKey": "functionDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -10304,7 +10304,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "if",
+      "irKey": "ifStatement",
       "hidden": false,
       "fields": [
         {
@@ -11429,7 +11429,7 @@
       "modelType": "branch",
       "typeName": "InstantiationExpression",
       "factoryName": "instantiationExpression",
-      "irKey": "instantiation",
+      "irKey": "instantiationExpression",
       "hidden": false,
       "fields": [
         {
@@ -11496,7 +11496,7 @@
       "modelType": "branch",
       "typeName": "InterfaceDeclaration",
       "factoryName": "interfaceDeclaration",
-      "irKey": "interface",
+      "irKey": "interfaceDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -11888,7 +11888,7 @@
       "modelType": "branch",
       "typeName": "JsxExpression",
       "factoryName": "jsxExpression",
-      "irKey": "jsx",
+      "irKey": "jsxExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -12187,7 +12187,7 @@
       "modelType": "branch",
       "typeName": "LabeledStatement",
       "factoryName": "labeledStatement",
-      "irKey": "labeled",
+      "irKey": "labeledStatement",
       "hidden": false,
       "fields": [
         {
@@ -12247,7 +12247,7 @@
       "modelType": "branch",
       "typeName": "LexicalDeclaration",
       "factoryName": "lexicalDeclaration",
-      "irKey": "lexical",
+      "irKey": "lexicalDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -12526,7 +12526,7 @@
       "modelType": "branch",
       "typeName": "MemberExpression",
       "factoryName": "memberExpression",
-      "irKey": "member",
+      "irKey": "memberExpression",
       "hidden": false,
       "fields": [
         {
@@ -12636,7 +12636,7 @@
       "modelType": "branch",
       "typeName": "MethodDefinition",
       "factoryName": "methodDefinition",
-      "irKey": "method",
+      "irKey": "methodDefinition",
       "hidden": false,
       "fields": [
         {
@@ -13527,7 +13527,7 @@
       "modelType": "branch",
       "typeName": "NewExpression",
       "factoryName": "newExpression",
-      "irKey": "new",
+      "irKey": "newExpression",
       "hidden": false,
       "fields": [
         {
@@ -13607,7 +13607,7 @@
       "modelType": "branch",
       "typeName": "NonNullExpression",
       "factoryName": "nonNullExpression",
-      "irKey": "nonNull",
+      "irKey": "nonNullExpression",
       "hidden": false,
       "fields": [
         {
@@ -14470,7 +14470,7 @@
       "modelType": "polymorph",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
-      "irKey": "parenthesized",
+      "irKey": "parenthesizedExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -14898,7 +14898,7 @@
       "modelType": "branch",
       "typeName": "PublicFieldDefinition",
       "factoryName": "publicFieldDefinition",
-      "irKey": "publicField",
+      "irKey": "publicFieldDefinition",
       "hidden": false,
       "fields": [
         {
@@ -15441,7 +15441,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "return",
+      "irKey": "returnStatement",
       "hidden": false,
       "fields": [
         {
@@ -15501,7 +15501,7 @@
       "modelType": "branch",
       "typeName": "SatisfiesExpression",
       "factoryName": "satisfiesExpression",
-      "irKey": "satisfies",
+      "irKey": "satisfiesExpression",
       "hidden": false,
       "fields": [
         {
@@ -15558,7 +15558,7 @@
       "modelType": "branch",
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
-      "irKey": "sequence",
+      "irKey": "sequenceExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -15847,7 +15847,7 @@
       "modelType": "branch",
       "typeName": "SubscriptExpression",
       "factoryName": "subscriptExpression",
-      "irKey": "subscript",
+      "irKey": "subscriptExpression",
       "hidden": false,
       "fields": [
         {
@@ -16078,7 +16078,7 @@
       "modelType": "branch",
       "typeName": "SwitchStatement",
       "factoryName": "switchStatement",
-      "irKey": "switch",
+      "irKey": "switchStatement",
       "hidden": false,
       "fields": [
         {
@@ -16263,7 +16263,7 @@
       "modelType": "branch",
       "typeName": "TernaryExpression",
       "factoryName": "ternaryExpression",
-      "irKey": "ternary",
+      "irKey": "ternaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -16364,7 +16364,7 @@
       "modelType": "branch",
       "typeName": "ThrowStatement",
       "factoryName": "throwStatement",
-      "irKey": "throw",
+      "irKey": "throwStatement",
       "hidden": false,
       "fields": [
         {
@@ -16435,7 +16435,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "try",
+      "irKey": "tryStatement",
       "hidden": false,
       "fields": [
         {
@@ -16622,7 +16622,7 @@
       "modelType": "branch",
       "typeName": "TypeAliasDeclaration",
       "factoryName": "typeAliasDeclaration",
-      "irKey": "typeAlias",
+      "irKey": "typeAliasDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -17154,7 +17154,7 @@
       "modelType": "branch",
       "typeName": "UnaryExpression",
       "factoryName": "unaryExpression",
-      "irKey": "unary",
+      "irKey": "unaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -17315,7 +17315,7 @@
       "modelType": "polymorph",
       "typeName": "UpdateExpression",
       "factoryName": "updateExpression",
-      "irKey": "update",
+      "irKey": "updateExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -17403,7 +17403,7 @@
       "modelType": "branch",
       "typeName": "VariableDeclaration",
       "factoryName": "variableDeclaration",
-      "irKey": "variable",
+      "irKey": "variableDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -17563,7 +17563,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "while",
+      "irKey": "whileStatement",
       "hidden": false,
       "fields": [
         {
@@ -17630,7 +17630,7 @@
       "modelType": "branch",
       "typeName": "WithStatement",
       "factoryName": "withStatement",
-      "irKey": "with",
+      "irKey": "withStatement",
       "hidden": false,
       "fields": [
         {
@@ -17697,7 +17697,7 @@
       "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
-      "irKey": "yield",
+      "irKey": "yieldExpression",
       "hidden": false,
       "fields": [
         {

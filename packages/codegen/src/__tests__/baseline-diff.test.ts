@@ -10,10 +10,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { generate } from '../compiler/generate.ts';
 
-const baselineDir = resolve(
-	import.meta.dirname!,
-	'../../../../specs/005-five-phase-compiler/baseline'
-);
+const baselineDir = resolve(import.meta.dirname!, '../../../../specs/005-five-phase-compiler/baseline');
 
 // Map of generated file key → output filename
 const FILE_MAP: Record<string, string> = {

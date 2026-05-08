@@ -11,10 +11,7 @@ export function collectRuleIds(rule: Rule): RuleId[] {
 	return ids;
 }
 
-export function expectCompleteCatalog(
-	rules: Record<string, Rule>,
-	catalog: RuleCatalog
-): void {
+export function expectCompleteCatalog(rules: Record<string, Rule>, catalog: RuleCatalog): void {
 	const seen = new Set<RuleId>();
 	for (const [kind, rule] of Object.entries(rules)) {
 		const ids = collectRuleIds(rule);
@@ -23,13 +20,8 @@ export function expectCompleteCatalog(
 		for (const id of ids) {
 			expect(seen.has(id), `duplicate RuleId ${id}`).toBe(false);
 			seen.add(id);
-			expect(catalog.byId.has(id), `missing catalog entry for ${id}`).toBe(
-				true
-			);
-			expect(
-				catalog.classificationById.has(id),
-				`missing classification for ${id}`
-			).toBe(true);
+			expect(catalog.byId.has(id), `missing catalog entry for ${id}`).toBe(true);
+			expect(catalog.classificationById.has(id), `missing classification for ${id}`).toBe(true);
 		}
 	}
 	expect(catalog.byId.size).toBe(seen.size);

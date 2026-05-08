@@ -15,17 +15,21 @@ if (!grammar || !kind) {
 	process.exit(1);
 }
 
-const dump = (rule: unknown) =>
-	JSON.stringify(rule, (k, v) => (k === '_ref' ? undefined : v), 2);
+const dump = (rule: unknown) => JSON.stringify(rule, (k, v) => (k === '_ref' ? undefined : v), 2);
+//TODO:
+
 
 const raw = await evaluate(resolveOverridesPath(grammar));
 if (!raw.rules[kind]) {
-	console.log('kind not found:', kind);
+	console.warn('kind not found at evaluate stage:', kind);
 	process.exit(1);
 }
+else
+{
+	console.log('=== POST-EVALUATE ===');
+	console.log(dump(raw.rules[kind]));
+}
 
-console.log('=== POST-EVALUATE ===');
-console.log(dump(raw.rules[kind]));
 
 const linked = link(raw);
 console.log('\n=== POST-LINK ===');

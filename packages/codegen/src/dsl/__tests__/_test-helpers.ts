@@ -21,16 +21,7 @@ import type { Rule } from '../../compiler/rule.ts';
 
 type Globals = Record<string, unknown>;
 
-const DSL_KEYS = [
-	'seq',
-	'choice',
-	'optional',
-	'repeat',
-	'repeat1',
-	'field',
-	'alias',
-	'prec'
-] as const;
+const DSL_KEYS = ['seq', 'choice', 'optional', 'repeat', 'repeat1', 'field', 'alias', 'prec'] as const;
 
 let savedGlobals: Globals | null = null;
 
@@ -46,13 +37,11 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 	savedGlobals = saved;
 
 	g.seq = (...members: Rule[]): Rule => ({ type: 'seq', members }) as Rule;
-	g.choice = (...members: Rule[]): Rule =>
-		({ type: 'choice', members }) as Rule;
+	g.choice = (...members: Rule[]): Rule => ({ type: 'choice', members }) as Rule;
 	g.optional = (content: Rule): Rule => ({ type: 'optional', content }) as Rule;
 	g.repeat = (content: Rule): Rule => ({ type: 'repeat', content }) as Rule;
 	g.repeat1 = (content: Rule): Rule => ({ type: 'repeat1', content }) as Rule;
-	g.field = (name: string, content: Rule): Rule =>
-		({ type: 'field', name, content }) as Rule;
+	g.field = (name: string, content: Rule): Rule => ({ type: 'field', name, content }) as Rule;
 	g.alias = (rule: unknown, value: unknown): Rule => {
 		if (typeof value === 'string') {
 			return { type: 'alias', content: rule, named: false, value } as Rule;
@@ -74,10 +63,7 @@ export function installFakeDsl(overrides?: Partial<Globals>): void {
 		(variant: 'prec' | 'prec_left' | 'prec_right' | 'prec_dynamic') =>
 		(value: number, content: Rule): Rule =>
 			({ type: variant, value, content }) as unknown as Rule;
-	const precFn = makePrec('prec') as ((
-		value: number,
-		content: Rule
-	) => Rule) & {
+	const precFn = makePrec('prec') as ((value: number, content: Rule) => Rule) & {
 		left: (value: number, content: Rule) => Rule;
 		right: (value: number, content: Rule) => Rule;
 		dynamic: (value: number, content: Rule) => Rule;

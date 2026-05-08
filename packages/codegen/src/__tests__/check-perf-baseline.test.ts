@@ -74,11 +74,7 @@ const baselineFfi: BaselineFfi = {
 
 describe('evaluateVerdict', () => {
 	it('returns ok when fresh matches baseline exactly', () => {
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(baselineFfi),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(baselineFfi), false);
 		expect(v.kind).toBe('ok');
 	});
 
@@ -87,21 +83,13 @@ describe('evaluateVerdict', () => {
 			...baselineFfi,
 			meanRoundtripMs: 0.0045 * 1.09
 		};
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(fresh),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
 		expect(v.kind).toBe('ok');
 	});
 
 	it("returns ok when totalCalls decreases (improvements aren't regressions)", () => {
 		const fresh: BaselineFfi = { ...baselineFfi, totalCalls: 700 };
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(fresh),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
 		expect(v.kind).toBe('ok');
 	});
 
@@ -110,11 +98,7 @@ describe('evaluateVerdict', () => {
 			...baselineFfi,
 			meanRoundtripMs: 0.0045 * 1.2
 		};
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(fresh),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
 		expect(v.kind).toBe('regression');
 		if (v.kind === 'regression') {
 			expect(v.field).toBe('meanRoundtripMs');
@@ -125,11 +109,7 @@ describe('evaluateVerdict', () => {
 
 	it('flags totalCalls regression > 10%', () => {
 		const fresh: BaselineFfi = { ...baselineFfi, totalCalls: 1100 };
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(fresh),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), false);
 		expect(v.kind).toBe('regression');
 		if (v.kind === 'regression') {
 			expect(v.field).toBe('totalCalls');
@@ -142,21 +122,13 @@ describe('evaluateVerdict', () => {
 			...baselineFfi,
 			meanRoundtripMs: 0.0045 * 1.2
 		};
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(fresh),
-			true
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(fresh), true);
 		expect(v.kind).toBe('regression');
 		if (v.kind === 'regression') expect(v.warnOnly).toBe(true);
 	});
 
 	it('returns platform-mismatch when collectedOn.platform differs', () => {
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(baselineFfi, { platform: 'linux' }),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(baselineFfi, { platform: 'linux' }), false);
 		expect(v.kind).toBe('platform-mismatch');
 		if (v.kind === 'platform-mismatch') {
 			expect(v.baselinePlatform).toBe('darwin');
@@ -165,29 +137,17 @@ describe('evaluateVerdict', () => {
 	});
 
 	it('returns schema-mismatch when schemaVersion differs', () => {
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(baselineFfi, { schemaVersion: 2 }),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(baselineFfi, { schemaVersion: 2 }), false);
 		expect(v.kind).toBe('schema-mismatch');
 	});
 
 	it('rejects a metrics file with backend ts for the native perf gate', () => {
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			{ ...makeFresh(baselineFfi), backend: 'ts' },
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), { ...makeFresh(baselineFfi), backend: 'ts' }, false);
 		expect(v.kind).toBe('backend-mismatch');
 	});
 
 	it('rejects a native metrics file with no ffi block', () => {
-		const v = evaluateVerdict(
-			makeBaseline(baselineFfi),
-			makeFresh(undefined),
-			false
-		);
+		const v = evaluateVerdict(makeBaseline(baselineFfi), makeFresh(undefined), false);
 		expect(v.kind).toBe('missing-ffi');
 	});
 

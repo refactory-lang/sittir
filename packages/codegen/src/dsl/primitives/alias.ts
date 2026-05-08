@@ -30,11 +30,7 @@ export interface AliasPlaceholder {
 }
 
 export function isAliasPlaceholder(v: unknown): v is AliasPlaceholder {
-	return (
-		!!v &&
-		typeof v === 'object' &&
-		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'alias'
-	);
+	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'alias';
 }
 
 export function alias(rule: Rule | string, value?: string | Rule): unknown {
@@ -46,8 +42,7 @@ export function alias(rule: Rule | string, value?: string | Rule): unknown {
 		} satisfies AliasPlaceholder;
 	}
 
-	const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown })
-		.alias;
+	const native = (globalThis as { alias?: (r: unknown, v: unknown) => unknown }).alias;
 	if (typeof native !== 'function') {
 		throw new Error(
 			'alias(): no global alias() found — must be called inside a runtime that injects alias() (sittir evaluate.ts or tree-sitter CLI)'

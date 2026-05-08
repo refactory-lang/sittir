@@ -50,22 +50,12 @@ const GRAMMAR_PATHS: Readonly<Record<string, string>> = {
 	tsx: 'tree-sitter-typescript/tsx/src/node-types.json'
 };
 
-export function loadRawEntries(
-	grammar: string,
-	explicitPath?: string
-): RawNodeEntry[] {
+export function loadRawEntries(grammar: string, explicitPath?: string): RawNodeEntry[] {
 	if (explicitPath) return loadJson(explicitPath);
 
-	const overridePath = join(
-		packagesDir,
-		grammar,
-		'.sittir',
-		'src',
-		'node-types.json'
-	);
+	const overridePath = join(packagesDir, grammar, '.sittir', 'src', 'node-types.json');
 	if (existsSync(overridePath)) return loadJson(overridePath);
 
-	const modulePath =
-		GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
+	const modulePath = GRAMMAR_PATHS[grammar] ?? `tree-sitter-${grammar}/src/node-types.json`;
 	return loadJson(fileURLToPath(import.meta.resolve(modulePath)));
 }

@@ -31,18 +31,13 @@ function tracedKinds(): readonly string[] {
  * in every phase (Link may classify a kind into a synthetic type;
  * Optimize may inline single-use hidden rules, removing the entry).
  */
-export function tracePhaseRules(
-	phase: string,
-	rules: Record<string, Rule> | undefined | null
-): void {
+export function tracePhaseRules(phase: string, rules: Record<string, Rule> | undefined | null): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0 || !rules) return;
 	for (const k of kinds) {
 		const rule = rules[k];
 		if (rule === undefined) {
-			console.error(
-				`[sittir-trace] ${phase}: '${k}' (not present in this phase)`
-			);
+			console.error(`[sittir-trace] ${phase}: '${k}' (not present in this phase)`);
 			continue;
 		}
 		console.error(`[sittir-trace] ${phase}: '${k}'`);
@@ -56,10 +51,7 @@ export function tracePhaseRules(
  * derivations, polymorphs carry forms — so we format the essentials
  * rather than full JSON (which pulls in parent-map cycles).
  */
-export function traceAssembleNodes(
-	phase: string,
-	nodes: Map<string, AssembledNode>
-): void {
+export function traceAssembleNodes(phase: string, nodes: Map<string, AssembledNode>): void {
 	const kinds = tracedKinds();
 	if (kinds.length === 0) return;
 	for (const k of kinds) {
@@ -76,8 +68,7 @@ export function traceAssembleNodes(
 		// on Branch / Group is the canonical "named slots" view that survived.
 		if ('slots' in node) {
 			const fields = (node as { fields: readonly AssembledNonterminal[] }).fields;
-			if (fields.length > 0)
-				console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
+			if (fields.length > 0) console.error(`  fields=${JSON.stringify(fields.map((f) => f.name))}`);
 		}
 	}
 }

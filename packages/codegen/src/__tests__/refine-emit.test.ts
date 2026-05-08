@@ -15,10 +15,7 @@ import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
 import type { RawGrammar, RefineForm } from '../compiler/types.ts';
 import { link } from '../compiler/link.ts';
-import {
-	resolveRefinePath,
-	narrowedFieldLiteralsForForm
-} from '../compiler/link-refine.ts';
+import { resolveRefinePath, narrowedFieldLiteralsForForm } from '../compiler/link-refine.ts';
 import { optimize } from '../compiler/optimize.ts';
 import { assemble } from '../compiler/assemble.ts';
 import { emitTypes } from '../emitters/types.ts';
@@ -90,33 +87,23 @@ describe('link-refine — validateRefineForms', () => {
 	});
 
 	it('throws when a path does not resolve to a choice', () => {
-		const raw = makeRefineRaw([
-			{ name: 'curly', selections: { 'nonexistent:': '{' } }
-		]);
+		const raw = makeRefineRaw([{ name: 'curly', selections: { 'nonexistent:': '{' } }]);
 		expect(() => link(raw)).toThrow(/does not match any field/);
 	});
 
 	it('throws when a string selection does not match any branch literal', () => {
-		const raw = makeRefineRaw([
-			{ name: 'curly', selections: { 'opening:': '<bogus>' } }
-		]);
+		const raw = makeRefineRaw([{ name: 'curly', selections: { 'opening:': '<bogus>' } }]);
 		expect(() => link(raw)).toThrow(/selection '<bogus>' does not match/);
 	});
 
 	it('throws when an index selection is out of range', () => {
-		const raw = makeRefineRaw([
-			{ name: 'curly', selections: { 'opening:': 5 } }
-		]);
+		const raw = makeRefineRaw([{ name: 'curly', selections: { 'opening:': 5 } }]);
 		expect(() => link(raw)).toThrow(/out of range/);
 	});
 
 	it('throws with path + form + kind context in the message', () => {
-		const raw = makeRefineRaw([
-			{ name: 'funky', selections: { 'opening:': '<bogus>' } }
-		]);
-		expect(() => link(raw)).toThrow(
-			/refine\(iface_body\) form 'funky': path 'opening:'/
-		);
+		const raw = makeRefineRaw([{ name: 'funky', selections: { 'opening:': '<bogus>' } }]);
+		expect(() => link(raw)).toThrow(/refine\(iface_body\) form 'funky': path 'opening:'/);
 	});
 });
 
@@ -164,25 +151,55 @@ describe('link-refine — resolveRefinePath + narrowedFieldLiteralsForForm', () 
 // ---------------------------------------------------------------------------
 
 function runPipeline(forms: RefineForm[]) {
- 	const raw = makeRefineRaw(forms);
- 	const linked = link(raw);
- 	const optimized = optimize(linked);
- 	const nodeMap = assemble(optimized);
+	const raw = makeRefineRaw(forms);
+	const linked = link(raw);
+	const optimized = optimize(linked);
+	const nodeMap = assemble(optimized);
 	const generatedIdTables = makeGeneratedIdTables();
- 	return {
- 		nodeMap,
- 		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
- 		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
- 		irSrc: emitIr({ grammar: 'synth', nodeMap })
- 	};
+	return {
+		nodeMap,
+		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
+		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap }),
+		irSrc: emitIr({ grammar: 'synth', nodeMap })
+	};
 }
 
 function makeGeneratedIdTables(): GeneratedIdTables {
 	return {
 		kindIds: {
-			iface_body: { id: 11, parser: { cSymbol: 'sym_iface_body', parserName: 'iface_body', anon: false, aux: false, alias: false, hidden: false } },
-			iface_body_curly: { id: 17, parser: { cSymbol: 'sym_iface_body_curly', parserName: 'iface_body_curly', anon: false, aux: false, alias: false, hidden: false } },
-			iface_body_flow: { id: 23, parser: { cSymbol: 'sym_iface_body_flow', parserName: 'iface_body_flow', anon: false, aux: false, alias: false, hidden: false } }
+			iface_body: {
+				id: 11,
+				parser: {
+					cSymbol: 'sym_iface_body',
+					parserName: 'iface_body',
+					anon: false,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			},
+			iface_body_curly: {
+				id: 17,
+				parser: {
+					cSymbol: 'sym_iface_body_curly',
+					parserName: 'iface_body_curly',
+					anon: false,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			},
+			iface_body_flow: {
+				id: 23,
+				parser: {
+					cSymbol: 'sym_iface_body_flow',
+					parserName: 'iface_body_flow',
+					anon: false,
+					aux: false,
+					alias: false,
+					hidden: false
+				}
+			}
 		},
 		sourceArtifact: 'parser.wasm'
 	};
@@ -195,21 +212,13 @@ describe('types emitter — per-form namespace sugar', () => {
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
 		// Sub-namespace declarations exist.
-		expect(typesSrc).toMatch(
-			/export namespace IfaceBody \{[\s\S]*export namespace Curly/
-		);
+		expect(typesSrc).toMatch(/export namespace IfaceBody \{[\s\S]*export namespace Curly/);
 		expect(typesSrc).toMatch(/export namespace Flow/);
 		// Per-form Config omits both narrowed fields.
-		expect(typesSrc).toMatch(
-			/Curly \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/
-		);
+		expect(typesSrc).toMatch(/Curly \{\s+export type Config = Omit<ConfigFor<'iface_body'>, "opening" \| "closing">/);
 		// Per-form Tree aliases point at the base Tree.
-		expect(typesSrc).toContain(
-			'export type IfaceBodyCurlyTree = IfaceBodyTree;'
-		);
-		expect(typesSrc).toContain(
-			'export type IfaceBodyFlowTree = IfaceBodyTree;'
-		);
+		expect(typesSrc).toContain('export type IfaceBodyCurlyTree = IfaceBodyTree;');
+		expect(typesSrc).toContain('export type IfaceBodyFlowTree = IfaceBodyTree;');
 		// Default Config points at the first-declared form.
 		expect(typesSrc).toMatch(/Default form: 'curly' \(first-declared\)/);
 		expect(typesSrc).toMatch(/export type Config = Curly\.Config;/);
@@ -254,37 +263,25 @@ describe('factories emitter — per-form factory emission', () => {
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
 		// Curly factory stamps '{' / '}' via _<name> storage.
-		expect(factoriesSrc).toMatch(
-			/ifaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/
-		);
+		expect(factoriesSrc).toMatch(/ifaceBodyCurly[\s\S]*_opening = "\{" as const[\s\S]*_closing = "\}" as const/);
 		// Flow factory stamps '{|' / '|}' via _<name> storage.
-		expect(factoriesSrc).toMatch(
-			/ifaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/
-		);
+		expect(factoriesSrc).toMatch(/ifaceBodyFlow[\s\S]*_opening = "\{\|" as const[\s\S]*_closing = "\|\}" as const/);
 	});
 
 	it('does not emit a $variant tag (NodeData round-trips through readNode)', () => {
-		const { factoriesSrc } = runPipeline([
-			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }
-		]);
+		const { factoriesSrc } = runPipeline([{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }]);
 		// Pull out just the curly function body and assert no $variant.
-		const match = factoriesSrc.match(
-			/export function ifaceBodyCurly[\s\S]*?\n\}/
-		);
+		const match = factoriesSrc.match(/export function ifaceBodyCurly[\s\S]*?\n\}/);
 		expect(match).toBeTruthy();
 		expect(match![0]).not.toContain('$variant');
 	});
 
 	it('types the per-form factory parameter with the narrowed Config', () => {
-		const { factoriesSrc } = runPipeline([
-			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }
-		]);
+		const { factoriesSrc } = runPipeline([{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } }]);
 		// Per-form Config lives under the parent namespace as a sub-namespace
 		// (`T.IfaceBody.Curly.Config`), not as a flat alias. See
 		// emitRefineFormSubNamespaces in emitters/types.ts.
-		expect(factoriesSrc).toMatch(
-			/export function ifaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/
-		);
+		expect(factoriesSrc).toMatch(/export function ifaceBodyCurly\(config\??: T\.IfaceBody\.Curly\.Config\)/);
 	});
 });
 

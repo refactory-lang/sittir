@@ -12,7 +12,7 @@ describe('SCM parser', () => {
 		const result = parseSCMQuery('(line_comment (doc_comment)) @comment.documentation');
 		expect(result).toContainEqual({
 			kindName: 'line_comment',
-			captureName: 'comment.documentation',
+			captureName: 'comment.documentation'
 		});
 	});
 
@@ -26,7 +26,7 @@ describe('SCM parser', () => {
 			(line_comment) @comment
 			(block_comment) @comment
 		`);
-		expect(result.filter(c => c.captureName === 'comment')).toHaveLength(2);
+		expect(result.filter((c) => c.captureName === 'comment')).toHaveLength(2);
 	});
 
 	it('skips string literals at top level', () => {
@@ -56,15 +56,15 @@ describe('SCM parser', () => {
 
 	it('handles bracket alternation inside predicate group', () => {
 		const result = parseSCMQuery(
-			'([(function_declaration) (arrow_function)] @definition.function (#strip! @definition.function))',
+			'([(function_declaration) (arrow_function)] @definition.function (#strip! @definition.function))'
 		);
 		expect(result).toContainEqual({
 			kindName: 'function_declaration',
-			captureName: 'definition.function',
+			captureName: 'definition.function'
 		});
 		expect(result).toContainEqual({
 			kindName: 'arrow_function',
-			captureName: 'definition.function',
+			captureName: 'definition.function'
 		});
 	});
 
@@ -76,11 +76,11 @@ describe('SCM parser', () => {
 		`);
 		expect(result).toContainEqual({
 			kindName: 'class_declaration',
-			captureName: 'definition.type',
+			captureName: 'definition.type'
 		});
 		expect(result).toContainEqual({
 			kindName: 'function_declaration',
-			captureName: 'definition.type',
+			captureName: 'definition.type'
 		});
 	});
 
@@ -99,20 +99,16 @@ describe('SCM parser', () => {
 			(line_comment (doc_comment)) @comment.documentation
 			(block_comment (doc_comment)) @comment.documentation
 		`);
-		const commentCaptures = result.filter(
-			c => c.captureName === 'comment' || c.captureName.startsWith('comment.'),
-		);
+		const commentCaptures = result.filter((c) => c.captureName === 'comment' || c.captureName.startsWith('comment.'));
 		expect(commentCaptures).toHaveLength(4);
-		expect(commentCaptures.map(c => c.kindName)).toContain('line_comment');
-		expect(commentCaptures.map(c => c.kindName)).toContain('block_comment');
+		expect(commentCaptures.map((c) => c.kindName)).toContain('line_comment');
+		expect(commentCaptures.map((c) => c.kindName)).toContain('block_comment');
 	});
 });
 
 describe('inherits directive', () => {
 	it('detects ; inherits: javascript', () => {
-		expect(parseInheritsDirective('; inherits: javascript\n(type_identifier) @type')).toBe(
-			'javascript',
-		);
+		expect(parseInheritsDirective('; inherits: javascript\n(type_identifier) @type')).toBe('javascript');
 	});
 
 	it('returns undefined when no directive', () => {

@@ -1,19 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import {
-	link,
-	enrichPositions,
-	computeParentSets,
-	applyOverridePolymorphs
-} from '../compiler/link.ts';
+import { link, enrichPositions, computeParentSets, applyOverridePolymorphs } from '../compiler/link.ts';
 import type { DerivationLog } from '../compiler/types.ts';
 import type { Rule, SymbolRef } from '../compiler/rule.ts';
 import type { RawGrammar } from '../compiler/types.ts';
 import { createEmptyRuleCatalog } from '../compiler/rule-catalog.ts';
 
-function makeRaw(
-	rules: Record<string, Rule>,
-	overrides?: Partial<RawGrammar>
-): RawGrammar {
+function makeRaw(rules: Record<string, Rule>, overrides?: Partial<RawGrammar>): RawGrammar {
 	return {
 		name: 'test',
 		rules,
@@ -77,8 +69,7 @@ describe('Link — reference resolution', () => {
 				// stamp `nonEmpty: true` on the resulting slot and the
 				// types emitter can render a non-empty tuple type.
 			}
-			if ('content' in rule && rule.content)
-				assertNoRefTypes(rule.content as Rule);
+			if ('content' in rule && rule.content) assertNoRefTypes(rule.content as Rule);
 			if ('members' in rule && Array.isArray((rule as any).members)) {
 				for (const m of (rule as any).members) assertNoRefTypes(m);
 			}
@@ -229,10 +220,7 @@ describe('Link — output contract', () => {
 	});
 
 	it('returns word from raw grammar', () => {
-		const raw = makeRaw(
-			{ id: { type: 'pattern', value: '[a-z]+' } },
-			{ word: 'id' }
-		);
+		const raw = makeRaw({ id: { type: 'pattern', value: '[a-z]+' } }, { word: 'id' });
 		const linked = link(raw);
 		expect(linked.word).toBe('id');
 	});
@@ -393,10 +381,7 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		expect(assignment.type).not.toBe('polymorph');
 		expect(
 			linked.derivations.promotedRules.some(
-				(p: any) =>
-					p.kind === 'assignment' &&
-					p.classification === 'polymorph' &&
-					!p.applied
+				(p: any) => p.kind === 'assignment' && p.classification === 'polymorph' && !p.applied
 			)
 		).toBe(true);
 	});
@@ -497,24 +482,15 @@ describe('Link — variant tagging + polymorph promotion', () => {
 		const selfBody = rules['_visibility_modifier_pub_self']!;
 		expect(selfBody.type).toBe('seq');
 		if (selfBody.type !== 'seq') throw new Error('unreachable');
-		expect(
-			selfBody.members.map((m) => (m.type === 'string' ? m.value : m.type))
-		).toEqual(['(', 'symbol', ')']);
+		expect(selfBody.members.map((m) => (m.type === 'string' ? m.value : m.type))).toEqual(['(', 'symbol', ')']);
 		const superBody = rules['_visibility_modifier_pub_super']!;
 		expect(superBody.type).toBe('seq');
 		// Variant-child derivations emitted for downstream use.
 		const derivedKinds = derivations.promotedRules
-			.filter(
-				(p) =>
-					p.kind === 'visibility_modifier_pub_self' ||
-					p.kind === 'visibility_modifier_pub_super'
-			)
+			.filter((p) => p.kind === 'visibility_modifier_pub_self' || p.kind === 'visibility_modifier_pub_super')
 			.map((p) => p.kind)
 			.sort();
-		expect(derivedKinds).toEqual([
-			'visibility_modifier_pub_self',
-			'visibility_modifier_pub_super'
-		]);
+		expect(derivedKinds).toEqual(['visibility_modifier_pub_self', 'visibility_modifier_pub_super']);
 	});
 
 	it('applyOverridePolymorphs replaces rule when registered variant children DO match found choice', () => {

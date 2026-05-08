@@ -33,14 +33,8 @@ export function emitGrammar(config: EmitGrammarConfig): string {
 
 	const lines: string[] = [];
 
-	lines.push(
-		'// Auto-generated grammar type from tree-sitter-' +
-			grammar +
-			'/src/node-types.json'
-	);
-	lines.push(
-		'// Structurally compatible with @codemod.com/jssg-types ' + grammarTypeName
-	);
+	lines.push('// Auto-generated grammar type from tree-sitter-' + grammar + '/src/node-types.json');
+	lines.push('// Structurally compatible with @codemod.com/jssg-types ' + grammarTypeName);
 	lines.push('');
 	lines.push(`export type ${grammarAlias} = {`);
 

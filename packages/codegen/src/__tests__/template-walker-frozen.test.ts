@@ -48,18 +48,11 @@ import {
 type Grammar = 'rust' | 'typescript' | 'python';
 
 function templatesDirFor(grammar: Grammar): string {
-	return resolve(
-		fileURLToPath(new URL('../../../..', import.meta.url)),
-		`packages/${grammar}/templates`
-	);
+	return resolve(fileURLToPath(new URL('../../../..', import.meta.url)), `packages/${grammar}/templates`);
 }
 
-const renderers: Partial<
-	Record<Grammar, ReturnType<typeof createRenderer>>
-> = {};
-async function rendererFor(
-	grammar: Grammar
-): Promise<ReturnType<typeof createRenderer>> {
+const renderers: Partial<Record<Grammar, ReturnType<typeof createRenderer>>> = {};
+async function rendererFor(grammar: Grammar): Promise<ReturnType<typeof createRenderer>> {
 	const cached = renderers[grammar];
 	if (cached) return cached;
 	const kindNames = await loadKindNames(grammar);
@@ -80,23 +73,16 @@ interface ParseAndRenderResult {
  * render it through the per-grammar `.jinja` templates. Throws if no
  * matching kind is found in the parse tree.
  */
-async function parseAndRender(
-	grammar: Grammar,
-	source: string,
-	kind: string
-): Promise<ParseAndRenderResult> {
+async function parseAndRender(grammar: Grammar, source: string, kind: string): Promise<ParseAndRenderResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
 	const tree = parser.parse(source);
-	if (!tree)
-		throw new Error(`parseAndRender: parse failed for ${grammar} source`);
+	if (!tree) throw new Error(`parseAndRender: parse failed for ${grammar} source`);
 
 	const target = findFirst(tree.rootNode, kind);
 	if (!target) {
-		throw new Error(
-			`parseAndRender: no ${kind} found in parsed source: ${JSON.stringify(source)}`
-		);
+		throw new Error(`parseAndRender: no ${kind} found in parsed source: ${JSON.stringify(source)}`);
 	}
 
 	const readTreeNodeFn = await loadReadTreeNode(grammar);
@@ -404,11 +390,7 @@ describe('walker frozen output (Cluster F step 1)', () => {
 			it(
 				label,
 				async () => {
-					const { rendered } = await parseAndRender(
-						c.grammar,
-						c.source,
-						c.kind
-					);
+					const { rendered } = await parseAndRender(c.grammar, c.source, c.kind);
 					expect(rendered).toBe(c.target);
 				},
 				30000
@@ -424,11 +406,7 @@ describe('walker frozen output (Cluster F step 1)', () => {
 			it.fails(
 				label,
 				async () => {
-					const { rendered } = await parseAndRender(
-						c.grammar,
-						c.source,
-						c.kind
-					);
+					const { rendered } = await parseAndRender(c.grammar, c.source, c.kind);
 					expect(rendered).toBe(c.target);
 				},
 				30000

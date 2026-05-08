@@ -11,23 +11,15 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
-import {
-	validateAgainstNodeTypes,
-	formatNodeTypesValidationReport
-} from '../validate/node-types.ts';
-import {
-	resolveGrammarJsPath,
-	resolveOverridesPath
-} from '../compiler/resolve-grammar.ts';
+import { validateAgainstNodeTypes, formatNodeTypesValidationReport } from '../validate/node-types.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
 
 for (const grammar of ['rust', 'typescript', 'python'] as const) {
 	describe(`T021 node-types validation — ${grammar}`, () => {
 		it(`runs without throwing`, async () => {
 			const overrides = resolveOverridesPath(grammar);
-			const entry = existsSync(overrides)
-				? overrides
-				: resolveGrammarJsPath(grammar);
+			const entry = existsSync(overrides) ? overrides : resolveGrammarJsPath(grammar);
 			const raw = await evaluate(entry);
 			const linked = link(raw);
 			const result = validateAgainstNodeTypes(grammar, linked);

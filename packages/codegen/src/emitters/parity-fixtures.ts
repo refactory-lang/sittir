@@ -55,10 +55,7 @@ export interface ExtractResult {
  *
  * @throws if a grammar's FR-011 required kinds aren't covered.
  */
-export async function extractParityFixtures(
-	grammar: string,
-	templatesPath: string
-): Promise<ExtractResult> {
+export async function extractParityFixtures(grammar: string, templatesPath: string): Promise<ExtractResult> {
 	const fixtures: ParityFixture[] = [];
 	const coveredKinds = new Set<string>();
 	let renderCount = 0;

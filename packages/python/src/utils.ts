@@ -111,8 +111,8 @@ const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named',
 
 type NativeTransportAlternative = { readonly type: string; readonly text?: string };
 type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
-type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
-type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
+type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childrenMultiple: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
+type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly multiple: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
   "assignment_eq": "_assignment_eq",
@@ -144,22 +144,123 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
 };
 
 const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
+  "_as_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"case_pattern"},{"type":"identifier"}] as const,
+    fields: [
+    ],
+  },
+  "_comprehension_clauses": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"for_in_clause"},{"type":"if_clause"}] as const,
+    fields: [
+    ],
+  },
   "_import_list": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
     ],
   },
+  "_list_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"case_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "_match_block": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_match_block_block"}] as const,
+    fields: [
+    ],
+  },
   "_match_block_block": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "alternative", multiple: true, required: true, alternatives: [{"type":"case_clause"}] as const },
     ],
   },
+  "_simple_pattern_negative": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"integer"},{"type":"float"}] as const,
+    fields: [
+    ],
+  },
+  "_simple_statements": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"future_import_statement"},{"type":"import_statement"},{"type":"import_from_statement"},{"type":"print_statement"},{"type":"assert_statement"},{"type":"expression_statement"},{"type":"return_statement"},{"type":"delete_statement"},{"type":"raise_statement"},{"type":"pass_statement","text":"pass"},{"type":"break_statement","text":"break"},{"type":"continue_statement","text":"continue"},{"type":"global_statement"},{"type":"nonlocal_statement"},{"type":"exec_statement"},{"type":"type_alias_statement"}] as const,
+    fields: [
+    ],
+  },
+  "_suite": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_simple_statements"},{"type":"block"},{"type":"_newline"}] as const,
+    fields: [
+    ],
+  },
+  "_tuple_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"case_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "_with_clause_paren": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"with_item"}] as const,
+    fields: [
+    ],
+  },
+  "argument_list": {
+    childrenRequired: false,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"list_splat"},{"type":"dictionary_splat"},{"type":"parenthesized_list_splat"},{"type":"keyword_argument"}] as const,
+    fields: [
+    ],
+  },
+  "assert_statement": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "block": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_simple_statements"},{"type":"if_statement"},{"type":"for_statement"},{"type":"while_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"function_definition"},{"type":"class_definition"},{"type":"decorated_definition"},{"type":"match_statement"}] as const,
+    fields: [
+    ],
+  },
+  "case_clause": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"case_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "case_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_as_pattern"},{"type":"keyword_pattern"},{"type":"class_pattern"},{"type":"splat_pattern"},{"type":"union_pattern"},{"type":"_list_pattern"},{"type":"_tuple_pattern"},{"type":"dict_pattern"},{"type":"string"},{"type":"concatenated_string"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"_simple_pattern_negative"},{"type":"complex_pattern"},{"type":"dotted_name"}] as const,
+    fields: [
+    ],
+  },
   "class_pattern": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "arguments", multiple: true, required: true, alternatives: [{"type":"case_pattern"}] as const },
@@ -167,13 +268,78 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "comparison_operator": {
     childrenRequired: true,
+    childrenMultiple: true,
     childAlternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const,
     fields: [
       { name: "operators", multiple: true, required: true, alternatives: [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const },
     ],
   },
+  "complex_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"integer"},{"type":"float"}] as const,
+    fields: [
+    ],
+  },
+  "concatenated_string": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"string"}] as const,
+    fields: [
+    ],
+  },
+  "decorated_definition": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"decorator"}] as const,
+    fields: [
+    ],
+  },
+  "delete_statement": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
+    fields: [
+    ],
+  },
+  "dict_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_key_value_pattern"},{"type":"splat_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "dictionary": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"pair"},{"type":"dictionary_splat"}] as const,
+    fields: [
+    ],
+  },
+  "dictionary_comprehension": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
+    fields: [
+    ],
+  },
+  "dictionary_splat_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"}] as const,
+    fields: [
+    ],
+  },
+  "dotted_name": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"}] as const,
+    fields: [
+    ],
+  },
   "except_clause": {
     childrenRequired: true,
+    childrenMultiple: false,
     childAlternatives: [{"type":"_suite"}] as const,
     fields: [
       { name: "value", multiple: true, required: false, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
@@ -181,62 +347,225 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "exec_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "in_clause", multiple: true, required: false, alternatives: [{"type":"in","text":"in"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
     ],
   },
+  "expression_list": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":",","text":","}] as const,
+    fields: [
+    ],
+  },
+  "expression_statement_tuple": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const,
+    fields: [
+    ],
+  },
   "for_in_clause": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "right", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"lambda_within_for_in_clause"}] as const },
     ],
   },
+  "format_specifier": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"interpolation"}] as const,
+    fields: [
+    ],
+  },
   "future_import_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
     ],
   },
+  "generator_expression": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
+    fields: [
+    ],
+  },
+  "global_statement": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"}] as const,
+    fields: [
+    ],
+  },
   "if_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "alternative", multiple: true, required: false, alternatives: [{"type":"elif_clause"},{"type":"else_clause"}] as const },
     ],
   },
+  "import_from_statement": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"wildcard_import","text":"*"},{"type":"dotted_name"},{"type":"aliased_import"}] as const,
+    fields: [
+    ],
+  },
   "import_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
     ],
   },
+  "lambda_parameters": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"typed_parameter"},{"type":"default_parameter"},{"type":"typed_default_parameter"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"keyword_separator","text":"*"},{"type":"positional_separator","text":"/"},{"type":"dictionary_splat_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "list": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
+    fields: [
+    ],
+  },
+  "list_comprehension": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
+    fields: [
+    ],
+  },
+  "list_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "list_splat_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"}] as const,
+    fields: [
+    ],
+  },
   "match_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "subject", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
     ],
   },
+  "module": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_simple_statements"},{"type":"if_statement"},{"type":"for_statement"},{"type":"while_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"function_definition"},{"type":"class_definition"},{"type":"decorated_definition"},{"type":"match_statement"}] as const,
+    fields: [
+    ],
+  },
+  "nonlocal_statement": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"}] as const,
+    fields: [
+    ],
+  },
+  "parameters": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"typed_parameter"},{"type":"default_parameter"},{"type":"typed_default_parameter"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"keyword_separator","text":"*"},{"type":"positional_separator","text":"/"},{"type":"dictionary_splat_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "parenthesized_expression": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"}] as const,
+    fields: [
+    ],
+  },
+  "parenthesized_list_splat": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"parenthesized_list_splat"},{"type":"list_splat"}] as const,
+    fields: [
+    ],
+  },
+  "pattern_list": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":",","text":","}] as const,
+    fields: [
+    ],
+  },
   "print_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [{"type":"chevron"}] as const,
     fields: [
       { name: "argument", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
     ],
   },
+  "raise_statement": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
+    fields: [
+    ],
+  },
+  "return_statement": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
+    fields: [
+    ],
+  },
+  "set": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
+    fields: [
+    ],
+  },
+  "set_comprehension": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
+    fields: [
+    ],
+  },
   "string": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "content", multiple: true, required: true, alternatives: [{"type":"interpolation"},{"type":"string_content"}] as const },
     ],
   },
+  "string_content": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"escape_interpolation"},{"type":"escape_sequence"},{"type":"_not_escape_sequence","text":"\\"},{"type":"_string_content"}] as const,
+    fields: [
+    ],
+  },
   "subscript": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "subscript", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"slice"}] as const },
@@ -244,9 +573,73 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "try_statement": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "except_clauses", multiple: true, required: true, alternatives: [{"type":"except_clause"}] as const },
+    ],
+  },
+  "tuple": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
+    fields: [
+    ],
+  },
+  "tuple_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "type": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"splat_type"},{"type":"generic_type"},{"type":"union_type"},{"type":"constrained_type"},{"type":"member_type"}] as const,
+    fields: [
+    ],
+  },
+  "type_parameter": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"type"}] as const,
+    fields: [
+    ],
+  },
+  "typed_parameter": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"list_splat_pattern"},{"type":"dictionary_splat_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "union_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"class_pattern"},{"type":"splat_pattern"},{"type":"union_pattern"},{"type":"_list_pattern"},{"type":"_tuple_pattern"},{"type":"dict_pattern"},{"type":"string"},{"type":"concatenated_string"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"_simple_pattern_negative"},{"type":"complex_pattern"},{"type":"dotted_name"}] as const,
+    fields: [
+    ],
+  },
+  "with_clause_bare": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"with_item"}] as const,
+    fields: [
+    ],
+  },
+  "with_clause_paren": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"with_item"}] as const,
+    fields: [
+    ],
+  },
+  "yield": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"from","text":"from"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
+    fields: [
     ],
   },
 };
@@ -258,21 +651,21 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       fields: [
         { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_assignment_eq"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_eq"}] as const },
     },
     {
       variant: "type",
       fields: [
         { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_assignment_type"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_type"}] as const },
     },
     {
       variant: "typed",
       fields: [
         { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_assignment_typed"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_typed"}] as const },
     },
   ],
   "expression_statement": [
@@ -280,7 +673,7 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "tuple",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"expression_statement_tuple"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"expression_statement_tuple"}] as const },
     },
   ],
   "with_clause": [
@@ -288,164 +681,63 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "bare",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"with_clause_bare"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"with_clause_bare"}] as const },
     },
     {
       variant: "paren",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_with_clause_paren"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_with_clause_paren"}] as const },
     },
   ],
 };
 
-const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
-  "(",
-  ")",
-  "*",
-  "**",
-  ",",
-  "-",
-  "->",
-  ".",
-  "...",
-  "/",
-  ":",
-  ":=",
-  "=",
-  ">>",
-  "@",
-  "False",
-  "None",
-  "True",
-  "[",
-  "\\",
-  "]",
-  "_",
-  "__future__",
-  "_async_marker",
-  "_augmented_assignment_operator",
-  "_binary_operator_operator",
-  "_boolean_operator_operator",
-  "_dedent",
-  "_identifier",
-  "_indent",
-  "_is_not",
-  "_kw_async_marker",
-  "_kw_type",
-  "_newline",
-  "_not_escape_sequence",
-  "_not_in",
-  "_string_content",
-  "_type_alias_statement_type",
-  "_unary_operator_operator",
-  "as",
-  "assert",
-  "async",
-  "break",
-  "break_statement",
-  "case",
-  "class",
-  "comment",
-  "continue",
-  "continue_statement",
-  "def",
-  "del",
-  "elif",
-  "ellipsis",
-  "else",
-  "escape_interpolation",
-  "escape_sequence",
-  "except",
-  "exec",
-  "false",
-  "finally",
-  "float",
-  "for",
-  "from",
-  "global",
-  "identifier",
-  "if",
-  "import",
-  "import_prefix",
-  "in",
-  "integer",
-  "keyword_separator",
-  "line_continuation",
-  "match",
-  "none",
-  "nonlocal",
-  "not",
-  "pass",
-  "pass_statement",
-  "positional_separator",
-  "print",
-  "raise",
-  "return",
-  "string_end",
-  "string_start",
-  "true",
-  "try",
-  "type_conversion",
-  "while",
-  "wildcard_import",
-  "with",
-  "{",
-  "|",
-  "}",
-]);
-
-const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
-  "aliased_import": new Set(["alias"]),
-  "attribute": new Set(["attribute"]),
-  "augmented_assignment": new Set(["operator"]),
+const nativeTransportBooleanKeywordFieldsByKind: Record<string, ReadonlySet<string>> = {
   "binary_operator": new Set(["operator"]),
   "boolean_operator": new Set(["operator"]),
-  "class_definition": new Set(["name"]),
-  "comparison_operator": new Set(["operators"]),
-  "complex_pattern": new Set(["imaginary","real"]),
   "for_in_clause": new Set(["async_marker"]),
   "for_statement": new Set(["async_marker"]),
-  "function_definition": new Set(["async_marker","name"]),
-  "generic_type": new Set(["identifier"]),
-  "interpolation": new Set(["type_conversion"]),
-  "keyword_pattern": new Set(["identifier"]),
-  "member_type": new Set(["identifier"]),
-  "relative_import": new Set(["import_prefix"]),
-  "splat_pattern": new Set(["identifier"]),
-  "splat_type": new Set(["identifier"]),
-  "string": new Set(["string_end","string_start"]),
+  "function_definition": new Set(["async_marker"]),
   "type_alias_statement": new Set(["type"]),
-  "typed_default_parameter": new Set(["name"]),
-  "unary_operator": new Set(["operator"]),
   "with_statement": new Set(["async_marker"]),
 };
 
-function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
-  const fields = nativeTransportTerminalFieldsByKind[kind];
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function coerceKeywordPresenceFields(projected: Record<string, unknown>, kind: string): void {
+  const fields = nativeTransportBooleanKeywordFieldsByKind[kind];
   if (!fields) return;
   for (const fieldName of fields) {
     const value = projected[fieldName];
     if (value === undefined) continue;
+    if (typeof value === 'boolean') continue;
     if (Array.isArray(value)) {
-      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
-    } else {
-      projected[fieldName] = collapseIfTerminal(value);
+      projected[fieldName] = value.length > 0;
+      continue;
+    }
+    projected[fieldName] = true;
+  }
+}
+
+function coerceNativeTransportChildren(projected: Record<string, unknown>, kind: string): void {
+  const children = projected.$children;
+  if (!Array.isArray(children)) return;
+  const variant = typeof projected.$variant === "string" ? projected.$variant : undefined;
+  if (variant !== undefined) {
+    const variantRule = nativeTransportVariantRules[kind]?.find((candidate) => candidate.variant === variant);
+    if (variantRule?.children && !variantRule.children.multiple) {
+      if (children.length === 0 && !variantRule.children.required) { delete projected.$children; return; }
+      projected.$children = children[0];
+      return;
     }
   }
-}
-
-function collapseIfTerminal(value: unknown): unknown {
-  if (typeof value === 'string') return value;
-  if (!isRecord(value)) return value;
-  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
-    return value.$text;
+  const rawRule = nativeTransportRawChildFieldRules[kind];
+  if (rawRule && !rawRule.childrenMultiple) {
+    if (children.length === 0 && !rawRule.childrenRequired) { delete projected.$children; return; }
+    projected.$children = children[0];
   }
-  return value;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function projectTransportValue(value: unknown, path: string): unknown {
@@ -498,7 +790,8 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
-  collapseTerminalFields(projected, resolvedKind);
+  coerceNativeTransportChildren(projected, resolvedKind);
+  coerceKeywordPresenceFields(projected, resolvedKind);
 
   projected.$type = kindIdFromName(resolvedKind);
 

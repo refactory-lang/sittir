@@ -62,12 +62,8 @@ export interface TemplateFile {
  *   the function sorts by filename internally.
  * @returns lowercase hex-encoded SHA-256 digest, 64 characters.
  */
-export function computeTemplateBundleHash(
-	files: readonly TemplateFile[]
-): string {
-	const sorted = [...files].sort((a, b) =>
-		a.filename < b.filename ? -1 : a.filename > b.filename ? 1 : 0
-	);
+export function computeTemplateBundleHash(files: readonly TemplateFile[]): string {
+	const sorted = [...files].sort((a, b) => (a.filename < b.filename ? -1 : a.filename > b.filename ? 1 : 0));
 	const hash = createHash('sha256');
 	for (const { filename, content } of sorted) {
 		const normalized = content.replace(/\r\n/g, '\n');

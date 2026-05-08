@@ -14,19 +14,16 @@ import { validateRoundTrip } from '../validate/roundtrip.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 function templatesPath(grammar: string): string {
-	return resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${grammar}/templates`
-	);
+	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
 }
 
 async function runGrammar(grammar: string): Promise<string> {
 	const tp = templatesPath(grammar);
 	const [from, rt, cov, fac] = await Promise.all([
-		validateFrom(grammar),
+		validateFrom(grammar, 'native'),
 		validateRoundTrip(grammar, tp, { backend: 'native' }),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateFactoryRoundTrip(grammar, tp)
+		validateFactoryRoundTrip(grammar, tp, 'native')
 	]);
 	return [
 		`${grammar}:`,

@@ -53,10 +53,7 @@ export interface NativeEngine {
 	findAndRead(source: string, pattern: string): string;
 	readNode(nodeId: NodeId): string;
 	render(node: AnyTransport): string;
-	applyEdits(
-		source: string,
-		edits: { startPos: number; endPos: number; insertedText: string }[]
-	): string;
+	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	dispose(): void;
 }
 
@@ -78,10 +75,7 @@ let debugEmitted = false;
 const PACKAGE_ID = 'sittir/python';
 
 /** Workspace-local native module path for the grammar-owned binary. */
-const NATIVE_MODULE_PATH = fileURLToPath(new URL(
-	'../../../rust/crates/sittir-python/index.js',
-	import.meta.url
-));
+const NATIVE_MODULE_PATH = fileURLToPath(new URL('../../../rust/crates/sittir-python/index.js', import.meta.url));
 
 function createJsStatus(reason: string, hashMatch?: false): JsBackendStatus {
 	if (hashMatch === false) {
@@ -127,10 +121,7 @@ function tryLoadNative(): NativeModule | { reason: string } {
 		const message = err instanceof Error ? err.message : String(err);
 		// Cannot-find-module surfaces as the common "platform not supported"
 		// case; other errors get the generic native-load-failed phrasing.
-		if (
-			/Cannot find module/i.test(message) ||
-			/MODULE_NOT_FOUND/.test(message)
-		) {
+		if (/Cannot find module/i.test(message) || /MODULE_NOT_FOUND/.test(message)) {
 			return { reason: 'native binary not available for this platform' };
 		}
 		return { reason: `native load failed: ${message}` };
@@ -162,17 +153,13 @@ function computeBackend(): BackendStatus {
 		return createJsStatus('forced by SITTIR_BACKEND=js');
 	}
 	if (forced === 'wasm') {
-		return createJsStatus(
-			'forced by SITTIR_BACKEND=wasm, but @sittir/python does not package a WASM backend yet'
-		);
+		return createJsStatus('forced by SITTIR_BACKEND=wasm, but @sittir/python does not package a WASM backend yet');
 	}
 
 	const loaded = tryLoadNative();
 	if ('reason' in loaded) {
 		if (forced === 'native') {
-			throw new Error(
-				`SITTIR_BACKEND=native but native engine unavailable — ${loaded.reason}`
-			);
+			throw new Error(`SITTIR_BACKEND=native but native engine unavailable — ${loaded.reason}`);
 		}
 		return createJsStatus(loaded.reason);
 	}
@@ -188,9 +175,7 @@ function computeBackend(): BackendStatus {
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
 		if (forced === 'native') {
-			throw new Error(
-				`SITTIR_BACKEND=native but native-engine error at init: ${message}`
-			);
+			throw new Error(`SITTIR_BACKEND=native but native-engine error at init: ${message}`);
 		}
 		return createJsStatus(`native-engine error at init: ${message}`);
 	}

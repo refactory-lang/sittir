@@ -1,20 +1,8 @@
 import type { NodeMap } from '../compiler/types.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import type {
-	AssembledNonterminal,
-	
-	AssembledNode,
-	NodeOrTerminal
-} from '../compiler/node-map.ts';
-import {
-	isTerminalValue,
-	allFormFieldsOf,
-	allFormChildrenOf
-} from '../compiler/node-map.ts';
-import {
-	fieldTypeComponents,
-	resolveHiddenKeywordLiteral
-} from './shared.ts';
+import type { AssembledNonterminal, AssembledNode, NodeOrTerminal } from '../compiler/node-map.ts';
+import { isTerminalValue, allFormFieldsOf, allFormChildrenOf } from '../compiler/node-map.ts';
+import { fieldTypeComponents, resolveHiddenKeywordLiteral } from './shared.ts';
 
 export interface TransportLiteral {
 	readonly kind: string;
@@ -27,19 +15,14 @@ export interface TransportProjection {
 	readonly nodeKinds: ReadonlySet<string>;
 }
 
-export function collectTransportProjection(
-	nodeMap: NodeMap
-): TransportProjection {
+export function collectTransportProjection(nodeMap: NodeMap): TransportProjection {
 	const nodes = collectTransportNodes(nodeMap);
 	const nodeKinds = new Set(nodes.map((node) => node.kind));
 	const literals = collectTransportLiterals(nodes, nodeMap, nodeKinds);
 	return { nodes, literals, nodeKinds };
 }
 
-export function resolveTransportReferenceKind(
-	kind: string,
-	nodeMap: NodeMap
-): string {
+export function resolveTransportReferenceKind(kind: string, nodeMap: NodeMap): string {
 	const node = nodeMap.nodes.get(kind);
 	if (node && isConcreteTransportNode(node, nodeMap)) return kind;
 	if (!kind.startsWith('_')) return kind;
@@ -64,10 +47,7 @@ function collectTransportNodes(nodeMap: NodeMap): AssembledNode[] {
 	return nodes;
 }
 
-function isConcreteTransportNode(
-	node: AssembledNode,
-	nodeMap: NodeMap
-): boolean {
+function isConcreteTransportNode(node: AssembledNode, nodeMap: NodeMap): boolean {
 	switch (node.modelType) {
 		case 'branch':
 		case 'polymorph':
@@ -103,8 +83,7 @@ function collectTransportLiterals(
 
 	for (const node of nodes) {
 		for (const field of allFormFieldsOf(node)) {
-			for (const literal of fieldTransportLiterals(field, nodeMap))
-				add(literal);
+			for (const literal of fieldTransportLiterals(field, nodeMap)) add(literal);
 		}
 		for (const child of allFormChildrenOf(node)) {
 			for (const literal of childTransportLiterals(child)) add(literal);
@@ -113,18 +92,12 @@ function collectTransportLiterals(
 	return literals;
 }
 
-function fieldTransportLiterals(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap
-): TransportLiteral[] {
+function fieldTransportLiterals(field: AssembledNonterminal, nodeMap: NodeMap): TransportLiteral[] {
 	return fieldTypeComponents(field, nodeMap).flatMap((component) => {
 		if (component.kind === 'literal') {
 			return [{ kind: component.value, text: component.value }];
 		}
-		const literal = terminalTransportLiteralForKind(
-			component.rawKind,
-			nodeMap
-		);
+		const literal = terminalTransportLiteralForKind(component.rawKind, nodeMap);
 		return literal === undefined ? [] : [literal];
 	});
 }
@@ -136,9 +109,7 @@ function childTransportLiterals(child: AssembledNonterminal): TransportLiteral[]
 	});
 }
 
-function literalForSlotValue(
-	value: NodeOrTerminal
-): TransportLiteral | undefined {
+function literalForSlotValue(value: NodeOrTerminal): TransportLiteral | undefined {
 	if (isTerminalValue(value)) {
 		return { kind: value.value, text: value.value };
 	}
@@ -153,10 +124,7 @@ function supertypeTransportTypeNames(nodeMap: NodeMap): Set<string> {
 	return names;
 }
 
-function terminalTransportLiteralForKind(
-	kind: string,
-	nodeMap: NodeMap
-): TransportLiteral | undefined {
+function terminalTransportLiteralForKind(kind: string, nodeMap: NodeMap): TransportLiteral | undefined {
 	const hiddenLiteral = resolveHiddenKeywordLiteral(kind, nodeMap);
 	if (hiddenLiteral !== undefined) return { kind, text: hiddenLiteral };
 	const node = nodeMap.nodes.get(kind);

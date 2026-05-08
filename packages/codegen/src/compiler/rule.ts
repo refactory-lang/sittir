@@ -105,12 +105,7 @@ export interface FieldRule {
 	readonly type: 'field';
 	readonly name: string;
 	readonly content: Rule;
-	readonly source?:
-		| 'grammar'
-		| 'override'
-		| 'inlined'
-		| 'enriched'
-		| 'inferred';
+	readonly source?: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 	readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
 	/**
 	 * True if the field's value is rendered as an indented block — its
@@ -304,12 +299,10 @@ export const isField = (r: Rule): r is FieldRule => r.type === 'field';
 export const isVariant = (r: Rule): r is VariantRule => r.type === 'variant';
 export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause';
 export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum';
-export const isSupertype = (r: Rule): r is SupertypeRule =>
-	r.type === 'supertype';
+export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype';
 export const isGroup = (r: Rule): r is GroupRule => r.type === 'group';
 export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal';
-export const isPolymorph = (r: Rule): r is PolymorphRule =>
-	r.type === 'polymorph';
+export const isPolymorph = (r: Rule): r is PolymorphRule => r.type === 'polymorph';
 export const isString = (r: Rule): r is StringRule => r.type === 'string';
 export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern';
 export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent';

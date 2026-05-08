@@ -31,14 +31,7 @@
  * produces a full `simplifiedRules` map on `OptimizedGrammar`.
  */
 
-import type {
-	Rule,
-	ChoiceRule,
-	SeqRule,
-	FieldRule,
-	RepeatRule,
-	Repeat1Rule
-} from './rule.ts';
+import type { Rule, ChoiceRule, SeqRule, FieldRule, RepeatRule, Repeat1Rule } from './rule.ts';
 
 /** Does this string lex as a "word" under the grammar's `word` rule? */
 /**
@@ -61,27 +54,19 @@ function isEmptyMatchMember(rule: Rule): boolean {
 	return false;
 }
 
-function isKeywordShape(
-	value: string,
-	wordMatcher: RegExp | undefined
-): boolean {
+function isKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
 	if (wordMatcher) return wordMatcher.test(value);
 	return /^\w+$/.test(value);
 }
 
-export function simplifyRule(
-	rule: Rule,
-	wordMatcher?: RegExp,
-	inField: boolean = false
-): Rule {
+export function simplifyRule(rule: Rule, wordMatcher?: RegExp, inField: boolean = false): Rule {
 	switch (rule.type) {
 		case 'seq': {
 			// Strip non-keyword strings, remove empty-seq sentinels, flatten nested seqs.
 			const members = rule.members
 				.map((m) => simplifyRule(m, wordMatcher, inField))
 				.filter((m) => {
-					if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher))
-						return false;
+					if (m.type === 'string' && !isKeywordShape(m.value, wordMatcher)) return false;
 					if (m.type === 'seq' && m.members.length === 0) return false;
 					return true;
 				})
@@ -92,22 +77,13 @@ export function simplifyRule(
 		}
 		case 'choice': {
 			// Variant wrappers preserved for polymorph surface detection.
-			const members = rule.members.map((m) =>
-				simplifyRule(m, wordMatcher, inField)
-			);
+			const members = rule.members.map((m) => simplifyRule(m, wordMatcher, inField));
 			// Fold empty-match members (pattern(""), empty seq) into optional.
 			const empty = members.findIndex(isEmptyMatchMember);
 			if (empty >= 0 && members.length > 1) {
 				const nonEmpty = members.filter((_, i) => i !== empty);
-				const inner: Rule =
-					nonEmpty.length === 1
-						? nonEmpty[0]!
-						: { type: 'choice', members: nonEmpty };
-				return simplifyRule(
-					{ type: 'optional', content: inner },
-					wordMatcher,
-					inField
-				);
+				const inner: Rule = nonEmpty.length === 1 ? nonEmpty[0]! : { type: 'choice', members: nonEmpty };
+				return simplifyRule({ type: 'optional', content: inner }, wordMatcher, inField);
 			}
 			if (members.length === 1) return members[0]!;
 			// Merge structurally-equivalent choice branches so same-
@@ -135,11 +111,7 @@ export function simplifyRule(
 			if (inner.type === 'seq' && inner.members.length === 0) {
 				return { type: 'seq', members: [] };
 			}
-			if (
-				!inField &&
-				inner.type === 'string' &&
-				!isKeywordShape(inner.value, wordMatcher)
-			) {
+			if (!inField && inner.type === 'string' && !isKeywordShape(inner.value, wordMatcher)) {
 				return { type: 'seq', members: [] };
 			}
 			return hoistFieldOutOfSingleContentWrapper({
@@ -202,10 +174,7 @@ export function simplifyRule(
  *      derivation walked an uncanonical tree and silently dropped
  *      duplicate-named field occurrences across choice branches.
  */
-export function simplifyRules(
-	rules: Record<string, Rule>,
-	wordMatcher?: RegExp
-): Record<string, Rule> {
+export function simplifyRules(rules: Record<string, Rule>, wordMatcher?: RegExp): Record<string, Rule> {
 	const out: Record<string, Rule> = {};
 	for (const [name, rule] of Object.entries(rules)) {
 		out[name] = normalizeToFixpoint(rule, wordMatcher, rules);
@@ -236,11 +205,7 @@ export function simplifyRules(
  * of those metrics. Safety cap at 16 iterations — a real grammar
  * converges in 2-3.
  */
-function normalizeToFixpoint(
-	rule: Rule,
-	wordMatcher: RegExp | undefined,
-	rules: Readonly<Record<string, Rule>>
-): Rule {
+function normalizeToFixpoint(rule: Rule, wordMatcher: RegExp | undefined, rules: Readonly<Record<string, Rule>>): Rule {
 	const MAX_ITERS = 16;
 	let current = rule;
 	for (let i = 0; i < MAX_ITERS; i++) {
@@ -283,12 +248,7 @@ function rulesStructurallyEqual(a: Rule, b: Rule): boolean {
  * Preserves separator/trailing/leading metadata on the repeat.
  */
 function hoistFieldOutOfSingleContentWrapper(rule: Rule): Rule {
-	if (
-		rule.type !== 'optional' &&
-		rule.type !== 'repeat' &&
-		rule.type !== 'repeat1'
-	)
-		return rule;
+	if (rule.type !== 'optional' && rule.type !== 'repeat' && rule.type !== 'repeat1') return rule;
 	const inner = rule.content;
 	if (inner.type !== 'field') return rule;
 	const wrapper: Rule = { ...rule, content: inner.content };
@@ -439,9 +399,7 @@ function countFieldNames(members: Rule[]): Map<string, number> {
  * branch's top-level members, or null if no such name exists.
  * Deterministic tie-break: the field order of the first branch.
  */
-function firstFieldNameSharedExactlyOncePerBranch(
-	perBranchCounts: Map<string, number>[]
-): string | null {
+function firstFieldNameSharedExactlyOncePerBranch(perBranchCounts: Map<string, number>[]): string | null {
 	if (perBranchCounts.length === 0) return null;
 	const first = perBranchCounts[0]!;
 	outer: for (const [name, count] of first) {
@@ -476,42 +434,26 @@ function extractFieldAcrossBranches(perBranch: Rule[][], name: string): Rule {
 		if (!extracted)
 			return {
 				type: 'choice',
-				members: perBranch.map((b) =>
-					b.length === 1 ? b[0]! : { type: 'seq', members: b }
-				)
+				members: perBranch.map((b) => (b.length === 1 ? b[0]! : { type: 'seq', members: b }))
 			};
 		hoistedFieldTemplate = hoistedFieldTemplate ?? extracted;
 		hoistedContents.push(extracted.content);
 		residuals.push(
-			rest.length === 0
-				? { type: 'seq', members: [] }
-				: rest.length === 1
-					? rest[0]!
-					: { type: 'seq', members: rest }
+			rest.length === 0 ? { type: 'seq', members: [] } : rest.length === 1 ? rest[0]! : { type: 'seq', members: rest }
 		);
 	}
 	const unionedContent: Rule =
-		hoistedContents.length === 1
-			? hoistedContents[0]!
-			: { type: 'choice', members: hoistedContents };
+		hoistedContents.length === 1 ? hoistedContents[0]! : { type: 'choice', members: hoistedContents };
 	const hoistedField: Rule = {
 		...hoistedFieldTemplate!,
 		content: unionedContent
 	};
-	const hasEmptyResidual = residuals.some(
-		(r) => r.type === 'seq' && r.members.length === 0
-	);
-	const nonEmptyResiduals = residuals.filter(
-		(r) => !(r.type === 'seq' && r.members.length === 0)
-	);
+	const hasEmptyResidual = residuals.some((r) => r.type === 'seq' && r.members.length === 0);
+	const nonEmptyResiduals = residuals.filter((r) => !(r.type === 'seq' && r.members.length === 0));
 	if (nonEmptyResiduals.length === 0) return hoistedField;
 	const residualCore: Rule =
-		nonEmptyResiduals.length === 1
-			? nonEmptyResiduals[0]!
-			: { type: 'choice', members: nonEmptyResiduals };
-	const residualPart: Rule = hasEmptyResidual
-		? { type: 'optional', content: residualCore }
-		: residualCore;
+		nonEmptyResiduals.length === 1 ? nonEmptyResiduals[0]! : { type: 'choice', members: nonEmptyResiduals };
+	const residualPart: Rule = hasEmptyResidual ? { type: 'optional', content: residualCore } : residualCore;
 	return { type: 'seq', members: [hoistedField, residualPart] };
 }
 
@@ -628,18 +570,14 @@ function positionsAreMergeable(position: readonly Rule[]): boolean {
 		return position.every((p) => p.type === 'symbol' && p.name === first.name);
 	}
 	if (first.type === 'supertype') {
-		return position.every(
-			(p) => p.type === 'supertype' && p.name === first.name
-		);
+		return position.every((p) => p.type === 'supertype' && p.name === first.name);
 	}
 	if (first.type === 'string') {
 		// Same literal at same position is fine. Different literals at
 		// same position means the literal itself is the discriminator
 		// — that's the "choice of literals" case (handled by
 		// separator / enum detection; leave for now).
-		return position.every(
-			(p) => p.type === 'string' && p.value === first.value
-		);
+		return position.every((p) => p.type === 'string' && p.value === first.value);
 	}
 	// Other kinds: structurally identical means equal by shape.
 	// Conservative: require literal JSON equality.
@@ -661,10 +599,7 @@ function mergePosition(position: readonly Rule[]): Rule {
 	if (first.type === 'field') {
 		const fields = position.filter((p): p is FieldRule => p.type === 'field');
 		const contents = dedupeByJson(fields.map((f) => f.content));
-		const mergedContent: Rule =
-			contents.length === 1
-				? contents[0]!
-				: { type: 'choice', members: contents };
+		const mergedContent: Rule = contents.length === 1 ? contents[0]! : { type: 'choice', members: contents };
 		return { ...first, content: mergedContent };
 	}
 	return first;
@@ -718,9 +653,7 @@ export function hoistInnerFieldsForTemplate(rule: Rule): Rule {
 		case 'terminal':
 			return {
 				...rule,
-				content: hoistInnerFieldsForTemplate(
-					(rule as { content: Rule }).content
-				)
+				content: hoistInnerFieldsForTemplate((rule as { content: Rule }).content)
 			} as Rule;
 		case 'field': {
 			const recursed: Rule = {
@@ -749,8 +682,7 @@ export function inlineGroupRefs(
 	rules: Readonly<Record<string, Rule>>,
 	visited: ReadonlySet<string> = new Set()
 ): Rule {
-	const recurse = (r: Rule, v: ReadonlySet<string>): Rule =>
-		inlineGroupRefs(r, rules, v);
+	const recurse = (r: Rule, v: ReadonlySet<string>): Rule => inlineGroupRefs(r, rules, v);
 	switch (rule.type) {
 		case 'symbol': {
 			if (!rule.hidden) return rule;
@@ -808,9 +740,7 @@ function resolveGroupOrMultiInlineTarget(target: Rule): Rule | null {
  * can detect `optional(repeat(...))`, `group(repeat1(...))`, etc.
  * Returns `null` for anything that isn't ultimately a repeat shape.
  */
-export function extractRepeatShape(
-	rule: Rule
-): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
+export function extractRepeatShape(rule: Rule): { repeat: RepeatRule | Repeat1Rule; nonEmpty: boolean } | null {
 	switch (rule.type) {
 		case 'repeat':
 			return { repeat: rule, nonEmpty: false };

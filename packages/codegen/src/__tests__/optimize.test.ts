@@ -16,10 +16,7 @@ import {
 import type { Rule } from '../compiler/rule.ts';
 import type { LinkedGrammar, ExternalRole } from '../compiler/types.ts';
 
-function makeLinked(
-	rules: Record<string, Rule>,
-	overrides?: Partial<LinkedGrammar>
-): LinkedGrammar {
+function makeLinked(rules: Record<string, Rule>, overrides?: Partial<LinkedGrammar>): LinkedGrammar {
 	return {
 		name: 'test',
 		rules,
@@ -34,12 +31,8 @@ function makeLinked(
 
 describe('Optimize — rulesEqual', () => {
 	it('compares string rules', () => {
-		expect(
-			rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'a' })
-		).toBe(true);
-		expect(
-			rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'b' })
-		).toBe(false);
+		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'a' })).toBe(true);
+		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'string', value: 'b' })).toBe(false);
 	});
 
 	it('compares seq rules recursively', () => {
@@ -51,12 +44,7 @@ describe('Optimize — rulesEqual', () => {
 	});
 
 	it('different types are not equal', () => {
-		expect(
-			rulesEqual(
-				{ type: 'string', value: 'a' },
-				{ type: 'pattern', value: 'a' }
-			)
-		).toBe(false);
+		expect(rulesEqual({ type: 'string', value: 'a' }, { type: 'pattern', value: 'a' })).toBe(false);
 	});
 });
 
@@ -184,9 +172,7 @@ describe('Optimize — optimize()', () => {
 		expect(optimized.rules['item']).toBeDefined();
 		// Field metadata must be preserved
 		const item = optimized.rules['item'] as any;
-		const fieldMember =
-			item.members?.find((m: any) => m.type === 'field') ??
-			(item.type === 'field' ? item : null);
+		const fieldMember = item.members?.find((m: any) => m.type === 'field') ?? (item.type === 'field' ? item : null);
 		if (fieldMember) {
 			expect(fieldMember.name).toBe('body');
 		}
@@ -223,16 +209,8 @@ describe('Optimize — fanOutSeqChoices (T060)', () => {
 		const branches = (out as any).members;
 		expect(branches).toHaveLength(2);
 		expect(branches[0].type).toBe('seq');
-		expect(branches[0].members.map((m: any) => m.value)).toEqual([
-			'a',
-			'b',
-			'd'
-		]);
-		expect(branches[1].members.map((m: any) => m.value)).toEqual([
-			'a',
-			'c',
-			'd'
-		]);
+		expect(branches[0].members.map((m: any) => m.value)).toEqual(['a', 'b', 'd']);
+		expect(branches[1].members.map((m: any) => m.value)).toEqual(['a', 'c', 'd']);
 	});
 
 	it('leaves multi-choice seqs alone', () => {
@@ -327,11 +305,7 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		expect(out.type).toBe('seq');
 		expect(out.members[0]).toEqual({ type: 'string', value: 'a' });
 		expect(out.members[1].type).toBe('choice');
-		expect(out.members[1].members.map((m: any) => m.value)).toEqual([
-			'x',
-			'y',
-			'z'
-		]);
+		expect(out.members[1].members.map((m: any) => m.value)).toEqual(['x', 'y', 'z']);
 	});
 
 	it('extracts a common suffix across seq branches', () => {
@@ -472,10 +446,7 @@ describe('Optimize — factorChoiceBranches (T061)', () => {
 		expect(out.type).toBe('seq');
 		expect(out.members[1].type).toBe('optional');
 		expect(out.members[1].content.type).toBe('choice');
-		expect(out.members[1].content.members.map((m: any) => m.value)).toEqual([
-			'b',
-			'd'
-		]);
+		expect(out.members[1].content.members.map((m: any) => m.value)).toEqual(['b', 'd']);
 	});
 });
 

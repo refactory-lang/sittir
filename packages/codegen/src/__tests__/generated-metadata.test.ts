@@ -25,9 +25,7 @@ describe('generated metadata', () => {
 		const sourceFileEntry = metadata.kindByName.get('source_file');
 		expect(sourceFileEntry?.kindId).toBe(1);
 		expect(sourceFileEntry?.sourceArtifact).toBe('parser.c');
-		expect(sourceFileEntry?.presence).toBe(
-			KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals
-		);
+		expect(sourceFileEntry?.presence).toBe(KindPresenceFlag.TSGrammar | KindPresenceFlag.TSInternals);
 		expect(metadata.kindByName.has('missing')).toBe(false);
 
 		const itemEntry = metadata.fieldByName.get('item');
@@ -74,8 +72,7 @@ describe('generated metadata', () => {
 		const language = {
 			nodeTypeCount: 5,
 			fieldCount: 2,
-			nodeTypeForId: (id: number) =>
-				['end', 'identifier', ';', 'hidden', 'identifier'][id] ?? null,
+			nodeTypeForId: (id: number) => ['end', 'identifier', ';', 'hidden', 'identifier'][id] ?? null,
 			nodeTypeIsVisible: (id: number) => id === 1 || id === 2 || id === 4,
 			nodeTypeIsNamed: (id: number) => id === 1 || id === 4,
 			fieldNameForId: (id: number) => [null, 'item', 'name'][id] ?? null

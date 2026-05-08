@@ -19,10 +19,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 				2,
 				g.seq(
 					{ type: 'string', value: '[' } as any,
-					g.choice(
-						{ type: 'blank' } as any,
-						g.repeat({ type: 'symbol', name: 'X' } as any)
-					),
+					g.choice({ type: 'blank' } as any, g.repeat({ type: 'symbol', name: 'X' } as any)),
 					{ type: 'string', value: ']' } as any
 				)
 			);
@@ -66,10 +63,7 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			const g = globalThis as any;
 			const original = g.seq(
 				{ type: 'string', value: '(' } as any,
-				g.choice(
-					{ type: 'symbol', name: 'X' } as any,
-					{ type: 'symbol', name: 'Y' } as any
-				),
+				g.choice({ type: 'symbol', name: 'X' } as any, { type: 'symbol', name: 'Y' } as any),
 				{ type: 'string', value: ')' } as any
 			);
 			transform(original, {
@@ -84,15 +78,9 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 		const { ctx } = withWireContext('mixed', () => {
 			const g = globalThis as any;
 			const original = g.seq(
-				g.choice(
-					{ type: 'symbol', name: 'A' } as any,
-					{ type: 'symbol', name: 'B' } as any
-				),
+				g.choice({ type: 'symbol', name: 'A' } as any, { type: 'symbol', name: 'B' } as any),
 				{ type: 'string', value: '|' } as any,
-				g.choice(
-					{ type: 'symbol', name: 'C' } as any,
-					{ type: 'symbol', name: 'D' } as any
-				)
+				g.choice({ type: 'symbol', name: 'C' } as any, { type: 'symbol', name: 'D' } as any)
 			);
 			transform(original, {
 				'0/0': variant('left_a'),
@@ -100,9 +88,6 @@ describe('tryHoistSiblingVariants (via transform)', () => {
 			});
 		});
 		expect(ctx.conflictGroups).toEqual([]);
-		expect(ctx.polymorphVariants.map((v) => v.child).sort()).toEqual([
-			'left_a',
-			'right_c'
-		]);
+		expect(ctx.polymorphVariants.map((v) => v.child).sort()).toEqual(['left_a', 'right_c']);
 	});
 });

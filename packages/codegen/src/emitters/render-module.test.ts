@@ -22,26 +22,18 @@ describe('emitHashFiles', () => {
 
 	it('bakes the same hash into both files', () => {
 		const emit = emitHashFiles('python', sample);
-		const rsMatch = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(
-			emit.hashRs.contents
-		);
-		const tsMatch = /TEMPLATE_BUNDLE_HASH = '([0-9a-f]{64})'/.exec(
-			emit.hashTs.contents
-		);
+		const rsMatch = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(emit.hashRs.contents);
+		const tsMatch = /TEMPLATE_BUNDLE_HASH = '([0-9a-f]{64})'/.exec(emit.hashTs.contents);
 		expect(rsMatch?.[1]).toBeDefined();
 		expect(rsMatch?.[1]).toBe(tsMatch?.[1]);
 	});
 
 	it('references the one-flag regen command in generated headers', () => {
 		const emit = emitHashFiles('typescript', sample);
-		expect(emit.hashRs.contents).toMatch(
-			/@generated from packages\/typescript\/templates/
-		);
+		expect(emit.hashRs.contents).toMatch(/@generated from packages\/typescript\/templates/);
 		expect(emit.hashRs.contents).toMatch(/--grammar typescript --all/);
 		expect(emit.hashRs.contents).not.toMatch(/--render-module/);
-		expect(emit.hashTs.contents).toMatch(
-			/@generated from packages\/typescript\/templates/
-		);
+		expect(emit.hashTs.contents).toMatch(/@generated from packages\/typescript\/templates/);
 		expect(emit.hashTs.contents).toMatch(/--grammar typescript --all/);
 		expect(emit.hashTs.contents).not.toMatch(/--render-module/);
 	});
@@ -59,12 +51,8 @@ describe('emitHashFiles', () => {
 		expect(r.hashRs.path).not.toBe(p.hashRs.path);
 		// Same templates -> same hash even across grammars (the hash
 		// function doesn't know the grammar, just the files).
-		const rHash = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(
-			r.hashRs.contents
-		)?.[1];
-		const pHash = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(
-			p.hashRs.contents
-		)?.[1];
+		const rHash = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(r.hashRs.contents)?.[1];
+		const pHash = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(p.hashRs.contents)?.[1];
 		expect(rHash).toBe(pHash);
 	});
 });

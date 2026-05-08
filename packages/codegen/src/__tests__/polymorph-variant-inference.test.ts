@@ -2,7 +2,7 @@
  * polymorph-variant-inference.test.ts — targeted unit tests for polymorph
  * `$variant` stamping inside `nodeToConfig`.
  *
- * Exercises both the 'override' (first-named-child $type lookup) and
+ * Exercises both the 'override' (named-child $type lookup) and
  * 'promoted' (field-presence on derived config) paths. The helper's
  * exported name may shift under the in-flight `PolymorphVariantDescriptor`
  * refactor — tests assert PUBLIC BEHAVIOR by calling `nodeToConfig` and
@@ -28,16 +28,16 @@ const KIND = {
 	plain_kind: 7,
 	x: 8,
 	dotdot: 9,
+	token_tree: 10,
+	delim_token_tree_paren: 11
 } as const;
 
-const kindNames: ReadonlyMap<number, string> = new Map(
-	Object.entries(KIND).map(([name, id]) => [id, name])
-);
+const kindNames: ReadonlyMap<number, string> = new Map(Object.entries(KIND).map(([name, id]) => [id, name]));
 
 const kindNameFromId = (id: number): string | undefined => kindNames.get(id);
 
 // ---------------------------------------------------------------------------
-// Override path — $variant derives from the kind of the first NAMED child.
+// Override path — $variant derives from the kind of a matching NAMED child.
 // ---------------------------------------------------------------------------
 
 describe('nodeToConfig — polymorph $variant (override source)', () => {
@@ -53,10 +53,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 			$type: KIND.assignment,
 			$children: [{ $type: KIND.assignment_eq, $named: true }]
 		};
-		const cfg = nodeToConfig(
-			data,
-			makeOpts({ assignment_eq: 'eq', assignment_type: 'type' })
-		);
+		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq', assignment_type: 'type' }));
 		expect(cfg.$variant).toBe('eq');
 	});
 
@@ -92,6 +89,90 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		const cfg = nodeToConfig(data, makeOpts({ assignment_eq: 'eq' }));
 		expect('$variant' in cfg).toBe(false);
 	});
+
+	it('matches hidden helper child kinds by variant suffix when exact kind lookup misses', () => {
+		const data = {
+			$type: KIND.token_tree,
+			$children: [{ $type: KIND.delim_token_tree_paren, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_paren: 'paren',
+						token_tree_bracket: 'bracket',
+						token_tree_brace: 'brace'
+					}
+				}
+			},
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('paren');
+	});
+
+	it('prefers the longest matching variant suffix when matches overlap', () => {
+		const data = {
+			$type: KIND.token_tree,
+			$children: [{ $type: KIND.delim_token_tree_paren, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_paren: 'paren',
+						token_tree_tree_paren: 'tree_paren'
+					}
+				}
+			},
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('tree_paren');
+	});
+
+	it('falls back to the CST wrapper child kind when native read collapsed the helper kind', () => {
+		const data = {
+			$type: KIND.token_tree,
+			$children: [{ $type: KIND.some_unregistered, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_paren: 'paren',
+						token_tree_bracket: 'bracket'
+					}
+				}
+			},
+			firstNamedChildKindHint: 'token_tree_paren',
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('paren');
+	});
+
+	it('falls back to later CST named children when the discriminating wrapper is not first', () => {
+		const data = {
+			$type: KIND.assignment,
+			$children: [{ $type: KIND.some_unregistered, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				assignment: {
+					source: 'override',
+					childKind: {
+						assignment_eq: 'eq',
+						assignment_type: 'type'
+					}
+				}
+			},
+			firstNamedChildKindHint: 'some_unregistered',
+			namedChildKindHints: ['some_unregistered', 'assignment_type'],
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('type');
+	});
 });
 
 // ---------------------------------------------------------------------------
@@ -99,9 +180,7 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 // ---------------------------------------------------------------------------
 
 describe('nodeToConfig — polymorph $variant (promoted source)', () => {
-	const makeOpts = (
-		fields: Record<string, readonly string[]>
-	): NodeToConfigOpts => ({
+	const makeOpts = (fields: Record<string, readonly string[]>): NodeToConfigOpts => ({
 		polymorphVariants: {
 			range_expression: { source: 'promoted', fields }
 		},

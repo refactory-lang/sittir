@@ -4,21 +4,14 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import {
-	AssembledBranch,
-	AssembledKeyword,
-	AssembledPattern
-} from '../compiler/node-map.ts';
+import { AssembledBranch, AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { emitHashFiles, emitRenderModule } from '../emitters/render-module.ts';
 import { fixturesOutputPath } from '../emitters/parity-fixtures.ts';
 
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
-	/\/$/,
-	''
-);
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 function makeMinimalNodeMap(): NodeMap {
 	const nameRule: SeqRule = {
@@ -31,15 +24,9 @@ function makeMinimalNodeMap(): NodeMap {
 			}
 		]
 	};
-	const nodes = new Map<
-		string,
-		AssembledBranch | AssembledPattern | AssembledKeyword
-	>([
+	const nodes = new Map<string, AssembledBranch | AssembledPattern | AssembledKeyword>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
-		[
-			'identifier',
-			new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
-		],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
 		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
 	]);
 	return {
@@ -62,30 +49,18 @@ describe('render pipeline optimization — retained baseline convergence', () =>
 		] as const;
 
 		const hashes = emitHashFiles('rust', files);
-		expect(hashes.hashRs.path).toBe(
-			'rust/crates/sittir-rust/src/render/hash.rs'
-		);
+		expect(hashes.hashRs.path).toBe('rust/crates/sittir-rust/src/render/hash.rs');
 		expect(hashes.hashTs.path).toBe('packages/rust/src/hash.ts');
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
-		expect(emitted.templatesRs.path).toBe(
-			'rust/crates/sittir-rust/src/render/templates.rs'
-		);
-		expect(emitted.libRs.path).toBe(
-			'rust/crates/sittir-rust/src/render/mod.rs'
-		);
+		expect(emitted.templatesRs.path).toBe('rust/crates/sittir-rust/src/render/templates.rs');
+		expect(emitted.libRs.path).toBe('rust/crates/sittir-rust/src/render/mod.rs');
 	});
 
 	it('writes extracted parity fixtures beside the grammar native crate', () => {
-		expect(fixturesOutputPath('rust')).toBe(
-			'rust/crates/sittir-rust/test-fixtures.json'
-		);
-		expect(fixturesOutputPath('typescript')).toBe(
-			'rust/crates/sittir-typescript/test-fixtures.json'
-		);
-		expect(fixturesOutputPath('python')).toBe(
-			'rust/crates/sittir-python/test-fixtures.json'
-		);
+		expect(fixturesOutputPath('rust')).toBe('rust/crates/sittir-rust/test-fixtures.json');
+		expect(fixturesOutputPath('typescript')).toBe('rust/crates/sittir-typescript/test-fixtures.json');
+		expect(fixturesOutputPath('python')).toBe('rust/crates/sittir-python/test-fixtures.json');
 	});
 
 	it('tracks grammar-owned native crates in the Cargo workspace instead of separate render modules', () => {
@@ -101,31 +76,22 @@ describe('render pipeline optimization — level 1 borrowed askama views', () =>
 		const files = [
 			{
 				filename: 'function_item.jinja',
-				content:
-					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }}'
+				content: '{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %} {{ children | join(" ") }}'
 			}
 		] as const;
 
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap());
-		expect(emitted.templatesRs.contents).toContain(
-			"pub struct FunctionItemTemplate<'a> {"
-		);
+		expect(emitted.templatesRs.contents).toContain("pub struct FunctionItemTemplate<'a> {");
 		// Phase D: field views use SingleNonterminalView (Askama streaming) not bare &'a str.
 		// T009: module-level `use` imports — short names.
-		expect(emitted.templatesRs.contents).toContain(
-			"    pub name: SingleNonterminalView<'a>,"
-		);
+		expect(emitted.templatesRs.contents).toContain("    pub name: SingleNonterminalView<'a>,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub text: &'a str,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub variant: &'a str,");
-		expect(emitted.templatesRs.contents).not.toContain(
-			"    pub children: ListView<'a>,"
-		);
+		expect(emitted.templatesRs.contents).not.toContain("    pub children: ListView<'a>,");
 		expect(emitted.templatesRs.contents).not.toContain("    pub name_list: &'a [String],");
-		expect(emitted.templatesRs.contents).not.toContain("    pub name_leading_sep: bool,");
-		expect(emitted.templatesRs.contents).not.toContain("    pub name_trailing_sep: bool,");
-		expect(emitted.templatesRs.contents).not.toContain(
-			'.cloned().unwrap_or_default()'
-		);
+		expect(emitted.templatesRs.contents).not.toContain('    pub name_leading_sep: bool,');
+		expect(emitted.templatesRs.contents).not.toContain('    pub name_trailing_sep: bool,');
+		expect(emitted.templatesRs.contents).not.toContain('.cloned().unwrap_or_default()');
 	});
 });
 
@@ -134,8 +100,7 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const files = [
 			{
 				filename: 'function_item.jinja',
-				content:
-					'{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %}'
+				content: '{# @generated #}\n{% if name | isPresent %}{{ name }}{% endif %}'
 			}
 		] as const;
 
@@ -148,7 +113,10 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					parser: {
 						cSymbol: 'sym_function_item',
 						parserName: 'function_item',
-						anon: false, aux: false, alias: false, hidden: false
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
 					}
 				},
 				identifier: {
@@ -156,7 +124,10 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					parser: {
 						cSymbol: 'sym_identifier',
 						parserName: 'identifier',
-						anon: false, aux: false, alias: false, hidden: false
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
 					}
 				},
 				kw_fn: {
@@ -164,7 +135,10 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					parser: {
 						cSymbol: 'anon_sym_fn',
 						parserName: 'kw_fn',
-						anon: true, aux: false, alias: false, hidden: false
+						anon: true,
+						aux: false,
+						alias: false,
+						hidden: false
 					}
 				}
 			},
@@ -183,32 +157,22 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		expect(emitted.bridgeRs.contents).toContain('fn missing_required_field');
 		expect(emitted.bridgeRs.contents).toContain('fn resolve_children');
 		// render_dispatch is a thin shim in dispatch.rs delegating to bridge::render_nodedata_into.
-		expect(emitted.dispatchRs.contents).toContain(
-			'pub fn render_dispatch(node: &NodeData)'
-		);
-		expect(emitted.dispatchRs.contents).toContain(
-			'render_nodedata_into(node, &mut buf)'
-		);
+		expect(emitted.dispatchRs.contents).toContain('pub fn render_dispatch(node: &NodeData)');
+		expect(emitted.dispatchRs.contents).toContain('render_nodedata_into(node, &mut buf)');
 		// Per-kind render functions are inlined into bridge::render_nodedata_into.
 		expect(emitted.bridgeRs.contents).toContain('fn render_nodedata_into(');
 		// Phase D: dispatch inlined into bridge uses numeric KindId (42).
 		expect(emitted.bridgeRs.contents).toContain('42 =>');
-		expect(emitted.bridgeRs.contents).toContain(
-			'resolve_field(node, "name", true)'
-		);
+		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
 		expect(emitted.bridgeRs.contents).toContain(
 			`format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_)`
 		);
 		// templates.rs has no render functions — only struct definitions.
 		expect(emitted.templatesRs.contents).not.toContain('fn render_function_item(');
 		expect(emitted.templatesRs.contents).not.toContain('TemplateContext');
-		expect(emitted.templatesRs.contents).not.toContain(
-			'pub struct RustGrammarMeta'
-		);
+		expect(emitted.templatesRs.contents).not.toContain('pub struct RustGrammarMeta');
 		// mod.rs re-exports from dispatch and transport (spec 024 split).
-		expect(emitted.libRs.contents).toContain(
-			'pub use dispatch::render_dispatch;'
-		);
+		expect(emitted.libRs.contents).toContain('pub use dispatch::render_dispatch;');
 		expect(emitted.libRs.contents).toContain(
 			'pub use transport::{render_transport, render_transport_dispatch, render_transport_parts, AnyTransport};'
 		);
@@ -230,7 +194,10 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 					parser: {
 						cSymbol: 'sym_function_item',
 						parserName: 'function_item',
-						anon: false, aux: false, alias: false, hidden: false
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
 					}
 				}
 			},
@@ -240,20 +207,12 @@ describe('render pipeline optimization — level 3 direct render path', () => {
 		const emitted = emitRenderModule('rust', files, makeMinimalNodeMap(), generatedIdTables);
 
 		// Per-kind render logic is inlined into bridge::render_nodedata_into.
-		expect(emitted.bridgeRs.contents).toContain(
-			'resolve_field(node, "name", true)'
-		);
+		expect(emitted.bridgeRs.contents).toContain('resolve_field(node, "name", true)');
 	});
 
 	it('removes the shared prepare bridge while keeping the native render boundary unchanged', () => {
-		const coreLib = readFileSync(
-			resolve(repoRoot, 'rust/crates/sittir-core/src/lib.rs'),
-			'utf8'
-		);
-		const rustNapi = readFileSync(
-			resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'),
-			'utf8'
-		);
+		const coreLib = readFileSync(resolve(repoRoot, 'rust/crates/sittir-core/src/lib.rs'), 'utf8');
+		const rustNapi = readFileSync(resolve(repoRoot, 'rust/crates/sittir-rust/src/lib.rs'), 'utf8');
 
 		expect(coreLib).not.toContain('pub mod prepare;');
 		expect(rustNapi).toContain('render_nodedata_into(node');

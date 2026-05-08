@@ -55,7 +55,6 @@ function kindDiscriminantOrLiteral(
 import type {
 	AssembledNode,
 	AssembledNonterminal,
-	
 	AssembledPattern,
 	AssembledKeyword,
 	AssembledToken
@@ -81,6 +80,7 @@ import {
 	slotKindNames,
 	slotLiteralValues,
 	resolveHiddenKeywordLiteral,
+	combineSlotCardinality,
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
@@ -89,17 +89,10 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import {
-	collectTransportProjection,
-	resolveTransportReferenceKind
-} from './transport-projection.ts';
+import { collectTransportProjection, resolveTransportReferenceKind } from './transport-projection.ts';
 
 type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
-type TerminalNode =
-	| AssembledPattern
-	| AssembledKeyword
-	| AssembledToken
-	| AssembledEnum;
+type TerminalNode = AssembledPattern | AssembledKeyword | AssembledToken | AssembledEnum;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -116,8 +109,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	const { grammar, nodeMap } = config;
 	const { generatedIdTables } = config;
 	const grammarKeys = buildGrammarKeySet(grammar);
-	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } =
-		collectNodesByCategory(nodeMap);
+	const { structNodes, leafKinds, supertypes, keywordKinds, leafValueMap } = collectNodesByCategory(nodeMap);
 
 	const grammarPrefix = grammar.charAt(0).toUpperCase() + grammar.slice(1);
 	const grammarAlias = `${grammarPrefix}Grammar`;
@@ -131,11 +123,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// the AnyTransport::FromNapiValue dispatch so wire $type values from
 	// any source resolve to the same KindId. Coverage gap fix (Phase B).
 	const kindEntries = generatedIdTables
-		? collectKindEntries(
-				collectCatalogKinds(generatedIdTables),
-				nodeMap,
-				generatedIdTables
-			)
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
 	const lines: string[] = [];
@@ -150,25 +138,16 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 	lines.push(`export type { ${grammarAlias} };`);
 	lines.push('');
-	lines.push(
-		`export type NodeData<K extends NodeKind<${grammarAlias}>> = BaseNodeData<${grammarAlias}, K>;`
-	);
-	lines.push(
-		`export type NodeConfig<K extends NodeKind<${grammarAlias}>> = BaseNodeConfig<${grammarAlias}, K>;`
-	);
-	lines.push(
-		`export type TreeNode<K extends NodeKind<${grammarAlias}>> = BaseTreeNode<${grammarAlias}, K>;`
-	);
+	lines.push(`export type NodeData<K extends NodeKind<${grammarAlias}>> = BaseNodeData<${grammarAlias}, K>;`);
+	lines.push(`export type NodeConfig<K extends NodeKind<${grammarAlias}>> = BaseNodeConfig<${grammarAlias}, K>;`);
+	lines.push(`export type TreeNode<K extends NodeKind<${grammarAlias}>> = BaseTreeNode<${grammarAlias}, K>;`);
 	lines.push('');
 
 	// LeafScalarMap
 	lines.push('export type LeafScalarMap = {');
 	for (const kind of leafKinds) {
 		const node = nodeMap.nodes.get(kind);
-		if (
-			node?.modelType === 'enum' &&
-			node.values.every((v) => /^\d+$/.test(v))
-		) {
+		if (node?.modelType === 'enum' && node.values.every((v) => /^\d+$/.test(v))) {
 			lines.push(`  ${quoteKey(kind)}: number;`);
 		}
 	}
@@ -185,9 +164,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		}
 		const values = leafValueMap.get(kind);
 		if (values && values.length > 0) {
-			lines.push(
-				`  ${quoteKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`
-			);
+			lines.push(`  ${quoteKey(kind)}: ${values.map((v) => JSON.stringify(v)).join(' | ')};`);
 		}
 	}
 	lines.push('};');
@@ -251,9 +228,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 				);
 			}
 			if (node.forms.length > 1) {
-				lines.push(
-					`export type ${node.typeName} = ${formTypeNames.join(' | ')};`
-				);
+				lines.push(`export type ${node.typeName} = ${formTypeNames.join(' | ')};`);
 			} else {
 				// Single-form polymorph — expose the parent kind's type name
 				// as an alias over the lone form so consumer references to
@@ -262,13 +237,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 			}
 			polymorphTypeNames.set(node.kind, formTypeNames);
 		} else {
-			emitInterface(
-				lines,
-				node,
-				nodeMap,
-				lookupUnion,
-				kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries)
-			);
+			emitInterface(lines, node, nodeMap, lookupUnion, kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries));
 		}
 	}
 	lines.push('');
@@ -280,9 +249,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		if (generatedTypes.has(name)) continue;
 		generatedTypes.add(name);
 		const fallbackDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(
-			`export type ${name} = Terminal<${fallbackDiscriminant}, string>;`
-		);
+		lines.push(`export type ${name} = Terminal<${fallbackDiscriminant}, string>;`);
 	}
 	if (missingKindTypes.size > 0) lines.push('');
 
@@ -376,9 +343,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 	assertNoCamelCaseCollisions(nodeKinds);
 
 	// 1. Per-kind namespace interfaces
-	lines.push(
-		'// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)'
-	);
+	lines.push('// Per-kind namespace interfaces — one computed base per kind (spec 008 US1)');
 	for (const kind of nodeKinds) {
 		const node = nodeMap.nodes.get(kind)!;
 		if (!generatedTypes.has(node.typeName)) continue;
@@ -397,27 +362,15 @@ export function emitTypes(config: EmitTypesConfig): string {
 	lines.push('');
 
 	// 3. Generic accessors over NamespaceMap
-	lines.push(
-		"export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];"
-	);
-	lines.push(
-		"export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];"
-	);
-	lines.push(
-		"export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];"
-	);
-	lines.push(
-		"export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];"
-	);
+	lines.push("export type ConfigFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Config'];");
+	lines.push("export type FluentFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Fluent'];");
+	lines.push("export type LooseFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Loose'];");
+	lines.push("export type TreeFor<K extends keyof NamespaceMap> = NamespaceMap[K]['Tree'];");
 	lines.push('');
 
 	// 4. Namespace sugar — declaration-merges with the data interface
-	lines.push(
-		'// Namespace sugar — merges with each data interface so consumers can write'
-	);
-	lines.push(
-		'// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.'
-	);
+	lines.push('// Namespace sugar — merges with each data interface so consumers can write');
+	lines.push('// <TypeName>.Config / .Fluent / .Loose / .Tree alongside using <TypeName> as a type.');
 	const refineInfoByKind = new Map<string, RefineKindInfo>();
 	for (const info of refineInfos ?? []) refineInfoByKind.set(info.kind, info);
 	for (const kind of nodeKinds) {
@@ -463,8 +416,7 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'BooleanKeyword',
 		...(usesBitflag ? ['Bitflag'] : [])
 	];
-	lines[sittirImportIndex] =
-		`import type { ${importedNames.join(', ')} } from '@sittir/types';`;
+	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
 
 	return lines.join('\n');
 }
@@ -611,19 +563,13 @@ function emitTransportDeclarations(
 	const projection = collectTransportProjection(nodeMap);
 	const transportNodeKinds = projection.nodeKinds;
 
-	lines.push(
-		'// Native render transport types — data-only JS → native boundary'
-	);
-	lines.push(
-		'export interface TerminalTransport<ID extends number = number, V extends string = string> {'
-	);
+	lines.push('// Native render transport types — data-only JS → native boundary');
+	lines.push('export interface TerminalTransport<ID extends number = number, V extends string = string> {');
 	lines.push('  readonly $type: ID;');
-	lines.push("  readonly $source?: 0 | 1 | 2;");
+	lines.push('  readonly $source?: 0 | 1 | 2;');
 	lines.push('  readonly $named?: boolean;');
 	lines.push('  readonly $text: V;');
-	lines.push(
-		'  readonly $span?: { readonly start: number; readonly end: number };'
-	);
+	lines.push('  readonly $span?: { readonly start: number; readonly end: number };');
 	lines.push('  readonly $nodeHandle?: number;');
 	lines.push('  readonly $childIndex?: number;');
 	lines.push('}');
@@ -638,13 +584,7 @@ function emitTransportDeclarations(
 			case 'branch':
 			case 'polymorph':
 			case 'group':
-				emitStructuralTransportNamespace(
-					lines,
-					node,
-					nodeMap,
-					transportNodeKinds,
-					kindEntries
-				);
+				emitStructuralTransportNamespace(lines, node, nodeMap, transportNodeKinds, kindEntries);
 				break;
 			case 'pattern':
 			case 'keyword':
@@ -664,11 +604,7 @@ function emitTransportDeclarations(
 		const members = st.subtypes
 			.map((kind) => nodeMap.nodes.get(kind))
 			.filter((member): member is AssembledNode => {
-				return (
-					member !== undefined &&
-					generatedTypes.has(member.typeName) &&
-					transportNodeKinds.has(member.kind)
-				);
+				return member !== undefined && generatedTypes.has(member.typeName) && transportNodeKinds.has(member.kind);
 			})
 			.map((member) => `${member.typeName}.Transport`);
 		if (members.length === 0) continue;
@@ -678,14 +614,10 @@ function emitTransportDeclarations(
 		lines.push('');
 	}
 
-	lines.push(
-		'export type TransportFor<K extends SyntaxKind | keyof KindMap> ='
-	);
+	lines.push('export type TransportFor<K extends SyntaxKind | keyof KindMap> =');
 	for (const node of projection.nodes) {
 		const kind = node.kind;
-		lines.push(
-			`  K extends ${JSON.stringify(kind)} ? ${node.typeName}.Transport :`
-		);
+		lines.push(`  K extends ${JSON.stringify(kind)} ? ${node.typeName}.Transport :`);
 	}
 	lines.push('  never;');
 	lines.push('');
@@ -696,9 +628,7 @@ function emitTransportDeclarations(
 	}
 	for (const literal of projection.literals) {
 		const disc = resolveTransportDiscriminant(literal.kind, kindEntries);
-		lines.push(
-			`  | LiteralTransport<${disc}, ${JSON.stringify(literal.text)}>`
-		);
+		lines.push(`  | LiteralTransport<${disc}, ${JSON.stringify(literal.text)}>`);
 	}
 	lines.push(';');
 	lines.push('');
@@ -754,9 +684,7 @@ function emitPolymorphTransportNamespace(
 
 	lines.push(`export namespace ${node.typeName} {`);
 	if (formTypeNames.length > 1) {
-		lines.push(
-			`  export type Transport = ${formTypeNames.map((name) => `${name}.Transport`).join(' | ')};`
-		);
+		lines.push(`  export type Transport = ${formTypeNames.map((name) => `${name}.Transport`).join(' | ')};`);
 	} else {
 		lines.push(`  export type Transport = ${formTypeNames[0]}.Transport;`);
 	}
@@ -781,28 +709,19 @@ function emitTransportInterfaceNamespace(
 	if (variant !== undefined) {
 		lines.push(`    readonly $variant: '${variant}';`);
 	}
-	lines.push("    readonly $source?: 0 | 1 | 2;");
+	lines.push('    readonly $source?: 0 | 1 | 2;');
 	lines.push('    readonly $named?: boolean;');
 	lines.push('    readonly $text?: string;');
-	lines.push(
-		'    readonly $span?: { readonly start: number; readonly end: number };'
-	);
+	lines.push('    readonly $span?: { readonly start: number; readonly end: number };');
 	lines.push('    readonly $nodeHandle?: number;');
 	lines.push('    readonly $childIndex?: number;');
 
 	if (fields.length > 0) {
 		for (const field of fields) {
 			const opt = isRequired(field) ? '' : '?';
-			const typeExpr = transportFieldTypeExpr(
-				field,
-				nodeMap,
-				transportNodeKinds,
-				kindEntries
-			);
+			const typeExpr = transportFieldTypeExpr(field, nodeMap, transportNodeKinds, kindEntries);
 			if (isMultiple(field)) {
-				lines.push(
-					`    readonly ${quoteKey(field.name)}${opt}: readonly (${typeExpr})[];`
-				);
+				lines.push(`    readonly ${quoteKey(field.name)}${opt}: readonly (${typeExpr})[];`);
 			} else {
 				lines.push(`    readonly ${quoteKey(field.name)}${opt}: ${typeExpr};`);
 			}
@@ -811,18 +730,16 @@ function emitTransportInterfaceNamespace(
 
 	if (children.length > 0) {
 		const childTypes = children
-			.map((child) =>
-				transportChildTypeExpr(child, nodeMap, transportNodeKinds, kindEntries)
-			)
+			.map((child) => transportChildTypeExpr(child, nodeMap, transportNodeKinds, kindEntries))
 			.filter((expr) => expr.length > 0);
 		if (childTypes.length > 0) {
 			const union = [...new Set(childTypes)].join(' | ');
-			const anyMultiple = children.some((child) => isMultiple(child));
-			const opt = children.some((child) => isRequired(child)) ? '' : '?';
-			if (anyMultiple) {
+			const cardinality = combineSlotCardinality(children);
+			const opt = cardinality.required ? '' : '?';
+			if (cardinality.multiple) {
 				lines.push(`    readonly $children${opt}: readonly (${union})[];`);
 			} else {
-				lines.push(`    readonly $children${opt}: readonly [${union}];`);
+				lines.push(`    readonly $children${opt}: ${union};`);
 			}
 		}
 	}
@@ -837,10 +754,7 @@ function emitTransportInterfaceNamespace(
  * `TSKindId.X` expression. Falls back to `number` when no catalog entry
  * is found, matching the `TerminalTransport<ID extends number>` constraint.
  */
-function resolveTransportDiscriminant(
-	value: string,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
+function resolveTransportDiscriminant(value: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
 	if (!kindEntries) return 'number';
 	const entry = findKindEntry(kindEntries, value);
 	if (entry) return `TSKindId.${entry.member}`;
@@ -975,15 +889,11 @@ function transportChildTypeExpr(
 	for (const value of child.values) {
 		if (isTerminalValue(value)) {
 			const disc = resolveTransportDiscriminant(value.value, kindEntries);
-			parts.push(
-				`LiteralTransport<${disc}, ${JSON.stringify(value.value)}>`
-			);
+			parts.push(`LiteralTransport<${disc}, ${JSON.stringify(value.value)}>`);
 			continue;
 		}
 		if (!isNodeRef(value)) continue;
-		const kind = isUnresolvedRef(value.node)
-			? value.node.name
-			: value.node.kind;
+		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
 		parts.push(transportTypeForKind(kind, nodeMap, transportNodeKinds, kindEntries));
 	}
 	return [...new Set(parts)].join(' | ');
@@ -1071,11 +981,7 @@ function terminalTransportTextType(node: TerminalNode): string {
  * @param allKinds - Ordered list of all kind strings (structural + leaf).
  * @param nodeMap - The assembled node map, used to look up `typeName` per kind.
  */
-function emitSyntaxKindEnum(
-	lines: string[],
-	allKinds: readonly string[],
-	nodeMap: NodeMap
-): void {
+function emitSyntaxKindEnum(lines: string[], allKinds: readonly string[], nodeMap: NodeMap): void {
 	lines.push('export const enum SyntaxKind {');
 	const seenEnumMembers = new Set<string>();
 	for (const kind of allKinds) {
@@ -1098,10 +1004,7 @@ function emitSyntaxKindEnum(
  * data/transport interfaces can carry `TSKindId.*` instead of string
  * literals.
  */
-function emitKindIdEnumAndLookups(
-	lines: string[],
-	entries: KindEnumEntry[]
-): void {
+function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[]): void {
 	lines.push('export const enum TSKindId {');
 	for (const entry of entries) {
 		lines.push(`  ${entry.member} = ${entry.id},`);
@@ -1134,15 +1037,11 @@ function emitKindIdEnumAndLookups(
 		seenCases.add(entry.symbolName);
 		lines.push(`    case ${JSON.stringify(entry.symbolName)}: return TSKindId.${entry.member};`);
 	}
-	lines.push(
-		"    default: throw new TypeError(`unknown kind name ${kindName}`);"
-	);
+	lines.push('    default: throw new TypeError(`unknown kind name ${kindName}`);');
 	lines.push('  }');
 	lines.push('}');
 	lines.push('');
 }
-
-
 
 // ---------------------------------------------------------------------------
 // LookupUnion factory
@@ -1209,10 +1108,7 @@ function resolvePolymorphFormTypeName(form: AssembledGroup): string {
  * @returns The discriminant expression string (e.g.
  *   `TSKindId.DotDot` or `TSKindId.U8 | TSKindId.I8 | ...`).
  */
-function enumMemberDiscriminant(
-	node: AssembledEnum,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
+function enumMemberDiscriminant(node: AssembledEnum, kindEntries: readonly KindEnumEntry[] | undefined): string {
 	if (!kindEntries) return JSON.stringify(node.kind);
 	const members: string[] = [];
 	for (const value of node.values) {
@@ -1286,9 +1182,7 @@ function emitLeafTerminalAliases(
 			node.modelType === 'enum'
 				? enumMemberDiscriminant(node, kindEntries)
 				: kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(
-			`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${textType}>;`
-		);
+		lines.push(`export type ${node.typeName} = Terminal<${typeDiscriminant}, ${textType}>;`);
 	}
 	lines.push('');
 }
@@ -1341,9 +1235,7 @@ function emitTreeInterfaceDeclarations(
 		const candidate = isAnon ? `_anonymous_${kind}` : kind;
 		const grammarKey = grammarKeys.has(candidate) ? candidate : null;
 		if (grammarKey && !isAnon) {
-			lines.push(
-				`export interface ${node.typeName}Tree extends TreeNode<'${grammarKey}'> {}`
-			);
+			lines.push(`export interface ${node.typeName}Tree extends TreeNode<'${grammarKey}'> {}`);
 		} else if (isAnon) {
 			lines.push(
 				`export interface ${node.typeName}Tree extends AnyTreeNode { readonly type: ${JSON.stringify(kind)}; }`
@@ -1360,9 +1252,7 @@ function emitTreeInterfaceDeclarations(
 				if (treeEmitted.has(ftn)) continue;
 				treeEmitted.add(ftn);
 				if (grammarKey) {
-					lines.push(
-						`export interface ${ftn}Tree extends TreeNode<'${grammarKey}'> {}`
-					);
+					lines.push(`export interface ${ftn}Tree extends TreeNode<'${grammarKey}'> {}`);
 				} else {
 					lines.push(`export interface ${ftn}Tree extends AnyTreeNode {}`);
 				}
@@ -1417,15 +1307,11 @@ function emitSupertypeUnionDeclarations(
 		const resolvedSubs = st.subtypes.map((sub) => {
 			const n = nodeMap.nodes.get(sub);
 			if (!n) {
-				throw new Error(
-					`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`
-				);
+				throw new Error(`types: supertype '${st.kind}' references subtype '${sub}' which is not in NodeMap.`);
 			}
 			return { sub, typeName: n.typeName };
 		});
-		const members = resolvedSubs
-			.map((r) => r.typeName)
-			.filter((t) => generatedTypes.has(t));
+		const members = resolvedSubs.map((r) => r.typeName).filter((t) => generatedTypes.has(t));
 		if (members.length === 0) {
 			throw new Error(
 				`types: supertype '${st.kind}' has no resolvable member types after filtering. ` +
@@ -1444,9 +1330,7 @@ function emitSupertypeUnionDeclarations(
 		// literal inline and emit no Tree alias). Without the filter the
 		// supertype Tree references dangling identifiers like
 		// `WildcardPatternTree` for `_wildcard_pattern`.
-		const treeMembers = resolvedSubs
-			.filter((r) => generatedTypes.has(r.typeName))
-			.map((r) => `${r.typeName}Tree`);
+		const treeMembers = resolvedSubs.filter((r) => generatedTypes.has(r.typeName)).map((r) => `${r.typeName}Tree`);
 		if (treeMembers.length > 0) {
 			lines.push(`export type ${typeName}Tree = ${treeMembers.join(' | ')};`);
 			lines.push('');
@@ -1499,9 +1383,7 @@ function collectAndEmitTokenTypeAliases(
 		if (ref?.modelType === 'token') referencedTokenTypeNames.add(ref.typeName);
 	}
 
-	lines.push(
-		'// Token type aliases (only tokens referenced in field/child unions)'
-	);
+	lines.push('// Token type aliases (only tokens referenced in field/child unions)');
 	for (const [kind, node] of nodeMap.nodes) {
 		if (node.modelType !== 'token') continue;
 		if (!referencedTokenTypeNames.has(node.typeName)) continue;
@@ -1512,9 +1394,7 @@ function collectAndEmitTokenTypeAliases(
 		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) continue;
 		generatedTypes.add(node.typeName);
 		const tokenDiscriminant = kindDiscriminantOrLiteral(kind, nodeMap, kindEntries);
-		lines.push(
-			`export type ${node.typeName} = Terminal<${tokenDiscriminant}>;`
-		);
+		lines.push(`export type ${node.typeName} = Terminal<${tokenDiscriminant}>;`);
 		if (!treeEmitted.has(node.typeName)) {
 			treeEmitted.add(node.typeName);
 			lines.push(
@@ -1618,20 +1498,9 @@ function emitInterface(
 			// ADR-0012: boolean-keyword / bitflag brand takes precedence over
 			// AutoStamp (auto-stamp applies to required-single fields, these
 			// brands apply to optional / repeat slots — non-overlapping).
-			const wrappedType = wrapFieldTypeForBrand(
-				f,
-				node.kind,
-				nodeMap,
-				typeExpr
-			);
+			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
 			if (isMultiple(f)) {
-				emitFieldArrayDeclaration(
-					lines,
-					`_${f.name}`,
-					opt,
-					wrappedType,
-					isNonEmpty(f)
-				);
+				emitFieldArrayDeclaration(lines, `_${f.name}`, opt, wrappedType, isNonEmpty(f));
 			} else {
 				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
 			}
@@ -1657,9 +1526,7 @@ function emitInterface(
 		const perChildParts = children.map((c) => childContentParts(c, nodeMap));
 		const allPartsFlat = perChildParts.flat();
 		const aliased = lookupUnion?.(allPartsFlat);
-		const childTypes = perChildParts
-			.map((parts) => parts.join(' | '))
-			.filter(Boolean);
+		const childTypes = perChildParts.map((parts) => parts.join(' | ')).filter(Boolean);
 		if (childTypes.length > 0) {
 			const union = aliased ?? childTypes.join(' | ');
 			const anyMultiple = children.some((c) => isMultiple(c));
@@ -1764,9 +1631,7 @@ function childContentParts(child: AssembledNonterminal, nodeMap: NodeMap): strin
 		}
 		const n = nodeMap.nodes.get(t);
 		if (!n) {
-			throw new Error(
-				`types: child references kind '${t}' which is not in NodeMap.`
-			);
+			throw new Error(`types: child references kind '${t}' which is not in NodeMap.`);
 		}
 		const name = n.typeName;
 		parts.push(/^[A-Za-z_$][\w$]*$/.test(name) ? name : JSON.stringify(t));
@@ -1881,20 +1746,16 @@ function emitFormChildrenSlot(
 		if (!n) return false;
 		// T046: hidden non-token groups have fragment factories and interfaces —
 		// include them in child slots. Token modelType hidden kinds stay excluded.
-		const isHiddenGroup =
-			t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
+		const isHiddenGroup = t.startsWith('_') && n.modelType !== 'token' && n.modelType !== 'multi';
 		if (!n.userFacing && !isHiddenGroup) return false;
 		if (resolveHiddenKeywordLiteral(t, nodeMap) !== undefined) return false;
 		// Empty branch / group — no fields and no children to construct.
 		if (n.modelType === 'branch' || n.modelType === 'group') {
-			if (n.fields.length === 0 && n.children.length === 0)
-				return false;
+			if (n.fields.length === 0 && n.children.length === 0) return false;
 		}
 		return true;
 	};
-	const emittableChildren = form.children.filter((c) =>
-		slotKindNames(c).some(isEmittableRef)
-	);
+	const emittableChildren = form.children.filter((c) => slotKindNames(c).some(isEmittableRef));
 	if (emittableChildren.length === 0) return;
 	const parts = emittableChildren.map((c) =>
 		slotKindNames(c)
@@ -1932,11 +1793,7 @@ function emitFormChildrenSlot(
  * literal / alias-source / hidden-keyword logic lives in one place
  * (factories.ts::fieldElementType is the same walk with a `T.` prefix).
  */
-function fieldTypeExpr(
-	field: AssembledNonterminal,
-	nodeMap?: NodeMap,
-	lookupUnion?: LookupUnion
-): string {
+function fieldTypeExpr(field: AssembledNonterminal, nodeMap?: NodeMap, lookupUnion?: LookupUnion): string {
 	const litVals = slotLiteralValues(field);
 	const kinds = slotKindNames(field);
 
@@ -1953,9 +1810,7 @@ function fieldTypeExpr(
 		if (comp.kind === 'literal') {
 			parts.push(JSON.stringify(comp.value));
 		} else if (comp.kind === 'nodeKind') {
-			parts.push(
-				isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind)
-			);
+			parts.push(isValidIdent(comp.value) ? comp.value : JSON.stringify(comp.rawKind));
 		} else {
 			// missing kind — register for stub emission and use the
 			// PascalCase fallback name (bare, no prefix).
@@ -1984,12 +1839,7 @@ function fieldTypeExpr(
  * requires required+non-repeated, boolean requires optional, bitflag
  * requires repeat.
  */
-function wrapFieldTypeForBrand(
-	f: AssembledNonterminal,
-	kind: string,
-	nodeMap: NodeMap,
-	typeExpr: string
-): string {
+function wrapFieldTypeForBrand(f: AssembledNonterminal, kind: string, nodeMap: NodeMap, typeExpr: string): string {
 	const kw = keywordPresenceKind(f, nodeMap);
 	if (kw === 'boolean') return `BooleanKeyword<${typeExpr}>`;
 	if (kw === 'bitflag') {
@@ -2029,14 +1879,9 @@ function quoteKey(key: string): string {
  * method return types (`curly().type(...)`) can name a form-
  * specific Tree type at compile time without a structural duplicate.
  */
-function emitRefineFormTreeAliases(
-	lines: string[],
-	refineInfos: readonly RefineKindInfo[] | undefined
-): void {
+function emitRefineFormTreeAliases(lines: string[], refineInfos: readonly RefineKindInfo[] | undefined): void {
 	if (!refineInfos || refineInfos.length === 0) return;
-	lines.push(
-		'// refine() per-form Tree aliases — same shape as the base kind Tree.'
-	);
+	lines.push('// refine() per-form Tree aliases — same shape as the base kind Tree.');
 	for (const info of refineInfos) {
 		for (const form of info.forms) {
 			const formType = refineFormTypeName(info.typeName, form.name);
@@ -2071,13 +1916,8 @@ function emitNamespaceSugarBlock(
 	if (refineInfo && refineInfo.forms.length > 0) {
 		emitRefineFormSubNamespaces(lines, node.typeName, kind, refineInfo);
 		const defaultForm = refineInfo.forms[0]!;
-		const defaultShortName = refineFormTypeName(
-			node.typeName,
-			defaultForm.name
-		).slice(node.typeName.length);
-		lines.push(
-			`  /** Default form: '${defaultForm.name}' (first-declared). */`
-		);
+		const defaultShortName = refineFormTypeName(node.typeName, defaultForm.name).slice(node.typeName.length);
+		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
 		lines.push(`  export type Config = ConfigFor<'${kind}'>;`);
@@ -2111,12 +1951,8 @@ function emitRefineFormSubNamespaces(
 		lines.push(`  export namespace ${shortName} {`);
 		const narrowed = form.narrowedFields;
 		if (narrowed.length > 0) {
-			const omitKeys = narrowed
-				.map((n) => JSON.stringify(snakeToCamel(n.fieldName)))
-				.join(' | ');
-			lines.push(
-				`    export type Config = Omit<ConfigFor<'${kind}'>, ${omitKeys}>;`
-			);
+			const omitKeys = narrowed.map((n) => JSON.stringify(snakeToCamel(n.fieldName))).join(' | ');
+			lines.push(`    export type Config = Omit<ConfigFor<'${kind}'>, ${omitKeys}>;`);
 		} else {
 			lines.push(`    export type Config = ConfigFor<'${kind}'>;`);
 		}

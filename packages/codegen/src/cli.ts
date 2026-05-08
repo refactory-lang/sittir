@@ -9,23 +9,11 @@
 
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import {
-	validateRoundTrip,
-	formatRoundTripReport
-} from './validate/roundtrip.ts';
-import {
-	validateFactoryRoundTrip,
-	formatFactoryRoundTripReport
-} from './validate/factory-roundtrip.ts';
+import { validateRoundTrip, formatRoundTripReport } from './validate/roundtrip.ts';
+import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate/factory-roundtrip.ts';
 import { validateFrom, formatFromReport } from './validate/from.ts';
-import {
-	validateRenderableFromNodeMap,
-	formatRenderableReport
-} from './validate/renderable.ts';
-import {
-	validateReadNodeRoundTrip,
-	formatReadNodeRoundTripReport
-} from './validate/readnode-roundtrip.ts';
+import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
+import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate/readnode-roundtrip.ts';
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
 import { emitSuggested } from './emitters/suggested.ts';
@@ -33,13 +21,9 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
-import { emitRenderModule } from './emitters/render-module.ts';
+import { emitRenderModule, RUST_KEYWORDS, rustFieldIdent } from './emitters/render-module.ts';
 import { renderModuleTemplatesDir, renderModuleSrcDir } from './emitters/render-module-paths.ts';
-import {
-	extractParityFixtures,
-	serializeFixtures,
-	fixturesOutputPath
-} from './emitters/parity-fixtures.ts';
+import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './emitters/parity-fixtures.ts';
 import { readdirSync, readFileSync, rmSync } from 'node:fs';
 import type { TemplateFile } from './emitters/template-hash.ts';
 
@@ -214,12 +198,7 @@ if (!cliArgs.all && (!cliArgs.nodes || cliArgs.nodes.length === 0)) {
 // loadLanguageForGrammar) see a stale parser that doesn't know about
 // recent `field(...)` / `variant(...)` additions, producing silent
 // AST mismatches in round-trip tests.
-if (
-	cliArgs.all &&
-	!cliArgs.skipTsChain &&
-	!cliArgs.transpile &&
-	!cliArgs.tsGenerate
-) {
+if (cliArgs.all && !cliArgs.skipTsChain && !cliArgs.transpile && !cliArgs.tsGenerate) {
 	console.log(
 		`Full regenerate for ${cliArgs.grammar}: transpile + tree-sitter generate + compile-parser + sittir codegen`
 	);
@@ -273,9 +252,7 @@ writeJinjaTemplates(result.jinjaTemplates, join(dirname(outDir), 'templates'));
 // bodies that were just written above — this keeps the TS-side and
 // Rust-side derivations in lockstep.
 const RUST_RENDER_GRAMMARS = ['rust', 'typescript', 'python'] as const;
-const shouldEmitRustRender =
-	cliArgs.all &&
-	(RUST_RENDER_GRAMMARS as readonly string[]).includes(config.grammar);
+const shouldEmitRustRender = cliArgs.all && (RUST_RENDER_GRAMMARS as readonly string[]).includes(config.grammar);
 
 if (shouldEmitRustRender) {
 	const grammar = config.grammar as (typeof RUST_RENDER_GRAMMARS)[number];
@@ -296,26 +273,25 @@ if (shouldEmitRustRender) {
 	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
 	// removed so regenerations don't accumulate dead templates.
 	//
-	// Template-body transform: rust keywords that can't be raw-
-	// identifier'd (`crate`, `self`, `super`, `Self`) have their struct
-	// field names suffixed with `_` at emit time (see
-	// `render-module.ts:RUST_NON_RAWABLE_KEYWORDS`). Askama resolves
-	// template variables by the field's raw name, so the template
-	// copy must rename `{{ crate }}` → `{{ crate_ }}` to match.
+	// Template-body transform: the Rust render module renames keyword-
+	// named struct fields with `rustFieldIdent()` (`pub` → `pub_`,
+	// `type` → `type_`, `crate` → `crate_`, etc.). Askama resolves
+	// template variables against the emitted Rust field identifiers, so
+	// the Rust render copy must rewrite template identifier positions to
+	// the same names.
 	// Applies only to the Rust render-module copy — the source .jinja under
 	// packages/{lang}/templates/ stays unchanged (TS Nunjucks side
 	// doesn't have the keyword collision).
-	const RUST_UNRAWABLE_KW = ['crate', 'self', 'super', 'Self'] as const;
 	const renameForRustRender = (body: string): string => {
 		let out = body;
-		for (const kw of RUST_UNRAWABLE_KW) {
+		for (const kw of RUST_KEYWORDS) {
 			// Match `{{ kw }}` / `{{ kw | filter }}` / `{% if kw ... %}` /
 			// `{% for x in kw %}` — identifier position only.
 			const re = new RegExp(
 				`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`,
 				'g'
 			);
-			out = out.replace(re, `$1${kw}_`);
+			out = out.replace(re, `$1${rustFieldIdent(kw)}`);
 		}
 		return out;
 	};
@@ -324,9 +300,7 @@ if (shouldEmitRustRender) {
 		return body + '\n';
 	};
 	const srcTemplatesDir = join(dirname(outDir), 'templates');
-	const dstTemplatesDir = renderModuleTemplatesDir(
-		grammar as 'rust' | 'typescript' | 'python'
-	);
+	const dstTemplatesDir = renderModuleTemplatesDir(grammar as 'rust' | 'typescript' | 'python');
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
 	for (const [kind] of result.jinjaTemplates.bodies) {
@@ -340,8 +314,7 @@ if (shouldEmitRustRender) {
 	}
 	for (const existing of readdirSync(dstTemplatesDir)) {
 		if (!existing.endsWith('.jinja')) continue;
-		if (!emittedNames.has(existing))
-			rmSync(join(dstTemplatesDir, existing), { force: true });
+		if (!emittedNames.has(existing)) rmSync(join(dstTemplatesDir, existing), { force: true });
 	}
 	// Write per-grammar kind_ids.rs (Phase B: KindID runtime migration).
 	// This file exports one pub const per kind matching the TS-side TSKindId enum.
@@ -422,10 +395,7 @@ writeFile(join(dirname(outDir), 'vitest.config.ts'), result.config);
 // --- Renderability check: every named kind in node-types.json must be
 // reachable by @sittir/core's render() function (supertype, leaf, or rule).
 // Uses the NodeMap directly for a structural truth check.
-const renderable = validateRenderableFromNodeMap(
-	config.grammar,
-	result.nodeMap
-);
+const renderable = validateRenderableFromNodeMap(config.grammar, result.nodeMap);
 console.log('');
 console.log(formatRenderableReport(renderable));
 if (renderable.missing.length > 0) {
@@ -457,10 +427,7 @@ if (cliArgs.roundtrip) {
 	console.log(formatRoundTripReport(rtResult));
 
 	// Factory round-trip (corpus → readNode → factory() → render → re-parse)
-	const frtResult = await validateFactoryRoundTrip(
-		config.grammar,
-		templatesDir
-	);
+	const frtResult = await validateFactoryRoundTrip(config.grammar, templatesDir);
 	console.log(formatFactoryRoundTripReport(frtResult));
 
 	// from() correctness (structural comparison: from() vs factory())
@@ -533,13 +500,8 @@ if (cliArgs.roundtrip) {
 			nodeMap: result.nodeMap,
 			roundTripFailures: diagnostics
 		});
-		writeFile(
-			join(dirname(outDir), 'overrides.suggested.ts'),
-			suggestedWithFailures
-		);
-		console.log(
-			`  → overrides.suggested.ts updated with ${diagnostics.length} round-trip diagnostic(s)`
-		);
+		writeFile(join(dirname(outDir), 'overrides.suggested.ts'), suggestedWithFailures);
+		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} round-trip diagnostic(s)`);
 	}
 
 	const totalFail = rtResult.fail + frtResult.fail + fromResult.fail;
@@ -550,9 +512,7 @@ if (cliArgs.roundtrip) {
 }
 
 if (process.exitCode) {
-	console.error(
-		`\nFailed. Generated files were written, but validation reported errors.`
-	);
+	console.error(`\nFailed. Generated files were written, but validation reported errors.`);
 } else {
 	console.log(`
 Done! Generated:
@@ -563,6 +523,4 @@ Done! Generated:
 // Spec 013: dump derive-audit counts if SITTIR_AUDIT_DERIVE=1 was set.
 // No-op otherwise. Used to validate simplify's canonicalization before
 // shrinking `deriveFields` / `deriveChildren` to trivial walks.
-(await import('./compiler/node-map.ts')).dumpDerivationAudit(
-	`${config.grammar}-derive`
-);
+(await import('./compiler/node-map.ts')).dumpDerivationAudit(`${config.grammar}-derive`);

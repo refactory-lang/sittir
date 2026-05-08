@@ -1447,7 +1447,7 @@
       "modelType": "branch",
       "typeName": "AssertStatement",
       "factoryName": "assertStatement",
-      "irKey": "assert",
+      "irKey": "assertStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -2017,7 +2017,7 @@
       "modelType": "keyword",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "break",
+      "irKey": "breakStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -2257,7 +2257,7 @@
       "modelType": "branch",
       "typeName": "ClassDefinition",
       "factoryName": "classDefinition",
-      "irKey": "class",
+      "irKey": "classDefinition",
       "hidden": false,
       "fields": [
         {
@@ -2660,7 +2660,7 @@
       "modelType": "branch",
       "typeName": "ConditionalExpression",
       "factoryName": "conditionalExpression",
-      "irKey": "conditional",
+      "irKey": "conditionalExpression",
       "hidden": false,
       "fields": [
         {
@@ -2807,7 +2807,7 @@
       "modelType": "keyword",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continue",
+      "irKey": "continueStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -2818,7 +2818,7 @@
       "modelType": "branch",
       "typeName": "DecoratedDefinition",
       "factoryName": "decoratedDefinition",
-      "irKey": "decorated",
+      "irKey": "decoratedDefinition",
       "hidden": false,
       "fields": [
         {
@@ -3007,7 +3007,7 @@
       "modelType": "branch",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
-      "irKey": "delete",
+      "irKey": "deleteStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -3482,7 +3482,7 @@
       "modelType": "branch",
       "typeName": "ExecStatement",
       "factoryName": "execStatement",
-      "irKey": "exec",
+      "irKey": "execStatement",
       "hidden": false,
       "fields": [
         {
@@ -3826,7 +3826,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "for",
+      "irKey": "forStatement",
       "hidden": false,
       "fields": [
         {
@@ -3988,7 +3988,7 @@
       "modelType": "branch",
       "typeName": "FunctionDefinition",
       "factoryName": "functionDefinition",
-      "irKey": "function",
+      "irKey": "functionDefinition",
       "hidden": false,
       "fields": [
         {
@@ -4137,7 +4137,7 @@
       "modelType": "branch",
       "typeName": "FutureImportStatement",
       "factoryName": "futureImportStatement",
-      "irKey": "futureImport",
+      "irKey": "futureImportStatement",
       "hidden": false,
       "fields": [
         {
@@ -4178,7 +4178,7 @@
       "modelType": "branch",
       "typeName": "GeneratorExpression",
       "factoryName": "generatorExpression",
-      "irKey": "generator",
+      "irKey": "generatorExpression",
       "hidden": false,
       "fields": [
         {
@@ -4295,7 +4295,7 @@
       "modelType": "branch",
       "typeName": "GlobalStatement",
       "factoryName": "globalStatement",
-      "irKey": "global",
+      "irKey": "globalStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -4374,7 +4374,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "if",
+      "irKey": "ifStatement",
       "hidden": false,
       "fields": [
         {
@@ -4471,7 +4471,7 @@
       "modelType": "branch",
       "typeName": "ImportFromStatement",
       "factoryName": "importFromStatement",
-      "irKey": "importFrom",
+      "irKey": "importFromStatement",
       "hidden": false,
       "fields": [
         {
@@ -4548,7 +4548,7 @@
       "modelType": "branch",
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
-      "irKey": "import",
+      "irKey": "importStatement",
       "hidden": false,
       "fields": [
         {
@@ -5185,7 +5185,7 @@
       "modelType": "branch",
       "typeName": "MatchStatement",
       "factoryName": "matchStatement",
-      "irKey": "match",
+      "irKey": "matchStatement",
       "hidden": false,
       "fields": [
         {
@@ -5328,7 +5328,7 @@
       "modelType": "branch",
       "typeName": "NamedExpression",
       "factoryName": "namedExpression",
-      "irKey": "named",
+      "irKey": "namedExpression",
       "hidden": false,
       "fields": [
         {
@@ -5406,7 +5406,7 @@
       "modelType": "branch",
       "typeName": "NonlocalStatement",
       "factoryName": "nonlocalStatement",
-      "irKey": "nonlocal",
+      "irKey": "nonlocalStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -5577,7 +5577,7 @@
       "modelType": "branch",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
-      "irKey": "parenthesized",
+      "irKey": "parenthesizedExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -5651,7 +5651,7 @@
       "modelType": "keyword",
       "typeName": "PassStatement",
       "factoryName": "passStatement",
-      "irKey": "pass",
+      "irKey": "passStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"pass\" as const",
@@ -5770,7 +5770,7 @@
       "modelType": "branch",
       "typeName": "PrintStatement",
       "factoryName": "printStatement",
-      "irKey": "print",
+      "irKey": "printStatement",
       "hidden": false,
       "fields": [
         {
@@ -5836,7 +5836,7 @@
       "modelType": "branch",
       "typeName": "RaiseStatement",
       "factoryName": "raiseStatement",
-      "irKey": "raise",
+      "irKey": "raiseStatement",
       "hidden": false,
       "fields": [
         {
@@ -5953,7 +5953,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "return",
+      "irKey": "returnStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -6473,7 +6473,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "try",
+      "irKey": "tryStatement",
       "hidden": false,
       "fields": [
         {
@@ -6702,7 +6702,7 @@
       "modelType": "branch",
       "typeName": "TypeAliasStatement",
       "factoryName": "typeAliasStatement",
-      "irKey": "typeAlias",
+      "irKey": "typeAliasStatement",
       "hidden": false,
       "fields": [
         {
@@ -7116,7 +7116,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "while",
+      "irKey": "whileStatement",
       "hidden": false,
       "fields": [
         {
@@ -7338,7 +7338,7 @@
       "modelType": "branch",
       "typeName": "WithItem",
       "factoryName": "withItem",
-      "irKey": "with",
+      "irKey": "withItem",
       "hidden": false,
       "fields": [
         {

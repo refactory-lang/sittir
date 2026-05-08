@@ -71,9 +71,7 @@ describe('US6 — manual overrides win over inference (T069 / T069a)', () => {
 		// We check by scanning for the field-inference block and
 		// verifying the manually declared `function_item.body`
 		// override isn't duplicated.
-		const inferenceSection = suggested.match(
-			/Field inferences[\s\S]*?(?=Rule promotions|$)/
-		);
+		const inferenceSection = suggested.match(/Field inferences[\s\S]*?(?=Rule promotions|$)/);
 		if (inferenceSection) {
 			expect(inferenceSection[0]).not.toMatch(/function_item\.body/);
 		}

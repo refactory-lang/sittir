@@ -111,8 +111,8 @@ const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named',
 
 type NativeTransportAlternative = { readonly type: string; readonly text?: string };
 type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
-type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
-type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
+type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childrenMultiple: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
+type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly multiple: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
 
 const nativeTransportAliasTargetToSource: Record<string, string> = {
   "abstract_marker": "_abstract_marker",
@@ -200,57 +200,380 @@ const nativeTransportAliasTargetToSource: Record<string, string> = {
 };
 
 const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
+  "_class_body_member": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"abstract_method_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"public_field_definition"},{"type":"_automatic_semicolon"},{"type":",","text":","}] as const,
+    fields: [
+    ],
+  },
   "_class_body_method": {
     childrenRequired: true,
+    childrenMultiple: false,
     childAlternatives: [{"type":"method_definition"},{"type":"_automatic_semicolon"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "_class_body_method_sig": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"method_signature"},{"type":"_function_signature_automatic_semicolon"},{"type":",","text":","}] as const,
+    fields: [
+    ],
+  },
+  "_class_heritage_extends_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"extends_clause"},{"type":"implements_clause"}] as const,
+    fields: [
+    ],
+  },
+  "_class_heritage_implements_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"implements_clause"}] as const,
+    fields: [
+    ],
+  },
   "_export_statement_default_decl_arm": {
     childrenRequired: true,
+    childrenMultiple: false,
     childAlternatives: [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "_export_statement_default_decl_arm_default_kw": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw_value"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_default_decl_arm_default_kw_value": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_default_from_arm": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_export_statement_default_from_arm_star_from"},{"type":"_export_statement_default_from_arm_ns_from"},{"type":"_export_statement_default_from_arm_clause_from"},{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_default_from_arm_clause_from": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"export_clause"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_default_from_arm_ns_from": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"namespace_export"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_equals_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_namespace_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_export_statement_type_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_for_header": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_for_header_lhs"},{"type":"_for_header_var_kind"},{"type":"_for_header_let_const_kind"}] as const,
+    fields: [
+    ],
+  },
+  "_for_header_let_const_kind": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "_for_header_var_kind": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_initializer"}] as const,
+    fields: [
+    ],
+  },
+  "_import_clause_default_import": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"namespace_import"},{"type":"named_imports"}] as const,
+    fields: [
+    ],
+  },
+  "_import_clause_named_imports": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"named_imports"}] as const,
+    fields: [
+    ],
+  },
+  "_import_clause_namespace_import": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"namespace_import"}] as const,
+    fields: [
+    ],
+  },
+  "_index_signature_mapped_type_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"mapped_type_clause"}] as const,
+    fields: [
+    ],
+  },
   "_jsx_start_opening_element": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
     ],
   },
+  "_jsx_string": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"unescaped_double_jsx_string_fragment"},{"type":"html_character_reference"},{"type":"unescaped_single_jsx_string_fragment"}] as const,
+    fields: [
+    ],
+  },
+  "_lhs_expression": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"identifier"},{"type":"_reserved_identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"}] as const,
+    fields: [
+    ],
+  },
   "_parameter_name": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "_parenthesized_expression_sequence": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
+  "_parenthesized_expression_typed": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const,
+    fields: [
+    ],
+  },
+  "_public_field_definition_access_first": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const,
+    fields: [
+    ],
+  },
+  "_public_field_definition_declare_first": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"}] as const,
+    fields: [
+    ],
+  },
+  "_public_field_definition_static_mods": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"override_modifier","text":"override"}] as const,
+    fields: [
+    ],
+  },
+  "_string_double": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"unescaped_double_string_fragment"},{"type":"escape_sequence"}] as const,
+    fields: [
+    ],
+  },
+  "_string_single": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"unescaped_single_string_fragment"},{"type":"escape_sequence"}] as const,
+    fields: [
+    ],
+  },
+  "_type_identifier": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"}] as const,
+    fields: [
+    ],
+  },
   "abstract_class_declaration": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "arguments": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"spread_element"}] as const,
+    fields: [
+    ],
+  },
+  "array": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"spread_element"}] as const,
+    fields: [
+    ],
+  },
+  "array_pattern": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"member_expression"},{"type":"subscript_expression"},{"type":"undefined","text":"undefined"},{"type":"identifier"},{"type":"object_pattern"},{"type":"array_pattern"},{"type":"non_null_expression"},{"type":"rest_pattern"},{"type":"assignment_pattern"}] as const,
+    fields: [
+    ],
+  },
+  "asserts": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"type_predicate"},{"type":"identifier"},{"type":"this","text":"this"}] as const,
+    fields: [
     ],
   },
   "class": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
+    ],
+  },
+  "class_body": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_class_body_method"},{"type":"_class_body_method_sig"},{"type":"class_static_block"},{"type":"_class_body_member"},{"type":";","text":";"}] as const,
+    fields: [
     ],
   },
   "class_declaration": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "class_heritage_extends_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"extends_clause"},{"type":"implements_clause"}] as const,
+    fields: [
+    ],
+  },
+  "class_heritage_implements_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"implements_clause"}] as const,
+    fields: [
+    ],
+  },
+  "class_static_block": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "decorator": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"decorator_member_expression"},{"type":"decorator_call_expression"},{"type":"decorator_parenthesized_expression"}] as const,
+    fields: [
+    ],
+  },
+  "decorator_parenthesized_expression": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"decorator_member_expression"},{"type":"decorator_call_expression"}] as const,
+    fields: [
+    ],
+  },
+  "enum_body": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"identifier"},{"type":"private_property_identifier"},{"type":"string"},{"type":"number"},{"type":"computed_property_name"},{"type":"enum_assignment"}] as const,
+    fields: [
+    ],
+  },
+  "export_clause": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"export_specifier"}] as const,
+    fields: [
+    ],
+  },
+  "export_statement_equals_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "export_statement_namespace_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "export_statement_type_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"export_clause"},{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "expression_statement": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
   "extends_clause": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "value", multiple: true, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const },
@@ -258,6 +581,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "extends_type_clause": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "type", multiple: true, required: true, alternatives: [{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"}] as const },
@@ -265,13 +589,106 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "field_definition": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "for_in_statement": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_for_header_lhs"},{"type":"_for_header_var_kind"},{"type":"_for_header_let_const_kind"}] as const,
+    fields: [
+    ],
+  },
+  "formal_parameters": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"required_parameter"},{"type":"optional_parameter"}] as const,
+    fields: [
+    ],
+  },
+  "function_declaration": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "generator_function_declaration": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_automatic_semicolon"}] as const,
+    fields: [
+    ],
+  },
+  "implements_clause": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const,
+    fields: [
+    ],
+  },
+  "import_clause_default_import": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"namespace_import"},{"type":"named_imports"}] as const,
+    fields: [
+    ],
+  },
+  "import_clause_named_imports": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"named_imports"}] as const,
+    fields: [
+    ],
+  },
+  "import_clause_namespace_import": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"namespace_import"}] as const,
+    fields: [
+    ],
+  },
+  "index_signature_mapped_type_clause": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"mapped_type_clause"}] as const,
+    fields: [
+    ],
+  },
+  "jsx_attribute": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"jsx_identifier"},{"type":"identifier"},{"type":"jsx_namespace_name"},{"type":"_jsx_string"},{"type":"jsx_expression"},{"type":"jsx_element"},{"type":"jsx_self_closing_element"}] as const,
+    fields: [
+    ],
+  },
+  "jsx_element": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"jsx_text"},{"type":"html_character_reference"},{"type":"jsx_element"},{"type":"jsx_self_closing_element"},{"type":"jsx_expression"}] as const,
+    fields: [
+    ],
+  },
+  "jsx_expression": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"},{"type":"spread_element"}] as const,
+    fields: [
+    ],
+  },
+  "jsx_namespace_name": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"jsx_identifier"}] as const,
+    fields: [
+    ],
+  },
   "jsx_opening_element": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
@@ -279,6 +696,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "jsx_self_closing_element": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
@@ -286,13 +704,57 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "lexical_declaration": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
     ],
   },
+  "literal_type": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_number"},{"type":"number"},{"type":"string"},{"type":"true","text":"true"},{"type":"false","text":"false"},{"type":"null","text":"null"},{"type":"undefined","text":"undefined"}] as const,
+    fields: [
+    ],
+  },
+  "member_expression": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":".","text":"."},{"type":"_optional_chain","text":"?."}] as const,
+    fields: [
+    ],
+  },
+  "named_imports": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"import_specifier"}] as const,
+    fields: [
+    ],
+  },
+  "namespace_export": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"identifier"},{"type":"string"}] as const,
+    fields: [
+    ],
+  },
+  "object": {
+    childrenRequired: false,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"pair"},{"type":"spread_element"},{"type":"method_definition"},{"type":"identifier"},{"type":"_reserved_identifier"}] as const,
+    fields: [
+    ],
+  },
+  "object_pattern": {
+    childrenRequired: false,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"pair_pattern"},{"type":"rest_pattern"},{"type":"object_assignment_pattern"},{"type":"identifier"},{"type":"_reserved_identifier"}] as const,
+    fields: [
+    ],
+  },
   "object_type": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "members", multiple: true, required: false, alternatives: [{"type":",","text":","},{"type":";","text":";"},{"type":"export_statement"},{"type":"property_signature"},{"type":"call_signature"},{"type":"construct_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"_automatic_semicolon"}] as const },
@@ -300,13 +762,22 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "optional_parameter": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "parenthesized_expression_sequence": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
   "program": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
@@ -314,6 +785,7 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "public_field_definition": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [{"type":"_public_field_definition_declare_first"},{"type":"_public_field_definition_access_first"},{"type":"_public_field_definition_static_mods"},{"type":"_public_field_definition_abstract_first"},{"type":"_public_field_definition_readonly_first"},{"type":"_public_field_definition_accessor_opt"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
@@ -321,20 +793,65 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "required_parameter": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
     fields: [
       { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
     ],
   },
+  "rest_pattern": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_lhs_expression"}] as const,
+    fields: [
+    ],
+  },
+  "return_statement": {
+    childrenRequired: false,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
+  "sequence_expression": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const,
+    fields: [
+    ],
+  },
   "statement_block": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
     ],
   },
+  "string_double": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"unescaped_double_string_fragment"},{"type":"escape_sequence"}] as const,
+    fields: [
+    ],
+  },
+  "string_single": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"unescaped_single_string_fragment"},{"type":"escape_sequence"}] as const,
+    fields: [
+    ],
+  },
+  "switch_body": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"switch_case"},{"type":"switch_default"}] as const,
+    fields: [
+    ],
+  },
   "switch_case": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
@@ -342,13 +859,78 @@ const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildR
   },
   "switch_default": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
     ],
   },
+  "template_literal_type": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_template_chars"},{"type":"template_type"}] as const,
+    fields: [
+    ],
+  },
+  "template_string": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"_template_chars"},{"type":"escape_sequence"},{"type":"template_substitution"}] as const,
+    fields: [
+    ],
+  },
+  "template_substitution": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
+  "template_type": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"infer_type"}] as const,
+    fields: [
+    ],
+  },
+  "throw_statement": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"sequence_expression"}] as const,
+    fields: [
+    ],
+  },
+  "tuple_type": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"tuple_parameter"},{"type":"optional_tuple_parameter"},{"type":"optional_type"},{"type":"rest_type"},{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const,
+    fields: [
+    ],
+  },
+  "type_arguments": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"parenthesized_type"},{"type":"predefined_type"},{"type":"identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"},{"type":"object_type"},{"type":"array_type"},{"type":"tuple_type"},{"type":"flow_maybe_type"},{"type":"type_query"},{"type":"index_type_query"},{"type":"this","text":"this"},{"type":"existential_type","text":"*"},{"type":"literal_type"},{"type":"lookup_type"},{"type":"conditional_type"},{"type":"template_literal_type"},{"type":"intersection_type"},{"type":"union_type"},{"type":"function_type"},{"type":"readonly_type"},{"type":"constructor_type"},{"type":"infer_type"},{"type":"_type_query_member_expression_in_type_annotation"},{"type":"_type_query_call_expression_in_type_annotation"}] as const,
+    fields: [
+    ],
+  },
+  "type_parameters": {
+    childrenRequired: true,
+    childrenMultiple: true,
+    childAlternatives: [{"type":"type_parameter"}] as const,
+    fields: [
+    ],
+  },
+  "type_query": {
+    childrenRequired: true,
+    childrenMultiple: false,
+    childAlternatives: [{"type":"_type_query_subscript_expression"},{"type":"_type_query_member_expression"},{"type":"_type_query_call_expression"},{"type":"_type_query_instantiation_expression"},{"type":"identifier"},{"type":"this","text":"this"}] as const,
+    fields: [
+    ],
+  },
   "variable_declaration": {
     childrenRequired: false,
+    childrenMultiple: false,
     childAlternatives: [] as const,
     fields: [
       { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
@@ -364,7 +946,7 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
         { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"_async_marker","text":"async"}] as const },
         { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_arrow_function_parameter"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_arrow_function_parameter"}] as const },
     },
     {
       variant: "_call_signature",
@@ -372,7 +954,7 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
         { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"_async_marker","text":"async"}] as const },
         { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_arrow_function__call_signature"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_arrow_function__call_signature"}] as const },
     },
   ],
   "call_expression": [
@@ -380,19 +962,19 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "call",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_call_expression_call"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_call_expression_call"}] as const },
     },
     {
       variant: "template_call",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_call_expression_template_call"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_call_expression_template_call"}] as const },
     },
     {
       variant: "member",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_call_expression_member"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_call_expression_member"}] as const },
     },
   ],
   "class_heritage": [
@@ -400,13 +982,13 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "extends_clause",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_class_heritage_extends_clause"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_class_heritage_extends_clause"}] as const },
     },
     {
       variant: "implements_clause",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_class_heritage_implements_clause"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_class_heritage_implements_clause"}] as const },
     },
   ],
   "export_statement": [
@@ -414,25 +996,25 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "default",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_export_statement_default_from_arm"},{"type":"_export_statement_default_decl_arm"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_export_statement_default_from_arm"},{"type":"_export_statement_default_decl_arm"}] as const },
     },
     {
       variant: "type_export",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_export_statement_type_export"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_export_statement_type_export"}] as const },
     },
     {
       variant: "equals_export",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_export_statement_equals_export"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_export_statement_equals_export"}] as const },
     },
     {
       variant: "namespace_export",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_export_statement_namespace_export"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_export_statement_namespace_export"}] as const },
     },
   ],
   "import_clause": [
@@ -440,19 +1022,19 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "namespace_import",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_import_clause_namespace_import"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_import_clause_namespace_import"}] as const },
     },
     {
       variant: "named_imports",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_import_clause_named_imports"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_import_clause_named_imports"}] as const },
     },
     {
       variant: "default_import",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_import_clause_default_import"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_import_clause_default_import"}] as const },
     },
   ],
   "import_specifier": [
@@ -461,14 +1043,14 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       fields: [
         { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"_export_specifier_export_kind","text":"type"},{"type":"_export_specifier_export_kind","text":"typeof"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_import_specifier_name"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_import_specifier_name"}] as const },
     },
     {
       variant: "as",
       fields: [
         { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"_export_specifier_export_kind","text":"type"},{"type":"_export_specifier_export_kind","text":"typeof"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_import_specifier_as"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_import_specifier_as"}] as const },
     },
   ],
   "index_signature": [
@@ -478,7 +1060,7 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
         { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
         { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_index_signature_colon"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_index_signature_colon"}] as const },
     },
     {
       variant: "mapped_type_clause",
@@ -486,7 +1068,7 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
         { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
         { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
       ],
-      children: { required: true, alternatives: [{"type":"_index_signature_mapped_type_clause"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_index_signature_mapped_type_clause"}] as const },
     },
   ],
   "parenthesized_expression": [
@@ -494,13 +1076,13 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "typed",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_parenthesized_expression_typed"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_parenthesized_expression_typed"}] as const },
     },
     {
       variant: "sequence",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_parenthesized_expression_sequence"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_parenthesized_expression_sequence"}] as const },
     },
   ],
   "string": [
@@ -508,13 +1090,13 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "double",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_string_double"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_string_double"}] as const },
     },
     {
       variant: "single",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_string_single"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_string_single"}] as const },
     },
   ],
   "update_expression": [
@@ -522,266 +1104,84 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       variant: "postfix",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_update_expression_postfix"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_update_expression_postfix"}] as const },
     },
     {
       variant: "prefix",
       fields: [
       ],
-      children: { required: true, alternatives: [{"type":"_update_expression_prefix"}] as const },
+      children: { required: true, multiple: false, alternatives: [{"type":"_update_expression_prefix"}] as const },
     },
   ],
 };
 
-const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
-  "!",
-  "\"",
-  "${",
-  "&",
-  "'",
-  "(",
-  ")",
-  "*",
-  "+?:",
-  ",",
-  "-?:",
-  ".",
-  "...",
-  "/",
-  "/>",
-  ":",
-  ";",
-  "<",
-  "</",
-  "=",
-  "=>",
-  ">",
-  "?",
-  "?.",
-  "?:",
-  "@",
-  "[",
-  "]",
-  "__error_recovery",
-  "__for_header_operator",
-  "__for_header_var_kind_kind",
-  "__number_operator",
-  "__public_field_definition_access_first_declare_marker",
-  "__public_field_definition_accessor_opt_accessor_marker",
-  "_abstract_marker",
-  "_accessibility_modifier",
-  "_accessor_kind",
-  "_asserts_annotation_asserts",
-  "_assignment_expression_using_marker",
-  "_async_marker",
-  "_augmented_assignment_expression_operator",
-  "_automatic_semicolon",
-  "_binary_expression_operator",
-  "_const_marker",
-  "_export_specifier_export_kind",
-  "_for_in_statement_await_marker",
-  "_for_statement_initializer",
-  "_function_signature_automatic_semicolon",
-  "_import_attribute_object",
-  "_kind",
-  "_kw_abstract_marker",
-  "_kw_accessor_marker",
-  "_kw_asserts",
-  "_kw_async_marker",
-  "_kw_await_marker",
-  "_kw_const_marker",
-  "_kw_declare_marker",
-  "_kw_optional_marker",
-  "_kw_readonly_marker",
-  "_kw_static_marker",
-  "_kw_type_predicate",
-  "_kw_using_marker",
-  "_object_type_closing",
-  "_object_type_opening",
-  "_operator",
-  "_optional_chain",
-  "_optional_marker",
-  "_override_modifier",
-  "_public_field_definition_optionality_marker",
-  "_readonly_marker",
-  "_reserved_identifier",
-  "_static_marker",
-  "_template_chars",
-  "_ternary_qmark",
-  "_unary_expression_operator",
-  "`",
-  "abstract",
-  "accessibility_modifier",
-  "accessor",
-  "as",
-  "async",
-  "await",
-  "break",
-  "case",
-  "catch",
-  "comment",
-  "const",
-  "continue",
-  "debugger",
-  "declare",
-  "default",
-  "do",
-  "else",
-  "empty_statement",
-  "enum",
-  "escape_sequence",
-  "existential_type",
-  "export",
-  "extends",
-  "false",
-  "finally",
-  "for",
-  "from",
-  "function",
-  "global",
-  "hash_bang_line",
-  "html_character_reference",
-  "html_comment",
-  "identifier",
-  "if",
-  "implements",
-  "import",
-  "in",
-  "infer",
-  "interface",
-  "is",
-  "jsx_identifier",
-  "jsx_text",
-  "keyof",
-  "meta_property",
-  "namespace",
-  "new",
-  "null",
-  "number",
-  "optional_chain",
-  "override",
-  "override_modifier",
-  "predefined_type",
-  "private_property_identifier",
-  "readonly",
-  "regex_flags",
-  "regex_pattern",
-  "require",
-  "return",
-  "satisfies",
-  "static",
-  "super",
-  "switch",
-  "this",
-  "throw",
-  "true",
-  "try",
-  "typeof",
-  "undefined",
-  "unescaped_double_jsx_string_fragment",
-  "unescaped_double_string_fragment",
-  "unescaped_single_jsx_string_fragment",
-  "unescaped_single_string_fragment",
-  "using",
-  "var",
-  "while",
-  "with",
-  "yield",
-  "{",
-  "|",
-  "||",
-  "}",
-]);
-
-const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
-  "_arrow_function_parameter": new Set(["parameter"]),
-  "_for_header": new Set(["operator"]),
-  "_for_header_let_const_kind": new Set(["kind"]),
+const nativeTransportBooleanKeywordFieldsByKind: Record<string, ReadonlySet<string>> = {
   "_for_header_var_kind": new Set(["kind"]),
-  "_index_signature_colon": new Set(["name"]),
-  "_number": new Set(["argument","operator"]),
   "_parameter_name": new Set(["readonly_marker"]),
   "_public_field_definition_abstract_first": new Set(["abstract_marker","readonly_marker"]),
   "_public_field_definition_access_first": new Set(["declare_marker"]),
   "_public_field_definition_accessor_opt": new Set(["accessor_marker"]),
   "_public_field_definition_readonly_first": new Set(["abstract_marker","readonly_marker"]),
   "_public_field_definition_static_mods": new Set(["readonly_marker","static_marker"]),
-  "_type_query_member_expression": new Set(["property"]),
-  "_type_query_member_expression_in_type_annotation": new Set(["property"]),
-  "_update_expression_postfix": new Set(["operator"]),
-  "_update_expression_prefix": new Set(["operator"]),
-  "abstract_method_signature": new Set(["accessibility_modifier","accessor_kind","optional_marker","override_modifier"]),
+  "abstract_method_signature": new Set(["optional_marker","override_modifier"]),
   "arrow_function": new Set(["async_marker"]),
-  "arrow_function_parameter": new Set(["parameter"]),
   "assignment_expression": new Set(["using_marker"]),
-  "augmented_assignment_expression": new Set(["operator"]),
   "binary_expression": new Set(["operator"]),
-  "break_statement": new Set(["label"]),
-  "class_declaration": new Set(["automatic_semicolon"]),
   "construct_signature": new Set(["abstract_marker"]),
   "constructor_type": new Set(["abstract_marker"]),
-  "continue_statement": new Set(["label"]),
-  "decorator_member_expression": new Set(["property"]),
-  "enum_declaration": new Set(["const_marker","name"]),
-  "export_specifier": new Set(["export_kind"]),
+  "enum_declaration": new Set(["const_marker"]),
   "field_definition": new Set(["static_marker"]),
-  "for_in_statement": new Set(["await_marker","operator"]),
-  "function_declaration": new Set(["async_marker","name"]),
-  "function_expression": new Set(["async_marker","name"]),
-  "function_signature": new Set(["async_marker","name"]),
-  "generator_function": new Set(["async_marker","name"]),
-  "generator_function_declaration": new Set(["async_marker","name"]),
-  "import_alias": new Set(["name"]),
-  "import_require_clause": new Set(["identifier"]),
-  "import_specifier": new Set(["import_kind"]),
-  "import_statement": new Set(["import_clause"]),
-  "index_signature": new Set(["sign"]),
-  "lexical_declaration": new Set(["kind"]),
-  "member_expression": new Set(["property"]),
-  "method_definition": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "method_signature": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "namespace_import": new Set(["identifier"]),
-  "nested_identifier": new Set(["property"]),
-  "object_type": new Set(["closing","opening"]),
+  "for_in_statement": new Set(["await_marker"]),
+  "function_declaration": new Set(["async_marker"]),
+  "function_expression": new Set(["async_marker"]),
+  "function_signature": new Set(["async_marker"]),
+  "generator_function": new Set(["async_marker"]),
+  "generator_function_declaration": new Set(["async_marker"]),
+  "method_definition": new Set(["async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
+  "method_signature": new Set(["async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
   "optional_parameter": new Set(["readonly_marker"]),
-  "optional_tuple_parameter": new Set(["name"]),
-  "program": new Set(["hash_bang_line"]),
-  "property_signature": new Set(["accessibility_modifier","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "public_field_definition": new Set(["optionality_marker"]),
-  "regex": new Set(["flags","pattern"]),
+  "property_signature": new Set(["optional_marker","override_modifier","readonly_marker","static_marker"]),
   "required_parameter": new Set(["readonly_marker"]),
-  "statement_block": new Set(["automatic_semicolon"]),
   "subscript_expression": new Set(["optional_chain"]),
   "type_parameter": new Set(["const_marker"]),
-  "type_predicate": new Set(["name"]),
-  "unary_expression": new Set(["operator"]),
 };
 
-function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
-  const fields = nativeTransportTerminalFieldsByKind[kind];
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function coerceKeywordPresenceFields(projected: Record<string, unknown>, kind: string): void {
+  const fields = nativeTransportBooleanKeywordFieldsByKind[kind];
   if (!fields) return;
   for (const fieldName of fields) {
     const value = projected[fieldName];
     if (value === undefined) continue;
+    if (typeof value === 'boolean') continue;
     if (Array.isArray(value)) {
-      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
-    } else {
-      projected[fieldName] = collapseIfTerminal(value);
+      projected[fieldName] = value.length > 0;
+      continue;
+    }
+    projected[fieldName] = true;
+  }
+}
+
+function coerceNativeTransportChildren(projected: Record<string, unknown>, kind: string): void {
+  const children = projected.$children;
+  if (!Array.isArray(children)) return;
+  const variant = typeof projected.$variant === "string" ? projected.$variant : undefined;
+  if (variant !== undefined) {
+    const variantRule = nativeTransportVariantRules[kind]?.find((candidate) => candidate.variant === variant);
+    if (variantRule?.children && !variantRule.children.multiple) {
+      if (children.length === 0 && !variantRule.children.required) { delete projected.$children; return; }
+      projected.$children = children[0];
+      return;
     }
   }
-}
-
-function collapseIfTerminal(value: unknown): unknown {
-  if (typeof value === 'string') return value;
-  if (!isRecord(value)) return value;
-  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
-    return value.$text;
+  const rawRule = nativeTransportRawChildFieldRules[kind];
+  if (rawRule && !rawRule.childrenMultiple) {
+    if (children.length === 0 && !rawRule.childrenRequired) { delete projected.$children; return; }
+    projected.$children = children[0];
   }
-  return value;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 function projectTransportValue(value: unknown, path: string): unknown {
@@ -834,7 +1234,8 @@ function projectTransportValue(value: unknown, path: string): unknown {
 
   projectRawChildrenIntoFields(projected, resolvedKind);
   inferNativeTransportVariant(projected, resolvedKind);
-  collapseTerminalFields(projected, resolvedKind);
+  coerceNativeTransportChildren(projected, resolvedKind);
+  coerceKeywordPresenceFields(projected, resolvedKind);
 
   projected.$type = kindIdFromName(resolvedKind);
 

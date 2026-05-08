@@ -51,9 +51,7 @@ describe('alias()', () => {
 		});
 
 		it('throws on invalid second arg via the fake native', () => {
-			expect(() => alias(sym('foo'), 42 as unknown as string)).toThrow(
-				/invalid value/
-			);
+			expect(() => alias(sym('foo'), 42 as unknown as string)).toThrow(/invalid value/);
 		});
 	});
 });

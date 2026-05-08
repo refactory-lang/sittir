@@ -123,10 +123,7 @@ async function main(): Promise<void> {
 		hydrateSlotRefs(nodeMap);
 		try {
 			const types = emitTypes({ grammar, nodeMap, generatedIdTables });
-			const ifacePat = new RegExp(
-				`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`,
-				'm'
-			);
+			const ifacePat = new RegExp(`export interface ${kindToPascal(kind)}[^\\{]*\\{[\\s\\S]*?\\n\\}`, 'm');
 			const m = (types as unknown as string).match(ifacePat);
 			stages.emitInterface = m ? m[0] : null;
 		} catch (e) {
@@ -146,10 +143,7 @@ async function main(): Promise<void> {
 }
 
 function resolveGrammarJsPath(grammar: string): string {
-	const candidates = [
-		`tree-sitter-${grammar}/grammar.js`,
-		`tree-sitter-${grammar}/common/define-grammar.js`
-	];
+	const candidates = [`tree-sitter-${grammar}/grammar.js`, `tree-sitter-${grammar}/common/define-grammar.js`];
 	for (const c of candidates) {
 		try {
 			return requireFromHere.resolve(c);
@@ -157,9 +151,7 @@ function resolveGrammarJsPath(grammar: string): string {
 			/* try next */
 		}
 	}
-	throw new Error(
-		`probe-stages: could not resolve base grammar.js for '${grammar}'`
-	);
+	throw new Error(`probe-stages: could not resolve base grammar.js for '${grammar}'`);
 }
 
 function relFromRoot(p: string, root: string): string {

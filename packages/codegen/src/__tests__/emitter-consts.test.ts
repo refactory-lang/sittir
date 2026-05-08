@@ -116,7 +116,7 @@ describe('emitConsts', () => {
 									multiplicity: 'single'
 								}
 							],
-							source: 'grammar',
+							source: 'grammar'
 						},
 						{
 							name: 'body',
@@ -129,7 +129,7 @@ describe('emitConsts', () => {
 									multiplicity: 'single'
 								}
 							],
-							source: 'grammar',
+							source: 'grammar'
 						}
 					]
 				} as unknown as AssembledBranch
@@ -303,7 +303,7 @@ describe('emitConsts', () => {
 							propertyName: 'item',
 							paramName: 'item',
 							values: [],
-							source: 'grammar',
+							source: 'grammar'
 						}
 					]
 				} as unknown as AssembledBranch
@@ -323,21 +323,62 @@ describe('emitConsts', () => {
 			nodeMap,
 			generatedIdTables: {
 				kindIds: {
-					source_file: { id: 1, parser: { cSymbol: 'sym_source_file', parserName: 'source_file', anon: false, aux: false, alias: false, hidden: false } },
-					';': { id: 2, parser: { cSymbol: 'anon_sym_SEMI', parserName: 'SEMI', anon: true, aux: false, alias: false, hidden: false } },
-					missing: { id: 99, parser: { cSymbol: 'sym_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
+					source_file: {
+						id: 1,
+						parser: {
+							cSymbol: 'sym_source_file',
+							parserName: 'source_file',
+							anon: false,
+							aux: false,
+							alias: false,
+							hidden: false
+						}
+					},
+					';': {
+						id: 2,
+						parser: {
+							cSymbol: 'anon_sym_SEMI',
+							parserName: 'SEMI',
+							anon: true,
+							aux: false,
+							alias: false,
+							hidden: false
+						}
+					},
+					missing: {
+						id: 99,
+						parser: {
+							cSymbol: 'sym_missing',
+							parserName: 'missing',
+							anon: false,
+							aux: false,
+							alias: false,
+							hidden: false
+						}
+					}
 				},
 				fieldIds: {
-					item: { id: 7, parser: { cSymbol: 'field_item', parserName: 'item', anon: false, aux: false, alias: false, hidden: false } },
-					missing: { id: 99, parser: { cSymbol: 'field_missing', parserName: 'missing', anon: false, aux: false, alias: false, hidden: false } }
+					item: {
+						id: 7,
+						parser: { cSymbol: 'field_item', parserName: 'item', anon: false, aux: false, alias: false, hidden: false }
+					},
+					missing: {
+						id: 99,
+						parser: {
+							cSymbol: 'field_missing',
+							parserName: 'missing',
+							anon: false,
+							aux: false,
+							alias: false,
+							hidden: false
+						}
+					}
 				},
 				sourceArtifact: 'parser.wasm'
 			}
 		});
 
-		expect(output).toContain(
-			'export const TREE_SITTER_ID_SOURCE = "parser.wasm";'
-		);
+		expect(output).toContain('export const TREE_SITTER_ID_SOURCE = "parser.wasm";');
 		expect(output).toContain('export const TREE_SITTER_KIND_ID_BY_KIND = {');
 		expect(output).toContain('"source_file": 1,');
 		expect(output).toContain('";": 2,');
@@ -347,12 +388,8 @@ describe('emitConsts', () => {
 		expect(output).toContain('FieldItem = 7,');
 		expect(output).toContain('"item": TSFieldId.FieldItem,');
 		expect(output).toContain('export const TREE_SITTER_KIND_ID_JSON = [');
-		expect(output).toContain(
-			'{ name: "source_file", id: 1, enumName: "SourceFile", cName: "sym_source_file" },'
-		);
+		expect(output).toContain('{ name: "source_file", id: 1, enumName: "SourceFile", cName: "sym_source_file" },');
 		expect(output).toContain('export const TREE_SITTER_FIELD_ID_JSON = [');
-		expect(output).toContain(
-			'{ name: "item", id: 7, enumName: "FieldItem", cName: "field_item" },'
-		);
+		expect(output).toContain('{ name: "item", id: 7, enumName: "FieldItem", cName: "field_item" },');
 	});
 });

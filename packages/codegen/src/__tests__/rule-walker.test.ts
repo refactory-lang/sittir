@@ -16,10 +16,7 @@
 
 import { describe, it, expect } from 'vitest';
 import type { Rule } from '../compiler/rule.ts';
-import {
-	renderRuleTemplate,
-	findRepeatFlag
-} from '../compiler/template-walker.ts';
+import { renderRuleTemplate, findRepeatFlag } from '../compiler/template-walker.ts';
 
 // ---------------------------------------------------------------------------
 // Tiny Rule-tree builders — keep tests readable.
@@ -124,10 +121,7 @@ describe('renderRuleTemplate — multi-valued fields (a106f34)', () => {
 
 	it('two sibling multi-valued fields get distinct joinBy entries', () => {
 		// rust tuple_expression: attributes join by newline, rest by comma.
-		const r = seq(
-			field('attributes', repeat(sym('attribute'), '\n')),
-			field('rest', repeat(sym('expression'), ','))
-		);
+		const r = seq(field('attributes', repeat(sym('attribute'), '\n')), field('rest', repeat(sym('expression'), ',')));
 		const { template, joinByField } = renderRuleTemplate(r);
 		expect(template).toContain('$$$ATTRIBUTES');
 		expect(template).toContain('$$$REST');
@@ -137,11 +131,7 @@ describe('renderRuleTemplate — multi-valued fields (a106f34)', () => {
 
 	it('sibling duplicate field refs share one $$$NAME slot with joinBy', () => {
 		// inferFields pattern: two refs tagged with the same field name.
-		const r = seq(
-			field('pattern', sym('_pattern')),
-			str('|'),
-			field('pattern', sym('_pattern'))
-		);
+		const r = seq(field('pattern', sym('_pattern')), str('|'), field('pattern', sym('_pattern')));
 		const { template, joinByField } = renderRuleTemplate(r);
 		// Only ONE $$$PATTERN slot — the duplicate is absorbed and the
 		// '|' between them becomes the per-slot joinBy.
@@ -167,14 +157,7 @@ describe('renderRuleTemplate — synthetic outer-field wrappers (606b646)', () =
 		// Autogen override: field('outer', seq(field('name', sym), field('value', sym)))
 		// The outer field is synthetic — no runtime node corresponds to it —
 		// so the walker descends and emits the inner slots directly.
-		const r = field(
-			'outer',
-			seq(
-				field('name', sym('identifier')),
-				str('='),
-				field('value', sym('expression'))
-			)
-		);
+		const r = field('outer', seq(field('name', sym('identifier')), str('='), field('value', sym('expression'))));
 		const { template } = renderRuleTemplate(r);
 		// needsSpace only inserts spaces between word-like chars, so `=`
 		// doesn't get flanking spaces in the template. The renderer adds
@@ -210,10 +193,7 @@ describe('renderRuleTemplate — choice branch diagnostic', () => {
 		// Ideal fix is `variant()` adoption per arm. Absent that,
 		// walker logs a diagnostic and picks the first non-empty
 		// branch — drops the 'while' keyword from branch 1.
-		const r = choice(
-			seq(str('if'), field('cond', sym('expression'))),
-			seq(str('while'), field('body', sym('block')))
-		);
+		const r = choice(seq(str('if'), field('cond', sym('expression'))), seq(str('while'), field('body', sym('block'))));
 		const { template } = renderRuleTemplate(r);
 		expect(template).toContain('if');
 		expect(template).not.toContain('while');
@@ -227,13 +207,7 @@ describe('renderRuleTemplate — choice branch diagnostic', () => {
 		// rendering but is the pre-Option-3 baseline the walker has
 		// always used. Visible in the diagnostic so authors know to
 		// variant()-adopt.
-		const r = choice(
-			sym('crate'),
-			seq(
-				field('pub', sym('_kw_pub')),
-				optional(choice(sym('self'), sym('super')))
-			)
-		);
+		const r = choice(sym('crate'), seq(field('pub', sym('_kw_pub')), optional(choice(sym('self'), sym('super')))));
 		const { template } = renderRuleTemplate(r);
 		expect(template).toContain('$$$CHILDREN');
 		expect(template).toContain('$PUB');
@@ -322,10 +296,7 @@ describe('renderRuleTemplate — hidden helper inlining', () => {
 		const r = seq(
 			str('//'),
 			choice(
-				seq(
-					{ type: 'pattern', value: '\\/\\/' } as Rule,
-					{ type: 'pattern', value: '.*' } as Rule
-				),
+				seq({ type: 'pattern', value: '\\/\\/' } as Rule, { type: 'pattern', value: '.*' } as Rule),
 				seq(field('outer', str('/')), field('doc', sym('text')))
 			)
 		);
@@ -349,11 +320,7 @@ describe('renderRuleTemplate — alias rules', () => {
 	it('named alias emits $$$CHILDREN like a visible symbol', () => {
 		// `alias($._hidden, $.visible)` — tree-sitter surfaces a visible
 		// kind at parse time. Walker must render it as a named child slot.
-		const r = aliasRule(
-			sym('_visibility_modifier_pub_crate'),
-			true,
-			'visibility_modifier_pub_crate'
-		);
+		const r = aliasRule(sym('_visibility_modifier_pub_crate'), true, 'visibility_modifier_pub_crate');
 		expect(renderRuleTemplate(r).template).toBe('$$$CHILDREN');
 	});
 
@@ -369,11 +336,7 @@ describe('renderRuleTemplate — alias rules', () => {
 	it('named alias inside seq preserves ambient literals', () => {
 		// `pub(inner_alias)` shape — ambient `(`/`)` must survive so the
 		// parent template doesn't collapse to just `$$$CHILDREN`.
-		const r = seq(
-			str('('),
-			aliasRule(sym('_inner'), true, 'visible_inner'),
-			str(')')
-		);
+		const r = seq(str('('), aliasRule(sym('_inner'), true, 'visible_inner'), str(')'));
 		expect(renderRuleTemplate(r).template).toBe('($$$CHILDREN)');
 	});
 
@@ -411,19 +374,13 @@ describe('findRepeatFlag', () => {
 		({ type: 'repeat', content: sym('X'), separator: ',', ...extras }) as Rule;
 
 	it('returns true for `repeat.trailing = true`', () => {
-		expect(findRepeatFlag(repeatWith({ trailing: true }), 'trailing')).toBe(
-			true
-		);
-		expect(findRepeatFlag(repeatWith({ trailing: true }), 'leading')).toBe(
-			false
-		);
+		expect(findRepeatFlag(repeatWith({ trailing: true }), 'trailing')).toBe(true);
+		expect(findRepeatFlag(repeatWith({ trailing: true }), 'leading')).toBe(false);
 	});
 
 	it('returns true for `repeat.leading = true`', () => {
 		expect(findRepeatFlag(repeatWith({ leading: true }), 'leading')).toBe(true);
-		expect(findRepeatFlag(repeatWith({ leading: true }), 'trailing')).toBe(
-			false
-		);
+		expect(findRepeatFlag(repeatWith({ leading: true }), 'trailing')).toBe(false);
 	});
 
 	it('returns false for plain repeat with no flag', () => {
@@ -433,10 +390,7 @@ describe('findRepeatFlag', () => {
 
 	it('descends through seq / choice / optional / field wrappers', () => {
 		const trailingRepeat = repeatWith({ trailing: true });
-		const shape = field(
-			'list',
-			optional(seq(str('['), trailingRepeat, str(']')))
-		);
+		const shape = field('list', optional(seq(str('['), trailingRepeat, str(']'))));
 		expect(findRepeatFlag(shape, 'trailing')).toBe(true);
 		const choiceShape = choice(sym('other'), trailingRepeat);
 		expect(findRepeatFlag(choiceShape, 'trailing')).toBe(true);

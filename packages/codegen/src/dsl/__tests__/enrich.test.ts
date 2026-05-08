@@ -1,12 +1,4 @@
-import {
-	describe,
-	it,
-	expect,
-	vi,
-	afterEach,
-	beforeAll,
-	afterAll
-} from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
 import { enrich } from '../enrich.ts';
 import type { Rule } from '../../compiler/rule.ts';
 import { installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
@@ -107,9 +99,7 @@ describe('enrich()', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi
-					.spyOn(process.stderr, 'write')
-					.mockImplementation(() => true);
+				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					foo: {
 						type: 'seq',
@@ -133,9 +123,7 @@ describe('enrich()', () => {
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
 				// Pass was renamed kind-to-name → symbol-to-field in 80ee7ad9
 				// (passes 1+3 merged into one symbol-to-field pass + fixed-point loop).
-				expect(
-					calls.some((c) => c.includes('skipped symbol-to-field on foo'))
-				).toBe(true);
+				expect(calls.some((c) => c.includes('skipped symbol-to-field on foo'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
 			}
@@ -318,9 +306,7 @@ describe('enrich()', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi
-					.spyOn(process.stderr, 'write')
-					.mockImplementation(() => true);
+				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					decorated_fn: {
 						type: 'seq',
@@ -346,11 +332,7 @@ describe('enrich()', () => {
 					content: { type: 'string', value: 'async' }
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
-				expect(
-					calls.some((c) =>
-						c.includes('skipped optional-keyword-prefix on decorated_fn')
-					)
-				).toBe(true);
+				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on decorated_fn'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
 			}
@@ -586,9 +568,7 @@ describe('enrich()', () => {
 			const savedQuiet = process.env.SITTIR_QUIET;
 			delete process.env.SITTIR_QUIET;
 			try {
-				const stderrSpy = vi
-					.spyOn(process.stderr, 'write')
-					.mockImplementation(() => true);
+				const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 				const input = mkGrammar({
 					wrapped: {
 						type: 'prec',
@@ -617,11 +597,7 @@ describe('enrich()', () => {
 					content: { type: 'string', value: 'async' }
 				});
 				const calls = stderrSpy.mock.calls.map((c) => String(c[0]));
-				expect(
-					calls.some((c) =>
-						c.includes('skipped optional-keyword-prefix on wrapped')
-					)
-				).toBe(true);
+				expect(calls.some((c) => c.includes('skipped optional-keyword-prefix on wrapped'))).toBe(true);
 			} finally {
 				if (savedQuiet !== undefined) process.env.SITTIR_QUIET = savedQuiet;
 			}
@@ -648,9 +624,7 @@ describe('enrich()', () => {
 				alias_rule: { type: 'symbol', name: 'target' }
 			});
 			const out = runEnrich(input);
-			expect(out.grammar.rules.alias_rule).toEqual(
-				input.grammar.rules.alias_rule
-			);
+			expect(out.grammar.rules.alias_rule).toEqual(input.grammar.rules.alias_rule);
 		});
 	});
 });
