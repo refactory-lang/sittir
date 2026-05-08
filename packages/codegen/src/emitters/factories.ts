@@ -940,7 +940,7 @@ function emitFieldCarryingFactory(
 		);
 	}
 	lines.push('    },');
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1012,7 +1012,7 @@ function emitSingleFieldFactory(
 	const setterType = setterElemType(soleField, elemType, fn, nodeMap);
 	lines.push(`      ${method}: (${setterValueSignature(soleField, setterType)}) => ${fn}(value),`);
 	lines.push('    },');
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1171,7 +1171,7 @@ function emitRefineFormFactory(
 		);
 	}
 	lines.push('    },');
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1335,7 +1335,7 @@ function emitContainerFactory(
 	} else {
 		lines.push(`    $with: { $child: (v: ${elementType}) => ${fn}(v) },`);
 	}
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return lines.join('\n');
 }
@@ -1402,7 +1402,7 @@ function emitPolymorphFactory(
 			`    $source: 2 as const,`,
 			`    $named: true as const,`,
 			`    $with: {},`,
-			`  });`,
+			`  }, methodsEngine);`,
 			`}`
 		].join('\n');
 	}
@@ -1604,7 +1604,7 @@ function emitHoistedPolymorphFormFactory(
 			const propName = f.propertyName;
 			lines.push(`    ${propName}() { return _${f.name}; },`);
 		}
-		lines.push('  });');
+		lines.push('  }, methodsEngine);');
 	}
 	lines.push(`  const children = [inner] as const;`);
 
@@ -1684,7 +1684,7 @@ function emitHoistedPolymorphFormFactory(
 	} else {
 		lines.push(`    $with: {},`);
 	}
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	lines.push('}');
 	return renameUnusedConfigParam(lines);
 }
@@ -1841,7 +1841,7 @@ function emitTextFactory(
 		`    $source: 2 as const,`,
 		'    $named: true as const,',
 		`    $text: ${textExpr},`,
-		'  });',
+		'  }, methodsEngine);',
 		'}'
 	);
 	return body.join('\n');
@@ -1982,7 +1982,7 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
 		lines.push(
-			"import { coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage, withMethods } from './utils.js';"
+			"import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';"
 		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());

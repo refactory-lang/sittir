@@ -379,7 +379,7 @@ function emitFieldCarryingWrap(
 	// $with — calls the corresponding factory for update operations.
 	emitInlineWithProperty(lines, node, fields, children, nodeMap);
 
-	lines.push('  });');
+	lines.push('  }, methodsEngine);');
 	if (hasWithSetters) {
 		lines.push('  return _node;');
 	}
@@ -554,6 +554,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
 		const utilsImports = [
 			'withMethods',
+			'methodsEngine',
 			...(usesCoerceBoolean ? ['coerceBooleanKeywordStorage'] : []),
 			...(usesCoerceBitflag ? ['coerceBitflagStorage'] : [])
 		];

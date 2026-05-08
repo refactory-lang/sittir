@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../emitters/client-utils.ts';
+import { emitFactories } from '../emitters/factories.ts';
+import { emitWrap } from '../emitters/wrap.ts';
 import { makeMinimalNodeMap } from './helpers/node-map-fixtures.ts';
 
 describe('utils engine facade emission', () => {
@@ -13,5 +15,16 @@ describe('utils engine facade emission', () => {
 		expect(contents).toContain('engine: typeof methodsEngine');
 		expect(contents).toContain('return withCommonMethods(node, engine);');
 		expect(contents).not.toContain('$render(this: AnyNodeData): string { return render(this); }');
+	});
+
+	it('emits factory and wrap call sites with the explicit methodsEngine argument', () => {
+		const nodeMap = makeMinimalNodeMap();
+		const factoriesSrc = emitFactories({ grammar: 'synth', nodeMap });
+		const wrapSrc = emitWrap({ grammar: 'synth', nodeMap });
+
+		expect(factoriesSrc).toContain('import { withMethods, methodsEngine');
+		expect(factoriesSrc).toContain('}, methodsEngine);');
+		expect(wrapSrc).toContain('import { withMethods, methodsEngine');
+		expect(wrapSrc).toContain('}, methodsEngine);');
 	});
 });
