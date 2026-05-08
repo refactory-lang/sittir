@@ -1,13 +1,5 @@
 import type { AssembledNode } from '../compiler/node-map.ts';
 
-export interface LoopDrivenEmitter<TResult, TFinalizeArg = void> {
-	emitLeaf?(node: AssembledNode): void;
-	emitBranch?(node: AssembledNode): void;
-	emitPolymorph?(node: AssembledNode): void;
-	emitGroup?(node: AssembledNode): void;
-	finalize(arg: TFinalizeArg): TResult;
-}
-
 /** Constructor-based emitter with no init() lifecycle phase. */
 export interface CodegenEmitter<TResult, TFinalizeArg = void> {
 	emitLeaf?(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void;
