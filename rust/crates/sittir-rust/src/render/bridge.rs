@@ -382,9 +382,9 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (246, 338) => Some("binary"), // ("range_expression", "range_expression_binary")
         (246, 339) => Some("binary"), // ("range_expression", "range_expression_postfix")
         (246, 340) => Some("binary"), // ("range_expression", "range_expression_prefix")
-        (303, 344) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_bare")
-        (303, 343) => Some("left_with_right"), // ("range_pattern", "range_pattern_left_with_right")
-        (303, 342) => Some("left_with_right"), // ("range_pattern", "range_pattern_prefix")
+        (303, 344) => Some("prefix"), // ("range_pattern", "range_pattern_left_bare")
+        (303, 343) => Some("prefix"), // ("range_pattern", "range_pattern_left_with_right")
+        (303, 342) => Some("prefix"), // ("range_pattern", "range_pattern_prefix")
         (176, 345) => Some("brace"), // ("struct_item", "struct_item_brace")
         (176, 346) => Some("brace"), // ("struct_item", "struct_item_tuple")
         (176, 347) => Some("brace"), // ("struct_item", "struct_item_unit")
@@ -394,9 +394,9 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (164, 375) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_brace")
         (164, 374) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_bracket")
         (164, 373) => Some("paren"), // ("token_tree_pattern", "token_tree_pattern_paren")
-        (215, 348) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_crate")
-        (215, 350) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_in_path")
-        (215, 349) => Some("in_path"), // ("visibility_modifier", "visibility_modifier_pub")
+        (215, 348) => Some("crate"), // ("visibility_modifier", "visibility_modifier_crate")
+        (215, 350) => Some("crate"), // ("visibility_modifier", "visibility_modifier_in_path")
+        (215, 349) => Some("crate"), // ("visibility_modifier", "visibility_modifier_pub")
         _ => None,
     }
 }

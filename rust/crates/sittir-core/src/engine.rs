@@ -82,22 +82,17 @@ impl<G: EngineGrammar> ParsedTree<G> {
     }
 
     /// Read the root node of the parsed tree into a `NodeData`.
-    /// Stamps `node_handle` on the returned root and pushes the root
-    /// node into the node table for subsequent child navigation.
+    /// Reserves the root handle first so the returned payload and its
+    /// child stubs share the same parent-handle contract as the JS
+    /// reader, then stores the root node for subsequent child reads.
     pub fn read_root(&mut self) -> NodeData {
-        // Read first (borrows tree + source immutably).
-        let mut data = read_node(&self.tree, &self.source, None);
-        // Push root into node table. We inline the push_node logic
-        // here to avoid a self-borrow conflict (root_node() borrows
-        // self.tree, but push_node needs &mut self).
         let handle = self.nodes.len() as u32;
         // SAFETY: root_node borrows from self.tree which outlives
         // self.nodes (nodes declared after tree → dropped first).
         let root: tree_sitter::Node<'static> =
             unsafe { std::mem::transmute(self.tree.root_node()) };
         self.nodes.push(StoredNode::Ts(root));
-        data.node_handle = Some(handle);
-        data
+        read_node(&self.tree, &self.source, None, Some(handle))
     }
 
     /// Read a child node by handle + child_index.
@@ -117,9 +112,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
                 parent_node.child_count()
             )
         })?;
-        let mut data = read_node(&self.tree, &self.source, Some(child_node));
         let new_handle = self.push_node(child_node);
-        data.node_handle = Some(new_handle);
+        let data = read_node(&self.tree, &self.source, Some(child_node), Some(new_handle));
         serde_json::to_string(&data).map_err(|e| format!("serialize NodeData failed: {e}"))
     }
 

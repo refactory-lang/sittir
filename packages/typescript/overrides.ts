@@ -14,14 +14,7 @@
 // non-JSX corpus but a latent mismatch: anything JSX-shaped would
 // reparse-fail. Pick one grammar and stick with it end-to-end.
 import base from '../../node_modules/.pnpm/tree-sitter-typescript@0.23.2/node_modules/tree-sitter-typescript/typescript/grammar.js';
-import {
-	transform,
-	enrich,
-	field,
-	wire,
-	refine,
-	variant
-} from '../codegen/src/dsl/index.ts';
+import { transform, enrich, field, wire, refine, variant } from '../codegen/src/dsl/index.ts';
 
 export default grammar(
 	enrich(base),
@@ -60,29 +53,14 @@ export default grammar(
 			[$.object, $.object_pattern],
 			[$.primary_expression, $.method_definition],
 			[$.primary_expression, $.arrow_function, $._property_name],
-			[
-				$.call_expression,
-				$.binary_expression,
-				$.unary_expression,
-				$.instantiation_expression
-			],
+			[$.call_expression, $.binary_expression, $.unary_expression, $.instantiation_expression],
 			[$.assignment_expression, $.pattern],
 			[$.primary_expression, $.pattern],
 			[$.primary_expression, $._parameter_name],
-			[
-				$.call_expression,
-				$.await_expression,
-				$.binary_expression,
-				$.instantiation_expression
-			],
+			[$.call_expression, $.await_expression, $.binary_expression, $.instantiation_expression],
 			[$.array, $.array_pattern],
 			[$.primary_type, $.type_parameter],
-			[
-				$.call_expression,
-				$.binary_expression,
-				$.update_expression,
-				$.instantiation_expression
-			],
+			[$.call_expression, $.binary_expression, $.update_expression, $.instantiation_expression],
 			[$.primary_expression, $.rest_pattern],
 			[$._for_header, $.primary_expression],
 			[$.class],
@@ -117,33 +95,11 @@ export default grammar(
 			[$.nested_identifier, $.nested_type_identifier],
 			[$._initializer, $.binary_expression],
 			[$.primary_expression, $._export_statement_namespace_export],
-			[
-				$.binary_expression,
-				$.unary_expression,
-				$.instantiation_expression,
-				$._call_expression_call
-			],
-			[
-				$.await_expression,
-				$.binary_expression,
-				$.instantiation_expression,
-				$._call_expression_call
-			],
-			[
-				$.binary_expression,
-				$.update_expression,
-				$.instantiation_expression,
-				$._call_expression_call
-			],
-			[
-				$.binary_expression,
-				$.instantiation_expression,
-				$._call_expression_call
-			],
-			[
-				$._type_query_call_expression_in_type_annotation,
-				$._call_expression_call
-			],
+			[$.binary_expression, $.unary_expression, $.instantiation_expression, $._call_expression_call],
+			[$.await_expression, $.binary_expression, $.instantiation_expression, $._call_expression_call],
+			[$.binary_expression, $.update_expression, $.instantiation_expression, $._call_expression_call],
+			[$.binary_expression, $.instantiation_expression, $._call_expression_call],
+			[$._type_query_call_expression_in_type_annotation, $._call_expression_call],
 			[$._type_query_call_expression, $._call_expression_call],
 			[$.primary_expression, $._export_statement_default],
 			// update_expression variant extraction: the hoisted

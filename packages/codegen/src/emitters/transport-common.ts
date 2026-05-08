@@ -1,0 +1,100 @@
+import type { NodeMap } from '../compiler/types.ts';
+import type { AssembledNonterminal, AssembledNode, AssembledSupertype, UnresolvedRef } from '../compiler/node-map.ts';
+import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
+
+/**
+ * Classification of a transport slot by its type width.
+ *
+ * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
+ *                     `typeName` is the assembled node's typeName (PascalCase,
+ *                     leading-underscore-stripped) used to derive the Rust
+ *                     struct name and render fn name. Falls back to the kind
+ *                     string when nodeMap is unavailable (test / exported path).
+ * - `supertype`     — kind set is a subset of a known assembled supertype's
+ *                     resolved subtypes; emit `<Supertype>Transport` enum.
+ *                     `supertypeName` is the supertype's `typeName` (PascalCase).
+ * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
+ *                     sittir's pipeline; retained as a compile-safety escape).
+ */
+export type SlotClass =
+	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
+	| { readonly tag: 'supertype'; readonly supertypeName: string }
+	| { readonly tag: 'heterogeneous'; readonly useBox?: boolean };
+
+/**
+ * Classify a slot's kind set against the supertype registry.
+ *
+ * Single source of derivation for slot class — all emitters (field type,
+ * children type, render call, list buffer) MUST call this. DRY constraint.
+ *
+ * Tiebreak when multiple supertypes cover the kinds: the narrower supertype
+ * (smallest `subtypes.size`) wins. If tied, Map insertion order (grammar order)
+ * is the tiebreak — deterministic across runs.
+ *
+ * @param kinds - the kind set for this slot (projection.kinds for fields;
+ *   deriveChildrenKinds result for children)
+ * @param supertypeMap - result of `buildSupertypeTransportSet(nodeMap)`; when
+ *   absent (test path / no nodeMap) multi-kind slots fall back to `heterogeneous`.
+ */
+export function classifySlot(
+	kinds: readonly string[],
+	supertypeMap: ReadonlyMap<string, ReadonlySet<string>> = new Map()
+): SlotClass {
+	if (kinds.length === 1) {
+		const kind = kinds[0]!;
+		return { tag: 'concrete', kind, typeName: kind };
+	}
+	if (kinds.length === 0) {
+		return { tag: 'heterogeneous' };
+	}
+	const kindSet = new Set(kinds);
+	let bestMatch: { supertypeName: string; size: number } | undefined;
+	for (const [supertypeName, subtypes] of supertypeMap) {
+		if ([...kindSet].every((k) => subtypes.has(k))) {
+			if (bestMatch === undefined || subtypes.size < bestMatch.size) {
+				bestMatch = { supertypeName, size: subtypes.size };
+			}
+		}
+	}
+	if (bestMatch !== undefined) {
+		return { tag: 'supertype', supertypeName: bestMatch.supertypeName };
+	}
+	return { tag: 'heterogeneous' };
+}
+
+/**
+ * Build a registry of supertype typeName → resolved concrete subtype set
+ * from the assembled node map.
+ *
+ * @param nodeMap - the assembled node map for the grammar
+ */
+export function buildSupertypeTransportSet(nodeMap: NodeMap): Map<string, ReadonlySet<string>> {
+	const result = new Map<string, ReadonlySet<string>>();
+	for (const [, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		result.set(node.typeName, new Set((node as AssembledSupertype).subtypes));
+	}
+	return result;
+}
+
+/**
+ * Extract the kind set from an `AssembledNonterminal.values` array.
+ * Parallel to `AssembledNonterminal.projection.kinds` for field slots.
+ * Terminal values (inline string literals) are skipped — they do not
+ * contribute to the transport type.
+ *
+ * Unresolved refs are included using their `name` (the grammar kind string,
+ * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds`
+ * is built in `deriveFieldsRaw`.
+ *
+ * @param child - any AssembledNonterminal (field or children slot)
+ * @returns deduplicated list of resolved kind names
+ */
+export function deriveChildrenKinds(child: AssembledNonterminal): string[] {
+	const kinds = new Set<string>();
+	for (const v of child.values) {
+		if (!isNodeRef(v)) continue;
+		kinds.add(isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : (v.node as AssembledNode).kind);
+	}
+	return [...kinds];
+}

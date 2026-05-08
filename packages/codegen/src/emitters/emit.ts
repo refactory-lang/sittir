@@ -18,6 +18,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
+import type { RenderModuleBundle } from './render-module.ts';
 
 import { factoryEmitter } from './factories.ts';
 import { fromEmitter } from './from.ts';
@@ -31,6 +32,7 @@ import { emitTypeTests } from './type-test.ts';
 import { templateEmitter } from './templates.ts';
 import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
+import { isRenderModuleGrammar, renderModuleEmitter } from './render-module.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -41,6 +43,7 @@ export interface EmitAllConfig {
 	strict?: boolean;
 	triviaKinds?: string[];
 	grammarRoles?: GrammarRoles;
+	emitRenderModule?: boolean;
 }
 
 export interface EmitAllResult {
@@ -56,6 +59,7 @@ export interface EmitAllResult {
 	jinjaTemplates: EmittedTemplates;
 	factoryMap: string;
 	utils: string;
+	renderModule?: RenderModuleBundle;
 }
 
 /**
@@ -66,7 +70,17 @@ export interface EmitAllResult {
  * @returns An object with every emitter's final output string.
  */
 export function emitAll(config: EmitAllConfig): EmitAllResult {
-	const { grammar, nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, strict, triviaKinds, grammarRoles } =
+	const {
+		grammar,
+		nodeMap,
+		generatedIdTables,
+		inlineKinds,
+		synthesizedKinds,
+		strict,
+		triviaKinds,
+		grammarRoles,
+		emitRenderModule
+	} =
 		config;
 
 	// -----------------------------------------------------------------
@@ -107,31 +121,31 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		const emitFactory = factoryEmitter.shouldEmit(kind, node);
 		const emitFrom = fromEmitter.shouldEmit(kind, node);
 		const emitWrap = wrapEmitter.shouldEmit(kind, node);
-		const emitTemplate = templateEmitter.shouldEmit(kind, node);
+		const emitTemplate = templateEmitter.shouldEmit(node);
 
 		switch (node.modelType) {
 			case 'pattern':
 			case 'keyword':
 			case 'enum':
-				if (emitFactory) factoryEmitter.emitLeaf(kind, node);
+				if (emitFactory) factoryEmitter.emitLeaf(node);
 				if (emitFrom) fromEmitter.emitLeaf(node);
-				if (emitTemplate) templateEmitter.emitLeaf(kind, node);
+				if (emitTemplate) templateEmitter.emitLeaf(node);
 				break;
 			case 'branch':
-				if (emitFactory) factoryEmitter.emitBranch(kind, node);
+				if (emitFactory) factoryEmitter.emitBranch(node);
 				if (emitFrom) fromEmitter.emitBranch(node);
 				if (emitWrap) wrapEmitter.emitBranch(node);
-				if (emitTemplate) templateEmitter.emitBranch(kind, node);
+				if (emitTemplate) templateEmitter.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (emitFactory) factoryEmitter.emitPolymorph(kind, node);
+				if (emitFactory) factoryEmitter.emitPolymorph(node);
 				if (emitFrom) fromEmitter.emitPolymorph(node);
 				if (emitWrap) wrapEmitter.emitPolymorph(node);
-				if (emitTemplate) templateEmitter.emitPolymorph(kind, node);
+				if (emitTemplate) templateEmitter.emitPolymorph(node);
 				break;
 			case 'group':
-				if (emitFactory) factoryEmitter.emitGroup(kind, node);
-				if (emitTemplate) templateEmitter.emitGroup(kind, node);
+				if (emitFactory) factoryEmitter.emitGroup(node);
+				if (emitTemplate) templateEmitter.emitGroup(node);
 				break;
 			case 'token':
 			case 'supertype':
@@ -147,6 +161,16 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
 	const jinjaTemplates = templateEmitter.finalize();
+	const renderModule =
+		emitRenderModule && isRenderModuleGrammar(grammar)
+			? (renderModuleEmitter.init({
+					grammar,
+					templates: jinjaTemplates,
+					nodeMap,
+					generatedIdTables
+				}),
+				renderModuleEmitter.finalize())
+			: undefined;
 
 	// -----------------------------------------------------------------
 	// 4. Run emitters that use their own internal iteration
@@ -173,6 +197,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		typeTests,
 		jinjaTemplates,
 		factoryMap,
-		utils
+		utils,
+		renderModule
 	};
 }

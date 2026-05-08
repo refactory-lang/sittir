@@ -89,7 +89,8 @@ import {
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { collectTransportProjection, resolveTransportReferenceKind } from './transport-projection.ts';
+import { resolveTransportReferenceKind } from './transport-projection.ts';
+import { getTransportProjection } from './transport-projection-cache.ts';
 
 type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
 type TerminalNode = AssembledPattern | AssembledKeyword | AssembledToken | AssembledEnum;
@@ -560,7 +561,7 @@ function emitTransportDeclarations(
 	generatedTypes: Set<string>,
 	kindEntries?: readonly KindEnumEntry[]
 ): void {
-	const projection = collectTransportProjection(nodeMap);
+	const projection = getTransportProjection(nodeMap);
 	const transportNodeKinds = projection.nodeKinds;
 
 	lines.push('// Native render transport types — data-only JS → native boundary');

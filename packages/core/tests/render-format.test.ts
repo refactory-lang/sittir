@@ -76,9 +76,7 @@ describe('engine format resolution', () => {
 		const inferred: FormatRecord = { boundary: { leading: '  ' } };
 		const engineFormat: FormatRecord = { boundary: { leading: '\t' } };
 
-		expect(resolveEngineFormat(engineFormat, inferred, false)).toEqual(
-			engineFormat
-		);
+		expect(resolveEngineFormat(engineFormat, inferred, false)).toEqual(engineFormat);
 	});
 
 	it('detached NodeData does not borrow inferred tree format', () => {

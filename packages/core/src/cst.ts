@@ -2,11 +2,7 @@
 import type { AnyNodeData, CSTNode, Position } from './types.ts';
 import type { BoundRenderer } from './render.ts';
 
-function offsetToPosition(
-	offset: number,
-	fullText: string,
-	baseOffset: number
-): Position {
+function offsetToPosition(offset: number, fullText: string, baseOffset: number): Position {
 	const textUpTo = fullText.slice(0, offset - baseOffset);
 	const lines = textUpTo.split('\n');
 	return {

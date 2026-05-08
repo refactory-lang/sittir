@@ -106,28 +106,16 @@ fn present_optionals_appear_on_the_wire() {
 
 #[test]
 fn no_unexpected_top_level_keys() {
-    // Enumerate the 10 allowed top-level keys per data-model.md §1.
-    // Any other top-level `$`-key is a contract violation.
-    const ALLOWED: &[&str] = &[
-        "$type",
-        "$source",
-        "$named",
-        "$fields",
-        "$children",
-        "$text",
-        "$span",
-        "$nodeHandle",
-        "$childIndex",
-        "$triviaData",
-    ];
     let json = serde_json::to_string(&sample_branch()).unwrap();
     let v = wire(&json);
     for key in v.as_object().expect("object").keys() {
         assert!(
-            ALLOWED.contains(&key.as_str()),
+            is_allowed_node_key(key),
             "unexpected top-level key on the wire: {key}"
         );
     }
+    assert!(v.get("_name").is_some(), "named slots serialize as top-level _<slot> keys");
+    assert!(v.get("$fields").is_none(), "legacy $fields wrapper must not serialize");
 }
 
 #[test]
@@ -195,4 +183,26 @@ fn deserialization_accepts_missing_optionals() {
     assert!(parsed.span.is_none());
     assert!(parsed.node_handle.is_none());
     assert!(parsed.child_index.is_none());
+}
+
+#[test]
+fn deserialization_accepts_legacy_fields_wrapper_for_compatibility() {
+    let legacy = r#"{"$type":188,"$source":0,"$named":true,"$fields":{"name":{"$type":1,"$source":0,"$named":true,"$text":"foo"}}}"#;
+    let parsed: NodeData = serde_json::from_str(legacy).unwrap();
+    assert!(parsed.fields.as_ref().is_some_and(|fields| fields.contains_key("name")));
+}
+
+fn is_allowed_node_key(key: &str) -> bool {
+    matches!(
+        key,
+        "$type"
+            | "$source"
+            | "$named"
+            | "$children"
+            | "$text"
+            | "$span"
+            | "$nodeHandle"
+            | "$childIndex"
+            | "$triviaData"
+    ) || key.starts_with('_')
 }

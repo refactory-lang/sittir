@@ -254,7 +254,8 @@ function buildAssembledFormGroups(
 			factoryName: formNames.factoryName,
 			irKey: formNames.irKey,
 			name: disambiguated,
-			parentKind
+			parentKind,
+			overridePassthrough: polySource === 'override' && !form.visibleChildKind
 		});
 	});
 }
@@ -279,7 +280,9 @@ function collectOverrideVariantChildKinds(
 	polyForms: PolymorphRule['forms']
 ): string[] {
 	if (polySource !== 'override') return [];
-	return polyForms.map((f) => extractVariantChildSymbol(f.content)).filter((s): s is string => !!s);
+	return polyForms
+		.map((form) => form.visibleChildKind ?? extractVariantChildSymbol(form.content))
+		.filter((visibleKind): visibleKind is string => !!visibleKind);
 }
 
 /**
@@ -304,7 +307,7 @@ function buildVisibleVariantChildGroups(
 	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];
 	for (const form of polyForms) {
-		const visibleKind = extractVariantChildSymbol(form.content);
+		const visibleKind = form.visibleChildKind ?? extractVariantChildSymbol(form.content);
 		if (!visibleKind) continue;
 		const hiddenKind = `_${visibleKind}`;
 		const sourceRule = optimized.rules[hiddenKind];

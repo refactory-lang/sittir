@@ -1,0 +1,3354 @@
+{
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/vitest.workspace.ts": {
+    "mtime": 1777732931.8716693,
+    "hash": "7e651bfca3ebfa193d514db1abaf9f8f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/test-read.ts": {
+    "mtime": 1778211040.3965364,
+    "hash": "dc5a7759ca8a1598e9ece582e507cbea"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/oxlint.config.ts": {
+    "mtime": 1777732929.8908882,
+    "hash": "95ecd9cbbc149c5252448df40a50a536"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/vitest.config.ts": {
+    "mtime": 1778174367.3496046,
+    "hash": "4eaf5c3baf0ceb32e7909991cdcd951c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/vitest.setup.ts": {
+    "mtime": 1778174367.3499463,
+    "hash": "2eb09d439ae9374b390339f567f18a5d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/oxfmt.config.ts": {
+    "mtime": 1778174385.6927915,
+    "hash": "1b716d756cf86a4bd07e8a9089ce4757"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/type-test.ts": {
+    "mtime": 1777732931.6777034,
+    "hash": "297b818ce69584a0b08335b0f8479b7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/wrap.ts": {
+    "mtime": 1777732931.6849966,
+    "hash": "6d9ab6e9497eda922b44641c3a530c91"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/from.ts": {
+    "mtime": 1777732931.676125,
+    "hash": "7a832bcfea6ceb9f21bc90a1237071d8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/utils.ts": {
+    "mtime": 1777732931.6795535,
+    "hash": "191bce669e27a86c4c0a773c0ad19071"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/grammar.ts": {
+    "mtime": 1777732931.6767876,
+    "hash": "22c6b3b22e84ead14a312c6fc0060858"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/consts.ts": {
+    "mtime": 1777732931.6715634,
+    "hash": "8e08fb22e16b8f41156a7794215bd180"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/factories.ts": {
+    "mtime": 1777732931.672956,
+    "hash": "3da4e72343a4c0d243714399c1077db7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/types.ts": {
+    "mtime": 1777732931.6792123,
+    "hash": "33c2732ea6e598f217416907d31999df"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/ir.ts": {
+    "mtime": 1777732931.6770146,
+    "hash": "96a0484f8a7126e063f14834f554e9e6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/src/index.ts": {
+    "mtime": 1777336281.783391,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/type-test.ts": {
+    "mtime": 1777732931.7022052,
+    "hash": "a45bda4865f60a7e64a806d86d633a1f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/wrap.ts": {
+    "mtime": 1777732931.7041054,
+    "hash": "9af655f845cbadd042f7fa0dbf11c363"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/from.ts": {
+    "mtime": 1777732931.698519,
+    "hash": "f35bc00902cfff9ef4cd99038166c63a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/utils.ts": {
+    "mtime": 1777732931.7036574,
+    "hash": "191bce669e27a86c4c0a773c0ad19071"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/grammar.ts": {
+    "mtime": 1777732931.701298,
+    "hash": "8a3faa12055f1b54c661674ab704ab78"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/consts.ts": {
+    "mtime": 1777732931.6901257,
+    "hash": "a444b7ab5ace48f8dba55002b5c1e2d5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/factories.ts": {
+    "mtime": 1777732931.6977918,
+    "hash": "c136bce0f846ce3828284f0fbf3d5e1c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/types.ts": {
+    "mtime": 1777732931.703404,
+    "hash": "087c14f29a00ecf80aec25954ee5208e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/ir.ts": {
+    "mtime": 1777732931.7018826,
+    "hash": "403143566d4365d8467b7646a42ce9e0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/src/index.ts": {
+    "mtime": 1777336281.6285691,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/type-test.ts": {
+    "mtime": 1777732931.6882281,
+    "hash": "c646fa23cc4a1ad1c215851e27d93a09"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/wrap.ts": {
+    "mtime": 1777732931.6897194,
+    "hash": "b23a054838e58f2bbb2f141b162d6cf7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/from.ts": {
+    "mtime": 1777732931.6867244,
+    "hash": "21fae8e2262d747d034fc997d698fbb7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/utils.ts": {
+    "mtime": 1777732931.6894183,
+    "hash": "191bce669e27a86c4c0a773c0ad19071"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/grammar.ts": {
+    "mtime": 1777732931.6873944,
+    "hash": "af47278a0cd04517ac905d3ef1751ff3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/consts.ts": {
+    "mtime": 1777732931.6858253,
+    "hash": "ed28967615869839b59f88194adfd3df"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/factories.ts": {
+    "mtime": 1777732931.686471,
+    "hash": "223facba9352b59382bceef52c669fbf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/types.ts": {
+    "mtime": 1777732931.6891735,
+    "hash": "83983435969daf72530c9c4443f39d2a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/ir.ts": {
+    "mtime": 1777732931.6876044,
+    "hash": "b83aca6c836a63e04e2b10332e7b7b0c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/src/index.ts": {
+    "mtime": 1777336281.4688325,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/type-test.ts": {
+    "mtime": 1777732931.7149224,
+    "hash": "6ceb902a34a58af05c5d7ae2bb76de78"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/wrap.ts": {
+    "mtime": 1777732931.7162688,
+    "hash": "a620e5fc14e70f0fe8e4d5dee4f20889"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/from.ts": {
+    "mtime": 1777732931.7072587,
+    "hash": "97ae75ccd4185b0d1b7df5e58198f1b8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/utils.ts": {
+    "mtime": 1777732931.7158418,
+    "hash": "0090cd09163538a3339e8c3af2165c1b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/grammar.ts": {
+    "mtime": 1777732931.707461,
+    "hash": "22c6b3b22e84ead14a312c6fc0060858"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/consts.ts": {
+    "mtime": 1777732931.705217,
+    "hash": "618ccaeb355362d3cb8657c8ebeb5a52"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/factories.ts": {
+    "mtime": 1777732931.7056804,
+    "hash": "ab7bc0f16483b24fd7f299e400fd7ff9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/types.ts": {
+    "mtime": 1777732931.7154825,
+    "hash": "f1fcbd9f0a485ece4e4d95ecf92878b4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/ir.ts": {
+    "mtime": 1777732931.7078416,
+    "hash": "1ffc3c2bc9b5cc9cf173780cd815c9c6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/index.ts": {
+    "mtime": 1777336281.225665,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/type-test.ts": {
+    "mtime": 1777732931.7270703,
+    "hash": "34ea8a8514277ce74c8167ec545b403f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/wrap.ts": {
+    "mtime": 1777732931.7282846,
+    "hash": "69e92a9fe9c2c162ecac4f8afad17f83"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/from.ts": {
+    "mtime": 1777732931.7249997,
+    "hash": "1d469d61f688da5e5c3c7f26ab37d044"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/utils.ts": {
+    "mtime": 1777732931.7276366,
+    "hash": "0090cd09163538a3339e8c3af2165c1b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/grammar.ts": {
+    "mtime": 1777732931.7251987,
+    "hash": "8a3faa12055f1b54c661674ab704ab78"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/consts.ts": {
+    "mtime": 1777732931.7244136,
+    "hash": "43e9e57358b824f9b97f0a739015e8c9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/factories.ts": {
+    "mtime": 1777732931.7246726,
+    "hash": "a257755592e2a78c0b2d23cac2a38b20"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/types.ts": {
+    "mtime": 1777732931.72746,
+    "hash": "f9766aa0e8e6b9ed4cd145462f240565"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/ir.ts": {
+    "mtime": 1777732931.7259862,
+    "hash": "34863786615f726cc07c1d3b60cc6a2a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/index.ts": {
+    "mtime": 1777336281.0327203,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/type-test.ts": {
+    "mtime": 1777732931.723665,
+    "hash": "fd00a33790487c42607a8a99870127db"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/wrap.ts": {
+    "mtime": 1777732931.7242558,
+    "hash": "660f77b3ce2706c0208007b55544c75b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/from.ts": {
+    "mtime": 1777732931.7219365,
+    "hash": "feaa9afd824048fe59324b006641cab4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/utils.ts": {
+    "mtime": 1777732931.7240887,
+    "hash": "0090cd09163538a3339e8c3af2165c1b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/grammar.ts": {
+    "mtime": 1777732931.7222836,
+    "hash": "af47278a0cd04517ac905d3ef1751ff3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/consts.ts": {
+    "mtime": 1777732931.7166984,
+    "hash": "7b7b90ae28d3a3eabb09dbdd426b2516"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/factories.ts": {
+    "mtime": 1777732931.7182484,
+    "hash": "593767e5c1863c8e945ea4c9d2971e7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/types.ts": {
+    "mtime": 1777732931.723921,
+    "hash": "17f09ab6d39a0b5abe7ed53bb37b773d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/ir.ts": {
+    "mtime": 1777732931.7227237,
+    "hash": "0e64055352a67d67689570eda96e2a19"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/index.ts": {
+    "mtime": 1777336280.9520023,
+    "hash": "ff2b3d36008f52eca4f5258a518b5afc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/v1-reference/rules.ts": {
+    "mtime": 1777732931.7295687,
+    "hash": "5cc69fa1287443609135ec6e1e8da426"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/v1-reference/index.ts": {
+    "mtime": 1777732931.7287023,
+    "hash": "0e5199e54afa3cfb2b37e9ca35eb8af0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/reference/tree-sitter-dsl.js": {
+    "mtime": 1777732931.7314885,
+    "hash": "d13909918b2d1d2a74664f0d7915fa0d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-parity-tests/tests/parity.rs": {
+    "mtime": 1777732930.838122,
+    "hash": "b1dcc48390bdb68d9a6be5e83a049a29"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-parity-tests/src/lib.rs": {
+    "mtime": 1777732930.8377473,
+    "hash": "28257860e080c0f3f7965ff2bdf9c4f9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/build.rs": {
+    "mtime": 1777732931.07896,
+    "hash": "295690c83769ac914defe80d33532662"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/index.js": {
+    "mtime": 1778214314.6850085,
+    "hash": "5527f8b465f5b8bdc6ca40cc0645fc88"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/index.d.ts": {
+    "mtime": 1778214314.6846745,
+    "hash": "9af1499ae68ffa8641bf96385f8957c6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/lib.rs": {
+    "mtime": 1778129037.3504474,
+    "hash": "d207368c8203a9ae8d868c9d224dcd04"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/bridge.rs": {
+    "mtime": 1778212323.9201899,
+    "hash": "2cc4c2143653c1a551a9d44170cdfc9b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/dispatch.rs": {
+    "mtime": 1778212323.9186962,
+    "hash": "a69924b8689fb558559e67ef6597c2df"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/transport.rs": {
+    "mtime": 1778212323.919987,
+    "hash": "bfdbdcf51e043962bed961d83eeed7b6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/mod.rs": {
+    "mtime": 1778212323.9202554,
+    "hash": "09cf5b514bbed0215b658dc4973c908e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/kind_ids.rs": {
+    "mtime": 1778212323.935563,
+    "hash": "f8260615912a9a2719056df9cd60bdac"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/templates.rs": {
+    "mtime": 1778212323.9186068,
+    "hash": "9e2f86fb7fd77805a229bcdcec47a8ed"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-python/src/render/hash.rs": {
+    "mtime": 1778212323.9182723,
+    "hash": "c55cc83e68bce2138b926d49ea20d7f4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/build.rs": {
+    "mtime": 1777732931.5210063,
+    "hash": "295690c83769ac914defe80d33532662"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/index.js": {
+    "mtime": 1778214314.7197816,
+    "hash": "71288965247752b716c96e2f347f3304"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/index.d.ts": {
+    "mtime": 1778214314.7191644,
+    "hash": "b26595ddc7fd43bd351c42c4d2c0b23f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/lib.rs": {
+    "mtime": 1778129037.3584201,
+    "hash": "99e49cf69facd2ff60d4ae41371501b2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/bridge.rs": {
+    "mtime": 1778211840.43583,
+    "hash": "5881fb3492f0d56048429984bf16b3c6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/dispatch.rs": {
+    "mtime": 1778211840.4297495,
+    "hash": "cd4f3b9f4abec6c6ab16013a1023027d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/transport.rs": {
+    "mtime": 1778211840.432098,
+    "hash": "a28002664b84bbe5b1d2f7a37e8a009a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/mod.rs": {
+    "mtime": 1778211840.4360037,
+    "hash": "98dfde091d917ca34e60cfa2c298f5f6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/kind_ids.rs": {
+    "mtime": 1778211840.4685824,
+    "hash": "f31bf67c2fffd3cda9ae4a5a0b5a11de"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/templates.rs": {
+    "mtime": 1778211840.4296553,
+    "hash": "7299901c2e79ce30affc9f35ce556c9a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-typescript/src/render/hash.rs": {
+    "mtime": 1778211840.4292843,
+    "hash": "d3cc942c26c7b008514fe41a81c75b14"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/wire_shape.rs": {
+    "mtime": 1778195379.349576,
+    "hash": "69627a0778dca9ad2c3dff031c20a055"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/boundary_roundtrip.rs": {
+    "mtime": 1778195389.099315,
+    "hash": "3132960c9a58c48eddec86401b9afc15"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/renderable.rs": {
+    "mtime": 1777732930.8293102,
+    "hash": "cf6b6d3fdf0209b831bcc6e6d10326df"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/splice.rs": {
+    "mtime": 1777732930.836939,
+    "hash": "a3bee68dca0961db917a89273803663e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/filters.rs": {
+    "mtime": 1777732930.7798479,
+    "hash": "db8c10b54df95ff8c69b3342f9c0077f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/kind_id.rs": {
+    "mtime": 1777732930.7802951,
+    "hash": "c8521a49519c8955f8b3c64fbebd9eb1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/tests/read_node.rs": {
+    "mtime": 1778194954.576728,
+    "hash": "839023ace23626187f514dd5bb1ed8c3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/format.rs": {
+    "mtime": 1777732930.685812,
+    "hash": "3972ffa471c434ac57fb24ac00250065"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/types.rs": {
+    "mtime": 1778195392.3405178,
+    "hash": "5fbdf0e65aef8dcd87277b0ae0cf43ec"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/lib.rs": {
+    "mtime": 1778129037.3501475,
+    "hash": "021cf838ccebec7dff64d6f718b31e5e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/boundary.rs": {
+    "mtime": 1777732930.68075,
+    "hash": "eb00d836d413fa2af74e9b2bf3a086d8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/splice.rs": {
+    "mtime": 1777732930.7461061,
+    "hash": "5dc550f35d4bfc8336b78c4b4fc8d199"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/filters.rs": {
+    "mtime": 1777732930.6856575,
+    "hash": "a81c52dff541026b2c547f5e99073a69"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/macros.rs": {
+    "mtime": 1778129037.3502824,
+    "hash": "5e4b7e6fe6eb7ee03e77b1c5daf0b454"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/read_node.rs": {
+    "mtime": 1778195367.0124228,
+    "hash": "c8d3afd0a363141bb9215fc664f792d4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-core/src/engine.rs": {
+    "mtime": 1778195371.856197,
+    "hash": "95ac07f646863284bf2c89e9b4bb4a4a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/build.rs": {
+    "mtime": 1777732931.3502724,
+    "hash": "295690c83769ac914defe80d33532662"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/index.js": {
+    "mtime": 1778214314.7065196,
+    "hash": "2613368d38908756e1601a8f901db869"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/index.d.ts": {
+    "mtime": 1778214314.705874,
+    "hash": "f5d1807703840c2457c2db9dbe6f0e42"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/lib.rs": {
+    "mtime": 1778129037.3551967,
+    "hash": "95512089589da375764af1f50c15a75e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/bridge.rs": {
+    "mtime": 1778211815.5372574,
+    "hash": "c5cd0f6d5be5cee9214fc3faec4aa664"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/dispatch.rs": {
+    "mtime": 1778211815.534374,
+    "hash": "0b598236fd43a6562a85f986c54abe49"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/transport.rs": {
+    "mtime": 1778211815.5366144,
+    "hash": "479f3d5115d2721c3c65a865969b626a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/mod.rs": {
+    "mtime": 1778211815.5375063,
+    "hash": "ccf28e1feef5095aa06ef29838e1f6f2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/kind_ids.rs": {
+    "mtime": 1778211815.5664635,
+    "hash": "6d30e7276b6b3ba7bd759b7ea0848ec8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/templates.rs": {
+    "mtime": 1778211815.5342968,
+    "hash": "073c284dc279242af1dbbe2cd250a77e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/rust/crates/sittir-rust/src/render/hash.rs": {
+    "mtime": 1778211815.5338418,
+    "hash": "dc1606013ad25abaf8f4ee670b702560"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/helpers.ts": {
+    "mtime": 1778174367.485371,
+    "hash": "6583be29290ff68e0e4db7762c0cb533"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/native-node-id.test.ts": {
+    "mtime": 1778174367.484955,
+    "hash": "57c063fe092b342ce6a31e168c366406"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/rust.test.ts": {
+    "mtime": 1778174367.4851086,
+    "hash": "fb3d6fd449b15fb223c5990785797c4f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/python.test.ts": {
+    "mtime": 1778174367.4844575,
+    "hash": "eb88aae4da71bc97ab67c6e52b3ed299"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/typescript.test.ts": {
+    "mtime": 1778174367.4846172,
+    "hash": "33120699b7025890f81b26ff285580aa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/fixtures/typescript-4space.ts": {
+    "mtime": 1777732931.8663795,
+    "hash": "50c8d478b3b7ae2b87cb09dcf51c8513"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/fixtures/python-4space.py": {
+    "mtime": 1777732931.8647668,
+    "hash": "3b28c2902a1e19996476a41400a9922a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/format-roundtrip/fixtures/rust-tab-indent.rs": {
+    "mtime": 1777732931.8661776,
+    "hash": "0d45ba65d01e49403b72c9d97b969199"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/codemod-inline.ts": {
+    "mtime": 1778174367.4841561,
+    "hash": "d569e3d3b117167f7518f18c318f1085"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/us1-codemod-js-fallback.test.ts": {
+    "mtime": 1778174367.4836247,
+    "hash": "f82271bcaeb9cdb763264146f297b323"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/us1-codemod.test.ts": {
+    "mtime": 1778174367.4840515,
+    "hash": "cb8c803cb0b0b8d4bd5411c4adb78602"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/capture-baseline.ts": {
+    "mtime": 1777732931.8222694,
+    "hash": "609b15982c369150027cd6ac4538915a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/us1-hash-mismatch.test.ts": {
+    "mtime": 1778174367.48383,
+    "hash": "0ca6e09e4565e4db9e0b75843a09f8c0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/10.rs": {
+    "mtime": 1777732931.8386946,
+    "hash": "9377740bc97039cad51cb8ce2c2a5ba6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/14.rs": {
+    "mtime": 1777732931.8391883,
+    "hash": "b13fad0f1a9908a99102ca8c331af90e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/20.rs": {
+    "mtime": 1777732931.8500896,
+    "hash": "6b0967d4a006cbd24bcf146fc903a3f2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/04.rs": {
+    "mtime": 1777732931.8378932,
+    "hash": "6e25c8f275b35ecc6661679dd86f999e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/15.rs": {
+    "mtime": 1777732931.8436415,
+    "hash": "567ae3baa962a06fe13c2a5f9b602997"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/05.rs": {
+    "mtime": 1777732931.8380814,
+    "hash": "d909f264129fce098f7ccc47074f85e3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/11.rs": {
+    "mtime": 1777732931.8388295,
+    "hash": "701b2faa23cc126fcfdbf81428385b85"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/01.rs": {
+    "mtime": 1777732931.8285124,
+    "hash": "24bb4686806c8738d25a60c6d295c264"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/16.rs": {
+    "mtime": 1777732931.8462925,
+    "hash": "ad8da5ab779b9bf9363fc9b79304e3ca"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/06.rs": {
+    "mtime": 1777732931.8381932,
+    "hash": "3a2116a8197f216e13a919a30a7f8eb2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/12.rs": {
+    "mtime": 1777732931.8389456,
+    "hash": "c9f44f5614dc8340ad9d27f227958efc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/02.rs": {
+    "mtime": 1777732931.8288047,
+    "hash": "4e8514f06642360ae1460485e9571d50"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/13.rs": {
+    "mtime": 1777732931.8390393,
+    "hash": "7ec475f80ee2482a04136e4ff704527b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/03.rs": {
+    "mtime": 1777732931.8290386,
+    "hash": "7747fe6b7c0f5b587cfb829af7eb2aa4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/17.rs": {
+    "mtime": 1777732931.849676,
+    "hash": "914f742628f25ea1309cf2db38457da5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/07.rs": {
+    "mtime": 1777732931.8382998,
+    "hash": "12a23c379c147876a206faa58f7f0d23"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/18.rs": {
+    "mtime": 1777732931.8498585,
+    "hash": "02e5dc56bcdcdedfb3c6a0bd3b5b4b13"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/08.rs": {
+    "mtime": 1777732931.8384888,
+    "hash": "bbad6c251cf02550854debda8031ac36"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/19.rs": {
+    "mtime": 1777732931.849988,
+    "hash": "5831d35d0620e8b376b791bff6d9e1d2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/09.rs": {
+    "mtime": 1777732931.8385856,
+    "hash": "9834e7b119583bcd63877f47b6095ce8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/10.rs": {
+    "mtime": 1777732931.8526144,
+    "hash": "9377740bc97039cad51cb8ce2c2a5ba6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/14.rs": {
+    "mtime": 1777732931.8564758,
+    "hash": "b13fad0f1a9908a99102ca8c331af90e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/20.rs": {
+    "mtime": 1777732931.857657,
+    "hash": "1d40b6df779dda5e56ea198899356038"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/04.rs": {
+    "mtime": 1777732931.8505619,
+    "hash": "a04b6889ed52b9c59f63623d48eca945"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/15.rs": {
+    "mtime": 1777732931.8566027,
+    "hash": "b228a1b9269a74fe82d618f17c8f1d3f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/05.rs": {
+    "mtime": 1777732931.8506463,
+    "hash": "66bbb6d4f3fc857b546c0b5d8c7bed8c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/11.rs": {
+    "mtime": 1777732931.8527372,
+    "hash": "93c924496c05ed5d79ca04745de28738"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/01.rs": {
+    "mtime": 1777732931.8502522,
+    "hash": "d7fb32a37c58eaea27026e9901b5fcfc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/16.rs": {
+    "mtime": 1777732931.8567297,
+    "hash": "5ca63bc0f87bb3b14b34d06a431436d8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/06.rs": {
+    "mtime": 1777732931.8507388,
+    "hash": "3a2116a8197f216e13a919a30a7f8eb2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/12.rs": {
+    "mtime": 1777732931.852858,
+    "hash": "c9f44f5614dc8340ad9d27f227958efc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/02.rs": {
+    "mtime": 1777732931.850348,
+    "hash": "ca3b13fbe83405ef2de953ba7f3ef110"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/13.rs": {
+    "mtime": 1777732931.8563247,
+    "hash": "1278b4c1cd578145d46e0973404f906f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/03.rs": {
+    "mtime": 1777732931.8504534,
+    "hash": "e7bf1749a6034502713b5795ee10cb87"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/17.rs": {
+    "mtime": 1777732931.8568897,
+    "hash": "a3be5c7c597eae80b9f8e6b3bdfe6cfd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/07.rs": {
+    "mtime": 1777732931.850823,
+    "hash": "8f648a9f850446ac2e03a1792552edf9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/18.rs": {
+    "mtime": 1777732931.857182,
+    "hash": "05130dbc7554313d8c686c5217f495bd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/08.rs": {
+    "mtime": 1777732931.8509285,
+    "hash": "ee18c88474f4485b27b299640e029a28"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/19.rs": {
+    "mtime": 1777732931.8574016,
+    "hash": "2275b5daf42daf28303be338565311d6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/tests/acceptance/fixtures/codemod-sample/baseline/09.rs": {
+    "mtime": 1777732931.85121,
+    "hash": "0c663de690fcf2b4570a754c4af13b10"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-shorthand.ts": {
+    "mtime": 1776801880.6971607,
+    "hash": "b319eb3ea5cb90d9685016a6fd8907b9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-fntype-parse.ts": {
+    "mtime": 1776801880.7089126,
+    "hash": "04deed9ad0f4ba8ca9f9bac5603a940c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-poly-candidates.ts": {
+    "mtime": 1776801880.6964147,
+    "hash": "d34ffa382ab05c90c8857fcd2df598ba"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-struct-pat.ts": {
+    "mtime": 1776801880.6972635,
+    "hash": "9a22fbd4f5392a71ff82d6e1d7e805f4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-both-ls.ts": {
+    "mtime": 1776801880.7079074,
+    "hash": "5a193324dce92e0423c315341a51d93a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-modext.ts": {
+    "mtime": 1776801880.710475,
+    "hash": "e6d5f6bb2665b6979b55f4f41de3f8d2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-if.ts": {
+    "mtime": 1776801880.7011304,
+    "hash": "ba935a9785651074bc8a8594c870e7b8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-call.ts": {
+    "mtime": 1776801880.708129,
+    "hash": "6faf489d660b6754bc1f90d1964431c9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/profile-failures.ts": {
+    "mtime": 1776801880.706156,
+    "hash": "687a2fd9176d83aa3728599e1c4712dc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/render-ls.ts": {
+    "mtime": 1776801880.7067502,
+    "hash": "ced04d8f826b6ca09ffd5070bbd63ef1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/list-groups.ts": {
+    "mtime": 1776801880.705631,
+    "hash": "29ce735735e2dbde430dcbdf16352689"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/compare-import-data.ts": {
+    "mtime": 1776801880.6983593,
+    "hash": "97def2910b50dc4292ce610118c5c632"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-bearers.ts": {
+    "mtime": 1776801880.6933959,
+    "hash": "94b9aeb20afece91937dc4c138298c15"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-impl-factory.ts": {
+    "mtime": 1776801880.7003546,
+    "hash": "c6befddaead2d4bd20bc98919c2b91ba"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-python-ir.ts": {
+    "mtime": 1776801880.6966548,
+    "hash": "6c2550ac0832193844f59cf01d885705"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/test-walk-render.ts": {
+    "mtime": 1776801880.7074568,
+    "hash": "86931354b66393bc1a718a31be282513"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-match-body.ts": {
+    "mtime": 1776801880.695762,
+    "hash": "9c7756e43fe41c198bfd62585452baab"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-call.ts": {
+    "mtime": 1776801880.700611,
+    "hash": "c313feebf1814bd6810f3aa833a47d46"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-undef.ts": {
+    "mtime": 1776801880.7117245,
+    "hash": "3e5e65b1c60735aceff6afb7c96119da"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-from.ts": {
+    "mtime": 1776801880.7000456,
+    "hash": "96f410a47ae8fa43a188b1500b9ac4da"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/exercise-unaliased-groups.ts": {
+    "mtime": 1776801880.7031925,
+    "hash": "715a6b2b82ba2d8aaef8f4b3a888aa68"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-turbofish-reparse.ts": {
+    "mtime": 1776801880.697788,
+    "hash": "621c17ef0bc4c09135620ef4eaff1e39"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-py-body-rule.ts": {
+    "mtime": 1776801880.6965425,
+    "hash": "c3634c34a1f9a6cc3049c98453baf586"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-factory-reparse.ts": {
+    "mtime": 1776801880.700959,
+    "hash": "1568b2b5f1492964f123dd1dfff4d51e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-enrich2.ts": {
+    "mtime": 1776801880.694231,
+    "hash": "e30d13a1fc9f5c852ed35581b6abdecb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-field-pat.ts": {
+    "mtime": 1776801880.69443,
+    "hash": "284b57e763a97ec1578f7d9a7327826e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-rust-failures.ts": {
+    "mtime": 1776801880.6970594,
+    "hash": "142e6786ac0a9a3626fad7df2778d0e3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-assembled.ts": {
+    "mtime": 1776801880.6931608,
+    "hash": "b34ae3d7d212065180b8cf498191f4f5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-recurse.ts": {
+    "mtime": 1776801880.711115,
+    "hash": "5290e403a910cd27ffa931dfc52065a1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/debug-fntype-walk.ts": {
+    "mtime": 1776801880.698647,
+    "hash": "8f36d6b42469e181688d77a62a7e7cfd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/find-mut-contexts.ts": {
+    "mtime": 1776801880.7035615,
+    "hash": "a433f0d8cd54ddfdbe81b62c7a4a6529"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace_mod.mjs": {
+    "mtime": 1776801880.7119625,
+    "hash": "d135f947b0441d3b5221f6fa0701c20a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/probe-alias-render.ts": {
+    "mtime": 1776801880.7057674,
+    "hash": "e3a34cc71de152706a951362dc3a3947"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/inspect-loose.ts": {
+    "mtime": 1776818058.9989512,
+    "hash": "dfe19d45fad03c20390e04b2e4ac1064"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-struct-pat.ts": {
+    "mtime": 1776801880.7027264,
+    "hash": "648df4dc34253d2ae4b161a0c2b9172d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-group-refs.ts": {
+    "mtime": 1776801880.6948376,
+    "hash": "634e337448a26b398a3aac7d6bb2b2e6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-mut-pattern.ts": {
+    "mtime": 1776801880.710658,
+    "hash": "b5ab73fcf4cdcddf2e179fab68f3b9f8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-classify.ts": {
+    "mtime": 1776801880.708481,
+    "hash": "15b20b26bad97fce5c9cdcae7930abdb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/inspect-precedence2.ts": {
+    "mtime": 1776818107.5031383,
+    "hash": "03b31c63f90cb1a7bc30281368302745"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-generic-type-parse.ts": {
+    "mtime": 1776801880.6946113,
+    "hash": "0246ea747d6a633680ccb55bb77190cf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-match-stmt.ts": {
+    "mtime": 1776801880.6960719,
+    "hash": "b3edc720998eb4ac6c890b2470493300"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/inspect-container-loose.ts": {
+    "mtime": 1776818344.8586736,
+    "hash": "6b407b7937e4d58e81e38969c75d2a4b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/inspect-precedence.ts": {
+    "mtime": 1776818100.6538317,
+    "hash": "458050a7a7fdd082cd1090a821befb93"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-struct-item.ts": {
+    "mtime": 1776801880.7114887,
+    "hash": "8f9c4f017edb1e46bf978c714721e7ed"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-impl-parse.ts": {
+    "mtime": 1776801880.70902,
+    "hash": "1352f91a68bcb11bb031e402c3baf0a0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-if-comments.ts": {
+    "mtime": 1776801880.6951866,
+    "hash": "4ebb6b02cca91d9e9ef56bf952f65d00"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-ls-two.ts": {
+    "mtime": 1776801880.7097518,
+    "hash": "f4108252ef305e517be7d1656d82a6bd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-factory-reparse.ts": {
+    "mtime": 1776801880.70187,
+    "hash": "e6c5c8478132315617d6ff3802e8157c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-impl-regression.ts": {
+    "mtime": 1776801880.6955068,
+    "hash": "e67fcaa82eeb21e8deed760913f19aa8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-raw-fields.ts": {
+    "mtime": 1776801880.69689,
+    "hash": "17f2eaf8de5026b884cd3e7dc8943005"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-suite.ts": {
+    "mtime": 1776801880.6974826,
+    "hash": "a22b5bfc5134d5eb12754d2e8dda672c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/profile-shallow.ts": {
+    "mtime": 1776801880.7065523,
+    "hash": "42fbb86322caa50503ded3294656c638"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-import-pipeline.ts": {
+    "mtime": 1776801880.7092075,
+    "hash": "345bea509f988caddf46eb4ee5fcd14f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-enrich.ts": {
+    "mtime": 1776801880.6939938,
+    "hash": "38d9185f6e8496e1ff7345462975ac38"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-tuple-struct.ts": {
+    "mtime": 1776801880.6976795,
+    "hash": "5c11959c89d092230d82a6f88b4af6ad"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-ms.ts": {
+    "mtime": 1776801880.701352,
+    "hash": "ee533f5b393d04cd9d8347b80bfdca08"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-dec-one.ts": {
+    "mtime": 1776801880.6935894,
+    "hash": "482772dcd9b7996b631d838408945f2e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-source.ts": {
+    "mtime": 1776801880.7024806,
+    "hash": "8724db8986ed69947ec8b95f1514920e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/probe-other-aliases.ts": {
+    "mtime": 1776801880.7059035,
+    "hash": "1dad4b839cc09f00a2a61c10279fcc1f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-macro-forms.ts": {
+    "mtime": 1776801880.710083,
+    "hash": "4db331f7b6f506740447fb30e0698d57"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-rt-reparse.ts": {
+    "mtime": 1776801880.7022886,
+    "hash": "d505d8a724a993375d1231349516c405"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/test-walk-wrapped.ts": {
+    "mtime": 1776801880.7077012,
+    "hash": "b460dfcf6d6c3d8f27318bd51ce32842"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-all-ast.ts": {
+    "mtime": 1776801880.7014656,
+    "hash": "73a49a961fbae783f693895dab3b557b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/export-audit.mjs": {
+    "mtime": 1776801880.7034264,
+    "hash": "5df2c14ab95ef6d826cea14d4e59d6de"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-scoped-id.ts": {
+    "mtime": 1776801880.7113144,
+    "hash": "9e0ddb753bc25ac094c119cbb758f519"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/debug-suggester-source.ts": {
+    "mtime": 1776801880.6996522,
+    "hash": "61a41e603b27c116265983031e0861db"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/profile-recursive.ts": {
+    "mtime": 1776724424.5151403,
+    "hash": "8e0ab9e409bd3d86278a2d2efa180d61"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-tuple-one.ts": {
+    "mtime": 1776801880.711609,
+    "hash": "99560057b6185cf895d03dd9f18bd95f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/classify-kinds.ts": {
+    "mtime": 1776801880.6981766,
+    "hash": "ace9956633cd78be4aeab8231d1645d8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-rt-ast.ts": {
+    "mtime": 1776801880.7020755,
+    "hash": "f080c59e012484ffe6cfaa98fb2e5cbb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-unsafe-impl.ts": {
+    "mtime": 1776801880.7118306,
+    "hash": "ba86e6194f9d1dea406980673d1e1cf6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/test-drill-as.ts": {
+    "mtime": 1776801880.7072392,
+    "hash": "3739357d7c081ae9b9101888fb8060cb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-modeltype.ts": {
+    "mtime": 1776801880.6962013,
+    "hash": "16e51ff0033a30cf9cdc2bc5fe44b396"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-ls-validator.ts": {
+    "mtime": 1776801880.709968,
+    "hash": "99fc19a76d652a55db33dd8d4af05af6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/inspect-generic-type.ts": {
+    "mtime": 1776801880.7043085,
+    "hash": "040a464065216d6e0b4ae3afc1df3df2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-dec-def.ts": {
+    "mtime": 1776801880.7085898,
+    "hash": "7179ed43375dc0ebceb83d54622201dc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-list-splat.ts": {
+    "mtime": 1776801880.7093334,
+    "hash": "ad855211d0257b064e4f82a24a174f5f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-function-type.ts": {
+    "mtime": 1776801880.7002468,
+    "hash": "32065da968513adf3b19cca436cfd968"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/compare-overrides.ts": {
+    "mtime": 1776801880.698534,
+    "hash": "c850f8defb04f35a0a29a9a6d8cf2ca7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-impl-bang.ts": {
+    "mtime": 1776801880.6953068,
+    "hash": "38e123b164769c92d70f05fc0b518ddd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-macro-parse.ts": {
+    "mtime": 1776801880.7101886,
+    "hash": "6c7fbb4b2d36990b5dab71d0b627ed39"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-decorated.ts": {
+    "mtime": 1776801880.6938205,
+    "hash": "532936054c14e9a0dd6692d97960f5f6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-dec-render.ts": {
+    "mtime": 1776801880.7086945,
+    "hash": "80c8f9a3ed28b69e1395f4de1fe7916a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-rust-factory-ast.ts": {
+    "mtime": 1776801880.701658,
+    "hash": "a3ae6bb9ef0e9451d5a9426b4dc7e943"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-all.ts": {
+    "mtime": 1776801880.700451,
+    "hash": "ef4a6f380b70e799e2c72c45d35b7b77"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-tuple-struct-pattern.ts": {
+    "mtime": 1776801880.70305,
+    "hash": "4b736947e3e25ce4b66f264e18effc8c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-alias-sources.ts": {
+    "mtime": 1776801880.692935,
+    "hash": "1954c0fb61a626ba00ae440612381ba1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/check-walker.ts": {
+    "mtime": 1776801880.697981,
+    "hash": "395cde9e6702ef76214029b19ed128b2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-raw-string.ts": {
+    "mtime": 1776801880.7109356,
+    "hash": "abd86f03a8774191dc1fa0d501d874aa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-ls-fail.ts": {
+    "mtime": 1776801880.7095635,
+    "hash": "257fc39bafb20b92a76c0f500a0645a1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/find-unaliased-groups.ts": {
+    "mtime": 1776801880.7039042,
+    "hash": "4923d023d1aa0b0de5f3f239f08e0f15"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/trace-decorated.ts": {
+    "mtime": 1776801880.7088034,
+    "hash": "641db3b7d6d0fc7e8955b62ef085c781"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/detail-py-expression.ts": {
+    "mtime": 1776801880.7007802,
+    "hash": "f11d9da555f9ee24f9c9da013ed03daa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/profile-recursive-ast.ts": {
+    "mtime": 1776801880.7063596,
+    "hash": "db2ec08799ad345f1c00c8e473b9d01b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/alias-spike/grammar.js": {
+    "mtime": 1776801880.6910267,
+    "hash": "294e2d14c532a21628ff3ca145678d3e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/alias-spike/src/parser.c": {
+    "mtime": 1776801880.692112,
+    "hash": "922939975e674af594847df102743bb5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/alias-spike/src/tree_sitter/parser.h": {
+    "mtime": 1776801880.69269,
+    "hash": "19bf586d1d1c86c116f8442f3b7502e4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/alias-spike/src/tree_sitter/array.h": {
+    "mtime": 1776801880.6925097,
+    "hash": "8189ef945708d5f157caa80bc875f2fc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scratch/alias-spike/src/tree_sitter/alloc.h": {
+    "mtime": 1776801880.692317,
+    "hash": "388a26363ce9e36cf47af2950951db90"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/07-read-source.ts": {
+    "mtime": 1778170171.3779347,
+    "hash": "339d0bb966a768006f94625c1c0db11d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/13-bulk-file-processing.ts": {
+    "mtime": 1778170171.380618,
+    "hash": "6749c037c72c38b2d43a12c1780c7007"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/04-precompiled-templates.ts": {
+    "mtime": 1778170295.7505772,
+    "hash": "14f0953ace73f8cdfe4c2d53dd8ce43a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/01-construct-nodes.ts": {
+    "mtime": 1778205436.1435456,
+    "hash": "3840d15ef0a23812d96fa2a243041c25"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/12-cross-language-migration.ts": {
+    "mtime": 1778174367.3603673,
+    "hash": "28040ecff5f04603b5f8e3f3450e12ca"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/16-dogfooding.ts": {
+    "mtime": 1778174367.3603404,
+    "hash": "259eeb82f57283f9402eb435ff844bfe"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/03-trivia.ts": {
+    "mtime": 1778174367.3603177,
+    "hash": "b6e2c0174294d1903ffaec1a2772736c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/09-type-guards.ts": {
+    "mtime": 1778170171.3788342,
+    "hash": "bf1677923bd6bdd913fa2426bc634b70"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/14-format-preserving-transform.ts": {
+    "mtime": 1778174367.360255,
+    "hash": "5784aa51b6bc9666c0df271c4677149e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/02-render-round-trip.ts": {
+    "mtime": 1778177334.9737432,
+    "hash": "06ad90610f9d5e10843e2d0b2b3db68c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/08-find-patterns.ts": {
+    "mtime": 1778170171.3785357,
+    "hash": "3dac52b2bebb2919c5f50eea2d25063e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/11-codemod-template-wrapper.ts": {
+    "mtime": 1778174367.3601348,
+    "hash": "ab14634adfd425f68535b563b7b44571"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/index.ts": {
+    "mtime": 1778170171.382585,
+    "hash": "12a891b447b6507968aad6a58944c9e5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/06-composition.ts": {
+    "mtime": 1778172918.4029894,
+    "hash": "b9de0cee8fc7af1ae26212459698b456"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/05-inline-templates.ts": {
+    "mtime": 1778174367.3606732,
+    "hash": "78fc1afd9eadda37864ba0b3862c48f4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/10-codemod-unwrap-to-try.ts": {
+    "mtime": 1778176232.938248,
+    "hash": "aeb232e00fb1ce612c7a4eb631d5a446"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/15-generate-file.ts": {
+    "mtime": 1778170171.3813396,
+    "hash": "ec05287b15a3f8e60436f79335d1925b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scripts/bench-codemod-runner.ts": {
+    "mtime": 1777732931.65568,
+    "hash": "b89e68a3e067ba5f92b769a72643f22d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/scripts/check-jinja-templates.ts": {
+    "mtime": 1778174367.3601954,
+    "hash": "e9a909d15bb8e39c8d4e1637f6b4da4a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/types/tests/type-projections.test-d.ts": {
+    "mtime": 1778174367.364946,
+    "hash": "242e6b65e48cd2572f4d2b99181d6ab1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/types/tests/homogeneity.test.ts": {
+    "mtime": 1778174367.364689,
+    "hash": "6ab40591360418ca36f1fe07e717ab14"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/types/src/index.ts": {
+    "mtime": 1778174367.3639479,
+    "hash": "33044b83580a54b292142dbc15497298"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/types/src/core-types.ts": {
+    "mtime": 1778174367.3644114,
+    "hash": "a5eb3d995e0488d00bb7ec8d81d01c34"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/nunjucks-filters.test.ts": {
+    "mtime": 1778174367.500672,
+    "hash": "d5a818b04707c2555c4c5988487958ff"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/render-format.test.ts": {
+    "mtime": 1778174367.5010056,
+    "hash": "8acd7253a46061dd47717fb20c3ef515"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/format.test.ts": {
+    "mtime": 1778174367.5020492,
+    "hash": "a607d8c5269e94209cfeaeb14dda9d63"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/nunjucks-env.test.ts": {
+    "mtime": 1778174367.5025446,
+    "hash": "ad6b0f4ac6f263050c7fc85fae91fd7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/engine-api-shape.test.ts": {
+    "mtime": 1777781664.1576371,
+    "hash": "2a08a6a47a5b4f599579d0d8bdeb9879"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/edit.test.ts": {
+    "mtime": 1778174367.5028262,
+    "hash": "38773139fb9b5b7bef0c933190757f65"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/prepare.test.ts": {
+    "mtime": 1778174367.5031948,
+    "hash": "5635ef24b9aab4481f438b42d587e666"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/native-boundary.test.ts": {
+    "mtime": 1777781664.158546,
+    "hash": "583def377056482a841b0bd765ec8a6c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/readNode.test.ts": {
+    "mtime": 1778066750.0153823,
+    "hash": "abb137e5bb07a04a5ad158be930d44bd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/loader-dispatch.test.ts": {
+    "mtime": 1777732929.9706867,
+    "hash": "f591ea6c62bf0f7e5ea82d2f48f793bc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/node-handle-gc.test.ts": {
+    "mtime": 1778174367.503686,
+    "hash": "09e2e503e99ca3b2b9cbd233549845fc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/nunjucks-render.test.ts": {
+    "mtime": 1778174367.5063605,
+    "hash": "0df3f856991e8df94f25a7fa80da546e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/render.test.ts": {
+    "mtime": 1777732929.9888363,
+    "hash": "41ad9794fc0af6fabdc56501fe5857b2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/tests/cst.test.ts": {
+    "mtime": 1777781664.157235,
+    "hash": "9b381a49c6113298e2fb0f9399f89270"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/native-read.ts": {
+    "mtime": 1778195000.3713095,
+    "hash": "11e0411bcb309ec9f483861a762fa30a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/loader.ts": {
+    "mtime": 1778174367.4974825,
+    "hash": "efcb26f55e46daba0f0a3c93e9a0c45a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/native-boundary.ts": {
+    "mtime": 1778174367.4975548,
+    "hash": "091e7806cce3b3745828fff557327ccb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/engine.ts": {
+    "mtime": 1778194977.4003942,
+    "hash": "bfdca6a2321d976b9d9ac92e0c91990e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/readNode.ts": {
+    "mtime": 1778174367.497419,
+    "hash": "f136f301956aea8f5d502bd82bb1a073"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/validate.ts": {
+    "mtime": 1778174367.4972878,
+    "hash": "53dbb33265ac7948ce4ac93c7dd6eeaf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/cst.ts": {
+    "mtime": 1778174367.497318,
+    "hash": "66e55f814d1684f9d858020cfc77a8a9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/types.ts": {
+    "mtime": 1778095671.5362659,
+    "hash": "563cfdc5a077388771a21132a14c8ed7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/format.ts": {
+    "mtime": 1778174367.4972866,
+    "hash": "71af0db3a0ec850e7c67dc1f6fa92bac"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/edit.ts": {
+    "mtime": 1778174367.497114,
+    "hash": "74a7ec3ef051022de5b4aa05f8a90f5b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/nodeData.ts": {
+    "mtime": 1778174367.4967024,
+    "hash": "fee4aa343467f3d60a625c928eaa3a5d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/engine-boundary.ts": {
+    "mtime": 1777732929.9590566,
+    "hash": "8da91b75105afc1c4e4ad24d53fdd479"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/render.ts": {
+    "mtime": 1778174367.4980178,
+    "hash": "211f1f662cbcae59959307e400e96372"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/index.ts": {
+    "mtime": 1778193260.1696706,
+    "hash": "f141d643259846583a4d9838159ed796"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/metrics.ts": {
+    "mtime": 1778174367.4964952,
+    "hash": "cebe7caaa118c8dc982b80c8d7c5e2c0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/core/src/templates/nunjucks-env.ts": {
+    "mtime": 1778174367.4969778,
+    "hash": "07b01a1cc96bc6c22677031a68974623"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/overrides.ts": {
+    "mtime": 1778174367.3653343,
+    "hash": "e30fb12a0ac8b13ea28a48d5a1b4feea"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/overrides.suggested.ts": {
+    "mtime": 1778212333.4520996,
+    "hash": "1f657b6053789eda023a19be7c961702"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/vitest.config.ts": {
+    "mtime": 1778212333.4524744,
+    "hash": "cd4409415aaed6457a8aa38b7cc9f4cb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/nodes.test.ts": {
+    "mtime": 1778212333.4522872,
+    "hash": "62cfe44a5f4965c70e911243f44f6227"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/type-collision.test.ts": {
+    "mtime": 1778174367.4645863,
+    "hash": "cf678719ae59608cb2e5ebecb971a538"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/engine.test.ts": {
+    "mtime": 1777781664.169803,
+    "hash": "a45a107727fa2843c03e843a2ebfee6e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/parity.test.ts": {
+    "mtime": 1778174367.4641967,
+    "hash": "56d312d6ee4eb75918a36d4f100880db"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/is-guards.test.ts": {
+    "mtime": 1778174367.4655385,
+    "hash": "2909ebd3e6cb4b8600df7d86f2627352"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/backend-boundary.test.ts": {
+    "mtime": 1778174367.4650002,
+    "hash": "06197dac1e2ca7844c1084a6d74f0c26"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/ir-grouped-equivalence.test.ts": {
+    "mtime": 1778129037.3391685,
+    "hash": "b12188f8f1cad38edb1518f0b33807a7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/namespace-map-convergence.test.ts": {
+    "mtime": 1778174367.4653776,
+    "hash": "fefd1bf3c9323485a7d5de6dbf89fe10"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/from-loose.test.ts": {
+    "mtime": 1777732930.0682428,
+    "hash": "dbf6a8abc94bbb6b5500e16ae5042802"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/tests/api-surface.test.ts": {
+    "mtime": 1777732930.0661879,
+    "hash": "29c13b6b77279e07efcf42aac113f03f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/type-test.ts": {
+    "mtime": 1778212333.4524074,
+    "hash": "d4844591e2017362c01bbdf2dcd055e9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/wrap.ts": {
+    "mtime": 1778212323.8946784,
+    "hash": "c67887cc4fea038dfb590d2e3b9d699e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/from.ts": {
+    "mtime": 1778212323.8949635,
+    "hash": "4052628cc507af456bc544d7610cc03f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/utils.ts": {
+    "mtime": 1778212323.894819,
+    "hash": "72df6039043c99b95bd64b39cec78149"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/engine.ts": {
+    "mtime": 1778212323.8927853,
+    "hash": "47252273661f7415b15a3e597a96ea74"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/hash.ts": {
+    "mtime": 1778212323.9183743,
+    "hash": "1bf2e266a93ff8ce473d2efc2d8fe9af"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/grammar.ts": {
+    "mtime": 1778212323.892667,
+    "hash": "a25203b965e15a7b19fce80fc90166ee"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/consts.ts": {
+    "mtime": 1778212323.895493,
+    "hash": "52ae4b25d15ee22b68de2ce44607c508"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/factories.ts": {
+    "mtime": 1778212323.894189,
+    "hash": "4f98a58e8dcf0955c55a7be3adb63c99"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/types.ts": {
+    "mtime": 1778212323.893416,
+    "hash": "4db162f7a593aba425bf2552ac6fed06"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/ir.ts": {
+    "mtime": 1778212323.8951714,
+    "hash": "10b670769d7caa4c56a6314d755f1d01"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/is.ts": {
+    "mtime": 1778212323.8956382,
+    "hash": "53b844c0843110a37b9b60a210fa1d8d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/index.ts": {
+    "mtime": 1778212323.895706,
+    "hash": "c9f3d6df06374a4aa08c3701f6ca376c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/backend.ts": {
+    "mtime": 1778174367.5034437,
+    "hash": "6848575885c955a3216f84bfc6e86748"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/src/boundary.ts": {
+    "mtime": 1778174367.503351,
+    "hash": "618065f21f0370b448fe8acc1c497d18"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/overrides.ts": {
+    "mtime": 1778174367.4951334,
+    "hash": "5e11d6ad9a2fbeda911e71971f92555c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/overrides.suggested.ts": {
+    "mtime": 1778211859.7730598,
+    "hash": "678adce730435553a3984586ef01668c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/vitest.config.ts": {
+    "mtime": 1778211859.7740762,
+    "hash": "cd4409415aaed6457a8aa38b7cc9f4cb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/nodes.test.ts": {
+    "mtime": 1778211859.7732952,
+    "hash": "fa967c5c5844b446a46c3a60cf63f03f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/engine.test.ts": {
+    "mtime": 1777781664.2353451,
+    "hash": "d43076e586c0c6db174b667a7bf15ee9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/parity.test.ts": {
+    "mtime": 1778174367.4957907,
+    "hash": "94e34a50fcb6fdcacb7e29cf88831528"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/is-guards.test.ts": {
+    "mtime": 1778174367.495789,
+    "hash": "b815e93765a944655219d977f4d4a098"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/homogeneity-integration.test.ts": {
+    "mtime": 1778174367.4958017,
+    "hash": "a2a02ef6d1fe1e0940590af7f7ec04f8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/backend-boundary.test.ts": {
+    "mtime": 1778174367.4967089,
+    "hash": "4504f990ee8df7231868541300a5f46e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/ir-grouped-equivalence.test.ts": {
+    "mtime": 1778129037.349508,
+    "hash": "7bc73ab376f9efbfe24ee75c8345effc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/namespace-map-convergence.test.ts": {
+    "mtime": 1778174367.4963763,
+    "hash": "80ae0fc67c6a8f10455ca625dfbe8824"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/tests/api-surface.test.ts": {
+    "mtime": 1777732930.6345923,
+    "hash": "384de0656beff74a367295f04b1e8e62"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/common/scanner.h": {
+    "mtime": 1776520414.8404136,
+    "hash": "177f4034875bfe7db051882546c3836f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/type-test.ts": {
+    "mtime": 1778211859.773916,
+    "hash": "9d906d9ebf48d27f4cf9d4d0bd15381c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/wrap.ts": {
+    "mtime": 1778211840.3752196,
+    "hash": "f45c2d6d9c774d23d455b52850f0bd12"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/from.ts": {
+    "mtime": 1778211840.3762207,
+    "hash": "bc15734e2e241f15a4ee0dfdc2c483b4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/utils.ts": {
+    "mtime": 1778211840.3756824,
+    "hash": "dd94353d4b59f5139f5bac65237771e5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/engine.ts": {
+    "mtime": 1778211840.3716674,
+    "hash": "03fd0c2f7f902fae7dbe964f7c650635"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/hash.ts": {
+    "mtime": 1778211840.4293857,
+    "hash": "832054b8c40ae650c296ee5d77cf81a2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/grammar.ts": {
+    "mtime": 1778211840.3713467,
+    "hash": "778e26768894537fab3baf975e3a52b7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/consts.ts": {
+    "mtime": 1778211840.376537,
+    "hash": "559d3a0bd40498d4af556c57483f75f0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/factories.ts": {
+    "mtime": 1778211840.3747952,
+    "hash": "82b9f8d0ab60ccf7cd6d23d052320abd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/types.ts": {
+    "mtime": 1778211840.3725247,
+    "hash": "91735efca37e268dbb67debf55410e1f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/ir.ts": {
+    "mtime": 1778211840.3763347,
+    "hash": "2095ee723fb7423ec713cb1465246759"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/is.ts": {
+    "mtime": 1778211840.3769832,
+    "hash": "937ac426738d43275473952b68d29be5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/index.ts": {
+    "mtime": 1778211840.3774028,
+    "hash": "c9f3d6df06374a4aa08c3701f6ca376c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/backend.ts": {
+    "mtime": 1778174367.4859977,
+    "hash": "23b4775bf7c501d3b58986e2884ede6c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/src/boundary.ts": {
+    "mtime": 1778174367.4858716,
+    "hash": "618065f21f0370b448fe8acc1c497d18"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/overrides.ts": {
+    "mtime": 1778174367.4770296,
+    "hash": "97cbe353ffe04ca0c9ee38965885e9b4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/overrides.suggested.ts": {
+    "mtime": 1778211831.4158792,
+    "hash": "fbc4c70122064a21474bc6114bc613b8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/vitest.config.ts": {
+    "mtime": 1778211831.416817,
+    "hash": "cd4409415aaed6457a8aa38b7cc9f4cb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/nodes.test.ts": {
+    "mtime": 1778211831.4162893,
+    "hash": "5c847708ed309be209a9835384e63b24"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/nodedata-shape.test.ts": {
+    "mtime": 1778174367.468599,
+    "hash": "d27ab61cc85accbe67df9082dbdc9f8a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/engine.test.ts": {
+    "mtime": 1778193299.5366127,
+    "hash": "f5b11895e47a33fa8d5d5319cc449d3a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/parity.test.ts": {
+    "mtime": 1778174367.4680052,
+    "hash": "22c50f9ed3aad8256e87415bbdbdbcbc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/is-guards.test.ts": {
+    "mtime": 1778174367.4677877,
+    "hash": "6b9549a3fd1ecaa2852fa54e66162f11"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/kind-id-coverage.test.ts": {
+    "mtime": 1778174367.4675276,
+    "hash": "8f7b86daf76295a079fefb459d9244e6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/trivia.test.ts": {
+    "mtime": 1778174367.4672399,
+    "hash": "ea3fce2635310c249dcf6a1dc0abab0a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/backend-boundary.test.ts": {
+    "mtime": 1778174367.467001,
+    "hash": "6ce5ca7b0b59265b71b1039d87f01d33"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/ir-grouped-equivalence.test.ts": {
+    "mtime": 1778066750.049152,
+    "hash": "42b62e0b1b04cb5c0b2cdbbca2073fa0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/namespace-map-convergence.test.ts": {
+    "mtime": 1778174367.465925,
+    "hash": "714be03a762cf8772868377134ad4ef6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/tests/api-surface.test.ts": {
+    "mtime": 1777732930.4757988,
+    "hash": "a0e2213b4b1c9777717037487ab2be3c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/type-test.ts": {
+    "mtime": 1778211831.4167464,
+    "hash": "05c460af69a23672675781b044757825"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/wrap.ts": {
+    "mtime": 1778211815.479881,
+    "hash": "5e95ed6a283962e6872f74db84d7f784"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/from.ts": {
+    "mtime": 1778211815.4810486,
+    "hash": "3cb4b3494f9e1f11819f6dba9c0b5a9e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/utils.ts": {
+    "mtime": 1778211815.4804358,
+    "hash": "de46e30c6ee5ddd0abd743e0f5da952b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/engine.ts": {
+    "mtime": 1778211815.4775643,
+    "hash": "2be01e5ce5734e7543cce16dc06126fe"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/hash.ts": {
+    "mtime": 1778211815.5339491,
+    "hash": "e4c5a92e0490ee7e73a3287cf9dce36e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/grammar.ts": {
+    "mtime": 1778211815.4774528,
+    "hash": "1bfd57a7f2f29cdac8db350d604bb5aa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/consts.ts": {
+    "mtime": 1778211815.4835021,
+    "hash": "44b70cdb787766c56a4cf60f4cd55bfe"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/factories.ts": {
+    "mtime": 1778211815.4788003,
+    "hash": "a80db9843b03dc4f5b978311287c478b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/types.ts": {
+    "mtime": 1778211815.4783134,
+    "hash": "c12b085da6937868096c13b5b8aa03a5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/ir.ts": {
+    "mtime": 1778211815.4813643,
+    "hash": "eb618f970e8cdc2dc3cd6eb35d731ef3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/is.ts": {
+    "mtime": 1778211815.4838793,
+    "hash": "1d960932f675ff8024b976705d249413"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/index.ts": {
+    "mtime": 1778211815.4839544,
+    "hash": "c9f3d6df06374a4aa08c3701f6ca376c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/backend.ts": {
+    "mtime": 1778174367.3680623,
+    "hash": "f1f3011fe00160b8a1b83a2d77da3ffb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/src/boundary.ts": {
+    "mtime": 1778174367.3675456,
+    "hash": "618065f21f0370b448fe8acc1c497d18"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/vitest.config.ts": {
+    "mtime": 1777732929.956718,
+    "hash": "3332c36005e015322d4d05bc1118aac3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/tests/integration/validate-all.test.ts": {
+    "mtime": 1778213989.0500078,
+    "hash": "be2426f5bd9b4de74e129e85ca4e850e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/scripts/inspect-refs.ts": {
+    "mtime": 1778174367.4836938,
+    "hash": "9086ab0c79d6e5f5024acb3ea2bd60a5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/scripts/test-include-filter.ts": {
+    "mtime": 1778174367.4832742,
+    "hash": "ded3156af793bbc3009bfad144aefdca"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/scripts/inspect-suggestions.ts": {
+    "mtime": 1778174367.483074,
+    "hash": "d14d9b874c4eef3f7ee3d4af39f3a83a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/polymorph-variant.ts": {
+    "mtime": 1778174367.479841,
+    "hash": "c31520bef5d9d0ad49b68e0eaeccbc9e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/cli.ts": {
+    "mtime": 1778213772.4941263,
+    "hash": "72f32e1a8e543a2861d4f47cf899100e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/index.ts": {
+    "mtime": 1777732929.941835,
+    "hash": "f976305bc5fffd0be40d50e55f710e95"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/factory-render-parse.ts": {
+    "mtime": 1778213429.4917424,
+    "hash": "56b98b57f028ea5987ab8abda5e82bbf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/from.ts": {
+    "mtime": 1778192134.0665672,
+    "hash": "f327d2a7616ee6dfad493082d12ad3f7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/read-projection.ts": {
+    "mtime": 1778213397.4474711,
+    "hash": "e2e0fc76194af014a4719c21bd6fe1a4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/node-types-loader.ts": {
+    "mtime": 1778174367.4805872,
+    "hash": "7fe2a6ad52c2b046148110ef71e5d15a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/templates-path.ts": {
+    "mtime": 1778174367.4808762,
+    "hash": "fb3d46f4f70308d4c4500792771f6818"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/common.ts": {
+    "mtime": 1778214594.210657,
+    "hash": "419c8e3de0d55e4c2549f6dc64aad69f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/rule-lookup.ts": {
+    "mtime": 1778066750.0135953,
+    "hash": "c3ed97915ceda991c9f62f966ab8db8c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/node-types.ts": {
+    "mtime": 1778174367.4803047,
+    "hash": "7491c98ef99e9ddd142d83102dc4f429"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/template-coverage.ts": {
+    "mtime": 1778174367.4808245,
+    "hash": "42f39ee8de388497c898f3505b54eb22"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/renderable.ts": {
+    "mtime": 1778174367.4804053,
+    "hash": "e5f1aba231879c6d440a0358100218db"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/validate/read-render-parse.ts": {
+    "mtime": 1778213989.050544,
+    "hash": "6358c881bd06616ebad104aa9866ebfd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/real-grammar.test.ts": {
+    "mtime": 1778066749.9976218,
+    "hash": "42f1d2ca5f9af6058bd48e99d055fcda"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/native-hash-sync.test.ts": {
+    "mtime": 1778174367.4801662,
+    "hash": "856e2cf9763abff9c41e6c63f197bb98"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/emit-jinja-templates.test.ts": {
+    "mtime": 1778174367.4793618,
+    "hash": "6a71639f58f9d26ef51d663b816ef050"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/strict-terminal.test.ts": {
+    "mtime": 1778174367.4790976,
+    "hash": "9192e0a7287caeafc579f4bd3fbf72e5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/template-walker-frozen.test.ts": {
+    "mtime": 1778174367.4800882,
+    "hash": "57c7c11af25805b5240dd219f7965638"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/scm-roles.test.ts": {
+    "mtime": 1778095671.52398,
+    "hash": "62438c45522d100e2477ccebc88063f1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/generate.test.ts": {
+    "mtime": 1778174367.478746,
+    "hash": "8e0503e1c9860f039855a560790722a2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/render-pipeline-optimization.test.ts": {
+    "mtime": 1778174367.4786909,
+    "hash": "0f64ec62534b80de3487550cfdd27698"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/extension-dedup.test.ts": {
+    "mtime": 1777732929.8961031,
+    "hash": "af4eafa0b89810f724042a519cb4bb3a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/ir-variant-alias.test.ts": {
+    "mtime": 1778205815.369512,
+    "hash": "badbbb08bbc321cf7973442991053be7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/link.test.ts": {
+    "mtime": 1778174367.4794714,
+    "hash": "f3f4cecde37e7d15783502fe59cc83e8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/polymorph-metadata-e2e.test.ts": {
+    "mtime": 1778174367.4779248,
+    "hash": "8aca7395b342fe1e243d39c97df8a002"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/factory-ergonomics.test.ts": {
+    "mtime": 1778192343.784306,
+    "hash": "2169f90b53f00cdcf5795a957ce4eac9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/roundtrip.test.ts": {
+    "mtime": 1777732929.9073822,
+    "hash": "a6aaf1557e2b0a308d3c603935d5ca4d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/spike-override-parser.test.ts": {
+    "mtime": 1778174367.4775884,
+    "hash": "ebbfefc665bd3a9192d62dafd871040b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/check-perf-baseline.test.ts": {
+    "mtime": 1778174367.4777877,
+    "hash": "a0b30df8ee6bbdb6bf6575f6d5e47e06"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/polymorph-parameterless-child-template.test.ts": {
+    "mtime": 1778202172.4862747,
+    "hash": "3e85e19994c9a8eff1501209cf3ccd0a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/overrides-integration.test.ts": {
+    "mtime": 1778174367.4774468,
+    "hash": "b25a8adde030c04006b5667eb57ac934"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/evaluate.test.ts": {
+    "mtime": 1778174367.4783766,
+    "hash": "d967c95cab9733cd059109e19244cc0e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/factory-surface.test.ts": {
+    "mtime": 1778211787.622914,
+    "hash": "17b1b34be27a5dfa40b1b0b28ad5e7dc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/kindid-emit.test.ts": {
+    "mtime": 1778174367.4772522,
+    "hash": "ecc1580d31dd665515ba32ce6e2e156d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/optimize.test.ts": {
+    "mtime": 1778174367.478078,
+    "hash": "ddac27e391238ed9c79beabbfbee76e5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/native-transport-emit.test.ts": {
+    "mtime": 1778189711.1023228,
+    "hash": "778f7f70c96fd5083ccf7667a1f28933"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/polymorph-dispatcher-throw.test.ts": {
+    "mtime": 1778174367.4820282,
+    "hash": "c98c170462251ca8811a7a4527c613a6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/native-node-coords.test.ts": {
+    "mtime": 1778214516.6921678,
+    "hash": "a02faccf483c854327fbb418eb6a8944"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/emitter-consts.test.ts": {
+    "mtime": 1778174367.4822028,
+    "hash": "7648b2bd3ccb1f190d119164b5641086"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/refine-emit.test.ts": {
+    "mtime": 1778174367.4820917,
+    "hash": "2b2b4ad34ebf3538c1426a018d5e86dd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/templates-path.test.ts": {
+    "mtime": 1778174367.4818008,
+    "hash": "94ea8a338ee5291481ec7a52d450ddfb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/generated-metadata.test.ts": {
+    "mtime": 1778174367.4816635,
+    "hash": "47577fd68e03a6c2dc1a153ca18ab87f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/baseline-diff.test.ts": {
+    "mtime": 1778174367.482004,
+    "hash": "6d889c58208afacf81fe4ee09284c9c7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/compile-parser.test.ts": {
+    "mtime": 1777732929.8940806,
+    "hash": "e1c296bffcd11b0372a6f632723638e8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/collect-baseline.test.ts": {
+    "mtime": 1778174367.4815753,
+    "hash": "57a2f7e8cbfc65e3c035ca3ddb6fae38"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/polymorph-variant-inference.test.ts": {
+    "mtime": 1778200685.071426,
+    "hash": "57017d8d18c4a9ca9abbee4ba62bd3e4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/rule-walker.test.ts": {
+    "mtime": 1778174367.481668,
+    "hash": "a8fbccadb926e13d821917d8d2718874"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/jinja-translate.test.ts": {
+    "mtime": 1778174367.4811819,
+    "hash": "856343695f2de4fd1a465211fe31cb74"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/kind-id-rust-emit.test.ts": {
+    "mtime": 1778174367.481201,
+    "hash": "b5b7f51f9a471230b7622f022e513f16"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/simplify-canonical.test.ts": {
+    "mtime": 1778174367.4827342,
+    "hash": "99b2297f827a1da6b390a4bf6e838dc2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/polymorph-collision-guard.test.ts": {
+    "mtime": 1778174367.4829946,
+    "hash": "41e739324befb8bd9c8a265c946e8381"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/factory-roundtrip-harness.test.ts": {
+    "mtime": 1778213477.6661499,
+    "hash": "8f255f9aa79d7406aa0c0175c635812e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/resolve-effective-literal.test.ts": {
+    "mtime": 1778174367.482563,
+    "hash": "8701d02142edfebe6b5574af518eb004"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/single-file-diff.test.ts": {
+    "mtime": 1778174367.4823117,
+    "hash": "379a7c7f6f3b946c78793bad9207d074"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/scm-trivia.test.ts": {
+    "mtime": 1778174367.4822042,
+    "hash": "1fbfefddf6672d91dcbc29769b622bfe"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/taxonomy.test.ts": {
+    "mtime": 1778066749.9984746,
+    "hash": "c28e1a66d2159295a09e44b717f53801"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/optional-repeat1-multiplicity.test.ts": {
+    "mtime": 1778174367.4825788,
+    "hash": "ee34e61c18074e5e5ec999af9beacddd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/post-evaluate-invariant.test.ts": {
+    "mtime": 1778174367.482902,
+    "hash": "2233b5b59991bdec1f845c2d6bcf26e0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/corpus-validation.test.ts": {
+    "mtime": 1778213477.665748,
+    "hash": "758201a0aa2c9be51b212996a5fdbe36"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/assemble.test.ts": {
+    "mtime": 1778174367.483464,
+    "hash": "13b1ed32b91da139c2173ce0a28865ac"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/validate-node-types.test.ts": {
+    "mtime": 1778174367.4828806,
+    "hash": "8f93e3b09d10ef285ff3723e02cb11d5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/render-module-emit.test.ts": {
+    "mtime": 1778213922.9626465,
+    "hash": "cf6b71396d7a14c7e9ea9592eb6d6f85"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/nested-alias-e2e.test.ts": {
+    "mtime": 1778174367.3657835,
+    "hash": "cc84ce5ec322a00a3e49a436c4a59368"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/suggested-overrides.test.ts": {
+    "mtime": 1778174367.3656094,
+    "hash": "b076093e846a214dd9362a9384d44bfb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/check-baseline-regression.test.ts": {
+    "mtime": 1778174367.3665514,
+    "hash": "bca23b19748a0a43c163c1145e756acb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/keyword-presence.test.ts": {
+    "mtime": 1778174367.3654287,
+    "hash": "717b3d1df0bef36c9d8442e522b8bf2c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/fixtures/test-grammar.js": {
+    "mtime": 1778174367.4824717,
+    "hash": "f2e6a70d44c898c16229742716c32a7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/fixtures/rule-identity-grammar.js": {
+    "mtime": 1777732929.8966444,
+    "hash": "1c5b56ca7d10398fb6344fad7847532e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/fixtures/hidden-only-grammar.js": {
+    "mtime": 1777732929.896539,
+    "hash": "5cf66dc1774ad4f4a2ba2975a777d4d7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/fixtures/extension-dedup-grammar.js": {
+    "mtime": 1777732929.8963802,
+    "hash": "9e45c16991e172e2929188099246c168"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/fixtures/rule-identity-override.js": {
+    "mtime": 1778174367.4823084,
+    "hash": "58184574438d5eb5e030b2580ce51c2e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/__tests__/helpers/rule-catalog.ts": {
+    "mtime": 1778174367.5002534,
+    "hash": "79673511aff671cb74618857c36b4a30"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/transpile/transpile-overrides.ts": {
+    "mtime": 1778174367.363709,
+    "hash": "bfa4da6e08ec2bb0edadd6b6fbf5e765"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/transpile/compile-parser.ts": {
+    "mtime": 1778174367.3639107,
+    "hash": "945dabb9fe2358a99ddf8412b3f2e428"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/transpile/__tests__/transpile-overrides.test.ts": {
+    "mtime": 1778174367.362896,
+    "hash": "da02369caee396101ff59f0adc7d8566"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/counts.ts": {
+    "mtime": 1778213477.6638417,
+    "hash": "f6bff4a41e94b28e9a8a1bb427031f87"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/bench-render.ts": {
+    "mtime": 1778174367.3635035,
+    "hash": "fcfc5eed050aaad367c757c5c7c052de"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/probe-rule.ts": {
+    "mtime": 1778178363.927856,
+    "hash": "57bc9528cfd06340e61eeb296f58c67b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/probe-stages.ts": {
+    "mtime": 1778174367.3623228,
+    "hash": "bafd0d83864122a2488689e83211c5be"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/diff-failures.ts": {
+    "mtime": 1778213989.0508459,
+    "hash": "1ad06306f7b56bcf7b2d5d96a3aade9f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/probe-factory-rt.ts": {
+    "mtime": 1778213477.6640112,
+    "hash": "e9814537d8a30a5a5637f18ed4cfd682"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/regen-templates-rs.ts": {
+    "mtime": 1778213788.8500652,
+    "hash": "f3fb09277bc9c1dbef3e39f499d14e19"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/rt-breakdown.ts": {
+    "mtime": 1778213477.6643724,
+    "hash": "0c282dffa4f8cb71e95fa4ae3853af28"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/probe-kind.ts": {
+    "mtime": 1778174367.3626478,
+    "hash": "926bbd78130c3011b4f5b5841f6975ff"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/diagnose-phantom-kinds.ts": {
+    "mtime": 1778174367.3614726,
+    "hash": "cbb532b91d8e3303a1f1ced46a659c1a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/check-perf-baseline.ts": {
+    "mtime": 1778174367.3615866,
+    "hash": "9bfa98039aad4c4da3da47e5dd56a5b8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/probe-parity.ts": {
+    "mtime": 1778213477.6641665,
+    "hash": "efb1258caf0ad1638c81767455d3d6e5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/field-provenance.ts": {
+    "mtime": 1778174367.3610566,
+    "hash": "f42c1f6298b1745eff9b72a6ea1b1be8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/check-baseline-regression.ts": {
+    "mtime": 1778174367.3611856,
+    "hash": "daa6a5b8d89d065e3ff21de55d8ecdc6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scripts/collect-baseline.ts": {
+    "mtime": 1778213477.6650033,
+    "hash": "fc9f87ce877cec8cc07c9481845e5642"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/type-test.ts": {
+    "mtime": 1778174367.3589547,
+    "hash": "07270abeff7e0d7fc296e4ea9a8e649c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/wrap.ts": {
+    "mtime": 1778190396.3935897,
+    "hash": "cf8385f1039c93e5f3ae477818cbf5ab"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/emit.ts": {
+    "mtime": 1778213772.492675,
+    "hash": "b3b2dce9c88140956edf40f2a55fa807"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/template-hash.test.ts": {
+    "mtime": 1778174367.3599195,
+    "hash": "b49b514a587dbf811c4f8f0060fa6f1d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/template-hash.ts": {
+    "mtime": 1778174367.3586297,
+    "hash": "b66725015166c029fbf8ba4fd80a8bbb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/render-module.ts": {
+    "mtime": 1778213932.4586654,
+    "hash": "24b73924ea1b263df02cda84e73577b5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/from.ts": {
+    "mtime": 1778205433.1430411,
+    "hash": "4ee7e29751225bfb61208b8762f362c7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/transport-projection.ts": {
+    "mtime": 1778174367.3583426,
+    "hash": "0c03794212af2d3707463c50882f2904"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/node-model.ts": {
+    "mtime": 1778174367.3582654,
+    "hash": "98f1939d13e09031d2707a429e792356"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/kind-discriminant.ts": {
+    "mtime": 1778174367.3576527,
+    "hash": "bf694d3e475c2920c2ef72c49d30e717"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/parity-fixtures.ts": {
+    "mtime": 1778213477.665212,
+    "hash": "e778eccf7c0a94c3b09634ccc90aa4e6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/engine.ts": {
+    "mtime": 1777732929.9276283,
+    "hash": "7af66459e92b2e1534c166552c2edeb1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/client-utils.ts": {
+    "mtime": 1778189694.5989614,
+    "hash": "2bc69a441350465d6f3c02aa474cf567"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/templates.ts": {
+    "mtime": 1778210601.75221,
+    "hash": "6934be2e75fc71d78e1ef0f6f8459355"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/transport-projection-cache.ts": {
+    "mtime": 1778213922.9580598,
+    "hash": "84b3c3808e63e1e309f6952468e61232"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/shared.ts": {
+    "mtime": 1778212315.975471,
+    "hash": "d398f428d1bd3614903859a9da55ca5c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/index-file.ts": {
+    "mtime": 1777732929.9314396,
+    "hash": "e8c565d5f7e1e2322a228b89bf814e83"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/grammar.ts": {
+    "mtime": 1778174367.356446,
+    "hash": "4454dfa7a48454dc41bed92424e87902"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/consts.ts": {
+    "mtime": 1778174367.3568337,
+    "hash": "3baa8ff26aa205a1c5000b12d64d3d9d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/factories.ts": {
+    "mtime": 1778210480.842709,
+    "hash": "9ac6d3229491b06bc290f0a4a19d82c5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/types.ts": {
+    "mtime": 1778213922.9623554,
+    "hash": "d1991c6d4ed7c3d31418f59d863f25a3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/test.ts": {
+    "mtime": 1778191775.6135733,
+    "hash": "6e4cbbdfac93bf5611ba0a501d2d5e60"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/ir.ts": {
+    "mtime": 1778205735.5351825,
+    "hash": "5d3f09c02d8fd74eb3594e00bf9c0105"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/kind-id-rust.ts": {
+    "mtime": 1778174367.3557277,
+    "hash": "c6426181b3c96ac55ec1971d0fe21980"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/render-module.test.ts": {
+    "mtime": 1778174367.3554845,
+    "hash": "8e5d708815e3094f0a82240d3ccdd2d1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/suggested.ts": {
+    "mtime": 1778174367.3576548,
+    "hash": "da4251d6976b05cfd0978ddce5a6abf2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/factory-map.ts": {
+    "mtime": 1778211912.5273738,
+    "hash": "e1d977570f1a025705bf4515f4658dfd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/refine-emit.ts": {
+    "mtime": 1778174367.3554356,
+    "hash": "fe91b4f01bacd2eb5f53f9f2b6654adb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/render-module-paths.ts": {
+    "mtime": 1777732929.9355721,
+    "hash": "d322c6f219f5dd2480bc4e6d0cf837f9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/is.ts": {
+    "mtime": 1778174367.3559039,
+    "hash": "c14f79664c5b0358054051fe6bd7407e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/config.ts": {
+    "mtime": 1777732929.9257004,
+    "hash": "5be2667c422be21f035ef939c42e4ae9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/emitters/transport-common.ts": {
+    "mtime": 1778213922.9573104,
+    "hash": "1d3920aac1ba9eef3b16890dfe750c56"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scm/parse.ts": {
+    "mtime": 1778174367.355251,
+    "hash": "31b2f664663a840b2ed44a81c42e5124"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/scm/extract-roles.ts": {
+    "mtime": 1778174367.3556628,
+    "hash": "228cc40e40c86cdc4e14ecca7a5e3a5c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/evaluate.ts": {
+    "mtime": 1778174367.3575146,
+    "hash": "2e8434baa8d7ace020066d67e0b482a2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/common.ts": {
+    "mtime": 1778199801.4761746,
+    "hash": "e32183a5a1351208743647ac1c1b2c91"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/rule.ts": {
+    "mtime": 1778211637.3026328,
+    "hash": "8e2a8f7b94fe26fd2ed865cb0e2f4714"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/resolve-grammar.ts": {
+    "mtime": 1777732929.9172292,
+    "hash": "ed3845ca8d1fba45e4b2c5214613fdd9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/assemble.ts": {
+    "mtime": 1778212311.7596493,
+    "hash": "5619fd75a12b7a66897bf4f74305f88a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/template-walker.ts": {
+    "mtime": 1778208242.2653522,
+    "hash": "facafa03c92a0696e4af112e9d3edb4b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/types.ts": {
+    "mtime": 1778174367.3545942,
+    "hash": "f390da4340eacc51b2245005df7f0f49"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/node-map.ts": {
+    "mtime": 1778212301.6846461,
+    "hash": "659b3916520e8ac905abcf84efb37abf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/link-refine.ts": {
+    "mtime": 1778174367.353761,
+    "hash": "12f9ea5051b0dc30ea17f9bf7efdb681"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/generate.ts": {
+    "mtime": 1778213772.4934788,
+    "hash": "b1a8aaa4086c4a7e691aa76c426d3b40"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/rule-catalog.ts": {
+    "mtime": 1778174367.3527873,
+    "hash": "35919f30afff078fcef6916d9b9e60b1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/trace.ts": {
+    "mtime": 1778174367.354056,
+    "hash": "772fa6c1617732f7dcea8ea98de16ce0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/simplify.ts": {
+    "mtime": 1778174367.3530679,
+    "hash": "a7b4fd56a5b7244ba65d6765459936c4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/generated-metadata.ts": {
+    "mtime": 1778207684.6494148,
+    "hash": "d36ed127f9047305407268e3eb78a362"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/link.ts": {
+    "mtime": 1778211660.6368656,
+    "hash": "ca238bc275a1a457ad00b43a4e884e75"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/compiler/optimize.ts": {
+    "mtime": 1778174367.352515,
+    "hash": "b701e564e646ac7e4e85f6b7a0e49797"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/enrich.ts": {
+    "mtime": 1778174367.3516338,
+    "hash": "ebdb6dce7dc52eaa82bdb31213ec755f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/runtime-shapes.ts": {
+    "mtime": 1778174367.3495305,
+    "hash": "ada3b1fbc7225de9588b897e58b3ac2b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/index.ts": {
+    "mtime": 1778174367.3492637,
+    "hash": "0ffad44045f8b29e53e11c605470d562"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/wire/wire.ts": {
+    "mtime": 1778174367.352986,
+    "hash": "defb373f385bf7b360de69375678ad01"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/primitives/variant.ts": {
+    "mtime": 1778174367.352339,
+    "hash": "76f4ee9765de85fa300017c113b4191e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/primitives/role.ts": {
+    "mtime": 1778174367.351276,
+    "hash": "33899c798b0ec396f3e3b35bde386f0f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/primitives/refine.ts": {
+    "mtime": 1778174367.351244,
+    "hash": "80a2972181123e167494b8df69822879"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/primitives/alias.ts": {
+    "mtime": 1778174367.352014,
+    "hash": "4c49cf9b7c1834f55a7f3f135380af8c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/primitives/field.ts": {
+    "mtime": 1778174367.352331,
+    "hash": "9eecd162a5012a4c7db0a9a2ff30c23d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/wire.test.ts": {
+    "mtime": 1778174367.350982,
+    "hash": "9e97b95714d2d55ab9a54b3948c5cfb5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/transform-hoist.test.ts": {
+    "mtime": 1778174367.3503225,
+    "hash": "b4711c9f2b868324d9f1b978d7b95c25"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/role.test.ts": {
+    "mtime": 1778174367.350303,
+    "hash": "65b96c4b84239b2ac3cca986bc911b54"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/enrich-bare-keyword.test.ts": {
+    "mtime": 1777732929.919088,
+    "hash": "3dbc438a85cd045824b95c68563c2ff9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/enrich.test.ts": {
+    "mtime": 1778174367.3509045,
+    "hash": "c3f0d6d55bd1cf46064f77fe91e65def"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/polymorph-metadata.test.ts": {
+    "mtime": 1778174367.3499465,
+    "hash": "52f7fe36a45e8dd1d94df3310c75da62"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/alias.test.ts": {
+    "mtime": 1778174367.3498464,
+    "hash": "4b77cdf0622a970e9b7e2539aa3df5c2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/transform-path.test.ts": {
+    "mtime": 1778174367.35218,
+    "hash": "a7a5c96e9a56e9acd3cfcf7bf852b3d0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/_test-helpers.ts": {
+    "mtime": 1778174367.3497443,
+    "hash": "470d60fc007b92ae344aee211bfd1022"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/__tests__/refine.test.ts": {
+    "mtime": 1777732929.9195118,
+    "hash": "a2ce12c869cb32f93d4591db1d3c436b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/transform/transform-path.ts": {
+    "mtime": 1778174367.3525145,
+    "hash": "a7270b240d434c4cca4e5af6942ae6fc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/src/dsl/transform/transform.ts": {
+    "mtime": 1778174367.3499458,
+    "hash": "6e739fa225265202e9ccb121e1877c1e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/CHANGELOG-WIP.md": {
+    "mtime": 1777732929.883218,
+    "hash": "216a2c97c16a386a1f89020f8fa4879e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/spec-004-updates.md": {
+    "mtime": 1777732931.657356,
+    "hash": "d185dc1850c78f095bc242163d835f0c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/README.md": {
+    "mtime": 1778170171.3731682,
+    "hash": "ff3b79651dc720d13818b040bf495c69"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/sgconfig.yml": {
+    "mtime": 1778174367.4602573,
+    "hash": "2cfc943fa5318366d0d2ff4ed805c9cb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/AGENTS.md": {
+    "mtime": 1777732929.8830473,
+    "hash": "5ae0ccdbb7a312de2d4b758e2f2b65dc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/handoff.md": {
+    "mtime": 1777732929.8903584,
+    "hash": "96ecb29deeeae7aeccecb63833b24fa2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/CLAUDE.md": {
+    "mtime": 1778245381.579836,
+    "hash": "9e72e9cb4771f7890fa4d4c75fd57169"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/pnpm-workspace.yaml": {
+    "mtime": 1777732930.6710598,
+    "hash": "72911ce12ad29b25185a3a67ab2adffa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/open-issues.md": {
+    "mtime": 1777732931.8120987,
+    "hash": "c38a2e67fae9faa6ad8600d91af15398"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/sittir-grammar-compiler-spec.md": {
+    "mtime": 1777732931.8219085,
+    "hash": "916aec8eeca2f928c0aa67159462878e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/010-stricter-nodedata/spec.md": {
+    "mtime": 1777732931.7471924,
+    "hash": "c3dd214e537319b80c05790c51456a08"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/015-rust-wasm-backend/spec.md": {
+    "mtime": 1777732931.7595775,
+    "hash": "6af7a41911908733f991913add5c915f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/013-canonical-surface/tagvariants-removal-plan.md": {
+    "mtime": 1777732931.7577143,
+    "hash": "04b08f8c2b104a592ce88e55610eaf82"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/013-canonical-surface/next-session-prompt.md": {
+    "mtime": 1777732931.7570102,
+    "hash": "b780894702c58ce05581f385e0443c7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/013-canonical-surface/subagent-reverse-engineering.md": {
+    "mtime": 1777732931.7573392,
+    "hash": "9177c57bc6cf4f669a0a70c2e2ca79ee"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/013-canonical-surface/plan.md": {
+    "mtime": 1777732931.7572327,
+    "hash": "2ace18e8e6e910c41c4e7dd704110cb1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/013-canonical-surface/no-silent-formatting-plan.md": {
+    "mtime": 1777732931.757116,
+    "hash": "c1df9efefac748f46c3d0428051e8de8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/rt-failure-details-adr017.md": {
+    "mtime": 1777781664.2879987,
+    "hash": "558d481f93317c915bc712b8563f8851"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/rt-failure-details.md": {
+    "mtime": 1777737647.564636,
+    "hash": "4ef0ccf8b81b1349fd4812204bec5973"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/IMPLEMENTATION-STATUS.md": {
+    "mtime": 1778066750.0856533,
+    "hash": "5f245a36867de32d4dda1fb764ae3521"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/quickstart.md": {
+    "mtime": 1778066750.0869436,
+    "hash": "4ec18450576198064f9386471bcf8f0d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/tasks.md": {
+    "mtime": 1778066750.087432,
+    "hash": "55e5902737848fd67afe505727b41c2b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/rt-failure-inventory.md": {
+    "mtime": 1777781664.288395,
+    "hash": "a9694b9f192544a8cf216c810a7c45eb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/research.md": {
+    "mtime": 1778066750.0871146,
+    "hash": "822e1072a3f2788e4ab8af1c45d07371"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/data-model.md": {
+    "mtime": 1778066750.0863237,
+    "hash": "b1ad26fef177ffddbac873b42c936612"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/plan.md": {
+    "mtime": 1778066750.086855,
+    "hash": "7e69e8352442d2652f61ab43716fb095"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/spec.md": {
+    "mtime": 1778066750.0872965,
+    "hash": "8de919f880589ef1cb453fb1eb33aeeb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/handoff.md": {
+    "mtime": 1778066750.0867584,
+    "hash": "473225eefeb0ae2caaf8804ef52fc6c8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/dupe-unnamed-children-report.md": {
+    "mtime": 1778066750.0866706,
+    "hash": "173ebe7011eef4ea94945bb0dcadb585"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/checklists/requirements.md": {
+    "mtime": 1778066750.0860126,
+    "hash": "b3617b1387f05b413d00894826740e13"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/contracts/nodedata-surface.md": {
+    "mtime": 1778066750.0862212,
+    "hash": "bf908dc3316b4ca0fed32305a6a2e330"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/contracts/assembled-model.md": {
+    "mtime": 1778066750.0861342,
+    "hash": "12b8c7737e093bc3712795ee2abf6e93"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/022-binding-simplify-assemble/baselines/pre-phase-1-hashes.txt": {
+    "mtime": 1778066750.0859125,
+    "hash": "1f7c934d6b24e12533f4f2aa30d4b590"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/quickstart.md": {
+    "mtime": 1777732931.6632376,
+    "hash": "9139be84916e6a4ed8100b8b316e833e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/tasks.md": {
+    "mtime": 1777732931.6648986,
+    "hash": "a1e24394dcdff07c5330bb0dd9783b9a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/research.md": {
+    "mtime": 1777732931.6634102,
+    "hash": "ff6feb0712402b39933f9fdbd5d80ffa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/data-model.md": {
+    "mtime": 1777732931.6581311,
+    "hash": "8befa720b926b65a447f265de26f3d2f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/plan.md": {
+    "mtime": 1777732931.6630666,
+    "hash": "714297b5fcd93d466d8c894bcd86975a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/spec.md": {
+    "mtime": 1777732931.6642354,
+    "hash": "1dc33f3300a5cfe8ed459a5de060f58d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/enhancement-summary.md": {
+    "mtime": 1777732931.6621387,
+    "hash": "4c75288dd3e667c74b9507200537df52"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/checklists/requirements.md": {
+    "mtime": 1777408961.3805704,
+    "hash": "e155992f73365084f5e9763d1ddbf7f8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/001-codegen-grammarjs-rewrite/contracts/public-api.md": {
+    "mtime": 1777732931.65786,
+    "hash": "98683307f842fc37cf68e17995f082f9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/024-streaming-render/tasks.md": {
+    "mtime": 1778114994.0351903,
+    "hash": "ec5989a75dfc23243d838f9a8f634b06"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/024-streaming-render/research.md": {
+    "mtime": 1778114994.0345469,
+    "hash": "1aa730241219268529837a0ae950a61c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/024-streaming-render/plan.md": {
+    "mtime": 1778114994.0342872,
+    "hash": "b986af43b46813b44b553f773470850b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/024-streaming-render/spec.md": {
+    "mtime": 1778114994.0348496,
+    "hash": "9f942d701e72bc34923d86a384f0fc3c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/024-streaming-render/checklists/requirements.md": {
+    "mtime": 1778114994.0327086,
+    "hash": "33e1d599aa453ecdb3d2d2509535820f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/followup-plan.md": {
+    "mtime": 1777732931.7503521,
+    "hash": "ee822650afc88b2bfaf0bd0e8cbf8f94"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/benchmarks.md": {
+    "mtime": 1777732931.7475686,
+    "hash": "faa86f5b1cda078041bf7555e92a0d94"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/quickstart.md": {
+    "mtime": 1777732931.7505546,
+    "hash": "3c202dc4bd71c3bf93cef8f217f66e89"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/tasks.md": {
+    "mtime": 1777732931.7509327,
+    "hash": "3c4084c9ddf6dfd8153f761fc87282b0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/research.md": {
+    "mtime": 1777732931.7506852,
+    "hash": "aec9e900858865615d07710bece64d24"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/data-model.md": {
+    "mtime": 1777732931.7502215,
+    "hash": "34295f900ae501793f1999529af4ed11"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/plan.md": {
+    "mtime": 1777732931.7504575,
+    "hash": "58003cb77b0dda1848c0cc84741cd61f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/spec.md": {
+    "mtime": 1777732931.7507832,
+    "hash": "3e020eef7c803fc264ab321a6f045d31"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/checklists/requirements.md": {
+    "mtime": 1777732931.7497249,
+    "hash": "41b094a164998e39a6b5221b4a19e681"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/contracts/translator-mapping.md": {
+    "mtime": 1777732931.7501175,
+    "hash": "4b9710246fe30d5d90a5a0c8dcf5b96f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/contracts/jinja-subset.md": {
+    "mtime": 1777732931.749899,
+    "hash": "942889b1237b2286a7f8fe02007d58d6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/011-jinja-template-migration/contracts/template-context.md": {
+    "mtime": 1777732931.7499988,
+    "hash": "1249aedd97fac8a6c4725d6c8b8c5e9d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/archive-054-post-016-perf-tracking/spec.md": {
+    "mtime": 1777732931.7935457,
+    "hash": "91c154efc0e6c0e5b44027f89dc76646"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/archive-054-post-016-perf-tracking/053-trailing-leading-anon-synthesis/spec.md": {
+    "mtime": 1777732931.7927678,
+    "hash": "457117aafbb4b38aefdd1e4d0ac99dd3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/quickstart.md": {
+    "mtime": 1777732931.7666326,
+    "hash": "7680ce4d3e3f2de3c7c3c9e8d61c03c5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/tasks.md": {
+    "mtime": 1777732931.7728348,
+    "hash": "a2b9a5499b45f0b9cf9b0a185d710d84"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/research.md": {
+    "mtime": 1777732931.7667496,
+    "hash": "a74faab45012c88f026104b9e13c4478"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/data-model.md": {
+    "mtime": 1777732931.7659552,
+    "hash": "4b49470c921f1ed92aba51e81930c71e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/plan.md": {
+    "mtime": 1777732931.766428,
+    "hash": "65021b14dc24a9d3e52f509eec34b558"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/spec.md": {
+    "mtime": 1777732931.7681787,
+    "hash": "912ee66813e43c5b5dfd6430d14bf49a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/017-format-inference/checklists/requirements.md": {
+    "mtime": 1777732931.765373,
+    "hash": "faaf5f230ab2d79de6dc57dcdc92cb4c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/claude/fix-types-optimize-render-kbL76/plan.md": {
+    "mtime": 1777732931.805385,
+    "hash": "3c11e65726b7f84cb7abaee92a68a78a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/tasks.md": {
+    "mtime": 1778095671.6458685,
+    "hash": "832e52c550c2b38b314c82859c743a21"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/research.md": {
+    "mtime": 1778095671.641927,
+    "hash": "74bd5b1de9768bb07c1ba8d047e5c9bf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/data-model.md": {
+    "mtime": 1778095671.639261,
+    "hash": "1ac660c8306e8f1498d06b07c9aaae5c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/plan.md": {
+    "mtime": 1778095671.639751,
+    "hash": "447ebbb272180c7b4ae2f8820c3e3371"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/spec.md": {
+    "mtime": 1778095671.6436357,
+    "hash": "8d302f5a4f873ac4d72c2ac2cb2c2571"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/023-scm-role-extraction/checklists/requirements.md": {
+    "mtime": 1778095671.6389658,
+    "hash": "b08c0076f8f1b5f26b00f823f35e3d7e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/tasks.md": {
+    "mtime": 1777732931.668286,
+    "hash": "321ee1424cfbb8ebbfc4f995536fffc6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/methods.md": {
+    "mtime": 1777732931.6675022,
+    "hash": "b948631b74521b6dfd684c11b7aff6e2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/research.md": {
+    "mtime": 1777408961.3866413,
+    "hash": "cbefbf98ea1bf88f629b733f80df77f2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/heuristics.md": {
+    "mtime": 1777732931.6672177,
+    "hash": "63fb0cd83efadfd0120e8ff13faa8e6d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/data-model.md": {
+    "mtime": 1777732931.6664288,
+    "hash": "4c2096a1b4ea5bc927dfd2bc4f6f0329"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/plan.md": {
+    "mtime": 1777732931.66765,
+    "hash": "023b19da6d5f46a21e6088792e295e6d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/003-grammar-model-pipeline/spec.md": {
+    "mtime": 1777732931.6677976,
+    "hash": "00313cd0a18608deb423be8e98c4eb0b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/quickstart.md": {
+    "mtime": 1777732931.7310197,
+    "hash": "d512525d1c0bd3f8b25ea2d892acc069"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/tasks.md": {
+    "mtime": 1777732931.7334497,
+    "hash": "9e7c484289999a14ac3cd3d1b4571618"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/research.md": {
+    "mtime": 1777732931.7319748,
+    "hash": "3471364e583f9d4203ab6b9a0b852bde"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/data-model.md": {
+    "mtime": 1777732931.7306254,
+    "hash": "68ac8e3c302a1e8da8be51e8fa0a17bd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/plan.md": {
+    "mtime": 1777732931.7308648,
+    "hash": "a18a89e609402c37475b202abbe3724f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/spec.md": {
+    "mtime": 1777732931.7326093,
+    "hash": "abae5d1d2017978600d17766fb60c225"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/checklists/requirements.md": {
+    "mtime": 1777408961.3918767,
+    "hash": "9d37b913890dbc9c2c12722e2e848e3d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/contracts/phase-contracts.md": {
+    "mtime": 1777732931.7303739,
+    "hash": "572ff6140343dca5fa31f0245f3b7d21"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/diff-notes.md": {
+    "mtime": 1777732931.6707985,
+    "hash": "413f8afecd6386071437e91a6ffc9b11"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/README.md": {
+    "mtime": 1777732931.6706495,
+    "hash": "94ae9d3dae708307861555f3ea59ad15"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/python/templates.yaml": {
+    "mtime": 1777732931.6852968,
+    "hash": "58de1fba503ba22fcdde696d55c3233a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/typescript/templates.yaml": {
+    "mtime": 1777732931.704403,
+    "hash": "5ffbc4fe6adcc139514645aeaf4fabfb"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/previous/rust/templates.yaml": {
+    "mtime": 1777732931.6899004,
+    "hash": "572e887d93165c36b15e26acbaf4cff2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/python/templates.yaml": {
+    "mtime": 1777732931.7144563,
+    "hash": "1b4480bc617caf2ec1e6ba964028cbc3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/typescript/templates.yaml": {
+    "mtime": 1777732931.7268872,
+    "hash": "23e90f142f55eb33fdfa7d6a408aa615"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/005-five-phase-compiler/baseline/rust/templates.yaml": {
+    "mtime": 1777732931.72353,
+    "hash": "8df7be52b69c29c553efb89e521d2979"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/025-nodedata-free-render/tasks.md": {
+    "mtime": 1778129037.3639266,
+    "hash": "e98c0840610ce849ebc06489cb2d60b1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/025-nodedata-free-render/research.md": {
+    "mtime": 1778129037.3637044,
+    "hash": "96138fd14e9883005e8d2179d05fb9c4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/025-nodedata-free-render/plan.md": {
+    "mtime": 1778129037.3636138,
+    "hash": "6ea38f054aab6decc60f0a36cfb727df"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/025-nodedata-free-render/spec.md": {
+    "mtime": 1778129037.3638222,
+    "hash": "b1786e8cb079bffcc3ae4efcd3dd65a3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/025-nodedata-free-render/checklists/requirements.md": {
+    "mtime": 1778129037.3635333,
+    "hash": "7daa5c7e4952e51b4337cffe383dd9be"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/009-loose-homogeneity/spec.md": {
+    "mtime": 1777408961.4102676,
+    "hash": "7751aef8e6e28aaf4fe33c055ca07f06"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/quickstart.md": {
+    "mtime": 1777732931.7389746,
+    "hash": "210f03356f9c84f55933e44699cdc3cd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/tasks.md": {
+    "mtime": 1777732931.7412033,
+    "hash": "9a9fb6fcdc6d3e68291adec286541d69"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/research.md": {
+    "mtime": 1777732931.7408512,
+    "hash": "00f80179d83f3b96b9e9e16548a883a8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/data-model.md": {
+    "mtime": 1777732931.7349226,
+    "hash": "a7abaaf2a0ba195bb79b690887147e90"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/plan.md": {
+    "mtime": 1777732931.7357893,
+    "hash": "742c344d8eb2b1e300df3c1ebe1d4983"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/spec.md": {
+    "mtime": 1777408961.3984149,
+    "hash": "85776ff6aba79c7d0299c429bf436455"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/checklists/requirements.md": {
+    "mtime": 1777732931.7340333,
+    "hash": "941236cc4588b319e8f4f3d9b22d48b2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/006-override-dsl-enrich/contracts/dsl-surface.md": {
+    "mtime": 1777732931.734489,
+    "hash": "c77a47046594a0b98d234c7c012b1ed8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/quickstart.md": {
+    "mtime": 1777732931.7557895,
+    "hash": "6132e014072b6201787569a25b5d8c42"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/tasks.md": {
+    "mtime": 1777732931.756835,
+    "hash": "d1ef9f3087740b9d4e52e470bdca3394"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/research.md": {
+    "mtime": 1777732931.7564614,
+    "hash": "0eb74cab5f9f1b009e15269f4c190953"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/data-model.md": {
+    "mtime": 1777732931.7549858,
+    "hash": "ffb22316e02bb50ab3532deca393cd7f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/plan.md": {
+    "mtime": 1777732931.755172,
+    "hash": "763fa2b155c5bd41077efa327c3db9b3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/spec.md": {
+    "mtime": 1777732931.75668,
+    "hash": "9d360f613ad6e10019ecbf5156d6537f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/r1-ceilings-plan.md": {
+    "mtime": 1777732931.7559638,
+    "hash": "f3d936dc68839053d77e3000f788d745"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/checklists/requirements.md": {
+    "mtime": 1777732931.751131,
+    "hash": "1d47ae85241737aedf73e2af468f9e28"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/contracts/napi-api.md": {
+    "mtime": 1777732931.7513535,
+    "hash": "9284241d1c830060b6613b3001a498bc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/contracts/backend-selection.md": {
+    "mtime": 1777732931.7512622,
+    "hash": "8dcf078b771402b9087dc6155dd0ea31"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/contracts/nodedata-wire-format.md": {
+    "mtime": 1777732931.751442,
+    "hash": "8e4b1d0cb86792a8270cb9390a444d19"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/012-rust-core-port/contracts/template-context.md": {
+    "mtime": 1777732931.7536423,
+    "hash": "567d9778a028e92fa7f10371ead991c1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/benchmarks/2026-05-01-render-perf.md": {
+    "mtime": 1777732931.804676,
+    "hash": "bf2f9933c3a0d260e7121890575e2492"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/quickstart.md": {
+    "mtime": 1777732931.7846131,
+    "hash": "977e54e9e4f79911fa426c8972c931c0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/tasks.md": {
+    "mtime": 1777732931.7855296,
+    "hash": "4a2c553568bbeb6837cc7576bb2733cf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/research.md": {
+    "mtime": 1777732931.7847474,
+    "hash": "922442996ddc3ebc7c613e06761d8008"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/data-model.md": {
+    "mtime": 1777732931.7808554,
+    "hash": "c160977610774994e39d359d78baeeb2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/plan.md": {
+    "mtime": 1777732931.7810876,
+    "hash": "8e9a0ddaa37663c9cedae2839ed228a5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/spec.md": {
+    "mtime": 1777732931.785151,
+    "hash": "73fd272bc808cd98df2ce20c8cbc7201"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/checklists/requirements.md": {
+    "mtime": 1777732931.776058,
+    "hash": "ead368b675e59485fa46810351716897"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/020-template-engine-converge/contracts/render-pipeline-compatibility.md": {
+    "mtime": 1777732931.7785912,
+    "hash": "ccaf357d90ec60bb4e71a70a50f9cfaf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/014-rust-crate-publish/spec.md": {
+    "mtime": 1777732931.7588775,
+    "hash": "c046e29a85a4a372f4e753542d8e1e7f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/quickstart.md": {
+    "mtime": 1777732931.7445152,
+    "hash": "911a5bfa1feda8d8f9d7247c4623f88b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/tasks.md": {
+    "mtime": 1777732931.7469954,
+    "hash": "a71d9a84bf6081bdaa81e7185e30e4ac"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/research.md": {
+    "mtime": 1777732931.7451086,
+    "hash": "e79a5e70945f94bbfac170c6db319ba0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/baseline.md": {
+    "mtime": 1777732931.7433631,
+    "hash": "354459ee0c799dbbb4c32f5c438ffeb3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/data-model.md": {
+    "mtime": 1777732931.7439818,
+    "hash": "1cfe378eca6e86b1ba7c134366ecd089"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/plan.md": {
+    "mtime": 1777732931.7443297,
+    "hash": "79c86ced94e30bd4db64ef77ee6b6fc1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/landing-report.md": {
+    "mtime": 1777732931.7441127,
+    "hash": "47417fa39bbb67701bff3a6813ffd0e6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/spec.md": {
+    "mtime": 1777732931.7465446,
+    "hash": "712af5b12275ef67326f5a89b33e6293"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/checklists/requirements.md": {
+    "mtime": 1777732931.7434814,
+    "hash": "260257918d7f21acc37dc9b5723dd1c2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/contracts/from-resolver.md": {
+    "mtime": 1777408961.4052055,
+    "hash": "90d6b67876dbfb693fa50943418f1768"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/contracts/is-guards.md": {
+    "mtime": 1777732931.7438333,
+    "hash": "cc3c4b71663f896c27eb651d9b601319"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/contracts/NamespaceMap.md": {
+    "mtime": 1777732931.7436068,
+    "hash": "889a8379475c7c6a814262f6a6a8963d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/008-factory-ergonomic-cleanup/contracts/NodeNs.md": {
+    "mtime": 1777732931.7437174,
+    "hash": "9e74c3cba1d41e0bbb5f845f59f14eec"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/quickstart.md": {
+    "mtime": 1777732931.7917666,
+    "hash": "01c6a057b04baf1f2b8c0d96b6bf1aaa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/tasks.md": {
+    "mtime": 1777732931.7922716,
+    "hash": "75c7f2f1586a3f228d26abb3f972cb5a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/research.md": {
+    "mtime": 1777732931.7919211,
+    "hash": "c218745cc396a8f0bb085a7c7a3a1dd2"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/data-model.md": {
+    "mtime": 1777732931.7914312,
+    "hash": "69c5b52c44c8613fc242791150c2c229"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/plan.md": {
+    "mtime": 1777732931.7915463,
+    "hash": "8557ce0f09c82ff4b2bacdca5b205a77"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/spec.md": {
+    "mtime": 1777732931.7920682,
+    "hash": "bb4d6f5b34a77be46cdcc622d7a35f48"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/checklists/requirements.md": {
+    "mtime": 1777732931.7884345,
+    "hash": "a0e772dfbc92d252e43050b1295347af"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/021-rule-ids-at-evaluate/contracts/evaluate-rule-identity.md": {
+    "mtime": 1777732931.7913032,
+    "hash": "4c50bebc72b2e8cd524c44bd5efd1251"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/quickstart.md": {
+    "mtime": 1777732931.6693785,
+    "hash": "c12388f2d4a180e77deeeb29ad949192"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/tasks.md": {
+    "mtime": 1777408961.390861,
+    "hash": "cd3b066e276e96cf274974952e98a161"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/research.md": {
+    "mtime": 1777732931.6701722,
+    "hash": "cdf8097b04536c1ea7dd786d210358ef"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/data-model.md": {
+    "mtime": 1777732931.6686854,
+    "hash": "f27f44d34d16191885ed344cdada7d70"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/plan.md": {
+    "mtime": 1777732931.6691628,
+    "hash": "6f6e557f6656a210b9dae5fe2e783a7d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/spec.md": {
+    "mtime": 1777732931.6704178,
+    "hash": "dcc1aae925c0b14f54fb81e423e3cbd4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/design.md": {
+    "mtime": 1777732931.6689677,
+    "hash": "cc8e951ecf1ecf232c11d8ea1cbb631d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/004-yaml-render-templates/checklists/requirements.md": {
+    "mtime": 1777408961.3879802,
+    "hash": "48ee4503baa547ca5defacf30962dd99"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/quickstart.md": {
+    "mtime": 1777732931.7420418,
+    "hash": "03e682120983d99cbb44db9f2bd80266"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/tasks.md": {
+    "mtime": 1777732931.7432017,
+    "hash": "be70828a60fb68a4e564ab5f04195045"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/research.md": {
+    "mtime": 1777732931.7430375,
+    "hash": "c65470ed10d3ad311ce2819d620e9efc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/data-model.md": {
+    "mtime": 1777732931.7417612,
+    "hash": "10947c18daee8c86aae32febc4c1adb7"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/plan.md": {
+    "mtime": 1777732931.7419188,
+    "hash": "12f109c3f10be905325e91a55c20e984"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/spec.md": {
+    "mtime": 1777408961.4025717,
+    "hash": "0f45ef21172514d5de17644d009ef674"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/checklists/requirements.md": {
+    "mtime": 1777408961.3995814,
+    "hash": "394f59523fa6df4b07637cb4c626d471"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/007-override-compiled-parser/contracts/parser-loading.md": {
+    "mtime": 1777732931.7415287,
+    "hash": "ac5e319ac1769f611236e5421b172aba"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/research-jinja-whitespace.md": {
+    "mtime": 1777732931.763082,
+    "hash": "80ba75b28a6a9e8b875246e5b6e7d796"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/quickstart.md": {
+    "mtime": 1777732931.762879,
+    "hash": "db347b68207f90707f62e3aa4fa23f49"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/tasks.md": {
+    "mtime": 1777732931.7651207,
+    "hash": "0a04dff0e7283f27c044963133610e13"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/research.md": {
+    "mtime": 1777732931.763373,
+    "hash": "57fbf9f48722b1ecb4389aa2e1b9e045"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/data-model.md": {
+    "mtime": 1777732931.7615132,
+    "hash": "c17b23f460ece4fb9dbf10e7033a91c4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/plan.md": {
+    "mtime": 1777732931.7623737,
+    "hash": "6761309740964ad0f62b36bc2d424c19"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/spec.md": {
+    "mtime": 1777732931.7639797,
+    "hash": "982dcc539501f5ad55c3c707c8d6cf43"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/checklists/requirements.md": {
+    "mtime": 1777732931.7602172,
+    "hash": "f15c34466d98a0a39818c05bbb14554c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/016-parity-regressions/contracts/baseline-json.md": {
+    "mtime": 1777732931.761313,
+    "hash": "83964baeec07abf578580ff5b56aa00b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/specs/002-enriched-grammar-model/spec.md": {
+    "mtime": 1777732931.6658723,
+    "hash": "a72b4fad65c04538b356b982e4596dd0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/design-principles.md": {
+    "mtime": 1776520414.7806437,
+    "hash": "4f1ac1267a1d0db36601eb7e7367dc1f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/use-cases-and-examples.md": {
+    "mtime": 1778170171.3734496,
+    "hash": "492c0ad41ac52aa72f25f81494363d2a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/compiler-phase-glossary.md": {
+    "mtime": 1778066749.9927964,
+    "hash": "390fdac6edfe57de1ee5909dfdb4db4b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0003-role-effect-accumulator.md": {
+    "mtime": 1776520414.7803314,
+    "hash": "5dd3a79719b7f1ad1ce913f03fb2b037"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/TEMPLATE.md": {
+    "mtime": 1776520414.780571,
+    "hash": "1884b0ee4c382b5ad87e9cae05442c5c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0006-unalias-at-drill-site.md": {
+    "mtime": 1776629637.7270048,
+    "hash": "a161ce8aca9d38b3b0e9a08285362b37"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0014-jinja-template-migration.md": {
+    "mtime": 1777732929.8849354,
+    "hash": "30447ab3893247851a5cfba1364edf3d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0002-enrich-base-mechanical-only.md": {
+    "mtime": 1776520414.7802474,
+    "hash": "d7b104cd4807789706e7675d1de51d58"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0013-core-pre-port-cleanup.md": {
+    "mtime": 1777732929.8848333,
+    "hash": "de4629c68d6c8f5c80b3e08665016ea0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0018-dehoist-nodedata-surface.md": {
+    "mtime": 1778066749.992402,
+    "hash": "221953d69d7a3da65d632b7a6a4c3f88"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0004-transform-pre-evaluate-phase.md": {
+    "mtime": 1776520414.7804193,
+    "hash": "2a23079db1145189b00774e996819985"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0007-wire-opts-declarative-polymorphs.md": {
+    "mtime": 1777732929.8840823,
+    "hash": "e6d414cf6b377739d6f4146e808c6c46"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0021-eliminate-nodedata-from-transport-render.md": {
+    "mtime": 1778114994.0164497,
+    "hash": "39e020319559cf5b2ada825a39bdd0b8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0020-render-pipeline-consolidation.md": {
+    "mtime": 1778114994.0161116,
+    "hash": "b02ce2891ad1637cfb32fb73315a0144"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0011-codegen-data-model-dry.md": {
+    "mtime": 1777732929.8845375,
+    "hash": "ead9fb1c8af2e41e3a54ffe790527b85"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0008-declarative-transforms.md": {
+    "mtime": 1776741302.0957208,
+    "hash": "d6238ac0fe30aeb2ffed7efdca61d303"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0010-auto-stamp-and-refine.md": {
+    "mtime": 1777732929.8843935,
+    "hash": "bba7ed6ee73c09f10024bd8fb861a0dc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0009-remove-grammar-wrapper.md": {
+    "mtime": 1777732929.8842356,
+    "hash": "94b5abd0e438a7181cc2299716636074"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0019-streaming-render-architecture.md": {
+    "mtime": 1778097739.8869345,
+    "hash": "873a3b17318b13732a99294b202e967e"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0016-renderable-native-views.md": {
+    "mtime": 1777732929.8851233,
+    "hash": "813864ca0316a57a36a6bbd896721eb6"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0005-transpile-overrides-to-grammar-js.md": {
+    "mtime": 1776520414.780508,
+    "hash": "93a56aecd05f1754735b76481d2c5d54"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0017-child-index-navigation.md": {
+    "mtime": 1777742092.2963,
+    "hash": "3ee3907e9b6ea20870e65cda01c21027"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0001-tree-sitter-compatible-overrides.md": {
+    "mtime": 1776520414.7801561,
+    "hash": "576af8ed2b62a9b37a95b9478a8ef1fa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0015-model-driven-native-render-contract.md": {
+    "mtime": 1777732929.8850315,
+    "hash": "706247cc5c2b9da5ef3489e10cca8317"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/adr/0012-keyword-presence-types.md": {
+    "mtime": 1777732929.8847015,
+    "hash": "4c44dc33365fffcbcc66725bc259a081"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-05-07-runtime-package-boundaries.md": {
+    "mtime": 1778196700.9664993,
+    "hash": "d527335cc9a6690215a928277e1c7f1d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-30-kindid-runtime-migration.md": {
+    "mtime": 1777732929.887517,
+    "hash": "bf2bf7ba24b0f7930db29c7fad9e1888"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-05-01-typed-transport-fields.md": {
+    "mtime": 1777732929.8881626,
+    "hash": "985bc5702c6e620516f2190c24b4afdf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-29-renderable-native-views.md": {
+    "mtime": 1777732929.8873334,
+    "hash": "1004c0130e1b1352b8fc21c6cba7074b"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-21-adr-0010-auto-stamp-and-refine.md": {
+    "mtime": 1777732929.8857114,
+    "hash": "8c8f4ff2d8a4c2e00c04c89f760d15c8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-21-adr-0009-remove-grammar-wrapper.md": {
+    "mtime": 1777732929.8853693,
+    "hash": "1c66542eaefe194f34e2b5b62a236abf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-21-adr-0013-core-pre-port-cleanup.md": {
+    "mtime": 1777732929.8866289,
+    "hash": "30e5dd31266b332b30cfec42491cb83c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-27-native-bundle-sync.md": {
+    "mtime": 1777732929.8867724,
+    "hash": "64e67e7ee711920fc9b14461887ca45f"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-27-review-findings-remediation.md": {
+    "mtime": 1777732929.886899,
+    "hash": "df14161d8cb643a5af2c9241be8c8ae5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-05-05-taxonomy-driven-emitter-dispatch.md": {
+    "mtime": 1778066749.9932945,
+    "hash": "e134ed9484a2de88625addacd92f7ac1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-28-native-engine-format-symmetry.md": {
+    "mtime": 1777732929.88702,
+    "hash": "4461e76e1d50db867535189d483ef4f9"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-04-21-adr-0012-keyword-presence-types.md": {
+    "mtime": 1777732929.8860493,
+    "hash": "e0063c2f8e2069474219f8ac2fac2e41"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-05-02-child-index-navigation.md": {
+    "mtime": 1777751079.643271,
+    "hash": "3a6786ca53f996b1a12035d8c53e3bda"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/plans/2026-05-05-from-factory-ergonomics.md": {
+    "mtime": 1778066749.9929533,
+    "hash": "fe15f7fb4a7865c805deb5666250d315"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-07-runtime-package-boundaries-design.md": {
+    "mtime": 1778196500.0655246,
+    "hash": "333641d4405702ab9f949ce32750ded3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-27-js-backend-rename-design.md": {
+    "mtime": 1777732929.8884902,
+    "hash": "bff956096da4f463c29673c1f128d2cd"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-27-review-findings-remediation-design.md": {
+    "mtime": 1777732929.8888433,
+    "hash": "66013bccbb09ff68d8cfeb0796cac93c"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-06-canonical-surface-design.md": {
+    "mtime": 1778095671.523371,
+    "hash": "e7b92d592c6448b688f95fe2f910a3b1"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-04-slot-storage-names-design.md": {
+    "mtime": 1778066749.9934175,
+    "hash": "32ffdab12827307ac0d64966ec1f07ee"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-27-codegen-format-stability-design.md": {
+    "mtime": 1777732929.8883781,
+    "hash": "92dd73ed773db62b0e641b53018522a8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-29-renderable-native-views-design.md": {
+    "mtime": 1777732929.8893957,
+    "hash": "31c810f100c9d8c62b67b31d2c7614a3"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-28-native-renderer-format-symmetry-design.md": {
+    "mtime": 1777732929.889105,
+    "hash": "f2d15b639cd252c95d8b04580a4de7da"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-07-ir-variant-alias-casing-design.md": {
+    "mtime": 1778205646.6361945,
+    "hash": "e3f0d17dad5027d4962f05ac8f8aa507"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-02-child-index-navigation-design.md": {
+    "mtime": 1777742346.833676,
+    "hash": "d8baff51cece8b767c2b501f6f8e7cfa"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-29-rule-identity-and-binding-split-design.md": {
+    "mtime": 1777732929.8896425,
+    "hash": "d5fab4b06ddd7179f3dbddd0f7bd261a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-30-kindid-runtime-migration-design.md": {
+    "mtime": 1777732929.8898342,
+    "hash": "9c1aa7a7e0473c8957cbf33678ab5cdf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-05-from-factory-ergonomics-design.md": {
+    "mtime": 1778066749.993508,
+    "hash": "4602b4bd17b58c09c69b7da3415c2fbf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-04-27-native-bundle-sync-design.md": {
+    "mtime": 1777732929.888725,
+    "hash": "5531e5481b09df4443dd7baa2659c884"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/docs/superpowers/specs/2026-05-05-taxonomy-driven-emitter-dispatch-design.md": {
+    "mtime": 1778066749.9954312,
+    "hash": "b33276c095440d440ccd6fce3ce6bc31"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/examples/README.md": {
+    "mtime": 1778170171.3821337,
+    "hash": "4b39d39f620a7d9e4affe64ac6946318"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/types/README.md": {
+    "mtime": 1777732930.504557,
+    "hash": "64963f3599dee4f7def93ac0ee004d0a"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/validation-report.txt": {
+    "mtime": 1776272449.5488496,
+    "hash": "64659a6fe35018514f4c6d72483f12c8"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/python/README.md": {
+    "mtime": 1777732929.99146,
+    "hash": "4d096b6363a76374e31e00f963c07ce4"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/validation-report.txt": {
+    "mtime": 1776272449.5630074,
+    "hash": "8c9997427cb6c3cbbdfa510cd1f2ee80"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/typescript/README.md": {
+    "mtime": 1777732930.5201085,
+    "hash": "ee44b2fc936c837d541f97fc9f066068"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/validation-report.txt": {
+    "mtime": 1776272449.555247,
+    "hash": "5f0ca7a11c5b20e20b683bf565d171de"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/rust/README.md": {
+    "mtime": 1777732930.327837,
+    "hash": "a23fd527a0700392da5b8eb1cad45947"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/validation-reports/rust.txt": {
+    "mtime": 1776272449.539487,
+    "hash": "c6d721db955c2fda34e279d70ecacdda"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/validation-reports/python.txt": {
+    "mtime": 1776272449.5391335,
+    "hash": "68b697024ebccdda7f65fb234040bfec"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/validation-reports/typescript.txt": {
+    "mtime": 1776272449.5397944,
+    "hash": "bdb1170b534a964d06e71964764da8a5"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/typescript-expressions.txt": {
+    "mtime": 1776272449.5047717,
+    "hash": "1bca3f297eb4a5a55f46589f036728be"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/python-expressions.txt": {
+    "mtime": 1776272449.5006268,
+    "hash": "b086c9a4c57a060ff67dbe37e800eb1d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/python-statements.txt": {
+    "mtime": 1776272449.5017695,
+    "hash": "2a0b14800fa9210d2c92ad209fadbbcf"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-expressions.txt": {
+    "mtime": 1776272449.5031357,
+    "hash": "850fcc58b53d25ad84c430f31b63ee27"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-types.txt": {
+    "mtime": 1776272449.504329,
+    "hash": "cb00f2647e55455bed90ba6a6b86c200"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-macros.txt": {
+    "mtime": 1776272449.503589,
+    "hash": "41190f74576179cb4ed0a146efbfb042"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-patterns.txt": {
+    "mtime": 1776272449.5039208,
+    "hash": "07a68076546c6c7640167cabd00de2cc"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/typescript-types.txt": {
+    "mtime": 1776272449.5052724,
+    "hash": "00f53c0fcdc2f343296ec5d277345237"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-literals.txt": {
+    "mtime": 1776272449.5033703,
+    "hash": "3f6956503b4f3d5fa15e512ede4a0837"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/python-literals.txt": {
+    "mtime": 1776272449.5012033,
+    "hash": "af87ce919f0fbd3caa79f64355e4d8ce"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-async.txt": {
+    "mtime": 1776272449.5022647,
+    "hash": "202f63ade0297ef300bf5eeb107e4535"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/typescript-functions.txt": {
+    "mtime": 1776272449.5049663,
+    "hash": "a5f1579b8a537bc405ada5becccdade0"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/python-pattern_matching.txt": {
+    "mtime": 1776272449.5014572,
+    "hash": "5f4464345cdcc48e20f043e4432c390d"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/rust-declarations.txt": {
+    "mtime": 1776272449.5027518,
+    "hash": "fa9221e0fb888051db99657ebe57a032"
+  },
+  "/Users/pmouli/GitHub.nosync/refactory-lang/sittir/packages/codegen/fixtures/typescript-declarations.txt": {
+    "mtime": 1776272449.504549,
+    "hash": "d52cc2a6ae0b7de0fc53d8826899ddc0"
+  }
+}

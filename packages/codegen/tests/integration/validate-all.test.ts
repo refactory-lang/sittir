@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { resolve } from 'node:path';
 import { generate } from '../../src/compiler/generate.ts';
-import { validateRoundTrip } from '../../src/validate/roundtrip.ts';
-import { validateFactoryRoundTrip } from '../../src/validate/factory-roundtrip.ts';
+import { validateReadRenderParse } from '../../src/validate/read-render-parse.ts';
+import { validateFactoryRenderParse } from '../../src/validate/factory-render-parse.ts';
 
 /**
  * Resolve the on-disk `.jinja` templates directory for `grammar`.
@@ -10,15 +10,12 @@ import { validateFactoryRoundTrip } from '../../src/validate/factory-roundtrip.t
  * and dispatch accordingly.
  */
 function templatesPath(grammar: string): string {
-	return resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${grammar}/templates`
-	);
+	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
 }
 
 const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 
-// Round-trip failure ceilings — asserted ceilings can only go DOWN
+// Render-parse failure ceilings — asserted ceilings can only go DOWN
 // over time. The authoritative guard is
 // `src/__tests__/corpus-validation.test.ts`; this smoke-test file
 // exercises the same validators against fresh generator output.
@@ -34,27 +31,24 @@ const GRAMMARS = ['rust', 'typescript', 'python'] as const;
 // fix + null-wrap→skip expose the true failure counts, which are the
 // new ceilings. No real regression — numbers were inflated by silent
 // skip.
-const RT_CEILINGS: Record<
-	string,
-	{ roundTrip: number; factoryRoundTrip: number }
-> = {
-	// MEASUREMENT RESET (2026-04-25): rust roundTrip 55 → 65,
-	// factoryRoundTrip 45 → 70. TS-side post-processing was hiding
+const RENDER_PARSE_CEILINGS: Record<string, { readRenderParse: number; factoryRenderParse: number }> = {
+	// MEASUREMENT RESET (2026-04-25): rust readRenderParse 55 → 65,
+	// factoryRenderParse 45 → 70. TS-side post-processing was hiding
 	// walker whitespace artifacts; raw output exposes more real fail
 	// counts (see corpus-validation.test.ts FLOORS preamble + project
 	// memory note `project_post_processing_reset.md`). Cluster F walker
 	// refactor will lower these ceilings back down.
-	// Phase D (KindID migration, 2026-05-01): factoryRoundTrip 70→280.
+	// Phase D (KindID migration, 2026-05-01): factoryRenderParse 70→280.
 	// Codegen-synthesized variant/form/alias kinds get $type=0 under
 	// numeric dispatch — factory round-trip fails for all of them. The
 	// ceiling rise is proportional to the number of synthesized kinds
 	// (51 rust, 33 typescript) × the number of corpus instances per kind.
 	// ADR-0017 fix (2026-05-02): composite span key resolves node identity
-	// collisions — roundTrip ceilings lowered to reflect actual JS-path
+	// collisions — readRenderParse ceilings lowered to reflect actual JS-path
 	// fail counts (rust 65→15, typescript 60→25, python 75→70).
-	rust: { roundTrip: 15, factoryRoundTrip: 350 },
-	typescript: { roundTrip: 25, factoryRoundTrip: 215 },
-	python: { roundTrip: 70, factoryRoundTrip: 75 }
+	rust: { readRenderParse: 15, factoryRenderParse: 350 },
+	typescript: { readRenderParse: 25, factoryRenderParse: 215 },
+	python: { readRenderParse: 70, factoryRenderParse: 75 }
 };
 
 for (const grammar of GRAMMARS) {
@@ -72,29 +66,27 @@ for (const grammar of GRAMMARS) {
 			expect(result.suggested).toBeDefined();
 		});
 
-		describe('round-trip validation', () => {
-			const ceiling = RT_CEILINGS[grammar]!;
+		describe('render-parse validation', () => {
+			const ceiling = RENDER_PARSE_CEILINGS[grammar]!;
 
 			it('parse → readNode → render → reparse preserves structure', async () => {
-				const rt = await validateRoundTrip(grammar, templatesPath(grammar));
+				const rt = await validateReadRenderParse(grammar, templatesPath(grammar));
 				expect(rt.pass).toBeGreaterThan(0);
 				// Ceiling: fail count must not regress above known baseline
-				expect(
-					rt.fail,
-					`round-trip regressions (ceiling ${ceiling.roundTrip})`
-				).toBeLessThanOrEqual(ceiling.roundTrip);
+				expect(rt.fail, `read-render-parse regressions (ceiling ${ceiling.readRenderParse})`).toBeLessThanOrEqual(
+					ceiling.readRenderParse
+				);
 			}, 30_000);
 
-			it('factory round-trip — factory → render → parse matches', async () => {
-				const frt = await validateFactoryRoundTrip(
-					grammar,
-					templatesPath(grammar)
-				);
+			it('factory render-parse — factory → render → parse matches', async () => {
+				const frt = await validateFactoryRenderParse(grammar, templatesPath(grammar));
 				expect(frt.pass).toBeGreaterThan(0);
 				expect(
 					frt.fail,
-					`factory round-trip regressions (ceiling ${ceiling.factoryRoundTrip})`
-				).toBeLessThanOrEqual(ceiling.factoryRoundTrip);
+					`factory-render-parse regressions (ceiling ${ceiling.factoryRenderParse})`
+				).toBeLessThanOrEqual(
+					ceiling.factoryRenderParse
+				);
 			}, 30_000);
 		});
 	});

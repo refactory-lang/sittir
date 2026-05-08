@@ -3371,6 +3371,12 @@ export interface RangeExpressionUFormBare {
 }
 
 export type RangeExpression = RangeExpressionUFormBinary | RangeExpressionUFormPostfix | RangeExpressionUFormPrefix | RangeExpressionUFormBare;
+export interface RangePatternUFormPrefix {
+  readonly $type: TSKindId.RangePattern;
+  readonly $variant: 'prefix';
+  readonly $children: readonly [RangePatternPrefix];
+}
+
 export interface RangePatternUFormLeftWithRight {
   readonly $type: TSKindId.RangePattern;
   readonly $variant: 'left_with_right';
@@ -3386,13 +3392,7 @@ export interface RangePatternUFormLeftBare {
   left(): LiteralPattern | Path;
 }
 
-export interface RangePatternUFormPrefix {
-  readonly $type: TSKindId.RangePattern;
-  readonly $variant: 'prefix';
-  readonly $children: readonly [RangePatternPrefix];
-}
-
-export type RangePattern = RangePatternUFormLeftWithRight | RangePatternUFormLeftBare | RangePatternUFormPrefix;
+export type RangePattern = RangePatternUFormPrefix | RangePatternUFormLeftWithRight | RangePatternUFormLeftBare;
 export interface RawStringLiteral {
   readonly $type: TSKindId.RawStringLiteral;
   readonly _raw_string_literal_start?: string;
@@ -3852,12 +3852,6 @@ export interface VisibilityModifierCrate {
   readonly $children: readonly [Crate];
 }
 
-export interface VisibilityModifierUFormInPath {
-  readonly $type: TSKindId.VisibilityModifier;
-  readonly $variant: 'in_path';
-  readonly $children: readonly [VisibilityModifierInPath];
-}
-
 export interface VisibilityModifierUFormCrate {
   readonly $type: TSKindId.VisibilityModifier;
   readonly $variant: 'crate';
@@ -3870,7 +3864,13 @@ export interface VisibilityModifierUFormPub {
   readonly $children: readonly [VisibilityModifierPub];
 }
 
-export type VisibilityModifier = VisibilityModifierUFormInPath | VisibilityModifierUFormCrate | VisibilityModifierUFormPub;
+export interface VisibilityModifierUFormInPath {
+  readonly $type: TSKindId.VisibilityModifier;
+  readonly $variant: 'in_path';
+  readonly $children: readonly [VisibilityModifierInPath];
+}
+
+export type VisibilityModifier = VisibilityModifierUFormCrate | VisibilityModifierUFormPub | VisibilityModifierUFormInPath;
 export interface WhereClause {
   readonly $type: TSKindId.WhereClause;
   readonly $children: readonly (WherePredicate)[];
@@ -4132,9 +4132,9 @@ export interface RangeExpressionUFormPostfixTree extends TreeNode<'range_express
 export interface RangeExpressionUFormPrefixTree extends TreeNode<'range_expression'> {}
 export interface RangeExpressionUFormBareTree extends TreeNode<'range_expression'> {}
 export interface RangePatternTree extends TreeNode<'range_pattern'> {}
+export interface RangePatternUFormPrefixTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternUFormLeftWithRightTree extends TreeNode<'range_pattern'> {}
 export interface RangePatternUFormLeftBareTree extends TreeNode<'range_pattern'> {}
-export interface RangePatternUFormPrefixTree extends TreeNode<'range_pattern'> {}
 export interface RawStringLiteralTree extends TreeNode<'raw_string_literal'> {}
 export interface RefPatternTree extends TreeNode<'ref_pattern'> {}
 export interface ReferenceExpressionTree extends TreeNode<'reference_expression'> {}
@@ -4200,9 +4200,9 @@ export interface UseWildcardTree extends TreeNode<'use_wildcard'> {}
 export interface VariadicParameterTree extends TreeNode<'variadic_parameter'> {}
 export interface VisibilityModifierCrateTree extends TreeNode<'visibility_modifier_crate'> {}
 export interface VisibilityModifierTree extends TreeNode<'visibility_modifier'> {}
-export interface VisibilityModifierUFormInPathTree extends TreeNode<'visibility_modifier'> {}
 export interface VisibilityModifierUFormCrateTree extends TreeNode<'visibility_modifier'> {}
 export interface VisibilityModifierUFormPubTree extends TreeNode<'visibility_modifier'> {}
+export interface VisibilityModifierUFormInPathTree extends TreeNode<'visibility_modifier'> {}
 export interface WhereClauseTree extends TreeNode<'where_clause'> {}
 export interface WherePredicateTree extends TreeNode<'where_predicate'> {}
 export interface WhileExpressionTree extends TreeNode<'while_expression'> {}
@@ -5171,11 +5171,11 @@ export interface VariantMap {
   'or_pattern': { binary: OrPatternUFormBinary; prefix: OrPatternUFormPrefix };
   'pointer_type': { const: PointerTypeUFormConst; mut: PointerTypeUFormMut };
   'range_expression': { binary: RangeExpressionUFormBinary; postfix: RangeExpressionUFormPostfix; prefix: RangeExpressionUFormPrefix; bare: RangeExpressionUFormBare };
-  'range_pattern': { left_with_right: RangePatternUFormLeftWithRight; left_bare: RangePatternUFormLeftBare; prefix: RangePatternUFormPrefix };
+  'range_pattern': { prefix: RangePatternUFormPrefix; left_with_right: RangePatternUFormLeftWithRight; left_bare: RangePatternUFormLeftBare };
   'struct_item': { brace: StructItemUFormBrace; tuple: StructItemUFormTuple; unit: StructItemUFormUnit };
   'token_tree': { paren: TokenTreeUFormParen; bracket: TokenTreeUFormBracket; brace: TokenTreeUFormBrace };
   'token_tree_pattern': { paren: TokenTreePatternUFormParen; bracket: TokenTreePatternUFormBracket; brace: TokenTreePatternUFormBrace };
-  'visibility_modifier': { in_path: VisibilityModifierUFormInPath; crate: VisibilityModifierUFormCrate; pub: VisibilityModifierUFormPub };
+  'visibility_modifier': { crate: VisibilityModifierUFormCrate; pub: VisibilityModifierUFormPub; in_path: VisibilityModifierUFormInPath };
 }
 
 // Per-kind namespace interfaces — one computed base per kind (spec 008 US1)
@@ -9819,6 +9819,20 @@ export namespace RangeExpression {
   export type Transport = RangeExpressionUFormBinary.Transport | RangeExpressionUFormPostfix.Transport | RangeExpressionUFormPrefix.Transport | RangeExpressionUFormBare.Transport;
 }
 
+export namespace RangePatternUFormPrefix {
+  export interface Transport {
+    readonly $type: TSKindId.RangePattern;
+    readonly $variant: 'prefix';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: RangePatternPrefix.Transport;
+  }
+}
+
 export namespace RangePatternUFormLeftWithRight {
   export interface Transport {
     readonly $type: TSKindId.RangePattern;
@@ -9849,22 +9863,8 @@ export namespace RangePatternUFormLeftBare {
   }
 }
 
-export namespace RangePatternUFormPrefix {
-  export interface Transport {
-    readonly $type: TSKindId.RangePattern;
-    readonly $variant: 'prefix';
-    readonly $source?: 0 | 1 | 2;
-    readonly $named?: boolean;
-    readonly $text?: string;
-    readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeHandle?: number;
-    readonly $childIndex?: number;
-    readonly $children: RangePatternPrefix.Transport;
-  }
-}
-
 export namespace RangePattern {
-  export type Transport = RangePatternUFormLeftWithRight.Transport | RangePatternUFormLeftBare.Transport | RangePatternUFormPrefix.Transport;
+  export type Transport = RangePatternUFormPrefix.Transport | RangePatternUFormLeftWithRight.Transport | RangePatternUFormLeftBare.Transport;
 }
 
 export namespace RawStringLiteral {
@@ -10762,20 +10762,6 @@ export namespace VisibilityModifierCrate {
   }
 }
 
-export namespace VisibilityModifierUFormInPath {
-  export interface Transport {
-    readonly $type: TSKindId.VisibilityModifier;
-    readonly $variant: 'in_path';
-    readonly $source?: 0 | 1 | 2;
-    readonly $named?: boolean;
-    readonly $text?: string;
-    readonly $span?: { readonly start: number; readonly end: number };
-    readonly $nodeHandle?: number;
-    readonly $childIndex?: number;
-    readonly $children: VisibilityModifierInPath.Transport;
-  }
-}
-
 export namespace VisibilityModifierUFormCrate {
   export interface Transport {
     readonly $type: TSKindId.VisibilityModifier;
@@ -10804,8 +10790,22 @@ export namespace VisibilityModifierUFormPub {
   }
 }
 
+export namespace VisibilityModifierUFormInPath {
+  export interface Transport {
+    readonly $type: TSKindId.VisibilityModifier;
+    readonly $variant: 'in_path';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: VisibilityModifierInPath.Transport;
+  }
+}
+
 export namespace VisibilityModifier {
-  export type Transport = VisibilityModifierUFormInPath.Transport | VisibilityModifierUFormCrate.Transport | VisibilityModifierUFormPub.Transport;
+  export type Transport = VisibilityModifierUFormCrate.Transport | VisibilityModifierUFormPub.Transport | VisibilityModifierUFormInPath.Transport;
 }
 
 export namespace WhereClause {

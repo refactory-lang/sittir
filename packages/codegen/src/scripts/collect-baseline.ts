@@ -32,9 +32,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 import { renderModuleFixturesPath } from '../emitters/render-module-paths.ts';
 import { loadKindNames } from '../validate/common.ts';
@@ -306,8 +306,8 @@ async function collectValidatorsForGrammar(grammar: Grammar, backend: Backend): 
 	const [from, cov, rt, fac] = await Promise.all([
 		validateFrom(grammar, backendArg),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateRoundTrip(grammar, tp, { backend: backendArg }),
-		validateFactoryRoundTrip(grammar, tp, backendArg)
+		validateReadRenderParse(grammar, tp, { backend: backendArg }),
+		validateFactoryRenderParse(grammar, tp, backendArg)
 	]);
 
 	// Format-deferred kinds default to []. Triage runs during cluster

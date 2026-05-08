@@ -16,27 +16,27 @@
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
     "_crate": "text",
-    "_delim_token_tree_brace": "children",
-    "_delim_token_tree_bracket": "children",
-    "_delim_token_tree_paren": "children",
-    "_expression_statement_block_ending": "children",
-    "_expression_statement_with_semi": "children",
-    "_field_identifier": "children",
+    "_delim_token_tree_brace": "spread",
+    "_delim_token_tree_bracket": "spread",
+    "_delim_token_tree_paren": "spread",
+    "_expression_statement_block_ending": "spread",
+    "_expression_statement_with_semi": "spread",
+    "_field_identifier": "spread",
     "_field_pattern_named": "config",
     "_field_pattern_shorthand": "config",
     "_foreign_mod_item_body": "config",
-    "_function_type_fn_form": "children",
+    "_function_type_fn_form": "config",
     "_function_type_trait_form": "config",
     "_generic_type_with_turbofish_turbofish": "text",
     "_impl_item_body": "config",
     "_impl_item_negative": "text",
-    "_let_chain": "children",
+    "_let_chain": "spread",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
     "_line_comment_regular_dslash": "text",
-    "_macro_definition_brace": "children",
-    "_macro_definition_bracket": "children",
-    "_macro_definition_paren": "children",
+    "_macro_definition_brace": "config",
+    "_macro_definition_bracket": "config",
+    "_macro_definition_paren": "config",
     "_match_arm_block_ending": "config",
     "_match_arm_with_comma": "config",
     "_mod_item_inline": "config",
@@ -46,7 +46,7 @@
     "_or_pattern_binary": "config",
     "_or_pattern_prefix": "config",
     "_pointer_type_const": "text",
-    "_pointer_type_mut": "children",
+    "_pointer_type_mut": "config",
     "_primitive_type": "text",
     "_range_expression_bare": "config",
     "_range_expression_binary": "config",
@@ -56,22 +56,22 @@
     "_range_pattern_prefix": "config",
     "_ref_marker": "text",
     "_reference_expression_raw_const": "text",
-    "_reference_expression_raw_mut": "children",
-    "_reserved_identifier": "children",
+    "_reference_expression_raw_mut": "config",
+    "_reserved_identifier": "spread",
     "_self": "text",
     "_struct_item_brace": "config",
     "_struct_item_tuple": "config",
     "_token_binding_pattern_type": "text",
-    "_token_tree_brace": "children",
-    "_token_tree_bracket": "children",
-    "_token_tree_paren": "children",
-    "_token_tree_pattern_brace": "children",
-    "_token_tree_pattern_bracket": "children",
-    "_token_tree_pattern_paren": "children",
-    "_type_identifier": "children",
+    "_token_tree_brace": "spread",
+    "_token_tree_bracket": "spread",
+    "_token_tree_paren": "spread",
+    "_token_tree_pattern_brace": "spread",
+    "_token_tree_pattern_bracket": "spread",
+    "_token_tree_pattern_paren": "spread",
+    "_type_identifier": "spread",
     "_unary_expression_operator": "text",
     "_unsafe_marker": "text",
-    "_visibility_modifier_crate": "children",
+    "_visibility_modifier_crate": "config",
     "_visibility_modifier_in_path": "config",
     "_visibility_modifier_pub": "config",
     "abstract_type": "config",
@@ -80,64 +80,64 @@
     "array_type": "config",
     "assignment_expression": "config",
     "associated_type": "config",
-    "async_block": "config",
-    "attribute": "config",
-    "attribute_item": "single-field",
-    "await_expression": "children",
-    "base_field_initializer": "children",
+    "async_block": "direct",
+    "attribute": "direct",
+    "attribute_item": "direct",
+    "await_expression": "direct",
+    "base_field_initializer": "direct",
     "binary_expression": "config",
     "block": "config",
-    "block_comment": "config",
+    "block_comment": "direct",
     "boolean_literal": "text",
     "bounded_type": "config",
-    "bracketed_type": "children",
-    "break_expression": "config",
+    "bracketed_type": "direct",
+    "break_expression": "direct",
     "call_expression": "config",
     "captured_pattern": "config",
     "char_literal": "text",
-    "closure_expression_expr": "single-field",
+    "closure_expression_expr": "direct",
     "closure_expression": "config",
-    "closure_parameters": "children",
-    "comment": "children",
+    "closure_parameters": "spread",
+    "comment": "direct",
     "compound_assignment_expr": "config",
-    "const_block": "single-field",
+    "const_block": "direct",
     "const_item": "config",
     "const_parameter": "config",
-    "continue_expression": "single-field",
+    "continue_expression": "direct",
     "crate": "text",
-    "declaration_list": "children",
-    "delim_token_tree_paren": "children",
-    "delim_token_tree_bracket": "children",
-    "delim_token_tree_brace": "children",
+    "declaration_list": "spread",
+    "delim_token_tree_paren": "spread",
+    "delim_token_tree_bracket": "spread",
+    "delim_token_tree_brace": "spread",
     "delim_token_tree": "config",
-    "dynamic_type": "single-field",
-    "else_clause": "children",
+    "dynamic_type": "direct",
+    "else_clause": "direct",
     "enum_item": "config",
     "enum_variant": "config",
-    "enum_variant_list": "children",
+    "enum_variant_list": "spread",
     "escape_sequence": "text",
-    "expression_statement_with_semi": "children",
-    "expression_statement_block_ending": "children",
+    "expression_statement_with_semi": "direct",
+    "expression_statement_block_ending": "direct",
     "expression_statement": "config",
     "extern_crate_declaration": "config",
-    "extern_modifier": "single-field",
+    "extern_modifier": "direct",
     "field_declaration": "config",
-    "field_declaration_list": "children",
+    "field_declaration_list": "spread",
     "field_expression": "config",
     "field_initializer": "config",
-    "field_initializer_list": "children",
-    "field_pattern_shorthand": "single-field",
+    "field_initializer_list": "spread",
+    "field_pattern_shorthand": "direct",
     "field_pattern": "config",
     "for_expression": "config",
-    "for_lifetimes": "children",
-    "foreign_mod_item_body": "single-field",
+    "for_lifetimes": "spread",
+    "foreign_mod_item_body": "direct",
     "foreign_mod_item": "config",
     "fragment_specifier": "text",
     "function_item": "config",
     "function_modifiers": "config",
     "function_signature_item": "config",
     "function_type": "config",
-    "gen_block": "config",
+    "gen_block": "direct",
     "generic_function": "config",
     "generic_pattern": "config",
     "generic_type": "config",
@@ -145,112 +145,112 @@
     "higher_ranked_trait_bound": "config",
     "identifier": "text",
     "if_expression": "config",
-    "impl_item_body": "single-field",
+    "impl_item_body": "direct",
     "impl_item": "config",
     "index_expression": "config",
-    "inner_attribute_item": "single-field",
+    "inner_attribute_item": "direct",
     "integer_literal": "text",
-    "label": "single-field",
+    "label": "direct",
     "last_match_arm": "config",
     "let_condition": "config",
     "let_declaration": "config",
-    "lifetime": "single-field",
+    "lifetime": "direct",
     "lifetime_parameter": "config",
     "line_comment": "config",
     "loop_expression": "config",
-    "macro_definition_paren": "children",
-    "macro_definition_bracket": "children",
-    "macro_definition_brace": "children",
+    "macro_definition_paren": "config",
+    "macro_definition_bracket": "config",
+    "macro_definition_brace": "config",
     "macro_definition": "config",
     "macro_invocation": "config",
     "macro_rule": "config",
-    "match_arm_block_ending": "single-field",
+    "match_arm_block_ending": "direct",
     "match_arm": "config",
-    "match_block": "children",
+    "match_block": "config",
     "match_expression": "config",
     "match_pattern": "config",
     "metavariable": "text",
-    "mod_item_inline": "single-field",
+    "mod_item_inline": "direct",
     "mod_item": "config",
-    "mut_pattern": "config",
+    "mut_pattern": "direct",
     "mutable_specifier": "text",
-    "negative_literal": "single-field",
+    "negative_literal": "direct",
     "or_pattern": "config",
     "ordered_field_declaration_list": "config",
     "parameter": "config",
-    "parameters": "children",
-    "parenthesized_expression": "children",
-    "pointer_type_mut": "children",
+    "parameters": "spread",
+    "parenthesized_expression": "direct",
+    "pointer_type_mut": "config",
     "pointer_type": "config",
     "qualified_type": "config",
     "range_expression_bare": "config",
     "range_expression": "config",
     "range_pattern": "config",
     "raw_string_literal": "config",
-    "ref_pattern": "children",
-    "reference_expression": "config",
-    "reference_pattern": "config",
+    "ref_pattern": "direct",
+    "reference_expression": "direct",
+    "reference_pattern": "direct",
     "reference_type": "config",
-    "removed_trait_bound": "children",
-    "return_expression": "children",
+    "removed_trait_bound": "direct",
+    "return_expression": "config",
     "scoped_identifier": "config",
-    "scoped_type_identifier": "config",
-    "scoped_type_identifier_in_expression_position": "config",
+    "scoped_type_identifier": "direct",
+    "scoped_type_identifier_in_expression_position": "direct",
     "scoped_use_list": "config",
     "self": "text",
-    "self_parameter": "config",
+    "self_parameter": "direct",
     "shebang": "text",
     "shorthand_field_initializer": "config",
-    "slice_pattern": "children",
+    "slice_pattern": "spread",
     "source_file": "config",
     "static_item": "config",
-    "string_literal": "children",
+    "string_literal": "spread",
     "struct_expression": "config",
     "struct_item": "config",
     "struct_pattern": "config",
     "super": "text",
-    "token_binding_pattern": "config",
-    "token_repetition": "children",
-    "token_repetition_pattern": "children",
-    "token_tree_paren": "children",
-    "token_tree_bracket": "children",
-    "token_tree_brace": "children",
+    "token_binding_pattern": "direct",
+    "token_repetition": "spread",
+    "token_repetition_pattern": "spread",
+    "token_tree_paren": "spread",
+    "token_tree_bracket": "spread",
+    "token_tree_brace": "spread",
     "token_tree": "config",
-    "token_tree_pattern_paren": "children",
-    "token_tree_pattern_bracket": "children",
-    "token_tree_pattern_brace": "children",
+    "token_tree_pattern_paren": "spread",
+    "token_tree_pattern_bracket": "spread",
+    "token_tree_pattern_brace": "spread",
     "token_tree_pattern": "config",
-    "trait_bounds": "children",
+    "trait_bounds": "spread",
     "trait_item": "config",
-    "try_block": "single-field",
-    "try_expression": "single-field",
+    "try_block": "direct",
+    "try_expression": "direct",
     "tuple_expression": "config",
-    "tuple_pattern": "children",
+    "tuple_pattern": "spread",
     "tuple_struct_pattern": "config",
-    "tuple_type": "children",
-    "type_arguments": "children",
+    "tuple_type": "spread",
+    "type_arguments": "spread",
     "type_binding": "config",
     "type_cast_expression": "config",
     "type_item": "config",
     "type_parameter": "config",
     "type_parameters": "config",
-    "unary_expression": "config",
+    "unary_expression": "direct",
     "union_item": "config",
     "unit_expression": "text",
     "unit_type": "text",
-    "unsafe_block": "single-field",
+    "unsafe_block": "direct",
     "use_as_clause": "config",
-    "use_bounds": "children",
+    "use_bounds": "spread",
     "use_declaration": "config",
-    "use_list": "children",
-    "use_wildcard": "single-field",
-    "variadic_parameter": "config",
-    "visibility_modifier_crate": "children",
+    "use_list": "spread",
+    "use_wildcard": "direct",
+    "variadic_parameter": "direct",
+    "visibility_modifier_crate": "config",
     "visibility_modifier": "config",
-    "where_clause": "children",
+    "where_clause": "spread",
     "where_predicate": "config",
     "while_expression": "config",
-    "yield_expression": "children",
+    "yield_expression": "config",
     "string_content": "text",
     "raw_string_literal_content": "text",
     "float_literal": "text",
@@ -348,7 +348,6 @@
       "body"
     ],
     "_field_pattern_named": [
-      "name",
       "pattern"
     ],
     "_field_pattern_shorthand": [
@@ -379,20 +378,14 @@
     "_or_pattern_prefix": [
       "right"
     ],
-    "_range_expression_bare": [
-      "operator"
-    ],
     "_range_expression_binary": [
       "start",
-      "operator",
       "end"
     ],
     "_range_expression_postfix": [
-      "start",
-      "operator"
+      "start"
     ],
     "_range_expression_prefix": [
-      "operator",
       "end"
     ],
     "_range_pattern_left_with_right": [
@@ -400,6 +393,12 @@
     ],
     "_range_pattern_prefix": [
       "right"
+    ],
+    "_struct_item_brace": [
+      "body"
+    ],
+    "_struct_item_tuple": [
+      "body"
     ],
     "abstract_type": [
       "type_parameters",
@@ -417,26 +416,32 @@
       "right"
     ],
     "associated_type": [
-      "name",
       "type_parameters",
       "bounds",
       "where_clause"
     ],
     "async_block": [
-      "move_marker",
       "block"
+    ],
+    "attribute": [
+      "path"
     ],
     "attribute_item": [
       "attribute"
     ],
     "binary_expression": [
       "left",
-      "operator",
       "right"
+    ],
+    "block_comment": [
+      "doc"
     ],
     "bounded_type": [
       "left",
       "right"
+    ],
+    "break_expression": [
+      "label"
     ],
     "call_expression": [
       "function",
@@ -447,7 +452,6 @@
     ],
     "compound_assignment_expr": [
       "left",
-      "operator",
       "right"
     ],
     "const_block": [
@@ -472,7 +476,6 @@
     ],
     "enum_item": [
       "visibility_modifier",
-      "name",
       "type_parameters",
       "where_clause",
       "body"
@@ -485,7 +488,6 @@
     ],
     "extern_crate_declaration": [
       "visibility_modifier",
-      "crate",
       "name",
       "alias"
     ],
@@ -494,7 +496,6 @@
     ],
     "field_declaration": [
       "visibility_modifier",
-      "name",
       "type"
     ],
     "field_expression": [
@@ -536,7 +537,6 @@
       "where_clause"
     ],
     "gen_block": [
-      "move_marker",
       "block"
     ],
     "generic_function": [
@@ -549,7 +549,6 @@
     ],
     "generic_type_with_turbofish": [
       "type",
-      "turbofish",
       "type_arguments"
     ],
     "higher_ranked_trait_bound": [
@@ -579,7 +578,6 @@
       "value"
     ],
     "let_declaration": [
-      "mutable_specifier",
       "pattern",
       "type",
       "value",
@@ -618,29 +616,29 @@
       "value"
     ],
     "parameter": [
-      "mutable_specifier",
       "pattern",
+      "type"
+    ],
+    "pointer_type": [
       "type"
     ],
     "qualified_type": [
       "type",
       "alias"
     ],
-    "range_expression_bare": [
-      "operator"
-    ],
     "raw_string_literal": [
       "raw_string_literal_start",
       "string_content",
       "raw_string_literal_end"
     ],
+    "reference_expression": [
+      "value"
+    ],
     "reference_pattern": [
-      "mutable_specifier",
       "pattern"
     ],
     "reference_type": [
       "lifetime",
-      "mutable_specifier",
       "type"
     ],
     "scoped_identifier": [
@@ -648,22 +646,17 @@
       "name"
     ],
     "scoped_type_identifier": [
-      "path",
-      "name"
+      "path"
     ],
     "scoped_type_identifier_in_expression_position": [
-      "path",
-      "name"
+      "path"
     ],
     "scoped_use_list": [
       "path",
       "list"
     ],
     "self_parameter": [
-      "reference",
-      "lifetime",
-      "mutable_specifier",
-      "self"
+      "lifetime"
     ],
     "shorthand_field_initializer": [
       "attributes",
@@ -675,7 +668,6 @@
     ],
     "static_item": [
       "visibility_modifier",
-      "mutable_specifier",
       "name",
       "type",
       "value"
@@ -685,13 +677,10 @@
       "body"
     ],
     "token_binding_pattern": [
-      "name",
-      "type"
+      "name"
     ],
     "trait_item": [
       "visibility_modifier",
-      "unsafe_marker",
-      "name",
       "type_parameters",
       "bounds",
       "where_clause",
@@ -708,7 +697,6 @@
       "elements"
     ],
     "type_binding": [
-      "name",
       "type_arguments",
       "type"
     ],
@@ -718,14 +706,12 @@
     ],
     "type_item": [
       "visibility_modifier",
-      "name",
       "type_parameters",
       "where_clause",
       "type",
       "trailing_where_clause"
     ],
     "type_parameter": [
-      "name",
       "bounds",
       "default_type"
     ],
@@ -733,12 +719,10 @@
       "attributes"
     ],
     "unary_expression": [
-      "operator",
       "operand"
     ],
     "union_item": [
       "visibility_modifier",
-      "name",
       "type_parameters",
       "where_clause",
       "body"
@@ -758,7 +742,6 @@
       "path"
     ],
     "variadic_parameter": [
-      "mutable_specifier",
       "pattern"
     ],
     "where_predicate": [
@@ -885,9 +868,9 @@
     "range_pattern": {
       "source": "override",
       "childKind": {
+        "range_pattern_prefix": "prefix",
         "range_pattern_left_with_right": "left_with_right",
-        "range_pattern_left_bare": "left_bare",
-        "range_pattern_prefix": "prefix"
+        "range_pattern_left_bare": "left_bare"
       }
     },
     "reference_expression": {
@@ -924,9 +907,9 @@
     "visibility_modifier": {
       "source": "override",
       "childKind": {
-        "visibility_modifier_in_path": "in_path",
         "visibility_modifier_crate": "crate",
-        "visibility_modifier_pub": "pub"
+        "visibility_modifier_pub": "pub",
+        "visibility_modifier_in_path": "in_path"
       }
     }
   }

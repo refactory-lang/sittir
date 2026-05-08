@@ -18,7 +18,7 @@ import {
 	buildSupertypeTransportSet,
 	deriveChildrenKinds,
 	type SlotClass
-} from '../emitters/render-module.ts';
+} from '../emitters/transport-common.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';

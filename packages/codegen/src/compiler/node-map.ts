@@ -40,6 +40,7 @@ import type {
 	EnumRule,
 	SupertypeRule,
 	PolymorphRule,
+	PolymorphForm,
 	TerminalRule
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
@@ -3042,6 +3043,10 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		return this.#forms;
 	}
 
+	get formRules(): readonly PolymorphForm[] {
+		return this.rule.forms;
+	}
+
 	/**
 	 * Flattened field list across all forms — the union of every form's
 	 * named slots (source !== 'inferred'). Used by emitters that need
@@ -3595,6 +3600,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 * standalone groups (inlined hidden seqs).
 	 */
 	readonly parentKind?: string;
+	readonly overridePassthrough?: boolean;
 
 	/** See {@link AssembledBranch.slotClass}. */
 	slotClass?: BranchSlotClass;
@@ -3620,6 +3626,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 			detectToken?: string;
 			name?: string;
 			parentKind?: string;
+			overridePassthrough?: boolean;
 		}
 	) {
 		// Groups always derive a factoryName — hidden groups emit fragment factories
@@ -3639,6 +3646,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
+		this.overridePassthrough = opts?.overridePassthrough;
 		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 

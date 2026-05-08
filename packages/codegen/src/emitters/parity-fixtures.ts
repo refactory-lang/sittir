@@ -23,11 +23,11 @@
  */
 
 import {
-	validateRoundTrip,
+	validateReadRenderParse,
 	type ParityFixture,
 	type RenderFixture,
 	type RoundTripFixture
-} from '../validate/roundtrip.ts';
+} from '../validate/read-render-parse.ts';
 import { renderModuleFixturesPath } from './render-module-paths.ts';
 
 /** FR-011 exception kinds — at least one fixture of each must appear
@@ -61,7 +61,7 @@ export async function extractParityFixtures(grammar: string, templatesPath: stri
 	let renderCount = 0;
 	let roundTripCount = 0;
 
-	await validateRoundTrip(grammar, templatesPath, {
+	await validateReadRenderParse(grammar, templatesPath, {
 		onFixture: (fx) => {
 			fixtures.push(fx);
 			if (fx.kind === 'render') renderCount++;

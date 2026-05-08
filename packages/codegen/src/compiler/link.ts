@@ -22,6 +22,7 @@ import type {
 	ChoiceRule,
 	VariantRule,
 	PolymorphRule,
+	PolymorphForm,
 	Repeat1Rule,
 	SymbolRule,
 	StringRule
@@ -694,41 +695,7 @@ export function applyOverridePolymorphs(
 			continue;
 		}
 
-		const forms = children.map((child) => {
-			const fullName = `${parentKind}_${child}`;
-			const variantMember = found.choice.members.find((m) => {
-				if (m.type === 'variant') {
-					const sym = m.content;
-					return sym.type === 'symbol' && sym.name === fullName;
-				}
-				return m.type === 'symbol' && m.name === fullName;
-			});
-
-			// Extract from SEQ arm if variant symbol isn't a direct choice member.
-			const seqArmContent = variantMember ? null : findVariantSymbolInSeqArm(found.choice, fullName, rules);
-
-			const content =
-				variantMember?.type === 'variant'
-					? variantMember.content
-					: (seqArmContent ??
-						variantMember ??
-						(rules[`_${fullName}`]
-							? ({
-									type: 'symbol',
-									name: fullName,
-									aliasedFrom: `_${fullName}`
-								} as Rule)
-							: ({ type: 'symbol', name: fullName } as Rule)));
-			const fused =
-				found.prefix.length > 0 || found.suffix.length > 0
-					? ({
-							type: 'seq' as const,
-							members: [...found.prefix, content, ...found.suffix]
-						} as Rule)
-					: content;
-
-			return { name: child, content: fused };
-		});
+		const forms = buildOverridePolymorphForms(parentKind, children, found, rules);
 
 		rules[parentKind] = {
 			type: 'polymorph',
@@ -742,6 +709,114 @@ export function applyOverridePolymorphs(
 			applied: true
 		});
 	}
+}
+
+function buildOverridePolymorphForms(
+	parentKind: string,
+	children: readonly string[],
+	found: VariantChoiceLocation,
+	rules: Record<string, Rule>
+): PolymorphForm[] {
+	const variantChildSymbolNames = new Set(children.map((child) => `${parentKind}_${child}`));
+	const explicitVariantForms = new Map<string, PolymorphForm>();
+	for (const child of children) {
+		const visibleChildKind = `${parentKind}_${child}`;
+		const directMember = found.choice.members.find((member) => matchesOverrideChoiceMember(member, visibleChildKind));
+		const content =
+			directMember?.type === 'variant'
+				? directMember.content
+				: (directMember ??
+					findVariantSymbolInSeqArm(found.choice, visibleChildKind, rules) ??
+					resolveVisibleSymbolRule(visibleChildKind, rules));
+		explicitVariantForms.set(visibleChildKind, {
+			name: child,
+			content: fuseOverridePolymorphFormContent(found.prefix, content, found.suffix),
+			visibleChildKind,
+			discriminatorKinds: [visibleChildKind]
+		});
+	}
+
+	const orderedForms: PolymorphForm[] = [];
+	const seenExplicit = new Set<string>();
+	for (const member of found.choice.members) {
+		const visibleChildKind = findMatchingOverrideVariantKind(member, variantChildSymbolNames);
+		if (visibleChildKind) {
+			const form = explicitVariantForms.get(visibleChildKind);
+			if (form && !seenExplicit.has(visibleChildKind)) {
+				orderedForms.push(form);
+				seenExplicit.add(visibleChildKind);
+			}
+			continue;
+		}
+		const discriminatorKind = extractOverridePassthroughKind(member, variantChildSymbolNames);
+		if (!discriminatorKind) continue;
+		orderedForms.push({
+			name: visibleOverrideFormName(discriminatorKind),
+			content: fuseOverridePolymorphFormContent(
+				found.prefix,
+				resolveVisibleSymbolRule(discriminatorKind, rules),
+				found.suffix
+			),
+			discriminatorKinds: [discriminatorKind]
+		});
+	}
+
+	for (const child of children) {
+		const visibleChildKind = `${parentKind}_${child}`;
+		const form = explicitVariantForms.get(visibleChildKind);
+		if (form && !seenExplicit.has(visibleChildKind)) orderedForms.push(form);
+	}
+	return orderedForms;
+}
+
+function resolveVisibleSymbolRule(name: string, rules: Record<string, Rule>): SymbolRule {
+	const hiddenAlias = `_${name}`;
+	return rules[hiddenAlias]
+		? { type: 'symbol', name, aliasedFrom: hiddenAlias }
+		: { type: 'symbol', name };
+}
+
+function fuseOverridePolymorphFormContent(prefix: readonly Rule[], content: Rule, suffix: readonly Rule[]): Rule {
+	if (prefix.length === 0 && suffix.length === 0) return content;
+	return {
+		type: 'seq',
+		members: [...prefix, content, ...suffix]
+	};
+}
+
+function matchesOverrideChoiceMember(member: Rule, targetSymbolName: string): boolean {
+	const core = member.type === 'variant' ? member.content : member;
+	if (core.type === 'symbol') return core.name === targetSymbolName;
+	return false;
+}
+
+function findMatchingOverrideVariantKind(
+	member: Rule,
+	variantChildSymbolNames: ReadonlySet<string>
+): string | undefined {
+	const core = member.type === 'variant' ? member.content : member;
+	if (core.type === 'symbol') {
+		return variantChildSymbolNames.has(core.name) ? core.name : undefined;
+	}
+	if (core.type !== 'seq') return undefined;
+	for (const inner of core.members) {
+		const nested = inner.type === 'variant' ? inner.content : inner;
+		if (nested.type === 'symbol' && variantChildSymbolNames.has(nested.name)) return nested.name;
+	}
+	return undefined;
+}
+
+function extractOverridePassthroughKind(
+	member: Rule,
+	variantChildSymbolNames: ReadonlySet<string>
+): string | undefined {
+	const core = member.type === 'variant' ? member.content : member;
+	if (core.type !== 'symbol') return undefined;
+	return variantChildSymbolNames.has(core.name) ? undefined : core.name;
+}
+
+function visibleOverrideFormName(kind: string): string {
+	return kind.startsWith('_') ? kind.slice(1) : kind;
 }
 
 /**

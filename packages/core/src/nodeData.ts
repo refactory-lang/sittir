@@ -88,11 +88,9 @@ export function buildWithNamespace<C extends object, R extends AnyNodeData>(
 ): { readonly [k: string]: (v: unknown) => R } {
 	const withNs: Record<string, (v: unknown) => R> = {};
 	for (const [, configKey] of slotKeys) {
-		withNs[configKey] = function(v: unknown): R {
+		withNs[configKey] = function (v: unknown): R {
 			return factory({ ...config, [configKey]: v });
 		};
 	}
 	return withNs;
 }
-
-

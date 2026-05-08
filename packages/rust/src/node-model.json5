@@ -11321,11 +11321,37 @@
       "source": "override",
       "polymorphSource": "override",
       "variantChildKinds": [
+        "range_pattern_prefix",
         "range_pattern_left_with_right",
-        "range_pattern_left_bare",
-        "range_pattern_prefix"
+        "range_pattern_left_bare"
       ],
       "forms": [
+        {
+          "kind": "range_pattern__form_prefix",
+          "name": "prefix",
+          "typeName": "RangePatternUFormPrefix",
+          "factoryName": "rangePatternUFormPrefix",
+          "irKey": "rangePatternUFormPrefix",
+          "parentKind": "range_pattern",
+          "fields": [],
+          "children": [
+            {
+              "name": "range_pattern_prefix",
+              "propertyName": "rangePatternPrefix",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_range_pattern_prefix",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
         {
           "kind": "range_pattern__form_left_with_right",
           "name": "left_with_right",
@@ -11434,32 +11460,6 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_range_pattern_left_bare",
-                  "unresolved": true
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "kind": "range_pattern__form_prefix",
-          "name": "prefix",
-          "typeName": "RangePatternUFormPrefix",
-          "factoryName": "rangePatternUFormPrefix",
-          "irKey": "rangePatternUFormPrefix",
-          "parentKind": "range_pattern",
-          "fields": [],
-          "children": [
-            {
-              "name": "range_pattern_prefix",
-              "propertyName": "rangePatternPrefix",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_range_pattern_prefix",
                   "unresolved": true
                 }
               ]
@@ -15044,37 +15044,11 @@
       "source": "override",
       "polymorphSource": "override",
       "variantChildKinds": [
-        "visibility_modifier_in_path",
         "visibility_modifier_crate",
-        "visibility_modifier_pub"
+        "visibility_modifier_pub",
+        "visibility_modifier_in_path"
       ],
       "forms": [
-        {
-          "kind": "visibility_modifier__form_in_path",
-          "name": "in_path",
-          "typeName": "VisibilityModifierUFormInPath",
-          "factoryName": "visibilityModifierUFormInPath",
-          "irKey": "visibilityModifierUFormInPath",
-          "parentKind": "visibility_modifier",
-          "fields": [],
-          "children": [
-            {
-              "name": "visibility_modifier_in_path",
-              "propertyName": "visibilityModifierInPath",
-              "required": true,
-              "multiple": false,
-              "nonEmpty": false,
-              "values": [
-                {
-                  "kind": "node-ref",
-                  "multiplicity": "single",
-                  "name": "_visibility_modifier_in_path",
-                  "unresolved": true
-                }
-              ]
-            }
-          ]
-        },
         {
           "kind": "visibility_modifier__form_crate",
           "name": "crate",
@@ -15121,6 +15095,32 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_visibility_modifier_pub",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "visibility_modifier__form_in_path",
+          "name": "in_path",
+          "typeName": "VisibilityModifierUFormInPath",
+          "factoryName": "visibilityModifierUFormInPath",
+          "irKey": "visibilityModifierUFormInPath",
+          "parentKind": "visibility_modifier",
+          "fields": [],
+          "children": [
+            {
+              "name": "visibility_modifier_in_path",
+              "propertyName": "visibilityModifierInPath",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "_visibility_modifier_in_path",
                   "unresolved": true
                 }
               ]

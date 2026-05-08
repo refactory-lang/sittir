@@ -1719,12 +1719,36 @@ export interface ExpressionStatementTuple {
   readonly $children: NonEmptyArray<Expression>;
 }
 
+export interface ExpressionStatementUFormExpression {
+  readonly $type: TSKindId.ExpressionStatement;
+  readonly $variant: 'expression';
+  readonly $children: readonly [Expression];
+}
+
 export interface ExpressionStatementUFormTuple {
   readonly $type: TSKindId.ExpressionStatement;
   readonly $variant: 'tuple';
 }
 
-export type ExpressionStatement = ExpressionStatementUFormTuple;
+export interface ExpressionStatementUFormAssignment {
+  readonly $type: TSKindId.ExpressionStatement;
+  readonly $variant: 'assignment';
+  readonly $children: readonly [Assignment];
+}
+
+export interface ExpressionStatementUFormAugmentedAssignment {
+  readonly $type: TSKindId.ExpressionStatement;
+  readonly $variant: 'augmented_assignment';
+  readonly $children: readonly [AugmentedAssignment];
+}
+
+export interface ExpressionStatementUFormYield {
+  readonly $type: TSKindId.ExpressionStatement;
+  readonly $variant: 'yield';
+  readonly $children: readonly [Yield];
+}
+
+export type ExpressionStatement = ExpressionStatementUFormExpression | ExpressionStatementUFormTuple | ExpressionStatementUFormAssignment | ExpressionStatementUFormAugmentedAssignment | ExpressionStatementUFormYield;
 export interface FinallyClause {
   readonly $type: TSKindId.FinallyClause;
   readonly _block: Suite;
@@ -2288,7 +2312,11 @@ export interface ExecStatementTree extends TreeNode<'exec_statement'> {}
 export interface ExpressionListTree extends TreeNode<'expression_list'> {}
 export interface ExpressionStatementTupleTree extends TreeNode<'expression_statement_tuple'> {}
 export interface ExpressionStatementTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormExpressionTree extends TreeNode<'expression_statement'> {}
 export interface ExpressionStatementUFormTupleTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormAssignmentTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormAugmentedAssignmentTree extends TreeNode<'expression_statement'> {}
+export interface ExpressionStatementUFormYieldTree extends TreeNode<'expression_statement'> {}
 export interface FinallyClauseTree extends TreeNode<'finally_clause'> {}
 export interface ForInClauseTree extends TreeNode<'for_in_clause'> {}
 export interface ForStatementTree extends TreeNode<'for_statement'> {}
@@ -2904,7 +2932,7 @@ export interface KindMap {
 
 export interface VariantMap {
   'assignment': { eq: AssignmentUFormEq; type: AssignmentUFormType; typed: AssignmentUFormTyped };
-  'expression_statement': { tuple: ExpressionStatementUFormTuple };
+  'expression_statement': { expression: ExpressionStatementUFormExpression; tuple: ExpressionStatementUFormTuple; assignment: ExpressionStatementUFormAssignment; augmented_assignment: ExpressionStatementUFormAugmentedAssignment; yield: ExpressionStatementUFormYield };
   'with_clause': { bare: WithClauseUFormBare; paren: WithClauseUFormParen };
 }
 
@@ -4855,6 +4883,20 @@ export namespace ExpressionStatementTuple {
   }
 }
 
+export namespace ExpressionStatementUFormExpression {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionStatement;
+    readonly $variant: 'expression';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: Expression.Transport;
+  }
+}
+
 export namespace ExpressionStatementUFormTuple {
   export interface Transport {
     readonly $type: TSKindId.ExpressionStatement;
@@ -4869,8 +4911,50 @@ export namespace ExpressionStatementUFormTuple {
   }
 }
 
+export namespace ExpressionStatementUFormAssignment {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionStatement;
+    readonly $variant: 'assignment';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: Assignment.Transport;
+  }
+}
+
+export namespace ExpressionStatementUFormAugmentedAssignment {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionStatement;
+    readonly $variant: 'augmented_assignment';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: AugmentedAssignment.Transport;
+  }
+}
+
+export namespace ExpressionStatementUFormYield {
+  export interface Transport {
+    readonly $type: TSKindId.ExpressionStatement;
+    readonly $variant: 'yield';
+    readonly $source?: 0 | 1 | 2;
+    readonly $named?: boolean;
+    readonly $text?: string;
+    readonly $span?: { readonly start: number; readonly end: number };
+    readonly $nodeHandle?: number;
+    readonly $childIndex?: number;
+    readonly $children: Yield.Transport;
+  }
+}
+
 export namespace ExpressionStatement {
-  export type Transport = ExpressionStatementUFormTuple.Transport;
+  export type Transport = ExpressionStatementUFormExpression.Transport | ExpressionStatementUFormTuple.Transport | ExpressionStatementUFormAssignment.Transport | ExpressionStatementUFormAugmentedAssignment.Transport | ExpressionStatementUFormYield.Transport;
 }
 
 export namespace False {

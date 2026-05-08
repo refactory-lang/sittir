@@ -755,14 +755,15 @@ export function dottedNameFrom(...input: readonly (NonNullable<T.DottedName.Conf
 
 export function elifClauseFrom(input: T.ElifClause.Loose) {
   if (isNodeData(input)) return input;
-  return F.elifClause(_resolveOne<T.Expression>(input.condition, _K0, _super_expression));
+  return F.elifClause({
+    condition: _resolveOne<T.Expression>(input.condition, _K0, _super_expression),
+    consequence: _resolveOneBranch<T.Suite>(input.consequence, "_suite"),
+  });
 }
 
 export function elseClauseFrom(input: T.ElseClause.Loose) {
   if (isNodeData(input)) return input;
-  return F.elseClause({
-    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
-  });
+  return F.elseClause(_resolveOneBranch<T.Suite>(input.body, "_suite"));
 }
 
 export function escapeSequenceFrom(input: string | T.EscapeSequence) {
@@ -807,14 +808,34 @@ export function expressionStatementFrom(input?: T.ExpressionStatement.Loose) {
   if (input !== undefined && isNodeData(input)) return input;
   if (typeof input === "string") {
     switch (input) {
+      case "expression": return expressionStatementUFormExpressionFrom();
       case "tuple": return expressionStatementUFormTupleFrom();
+      case "assignment": return expressionStatementUFormAssignmentFrom();
+      case "augmented_assignment": return expressionStatementUFormAugmentedAssignmentFrom();
+      case "yield": return expressionStatementUFormYieldFrom();
     }
   }
   return _applyFactory(F.expressionStatement, input);
 }
 
+export function expressionStatementUFormExpressionFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormExpression>, '$variant'>) {
+  return F.expressionStatementUFormExpression(input);
+}
+
 export function expressionStatementUFormTupleFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormTuple>, '$variant'>) {
   return F.expressionStatementUFormTuple(input);
+}
+
+export function expressionStatementUFormAssignmentFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormAssignment>, '$variant'>) {
+  return F.expressionStatementUFormAssignment(input);
+}
+
+export function expressionStatementUFormAugmentedAssignmentFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormAugmentedAssignment>, '$variant'>) {
+  return F.expressionStatementUFormAugmentedAssignment(input);
+}
+
+export function expressionStatementUFormYieldFrom(input: Omit<ConfigOf<T.ExpressionStatementUFormYield>, '$variant'>) {
+  return F.expressionStatementUFormYield(input);
 }
 
 export function false_From(input?: T.False) {
@@ -824,9 +845,7 @@ export function false_From(input?: T.False) {
 
 export function finallyClauseFrom(input: T.FinallyClause.Loose) {
   if (isNodeData(input)) return input;
-  return F.finallyClause({
-    block: _resolveOneBranch<T.Suite>(input.block, "_suite"),
-  });
+  return F.finallyClause(_resolveOneBranch<T.Suite>(input.block, "_suite"));
 }
 
 export function floatFrom(input: string | T.Float) {
@@ -1315,7 +1334,10 @@ export function typedParameterFrom(input: T.TypedParameter.Loose) {
 
 export function unaryOperatorFrom(input: T.UnaryOperator.Loose) {
   if (isNodeData(input)) return input;
-  return F.unaryOperator(_resolveOne<T.PrimaryExpression>(input.argument, _K1, _K2));
+  return F.unaryOperator({
+    operator: _resolveOneLeaf<T.UnaryOperatorOperator>(input.operator, "_unary_operator_operator"),
+    argument: _resolveOne<T.PrimaryExpression>(input.argument, _K1, _K2),
+  });
 }
 
 export function unionPatternFrom(...input: readonly (NonNullable<T.UnionPattern.Config['children']>[number] | T.UnionPattern)[]) {
@@ -1377,7 +1399,11 @@ export function withItemFrom(input: T.WithItem.Loose) {
 
 export function withStatementFrom(input: T.WithStatement.Loose) {
   if (isNodeData(input)) return input;
-  return F.withStatement(_resolveOneBranch<T.WithClause>(input.withClause, "with_clause"));
+  return F.withStatement({
+    asyncMarker: _resolveBooleanKeyword(input.asyncMarker),
+    withClause: _resolveOneBranch<T.WithClause>(input.withClause, "with_clause"),
+    body: _resolveOneBranch<T.Suite>(input.body, "_suite"),
+  });
 }
 
 export function yield_From(input?: T.Yield.Loose) {

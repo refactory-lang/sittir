@@ -574,6 +574,39 @@ export interface ExpressionStatementTupleTransport {
   '$children': Array<ExpressionTransport>
 }
 
+export interface ExpressionStatementUFormAssignmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': Box<AnyTransport>
+}
+
+export interface ExpressionStatementUFormAugmentedAssignmentTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': AugmentedAssignmentTransport
+}
+
+export interface ExpressionStatementUFormExpressionTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': ExpressionTransport
+}
+
 export interface ExpressionStatementUFormTupleTransport {
   '$source'?: Source
   '$named'?: boolean
@@ -583,6 +616,17 @@ export interface ExpressionStatementUFormTupleTransport {
   '$childIndex'?: number
   '$triviaData'?: TransportTrivia
   '$children': Box<AnyTransport>
+}
+
+export interface ExpressionStatementUFormYieldTransport {
+  '$source'?: Source
+  '$named'?: boolean
+  '$text'?: string
+  '$span'?: Span
+  '$nodeHandle'?: number
+  '$childIndex'?: number
+  '$triviaData'?: TransportTrivia
+  '$children': YieldTransport
 }
 
 export interface FinallyClauseTransport {

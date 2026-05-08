@@ -70,26 +70,26 @@ export const templateEmitter = {
 		templateEmitterState.bodies = new Map();
 	},
 
-	shouldEmit(_kind: string, node: AssembledNode): boolean {
+	shouldEmit(node: AssembledNode): boolean {
 		if (!node.userFacing) return false;
 		if (node instanceof AssembledGroup && node.parentKind) return false;
 		return true;
 	},
 
-	emitLeaf(kind: string, node: AssembledNode): void {
-		emitTemplateForNode(kind, node);
+	emitLeaf(node: AssembledNode): void {
+		emitTemplateForNode(node);
 	},
 
-	emitBranch(kind: string, node: AssembledNode): void {
-		emitTemplateForNode(kind, node);
+	emitBranch(node: AssembledNode): void {
+		emitTemplateForNode(node);
 	},
 
-	emitPolymorph(kind: string, node: AssembledNode): void {
-		emitTemplateForNode(kind, node);
+	emitPolymorph(node: AssembledNode): void {
+		emitTemplateForNode(node);
 	},
 
-	emitGroup(kind: string, node: AssembledNode): void {
-		emitTemplateForNode(kind, node);
+	emitGroup(node: AssembledNode): void {
+		emitTemplateForNode(node);
 	},
 
 	finalize(): EmittedTemplates {
@@ -112,7 +112,7 @@ export function emitJinjaTemplates(
 	const { nodeMap } = config;
 	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	const bodies = new Map<string, string>();
-	for (const [kind, node] of nodeMap.nodes) {
+	for (const node of nodeMap.nodes.values()) {
 		// Single source of truth: `node.userFacing` is set at assemble
 		// time per the shouldEmit rules (visible kind / polymorph /
 		// alias source). Skips tokens, multis, and non-alias-source
@@ -138,7 +138,7 @@ export function emitJinjaTemplates(
 			// 16.9+), matching the renderNunjucks wrap in core/render.ts.
 			const detail = err instanceof Error ? err.message : String(err);
 			throw new Error(
-				`emitJinjaTemplates: failed on ${config.grammar}/${kind}: ${detail}`,
+				`emitJinjaTemplates: failed on ${config.grammar}/${node.kind}: ${detail}`,
 				{
 					cause: err
 				}
@@ -154,12 +154,12 @@ export function emitJinjaTemplates(
 		// with a visible $type that has no own template. So both producer
 		// paths (factory output stamping `_x` directly + parser output
 		// remapped by wrap) converge on the single hidden template file.
-		bodies.set(kind, `${GENERATED_HEADER}\n${body}`);
+		bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
 	}
 	return { bodies };
 }
 
-function emitTemplateForNode(kind: string, node: AssembledNode): void {
+function emitTemplateForNode(node: AssembledNode): void {
 	const config = templateEmitterState.config;
 	const wordMatcher = templateEmitterState.wordMatcher;
 	if (!config || !wordMatcher) {
@@ -172,7 +172,7 @@ function emitTemplateForNode(kind: string, node: AssembledNode): void {
 		config.nodeMap.externals
 	);
 	if (body === null) return;
-	templateEmitterState.bodies.set(kind, `${GENERATED_HEADER}\n${body}`);
+	templateEmitterState.bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
 }
 
 /**

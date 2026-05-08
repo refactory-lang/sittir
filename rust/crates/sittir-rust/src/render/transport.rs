@@ -13758,9 +13758,9 @@ impl RenderableTransport for RangeExpressionUFormBareTransport {
 
 #[derive(Debug, Clone)]
 pub enum RangePatternTransport {
+    RangePatternUFormPrefix(RangePatternUFormPrefixTransport),
     RangePatternUFormLeftWithRight(RangePatternUFormLeftWithRightTransport),
     RangePatternUFormLeftBare(RangePatternUFormLeftBareTransport),
-    RangePatternUFormPrefix(RangePatternUFormPrefixTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -13773,14 +13773,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternTransport {
         let variant: String = obj.get("$variant")?
             .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
         match variant.as_str() {
+            "prefix" => Ok(Self::RangePatternUFormPrefix(
+                RangePatternUFormPrefixTransport::from_napi_value(env, napi_val)?
+            )),
             "left_with_right" => Ok(Self::RangePatternUFormLeftWithRight(
                 RangePatternUFormLeftWithRightTransport::from_napi_value(env, napi_val)?
             )),
             "left_bare" => Ok(Self::RangePatternUFormLeftBare(
                 RangePatternUFormLeftBareTransport::from_napi_value(env, napi_val)?
-            )),
-            "prefix" => Ok(Self::RangePatternUFormPrefix(
-                RangePatternUFormPrefixTransport::from_napi_value(env, napi_val)?
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown $variant {:?} for RangePatternTransport",
@@ -13796,6 +13796,36 @@ impl RenderableTransport for RangePatternTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_range_pattern(self, dest)
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct RangePatternUFormPrefixTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: RangePatternPrefixTransport,
+}
+
+impl RenderableTransport for RangePatternUFormPrefixTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_range_pattern_uform_prefix(self, dest))
     }
 }
 
@@ -13858,36 +13888,6 @@ impl RenderableTransport for RangePatternUFormLeftBareTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_range_pattern_uform_left_bare(self, dest))
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct RangePatternUFormPrefixTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: RangePatternPrefixTransport,
-}
-
-impl RenderableTransport for RangePatternUFormPrefixTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_range_pattern_uform_prefix(self, dest))
     }
 }
 
@@ -16369,9 +16369,9 @@ impl RenderableTransport for VisibilityModifierCrateTransport {
 
 #[derive(Debug, Clone)]
 pub enum VisibilityModifierTransport {
-    VisibilityModifierUFormInPath(VisibilityModifierUFormInPathTransport),
     VisibilityModifierUFormCrate(VisibilityModifierUFormCrateTransport),
     VisibilityModifierUFormPub(VisibilityModifierUFormPubTransport),
+    VisibilityModifierUFormInPath(VisibilityModifierUFormInPathTransport),
 }
 
 #[cfg(feature = "napi-bindings")]
@@ -16384,14 +16384,14 @@ impl ::napi::bindgen_prelude::FromNapiValue for VisibilityModifierTransport {
         let variant: String = obj.get("$variant")?
             .ok_or_else(|| ::napi::Error::from_reason("$variant property missing"))?;
         match variant.as_str() {
-            "in_path" => Ok(Self::VisibilityModifierUFormInPath(
-                VisibilityModifierUFormInPathTransport::from_napi_value(env, napi_val)?
-            )),
             "crate" => Ok(Self::VisibilityModifierUFormCrate(
                 VisibilityModifierUFormCrateTransport::from_napi_value(env, napi_val)?
             )),
             "pub" => Ok(Self::VisibilityModifierUFormPub(
                 VisibilityModifierUFormPubTransport::from_napi_value(env, napi_val)?
+            )),
+            "in_path" => Ok(Self::VisibilityModifierUFormInPath(
+                VisibilityModifierUFormInPathTransport::from_napi_value(env, napi_val)?
             )),
             other => Err(::napi::Error::from_reason(format!(
                 "unknown $variant {:?} for VisibilityModifierTransport",
@@ -16407,36 +16407,6 @@ impl RenderableTransport for VisibilityModifierTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_visibility_modifier(self, dest)
-    }
-}
-
-#[cfg_attr(feature = "napi-bindings", napi(object))]
-#[derive(Debug, Clone)]
-pub struct VisibilityModifierUFormInPathTransport {
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
-    pub transport_source: Option<Source>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
-    pub transport_named: Option<bool>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
-    pub transport_text: Option<String>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
-    pub transport_span: Option<Span>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
-    pub transport_node_handle: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
-    pub transport_child_index: Option<f64>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
-    pub transport_trivia_data: Option<TransportTrivia>,
-    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
-    pub children: VisibilityModifierInPathTransport,
-}
-
-impl RenderableTransport for VisibilityModifierUFormInPathTransport {
-    fn render_into(
-        &self,
-        dest: &mut dyn ::std::fmt::Write,
-    ) -> Result<(), ::askama::Error> {
-        render_with_trivia!(self, dest, render_visibility_modifier_uform_in_path(self, dest))
     }
 }
 
@@ -16497,6 +16467,36 @@ impl RenderableTransport for VisibilityModifierUFormPubTransport {
         dest: &mut dyn ::std::fmt::Write,
     ) -> Result<(), ::askama::Error> {
         render_with_trivia!(self, dest, render_visibility_modifier_uform_pub(self, dest))
+    }
+}
+
+#[cfg_attr(feature = "napi-bindings", napi(object))]
+#[derive(Debug, Clone)]
+pub struct VisibilityModifierUFormInPathTransport {
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$source"))]
+    pub transport_source: Option<Source>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$named"))]
+    pub transport_named: Option<bool>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$text"))]
+    pub transport_text: Option<String>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$span"))]
+    pub transport_span: Option<Span>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$nodeHandle"))]
+    pub transport_node_handle: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$childIndex"))]
+    pub transport_child_index: Option<f64>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$triviaData"))]
+    pub transport_trivia_data: Option<TransportTrivia>,
+    #[cfg_attr(feature = "napi-bindings", napi(js_name = "$children"))]
+    pub children: VisibilityModifierInPathTransport,
+}
+
+impl RenderableTransport for VisibilityModifierUFormInPathTransport {
+    fn render_into(
+        &self,
+        dest: &mut dyn ::std::fmt::Write,
+    ) -> Result<(), ::askama::Error> {
+        render_with_trivia!(self, dest, render_visibility_modifier_uform_in_path(self, dest))
     }
 }
 
@@ -25580,10 +25580,25 @@ fn render_range_expression_uform_bare(node: &RangeExpressionUFormBareTransport, 
 
 fn render_range_pattern(t: &RangePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
+        RangePatternTransport::RangePatternUFormPrefix(data) => render_range_pattern_uform_prefix(data, dest),
         RangePatternTransport::RangePatternUFormLeftWithRight(data) => render_range_pattern_uform_left_with_right(data, dest),
         RangePatternTransport::RangePatternUFormLeftBare(data) => render_range_pattern_uform_left_bare(data, dest),
-        RangePatternTransport::RangePatternUFormPrefix(data) => render_range_pattern_uform_prefix(data, dest),
     }
+}
+
+fn render_range_pattern_uform_prefix(node: &RangePatternUFormPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+    let template = RangePatternTemplate {
+        children: ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        variant: "",
+        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+    };
+    template.render_into(dest)
 }
 
 fn render_range_pattern_uform_left_with_right(node: &RangePatternUFormLeftWithRightTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -25612,21 +25627,6 @@ fn render_range_pattern_uform_left_bare(node: &RangePatternUFormLeftBareTranspor
         },
         variant: "",
         left: SingleNonterminalView(::sittir_core::filters::Renderable::Transport(node.left.as_ref())),
-    };
-    template.render_into(dest)
-}
-
-fn render_range_pattern_uform_prefix(node: &RangePatternUFormPrefixTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
-    let template = RangePatternTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        variant: "",
-        left: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
     };
     template.render_into(dest)
 }
@@ -26556,25 +26556,10 @@ fn render_visibility_modifier_crate(node: &VisibilityModifierCrateTransport, des
 
 fn render_visibility_modifier(t: &VisibilityModifierTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     match t {
-        VisibilityModifierTransport::VisibilityModifierUFormInPath(data) => render_visibility_modifier_uform_in_path(data, dest),
         VisibilityModifierTransport::VisibilityModifierUFormCrate(data) => render_visibility_modifier_uform_crate(data, dest),
         VisibilityModifierTransport::VisibilityModifierUFormPub(data) => render_visibility_modifier_uform_pub(data, dest),
+        VisibilityModifierTransport::VisibilityModifierUFormInPath(data) => render_visibility_modifier_uform_in_path(data, dest),
     }
-}
-
-fn render_visibility_modifier_uform_in_path(node: &VisibilityModifierUFormInPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
-    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
-    let template = VisibilityModifierTemplate {
-        children: ListNonterminalView {
-            items: children_buf.as_slice(),
-            separator: "",
-            leading: false,
-            trailing: false,
-        },
-        variant: "",
-        pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
-    };
-    template.render_into(dest)
 }
 
 fn render_visibility_modifier_uform_crate(node: &VisibilityModifierUFormCrateTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
@@ -26593,6 +26578,21 @@ fn render_visibility_modifier_uform_crate(node: &VisibilityModifierUFormCrateTra
 }
 
 fn render_visibility_modifier_uform_pub(node: &VisibilityModifierUFormPubTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+    let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
+    let template = VisibilityModifierTemplate {
+        children: ListNonterminalView {
+            items: children_buf.as_slice(),
+            separator: "",
+            leading: false,
+            trailing: false,
+        },
+        variant: "",
+        pub_: SingleNonterminalView(::sittir_core::filters::Renderable::Text("")),
+    };
+    template.render_into(dest)
+}
+
+fn render_visibility_modifier_uform_in_path(node: &VisibilityModifierUFormInPathTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = vec![::sittir_core::filters::Renderable::Transport(&node.children)];
     let template = VisibilityModifierTemplate {
         children: ListNonterminalView {
@@ -32890,10 +32890,30 @@ fn transport_to_node_range_expression_uform_bare(transport: RangeExpressionUForm
 
 fn transport_to_node_range_pattern(transport: RangePatternTransport) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
+        RangePatternTransport::RangePatternUFormPrefix(data) => transport_to_node_range_pattern_uform_prefix(data),
         RangePatternTransport::RangePatternUFormLeftWithRight(data) => transport_to_node_range_pattern_uform_left_with_right(data),
         RangePatternTransport::RangePatternUFormLeftBare(data) => transport_to_node_range_pattern_uform_left_bare(data),
-        RangePatternTransport::RangePatternUFormPrefix(data) => transport_to_node_range_pattern_uform_prefix(data),
     }
+}
+
+fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(vec![AnyTransport::RangePatternPrefix(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(303) /* "range_pattern" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
 }
 
 fn transport_to_node_range_pattern_uform_left_with_right(transport: RangePatternUFormLeftWithRightTransport) -> Result<TransportNodeData, ::askama::Error> {
@@ -32922,26 +32942,6 @@ fn transport_to_node_range_pattern_uform_left_bare(transport: RangePatternUFormL
     fields.insert("left".to_string(), transport_field_value(*transport.left)?);
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::RangePatternLeftBare(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(303) /* "range_pattern" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        transport.transport_text,
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        fields,
-        children,
-        trivia_data,
-    ))
-}
-
-fn transport_to_node_range_pattern_uform_prefix(transport: RangePatternUFormPrefixTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::RangePatternPrefix(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(303) /* "range_pattern" */,
@@ -34482,30 +34482,10 @@ fn transport_to_node_visibility_modifier_crate(transport: VisibilityModifierCrat
 
 fn transport_to_node_visibility_modifier(transport: VisibilityModifierTransport) -> Result<TransportNodeData, ::askama::Error> {
     match transport {
-        VisibilityModifierTransport::VisibilityModifierUFormInPath(data) => transport_to_node_visibility_modifier_uform_in_path(data),
         VisibilityModifierTransport::VisibilityModifierUFormCrate(data) => transport_to_node_visibility_modifier_uform_crate(data),
         VisibilityModifierTransport::VisibilityModifierUFormPub(data) => transport_to_node_visibility_modifier_uform_pub(data),
+        VisibilityModifierTransport::VisibilityModifierUFormInPath(data) => transport_to_node_visibility_modifier_uform_in_path(data),
     }
-}
-
-fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModifierUFormInPathTransport) -> Result<TransportNodeData, ::askama::Error> {
-    let mut fields = TransportHashMap::new();
-    let fields = if fields.is_empty() { None } else { Some(fields) };
-    let children = Some(transport_children(vec![AnyTransport::VisibilityModifierInPath(transport.children)])?);
-    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
-    Ok(transport_node_data(
-        TransportKindId(215) /* "visibility_modifier" */,
-        transport.transport_source,
-        transport.transport_named,
-        true,
-        transport.transport_text,
-        transport.transport_span,
-        transport.transport_node_handle.map(|v| v as u32),
-        transport.transport_child_index.map(|v| v as u16),
-        fields,
-        children,
-        trivia_data,
-    ))
 }
 
 fn transport_to_node_visibility_modifier_uform_crate(transport: VisibilityModifierUFormCrateTransport) -> Result<TransportNodeData, ::askama::Error> {
@@ -34532,6 +34512,26 @@ fn transport_to_node_visibility_modifier_uform_pub(transport: VisibilityModifier
     let mut fields = TransportHashMap::new();
     let fields = if fields.is_empty() { None } else { Some(fields) };
     let children = Some(transport_children(vec![AnyTransport::VisibilityModifierPub(transport.children)])?);
+    let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
+    Ok(transport_node_data(
+        TransportKindId(215) /* "visibility_modifier" */,
+        transport.transport_source,
+        transport.transport_named,
+        true,
+        transport.transport_text,
+        transport.transport_span,
+        transport.transport_node_handle.map(|v| v as u32),
+        transport.transport_child_index.map(|v| v as u16),
+        fields,
+        children,
+        trivia_data,
+    ))
+}
+
+fn transport_to_node_visibility_modifier_uform_in_path(transport: VisibilityModifierUFormInPathTransport) -> Result<TransportNodeData, ::askama::Error> {
+    let mut fields = TransportHashMap::new();
+    let fields = if fields.is_empty() { None } else { Some(fields) };
+    let children = Some(transport_children(vec![AnyTransport::VisibilityModifierInPath(transport.children)])?);
     let trivia_data = transport.transport_trivia_data.map(|t| t.into_node_trivia());
     Ok(transport_node_data(
         TransportKindId(215) /* "visibility_modifier" */,

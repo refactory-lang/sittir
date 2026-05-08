@@ -1,8 +1,8 @@
 //! Spec 012 T062 — SC-007 shape gate.
 //!
-//! Serializes a complex NodeData and asserts the resulting JSON has
-//! exactly the nine allowed top-level `$`-prefixed keys with no
-//! additions. Enrichment fields (`$variant`, `$raw`, supertype labels)
+//! Serializes a complex NodeData and asserts the resulting JSON has the
+//! fixed allowed `$`-metadata keys plus de-hoisted `_<slot>` storage and
+//! no additions. Enrichment fields (`$variant`, `$raw`, supertype labels)
 //! live on the TS side and MUST NOT cross the wire boundary —
 //! corollary of FR-005a + Constitution Principle X.
 //!
@@ -22,24 +22,9 @@ const K_INTEGER_LITERAL: KindId = KindId(126);
 const K_FUNCTION_ITEM: KindId = KindId(188);
 const K_BLOCK: KindId = KindId(293);
 
-/// The ten allowed top-level keys per data-model.md §1 (nine
-/// structural + `$triviaData`). `HashSet` membership is the gate.
-const ALLOWED_KEYS: &[&str] = &[
-    "$type",
-    "$source",
-    "$named",
-    "$fields",
-    "$children",
-    "$text",
-    "$span",
-    "$nodeHandle",
-    "$childIndex",
-    "$triviaData",
-];
-
 /// Build a NodeData where every optional field is populated, so the
 /// serialized payload exercises the maximum-key surface. Anything
-/// outside `ALLOWED_KEYS` would surface here.
+/// outside the fixed metadata + `_<slot>` contract would surface here.
 fn complex_node() -> NodeData {
     let mut fields = HashMap::new();
     fields.insert(
@@ -106,13 +91,15 @@ fn top_level_keys_match_allowed_set() {
     let obj = value.as_object().expect("object");
 
     let actual: HashSet<&str> = obj.keys().map(String::as_str).collect();
-    let allowed: HashSet<&str> = ALLOWED_KEYS.iter().copied().collect();
-
-    let unexpected: Vec<&&str> = actual.difference(&allowed).collect();
+    let unexpected: Vec<&&str> = actual.iter().filter(|key| !is_allowed_node_key(key)).collect();
     assert!(
         unexpected.is_empty(),
-        "NodeData wire shape leaked unexpected top-level keys: {unexpected:?}. Allowed: {ALLOWED_KEYS:?}"
+        "NodeData wire shape leaked unexpected top-level keys: {unexpected:?}"
     );
+    assert!(actual.contains("_name"));
+    assert!(actual.contains("_values"));
+    assert!(actual.contains("_op"));
+    assert!(!actual.contains("$fields"));
 
     // Required trio must be present even on a fully-populated node;
     // optionals (when filled) must surface as well so downstream
@@ -131,21 +118,20 @@ fn nested_node_data_keys_also_match() {
     let json = serde_json::to_string(&node).expect("serialization");
     let value: serde_json::Value = serde_json::from_str(&json).expect("reparse");
 
-    let allowed: HashSet<&str> = ALLOWED_KEYS.iter().copied().collect();
-    walk_assert(&value, &allowed);
+    walk_assert(&value);
 }
 
 /// Walk every nested `NodeData`-shaped object inside the JSON value
 /// and assert each carries only the allowed keys. Identifies a
 /// NodeData by the presence of the required trio (`$type`/`$source`/
 /// `$named`).
-fn walk_assert(v: &serde_json::Value, allowed: &HashSet<&str>) {
+fn walk_assert(v: &serde_json::Value) {
     if let Some(obj) = v.as_object() {
         let is_node =
             obj.contains_key("$type") && obj.contains_key("$source") && obj.contains_key("$named");
         if is_node {
             let actual: HashSet<&str> = obj.keys().map(String::as_str).collect();
-            let unexpected: Vec<&&str> = actual.difference(allowed).collect();
+            let unexpected: Vec<&&str> = actual.iter().filter(|key| !is_allowed_node_key(key)).collect();
             assert!(
                 unexpected.is_empty(),
                 "nested NodeData leaked keys {unexpected:?} (kind = {:?})",
@@ -153,11 +139,26 @@ fn walk_assert(v: &serde_json::Value, allowed: &HashSet<&str>) {
             );
         }
         for child in obj.values() {
-            walk_assert(child, allowed);
+            walk_assert(child);
         }
     } else if let Some(arr) = v.as_array() {
         for item in arr {
-            walk_assert(item, allowed);
+            walk_assert(item);
         }
     }
+}
+
+fn is_allowed_node_key(key: &str) -> bool {
+    matches!(
+        key,
+        "$type"
+            | "$source"
+            | "$named"
+            | "$children"
+            | "$text"
+            | "$span"
+            | "$nodeHandle"
+            | "$childIndex"
+            | "$triviaData"
+    ) || key.starts_with('_')
 }

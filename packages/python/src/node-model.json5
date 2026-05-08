@@ -38,7 +38,11 @@
     "assignment__form_eq",
     "assignment__form_type",
     "assignment__form_typed",
+    "expression_statement__form_assignment",
+    "expression_statement__form_augmented_assignment",
+    "expression_statement__form_expression",
     "expression_statement__form_tuple",
+    "expression_statement__form_yield",
     "with_clause__form_bare",
     "with_clause__form_paren"
   ],
@@ -3610,9 +3614,39 @@
       "source": "override",
       "polymorphSource": "override",
       "variantChildKinds": [
-        "expression_statement_tuple"
+        "expression",
+        "expression_statement_tuple",
+        "assignment",
+        "augmented_assignment",
+        "yield"
       ],
       "forms": [
+        {
+          "kind": "expression_statement__form_expression",
+          "name": "expression",
+          "typeName": "ExpressionStatementUFormExpression",
+          "factoryName": "expressionStatementUFormExpression",
+          "irKey": "expressionStatementUFormExpression",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "expression",
+              "propertyName": "expression",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "expression",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
         {
           "kind": "expression_statement__form_tuple",
           "name": "tuple",
@@ -3633,6 +3667,84 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression_statement_tuple",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_assignment",
+          "name": "assignment",
+          "typeName": "ExpressionStatementUFormAssignment",
+          "factoryName": "expressionStatementUFormAssignment",
+          "irKey": "expressionStatementUFormAssignment",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "assignment",
+              "propertyName": "assignment",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "assignment",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_augmented_assignment",
+          "name": "augmented_assignment",
+          "typeName": "ExpressionStatementUFormAugmentedAssignment",
+          "factoryName": "expressionStatementUFormAugmentedAssignment",
+          "irKey": "expressionStatementUFormAugmentedAssignment",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "augmented_assignment",
+              "propertyName": "augmentedAssignment",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "augmented_assignment",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_yield",
+          "name": "yield",
+          "typeName": "ExpressionStatementUFormYield",
+          "factoryName": "expressionStatementUFormYield",
+          "irKey": "expressionStatementUFormYield",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "yield",
+              "propertyName": "yield",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "yield",
                   "unresolved": true
                 }
               ]

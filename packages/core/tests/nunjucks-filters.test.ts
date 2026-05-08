@@ -14,16 +14,12 @@ import { createNunjucksEnvironment } from '../src/templates/nunjucks-env.ts';
 // Filters are exercised through a real `createNunjucksEnvironment()`
 // invocation so that `registerSittirFilters` wiring is covered too.
 
-function withEnv<T>(
-	template: string,
-	fn: (render: (ctx: unknown) => string) => T
-): T {
+function withEnv<T>(template: string, fn: (render: (ctx: unknown) => string) => T): T {
 	const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-filters-'));
 	try {
 		writeFileSync(join(tmp, 't.jinja'), template);
 		const env = createNunjucksEnvironment(tmp);
-		const render = (ctx: unknown) =>
-			env.render('t.jinja', ctx as Record<string, unknown>);
+		const render = (ctx: unknown) => env.render('t.jinja', ctx as Record<string, unknown>);
 		return fn(render);
 	} finally {
 		rmSync(tmp, { recursive: true, force: true });
@@ -70,9 +66,7 @@ describe('join filter override', () => {
 			// but preserves the original message text — match on it so the
 			// assertion locks the filter's guard rail regardless of the
 			// outer wrapping.
-			expect(() => render({ x: { foo: 'bar' } })).toThrow(
-				/TypeError: join: unsupported value type object/
-			);
+			expect(() => render({ x: { foo: 'bar' } })).toThrow(/TypeError: join: unsupported value type object/);
 		});
 	});
 

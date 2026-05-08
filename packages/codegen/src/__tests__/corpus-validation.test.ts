@@ -26,11 +26,11 @@
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 import { generate } from '../compiler/generate.ts';
-import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateRenderable } from '../validate/renderable.ts';
-import { validateReadNodeRoundTrip } from '../validate/readnode-roundtrip.ts';
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadProjection } from '../validate/read-projection.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 /**
@@ -173,14 +173,14 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor —
 		// missing field surface, children slot not plumbed through
 		// the factory signature.
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRoundTrip(grammar, templatesPath);
+		const result = await validateFactoryRenderParse(grammar, templatesPath);
 
 		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass);
 	}, 60000);
 
-	it(`factory round-trip passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
+	it(`factory render-parse passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateFactoryRoundTrip(grammar, templatesPath);
+		const result = await validateFactoryRenderParse(grammar, templatesPath);
 
 		expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal);
 		expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass);
@@ -193,15 +193,15 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor —
 		expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass);
 	}, 60000);
 
-	it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+	it(`full read-render-parse passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
 
 		expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
 		expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
 	}, 60000);
 
-	it(`round-trip AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
+	it(`read-render-parse AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
 		// Strict structural equality between the original parse and
 		// the reparsed tree — anonymous tokens included. Tightens
 		// `rtPass` (which only checks that the kind survives) so
@@ -209,19 +209,19 @@ describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor —
 		// keyword tokens fail CI. The gap between `rtAstMatchPass`
 		// and `rtPass` is the outstanding fidelity debt.
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
 
 		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
 	}, 60000);
 
-	it(`deep round-trip (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+	it(`deep read-render-parse (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
 		// Full recursive read — deep-reads ALL named kinds, not just
 		// variant-adopted. Exercises full materialization path.
 		// Native parse + native render + recursive drill-in.
 		// Floor matches shallow RT — deep must be at least as good.
 		// Asserts structural identity (not just "kind found").
 		const templatesPath = resolveTemplatesPath(grammar);
-		const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native', recursive: true });
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native', recursive: true });
 
 		expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
 		expect(result.astMatchPass).toBe(result.pass);
@@ -447,11 +447,11 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
 	])
 };
 
-describe('readNode round-trip — structural', () => {
+describe('read projection — structural', () => {
 	it.each(['python', 'rust', 'typescript'] as const)(
 		'%s: every kind in the corpus passes the structural check',
 		async (grammar) => {
-			const result = await validateReadNodeRoundTrip(grammar);
+			const result = await validateReadProjection(grammar);
 			const known = OVERRIDE_PARSER_KNOWN_ISSUES[grammar] ?? new Set();
 			const unexpected = result.issues.filter((i) => !known.has(i.kind));
 			if (unexpected.length > 0) {

@@ -40,4 +40,55 @@ describe('native node coords', () => {
 			expect(dataKind).toBe(kind);
 		}
 	}, 30000);
+
+	it('drills into shallow native python children to reach nested nodes', async () => {
+		const grammar = 'python';
+		const source = 'x = 1';
+		const { Parser, lang } = await loadLanguageForGrammar(grammar);
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const tree = parser.parse(source);
+		if (!tree) throw new Error('expected parser to return a tree');
+		const handle = buildReadHandle(grammar, tree, source, 'native');
+		const kindNameFromId = await loadKindNameFromId(grammar);
+		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
+
+		for (const kind of ['expression_statement', 'assignment', 'identifier'] as const) {
+			const coords = findNativeNodeId(handle, kind, kindNameFromId);
+			expect(coords).not.toBeNull();
+
+			const treeNode = findFirst(tree.rootNode, kind);
+			expect(treeNode).not.toBeNull();
+			if (!coords || !treeNode) continue;
+
+			const data = readNodeAt(handle, adaptNode(treeNode), coords);
+			const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
+			expect(dataKind).toBe(kind);
+		}
+	}, 30000);
+
+	it('resolves root native coords without forcing a child drill-in', async () => {
+		const grammar = 'python';
+		const source = 'x = 1';
+		const { Parser, lang } = await loadLanguageForGrammar(grammar);
+		const parser = new Parser();
+		parser.setLanguage(lang);
+		const tree = parser.parse(source);
+		if (!tree) throw new Error('expected parser to return a tree');
+		const handle = buildReadHandle(grammar, tree, source, 'native');
+		const kindNameFromId = await loadKindNameFromId(grammar);
+		if (!kindNameFromId) throw new Error('expected python kindNameFromId resolver');
+
+		const coords = findNativeNodeId(handle, 'module', kindNameFromId);
+		expect(coords).not.toBeNull();
+		expect(coords).toEqual({});
+
+		const treeNode = findFirst(tree.rootNode, 'module');
+		expect(treeNode).not.toBeNull();
+		if (!coords || !treeNode) return;
+
+		const data = readNodeAt(handle, adaptNode(treeNode), coords);
+		const dataKind = typeof data.$type === 'number' ? kindNameFromId(data.$type) : data.$type;
+		expect(dataKind).toBe('module');
+	}, 30000);
 });

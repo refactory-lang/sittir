@@ -33,6 +33,7 @@ beforeAll(async () => {
 	const typescriptLinked = link(typescriptRaw);
 	const typescriptOptimized = optimize(typescriptLinked);
 	typescriptNodeMap = assemble(typescriptOptimized);
+
 });
 
 describe('child factory surface classification', () => {

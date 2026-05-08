@@ -294,6 +294,9 @@ export function buildReadHandle(
  */
 export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
+		if (nativeCoords.handle === undefined) {
+			return readNodeFn(handle);
+		}
 		return readNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex);
 	}
 	// WASM/JS path: temporarily set rootNode to the target node and read
@@ -313,8 +316,8 @@ export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: 
  * the position in parent's child array.
  */
 export interface NativeNodeCoords {
-	handle: number;
-	childIndex: number;
+	handle?: number;
+	childIndex?: number;
 }
 
 /**
@@ -367,8 +370,25 @@ export function findNativeNodeId(
 		return out;
 	}
 
+	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
+		if ((d.$children?.length ?? 0) > 0) return true;
+		const rec = d as unknown as Record<string, unknown>;
+		for (const key of Object.keys(rec)) {
+			if (key.startsWith('_')) return true;
+		}
+		const legacyFields = rec.$fields;
+		if (legacyFields != null && typeof legacyFields === 'object') {
+			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
+		}
+		return false;
+	}
+
 	function kindOf(d: AnyNodeData): string {
 		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
+	}
+
+	if (kindOf(root) === kind) {
+		return {};
 	}
 
 	function walk(d: AnyNodeData): NativeNodeCoords | null {
@@ -377,7 +397,7 @@ export function findNativeNodeId(
 				return { handle: d.$nodeHandle, childIndex: child.$childIndex };
 			}
 			let drilled = child;
-			if (drilled.$nodeHandle === undefined && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
+			if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
 				drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
 			}
 			const found = walk(drilled);
@@ -438,12 +458,18 @@ export function buildKindToSupertypes(
 
 const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
 	rust: {
+		source_file: (r) => r,
 		_expression: (r) => `fn _f() { let _ = ${r}; }`,
 		_type: (r) => `type _X = ${r};`,
 		_pattern: (r) => `fn _f() { let ${r} = (); }`,
 		_declaration_statement: (r) => r,
 		_literal: (r) => `fn _f() { let _ = ${r}; }`,
 		_literal_pattern: (r) => `fn _f() { let ${r} = (); }`,
+		parameters: (r) => `fn _f${r} {}`,
+		parameter: (r) => `fn _f(${r}) {}`,
+		arguments: (r) => `f${r};`,
+		type_parameters: (r) => `fn _f${r}() {}`,
+		type_parameter: (r) => `fn _f<${r}>() {}`,
 		// Kind-specific: `mut_pattern` only appears inside match arms and
 		// if-let conditions — NOT in plain `let` statements (tree-sitter-rust
 		// flattens `let mut x = ..` into `let_declaration` with
@@ -472,6 +498,7 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		visibility_modifier: (r) => `${r} fn _f() {}`
 	},
 	typescript: {
+		program: (r) => r,
 		// Tree-sitter-typescript exposes supertypes unprefixed (no leading
 		// `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
 		// The hidden-prefix form ('_expression' etc.) existed pre-regen
@@ -483,6 +510,15 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		pattern: (r) => `let ${r} = null;`,
 		declaration: (r) => r,
 		statement: (r) => r,
+		formal_parameters: (r) => `function _f${r} {}`,
+		required_parameter: (r) => `function _f(${r}) {}`,
+		arguments: (r) => `_f${r};`,
+		type_parameters: (r) => `function _f${r}() {}`,
+		variable_declarator: (r) => `let ${r};`,
+		type_annotation: (r) => `let _${r};`,
+		class_body: (r) => `class _C ${r}`,
+		property_signature: (r) => `interface _I { ${r} }`,
+		index_signature: (r) => `type _T = { ${r} }`,
 		// Alias-target-specific wrappers: tree-sitter aliases are
 		// position-dependent. `interface_body` is `alias($.object_type,
 		// $.interface_body)` inside `interface_declaration.body`.
@@ -500,12 +536,19 @@ const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = 
 		rest_pattern: (r) => `let [${r}] = [];`
 	},
 	python: {
+		module: (r) => r,
 		// tree-sitter-python supertypes are also unprefixed.
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `match _:\n  case ${r}: pass`,
 		simple_statement: (r) => r,
 		compound_statement: (r) => r,
+		expression_statement: (r) => r,
+		assignment: (r) => r,
+		function_definition: (r) => r,
+		parameters: (r) => `def _f${r}:\n    pass`,
+		argument_list: (r) => `_f${r}`,
+		dotted_name: (r) => `import ${r}`,
 		// Kind-specific: `list_splat` (`*args`) only appears inside
 		// argument lists, list/tuple/set literals, and expression
 		// lists. Generic expression wrapper `_ = *()` is syntactically
@@ -1169,6 +1212,38 @@ function assignChildrenToConfig(
 	out.children = children.map((c) => resolveChild(c, childOpts));
 }
 
+function promoteAnonymousChildrenToMissingFields(
+	declaredFields: readonly string[] | undefined,
+	parentKind: string | undefined,
+	children: readonly unknown[],
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): boolean {
+	if (!declaredFields || !parentKind) return false;
+	const anonymousChildren = children.filter(
+		(child): child is ReadNodeLike => child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
+	);
+	if (anonymousChildren.length === 0) return false;
+	const missingFields = declaredFields.filter((name) => {
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		return out[camel] === undefined;
+	});
+	if (missingFields.length === 0) return false;
+	if (anonymousChildren.length !== missingFields.length) return false;
+	anonymousChildren.forEach((child, index) => {
+		const name = missingFields[index]!;
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		out[camel] = resolveChild(child, {
+			...opts,
+			_parentKind: parentKind,
+			_fieldName: name,
+			firstNamedChildKindHint: undefined,
+			namedChildKindHints: undefined
+		});
+	});
+	return true;
+}
+
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1227,6 +1302,16 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 				};
 				out[camel] = resolveChild(child, resolveOpts);
 			});
+		} else if (
+			promoteAnonymousChildrenToMissingFields(
+				declaredFields,
+				parentKind,
+				data.$children,
+				opts,
+				out
+			)
+		) {
+			// Ambiguous-free anonymous-token fill completed above.
 		} else {
 			assignChildrenToConfig(data.$children, childOpts, out);
 		}

@@ -46,9 +46,7 @@ export interface CodemodResult {
  * Run the codemod on a single source string. Returns the rewritten
  * source and the number of insertions performed.
  */
-export async function runCodemodOnSource(
-	source: string
-): Promise<{ output: string; insertions: number }> {
+export async function runCodemodOnSource(source: string): Promise<{ output: string; insertions: number }> {
 	const { Parser, lang } = await loadLanguageForGrammar('rust');
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -153,9 +151,7 @@ function considerFunction(node: any, source: string): InlineMatch | null {
  * Apply the codemod to every `.rs` file in `corpusDir` (non-recursive,
  * sorted by filename). Returns one entry per file.
  */
-export async function runCodemodOnDir(
-	corpusDir: string
-): Promise<CodemodResult[]> {
+export async function runCodemodOnDir(corpusDir: string): Promise<CodemodResult[]> {
 	const entries = readdirSync(corpusDir, { withFileTypes: true })
 		.filter((e) => e.isFile() && e.name.endsWith('.rs'))
 		.map((e) => e.name)

@@ -13,34 +13,17 @@
  */
 
 import { describe, it } from 'vitest';
-import type {
-	FunctionItem,
-	ConfigFor,
-	FluentFor,
-	LooseFor,
-	TreeFor,
-	NamespaceMap
-} from '../src/index.ts';
+import type { FunctionItem, ConfigFor, FluentFor, LooseFor, TreeFor, NamespaceMap } from '../src/index.ts';
 
-type Equals<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
-		? true
-		: false;
+type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 function expectTrue<_T extends true>(): void {}
 
 describe('rust NamespaceMap access-path convergence', () => {
 	it('three paths resolve to same Config type', () => {
 		expectTrue<Equals<FunctionItem.Config, ConfigFor<'function_item'>>>();
-		expectTrue<
-			Equals<
-				ConfigFor<'function_item'>,
-				NamespaceMap['function_item']['Config']
-			>
-		>();
-		expectTrue<
-			Equals<FunctionItem.Config, NamespaceMap['function_item']['Config']>
-		>();
+		expectTrue<Equals<ConfigFor<'function_item'>, NamespaceMap['function_item']['Config']>>();
+		expectTrue<Equals<FunctionItem.Config, NamespaceMap['function_item']['Config']>>();
 	});
 
 	it('Fluent / Loose / Tree / Kind each converge', () => {

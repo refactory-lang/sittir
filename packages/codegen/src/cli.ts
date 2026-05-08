@@ -7,13 +7,13 @@
  *   sittir --grammar rust --nodes struct_item,function_item --output src/
  */
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
-import { validateRoundTrip, formatRoundTripReport } from './validate/roundtrip.ts';
-import { validateFactoryRoundTrip, formatFactoryRoundTripReport } from './validate/factory-roundtrip.ts';
+import { validateReadRenderParse, formatReadRenderParseReport } from './validate/read-render-parse.ts';
+import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './validate/factory-render-parse.ts';
 import { validateFrom, formatFromReport } from './validate/from.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
-import { validateReadNodeRoundTrip, formatReadNodeRoundTripReport } from './validate/readnode-roundtrip.ts';
+import { validateReadProjection, formatReadProjectionReport } from './validate/read-projection.ts';
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
 import { emitSuggested } from './emitters/suggested.ts';
@@ -21,11 +21,8 @@ import type { RoundTripDiagnostic } from './emitters/suggested.ts';
 import { compileParser } from './transpile/compile-parser.ts';
 import { transpileOverrides } from './transpile/transpile-overrides.ts';
 import { writeJinjaTemplates } from './emitters/templates.ts';
-import { emitRenderModule, RUST_KEYWORDS, rustFieldIdent } from './emitters/render-module.ts';
-import { renderModuleTemplatesDir, renderModuleSrcDir } from './emitters/render-module-paths.ts';
+import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './emitters/parity-fixtures.ts';
-import { readdirSync, readFileSync, rmSync } from 'node:fs';
-import type { TemplateFile } from './emitters/template-hash.ts';
 
 interface CodegenConfig {
 	grammar: string;
@@ -222,7 +219,8 @@ console.log(`Generating ${config.grammar} IR...`);
 const result = await generate({
 	grammar: config.grammar,
 	nodes: config.nodes,
-	outputDir: config.outputDir
+	outputDir: config.outputDir,
+	emitRenderModule: cliArgs.all
 });
 
 const outDir = cliArgs.outputDir;
@@ -256,11 +254,11 @@ const shouldEmitRustRender = cliArgs.all && (RUST_RENDER_GRAMMARS as readonly st
 
 if (shouldEmitRustRender) {
 	const grammar = config.grammar as (typeof RUST_RENDER_GRAMMARS)[number];
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of result.jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
+	const renderModule = result.renderModule;
+	if (!renderModule) {
+		throw new Error(`generate() did not return renderModule output for ${grammar}`);
 	}
-	const emit = emitRenderModule(grammar, templateFiles, result.nodeMap, result.generatedIdTables);
+	const emit = renderModule.emit;
 	writeFile(emit.hashRs.path, emit.hashRs.contents);
 	writeFile(emit.hashTs.path, emit.hashTs.contents);
 	writeFile(emit.templatesRs.path, emit.templatesRs.contents);
@@ -270,47 +268,14 @@ if (shouldEmitRustRender) {
 	writeFile(emit.libRs.path, emit.libRs.contents);
 	// Copy the per-kind `.jinja` files into the grammar crate's templates/
 	// directory so askama's build-time `#[template(path = ...)]` can
-	// resolve them (T030). Stale files (no longer in jinjaTemplates) are
-	// removed so regenerations don't accumulate dead templates.
-	//
-	// Template-body transform: the Rust render module renames keyword-
-	// named struct fields with `rustFieldIdent()` (`pub` → `pub_`,
-	// `type` → `type_`, `crate` → `crate_`, etc.). Askama resolves
-	// template variables against the emitted Rust field identifiers, so
-	// the Rust render copy must rewrite template identifier positions to
-	// the same names.
-	// Applies only to the Rust render-module copy — the source .jinja under
-	// packages/{lang}/templates/ stays unchanged (TS Nunjucks side
-	// doesn't have the keyword collision).
-	const renameForRustRender = (body: string): string => {
-		let out = body;
-		for (const kw of RUST_KEYWORDS) {
-			// Match `{{ kw }}` / `{{ kw | filter }}` / `{% if kw ... %}` /
-			// `{% for x in kw %}` — identifier position only.
-			const re = new RegExp(
-				`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`,
-				'g'
-			);
-			out = out.replace(re, `$1${rustFieldIdent(kw)}`);
-		}
-		return out;
-	};
-	const preserveMultilineTrailingNewline = (body: string): string => {
-		if (!body.includes('\n') || !body.endsWith('\n')) return body;
-		return body + '\n';
-	};
-	const srcTemplatesDir = join(dirname(outDir), 'templates');
-	const dstTemplatesDir = renderModuleTemplatesDir(grammar as 'rust' | 'typescript' | 'python');
+	// resolve them (T030). Stale files (no longer in the generated copy
+	// plan) are removed so regenerations don't accumulate dead templates.
+	const dstTemplatesDir = renderModule.templateCopies.directory;
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
-	for (const [kind] of result.jinjaTemplates.bodies) {
-		const fname = `${kind}.jinja`;
-		const srcPath = join(srcTemplatesDir, fname);
-		const dstPath = join(dstTemplatesDir, fname);
-		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
-		transformed = preserveMultilineTrailingNewline(transformed);
-		writeFile(dstPath, transformed);
-		emittedNames.add(fname);
+	for (const file of renderModule.templateCopies.files) {
+		writeFile(file.path, file.contents);
+		emittedNames.add(file.path.split('/').pop() ?? file.path);
 	}
 	for (const existing of readdirSync(dstTemplatesDir)) {
 		if (!existing.endsWith('.jinja')) continue;
@@ -408,43 +373,43 @@ if (renderable.missing.length > 0) {
 	);
 }
 
-// --- Round-trip validation (optional, requires web-tree-sitter) ---
+// --- Validation probes (optional, requires web-tree-sitter) ---
 if (cliArgs.roundtrip) {
-	console.log('\nRunning round-trip validation...');
+	console.log('\nRunning validator probes...');
 
-	// readNode round-trip (structural) — upstream of render/factory.
+	// read projection (structural) — upstream of render/factory.
 	// A regression here means readNode is losing content between
 	// tree-sitter's parse tree and the NodeData shape, so every
 	// downstream validator will mis-report.
-	const rnResult = await validateReadNodeRoundTrip(config.grammar);
-	console.log(formatReadNodeRoundTripReport(rnResult));
+	const readProjectionResult = await validateReadProjection(config.grammar);
+	console.log(formatReadProjectionReport(readProjectionResult));
 
 	// Validators take the per-rule `.jinja` templates directory
 	// path (feature 011). createRenderer auto-detects directory vs
 	// legacy YAML file.
 	const templatesDir = join(dirname(outDir), 'templates');
-	const rtResult = await validateRoundTrip(config.grammar, templatesDir);
-	console.log(formatRoundTripReport(rtResult));
+	const readRenderParseResult = await validateReadRenderParse(config.grammar, templatesDir);
+	console.log(formatReadRenderParseReport(readRenderParseResult));
 
-	// Factory round-trip (corpus → readNode → factory() → render → re-parse)
-	const frtResult = await validateFactoryRoundTrip(config.grammar, templatesDir);
-	console.log(formatFactoryRoundTripReport(frtResult));
+	// Factory render-parse (corpus → readNode → factory() → render → re-parse)
+	const factoryRenderParseResult = await validateFactoryRenderParse(config.grammar, templatesDir);
+	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
 
 	// from() correctness (structural comparison: from() vs factory())
 	const fromResult = await validateFrom(config.grammar);
 	console.log(formatFromReport(fromResult));
 
-	// Collect round-trip failures into a structured diagnostic list and
+	// Collect render-parse failures into a structured diagnostic list and
 	// re-emit overrides.suggested.ts with the new section. Gives the
 	// user a copy-pasteable record of input-vs-rendered for every
-	// corpus case that didn't survive the round-trip — useful for
+	// corpus case that didn't survive the render-parse path — useful for
 	// spotting missing joinBy / transform patches.
 	const parseFrag = (name: string): { entry: string; kind: string } => {
 		const m = name.match(/^(.+)\s+\[([^\]]+)\]$/);
 		return m ? { entry: m[1]!, kind: m[2]! } : { entry: name, kind: 'unknown' };
 	};
 	const diagnostics: RoundTripDiagnostic[] = [];
-	for (const e of rtResult.errors ?? []) {
+	for (const e of readRenderParseResult.errors ?? []) {
 		const { entry, kind } = parseFrag(e.name);
 		diagnostics.push({
 			entry,
@@ -456,7 +421,7 @@ if (cliArgs.roundtrip) {
 			input: e.input
 		});
 	}
-	for (const m of rtResult.astMismatches ?? []) {
+	for (const m of readRenderParseResult.astMismatches ?? []) {
 		const { entry, kind } = parseFrag(m.name);
 		diagnostics.push({
 			entry,
@@ -468,11 +433,11 @@ if (cliArgs.roundtrip) {
 			input: m.input
 		});
 	}
-	// Factory round-trip diagnostics — validator runs once per kind
+	// Factory render-parse diagnostics — validator runs once per kind
 	// with entry/input/rendered captured from the corpus case. Surfaces
 	// factory-API gaps (missing fields, wrong defaults) that the weaker
 	// kind-found pass doesn't flag.
-	for (const e of frtResult.errors ?? []) {
+	for (const e of factoryRenderParseResult.errors ?? []) {
 		diagnostics.push({
 			entry: e.entry ?? '(unknown)',
 			kind: e.kind,
@@ -483,7 +448,7 @@ if (cliArgs.roundtrip) {
 			input: e.input
 		});
 	}
-	for (const m of frtResult.astMismatches ?? []) {
+	for (const m of factoryRenderParseResult.astMismatches ?? []) {
 		diagnostics.push({
 			entry: m.entry ?? '(unknown)',
 			kind: m.kind,
@@ -501,12 +466,12 @@ if (cliArgs.roundtrip) {
 			roundTripFailures: diagnostics
 		});
 		writeFile(join(dirname(outDir), 'overrides.suggested.ts'), suggestedWithFailures);
-		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} round-trip diagnostic(s)`);
+		console.log(`  → overrides.suggested.ts updated with ${diagnostics.length} render-parse diagnostic(s)`);
 	}
 
-	const totalFail = rtResult.fail + frtResult.fail + fromResult.fail;
+	const totalFail = readRenderParseResult.fail + factoryRenderParseResult.fail + fromResult.fail;
 	if (totalFail > 0) {
-		console.error(`\n${totalFail} round-trip / from() failure(s) — see above.`);
+		console.error(`\n${totalFail} render-parse / from() failure(s) — see above.`);
 		process.exitCode = 1;
 	}
 }

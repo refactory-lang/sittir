@@ -38,9 +38,9 @@ for (const grammar of ['rust', 'typescript', 'python'] as const) {
 
 				// ADR-0017: readNode requires (handle, childIndex). Without a
 				// prior parseAndRead, any call throws "no tree cached".
-				expect(() =>
-					engine.readNode(testCase.handle as number, testCase.childIndex as number)
-				).toThrow(testCase.expected);
+				expect(() => engine.readNode(testCase.handle as number, testCase.childIndex as number)).toThrow(
+					testCase.expected
+				);
 			});
 		}
 	});

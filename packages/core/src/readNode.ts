@@ -19,11 +19,7 @@
  * on branch nodes for debugging purposes.
  */
 
-import type {
-	AnyNodeData,
-	AnyTreeNode,
-	FormatRecord
-} from './types.ts';
+import type { AnyNodeData, AnyTreeNode, FormatRecord } from './types.ts';
 
 /**
  * Whether to emit `$text` on branch nodes (those with `$fields` or
@@ -171,8 +167,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 	// `hasOwnProperty`, `valueOf`, `__proto__`.
 	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
 	// directly on the returned object (de-hoisted storage). No `$fields` wrapper.
-	const namedSlots: Record<string, AnyNodeData | AnyNodeData[]> =
-		Object.create(null);
+	const namedSlots: Record<string, AnyNodeData | AnyNodeData[]> = Object.create(null);
 	const children: AnyNodeData[] = [];
 
 	/**
@@ -228,11 +223,7 @@ export function readNode(tree: TreeHandle, handle?: number, childIndex?: number)
 			const existing = namedSlots[fname];
 			if (existing === undefined) {
 				namedSlots[fname] = entry;
-			} else if (
-				!Array.isArray(existing) &&
-				existing.$named === false &&
-				entry.$named === true
-			) {
+			} else if (!Array.isArray(existing) && existing.$named === false && entry.$named === true) {
 				namedSlots[fname] = entry;
 			} else if (Array.isArray(existing)) {
 				existing.push(entry);

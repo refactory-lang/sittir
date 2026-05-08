@@ -2274,6 +2274,7 @@ export const factoryEmitter = {
 	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const nodeMap = _emitterNodeMap;
+		const kindEntries = _emitterKindEntries;
 
 		if (!this.shouldEmit(kind, node)) return;
 

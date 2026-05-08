@@ -721,7 +721,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
     $children: (data as any).$children,
 
     $with: {
-      children: (...items: readonly [T.ExpressionStatementTuple]) => wrapExpressionStatement({ ...(data as any), $children: items }, tree),
+      children: (...items: readonly [((T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield))]) => wrapExpressionStatement({ ...(data as any), $children: items }, tree),
     },
   });
   return _node;

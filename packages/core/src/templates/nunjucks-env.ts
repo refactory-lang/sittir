@@ -30,9 +30,7 @@ import type { FlankedChildArray } from '../render.ts';
  *   comment at the option itself captures how FR-018 / SC-005 is still
  *   met for the typed-expression and template-file-missing channels.
  */
-export function createNunjucksEnvironment(
-	templatesDir: string
-): nunjucks.Environment {
+export function createNunjucksEnvironment(templatesDir: string): nunjucks.Environment {
 	const loader = new nunjucks.FileSystemLoader(templatesDir, {
 		noCache: false,
 		watch: false
@@ -103,15 +101,11 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 	 * is a context-builder bug: throw with filter name and value preview
 	 * instead of silently rendering `"[object Object]"`.
 	 */
-	const normalizeJoinValue = (
-		value: unknown,
-		filterName: string
-	): readonly string[] | string => {
+	const normalizeJoinValue = (value: unknown, filterName: string): readonly string[] | string => {
 		if (value === undefined || value === null) return '';
 		if (Array.isArray(value)) return value as readonly string[];
 		if (typeof value === 'string') return value;
-		if (typeof value === 'number' || typeof value === 'boolean')
-			return String(value);
+		if (typeof value === 'number' || typeof value === 'boolean') return String(value);
 		throw new TypeError(
 			`${filterName}: unsupported value type ${typeof value} ` +
 				`(value = ${JSON.stringify(value)?.slice(0, 120)}). Expected array / string / nullish; ` +
@@ -132,10 +126,7 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		if (trimmed.endsWith('\n')) return false;
 		return /(?:^|\n)\s*(?:\/\/|#)[^\n]*$/.test(trimmed);
 	};
-	const joinWithLineCommentFix = (
-		parts: readonly string[],
-		sep: string
-	): string => {
+	const joinWithLineCommentFix = (parts: readonly string[], sep: string): string => {
 		if (parts.length === 0) return '';
 		if (parts.length === 1) return parts[0]!;
 		const out: string[] = [];
@@ -174,18 +165,15 @@ function registerSittirFilters(env: nunjucks.Environment): void {
 		flankJoin(value, sep, 'joinWithTrailing', {
 			leading: false,
 			trailing: true
-		})
-	;
+		});
 	env.addFilter('joinWithTrailing', joinWithTrailing);
 	env.addFilter('join_with_trailing', joinWithTrailing);
 	const joinWithLeading = (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, 'joinWithLeading', { leading: true, trailing: false })
-	;
+		flankJoin(value, sep, 'joinWithLeading', { leading: true, trailing: false });
 	env.addFilter('joinWithLeading', joinWithLeading);
 	env.addFilter('join_with_leading', joinWithLeading);
 	const joinWithFlanks = (value: unknown, sep: unknown) =>
-		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true })
-	;
+		flankJoin(value, sep, 'joinWithFlanks', { leading: true, trailing: true });
 	env.addFilter('joinWithFlanks', joinWithFlanks);
 	env.addFilter('join_with_flanks', joinWithFlanks);
 

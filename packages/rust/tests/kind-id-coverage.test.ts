@@ -67,8 +67,6 @@ describe('kindIdFromName coverage (Phase B)', () => {
 	});
 
 	it('throws on genuinely unknown kinds', () => {
-		expect(() => kindIdFromName('definitely_not_a_real_kind_xyz')).toThrow(
-			/unknown kind name/
-		);
+		expect(() => kindIdFromName('definitely_not_a_real_kind_xyz')).toThrow(/unknown kind name/);
 	});
 });

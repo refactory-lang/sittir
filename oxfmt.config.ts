@@ -6,7 +6,7 @@ export default defineConfig({
 	tabWidth: 2,
 	trailingComma: 'none',
 	arrowParens: 'always',
-	printWidth: 80,
+	printWidth: 120,
 	sortPackageJson: false,
 	ignorePatterns: [
 		'**/*.md',
@@ -16,6 +16,7 @@ export default defineConfig({
 		'.claude/**',
 		'.specify/**',
 		'.changeset/**',
-		'specs/**'
+		'specs/**',
+		'examples/**'
 	]
 });

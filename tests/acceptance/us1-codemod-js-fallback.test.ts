@@ -57,9 +57,7 @@ describe('US1 acceptance — SITTIR_BACKEND=js fallback (T051)', () => {
 		vi.resetModules();
 		const { runCodemodOnDir } = await import('./codemod-inline.ts');
 		const results = await runCodemodOnDir(CORPUS_DIR);
-		const baselineFiles = new Set(
-			readdirSync(BASELINE_DIR).filter((n) => n.endsWith('.rs'))
-		);
+		const baselineFiles = new Set(readdirSync(BASELINE_DIR).filter((n) => n.endsWith('.rs')));
 		expect(results.length).toBeGreaterThanOrEqual(20);
 		for (const r of results) {
 			const name = basename(r.path);

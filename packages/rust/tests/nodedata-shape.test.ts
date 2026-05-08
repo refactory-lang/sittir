@@ -38,7 +38,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	const node = ir.function({
 		name: 'my_fn',
 		parameters: [],
-		body: minimalBlock,
+		body: minimalBlock
 	} as any);
 
 	it('FR-001: $fields wrapper is absent — no $fields key on node', () => {
@@ -58,7 +58,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 
 	it('FR-002: accessor function returns the stored value', () => {
 		const rec = node as unknown as Record<string, unknown>;
-		const accessor = rec['name'] as (() => unknown);
+		const accessor = rec['name'] as () => unknown;
 		expect(typeof accessor).toBe('function');
 		expect(accessor.call(node)).toBe('my_fn');
 	});
@@ -66,7 +66,7 @@ describe('ADR-0018 Phase 2 factory shape — branch node', () => {
 	it('SC-004: Object.keys() returns only $-metadata and _-storage keys (no accessor names)', () => {
 		const keys = Object.keys(node);
 		// No accessor names in enumerable keys
-		expect(keys.filter(k => !k.startsWith('$') && !k.startsWith('_'))).toEqual([]);
+		expect(keys.filter((k) => !k.startsWith('$') && !k.startsWith('_'))).toEqual([]);
 		// $type and $source are present
 		expect(keys).toContain('$type');
 		expect(keys).toContain('$source');
@@ -100,7 +100,7 @@ describe('ADR-0018 Phase 2 factory shape — leaf node', () => {
 
 	it('leaf: no _<name> keys (no fields)', () => {
 		const keys = Object.keys(leaf);
-		expect(keys.filter(k => k.startsWith('_'))).toEqual([]);
+		expect(keys.filter((k) => k.startsWith('_'))).toEqual([]);
 	});
 
 	it('leaf: no $fields', () => {
@@ -124,7 +124,7 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 	it('$with.name produces an updated node', () => {
 		const withNs = (original as unknown as Record<string, unknown>)['$with'] as Record<string, unknown>;
 		expect(withNs).toBeDefined();
-		const nameFn = withNs['name'] as ((v: unknown) => unknown);
+		const nameFn = withNs['name'] as (v: unknown) => unknown;
 		expect(typeof nameFn).toBe('function');
 		const updated = nameFn('updated') as unknown as Record<string, unknown>;
 		expect(updated['_name']).toBe('updated');
@@ -132,7 +132,7 @@ describe('ADR-0018 Phase 2 — $with namespace', () => {
 
 	it('$with produces a new frozen node; original is unchanged', () => {
 		const withNs = (original as unknown as Record<string, unknown>)['$with'] as Record<string, unknown>;
-		const nameFn = withNs['name'] as ((v: unknown) => unknown);
+		const nameFn = withNs['name'] as (v: unknown) => unknown;
 		const updated = nameFn('changed') as unknown as Record<string, unknown>;
 		// original unchanged
 		expect((original as unknown as Record<string, unknown>)['_name']).toBe('original');
@@ -193,7 +193,7 @@ describe('ADR-0018 Phase 2 factory shape — container node', () => {
 	it('container: no _<field> keys (uses $children for content)', () => {
 		const keys = Object.keys(container);
 		// The container key set is only $-metadata (no named fields → no _<name> keys).
-		const storageKeys = keys.filter(k => k.startsWith('_'));
+		const storageKeys = keys.filter((k) => k.startsWith('_'));
 		expect(storageKeys).toEqual([]);
 	});
 
@@ -213,14 +213,11 @@ describe('ADR-0018 Phase 2 — $fields absent from factory output (SC-001)', () 
 	const nodes = [
 		ir.function({ name: 'f', parameters: [], body: minimalBlock } as any),
 		ir.declarationList(),
-		ir.integerLiteral('1'),
+		ir.integerLiteral('1')
 	];
 
-	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))(
-		'SC-001: %s has no $fields key',
-		(_label, n) => {
-			expect((n as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
-			expect(Object.keys(n)).not.toContain('$fields');
-		}
-	);
+	it.each(nodes.map((n, i) => [`node[${i}]`, n] as const))('SC-001: %s has no $fields key', (_label, n) => {
+		expect((n as unknown as Record<string, unknown>)['$fields']).toBeUndefined();
+		expect(Object.keys(n)).not.toContain('$fields');
+	});
 });

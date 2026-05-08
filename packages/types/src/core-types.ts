@@ -361,9 +361,7 @@ export interface Renderable {
 }
 
 /** Extract type string(s) from a navigation node type. */
-export type KindOf<T> = T extends { readonly type: infer K extends string }
-	? K
-	: never;
+export type KindOf<T> = T extends { readonly type: infer K extends string } ? K : never;
 
 // ---------------------------------------------------------------------------
 // Native (NAPI) parse result

@@ -103,8 +103,11 @@ export function buildFactoryMap(nodeMap: NodeMap): FactoryMapData {
 		if (kind.startsWith('_') && !aliasSet.has(kind)) continue;
 		if (node.source === 'override') {
 			const childKind: Record<string, string> = {};
-			for (const form of node.forms) {
-				childKind[`${kind}_${form.name}`] = form.name;
+			for (const form of node.formRules) {
+				const discriminatorKinds = form.discriminatorKinds ?? [`${kind}_${form.name}`];
+				for (const runtimeKind of expandRuntimeDiscriminatorKinds(discriminatorKinds, nodeMap)) {
+					childKind[runtimeKind] = form.name;
+				}
 			}
 			polymorphVariants[kind] = { source: 'override', childKind };
 		} else {
@@ -180,4 +183,34 @@ function collectAliasSourceKinds(nodeMap: NodeMap): Set<string> {
 		out.add(kind);
 	}
 	return out;
+}
+
+function expandRuntimeDiscriminatorKinds(
+	discriminatorKinds: readonly string[],
+	nodeMap: NodeMap
+): string[] {
+	const expanded: string[] = [];
+	const seen = new Set<string>();
+	const visiting = new Set<string>();
+
+	function visit(discriminatorKind: string): void {
+		const normalized = discriminatorKind.startsWith('_') ? discriminatorKind.slice(1) : discriminatorKind;
+		if (seen.has(normalized) || visiting.has(normalized)) return;
+		const node =
+			nodeMap.nodes.get(discriminatorKind) ??
+			nodeMap.nodes.get(normalized);
+		if (node?.modelType !== 'supertype') {
+			seen.add(normalized);
+			expanded.push(normalized);
+			return;
+		}
+		visiting.add(normalized);
+		for (const subtype of node.subtypes) visit(subtype);
+		visiting.delete(normalized);
+	}
+
+	for (const discriminatorKind of discriminatorKinds) {
+		visit(discriminatorKind);
+	}
+	return expanded;
 }

@@ -1589,6 +1589,12 @@ export function rangePatternFrom(input?: T.RangePattern.Loose) {
   return _applyFactory(F.rangePattern, input);
 }
 
+export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
+  return F.rangePatternUFormPrefix({
+    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K34, _K35),
+  });
+}
+
 export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   return F.rangePatternUFormLeftWithRight({
     left: _resolveOne<T.LiteralPattern | T.Path>(input.left, _K34, _K35),
@@ -1599,12 +1605,6 @@ export function rangePatternUFormLeftWithRightFrom(input: Omit<ConfigOf<T.RangeP
 export function rangePatternUFormLeftBareFrom(input: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
   return F.rangePatternUFormLeftBare({
     left: _resolveOne<T.LiteralPattern | T.Path>(input.left, _K34, _K35),
-  });
-}
-
-export function rangePatternUFormPrefixFrom(input: Omit<ConfigOf<T.RangePatternUFormPrefix>, '$variant'>) {
-  return F.rangePatternUFormPrefix({
-    right: _resolveOne<T.LiteralPattern | T.Path>(input.right, _K34, _K35),
   });
 }
 
@@ -2084,17 +2084,12 @@ export function visibilityModifierFrom(input?: T.VisibilityModifier.Loose) {
   if (input !== undefined && isNodeData(input)) return input;
   if (typeof input === "string") {
     switch (input) {
-      case "in_path": return visibilityModifierUFormInPathFrom();
       case "crate": return visibilityModifierUFormCrateFrom();
       case "pub": return visibilityModifierUFormPubFrom();
+      case "in_path": return visibilityModifierUFormInPathFrom();
     }
   }
   return _applyFactory(F.visibilityModifier, input);
-}
-
-export function visibilityModifierUFormInPathFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
-  return F.visibilityModifierUFormInPath({
-  });
 }
 
 export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.VisibilityModifierUFormCrate>, '$variant'>) {
@@ -2103,6 +2098,11 @@ export function visibilityModifierUFormCrateFrom(input?: Omit<ConfigOf<T.Visibil
 
 export function visibilityModifierUFormPubFrom(_input?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   return F.visibilityModifierUFormPub({
+  });
+}
+
+export function visibilityModifierUFormInPathFrom(_input: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
+  return F.visibilityModifierUFormInPath({
   });
 }
 

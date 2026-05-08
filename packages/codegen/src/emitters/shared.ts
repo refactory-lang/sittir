@@ -271,16 +271,17 @@ export function resolveHiddenKeywordLiteral(kindName: string, nodeMap: NodeMap):
 export function isHiddenInfraSlot(slot: AssembledNonterminal, nodeMap: NodeMap): boolean {
 	const kinds = slotKindNames(slot);
 	if (kinds.length === 0) return false;
-	for (const k of kinds) {
-		if (!k.startsWith('_')) return false;
-		const node = nodeMap.nodes.get(k);
-		if (!node) return false;
-		if (node.modelType === 'supertype') {
-			const st = node as InstanceType<typeof AssembledSupertype>;
-			if (st.subtypes.some((s) => !s.startsWith('_'))) return false;
-		}
-	}
-	return true;
+	return kinds.every((kind) => isHiddenInfraKind(kind, nodeMap));
+}
+
+function isHiddenInfraKind(kindName: string, nodeMap: NodeMap): boolean {
+	if (!kindName.startsWith('_')) return false;
+	const literal = resolveHiddenKeywordLiteral(kindName, nodeMap);
+	if (literal !== undefined) return true;
+	const node = nodeMap.nodes.get(kindName);
+	if (!(node instanceof AssembledSupertype)) return false;
+	if (node.subtypes.length === 0) return false;
+	return node.subtypes.every((subtype) => isHiddenInfraKind(subtype, nodeMap));
 }
 
 // ---------------------------------------------------------------------------
@@ -579,6 +580,7 @@ export interface HoistedForm {
  * shape.
  */
 export function resolveHoistedForm(form: AssembledGroup, nodeMap: NodeMap): HoistedForm | undefined {
+	if (form.overridePassthrough) return undefined;
 	// Exactly one child slot.
 	const children = form.children;
 	if (children.length !== 1) return undefined;

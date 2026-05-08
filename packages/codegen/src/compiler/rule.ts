@@ -208,10 +208,28 @@ export interface TerminalRule {
  * `modelType: 'polymorph'` and builds one form per variant — no
  * simplifyRule or content guessing.
  */
+export interface PolymorphForm {
+	readonly name: string;
+	readonly content: Rule;
+	/**
+	 * For override polymorphs, the real visible parse-tree child kind used by
+	 * variant() adoption (e.g. `with_clause_paren`). Absent on passthrough
+	 * forms that keep their original bare symbol arm.
+	 */
+	readonly visibleChildKind?: string;
+	/**
+	 * Runtime child kinds that select this form in readNode→factory/.from()
+	 * resolution. May name a concrete kind (`assignment`) or a supertype
+	 * (`expression`) that later expands to concrete child kinds in the
+	 * validator metadata emitter.
+	 */
+	readonly discriminatorKinds?: readonly string[];
+}
+
 export interface PolymorphRule {
 	readonly type: 'polymorph';
 	/** Ordered list of forms (one per variant, in declaration order). */
-	readonly forms: Array<{ readonly name: string; readonly content: Rule }>;
+	readonly forms: Array<PolymorphForm>;
 	/** Always 'promoted' today — Link synthesises polymorphs from shape. */
 	readonly source?: RuleSource;
 }

@@ -1,10 +1,10 @@
-import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { join } from 'node:path';
 
 async function main() {
 	for (const grammar of ['rust', 'typescript', 'python'] as const) {
 		const templatesPath = join(process.cwd(), 'packages', grammar, 'templates');
-		const r = await validateFactoryRoundTrip(grammar, templatesPath, 'native');
+		const r = await validateFactoryRenderParse(grammar, templatesPath, 'native');
 		console.log(
 			`\n=== ${grammar} === total=${r.total} pass=${r.pass} fail=${r.fail} skip=${r.skip} astMatch=${r.astMatchPass}`
 		);

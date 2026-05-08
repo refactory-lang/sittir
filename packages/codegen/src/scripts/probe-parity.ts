@@ -1,16 +1,16 @@
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 
 const grammar = process.argv[2] ?? 'rust';
 const target = process.argv[3] ?? 'visibility_modifier';
 const covered = new Set<string>();
-const r = await validateRoundTrip(grammar, `./packages/${grammar}/templates`, {
+const r = await validateReadRenderParse(grammar, `./packages/${grammar}/templates`, {
 	backend: 'native',
 	onFixture: (fx) => {
 		if (fx.kind === 'roundtrip') covered.add(fx.pattern);
 	}
 });
 
-console.log(`[${grammar}] roundtrip kinds covered: ${covered.size}`);
+console.log(`[${grammar}] read-render-parse kinds covered: ${covered.size}`);
 console.log(`  target '${target}' covered: ${covered.has(target)}`);
 const variantChildren = [...covered].filter((k) => k.startsWith(`_${target}_`));
 console.log(`  variant children covered:`, variantChildren);

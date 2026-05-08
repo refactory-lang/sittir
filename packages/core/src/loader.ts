@@ -37,15 +37,9 @@ export interface CreateRendererOptions {
  * injecting a `kindNameFromId` resolver for Phase A/B coexistence where
  * factory/wrap output carries numeric TSKindId values in `$type`.
  */
-export function createRenderer(
-	templatesDir: string,
-	options?: CreateRendererOptions
-): BoundRenderer;
+export function createRenderer(templatesDir: string, options?: CreateRendererOptions): BoundRenderer;
 export function createRenderer(config: RulesConfig): BoundRenderer;
-export function createRenderer(
-	pathOrConfig: string | RulesConfig,
-	options?: CreateRendererOptions
-): BoundRenderer {
+export function createRenderer(pathOrConfig: string | RulesConfig, options?: CreateRendererOptions): BoundRenderer {
 	if (typeof pathOrConfig !== 'string') {
 		return createRendererFromConfig(pathOrConfig);
 	}

@@ -21,6 +21,8 @@ Given any tree-sitter grammar, sittir generates:
 - **Small runtime surface** — generated packages depend on `@sittir/core` and `@sittir/types`, with optional native render packages when installed.
 - **Deterministic output** — same grammar version produces byte-identical generated code. No timestamps, random identifiers, or order-dependent iteration.
 
+For a complete target-API walkthrough across factories, `.from()`, rendering, templates, codemods, lazy reads, and cross-language migrations, see [Use Cases & Examples](docs/use-cases-and-examples.md). Source-form TypeScript companions live in [`examples/`](examples/).
+
 ## Packages
 
 | Package                                     | Description                                                                          |

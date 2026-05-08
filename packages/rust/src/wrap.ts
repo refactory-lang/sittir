@@ -2019,7 +2019,7 @@ export function wrapRangePattern(data: T.RangePattern, tree: TreeHandle) {
     left() { return drillIn<T.LiteralPattern | T.Path>(this._left, tree); },
     $with: {
       left: (v: T.LiteralPattern | T.Path) => wrapRangePattern({ ...(data as any), _left: v }, tree),
-      children: (...items: readonly [((T.RangePatternLeftWithRight | ".." | T.RangePatternPrefix))]) => wrapRangePattern({ ...(data as any), $children: items }, tree),
+      children: (...items: readonly [((T.RangePatternPrefix | T.RangePatternLeftWithRight | ".."))]) => wrapRangePattern({ ...(data as any), $children: items }, tree),
     },
   });
   return _node;
@@ -2882,7 +2882,7 @@ export function wrapVisibilityModifier(data: T.VisibilityModifier, tree: TreeHan
     $children: (data as any).$children,
 
     $with: {
-      children: (...items: readonly [((T.VisibilityModifierInPath | T._VisibilityModifierCrate | T.VisibilityModifierPub))]) => wrapVisibilityModifier({ ...(data as any), $children: items }, tree),
+      children: (...items: readonly [((T._VisibilityModifierCrate | T.VisibilityModifierPub | T.VisibilityModifierInPath))]) => wrapVisibilityModifier({ ...(data as any), $children: items }, tree),
     },
   });
   return _node;

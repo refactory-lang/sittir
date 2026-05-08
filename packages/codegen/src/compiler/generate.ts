@@ -21,6 +21,7 @@ import { emitSuggested } from '../emitters/suggested.ts';
 import { emitNodeModel } from '../emitters/node-model.ts';
 import { emitEngine } from '../emitters/engine.ts';
 import { emitAll } from '../emitters/emit.ts';
+import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { computeSlotClasses } from '../emitters/shared.ts';
 import { loadGeneratedIdTables } from './generated-metadata.ts';
 import { extractGrammarRoles } from '../scm/extract-roles.ts';
@@ -65,8 +66,10 @@ export interface GeneratedFiles {
 	/** The intermediate NodeMap — available for inspection */
 	nodeMap: NodeMap;
 	/** Generated ID tables (from parser.c) — exposed for CLI callers that need
-	 *  to pass them to Rust-render emitters such as emitRenderModule. */
+	 *  to pass them to Rust-render emitters such as render-module emission. */
 	generatedIdTables?: GeneratedIdTables;
+	/** Grammar-owned Rust render-module outputs, when requested by the caller. */
+	renderModule?: RenderModuleBundle;
 }
 
 export interface GenerateConfig {
@@ -113,6 +116,8 @@ export interface GenerateConfig {
 	 * when at least one diagnostic exists.
 	 */
 	roundTripFailures?: readonly RoundTripDiagnostic[];
+	/** Emit grammar-owned Rust render-module artifacts in emit.ts. */
+	emitRenderModule?: boolean;
 }
 
 /**
@@ -201,7 +206,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		synthesizedKinds: evaluateSynthesizedKinds,
 		strict: cfg.strict,
 		triviaKinds,
-		grammarRoles
+		grammarRoles,
+		emitRenderModule: cfg.emitRenderModule
 	});
 
 	return {
@@ -229,7 +235,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		is: emitted.is,
 		kindIds: generatedIdTables ? emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }) : '',
 		nodeMap,
-		generatedIdTables
+		generatedIdTables,
+		renderModule: emitted.renderModule
 	};
 }
 

@@ -1142,6 +1142,12 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
   ],
   "range_pattern": [
     {
+      variant: "prefix",
+      fields: [
+      ],
+      children: { required: true, multiple: false, alternatives: [{"type":"_range_pattern_prefix"}] as const },
+    },
+    {
       variant: "left_with_right",
       fields: [
         { name: "left", multiple: false, required: true, alternatives: [{"type":"string_literal"},{"type":"raw_string_literal"},{"type":"char_literal"},{"type":"boolean_literal","text":"true"},{"type":"boolean_literal","text":"false"},{"type":"integer_literal"},{"type":"float_literal"},{"type":"negative_literal"},{"type":"self","text":"self"},{"type":"identifier"},{"type":"metavariable"},{"type":"super","text":"super"},{"type":"crate","text":"crate"},{"type":"scoped_identifier"}] as const },
@@ -1154,12 +1160,6 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
         { name: "left", multiple: false, required: true, alternatives: [{"type":"string_literal"},{"type":"raw_string_literal"},{"type":"char_literal"},{"type":"boolean_literal","text":"true"},{"type":"boolean_literal","text":"false"},{"type":"integer_literal"},{"type":"float_literal"},{"type":"negative_literal"},{"type":"self","text":"self"},{"type":"identifier"},{"type":"metavariable"},{"type":"super","text":"super"},{"type":"crate","text":"crate"},{"type":"scoped_identifier"}] as const },
       ],
       children: { required: true, multiple: false, alternatives: [{"type":"_range_pattern_left_bare","text":".."}] as const },
-    },
-    {
-      variant: "prefix",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_range_pattern_prefix"}] as const },
     },
   ],
   "struct_item": [
@@ -1233,12 +1233,6 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
   ],
   "visibility_modifier": [
     {
-      variant: "in_path",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_visibility_modifier_in_path"}] as const },
-    },
-    {
       variant: "crate",
       fields: [
       ],
@@ -1249,6 +1243,12 @@ const nativeTransportVariantRules: Record<string, readonly NativeTransportVarian
       fields: [
       ],
       children: { required: true, multiple: false, alternatives: [{"type":"_visibility_modifier_pub"}] as const },
+    },
+    {
+      variant: "in_path",
+      fields: [
+      ],
+      children: { required: true, multiple: false, alternatives: [{"type":"_visibility_modifier_in_path"}] as const },
     },
   ],
 };
