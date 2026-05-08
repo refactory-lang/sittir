@@ -11,7 +11,14 @@ export type {
 	ParseAndReadResult,
 	JsEngineOptions,
 	GrammarEngineConfig,
-	EngineOptions
+	EngineOptions,
+	RenderHandle,
+	NativeEngineLike,
+	NativeModuleLike,
+	NativeBackendStatusLike,
+	JsBackendStatusLike,
+	BackendStatusLike,
+	NativeRenderTransportProjector
 } from './engine.ts';
 export {
 	assertRenderableNodeData,

@@ -14,6 +14,7 @@ import { applyEdits as coreApplyEdits } from './edit.ts';
 import { applyFormat } from './format.ts';
 import type { TreeHandle } from './readNode.ts';
 import { readNode } from './readNode.ts';
+import { assertRenderableNodeData } from './native-boundary.ts';
 import { writeFileSync } from 'node:fs';
 
 // ---------------------------------------------------------------------------
@@ -35,14 +36,14 @@ export interface EngineOptions {
 
 /**
  * Minimal structural view of a live native engine instance.
- * Grammar packages expose a richer `NativeEngine` interface in backend.ts;
- * this is what `createGrammarEngine` needs and nothing more.
+ * Grammar packages may extend this with transport-specific render inputs or
+ * package-local helpers like `findAndRead()`.
  */
-interface NativeEngineInstance {
+export interface NativeEngineLike<TTransport = unknown> {
 	parseAndRead(source: string): string;
 	readNode(handle: number, childIndex: number): string;
-	render(node: unknown): string;
-	renderToFile?(node: unknown, path: string): void;
+	render(node: TTransport): string;
+	renderToFile?(node: TTransport, path: string): void;
 	applyEdits(
 		source: string,
 		edits: { startPos: number; endPos: number; insertedText: string }[]
@@ -88,16 +89,41 @@ function createRenderHandle(
  * Minimal structural view of the native-module constructor shape.
  * Only `SittirEngine` is required; grammar packages may expose more.
  */
-interface NativeModuleShape {
-	SittirEngine: new (options?: { format?: string }) => NativeEngineInstance;
+export interface NativeModuleLike<
+	TTransport = unknown,
+	TEngine extends NativeEngineLike<TTransport> = NativeEngineLike<TTransport>
+> {
+	SittirEngine: new (options?: { format?: string }) => TEngine;
 }
+
+export type NativeBackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> = {
+	readonly name: 'native';
+	readonly native: TModule;
+	readonly hashMatch?: true;
+};
+
+export type JsBackendStatusLike = {
+	readonly name: 'js';
+	readonly reason?: string;
+	readonly hashMatch?: false;
+};
 
 /**
  * Grammar-agnostic view of the backend status discriminated union.
  * Grammar packages use a richer `BackendStatus` in backend.ts; this is
  * the structural minimum that `createGrammarEngine` branches on.
  */
-type BackendStatusShape = { readonly name: 'native'; readonly native: NativeModuleShape } | { readonly name: string };
+export type BackendStatusLike<TModule extends NativeModuleLike = NativeModuleLike> =
+	| NativeBackendStatusLike<TModule>
+	| JsBackendStatusLike;
+
+/**
+ * Project a renderable NodeData tree into the grammar-local payload sent
+ * across the native render boundary.
+ */
+export type NativeRenderTransportProjector<TTransport = unknown> = (
+	node: AnyNodeData
+) => TTransport;
 
 // ---------------------------------------------------------------------------
 // GrammarEngineConfig + createGrammarEngine
@@ -110,15 +136,18 @@ type BackendStatusShape = { readonly name: 'native'; readonly native: NativeModu
  * `createGrammarEngine` can wire the native + JS paths without importing
  * from the grammar package.
  */
-export interface GrammarEngineConfig {
+export interface GrammarEngineConfig<
+	TTransport = unknown,
+	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
+> {
 	/** Path to the grammar's templates directory (for JS fallback). */
 	templatesPath: string;
 	/** Static kind-name lookup table from the grammar's generated types. */
 	kindNames: ReadonlyMap<number, string>;
 	/** Transport projection function from the grammar's generated utils. */
-	toNativeRenderTransport: (node: unknown) => unknown;
+	toNativeRenderTransport: NativeRenderTransportProjector<TTransport>;
 	/** Backend status checker from the grammar's generated backend. */
-	getActiveBackend: () => BackendStatusShape;
+	getActiveBackend: () => BackendStatusLike<TModule>;
 }
 
 /**
@@ -144,19 +173,23 @@ interface NativeParseResultShape {
  * Mirrors the per-grammar `getNativeBackendEngine()` helper that
  * previously lived in each grammar's hand-written `engine.ts`.
  */
-function getNativeEngine(config: GrammarEngineConfig, options?: EngineOptions): SittirEngineLike | null {
+function getNativeEngine<TTransport, TModule extends NativeModuleLike<TTransport>>(
+	config: GrammarEngineConfig<TTransport, TModule>,
+	options?: EngineOptions
+): SittirEngineLike | null {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') return null;
 
 	try {
 		const nativeOptions = options?.format ? { format: JSON.stringify(options.format) } : undefined;
-		const engine = new (status as { name: 'native'; native: NativeModuleShape }).native.SittirEngine(nativeOptions);
+		const engine = new status.native.SittirEngine(nativeOptions);
 		let currentSource = '';
 
 		function renderNativeNode(
 			node: Parameters<SittirEngineLike['render']>[0],
 			opts?: Parameters<SittirEngineLike['render']>[1]
 		): RenderHandle {
+			assertRenderableNodeData(node);
 			const transport = config.toNativeRenderTransport(node);
 			// Native engine does not yet support ignoreFormat option (Task 4).
 			// Until engine-owned format state is implemented, throw explicitly.
@@ -253,7 +286,10 @@ function getNativeEngine(config: GrammarEngineConfig, options?: EngineOptions): 
  * @param options - Engine-level options (format, etc.)
  * @returns An engine implementing `SittirEngineLike`.
  */
-export function createGrammarEngine(config: GrammarEngineConfig, options?: EngineOptions): SittirEngineLike {
+export function createGrammarEngine<
+	TTransport = unknown,
+	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
+>(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): SittirEngineLike {
 	const native = getNativeEngine(config, options);
 	if (native) return native;
 
