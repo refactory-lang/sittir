@@ -46,6 +46,7 @@ import {
 	type RefineKindInfo,
 	type RefineFormInfo
 } from './refine-emit.ts';
+import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
 	grammar: string;
@@ -78,7 +79,7 @@ export interface EmitFactoriesConfig {
  * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
  */
 export function emitFactories(config: EmitFactoriesConfig): string {
-	factoryEmitter.init(config);
+	const factoryEmitter = new FactoryEmitter(config);
 	for (const [kind, node] of config.nodeMap.nodes) {
 		factoryEmitter.dispatchNode(kind, node);
 	}
@@ -415,34 +416,27 @@ function emitFactoryMapConst(mapEntries: MapEntry[]): string[] {
 // ---------------------------------------------------------------------------
 
 /**
- * Module-local output buffer — populated by {@link factory} namespace
- * functions, read by {@link emitPerNodeFactories} after the dispatch loop.
- */
-let _factoryOutput: string[] = [];
-
-/**
  * Taxonomy-keyed factory dispatch namespace.
  *
- * Each function pushes into the module-local `_factoryOutput` buffer
- * (populated via `init()`, consumed via `collect()`). The functions are
- * thin wrappers that delegate to the existing internal emit helpers;
- * no emit-function signatures are changed.
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
  */
 export namespace factory {
-	/** Reset the output buffer before a new dispatch loop. */
+	/** Back-compat no-op; collection state now lives on emitter instances. */
 	export function init(): void {
-		_factoryOutput = [];
+		// No-op.
 	}
 
-	/** Return the accumulated factory source blocks. */
+	/** Back-compat stub; callers now own the output buffer directly. */
 	export function collect(): string[] {
-		return _factoryOutput;
+		return [];
 	}
 
 	/**
 	 * Emit a leaf factory (pattern, keyword, enum).
 	 */
 	export function leaf(
+		output: string[],
 		node: AssembledNode,
 		nodeMap: NodeMap,
 		leafReConsts: Map<string, string>,
@@ -468,7 +462,7 @@ export namespace factory {
 			default:
 				break;
 		}
-		if (result) _factoryOutput.push(result);
+		if (result) output.push(result);
 	}
 
 	/**
@@ -477,6 +471,7 @@ export namespace factory {
 	 * when applicable).
 	 */
 	export function branch(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'branch' }>,
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
@@ -497,19 +492,20 @@ export namespace factory {
 		} else {
 			result = emitFieldCarryingFactory(node, node.fields, node.children, nodeMap, false, kindEntries);
 		}
-		_factoryOutput.push(result);
+		output.push(result);
 	}
 
 	/**
 	 * Emit a polymorph factory — dispatcher + per-form inline factories.
 	 */
 	export function polymorph(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		const result = emitPolymorphFactory(node, nodeMap, kindEntries);
-		_factoryOutput.push(result);
+		output.push(result);
 	}
 
 	/**
@@ -517,12 +513,13 @@ export namespace factory {
 	 * fragments (polymorph form inner kinds).
 	 */
 	export function group(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'group' }>,
 		nodeMap: NodeMap,
 		kindEntries: readonly KindEnumEntry[] | undefined
 	): void {
 		const result = emitFieldCarryingFactory(node, node.fields, node.children, nodeMap, false, kindEntries);
-		_factoryOutput.push(result);
+		output.push(result);
 	}
 }
 
@@ -1953,49 +1950,19 @@ interface MapEntry {
 // Emitter protocol — init / dispatchNode / finalize
 // ---------------------------------------------------------------------------
 
-/**
- * Module-level state captured by {@link factoryEmitter.init} and consumed
- * by {@link factoryEmitter.dispatchNode} and {@link factoryEmitter.finalize}.
- *
- * This state mirrors what `emitFactories()` computes in its body before
- * handing off to `emitPerNodeFactories()`. Hoisting it here allows
- * `emit.ts` to drive the per-node loop externally.
- */
-let _emitterNodeMap: NodeMap;
-let _emitterStrict: boolean;
-let _emitterKindEntries: readonly KindEnumEntry[] | undefined;
-let _emitterInlineKinds: readonly string[] | undefined;
-let _emitterSynthesizedKinds: ReadonlySet<string> | undefined;
-let _emitterLeafReConsts: Map<string, string>;
-let _emitterAliasSourceKinds: Set<string>;
-let _emitterRefineByKind: Map<string, RefineKindInfo>;
-let _emitterPreambleLines: string[];
+export class FactoryEmitter implements CodegenEmitter<string> {
+	readonly #nodeMap: NodeMap;
+	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #inlineKinds: readonly string[] | undefined;
+	readonly #synthesizedKinds: ReadonlySet<string> | undefined;
+	readonly #leafReConsts: Map<string, string>;
+	readonly #aliasSourceKinds: Set<string>;
+	readonly #refineByKind: Map<string, RefineKindInfo>;
+	readonly #preambleLines: string[];
+	readonly #output: string[] = [];
 
-/**
- * Emitter protocol for the single-loop orchestrator in `emit.ts`.
- *
- * `init()` produces the preamble (imports, helpers, leaf regex consts)
- * and captures config state. `dispatchNode()` handles one node from the
- * shared loop — filtering + taxonomy dispatch. `finalize()` adds the
- * footer (FluentKindMap, _factoryMap) and returns the joined output.
- *
- * The existing `emitFactories()` entry point is preserved as a thin
- * wrapper for backwards compatibility (tests, CLI).
- */
-export const factoryEmitter = {
-	/**
-	 * Produce the preamble and capture config state for the dispatch loop.
-	 */
-	init(config: EmitFactoriesConfig): void {
-		const {
-			nodeMap,
-			strict = false,
-			generatedIdTables,
-			kindEntries: providedKindEntries,
-			inlineKinds,
-			synthesizedKinds
-		} = config;
-
+	constructor(config: EmitFactoriesConfig) {
+		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries, inlineKinds, synthesizedKinds } = config;
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -2027,54 +1994,43 @@ export const factoryEmitter = {
 		if (leafReConsts.size > 0) lines.push('');
 
 		const aliasSourceKinds = collectAliasSourceKinds(nodeMap);
-
-		const refineInfos = collectRefineKindInfos(nodeMap);
 		const refineByKind = new Map<string, RefineKindInfo>();
-		for (const info of refineInfos ?? []) refineByKind.set(info.kind, info);
+		for (const info of collectRefineKindInfos(nodeMap) ?? []) {
+			refineByKind.set(info.kind, info);
+		}
 
-		// Capture state for dispatchNode / finalize
-		_emitterNodeMap = nodeMap;
-		_emitterStrict = strict;
-		_emitterKindEntries = kindEntries;
-		_emitterInlineKinds = inlineKinds;
-		_emitterSynthesizedKinds = synthesizedKinds;
-		_emitterLeafReConsts = leafReConsts;
-		_emitterAliasSourceKinds = aliasSourceKinds;
-		_emitterRefineByKind = refineByKind;
-		_emitterPreambleLines = lines;
-
-		// Reset the per-node output buffer
-		factory.init();
-	},
+		this.#nodeMap = nodeMap;
+		this.#kindEntries = kindEntries;
+		this.#inlineKinds = inlineKinds;
+		this.#synthesizedKinds = synthesizedKinds;
+		this.#leafReConsts = leafReConsts;
+		this.#aliasSourceKinds = aliasSourceKinds;
+		this.#refineByKind = refineByKind;
+		this.#preambleLines = lines;
+	}
 
 	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {
-		factory.leaf(node, _emitterNodeMap, _emitterLeafReConsts, _emitterKindEntries);
-	},
+		factory.leaf(this.#output, node, this.#nodeMap, this.#leafReConsts, this.#kindEntries);
+	}
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
-		factory.branch(node, _emitterNodeMap, _emitterKindEntries);
-	},
+		factory.branch(this.#output, node, this.#nodeMap, this.#kindEntries);
+	}
 
 	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		factory.polymorph(node, _emitterNodeMap, _emitterKindEntries);
-	},
+		factory.polymorph(this.#output, node, this.#nodeMap, this.#kindEntries);
+	}
 
 	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {
-		factory.group(node, _emitterNodeMap, _emitterKindEntries);
-	},
+		factory.group(this.#output, node, this.#nodeMap, this.#kindEntries);
+	}
 
-	/**
-	 * Handle one node from the shared loop — applies the same filtering
-	 * as `emitPerNodeFactories()` and dispatches to the factory namespace.
-	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
-		const nodeMap = _emitterNodeMap;
-		const kindEntries = _emitterKindEntries;
 		const emission = classifyFactoryEmission(kind, node, {
-			nodeMap,
-			kindEntries,
-			inlineKinds: _emitterInlineKinds,
-			synthesizedKinds: _emitterSynthesizedKinds
+			nodeMap: this.#nodeMap,
+			kindEntries: this.#kindEntries,
+			inlineKinds: this.#inlineKinds,
+			synthesizedKinds: this.#synthesizedKinds
 		});
 		if (
 			emission === 'skip-inline-kind' ||
@@ -2085,9 +2041,7 @@ export const factoryEmitter = {
 		}
 		if (emission !== 'emit') return;
 
-		// --- Taxonomy dispatch ---
-		const prevLen = _factoryOutput.length;
-
+		const prevLen = this.#output.length;
 		switch (node.modelType) {
 			case 'pattern':
 			case 'keyword':
@@ -2104,42 +2058,27 @@ export const factoryEmitter = {
 				this.emitGroup(node);
 				break;
 			default:
-				// token, supertype, multi — no factory
 				break;
 		}
+		if (this.#output.length === prevLen) return;
 
-		// Nothing emitted for this node — skip refine forms.
-		if (_factoryOutput.length === prevLen) return;
-
-		// Refine-form factories — emitted immediately after the base
-		// factory they extend, preserving the original interleaved order.
-		const refineInfo = _emitterRefineByKind.get(kind);
-		if (refineInfo) {
-			for (const form of refineInfo.forms) {
-				const formSource = emitRefineFormFactory(node, form, refineInfo, nodeMap, kindEntries);
-				if (formSource === undefined) continue;
-				_factoryOutput.push(formSource);
-			}
+		const refineInfo = this.#refineByKind.get(kind);
+		if (!refineInfo) return;
+		for (const form of refineInfo.forms) {
+			const formSource = emitRefineFormFactory(node, form, refineInfo, this.#nodeMap, this.#kindEntries);
+			if (formSource === undefined) continue;
+			this.#output.push(formSource);
 		}
-	},
+	}
 
-	/**
-	 * Add footer (FluentKindMap, _factoryMap) and return the joined output.
-	 */
 	finalize(): string {
-		const nodeMap = _emitterNodeMap;
-		const kindEntries = _emitterKindEntries;
-		const lines = _emitterPreambleLines;
-		const aliasSourceKinds = _emitterAliasSourceKinds;
-
-		// Append per-node factory bodies
-		for (const source of factory.collect()) {
+		const lines = [...this.#preambleLines];
+		for (const source of this.#output) {
 			lines.push(source);
 			lines.push('');
 		}
 
-		// Footer — factory map entries, FluentKindMap, _factoryMap const
-		const mapEntries = buildFactoryMapEntries(nodeMap, aliasSourceKinds, kindEntries);
+		const mapEntries = buildFactoryMapEntries(this.#nodeMap, this.#aliasSourceKinds, this.#kindEntries);
 		lines.push(...emitFluentKindMap(mapEntries));
 		lines.push('');
 		lines.push(...emitFactoryMapConst(mapEntries));
@@ -2147,4 +2086,4 @@ export const factoryEmitter = {
 
 		return lines.join('\n');
 	}
-};
+}

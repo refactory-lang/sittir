@@ -44,6 +44,7 @@ import {
 import { fieldElementType } from './factories.ts';
 import { isNodeRef, isTerminalValue, isUnresolvedRef } from '../compiler/node-map.ts';
 import type { NodeOrTerminal } from '../compiler/node-map.ts';
+import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFromConfig {
 	grammar: string;
@@ -304,7 +305,7 @@ function emitInternedKindTable(lines: string[], namedEntries: Map<string, string
  * CLI callers). Delegates to the emitter protocol (init → loop → finalize).
  */
 export function emitFrom(config: EmitFromConfig): string {
-	fromEmitter.init(config);
+	const fromEmitter = new FromEmitter(config);
 	for (const [kind, node] of config.nodeMap.nodes) {
 		fromEmitter.dispatchNode(kind, node);
 	}
@@ -316,34 +317,26 @@ export function emitFrom(config: EmitFromConfig): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Module-local output buffer — populated by {@link from} namespace
- * functions, read by {@link collectPerNodeFromBlocks} after the dispatch loop.
- */
-let _fromOutput: string[] = [];
-
-/**
  * Taxonomy-keyed from() dispatch namespace.
  *
- * Each function pushes into the module-local `_fromOutput` buffer
- * (populated via `init()`, consumed via `collect()`). The functions are
- * thin wrappers that delegate to the existing internal emit helpers;
- * no emit-function signatures are changed.
+ * Callers provide the output buffer per run so collection state stays
+ * instance-local instead of living in module globals.
  */
 export namespace from {
-	/** Reset the output buffer before a new dispatch loop. */
+	/** Back-compat no-op; collection state now lives on emitter instances. */
 	export function init(): void {
-		_fromOutput = [];
+		// No-op.
 	}
 
-	/** Return the accumulated from() source blocks. */
+	/** Back-compat stub; callers now own the output buffer directly. */
 	export function collect(): string[] {
-		return _fromOutput;
+		return [];
 	}
 
 	/**
 	 * Emit a leaf from() resolver — string-like (pattern, enum) or keyword.
 	 */
-	export function leaf(node: AssembledNode): void {
+	export function leaf(output: string[], node: AssembledNode): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		let result: string | undefined;
 		switch (node.modelType) {
@@ -364,7 +357,7 @@ export namespace from {
 			default:
 				break;
 		}
-		if (result) _fromOutput.push(result);
+		if (result) output.push(result);
 	}
 
 	/**
@@ -372,6 +365,7 @@ export namespace from {
 	 * or regular field-carrying branch.
 	 */
 	export function branch(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'branch' }>,
 		nodeMap: NodeMap,
 		intern: KindInterner,
@@ -393,19 +387,20 @@ export namespace from {
 		} else {
 			result = emitBranchFrom(node, nodeMap, intern);
 		}
-		_fromOutput.push(result);
+		output.push(result);
 	}
 
 	/**
 	 * Emit a polymorph from() resolver — dispatcher + per-form resolvers.
 	 */
 	export function polymorph(
+		output: string[],
 		node: Extract<AssembledNode, { modelType: 'polymorph' }>,
 		nodeMap: NodeMap,
 		intern: KindInterner
 	): void {
 		const result = emitPolymorphFrom(node, nodeMap, intern);
-		_fromOutput.push(result);
+		output.push(result);
 	}
 }
 
@@ -2143,36 +2138,17 @@ function emitResolverHelpers(
 // Emitter protocol — init / dispatchNode / finalize
 // ---------------------------------------------------------------------------
 
-/**
- * Module-level state captured by {@link fromEmitter.init} and consumed
- * by {@link fromEmitter.dispatchNode} and {@link fromEmitter.finalize}.
- */
-let _fromEmitterNodeMap: NodeMap;
-let _fromEmitterKindEntries: readonly KindEnumEntry[] | undefined;
-let _fromEmitterInternKinds: KindInterner;
-let _fromEmitterKindTableLiterals: string[];
-let _fromEmitterNamedEntries: Map<string, string>;
-let _fromEmitterPreambleLines: string[];
+export class FromEmitter implements CodegenEmitter<string> {
+	readonly #nodeMap: NodeMap;
+	readonly #kindEntries: readonly KindEnumEntry[] | undefined;
+	readonly #internKinds: KindInterner;
+	readonly #kindTableLiterals: string[];
+	readonly #namedEntries: Map<string, string>;
+	readonly #preambleLines: string[];
+	readonly #output: string[] = [];
 
-/**
- * Emitter protocol for the single-loop orchestrator in `emit.ts`.
- *
- * `init()` produces the preamble (imports, input type, interner setup)
- * and captures config state. `dispatchNode()` handles one node from the
- * shared loop — filtering + taxonomy dispatch. `finalize()` adds the
- * footer (fromMap, resolver helpers, interned table, per-node blocks)
- * and returns the joined output.
- *
- * The existing `emitFrom()` entry point is preserved as a thin wrapper
- * for backwards compatibility (tests, CLI).
- */
-export const fromEmitter = {
-	/**
-	 * Produce the preamble and capture config state for the dispatch loop.
-	 */
-	init(config: EmitFromConfig): void {
+	constructor(config: EmitFromConfig) {
 		const { nodeMap, generatedIdTables, kindEntries: providedKindEntries } = config;
-
 		const kindEntries =
 			providedKindEntries ??
 			(generatedIdTables
@@ -2186,42 +2162,34 @@ export const fromEmitter = {
 		const internKinds = buildKindInterner(supertypeByKey, kindTableIndex, kindTableLiterals, namedEntries);
 
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
-
 		emitNamespaceImports(lines, kindEntries);
 		emitFromFieldInputType(lines);
 
-		// Capture state for dispatchNode / finalize
-		_fromEmitterNodeMap = nodeMap;
-		_fromEmitterKindEntries = kindEntries;
-		_fromEmitterInternKinds = internKinds;
-		_fromEmitterKindTableLiterals = kindTableLiterals;
-		_fromEmitterNamedEntries = namedEntries;
-		_fromEmitterPreambleLines = lines;
-
-		// Reset the per-node output buffer
-		from.init();
-	},
+		this.#nodeMap = nodeMap;
+		this.#kindEntries = kindEntries;
+		this.#internKinds = internKinds;
+		this.#kindTableLiterals = kindTableLiterals;
+		this.#namedEntries = namedEntries;
+		this.#preambleLines = lines;
+	}
 
 	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'enum' | 'keyword' }>): void {
-		from.leaf(node);
-	},
+		from.leaf(this.#output, node);
+	}
 
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
-		from.branch(node, _fromEmitterNodeMap, _fromEmitterInternKinds, _fromEmitterKindEntries);
-	},
+		from.branch(this.#output, node, this.#nodeMap, this.#internKinds, this.#kindEntries);
+	}
 
 	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
-		from.polymorph(node, _fromEmitterNodeMap, _fromEmitterInternKinds);
-	},
+		from.polymorph(this.#output, node, this.#nodeMap, this.#internKinds);
+	}
 
-	/**
-	 * Back-compat wrapper used by standalone `emitFrom()`.
-	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
 		if (
 			classifyFromEmission(kind, node, {
-				nodeMap: _fromEmitterNodeMap,
-				kindEntries: _fromEmitterKindEntries
+				nodeMap: this.#nodeMap,
+				kindEntries: this.#kindEntries
 			}) !== 'emit'
 		) {
 			return;
@@ -2241,35 +2209,20 @@ export const fromEmitter = {
 			default:
 				break;
 		}
-	},
+	}
 
-	/**
-	 * Add footer (fromMap, resolver helpers, interned kind table, per-node
-	 * blocks) and return the joined output.
-	 */
 	finalize(): string {
-		const nodeMap = _fromEmitterNodeMap;
-		const kindEntries = _fromEmitterKindEntries;
-		const lines = _fromEmitterPreambleLines;
-		const namedEntries = _fromEmitterNamedEntries;
-		const kindTableLiterals = _fromEmitterKindTableLiterals;
-
-		const perNodeBlocks = from.collect();
-
-		emitFromMapDeclaration(lines, nodeMap, kindEntries);
-
-		emitResolverHelpers(lines, nodeMap, kindEntries);
+		const lines = [...this.#preambleLines];
+		emitFromMapDeclaration(lines, this.#nodeMap, this.#kindEntries);
+		emitResolverHelpers(lines, this.#nodeMap, this.#kindEntries);
 		lines.push('');
-
 		emitPolymorphApplyHelper(lines);
 		emitChildrenInputHelper(lines);
-
-		emitInternedKindTable(lines, namedEntries, kindTableLiterals);
-		for (const block of perNodeBlocks) {
+		emitInternedKindTable(lines, this.#namedEntries, this.#kindTableLiterals);
+		for (const block of this.#output) {
 			lines.push(block);
 			lines.push('');
 		}
-
 		return lines.join('\n');
 	}
-};
+}

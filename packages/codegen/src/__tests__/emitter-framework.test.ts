@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { NodeMap } from '../compiler/types.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 import { AssembledBranch } from '../compiler/node-map.ts';
+import { emitAll } from '../emitters/emit.ts';
 import { TemplateEmitter } from '../emitters/templates.ts';
 
 function makeNodeMap(): NodeMap {
@@ -38,5 +39,23 @@ describe('loop-driven emitters', () => {
 		expect(left.finalize().bodies.has('right_kind')).toBe(false);
 		expect(right.finalize().bodies.has('right_kind')).toBe(true);
 		expect(right.finalize().bodies.has('left_kind')).toBe(false);
+	});
+
+	it('emitAll creates fresh loop-driven emitter instances per run', () => {
+		const nodeMap = {
+			name: 'test',
+			nodes: new Map(),
+			signatures: { signatures: new Map() },
+			derivations: { inferredFields: [], promotedRules: [], repeatedShapes: [] },
+			rules: {},
+			externals: new Set(),
+			word: undefined,
+			polymorphFormKinds: new Set()
+		} as any;
+
+		const first = emitAll({ grammar: 'rust', nodeMap });
+		const second = emitAll({ grammar: 'rust', nodeMap });
+
+		expect(first.jinjaTemplates.bodies).not.toBe(second.jinjaTemplates.bodies);
 	});
 });

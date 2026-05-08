@@ -20,9 +20,9 @@ import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
 import type { Grammar, RenderModuleBundle } from './render-module.ts';
 
-import { factoryEmitter } from './factories.ts';
-import { fromEmitter } from './from.ts';
-import { wrapEmitter } from './wrap.ts';
+import { FactoryEmitter } from './factories.ts';
+import { FromEmitter } from './from.ts';
+import { WrapEmitter } from './wrap.ts';
 import { emitTypes } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { emitIr } from './ir.ts';
@@ -107,7 +107,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	// -----------------------------------------------------------------
 	// 1. Initialize per-node-dispatch emitters (preamble, internal state)
 	// -----------------------------------------------------------------
-	factoryEmitter.init({
+	const factoryEmitter = new FactoryEmitter({
 		grammar,
 		nodeMap,
 		strict,
@@ -117,14 +117,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		synthesizedKinds
 	});
 
-	fromEmitter.init({
+	const fromEmitter = new FromEmitter({
 		grammar,
 		nodeMap,
 		generatedIdTables,
 		kindEntries
 	});
 
-	wrapEmitter.init({
+	const wrapEmitter = new WrapEmitter({
 		grammar,
 		nodeMap,
 		generatedIdTables,
