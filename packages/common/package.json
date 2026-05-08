@@ -32,6 +32,11 @@
 			"types": "./dist/engine-boundary.d.ts",
 			"import": "./dist/engine-boundary.js",
 			"default": "./dist/engine-boundary.js"
+		},
+		"./utils": {
+			"types": "./dist/utils.d.ts",
+			"import": "./dist/utils.js",
+			"default": "./dist/utils.js"
 		}
 	},
 	"scripts": {
