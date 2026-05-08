@@ -11,8 +11,9 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { existsSync } from 'node:fs';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
 	classifySlot,
 	buildSupertypeTransportSet,
@@ -32,6 +33,22 @@ import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
 import type { TemplateFile } from '../emitters/template-hash.ts';
 import type { NodeMap } from '../compiler/types.ts';
+
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
+
+// ---------------------------------------------------------------------------
+// Regression: regen-templates-rs.ts must use the shared runner
+// ---------------------------------------------------------------------------
+
+it('regen-templates-rs uses the shared render-module runner', () => {
+	const script = readFileSync(
+		resolve(repoRoot, 'packages/codegen/src/scripts/regen-templates-rs.ts'),
+		'utf8'
+	);
+	expect(script).toContain("from '../emitters/render-module-runner.ts'");
+	expect(script).toContain('runRenderModuleEmitter(');
+	expect(script).not.toContain('emitRenderModuleBundle(');
+});
 
 // ---------------------------------------------------------------------------
 // classifySlot — exported helper
