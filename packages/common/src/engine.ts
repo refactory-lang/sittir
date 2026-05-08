@@ -4,7 +4,6 @@ import type { TreeHandle } from './readNode.ts';
 
 export interface EngineOptions {
 	readonly format?: FormatRecord;
-	readonly backend?: 'auto' | 'native' | 'js' | 'wasm';
 }
 
 export interface RenderHandle {
