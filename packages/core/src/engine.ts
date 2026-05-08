@@ -19,6 +19,7 @@ import { applyEdits as coreApplyEdits } from './edit.ts';
 import { applyFormat } from './format.ts';
 import type { TreeHandle } from './readNode.ts';
 import { readNode } from './readNode.ts';
+import { writeFileSync } from 'node:fs';
 
 // ---------------------------------------------------------------------------
 // Grammar engine options — re-exported so grammar wrappers don't need to
@@ -46,11 +47,46 @@ interface NativeEngineInstance {
 	parseAndRead(source: string): string;
 	readNode(handle: number, childIndex: number): string;
 	render(node: unknown): string;
+	renderToFile?(node: unknown, path: string): void;
 	applyEdits(
 		source: string,
 		edits: { startPos: number; endPos: number; insertedText: string }[]
 	): string;
 	dispose(): void;
+}
+
+export interface RenderHandle {
+	save(path: string): void;
+	toString(): string;
+	print(): string;
+}
+
+function createRenderHandle(
+	renderText: () => string,
+	saveImpl?: (path: string) => boolean
+): RenderHandle {
+	let cached: string | undefined;
+	function getText(): string {
+		if (cached === undefined) cached = renderText();
+		return cached;
+	}
+	return {
+		save(path: string): void {
+			if (saveImpl?.(path) === true) {
+				return;
+			}
+			const text = getText();
+			writeFileSync(path, text, 'utf8');
+		},
+		toString(): string {
+			return getText();
+		},
+		print(): string {
+			const text = getText();
+			process.stdout.write(text);
+			return text;
+		}
+	};
 }
 
 /**
@@ -131,7 +167,7 @@ function getNativeEngine(
 		function renderNativeNode(
 			node: Parameters<SittirEngineLike['render']>[0],
 			opts?: Parameters<SittirEngineLike['render']>[1]
-		): string {
+		): RenderHandle {
 			const transport = config.toNativeRenderTransport(node);
 			// Native engine does not yet support ignoreFormat option (Task 4).
 			// Until engine-owned format state is implemented, throw explicitly.
@@ -141,7 +177,16 @@ function getNativeEngine(
 					'Use JS engine or wait for Task 4 (engine-owned format state).'
 				);
 			}
-			return engine.render(transport);
+			return createRenderHandle(
+				() => engine.render(transport),
+				(path) => {
+					if (engine.renderToFile) {
+						engine.renderToFile(transport, path);
+						return true;
+					}
+					return false;
+				}
+			);
 		}
 
 		// Wrap the native engine to match SittirEngineLike interface
@@ -185,7 +230,7 @@ function getNativeEngine(
 									handle === undefined
 										? parsed.nodeData
 										: (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
-								return renderNativeNode(node, opts);
+								return renderNativeNode(node, opts).toString();
 							},
 							format: parsed.format
 						} satisfies TreeHandle
@@ -264,10 +309,10 @@ export interface SittirEngineReader {
  */
 export interface SittirEngineLike {
 	/**
-	 * Render a NodeData node to a string.
+	 * Render a NodeData node to a handle.
 	 * Applies engine-level format unless `ignoreFormat: true`.
 	 */
-	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): string;
+	render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): RenderHandle;
 
 	/**
 	 * Apply a batch of edits to source text.
@@ -392,9 +437,14 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 	}
 
 	const engine: SittirEngineLike = {
-		render(node: AnyNodeData, options?: { ignoreFormat?: boolean }): string {
+		render(
+			node: AnyNodeData,
+			options?: { ignoreFormat?: boolean }
+		): RenderHandle {
 			// Engine-level render: no tree association, so treeFormat is undefined.
-			return renderNode(node, undefined, options?.ignoreFormat);
+			return createRenderHandle(() =>
+				renderNode(node, undefined, options?.ignoreFormat)
+			);
 		},
 
 		applyEdits(source: string, edits: readonly Edit[]): string {

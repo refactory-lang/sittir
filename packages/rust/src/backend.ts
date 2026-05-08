@@ -53,6 +53,7 @@ export interface NativeEngine {
 	findAndRead(source: string, pattern: string): string;
 	readNode(nodeId: NodeId): string;
 	render(node: AnyTransport): string;
+	renderToFile?(node: AnyTransport, path: string): void;
 	applyEdits(
 		source: string,
 		edits: { startPos: number; endPos: number; insertedText: string }[]
