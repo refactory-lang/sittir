@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	assemble,
-	classifyNode,
-	simplifyRule,
-	nameNode,
-	nameField
-} from '../compiler/assemble.ts';
+import { assemble, classifyNode, simplifyRule, nameNode, nameField } from '../compiler/assemble.ts';
 import { simplifyRules } from '../compiler/simplify.ts';
 import type { Rule } from '../compiler/rule.ts';
 import type { OptimizedGrammar } from '../compiler/types.ts';
@@ -18,10 +12,7 @@ function deriveFields(rule: Parameters<typeof deriveSlots>[0]) {
 	return deriveSlots(rule).filter((s) => s.source !== 'inferred');
 }
 
-function makeOptimized(
-	rules: Record<string, Rule>,
-	overrides?: Partial<OptimizedGrammar>
-): OptimizedGrammar {
+function makeOptimized(rules: Record<string, Rule>, overrides?: Partial<OptimizedGrammar>): OptimizedGrammar {
 	return {
 		name: 'test',
 		rules,
@@ -56,9 +47,7 @@ describe('Assemble — simplifyRule', () => {
 	it('collapses single-member seq to its content', () => {
 		const rule: Rule = {
 			type: 'seq',
-			members: [
-				{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }
-			]
+			members: [{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }]
 		};
 		const simplified = simplifyRule(rule);
 		expect(simplified.type).toBe('field');
@@ -307,9 +296,7 @@ describe('Rule — deriveFields', () => {
 	it('derives required=true for non-optional fields', () => {
 		const rule: Rule = {
 			type: 'seq',
-			members: [
-				{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }
-			]
+			members: [{ type: 'field', name: 'x', content: { type: 'symbol', name: 'y' } }]
 		};
 		const fields = deriveFields(rule);
 		expect(isRequired(fields[0]!)).toBe(true);

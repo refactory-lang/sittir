@@ -22,19 +22,11 @@ import type { Rule } from '../compiler/rule.ts';
 import type {
 	AssembledNode,
 	AssembledNonterminal,
-	
 	AssembledGroup,
 	NodeOrTerminal,
 	UnresolvedRef
 } from '../compiler/node-map.ts';
-import {
-	isNodeRef,
-	isUnresolvedRef,
-	isRequired,
-	isMultiple,
-	isNonEmpty,
-	kindsOf
-} from '../compiler/node-map.ts';
+import { isNodeRef, isUnresolvedRef, isRequired, isMultiple, isNonEmpty, kindsOf } from '../compiler/node-map.ts';
 
 export interface EmitNodeModelConfig {
 	grammar: string;
@@ -352,9 +344,7 @@ function serializeChild(child: AssembledNonterminal): SerializedSlot {
 
 function serializeValue(v: NodeOrTerminal): SerializedValue {
 	if (isNodeRef(v)) {
-		const name = isUnresolvedRef(v.node)
-			? (v.node as UnresolvedRef).name
-			: v.node.kind;
+		const name = isUnresolvedRef(v.node) ? (v.node as UnresolvedRef).name : v.node.kind;
 		const out: SerializedValue = {
 			kind: 'node-ref',
 			multiplicity: v.multiplicity,

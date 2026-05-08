@@ -19,18 +19,9 @@ import type {
 	EnumRule,
 	SupertypeRule
 } from './rule.ts';
-import type {
-	OptimizedGrammar,
-	NodeMap,
-	SignaturePool,
-	PolymorphVariant
-} from './types.ts';
+import type { OptimizedGrammar, NodeMap, SignaturePool, PolymorphVariant } from './types.ts';
 import { computePolymorphFormKinds } from './types.ts';
-import type {
-	AssembledNode,
-	AssembledNonterminal,
-	UnresolvedRef
-} from './node-map.ts';
+import type { AssembledNode, AssembledNonterminal, UnresolvedRef } from './node-map.ts';
 import {
 	AssembledBranch,
 	AssembledPolymorph,
@@ -51,12 +42,7 @@ import {
 	isUnresolvedRef,
 	allSlotsOf
 } from './node-map.ts';
-import {
-	simplifyRule,
-	inlineGroupRefs,
-	extractRepeatShape,
-	hoistInnerFieldsForTemplate
-} from './simplify.ts';
+import { simplifyRule, inlineGroupRefs, extractRepeatShape, hoistInnerFieldsForTemplate } from './simplify.ts';
 import { compileWordMatcher } from './common.ts';
 
 // ---------------------------------------------------------------------------
@@ -68,9 +54,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 	// Parents that went through Link's variant() push-down keep their
 	// original rule shape but should NOT auto-promote to polymorph —
 	// each variant child renders via its own kind-template.
-	const variantParents = new Set(
-		optimized.polymorphVariants?.map((v) => v.parent) ?? []
-	);
+	const variantParents = new Set(optimized.polymorphVariants?.map((v) => v.parent) ?? []);
 	const variantChildrenByParent = new Map<string, string[]>();
 	for (const v of optimized.polymorphVariants ?? []) {
 		const existing = variantChildrenByParent.get(v.parent) ?? [];
@@ -92,9 +76,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 		// here — templates need anonymous delimiters (`,`, `(`, `;`,
 		// …) to surface as template text. See
 		// `project_simplify_template_walker_divergence.md`.
-		const inlinedRule = hoistInnerFieldsForTemplate(
-			inlineGroupRefs(rule, optimized.rules)
-		);
+		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(rule, optimized.rules));
 		const modelType = classifyNode(kind, inlinedRule, { variantParents });
 		// `simplifiedRules[kind]` is already inlined + fixpoint-reduced
 		// by `simplifyRules` in optimize — pass through as-is.
@@ -107,11 +89,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 					kind,
 					new AssembledBranch(
 						kind,
-						inlinedRule as
-							| SeqRule
-							| ChoiceRule
-							| RepeatRule
-							| Repeat1Rule,
+						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule,
 						variantChildKinds ? { variantChildKinds } : undefined
 					)
@@ -121,46 +99,27 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 			case 'polymorph': {
 				const polyForms = derivePolymorphForms(kind, rule);
 				const polySource =
-					rule.type === 'polymorph'
-						? rule.source === 'override'
-							? 'override'
-							: 'promoted'
-						: 'promoted';
+					rule.type === 'polymorph' ? (rule.source === 'override' ? 'override' : 'promoted') : 'promoted';
 				const forms = buildAssembledFormGroups(kind, polyForms, polySource);
 				// Forms don't get top-level nodeMap entries — they're
 				// nested inside the parent polymorph's forms array.
 				// The polymorph itself + visible variant children (below)
 				// are the nodeMap-level entries.
-				for (const child of buildVisibleVariantChildGroups(
-					polySource,
-					polyForms,
-					optimized
-				)) {
+				for (const child of buildVisibleVariantChildGroups(polySource, polyForms, optimized)) {
 					nodes.set(child.kind, child);
 				}
-				const variantChildKinds = collectOverrideVariantChildKinds(
-					polySource,
-					polyForms
-				);
+				const variantChildKinds = collectOverrideVariantChildKinds(polySource, polyForms);
 				nodes.set(
 					kind,
-					new AssembledPolymorph(
-						kind,
-						rule as PolymorphRule | ChoiceRule,
-						forms,
-						{
-							source: polySource,
-							variantChildKinds
-						}
-					)
+					new AssembledPolymorph(kind, rule as PolymorphRule | ChoiceRule, forms, {
+						source: polySource,
+						variantChildKinds
+					})
 				);
 				break;
 			}
 			case 'pattern': {
-				nodes.set(
-					kind,
-					new AssembledPattern(kind, rule as PatternRule | TerminalRule)
-				);
+				nodes.set(kind, new AssembledPattern(kind, rule as PatternRule | TerminalRule));
 				break;
 			}
 			case 'keyword': {
@@ -178,21 +137,11 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
 			}
 			case 'supertype': {
 				const subtypes = resolveSupertypeSubtypes(rule, optimized);
-				nodes.set(
-					kind,
-					new AssembledSupertype(
-						kind,
-						rule as SupertypeRule | ChoiceRule,
-						subtypes
-					)
-				);
+				nodes.set(kind, new AssembledSupertype(kind, rule as SupertypeRule | ChoiceRule, subtypes));
 				break;
 			}
 			case 'group': {
-				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(
-					rule,
-					simplifiedRule
-				);
+				const { groupRule, groupSimplified } = unwrapGroupRuleAndSimplified(rule, simplifiedRule);
 				nodes.set(kind, new AssembledGroup(kind, groupRule, groupSimplified));
 				break;
 			}
@@ -257,10 +206,7 @@ export function assemble(optimized: OptimizedGrammar): NodeMap {
  *   been attached by `tagVariants`, so the form kinds stay collision-free and
  *   obviously generated.
  */
-function derivePolymorphForms(
-	kind: string,
-	rule: Rule
-): PolymorphRule['forms'] {
+function derivePolymorphForms(kind: string, rule: Rule): PolymorphRule['forms'] {
 	if (rule.type === 'polymorph') return rule.forms;
 	if (rule.type === 'choice') {
 		return rule.members.map((m, i) => ({
@@ -302,21 +248,15 @@ function buildAssembledFormGroups(
 		nameCounts.set(form.name, seen + 1);
 		const disambiguated = seen === 0 ? form.name : `${form.name}${seen + 1}`;
 		const formKind =
-			polySource === 'override'
-				? `${parentKind}__form_${disambiguated}`
-				: `${parentKind}_${disambiguated}`;
+			polySource === 'override' ? `${parentKind}__form_${disambiguated}` : `${parentKind}_${disambiguated}`;
 		const formNames = nameNode(formKind);
-		return new AssembledGroup(
-			formKind,
-			form.content,
-			simplifyRule(form.content),
-			{
-				factoryName: formNames.factoryName,
-				irKey: formNames.irKey,
-				name: disambiguated,
-				parentKind
-			}
-		);
+		return new AssembledGroup(formKind, form.content, simplifyRule(form.content), {
+			factoryName: formNames.factoryName,
+			irKey: formNames.irKey,
+			name: disambiguated,
+			parentKind,
+			overridePassthrough: polySource === 'override' && !form.visibleChildKind
+		});
 	});
 }
 
@@ -341,8 +281,8 @@ function collectOverrideVariantChildKinds(
 ): string[] {
 	if (polySource !== 'override') return [];
 	return polyForms
-		.map((f) => extractVariantChildSymbol(f.content))
-		.filter((s): s is string => !!s);
+		.map((form) => form.visibleChildKind ?? extractVariantChildSymbol(form.content))
+		.filter((visibleKind): visibleKind is string => !!visibleKind);
 }
 
 /**
@@ -367,27 +307,20 @@ function buildVisibleVariantChildGroups(
 	if (polySource !== 'override') return [];
 	const groups: AssembledNode[] = [];
 	for (const form of polyForms) {
-		const visibleKind = extractVariantChildSymbol(form.content);
+		const visibleKind = form.visibleChildKind ?? extractVariantChildSymbol(form.content);
 		if (!visibleKind) continue;
 		const hiddenKind = `_${visibleKind}`;
 		const sourceRule = optimized.rules[hiddenKind];
 		if (!sourceRule) continue;
-		const inlinedRule = hoistInnerFieldsForTemplate(
-			inlineGroupRefs(sourceRule, optimized.rules)
-		);
-		const simplifiedRule =
-			optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
+		const inlinedRule = hoistInnerFieldsForTemplate(inlineGroupRefs(sourceRule, optimized.rules));
+		const simplifiedRule = optimized.simplifiedRules[hiddenKind] ?? simplifyRule(sourceRule);
 		const modelType = classifyNode(visibleKind, inlinedRule);
 		switch (modelType) {
 			case 'branch':
 				groups.push(
 					new AssembledBranch(
 						visibleKind,
-						inlinedRule as
-							| SeqRule
-							| ChoiceRule
-							| RepeatRule
-							| Repeat1Rule,
+						inlinedRule as SeqRule | ChoiceRule | RepeatRule | Repeat1Rule,
 						simplifiedRule
 					)
 				);
@@ -419,10 +352,7 @@ function buildVisibleVariantChildGroups(
  *   Hidden names (`_foo`) are then resolved to the concrete kinds that
  *   tree-sitter actually surfaces at runtime via {@link resolveHiddenSubtypes}.
  */
-function resolveSupertypeSubtypes(
-	rule: Rule,
-	optimized: OptimizedGrammar
-): string[] {
+function resolveSupertypeSubtypes(rule: Rule, optimized: OptimizedGrammar): string[] {
 	let subtypes: string[];
 	if (rule.type === 'supertype') {
 		subtypes = rule.subtypes;
@@ -434,11 +364,7 @@ function resolveSupertypeSubtypes(
 	} else {
 		subtypes = [];
 	}
-	return resolveHiddenSubtypes(
-		subtypes,
-		optimized.rules,
-		optimized.aliasedHiddenKinds ?? new Map()
-	);
+	return resolveHiddenSubtypes(subtypes, optimized.rules, optimized.aliasedHiddenKinds ?? new Map());
 }
 
 /**
@@ -455,13 +381,9 @@ function resolveSupertypeSubtypes(
  *   simplified view is computed on-the-fly. Non-group rules pass through as-is
  *   (the fallback path — groups that didn't get the GroupRule wrapper).
  */
-function unwrapGroupRuleAndSimplified(
-	rule: Rule,
-	simplifiedRule: Rule
-): { groupRule: Rule; groupSimplified: Rule } {
+function unwrapGroupRuleAndSimplified(rule: Rule, simplifiedRule: Rule): { groupRule: Rule; groupSimplified: Rule } {
 	const groupRule = rule.type === 'group' ? rule.content : rule;
-	const groupSimplified =
-		rule.type === 'group' ? simplifyRule(groupRule) : simplifiedRule;
+	const groupSimplified = rule.type === 'group' ? simplifyRule(groupRule) : simplifiedRule;
 	return { groupRule, groupSimplified };
 }
 
@@ -508,10 +430,7 @@ function resolveIrKeys(nodes: Map<string, AssembledNode>): void {
  * Required repeated slots are NOT eligible — their cardinality is
  * user-determined.
  */
-function isAutoStampSlot(
-	slot: AssembledNonterminal,
-	nodes: Map<string, AssembledNode>
-): boolean {
+function isAutoStampSlot(slot: AssembledNonterminal, nodes: Map<string, AssembledNode>): boolean {
 	if (!isRequired(slot)) return true; // optional slots never block parameterless
 	if (isMultiple(slot)) return false; // required repeated slot needs user input
 
@@ -537,9 +456,7 @@ function isAutoStampSlot(
  * fixpoint. Returns `undefined` for nodes that have no slot model
  * (supertypes, tokens, multis — these are never parameterless compounds).
  */
-function getSlotsForParameterless(
-	node: AssembledNode
-): readonly AssembledNonterminal[] | undefined {
+function getSlotsForParameterless(node: AssembledNode): readonly AssembledNonterminal[] | undefined {
 	switch (node.modelType) {
 		case 'branch':
 		case 'group':
@@ -556,10 +473,7 @@ function getSlotsForParameterless(
  * stamp — we simply omit them from the factory call for parameterless
  * compounds).
  */
-function _stampExpressionForSlot(
-	slot: AssembledNonterminal,
-	nodes: Map<string, AssembledNode>
-): string | undefined {
+function _stampExpressionForSlot(slot: AssembledNonterminal, nodes: Map<string, AssembledNode>): string | undefined {
 	if (!isRequired(slot)) return undefined; // optional — no stamp needed
 	if (slot.values.length !== 1) return undefined;
 	const v = slot.values[0]!;
@@ -718,11 +632,7 @@ function resolveHiddenSubtypes(
 	return out;
 }
 
-function resolveHiddenRuleContent(
-	rule: Rule,
-	rules: Record<string, Rule>,
-	seen: Set<string>
-): string[] {
+function resolveHiddenRuleContent(rule: Rule, rules: Record<string, Rule>, seen: Set<string>): string[] {
 	switch (rule.type) {
 		case 'alias':
 			// Resolve to the SOURCE kind (what's in the rules map).
@@ -754,19 +664,13 @@ function resolveHiddenRuleContent(
 				return target ? resolveHiddenRuleContent(target, rules, seen) : [s];
 			});
 		case 'choice':
-			return rule.members.flatMap((m) =>
-				resolveHiddenRuleContent(m, rules, seen)
-			);
+			return rule.members.flatMap((m) => resolveHiddenRuleContent(m, rules, seen));
 		case 'variant':
 		case 'clause':
 		case 'group':
 		case 'token':
 		case 'terminal':
-			return resolveHiddenRuleContent(
-				(rule as { content: Rule }).content,
-				rules,
-				seen
-			);
+			return resolveHiddenRuleContent((rule as { content: Rule }).content, rules, seen);
 		default:
 			return [];
 	}
@@ -945,10 +849,7 @@ function markUserFacing(nodes: Map<string, AssembledNode>): void {
  *   marks each hidden child so its `.jinja` template, wrap-table entry,
  *   and `_aliasTargetToSource` remap are emitted by downstream emitters.
  */
-function markVariantChildrenUserFacing(
-	nodes: Map<string, AssembledNode>,
-	variants: readonly PolymorphVariant[]
-): void {
+function markVariantChildrenUserFacing(nodes: Map<string, AssembledNode>, variants: readonly PolymorphVariant[]): void {
 	for (const v of variants) {
 		const hiddenChildKind = `${v.parent}_${v.child}`;
 		const childNode = nodes.get(hiddenChildKind);
@@ -997,11 +898,7 @@ function resolveCollidingNames(nodes: Map<string, AssembledNode>): void {
  *   Visible wins. Hidden kinds are renamed with a `_` prefix to preserve the tree-sitter
  *   convention that hidden/internal kinds start with an underscore.
  */
-function renameCollidingHiddenKinds(
-	visible: AssembledNode[],
-	hidden: AssembledNode[],
-	typeName: string
-): void {
+function renameCollidingHiddenKinds(visible: AssembledNode[], hidden: AssembledNode[], typeName: string): void {
 	const hasNonTokenVisible = visible.some((n) => n.modelType !== 'token');
 	if (!hasNonTokenVisible) return;
 	for (const h of hidden) {
@@ -1030,10 +927,7 @@ function renameCollidingHiddenKinds(
  *   by kind string) keeps the original name; subsequent ones receive a numeric suffix.
  *   A warning is emitted so the situation is visible in the run log.
  */
-function renameCollidingVisibleKinds(
-	visible: AssembledNode[],
-	typeName: string
-): void {
+function renameCollidingVisibleKinds(visible: AssembledNode[], typeName: string): void {
 	const sorted = [...visible].sort((a, b) => a.kind.localeCompare(b.kind));
 	for (let i = 1; i < sorted.length; i++) {
 		const n = sorted[i]!;
@@ -1062,16 +956,11 @@ function renameCollidingVisibleKinds(
  *   Two hidden kinds both normalized to the same name receive numeric suffixes on every
  *   node after the first. A warning is emitted for each rename.
  */
-function renameCollidingHiddenOnlyKinds(
-	hidden: AssembledNode[],
-	typeName: string
-): void {
+function renameCollidingHiddenOnlyKinds(hidden: AssembledNode[], typeName: string): void {
 	for (let i = 1; i < hidden.length; i++) {
 		const h = hidden[i]!;
 		const newType = `${typeName}${i + 1}`;
-		console.warn(
-			`[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`
-		);
+		console.warn(`[assemble] typeName collision among hidden kinds: '${h.kind}' renamed '${typeName}' → '${newType}'`);
 		h.typeName = newType;
 		if (h.factoryName !== undefined) {
 			h.factoryName = newType.charAt(0).toLowerCase() + newType.slice(1);
@@ -1090,10 +979,7 @@ function renameCollidingHiddenOnlyKinds(
  *   supertype like python `expression` still blocks `expression_statement` from
  *   collapsing its irKey onto `expression`.
  */
-function preclaimSupertypeIrKeys(
-	nodes: Map<string, AssembledNode>,
-	claimed: Set<string>
-): void {
+function preclaimSupertypeIrKeys(nodes: Map<string, AssembledNode>, claimed: Set<string>): void {
 	for (const node of nodes.values()) {
 		if (node.modelType !== 'supertype') continue;
 		claimed.add(shortenIrKey(node.kind));
@@ -1153,10 +1039,7 @@ function partitionNodesIntoIrKeyPhases(nodes: Map<string, AssembledNode>): {
  *   where even the full name collides (two kinds normalise to the same factoryName),
  *   a numeric suffix is appended to guarantee uniqueness.
  */
-function assignIrKeyWithFallback(
-	node: AssembledNode,
-	claimed: Set<string>
-): void {
+function assignIrKeyWithFallback(node: AssembledNode, claimed: Set<string>): void {
 	const short = shortenIrKey(node.kind);
 	if (!claimed.has(short)) {
 		claimed.add(short);
@@ -1174,17 +1057,10 @@ function assignIrKeyWithFallback(
 }
 
 function shortenIrKey(kind: string): string {
-	const stripped = kind
-		.replace(/_item$/, '')
-		.replace(/_expression$/, '')
-		.replace(/_statement$/, '')
-		.replace(/_declaration$/, '')
-		.replace(/_definition$/, '');
+	const stripped = kind;
 	const parts = stripped.split('_').filter(Boolean);
 	if (parts.length === 0) return nameNode(kind).irKey;
-	const camel = parts
-		.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1)))
-		.join('');
+	const camel = parts.map((w, i) => (i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1))).join('');
 	return camel;
 }
 
@@ -1207,10 +1083,7 @@ function shortenIrKey(kind: string): string {
  *   grammar declares no `word` (or we can't extract its pattern), falls back to
  *   the conservative `/^\w+$/` heuristic.
  */
-function detectKeywordShape(
-	value: string,
-	wordMatcher: RegExp | undefined
-): boolean {
+function detectKeywordShape(value: string, wordMatcher: RegExp | undefined): boolean {
 	return wordMatcher ? wordMatcher.test(value) : /^\w+$/.test(value);
 }
 
@@ -1236,10 +1109,7 @@ function collectAnonymousNodes(
 		if (isWordShape) {
 			// Keyword token (e.g., "if", "class", "pub")
 			// Anonymous keywords from grammar — no factory (hidden: no user construction path)
-			nodes.set(
-				value,
-				new AssembledKeyword(value, syntheticStringRule, { hidden: true })
-			);
+			nodes.set(value, new AssembledKeyword(value, syntheticStringRule, { hidden: true }));
 		} else {
 			// Operator/punctuation token (e.g., "+", "->", "{")
 			nodes.set(value, new AssembledToken(value, syntheticStringRule));
@@ -1321,11 +1191,7 @@ type ModelType = AssembledNode['modelType'];
  * left is distinguishing branch (has fields) from container (has children
  * only) for ordinary seq rules — that's a one-level check.
  */
-export function classifyNode(
-	kind: string,
-	rule: Rule,
-	opts?: { variantParents?: ReadonlySet<string> }
-): ModelType {
+export function classifyNode(kind: string, rule: Rule, opts?: { variantParents?: ReadonlySet<string> }): ModelType {
 	switch (rule.type) {
 		case 'enum':
 			return 'enum';
@@ -1412,8 +1278,7 @@ function classifyBranchOrContainer(rule: Rule): ModelType | null {
  */
 function classifyTerminalFallback(kind: string, rule: Rule): ModelType {
 	if (isAllTextShape(rule)) return 'pattern';
-	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string'))
-		return 'enum';
+	if (rule.type === 'choice' && rule.members.every((m) => m.type === 'string')) return 'enum';
 	throw new Error(
 		`classifyNode: '${kind}' has no fields, no children, and no rule-type ` +
 			`classification. Link should have wrapped it as TerminalRule. rule.type=${rule.type}`
@@ -1552,12 +1417,10 @@ function extractVariantChildSymbol(rule: Rule): string | null {
 	if (rule.type === 'seq') {
 		for (const m of rule.members) {
 			if (m.type === 'symbol') return m.name;
-			if (m.type === 'variant' && m.content.type === 'symbol')
-				return m.content.name;
+			if (m.type === 'variant' && m.content.type === 'symbol') return m.content.name;
 		}
 	}
-	if (rule.type === 'variant' && rule.content.type === 'symbol')
-		return rule.content.name;
+	if (rule.type === 'variant' && rule.content.type === 'symbol') return rule.content.name;
 	return null;
 }
 
@@ -1568,4 +1431,3 @@ function extractVariantChildSymbol(rule: Rule): string | null {
 function computeSignatures(_nodes: Map<string, AssembledNode>): SignaturePool {
 	return { signatures: new Map() };
 }
-

@@ -5,19 +5,14 @@
  * Usage: tsx inspect-refs.ts <grammar> <symbolName>
  */
 import { evaluate } from '../src/compiler/evaluate.ts';
-import {
-	resolveGrammarJsPath,
-	resolveOverridesPath
-} from '../src/compiler/resolve-grammar.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../src/compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
 
 const grammar = process.argv[2] ?? 'rust';
 const symbol = process.argv[3] ?? '_type_identifier';
 
 const overridesPath = resolveOverridesPath(grammar);
-const entryPath = existsSync(overridesPath)
-	? overridesPath
-	: resolveGrammarJsPath(grammar);
+const entryPath = existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 const raw = await evaluate(entryPath);
 
 const refs = raw.references.filter((r) => r.to === symbol);
@@ -36,7 +31,5 @@ for (const r of named) {
 console.log();
 console.log('Unnamed references (parent only):');
 for (const r of unnamed) {
-	console.log(
-		`  ${r.from}${r.optional ? ' [optional]' : ''}${r.repeated ? ' [repeated]' : ''}`
-	);
+	console.log(`  ${r.from}${r.optional ? ' [optional]' : ''}${r.repeated ? ' [repeated]' : ''}`);
 }

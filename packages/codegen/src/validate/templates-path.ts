@@ -21,10 +21,7 @@ import type { TemplateRule } from '@sittir/types';
  * `catch` to the filesystem-not-present case without swallowing
  * permission errors (EACCES) or resource limits (EMFILE).
  */
-export function isNodeError(
-	err: unknown,
-	code?: string
-): err is NodeJS.ErrnoException {
+export function isNodeError(err: unknown, code?: string): err is NodeJS.ErrnoException {
 	if (!err || typeof err !== 'object') return false;
 	const candidate = err as { code?: unknown };
 	if (typeof candidate.code !== 'string') return false;
@@ -40,11 +37,7 @@ export function isNodeError(
 export function deriveRuleKinds(templatesPath: string): Set<string> {
 	const dirEntries = tryReadDirEntries(templatesPath);
 	if (dirEntries === null) return new Set();
-	return new Set(
-		dirEntries
-			.filter((f) => f.endsWith('.jinja'))
-			.map((f) => f.slice(0, -'.jinja'.length))
-	);
+	return new Set(dirEntries.filter((f) => f.endsWith('.jinja')).map((f) => f.slice(0, -'.jinja'.length)));
 }
 
 /**

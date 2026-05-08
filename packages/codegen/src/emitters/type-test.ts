@@ -178,9 +178,7 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 		seenType.add(s.typeName);
 		typeImports.add(s.typeName);
 		const discriminant = typeTestDiscriminant(s.kind, kindEntries, nodeMap);
-		body.push(
-			`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['$type'], ${discriminant}>>;`
-		);
+		body.push(`export type _Type_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}['$type'], ${discriminant}>>;`);
 	}
 	for (const l of leafKinds) {
 		if (seenType.has(l.typeName)) continue;
@@ -191,9 +189,7 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 			node instanceof AssembledEnum
 				? enumMemberTypeTestDiscriminant(node, kindEntries)
 				: typeTestDiscriminant(l.kind, kindEntries, nodeMap);
-		body.push(
-			`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['$type'], ${discriminant}>>;`
-		);
+		body.push(`export type _Type_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}['$type'], ${discriminant}>>;`);
 	}
 	body.push('');
 
@@ -208,17 +204,13 @@ export function emitTypeTests(config: EmitTypeTestsConfig): string {
 		if (seenTree.has(s.typeName)) continue;
 		seenTree.add(s.typeName);
 		typeImports.add(`${s.typeName}Tree`);
-		body.push(
-			`export type _Tree_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}Tree['type'], '${s.kind}'>>;`
-		);
+		body.push(`export type _Tree_${s.typeName} = _TypeAssert<_TypeExtends<${s.typeName}Tree['type'], '${s.kind}'>>;`);
 	}
 	for (const l of leafKinds) {
 		if (seenTree.has(l.typeName)) continue;
 		seenTree.add(l.typeName);
 		typeImports.add(`${l.typeName}Tree`);
-		body.push(
-			`export type _Tree_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}Tree['type'], '${l.kind}'>>;`
-		);
+		body.push(`export type _Tree_${l.typeName} = _TypeAssert<_TypeExtends<${l.typeName}Tree['type'], '${l.kind}'>>;`);
 	}
 	body.push('');
 

@@ -33,10 +33,7 @@ export async function setup() {
 		});
 		console.log(`[vitest-setup] pnpm -r run build (${Date.now() - t0}ms)`);
 	} catch (e) {
-		console.error(
-			'[vitest-setup] pnpm -r run build failed:',
-			(e as Error).message?.slice(0, 200)
-		);
+		console.error('[vitest-setup] pnpm -r run build failed:', (e as Error).message?.slice(0, 200));
 		throw e;
 	}
 
@@ -44,9 +41,7 @@ export async function setup() {
 		const grammarDir = join(import.meta.dirname, 'packages', grammar);
 		const grammarJs = join(grammarDir, '.sittir', 'grammar.js');
 		if (!existsSync(grammarJs)) {
-			console.warn(
-				`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`
-			);
+			console.warn(`[vitest-setup] no .sittir/grammar.js for ${grammar} — skip`);
 			continue;
 		}
 		try {
@@ -54,10 +49,7 @@ export async function setup() {
 			const wasm = await compileParser(grammarDir);
 			console.log(`[vitest-setup] ${grammar}: ${wasm} (${Date.now() - t0}ms)`);
 		} catch (e) {
-			console.error(
-				`[vitest-setup] compileParser(${grammar}) failed:`,
-				(e as Error).message?.slice(0, 200)
-			);
+			console.error(`[vitest-setup] compileParser(${grammar}) failed:`, (e as Error).message?.slice(0, 200));
 			throw e;
 		}
 	}

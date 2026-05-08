@@ -14,9 +14,7 @@ function makeMinimalFixture(): {
 	generatedIdTables: GeneratedIdTables;
 } {
 	const { rules, ruleCatalog } = buildRuleCatalog({
-		call_expression: seq(
-			field('function', { type: 'symbol', name: 'identifier' })
-		),
+		call_expression: seq(field('function', { type: 'symbol', name: 'identifier' })),
 		identifier: { type: 'pattern', value: '[a-z_]\\w*' }
 	});
 
@@ -35,8 +33,28 @@ function makeMinimalFixture(): {
 		},
 		generatedIdTables: {
 			kindIds: {
-				call_expression: { id: 17, parser: { cSymbol: 'sym_call_expression', parserName: 'call_expression', anon: false, aux: false, alias: false, hidden: false } },
-				identifier: { id: 3, parser: { cSymbol: 'sym_identifier', parserName: 'identifier', anon: false, aux: false, alias: false, hidden: false } }
+				call_expression: {
+					id: 17,
+					parser: {
+						cSymbol: 'sym_call_expression',
+						parserName: 'call_expression',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				},
+				identifier: {
+					id: 3,
+					parser: {
+						cSymbol: 'sym_identifier',
+						parserName: 'identifier',
+						anon: false,
+						aux: false,
+						alias: false,
+						hidden: false
+					}
+				}
 			},
 			sourceArtifact: 'parser.wasm'
 		}

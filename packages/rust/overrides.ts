@@ -16,14 +16,7 @@
 // final `grammar(enrich(base), wire(config))` line and the injected
 // DSL globals inside rule callbacks need suppression.
 import base from '../../node_modules/.pnpm/tree-sitter-rust@0.24.0_tree-sitter@0.22.4/node_modules/tree-sitter-rust/grammar.js';
-import {
-	transform,
-	enrich,
-	field,
-	alias,
-	variant,
-	wire
-} from '../codegen/src/dsl/index.ts';
+import { transform, enrich, field, alias, variant, wire } from '../codegen/src/dsl/index.ts';
 import type { WireConfig } from '../codegen/src/dsl/index.ts';
 import type { RustGrammar } from './src/grammar.ts';
 
@@ -58,11 +51,7 @@ const config: WireConfig<RustGrammar> = {
 		[$._expression_except_range, $._match_arm_block_ending],
 		// visibility_modifier variant extraction: `pub(crate)` vs
 		// `crate::foo` share the `crate` prefix.
-		[
-			$.scoped_identifier,
-			$.scoped_type_identifier,
-			$._visibility_modifier_crate
-		],
+		[$.scoped_identifier, $.scoped_type_identifier, $._visibility_modifier_crate],
 		// visibility_modifier variant extraction: `pub` vs `pub(x)`
 		// share the `pub` prefix; parser needs lookahead.
 		[$._visibility_modifier_pub]
@@ -156,10 +145,7 @@ const config: WireConfig<RustGrammar> = {
 		// These base-shape patches add field labels BEFORE polymorph
 		// aliasing — composition-order inversion in wire() lets this
 		// flow declaratively instead of inline in rules:.
-		array_expression: [
-			{ 1: field('attributes') },
-			{ '2/(_expression)': field('elements') }
-		],
+		array_expression: [{ 1: field('attributes') }, { '2/(_expression)': field('elements') }],
 
 		// arguments: seq('(', repeat(seq(repeat(attribute_item), _expression,
 		// optional(','))), ')').
@@ -568,10 +554,7 @@ const config: WireConfig<RustGrammar> = {
 		// Promote attribute_item to named field; the variant child stays as
 		// $children. Field patch (flat mode) runs before variant patches
 		// (path mode) via array-of-patch-sets.
-		match_arm: [
-			{ 0: field('attributes') },
-			{ '3/0': variant('with_comma'), '3/1': variant('block_ending') }
-		],
+		match_arm: [{ 0: field('attributes') }, { '3/0': variant('with_comma'), '3/1': variant('block_ending') }],
 
 		// line_comment: choice at pos 1 between regular double-slash,
 		// doc-comment, and regular content. Each arm has its own

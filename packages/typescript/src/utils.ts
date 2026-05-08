@@ -2,20 +2,10 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
-import type { Comment, AnyTransport, NamespaceMap } from './types.js';
-import { KIND_NAMES, kindIdFromName } from './types.js';
+import type { Comment, NamespaceMap } from './types.js';
+import { kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 
-/**
- * Wrap a factory-built node literal with the four `$`-prefixed shared
- * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).
- *
- * Generic on `T` so the literal type flows through unchanged — the
- * return type is `T & { ... methods ... }` so callers retain narrow
- * per-kind property types. No spread (rule 6), no `defineProperty`
- * (rule 1) — methods are merged via `Object.assign` and become
- * enumerable members of the returned object.
- */
 export function withMethods<T extends object>(
   node: T
 ): T & {
@@ -43,16 +33,6 @@ export function withMethods<T extends object>(
   });
 }
 
-/**
- * Type guard: returns true if `v` is a NodeData.
- *
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
- *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
- *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
- *   - `$children` (container nodes whose children arrive without field names),
- *   - `$source` (provenance tag stamped by `readNode` and every factory).
- */
 export function isNodeData<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
 ): v is NamespaceMap[K]['Node'];
@@ -61,16 +41,13 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'number') return false;
-  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));
-  return hasDehoistedFields
+  const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
+  return hasStoredFields
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
     || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
 }
 
-/**
- * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
- */
 export function isTreeNode<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']
 ): v is NamespaceMap[K]['Tree'];
@@ -99,828 +76,67 @@ export function hasKindOf<K extends keyof NamespaceMap>(
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
-/**
- * Convert NodeData/factory output into the data-only native transport shape.
- */
-export function toNativeRenderTransport(node: unknown): AnyTransport {
-  const projected = projectTransportValue(node, 'node');
-  return projected as AnyTransport;
+export function toNativeRenderTransport(node: unknown): unknown {
+  return node;
 }
 
-const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);
+export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (Array.isArray(value)) return value.length > 0 ? true : undefined;
+  return true;
+}
 
-type NativeTransportAlternative = { readonly type: string; readonly text?: string };
-type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
-type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
-type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
-
-const nativeTransportAliasTargetToSource: Record<string, string> = {
-  "abstract_marker": "_abstract_marker",
-  "accessor_kind": "_accessor_kind",
-  "asserts_annotation_asserts": "_asserts_annotation_asserts",
-  "assignment_expression_using_marker": "_assignment_expression_using_marker",
-  "async_marker": "_async_marker",
-  "augmented_assignment_expression_operator": "_augmented_assignment_expression_operator",
-  "automatic_semicolon": "_automatic_semicolon",
-  "binary_expression_operator": "_binary_expression_operator",
-  "call_expression_call": "_call_expression_call",
-  "call_expression_member": "_call_expression_member",
-  "call_expression_template_call": "_call_expression_template_call",
-  "class_body_member": "_class_body_member",
-  "class_body_method": "_class_body_method",
-  "class_body_method_sig": "_class_body_method_sig",
-  "const_marker": "_const_marker",
-  "destructuring_pattern": "_destructuring_pattern",
-  "export_specifier_export_kind": "_export_specifier_export_kind",
-  "export_statement_default": "_export_statement_default",
-  "export_statement_default_decl_arm": "_export_statement_default_decl_arm",
-  "export_statement_default_decl_arm_default_kw": "_export_statement_default_decl_arm_default_kw",
-  "export_statement_default_decl_arm_default_kw_value": "_export_statement_default_decl_arm_default_kw_value",
-  "export_statement_default_from_arm": "_export_statement_default_from_arm",
-  "export_statement_default_from_arm_clause_from": "_export_statement_default_from_arm_clause_from",
-  "export_statement_default_from_arm_ns_from": "_export_statement_default_from_arm_ns_from",
-  "export_statement_default_from_arm_star_from": "_export_statement_default_from_arm_star_from",
-  "expressions": "_expressions",
-  "for_header_let_const_kind": "_for_header_let_const_kind",
-  "for_header_lhs": "_for_header_lhs",
-  "for_header_operator": "__for_header_operator",
-  "for_header_var_kind": "_for_header_var_kind",
-  "for_header_var_kind_kind": "__for_header_var_kind_kind",
-  "for_in_statement_await_marker": "_for_in_statement_await_marker",
-  "for_statement_initializer": "_for_statement_initializer",
-  "formal_parameter": "_formal_parameter",
-  "function_signature_automatic_semicolon": "_function_signature_automatic_semicolon",
-  "import_attribute_object": "_import_attribute_object",
-  "import_identifier": "_import_identifier",
-  "import_specifier_as": "_import_specifier_as",
-  "index_signature_colon": "_index_signature_colon",
-  "initializer": "_initializer",
-  "jsx_attribute_name": "_jsx_attribute_name",
-  "jsx_attribute_value": "_jsx_attribute_value",
-  "jsx_child": "_jsx_child",
-  "jsx_element_name": "_jsx_element_name",
-  "kind": "_kind",
-  "lhs_expression": "_lhs_expression",
-  "module_export_name": "_module_export_name",
-  "number_operator": "__number_operator",
-  "object_type_closing": "_object_type_closing",
-  "object_type_opening": "_object_type_opening",
-  "operator": "_operator",
-  "optional_marker": "_optional_marker",
-  "parenthesized_expression_typed": "_parenthesized_expression_typed",
-  "property_name": "_property_name",
-  "public_field_definition_abstract_first": "_public_field_definition_abstract_first",
-  "public_field_definition_access_first": "_public_field_definition_access_first",
-  "public_field_definition_access_first_declare_marker": "__public_field_definition_access_first_declare_marker",
-  "public_field_definition_accessor_opt": "_public_field_definition_accessor_opt",
-  "public_field_definition_accessor_opt_accessor_marker": "__public_field_definition_accessor_opt_accessor_marker",
-  "public_field_definition_declare_first": "_public_field_definition_declare_first",
-  "public_field_definition_optionality_marker": "_public_field_definition_optionality_marker",
-  "public_field_definition_readonly_first": "_public_field_definition_readonly_first",
-  "public_field_definition_static_mods": "_public_field_definition_static_mods",
-  "readonly_marker": "_readonly_marker",
-  "reserved_identifier": "_reserved_identifier",
-  "semicolon": "_semicolon",
-  "shorthand_property_identifier": "_shorthand_property_identifier",
-  "shorthand_property_identifier_pattern": "_shorthand_property_identifier_pattern",
-  "statement_identifier": "_statement_identifier",
-  "static_marker": "_static_marker",
-  "template_chars": "_template_chars",
-  "tuple_type_member": "_tuple_type_member",
-  "type_identifier": "_type_identifier",
-  "type_query_call_expression": "_type_query_call_expression",
-  "type_query_call_expression_in_type_annotation": "_type_query_call_expression_in_type_annotation",
-  "type_query_instantiation_expression": "_type_query_instantiation_expression",
-  "type_query_member_expression": "_type_query_member_expression",
-  "type_query_member_expression_in_type_annotation": "_type_query_member_expression_in_type_annotation",
-  "type_query_subscript_expression": "_type_query_subscript_expression",
-  "unary_expression_operator": "_unary_expression_operator",
-  "update_expression_postfix": "_update_expression_postfix",
-  "update_expression_prefix": "_update_expression_prefix",
-};
-
-const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
-  "_class_body_method": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"method_definition"},{"type":"_automatic_semicolon"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "_export_statement_default_decl_arm": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"_export_statement_default_decl_arm_default_kw"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "_jsx_start_opening_element": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
-    ],
-  },
-  "_parameter_name": {
-    childrenRequired: false,
-    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "abstract_class_declaration": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "class": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "class_declaration": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "extends_clause": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "value", multiple: true, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"}] as const },
-    ],
-  },
-  "extends_type_clause": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "type", multiple: true, required: true, alternatives: [{"type":"_type_identifier"},{"type":"nested_type_identifier"},{"type":"generic_type"}] as const },
-    ],
-  },
-  "field_definition": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "jsx_opening_element": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
-    ],
-  },
-  "jsx_self_closing_element": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "attribute", multiple: true, required: true, alternatives: [{"type":"jsx_attribute"}] as const },
-    ],
-  },
-  "lexical_declaration": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
-    ],
-  },
-  "object_type": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "members", multiple: true, required: false, alternatives: [{"type":",","text":","},{"type":";","text":";"},{"type":"export_statement"},{"type":"property_signature"},{"type":"call_signature"},{"type":"construct_signature"},{"type":"index_signature"},{"type":"method_signature"},{"type":"_automatic_semicolon"}] as const },
-    ],
-  },
-  "optional_parameter": {
-    childrenRequired: false,
-    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "program": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
-    ],
-  },
-  "public_field_definition": {
-    childrenRequired: false,
-    childAlternatives: [{"type":"_public_field_definition_declare_first"},{"type":"_public_field_definition_access_first"},{"type":"_public_field_definition_static_mods"},{"type":"_public_field_definition_abstract_first"},{"type":"_public_field_definition_readonly_first"},{"type":"_public_field_definition_accessor_opt"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "required_parameter": {
-    childrenRequired: false,
-    childAlternatives: [{"type":"accessibility_modifier","text":"public"},{"type":"accessibility_modifier","text":"private"},{"type":"accessibility_modifier","text":"protected"},{"type":"override_modifier","text":"override"}] as const,
-    fields: [
-      { name: "decorator", multiple: true, required: true, alternatives: [{"type":"decorator"}] as const },
-    ],
-  },
-  "statement_block": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "statements", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
-    ],
-  },
-  "switch_case": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
-    ],
-  },
-  "switch_default": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "body", multiple: true, required: true, alternatives: [{"type":"export_statement"},{"type":"import_statement"},{"type":"debugger_statement"},{"type":"expression_statement"},{"type":"function_signature"},{"type":"abstract_class_declaration"},{"type":"module"},{"type":"internal_module"},{"type":"type_alias_declaration"},{"type":"enum_declaration"},{"type":"interface_declaration"},{"type":"import_alias"},{"type":"ambient_declaration"},{"type":"statement_block"},{"type":"if_statement"},{"type":"switch_statement"},{"type":"for_statement"},{"type":"for_in_statement"},{"type":"while_statement"},{"type":"do_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"break_statement"},{"type":"continue_statement"},{"type":"return_statement"},{"type":"throw_statement"},{"type":"empty_statement","text":";"},{"type":"labeled_statement"}] as const },
-    ],
-  },
-  "variable_declaration": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "declarators", multiple: true, required: true, alternatives: [{"type":"variable_declarator"}] as const },
-    ],
-  },
-};
-
-const nativeTransportVariantRules: Record<string, readonly NativeTransportVariantRule[]> = {
-  "arrow_function": [
-    {
-      variant: "parameter",
-      fields: [
-        { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"_async_marker","text":"async"}] as const },
-        { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_arrow_function_parameter"}] as const },
-    },
-    {
-      variant: "_call_signature",
-      fields: [
-        { name: "async_marker", multiple: false, required: false, alternatives: [{"type":"_async_marker","text":"async"}] as const },
-        { name: "body", multiple: false, required: true, alternatives: [{"type":"as_expression"},{"type":"satisfies_expression"},{"type":"instantiation_expression"},{"type":"internal_module"},{"type":"type_assertion"},{"type":"non_null_expression"},{"type":"assignment_expression"},{"type":"augmented_assignment_expression"},{"type":"await_expression"},{"type":"unary_expression"},{"type":"binary_expression"},{"type":"ternary_expression"},{"type":"update_expression"},{"type":"new_expression"},{"type":"yield_expression"},{"type":"statement_block"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_arrow_function__call_signature"}] as const },
-    },
-  ],
-  "call_expression": [
-    {
-      variant: "call",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_call_expression_call"}] as const },
-    },
-    {
-      variant: "template_call",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_call_expression_template_call"}] as const },
-    },
-    {
-      variant: "member",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_call_expression_member"}] as const },
-    },
-  ],
-  "class_heritage": [
-    {
-      variant: "extends_clause",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_class_heritage_extends_clause"}] as const },
-    },
-    {
-      variant: "implements_clause",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_class_heritage_implements_clause"}] as const },
-    },
-  ],
-  "export_statement": [
-    {
-      variant: "default",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_export_statement_default_from_arm"},{"type":"_export_statement_default_decl_arm"}] as const },
-    },
-    {
-      variant: "type_export",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_export_statement_type_export"}] as const },
-    },
-    {
-      variant: "equals_export",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_export_statement_equals_export"}] as const },
-    },
-    {
-      variant: "namespace_export",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_export_statement_namespace_export"}] as const },
-    },
-  ],
-  "import_clause": [
-    {
-      variant: "namespace_import",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_import_clause_namespace_import"}] as const },
-    },
-    {
-      variant: "named_imports",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_import_clause_named_imports"}] as const },
-    },
-    {
-      variant: "default_import",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_import_clause_default_import"}] as const },
-    },
-  ],
-  "import_specifier": [
-    {
-      variant: "name",
-      fields: [
-        { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"_export_specifier_export_kind","text":"type"},{"type":"_export_specifier_export_kind","text":"typeof"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_import_specifier_name"}] as const },
-    },
-    {
-      variant: "as",
-      fields: [
-        { name: "import_kind", multiple: false, required: false, alternatives: [{"type":"_export_specifier_export_kind","text":"type"},{"type":"_export_specifier_export_kind","text":"typeof"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_import_specifier_as"}] as const },
-    },
-  ],
-  "index_signature": [
-    {
-      variant: "colon",
-      fields: [
-        { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
-        { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_index_signature_colon"}] as const },
-    },
-    {
-      variant: "mapped_type_clause",
-      fields: [
-        { name: "sign", multiple: false, required: false, alternatives: [{"type":"-","text":"-"},{"type":"+","text":"+"}] as const },
-        { name: "type", multiple: false, required: true, alternatives: [{"type":"type_annotation"},{"type":"omitting_type_annotation"},{"type":"adding_type_annotation"},{"type":"opting_type_annotation"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_index_signature_mapped_type_clause"}] as const },
-    },
-  ],
-  "parenthesized_expression": [
-    {
-      variant: "typed",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_parenthesized_expression_typed"}] as const },
-    },
-    {
-      variant: "sequence",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_parenthesized_expression_sequence"}] as const },
-    },
-  ],
-  "string": [
-    {
-      variant: "double",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_string_double"}] as const },
-    },
-    {
-      variant: "single",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_string_single"}] as const },
-    },
-  ],
-  "update_expression": [
-    {
-      variant: "postfix",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_update_expression_postfix"}] as const },
-    },
-    {
-      variant: "prefix",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_update_expression_prefix"}] as const },
-    },
-  ],
-};
-
-const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
-  "!",
-  "\"",
-  "${",
-  "&",
-  "'",
-  "(",
-  ")",
-  "*",
-  "+?:",
-  ",",
-  "-?:",
-  ".",
-  "...",
-  "/",
-  "/>",
-  ":",
-  ";",
-  "<",
-  "</",
-  "=",
-  "=>",
-  ">",
-  "?",
-  "?.",
-  "?:",
-  "@",
-  "[",
-  "]",
-  "__error_recovery",
-  "__for_header_operator",
-  "__for_header_var_kind_kind",
-  "__number_operator",
-  "__public_field_definition_access_first_declare_marker",
-  "__public_field_definition_accessor_opt_accessor_marker",
-  "_abstract_marker",
-  "_accessibility_modifier",
-  "_accessor_kind",
-  "_asserts_annotation_asserts",
-  "_assignment_expression_using_marker",
-  "_async_marker",
-  "_augmented_assignment_expression_operator",
-  "_automatic_semicolon",
-  "_binary_expression_operator",
-  "_const_marker",
-  "_export_specifier_export_kind",
-  "_for_in_statement_await_marker",
-  "_for_statement_initializer",
-  "_function_signature_automatic_semicolon",
-  "_import_attribute_object",
-  "_kind",
-  "_kw_abstract_marker",
-  "_kw_accessor_marker",
-  "_kw_asserts",
-  "_kw_async_marker",
-  "_kw_await_marker",
-  "_kw_const_marker",
-  "_kw_declare_marker",
-  "_kw_optional_marker",
-  "_kw_readonly_marker",
-  "_kw_static_marker",
-  "_kw_type_predicate",
-  "_kw_using_marker",
-  "_object_type_closing",
-  "_object_type_opening",
-  "_operator",
-  "_optional_chain",
-  "_optional_marker",
-  "_override_modifier",
-  "_public_field_definition_optionality_marker",
-  "_readonly_marker",
-  "_reserved_identifier",
-  "_static_marker",
-  "_template_chars",
-  "_ternary_qmark",
-  "_unary_expression_operator",
-  "`",
-  "abstract",
-  "accessibility_modifier",
-  "accessor",
-  "as",
-  "async",
-  "await",
-  "break",
-  "case",
-  "catch",
-  "comment",
-  "const",
-  "continue",
-  "debugger",
-  "declare",
-  "default",
-  "do",
-  "else",
-  "empty_statement",
-  "enum",
-  "escape_sequence",
-  "existential_type",
-  "export",
-  "extends",
-  "false",
-  "finally",
-  "for",
-  "from",
-  "function",
-  "global",
-  "hash_bang_line",
-  "html_character_reference",
-  "html_comment",
-  "identifier",
-  "if",
-  "implements",
-  "import",
-  "in",
-  "infer",
-  "interface",
-  "is",
-  "jsx_identifier",
-  "jsx_text",
-  "keyof",
-  "meta_property",
-  "namespace",
-  "new",
-  "null",
-  "number",
-  "optional_chain",
-  "override",
-  "override_modifier",
-  "predefined_type",
-  "private_property_identifier",
-  "readonly",
-  "regex_flags",
-  "regex_pattern",
-  "require",
-  "return",
-  "satisfies",
-  "static",
-  "super",
-  "switch",
-  "this",
-  "throw",
-  "true",
-  "try",
-  "typeof",
-  "undefined",
-  "unescaped_double_jsx_string_fragment",
-  "unescaped_double_string_fragment",
-  "unescaped_single_jsx_string_fragment",
-  "unescaped_single_string_fragment",
-  "using",
-  "var",
-  "while",
-  "with",
-  "yield",
-  "{",
-  "|",
-  "||",
-  "}",
-]);
-
-const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
-  "_arrow_function_parameter": new Set(["parameter"]),
-  "_for_header": new Set(["operator"]),
-  "_for_header_let_const_kind": new Set(["kind"]),
-  "_for_header_var_kind": new Set(["kind"]),
-  "_index_signature_colon": new Set(["name"]),
-  "_number": new Set(["argument","operator"]),
-  "_parameter_name": new Set(["readonly_marker"]),
-  "_public_field_definition_abstract_first": new Set(["abstract_marker","readonly_marker"]),
-  "_public_field_definition_access_first": new Set(["declare_marker"]),
-  "_public_field_definition_accessor_opt": new Set(["accessor_marker"]),
-  "_public_field_definition_readonly_first": new Set(["abstract_marker","readonly_marker"]),
-  "_public_field_definition_static_mods": new Set(["readonly_marker","static_marker"]),
-  "_type_query_member_expression": new Set(["property"]),
-  "_type_query_member_expression_in_type_annotation": new Set(["property"]),
-  "_update_expression_postfix": new Set(["operator"]),
-  "_update_expression_prefix": new Set(["operator"]),
-  "abstract_method_signature": new Set(["accessibility_modifier","accessor_kind","optional_marker","override_modifier"]),
-  "arrow_function": new Set(["async_marker"]),
-  "arrow_function_parameter": new Set(["parameter"]),
-  "assignment_expression": new Set(["using_marker"]),
-  "augmented_assignment_expression": new Set(["operator"]),
-  "binary_expression": new Set(["operator"]),
-  "break_statement": new Set(["label"]),
-  "class_declaration": new Set(["automatic_semicolon"]),
-  "construct_signature": new Set(["abstract_marker"]),
-  "constructor_type": new Set(["abstract_marker"]),
-  "continue_statement": new Set(["label"]),
-  "decorator_member_expression": new Set(["property"]),
-  "enum_declaration": new Set(["const_marker","name"]),
-  "export_specifier": new Set(["export_kind"]),
-  "field_definition": new Set(["static_marker"]),
-  "for_in_statement": new Set(["await_marker","operator"]),
-  "function_declaration": new Set(["async_marker","name"]),
-  "function_expression": new Set(["async_marker","name"]),
-  "function_signature": new Set(["async_marker","name"]),
-  "generator_function": new Set(["async_marker","name"]),
-  "generator_function_declaration": new Set(["async_marker","name"]),
-  "import_alias": new Set(["name"]),
-  "import_require_clause": new Set(["identifier"]),
-  "import_specifier": new Set(["import_kind"]),
-  "import_statement": new Set(["import_clause"]),
-  "index_signature": new Set(["sign"]),
-  "lexical_declaration": new Set(["kind"]),
-  "member_expression": new Set(["property"]),
-  "method_definition": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "method_signature": new Set(["accessibility_modifier","accessor_kind","async_marker","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "namespace_import": new Set(["identifier"]),
-  "nested_identifier": new Set(["property"]),
-  "object_type": new Set(["closing","opening"]),
-  "optional_parameter": new Set(["readonly_marker"]),
-  "optional_tuple_parameter": new Set(["name"]),
-  "program": new Set(["hash_bang_line"]),
-  "property_signature": new Set(["accessibility_modifier","optional_marker","override_modifier","readonly_marker","static_marker"]),
-  "public_field_definition": new Set(["optionality_marker"]),
-  "regex": new Set(["flags","pattern"]),
-  "required_parameter": new Set(["readonly_marker"]),
-  "statement_block": new Set(["automatic_semicolon"]),
-  "subscript_expression": new Set(["optional_chain"]),
-  "type_parameter": new Set(["const_marker"]),
-  "type_predicate": new Set(["name"]),
-  "unary_expression": new Set(["operator"]),
-};
-
-function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
-  const fields = nativeTransportTerminalFieldsByKind[kind];
-  if (!fields) return;
-  for (const fieldName of fields) {
-    const value = projected[fieldName];
-    if (value === undefined) continue;
-    if (Array.isArray(value)) {
-      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
-    } else {
-      projected[fieldName] = collapseIfTerminal(value);
+export function coerceBitflagStorage(value: unknown, texts: readonly string[]): number | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (typeof value === 'number') return value === 0 ? undefined : value;
+  if (Array.isArray(value)) {
+    let acc = 0;
+    for (const item of value) {
+      const bits = coerceBitflagStorage(item, texts) ?? 0;
+      acc |= bits;
     }
+    return acc === 0 ? undefined : acc;
   }
+  const text = extractNodeText(value);
+  if (text === undefined) return undefined;
+  const index = texts.indexOf(text);
+  if (index < 0) return undefined;
+  return 1 << index;
 }
 
-function collapseIfTerminal(value: unknown): unknown {
-  if (typeof value === 'string') return value;
-  if (!isRecord(value)) return value;
-  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
-    return value.$text;
+export function coerceKindEnumStorage<T = unknown>(
+  value: unknown,
+  byText: readonly (readonly [string, number])[] = []
+): T {
+  if (value === undefined || value === null) return undefined as T;
+  if (typeof value === 'number') return value as T;
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => coerceKindEnumStorage(item, byText))
+      .filter((item) => item !== undefined) as T;
   }
-  return value;
+  const text = extractNodeText(value);
+  if (text !== undefined) {
+    const mapped = byText.find(([candidate]) => candidate === text);
+    if (mapped) return mapped[1] as T;
+  }
+  if (isRecord(value) && typeof value.$type === "number") return value.$type as T;
+  if (typeof value === 'string') {
+    const mapped = byText.find(([candidate]) => candidate === value);
+    return (mapped ? mapped[1] : kindIdFromName(value)) as T;
+  }
+  return value as T;
+}
+
+function extractNodeText(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (isNodeData(value)) {
+    return typeof value.$text === 'string' ? value.$text : undefined;
+  }
+  if (isRecord(value) && typeof value.$text === "string") return value.$text;
+  return undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function projectTransportValue(value: unknown, path: string): unknown {
-  if (Array.isArray(value)) {
-    return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
-  }
-  if (typeof value === 'string') {
-    return { $type: value, $text: value };
-  }
-  if (!isRecord(value)) return value;
-  // $type must be numeric (TSKindId). However, factory-constructed
-  // children can carry a string kind name when kindIdFromName was not invoked
-  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution
-  // via kindIdFromName so the full projection pipeline runs.
-  let numericType: number | undefined;
-  if (typeof value.$type === "number") {
-    numericType = value.$type;
-  } else if (typeof value.$type === "string") {
-    try {
-      const kindStr = nativeTransportType(value.$type);
-      numericType = kindIdFromName(kindStr);
-    } catch {
-      // Unknown kind name — cannot project, return as-is.
-    }
-  }
-  if (numericType === undefined) return value;
-
-  // Resolve the wire kind name (including alias rewriting) for internal
-  // routing. $type is always numeric after projection.
-  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
-
-  const projected: Record<string, unknown> = {};
-  const isFactory = value.$source === 2;
-  for (const key of transportMetadataKeys) {
-    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
-    if (key in value) projected[key] = value[key];
-  }
-  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.
-  // Temporarily store string kind for routing; converted to numeric below.
-  projected.$type = resolvedKind;
-
-  for (const [key, child] of Object.entries(value)) {
-    if (transportMetadataKeys.has(key)) continue;
-    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
-    if (typeof child === "function") continue;
-    const projKey = key.startsWith('_') ? key.slice(1) : key;
-    if (projKey in projected) continue;
-    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);
-  }
-
-  projectRawChildrenIntoFields(projected, resolvedKind);
-  inferNativeTransportVariant(projected, resolvedKind);
-  collapseTerminalFields(projected, resolvedKind);
-
-  projected.$type = kindIdFromName(resolvedKind);
-
-  return projected;
-}
-
-function nativeTransportType(kind: string): string {
-  return nativeTransportAliasTargetToSource[kind] ?? kind;
-}
-
-function projectRawChildrenIntoFields(projected: Record<string, unknown>, kind: string): void {
-  const rules = nativeTransportRawChildFieldRules[kind];
-  const children = projected.$children;
-  if (!rules || !Array.isArray(children)) return;
-  const keep: unknown[] = [];
-  const usedForField = new Set<number>();
-  for (const field of rules.fields) {
-    if (projected[field.name] !== undefined) continue;
-    const matches = children.map((child, index) => ({ child, index })).filter(({ child }) => transportValueMatches(child, field.alternatives));
-    if (field.multiple) {
-      if (matches.length > 0 || field.required) {
-        projected[field.name] = matches.map(({ child }) => child);
-        for (const { index } of matches) usedForField.add(index);
-      }
-    } else if (matches.length === 1) {
-      projected[field.name] = matches[0]!.child;
-      usedForField.add(matches[0]!.index);
-    }
-  }
-  for (let index = 0; index < children.length; index++) {
-    const child = children[index];
-    if (!usedForField.has(index) || transportValueMatches(child, rules.childAlternatives)) keep.push(child);
-  }
-  if (keep.length > 0 || rules.childrenRequired) {
-    projected.$children = keep;
-  } else {
-    delete projected.$children;
-  }
-}
-
-function inferNativeTransportVariant(projected: Record<string, unknown>, kind: string): void {
-  if (typeof projected.$variant === "string") return;
-  const rules = nativeTransportVariantRules[kind];
-  if (!rules) return;
-  const matches = rules.filter((rule) => transportVariantMatches(projected, rule));
-  if (matches.length === 1) projected.$variant = matches[0]!.variant;
-}
-
-function transportVariantMatches(node: Record<string, unknown>, rule: NativeTransportVariantRule): boolean {
-  for (const field of rule.fields) {
-    const value = node[field.name];
-    if (value === undefined) {
-      if (field.required) return false;
-      continue;
-    }
-    const ok = field.multiple ? transportArrayMatches(value, field.alternatives) : transportValueMatches(value, field.alternatives);
-    if (!ok) return false;
-  }
-  if (rule.children) {
-    const children = node.$children;
-    if (children === undefined) return !rule.children.required;
-    return transportArrayMatches(children, rule.children.alternatives);
-  }
-  return true;
-}
-
-function transportArrayMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  return Array.isArray(value) && value.every((item) => transportValueMatches(item, alternatives));
-}
-
-function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  if (typeof value === 'string') {
-    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
-  }
-  if (!isRecord(value)) return false;
-  // $type may be a numeric KindId (projected structured node) or a string
-  // (terminal node converted from a literal string via the string fast-path).
-  const vt = value.$type;
-  if (typeof vt !== "string" && typeof vt !== "number") return false;
-  return alternatives.some((candidate) => {
-    // Compare numeric vs numeric (kindIdFromName converts candidate string kind);
-    // compare string vs string for literal terminals.
-    const typeMatch = typeof vt === "number"
-      ? vt === kindIdFromName(candidate.type)
-      : vt === candidate.type;
-    if (!typeMatch) return false;
-    return candidate.text === undefined || value.$text === candidate.text;
-  });
 }

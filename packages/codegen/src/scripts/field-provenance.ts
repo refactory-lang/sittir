@@ -53,14 +53,8 @@ interface GrammarJson {
 	rules: Record<string, unknown>;
 }
 
-function isField(
-	node: unknown
-): node is { type: string; name: string; content: unknown; source?: string } {
-	return (
-		!!node &&
-		typeof node === 'object' &&
-		(node as { type?: unknown }).type === 'FIELD'
-	);
+function isField(node: unknown): node is { type: string; name: string; content: unknown; source?: string } {
+	return !!node && typeof node === 'object' && (node as { type?: unknown }).type === 'FIELD';
 }
 
 function collectFieldsInSubtree(node: unknown, out: Set<string>): void {
@@ -78,12 +72,7 @@ function collectFieldsInSubtree(node: unknown, out: Set<string>): void {
 	}
 }
 
-function walkRule(
-	kind: string,
-	node: unknown,
-	path: string[],
-	rows: FieldRow[]
-): void {
+function walkRule(kind: string, node: unknown, path: string[], rows: FieldRow[]): void {
 	if (!node || typeof node !== 'object') return;
 	if (isField(node)) {
 		const innerFieldNames = new Set<string>();
@@ -137,30 +126,23 @@ function main(): void {
 
 	let filtered = rows;
 	if (values.redundant) filtered = filtered.filter((r) => r.redundantNested);
-	if (values.source)
-		filtered = filtered.filter((r) => r.source === values.source);
+	if (values.source) filtered = filtered.filter((r) => r.source === values.source);
 
 	// Stats summary on stderr.
 	const bySource = new Map<string, number>();
-	for (const r of rows)
-		bySource.set(r.source, (bySource.get(r.source) ?? 0) + 1);
+	for (const r of rows) bySource.set(r.source, (bySource.get(r.source) ?? 0) + 1);
 	const redundantCount = rows.filter((r) => r.redundantNested).length;
 	process.stderr.write(`# grammar: ${grammar}\n`);
 	process.stderr.write(`# total FIELDs: ${rows.length}\n`);
-	for (const [src, n] of [...bySource].sort())
-		process.stderr.write(`#   ${src.padEnd(10)} ${n}\n`);
+	for (const [src, n] of [...bySource].sort()) process.stderr.write(`#   ${src.padEnd(10)} ${n}\n`);
 	process.stderr.write(`# redundant-nested: ${redundantCount}\n`);
 	process.stderr.write('\n');
 
 	// Header + rows to stdout.
-	process.stdout.write(
-		['kind', 'path', 'name', 'source', 'flag'].join('\t') + '\n'
-	);
+	process.stdout.write(['kind', 'path', 'name', 'source', 'flag'].join('\t') + '\n');
 	for (const r of filtered) {
 		const flag = r.redundantNested ? 'REDUNDANT_NESTED' : '';
-		process.stdout.write(
-			[r.kind, r.path, r.name, r.source, flag].join('\t') + '\n'
-		);
+		process.stdout.write([r.kind, r.path, r.name, r.source, flag].join('\t') + '\n');
 	}
 }
 

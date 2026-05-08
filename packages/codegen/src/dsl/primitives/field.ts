@@ -26,11 +26,7 @@
 import type { Rule } from '../../compiler/rule.ts';
 import type { FieldLike } from '../runtime-shapes.ts';
 import { wireRegisterSyntheticRule } from '../wire/wire.ts';
-import {
-	isStringType,
-	isOptionalType,
-	isChoiceType
-} from '../runtime-shapes.ts';
+import { isStringType, isOptionalType, isChoiceType } from '../runtime-shapes.ts';
 import type { RuntimeRule } from '../runtime-shapes.ts';
 
 /**
@@ -94,16 +90,9 @@ export function maybeKeywordSymbol(
 	if (isChoiceType(c.type)) {
 		const members = (content as { members?: Array<{ type?: string }> }).members;
 		if (Array.isArray(members) && members.length === 2) {
-			const blankIdx = members.findIndex(
-				(m) => m?.type === 'BLANK' || m?.type === 'blank'
-			);
+			const blankIdx = members.findIndex((m) => m?.type === 'BLANK' || m?.type === 'blank');
 			if (blankIdx !== -1) {
-				return descendOptional(
-					fieldName,
-					content,
-					wrapSyntheticBody,
-					'choice-blank'
-				);
+				return descendOptional(fieldName, content, wrapSyntheticBody, 'choice-blank');
 			}
 		}
 		return content;
@@ -133,9 +122,7 @@ function synthesizeKwSymbol(
 			};
 		}
 	).prec;
-	let precBody: RuntimeRule = (
-		typeof nativePrec === 'function' ? nativePrec(-1, content) : content
-	) as RuntimeRule;
+	let precBody: RuntimeRule = (typeof nativePrec === 'function' ? nativePrec(-1, content) : content) as RuntimeRule;
 	if (wrapSyntheticBody) precBody = wrapSyntheticBody(precBody);
 	if (!wireRegisterSyntheticRule(hiddenName, precBody)) {
 		throw new Error(
@@ -174,9 +161,7 @@ function descendOptional(
 		inner = (content as { content?: unknown }).content;
 	} else {
 		const members = (content as { members: Array<{ type?: string }> }).members;
-		const nonBlank = members.find(
-			(m) => m.type !== 'BLANK' && m.type !== 'blank'
-		);
+		const nonBlank = members.find((m) => m.type !== 'BLANK' && m.type !== 'blank');
 		inner = nonBlank;
 	}
 
@@ -185,17 +170,13 @@ function descendOptional(
 
 	// Rebuild the wrapper around the rewritten inner.
 	if (wrapperKind === 'optional') {
-		const nativeOptional = (
-			globalThis as { optional?: (c: unknown) => unknown }
-		).optional;
+		const nativeOptional = (globalThis as { optional?: (c: unknown) => unknown }).optional;
 		if (typeof nativeOptional !== 'function') return content;
 		return nativeOptional(rewritten);
 	}
 	// choice-blank: reconstruct the CHOICE preserving the BLANK position.
 	const c = content as { type: string; members: Array<{ type?: string }> };
-	const newMembers = c.members.map((m) =>
-		m.type === 'BLANK' || m.type === 'blank' ? m : (rewritten as typeof m)
-	);
+	const newMembers = c.members.map((m) => (m.type === 'BLANK' || m.type === 'blank' ? m : (rewritten as typeof m)));
 	return { ...c, members: newMembers };
 }
 
@@ -208,11 +189,7 @@ export interface FieldPlaceholder {
 }
 
 export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
-	return (
-		!!v &&
-		typeof v === 'object' &&
-		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'field'
-	);
+	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'field';
 }
 
 /**
@@ -231,18 +208,14 @@ export function isFieldPlaceholder(v: unknown): v is FieldPlaceholder {
  * whatever shape the runtime-injected `field()` produces (sittir
  * lowercase `type: 'field'` or tree-sitter uppercase `type: 'FIELD'`).
  */
-export function field(
-	name: string,
-	content?: Input
-): FieldPlaceholder | FieldLike {
+export function field(name: string, content?: Input): FieldPlaceholder | FieldLike {
 	if (content === undefined) {
 		return {
 			__sittirPlaceholder: 'field' as const,
 			name
 		} satisfies FieldPlaceholder;
 	}
-	const native = (globalThis as { field?: (n: string, c: Input) => unknown })
-		.field;
+	const native = (globalThis as { field?: (n: string, c: Input) => unknown }).field;
 	if (typeof native !== 'function') {
 		throw new Error(
 			'field(): no global field() found — must be called inside a runtime that injects field() (sittir evaluate.ts or tree-sitter CLI)'
@@ -269,11 +242,7 @@ export function field(
  * @param content - The raw content to place under the field.
  * @returns A FieldLike with `source: 'override'` stamped on it.
  */
-function buildTwoArgFieldResult(
-	native: (n: string, c: Input) => unknown,
-	name: string,
-	content: Input
-): FieldLike {
+function buildTwoArgFieldResult(native: (n: string, c: Input) => unknown, name: string, content: Input): FieldLike {
 	const initial = native(name, content) as FieldLike & { content?: unknown };
 	const inner = initial.content;
 	const symbolized = maybeKeywordSymbol(name, inner);

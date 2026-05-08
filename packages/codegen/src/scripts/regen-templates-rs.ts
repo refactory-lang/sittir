@@ -10,8 +10,8 @@
  * regenerated without touching TS output files.
  */
 
-import { writeFileSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { writeFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { evaluate } from '../compiler/evaluate.ts';
 import { link } from '../compiler/link.ts';
@@ -20,16 +20,16 @@ import { assemble, hydrateSlotRefs } from '../compiler/assemble.ts';
 import { resolveGrammarJsPath, resolveOverridesPath } from '../compiler/resolve-grammar.ts';
 import { loadGeneratedIdTables } from '../compiler/generated-metadata.ts';
 import { emitJinjaTemplates } from '../emitters/templates.ts';
-import { emitRenderModule } from '../emitters/render-module.ts';
-import { renderModuleTemplatesDir, renderModuleSrcDir } from '../emitters/render-module-paths.ts';
-import type { TemplateFile } from '../emitters/template-hash.ts';
+import { emitRenderModuleBundle } from '../emitters/render-module.ts';
+import { renderModuleSrcDir } from '../emitters/render-module-paths.ts';
 
 const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
 type Grammar = (typeof SUPPORTED_GRAMMARS)[number];
 
 const args = process.argv.slice(2);
-const grammarArg = args.find((_, i) => args[i - 1] === '--grammar' || args[i - 1] === '-g') ??
-	(args.find((a) => a.startsWith('--grammar='))?.split('=')[1]);
+const grammarArg =
+	args.find((_, i) => args[i - 1] === '--grammar' || args[i - 1] === '-g') ??
+	args.find((a) => a.startsWith('--grammar='))?.split('=')[1];
 
 if (!grammarArg) {
 	console.error('Usage: regen-templates-rs --grammar <rust|typescript|python|rust,typescript,python>');
@@ -62,14 +62,8 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	// Emit jinja templates (needed for emitRenderModule)
 	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
 
-	// Build template files list
-	const templateFiles: TemplateFile[] = [];
-	for (const [kind, body] of jinjaTemplates.bodies) {
-		templateFiles.push({ filename: `${kind}.jinja`, content: body });
-	}
-
-	// Emit render module
-	const emit = emitRenderModule(grammar, templateFiles, nodeMap, generatedIdTables);
+	const renderModule = emitRenderModuleBundle(grammar, jinjaTemplates, nodeMap, generatedIdTables);
+	const emit = renderModule.emit;
 
 	// Write split render module files
 	mkdirSync(dirname(emit.templatesRs.path), { recursive: true });
@@ -84,36 +78,12 @@ async function regenTemplatesRs(grammar: Grammar): Promise<void> {
 	writeFileSync(emit.libRs.path, emit.libRs.contents, 'utf8');
 	console.log(`  → ${emit.libRs.path} (${emit.libRs.contents.length} bytes)`);
 
-	// Copy jinja templates to rust crate
-	const RUST_UNRAWABLE_KW = ['crate', 'self', 'super', 'Self'] as const;
-	const renameForRustRender = (body: string): string => {
-		let out = body;
-		for (const kw of RUST_UNRAWABLE_KW) {
-			const re = new RegExp(
-				`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`,
-				'g'
-			);
-			out = out.replace(re, `$1${kw}_`);
-		}
-		return out;
-	};
-	const preserveMultilineTrailingNewline = (body: string): string => {
-		if (!body.includes('\n') || !body.endsWith('\n')) return body;
-		return body + '\n';
-	};
-
-	const srcTemplatesDir = join('packages', grammar, 'templates');
-	const dstTemplatesDir = renderModuleTemplatesDir(grammar);
+	const dstTemplatesDir = renderModule.templateCopies.directory;
 	mkdirSync(dstTemplatesDir, { recursive: true });
 	const emittedNames = new Set<string>();
-	for (const [kind] of jinjaTemplates.bodies) {
-		const fname = `${kind}.jinja`;
-		const srcPath = join(srcTemplatesDir, fname);
-		const dstPath = join(dstTemplatesDir, fname);
-		let transformed = renameForRustRender(readFileSync(srcPath, 'utf8'));
-		transformed = preserveMultilineTrailingNewline(transformed);
-		writeFileSync(dstPath, transformed, 'utf8');
-		emittedNames.add(fname);
+	for (const file of renderModule.templateCopies.files) {
+		writeFileSync(file.path, file.contents, 'utf8');
+		emittedNames.add(file.path.split('/').pop() ?? file.path);
 	}
 	for (const existing of readdirSync(dstTemplatesDir)) {
 		if (!existing.endsWith('.jinja')) continue;

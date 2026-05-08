@@ -30,9 +30,7 @@ beforeAll(async () => {
 
 describe('generated polymorph dispatcher — throw behavior', () => {
 	it('throws with "unknown $variant" message on bogus $variant', () => {
-		expect(() => assignment({ $variant: 'bogus' })).toThrow(
-			/unknown \$variant/
-		);
+		expect(() => assignment({ $variant: 'bogus' })).toThrow(/unknown \$variant/);
 	});
 
 	it('names the parent kind in the error message', () => {

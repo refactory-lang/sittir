@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	deriveSlots,
-	isNonEmpty,
-	isMultiple
-} from '../compiler/node-map.ts';
+import { deriveSlots, isNonEmpty, isMultiple } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
 
 // Helper — children-equivalent view over deriveSlots: kind-derived

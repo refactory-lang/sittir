@@ -1,6 +1,6 @@
 {
   "name": "typescript",
-  "nodeCount": 418,
+  "nodeCount": 413,
   "word": "identifier",
   "supertypes": [
     "_destructuring_pattern",
@@ -110,6 +110,16 @@
       "isParameterless": true,
       "stampExpression": "\"&\" as const",
       "text": "&"
+    },
+    {
+      "kind": "&&",
+      "modelType": "token",
+      "typeName": "Andand",
+      "irKey": "andand",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"&&\" as const",
+      "text": "&&"
     },
     {
       "kind": "'",
@@ -360,6 +370,17 @@
       "hidden": false
     },
     {
+      "kind": "__for_header_kind",
+      "modelType": "keyword",
+      "typeName": "ForHeaderKind",
+      "factoryName": "forHeaderKind",
+      "irKey": "forHeaderKind",
+      "hidden": false,
+      "isParameterless": true,
+      "stampExpression": "\"var\" as const",
+      "text": "var"
+    },
+    {
       "kind": "__for_header_operator",
       "modelType": "enum",
       "typeName": "ForHeaderOperator",
@@ -369,19 +390,6 @@
       "values": [
         "in",
         "of"
-      ]
-    },
-    {
-      "kind": "__for_header_var_kind_kind",
-      "modelType": "enum",
-      "typeName": "ForHeaderVarKindKind",
-      "factoryName": "forHeaderVarKindKind",
-      "irKey": "forHeaderVarKindKind",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"var\" as const",
-      "values": [
-        "var"
       ]
     },
     {
@@ -397,43 +405,15 @@
       ]
     },
     {
-      "kind": "__public_field_definition_access_first_declare_marker",
-      "modelType": "enum",
-      "typeName": "PublicFieldDefinitionAccessFirstDeclareMarker",
-      "factoryName": "publicFieldDefinitionAccessFirstDeclareMarker",
-      "irKey": "publicFieldDefinitionAccessFirstDeclareMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"declare\" as const",
-      "values": [
-        "declare"
-      ]
-    },
-    {
-      "kind": "__public_field_definition_accessor_opt_accessor_marker",
-      "modelType": "enum",
-      "typeName": "PublicFieldDefinitionAccessorOptAccessorMarker",
-      "factoryName": "publicFieldDefinitionAccessorOptAccessorMarker",
-      "irKey": "publicFieldDefinitionAccessorOptAccessorMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"accessor\" as const",
-      "values": [
-        "accessor"
-      ]
-    },
-    {
       "kind": "_abstract_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "AbstractMarker",
       "factoryName": "abstractMarker",
       "irKey": "abstractMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"abstract\" as const",
-      "values": [
-        "abstract"
-      ]
+      "text": "abstract"
     },
     {
       "kind": "_accessibility_modifier",
@@ -601,42 +581,24 @@
     },
     {
       "kind": "_asserts_annotation_asserts",
-      "modelType": "enum",
+      "modelType": "token",
       "typeName": "AssertsAnnotationAsserts",
-      "factoryName": "assertsAnnotationAsserts",
       "irKey": "assertsAnnotationAsserts",
-      "hidden": false,
+      "hidden": true,
       "isParameterless": true,
       "stampExpression": "\":\" as const",
-      "values": [
-        ":"
-      ]
-    },
-    {
-      "kind": "_assignment_expression_using_marker",
-      "modelType": "enum",
-      "typeName": "AssignmentExpressionUsingMarker",
-      "factoryName": "assignmentExpressionUsingMarker",
-      "irKey": "assignmentExpressionUsingMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"using\" as const",
-      "values": [
-        "using"
-      ]
+      "text": ":"
     },
     {
       "kind": "_async_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "AsyncMarker",
       "factoryName": "asyncMarker",
       "irKey": "asyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "values": [
-        "async"
-      ]
+      "text": "async"
     },
     {
       "kind": "_augmented_assignment_expression_operator",
@@ -670,19 +632,6 @@
       "factoryName": "automaticSemicolon",
       "irKey": "automaticSemicolon",
       "hidden": false
-    },
-    {
-      "kind": "_binary_expression_operator",
-      "modelType": "enum",
-      "typeName": "BinaryExpressionOperator",
-      "factoryName": "binaryExpressionOperator",
-      "irKey": "binaryExpressionOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"&&\" as const",
-      "values": [
-        "&&"
-      ]
     },
     {
       "kind": "_call_expression_call",
@@ -1258,16 +1207,14 @@
     },
     {
       "kind": "_const_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "ConstMarker",
       "factoryName": "constMarker",
       "irKey": "constMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"const\" as const",
-      "values": [
-        "const"
-      ]
+      "text": "const"
     },
     {
       "kind": "_destructuring_pattern",
@@ -2079,18 +2026,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__for_header_var_kind_kind",
-              "unresolved": true
+              "value": "var"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "__for_header_var_kind_kind"
-            ]
+            "kinds": []
           }
         },
         {
@@ -2140,32 +2084,6 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "kind": "_for_in_statement_await_marker",
-      "modelType": "enum",
-      "typeName": "ForInStatementAwaitMarker",
-      "factoryName": "forInStatementAwaitMarker",
-      "irKey": "forInStatementAwaitMarker",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"await\" as const",
-      "values": [
-        "await"
-      ]
-    },
-    {
-      "kind": "_for_statement_initializer",
-      "modelType": "enum",
-      "typeName": "ForStatementInitializer",
-      "factoryName": "forStatementInitializer",
-      "irKey": "forStatementInitializer",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\";\" as const",
-      "values": [
-        ";"
       ]
     },
     {
@@ -2956,7 +2874,7 @@
       "modelType": "branch",
       "typeName": "LhsExpression",
       "factoryName": "lhsExpression",
-      "irKey": "lhs",
+      "irKey": "lhsExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -3186,42 +3104,34 @@
     },
     {
       "kind": "_optional_chain",
-      "modelType": "enum",
+      "modelType": "token",
       "typeName": "OptionalChain",
-      "factoryName": "optionalChain",
       "irKey": "optionalChain",
-      "hidden": false,
+      "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?.\" as const",
-      "values": [
-        "?."
-      ]
+      "text": "?."
     },
     {
       "kind": "_optional_marker",
-      "modelType": "enum",
+      "modelType": "token",
       "typeName": "OptionalMarker",
-      "factoryName": "optionalMarker",
       "irKey": "optionalMarker",
-      "hidden": false,
+      "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"?\" as const",
-      "values": [
-        "?"
-      ]
+      "text": "?"
     },
     {
       "kind": "_override_modifier",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "_OverrideModifier",
       "factoryName": "_overrideModifier",
       "irKey": "_overrideModifier",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"override\" as const",
-      "values": [
-        "override"
-      ]
+      "text": "override"
     },
     {
       "kind": "_parameter_name",
@@ -3522,18 +3432,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "__public_field_definition_access_first_declare_marker",
-              "unresolved": true
+              "value": "declare"
             }
           ],
           "source": "enriched",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "__public_field_definition_access_first_declare_marker"
-            ]
+            "kinds": []
           }
         }
       ],
@@ -3574,18 +3481,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__public_field_definition_accessor_opt_accessor_marker",
-              "unresolved": true
+              "value": "accessor"
             }
           ],
           "source": "enriched",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "__public_field_definition_accessor_opt_accessor_marker"
-            ]
+            "kinds": []
           }
         }
       ],
@@ -3767,16 +3671,14 @@
     },
     {
       "kind": "_readonly_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "ReadonlyMarker",
       "factoryName": "readonlyMarker",
       "irKey": "readonlyMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"readonly\" as const",
-      "values": [
-        "readonly"
-      ]
+      "text": "readonly"
     },
     {
       "kind": "_reserved_identifier",
@@ -3831,16 +3733,14 @@
     },
     {
       "kind": "_static_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "StaticMarker",
       "factoryName": "staticMarker",
       "irKey": "staticMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
-      "values": [
-        "static"
-      ]
+      "text": "static"
     },
     {
       "kind": "_string_double",
@@ -4646,7 +4546,7 @@
       "modelType": "branch",
       "typeName": "AbstractClassDeclaration",
       "factoryName": "abstractClassDeclaration",
-      "irKey": "abstractClass",
+      "irKey": "abstractClassDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -5038,7 +4938,7 @@
       "modelType": "branch",
       "typeName": "AmbientDeclaration",
       "factoryName": "ambientDeclaration",
-      "irKey": "ambient",
+      "irKey": "ambientDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -5570,7 +5470,7 @@
       "modelType": "branch",
       "typeName": "AsExpression",
       "factoryName": "asExpression",
-      "irKey": "as",
+      "irKey": "asExpression",
       "hidden": false,
       "fields": [
         {
@@ -5711,7 +5611,7 @@
       "modelType": "branch",
       "typeName": "AssignmentExpression",
       "factoryName": "assignmentExpression",
-      "irKey": "assignment",
+      "irKey": "assignmentExpression",
       "hidden": false,
       "fields": [
         {
@@ -5723,18 +5623,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_assignment_expression_using_marker",
-              "unresolved": true
+              "value": "using"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_assignment_expression_using_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -5865,7 +5762,7 @@
       "modelType": "branch",
       "typeName": "AugmentedAssignmentExpression",
       "factoryName": "augmentedAssignmentExpression",
-      "irKey": "augmentedAssignment",
+      "irKey": "augmentedAssignmentExpression",
       "hidden": false,
       "fields": [
         {
@@ -5993,7 +5890,7 @@
       "modelType": "branch",
       "typeName": "AwaitExpression",
       "factoryName": "awaitExpression",
-      "irKey": "await",
+      "irKey": "awaitExpression",
       "hidden": false,
       "fields": [
         {
@@ -6027,7 +5924,7 @@
       "modelType": "branch",
       "typeName": "BinaryExpression",
       "factoryName": "binaryExpression",
-      "irKey": "binary",
+      "irKey": "binaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -6069,18 +5966,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_binary_expression_operator",
-              "unresolved": true
+              "value": "&&"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_binary_expression_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -6124,7 +6018,7 @@
       "modelType": "branch",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "break",
+      "irKey": "breakStatement",
       "hidden": false,
       "fields": [
         {
@@ -6184,7 +6078,7 @@
       "modelType": "polymorph",
       "typeName": "CallExpression",
       "factoryName": "callExpression",
-      "irKey": "call",
+      "irKey": "callExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -7394,7 +7288,7 @@
       "modelType": "branch",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continue",
+      "irKey": "continueStatement",
       "hidden": false,
       "fields": [
         {
@@ -7464,7 +7358,7 @@
       "modelType": "branch",
       "typeName": "DebuggerStatement",
       "factoryName": "debuggerStatement",
-      "irKey": "debugger",
+      "irKey": "debuggerStatement",
       "hidden": false,
       "fields": [
         {
@@ -7570,7 +7464,7 @@
       "modelType": "branch",
       "typeName": "DecoratorCallExpression",
       "factoryName": "decoratorCallExpression",
-      "irKey": "decoratorCall",
+      "irKey": "decoratorCallExpression",
       "hidden": false,
       "fields": [
         {
@@ -7660,7 +7554,7 @@
       "modelType": "branch",
       "typeName": "DecoratorMemberExpression",
       "factoryName": "decoratorMemberExpression",
-      "irKey": "decoratorMember",
+      "irKey": "decoratorMemberExpression",
       "hidden": false,
       "fields": [
         {
@@ -7730,7 +7624,7 @@
       "modelType": "branch",
       "typeName": "DecoratorParenthesizedExpression",
       "factoryName": "decoratorParenthesizedExpression",
-      "irKey": "decoratorParenthesized",
+      "irKey": "decoratorParenthesizedExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -7822,7 +7716,7 @@
       "modelType": "branch",
       "typeName": "DoStatement",
       "factoryName": "doStatement",
-      "irKey": "do",
+      "irKey": "doStatement",
       "hidden": false,
       "fields": [
         {
@@ -8055,7 +7949,7 @@
       "modelType": "branch",
       "typeName": "EnumDeclaration",
       "factoryName": "enumDeclaration",
-      "irKey": "enum",
+      "irKey": "enumDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -8270,7 +8164,7 @@
       "modelType": "polymorph",
       "typeName": "ExportStatement",
       "factoryName": "exportStatement",
-      "irKey": "export",
+      "irKey": "exportStatement",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -8739,7 +8633,7 @@
       "modelType": "branch",
       "typeName": "FieldDefinition",
       "factoryName": "fieldDefinition",
-      "irKey": "field",
+      "irKey": "fieldDefinition",
       "hidden": false,
       "fields": [
         {
@@ -8930,7 +8824,7 @@
       "modelType": "branch",
       "typeName": "ForInStatement",
       "factoryName": "forInStatement",
-      "irKey": "forIn",
+      "irKey": "forInStatement",
       "hidden": false,
       "fields": [
         {
@@ -8942,18 +8836,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "optional",
-              "name": "_for_in_statement_await_marker",
-              "unresolved": true
+              "value": "await"
             }
           ],
           "source": "enriched",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_for_in_statement_await_marker"
-            ]
+            "kinds": []
           }
         },
         {
@@ -9061,7 +8952,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "for",
+      "irKey": "forStatement",
       "hidden": false,
       "fields": [
         {
@@ -9091,10 +8982,9 @@
               "unresolved": true
             },
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_for_statement_initializer",
-              "unresolved": true
+              "value": ";"
             }
           ],
           "source": "grammar",
@@ -9103,8 +8993,7 @@
             "kinds": [
               "lexical_declaration",
               "variable_declaration",
-              "_expressions",
-              "_for_statement_initializer"
+              "_expressions"
             ]
           }
         },
@@ -9238,7 +9127,7 @@
       "modelType": "branch",
       "typeName": "FunctionDeclaration",
       "factoryName": "functionDeclaration",
-      "irKey": "function",
+      "irKey": "functionDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -10304,7 +10193,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "if",
+      "irKey": "ifStatement",
       "hidden": false,
       "fields": [
         {
@@ -11429,7 +11318,7 @@
       "modelType": "branch",
       "typeName": "InstantiationExpression",
       "factoryName": "instantiationExpression",
-      "irKey": "instantiation",
+      "irKey": "instantiationExpression",
       "hidden": false,
       "fields": [
         {
@@ -11496,7 +11385,7 @@
       "modelType": "branch",
       "typeName": "InterfaceDeclaration",
       "factoryName": "interfaceDeclaration",
-      "irKey": "interface",
+      "irKey": "interfaceDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -11888,7 +11777,7 @@
       "modelType": "branch",
       "typeName": "JsxExpression",
       "factoryName": "jsxExpression",
-      "irKey": "jsx",
+      "irKey": "jsxExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -12187,7 +12076,7 @@
       "modelType": "branch",
       "typeName": "LabeledStatement",
       "factoryName": "labeledStatement",
-      "irKey": "labeled",
+      "irKey": "labeledStatement",
       "hidden": false,
       "fields": [
         {
@@ -12247,7 +12136,7 @@
       "modelType": "branch",
       "typeName": "LexicalDeclaration",
       "factoryName": "lexicalDeclaration",
-      "irKey": "lexical",
+      "irKey": "lexicalDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -12526,7 +12415,7 @@
       "modelType": "branch",
       "typeName": "MemberExpression",
       "factoryName": "memberExpression",
-      "irKey": "member",
+      "irKey": "memberExpression",
       "hidden": false,
       "fields": [
         {
@@ -12636,7 +12525,7 @@
       "modelType": "branch",
       "typeName": "MethodDefinition",
       "factoryName": "methodDefinition",
-      "irKey": "method",
+      "irKey": "methodDefinition",
       "hidden": false,
       "fields": [
         {
@@ -13527,7 +13416,7 @@
       "modelType": "branch",
       "typeName": "NewExpression",
       "factoryName": "newExpression",
-      "irKey": "new",
+      "irKey": "newExpression",
       "hidden": false,
       "fields": [
         {
@@ -13607,7 +13496,7 @@
       "modelType": "branch",
       "typeName": "NonNullExpression",
       "factoryName": "nonNullExpression",
-      "irKey": "nonNull",
+      "irKey": "nonNullExpression",
       "hidden": false,
       "fields": [
         {
@@ -14470,7 +14359,7 @@
       "modelType": "polymorph",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
-      "irKey": "parenthesized",
+      "irKey": "parenthesizedExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -14898,7 +14787,7 @@
       "modelType": "branch",
       "typeName": "PublicFieldDefinition",
       "factoryName": "publicFieldDefinition",
-      "irKey": "publicField",
+      "irKey": "publicFieldDefinition",
       "hidden": false,
       "fields": [
         {
@@ -15441,7 +15330,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "return",
+      "irKey": "returnStatement",
       "hidden": false,
       "fields": [
         {
@@ -15501,7 +15390,7 @@
       "modelType": "branch",
       "typeName": "SatisfiesExpression",
       "factoryName": "satisfiesExpression",
-      "irKey": "satisfies",
+      "irKey": "satisfiesExpression",
       "hidden": false,
       "fields": [
         {
@@ -15558,7 +15447,7 @@
       "modelType": "branch",
       "typeName": "SequenceExpression",
       "factoryName": "sequenceExpression",
-      "irKey": "sequence",
+      "irKey": "sequenceExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -15847,7 +15736,7 @@
       "modelType": "branch",
       "typeName": "SubscriptExpression",
       "factoryName": "subscriptExpression",
-      "irKey": "subscript",
+      "irKey": "subscriptExpression",
       "hidden": false,
       "fields": [
         {
@@ -16078,7 +15967,7 @@
       "modelType": "branch",
       "typeName": "SwitchStatement",
       "factoryName": "switchStatement",
-      "irKey": "switch",
+      "irKey": "switchStatement",
       "hidden": false,
       "fields": [
         {
@@ -16263,7 +16152,7 @@
       "modelType": "branch",
       "typeName": "TernaryExpression",
       "factoryName": "ternaryExpression",
-      "irKey": "ternary",
+      "irKey": "ternaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -16364,7 +16253,7 @@
       "modelType": "branch",
       "typeName": "ThrowStatement",
       "factoryName": "throwStatement",
-      "irKey": "throw",
+      "irKey": "throwStatement",
       "hidden": false,
       "fields": [
         {
@@ -16435,7 +16324,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "try",
+      "irKey": "tryStatement",
       "hidden": false,
       "fields": [
         {
@@ -16622,7 +16511,7 @@
       "modelType": "branch",
       "typeName": "TypeAliasDeclaration",
       "factoryName": "typeAliasDeclaration",
-      "irKey": "typeAlias",
+      "irKey": "typeAliasDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -17154,7 +17043,7 @@
       "modelType": "branch",
       "typeName": "UnaryExpression",
       "factoryName": "unaryExpression",
-      "irKey": "unary",
+      "irKey": "unaryExpression",
       "hidden": false,
       "fields": [
         {
@@ -17315,7 +17204,7 @@
       "modelType": "polymorph",
       "typeName": "UpdateExpression",
       "factoryName": "updateExpression",
-      "irKey": "update",
+      "irKey": "updateExpression",
       "hidden": false,
       "source": "override",
       "polymorphSource": "override",
@@ -17403,7 +17292,7 @@
       "modelType": "branch",
       "typeName": "VariableDeclaration",
       "factoryName": "variableDeclaration",
-      "irKey": "variable",
+      "irKey": "variableDeclaration",
       "hidden": false,
       "fields": [
         {
@@ -17563,7 +17452,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "while",
+      "irKey": "whileStatement",
       "hidden": false,
       "fields": [
         {
@@ -17630,7 +17519,7 @@
       "modelType": "branch",
       "typeName": "WithStatement",
       "factoryName": "withStatement",
-      "irKey": "with",
+      "irKey": "withStatement",
       "hidden": false,
       "fields": [
         {
@@ -17697,7 +17586,7 @@
       "modelType": "branch",
       "typeName": "YieldExpression",
       "factoryName": "yieldExpression",
-      "irKey": "yield",
+      "irKey": "yieldExpression",
       "hidden": false,
       "fields": [
         {

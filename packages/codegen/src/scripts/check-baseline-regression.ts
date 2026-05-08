@@ -73,18 +73,10 @@ export type RegressionVerdict =
 
 const GRAMMARS = ['python', 'rust', 'typescript'] as const;
 
-const VALIDATORS = [
-	'from',
-	'coverage',
-	'roundtrip',
-	'factoryRoundtrip'
-] as const;
+const VALIDATORS = ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const;
 type ValidatorName = (typeof VALIDATORS)[number];
 
-const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = [
-	'roundtrip',
-	'factoryRoundtrip'
-];
+const ROUNDTRIP_VALIDATORS: readonly ValidatorName[] = ['roundtrip', 'factoryRoundtrip'];
 
 // ---------------------------------------------------------------------------
 // Schema validation — runs on BOTH base and head. Catches manual edits
@@ -103,10 +95,7 @@ function isPlainStringArray(value: unknown): value is string[] {
 	return Array.isArray(value) && value.every((v) => typeof v === 'string');
 }
 
-function validateSortedStringArray(
-	value: unknown,
-	path: string
-): RegressionVerdict | null {
+function validateSortedStringArray(value: unknown, path: string): RegressionVerdict | null {
 	if (!isPlainStringArray(value)) {
 		return {
 			ok: false,
@@ -126,11 +115,7 @@ function validateSortedStringArray(
 	return null;
 }
 
-function validateValidatorResultShape(
-	v: unknown,
-	path: string,
-	isRoundtrip: boolean
-): RegressionVerdict | null {
+function validateValidatorResultShape(v: unknown, path: string, isRoundtrip: boolean): RegressionVerdict | null {
 	if (v === null || typeof v !== 'object') {
 		return {
 			ok: false,
@@ -166,10 +151,7 @@ function validateValidatorResultShape(
 			details: { path: `${path}.failingKinds`, note: 'required by contract' }
 		};
 	}
-	const fkv = validateSortedStringArray(
-		obj['failingKinds'],
-		`${path}.failingKinds`
-	);
+	const fkv = validateSortedStringArray(obj['failingKinds'], `${path}.failingKinds`);
 	if (fkv) return fkv;
 	if (!('formatDeferredKinds' in obj)) {
 		return {
@@ -182,18 +164,12 @@ function validateValidatorResultShape(
 			}
 		};
 	}
-	const fdv = validateSortedStringArray(
-		obj['formatDeferredKinds'],
-		`${path}.formatDeferredKinds`
-	);
+	const fdv = validateSortedStringArray(obj['formatDeferredKinds'], `${path}.formatDeferredKinds`);
 	if (fdv) return fdv;
 	return null;
 }
 
-function validateParityFixturesShape(
-	v: unknown,
-	path: string
-): RegressionVerdict | null {
+function validateParityFixturesShape(v: unknown, path: string): RegressionVerdict | null {
 	if (v === null || typeof v !== 'object') {
 		return {
 			ok: false,
@@ -248,10 +224,7 @@ function validateParityFixturesShape(
 	return null;
 }
 
-function validateBaselineShape(
-	b: unknown,
-	label: string
-): RegressionVerdict | null {
+function validateBaselineShape(b: unknown, label: string): RegressionVerdict | null {
 	if (b === null || typeof b !== 'object') {
 		return {
 			ok: false,
@@ -411,13 +384,8 @@ function collectPassCounts(b: BackendBaseline): PassCountSample[] {
 	return out;
 }
 
-function checkPassCounts(
-	base: BackendBaseline,
-	head: BackendBaseline
-): RegressionVerdict | null {
-	const baseSamples = new Map(
-		collectPassCounts(base).map((s) => [s.path, s.value])
-	);
+function checkPassCounts(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
+	const baseSamples = new Map(collectPassCounts(base).map((s) => [s.path, s.value]));
 	for (const s of collectPassCounts(head)) {
 		const before = baseSamples.get(s.path) ?? 0;
 		if (s.value < before) {
@@ -436,10 +404,7 @@ function checkPassCounts(
 // Total-drop / total-fail-rise (rules #2 / #3)
 // ---------------------------------------------------------------------------
 
-function checkTotalDrop(
-	base: BackendBaseline,
-	head: BackendBaseline
-): RegressionVerdict | null {
+function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	if (head.totals.total < base.totals.total) {
 		return {
 			ok: false,
@@ -455,10 +420,7 @@ function checkTotalDrop(
 	return null;
 }
 
-function checkTotalFailRise(
-	base: BackendBaseline,
-	head: BackendBaseline
-): RegressionVerdict | null {
+function checkTotalFailRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	if (head.totals.fail <= base.totals.fail) return null;
 	// Total fail rose. Allowed only when the rise is FULLY accounted
 	// for by newly-discovered tests (total grew by ≥ the fail rise AND
@@ -494,17 +456,12 @@ function validatorSum(v: ValidatorResult): number {
 
 function parityFixturesSum(p: ParityFixtures): number {
 	let sum = 0;
-	for (const k of Object.keys(p.failingByKind))
-		sum += p.failingByKind[k]?.length ?? 0;
-	for (const k of Object.keys(p.formatDeferredByKind))
-		sum += p.formatDeferredByKind[k]?.length ?? 0;
+	for (const k of Object.keys(p.failingByKind)) sum += p.failingByKind[k]?.length ?? 0;
+	for (const k of Object.keys(p.formatDeferredByKind)) sum += p.formatDeferredByKind[k]?.length ?? 0;
 	return sum;
 }
 
-function checkFormatDeferredRise(
-	base: BackendBaseline,
-	head: BackendBaseline
-): RegressionVerdict | null {
+function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const g of GRAMMARS) {
 		const baseGE: GrammarEntry = base.grammars[g];
 		const headGE: GrammarEntry = head.grammars[g];
@@ -585,10 +542,7 @@ function checkFormatDeferredRise(
  * check, `base.backend === head.backend` is guaranteed, so the summary
  * may quote `head.backend` without ambiguity.
  */
-export function checkRegression(
-	base: BackendBaseline,
-	head: BackendBaseline
-): RegressionVerdict {
+export function checkRegression(base: BackendBaseline, head: BackendBaseline): RegressionVerdict {
 	const headSchema = validateBaselineShape(head, 'head');
 	if (headSchema) return headSchema;
 	const baseSchema = validateBaselineShape(base, 'base');
@@ -642,9 +596,7 @@ function parseArgs(argv: readonly string[]): CliArgs {
 		}
 	}
 	if (base === undefined || head === undefined) {
-		throw new Error(
-			'usage: check-baseline-regression --base <path> --head <path>'
-		);
+		throw new Error('usage: check-baseline-regression --base <path> --head <path>');
 	}
 	return { base, head };
 }

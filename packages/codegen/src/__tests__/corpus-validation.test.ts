@@ -26,11 +26,11 @@
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'node:path';
 import { generate } from '../compiler/generate.ts';
-import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
 import { validateRenderable } from '../validate/renderable.ts';
-import { validateReadNodeRoundTrip } from '../validate/readnode-roundtrip.ts';
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadProjection } from '../validate/read-projection.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 /**
@@ -160,89 +160,81 @@ type GrammarName = keyof typeof FLOORS;
 function resolveTemplatesPath(grammar: GrammarName): string {
 	// Per-rule `.jinja` layout (feature 011). Validators auto-detect
 	// directory vs legacy `.yaml` file via createRenderer dispatch.
-	return resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${grammar}/templates`
-	);
+	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
 }
 
-describe.each(Object.keys(FLOORS) as GrammarName[])(
-	'corpus validation floor — %s',
-	(grammar) => {
-		const floors = FLOORS[grammar];
+describe.each(Object.keys(FLOORS) as GrammarName[])('corpus validation floor — %s', (grammar) => {
+	const floors = FLOORS[grammar];
 
-		it(`factory build fidelity (AST match) passes at least ${floors.factoryAstMatchPass}/${floors.factoryTotal}`, async () => {
-			// Strict structural equality on the factory-build round-trip.
-			// Catches factory API gaps the weaker kind-found check misses:
-			// dropped anonymous children (e.g. python `async` prefix),
-			// missing field surface, children slot not plumbed through
-			// the factory signature.
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateFactoryRoundTrip(grammar, templatesPath);
+	it(`factory build fidelity (AST match) passes at least ${floors.factoryAstMatchPass}/${floors.factoryTotal}`, async () => {
+		// Strict structural equality on the factory-build round-trip.
+		// Catches factory API gaps the weaker kind-found check misses:
+		// dropped anonymous children (e.g. python `async` prefix),
+		// missing field surface, children slot not plumbed through
+		// the factory signature.
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = await validateFactoryRenderParse(grammar, templatesPath);
 
-			expect(result.astMatchPass).toBeGreaterThanOrEqual(
-				floors.factoryAstMatchPass
-			);
-		}, 60000);
+		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.factoryAstMatchPass);
+	}, 60000);
 
-		it(`factory round-trip passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateFactoryRoundTrip(grammar, templatesPath);
+	it(`factory render-parse passes at least ${floors.factoryPass}/${floors.factoryTotal}`, async () => {
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = await validateFactoryRenderParse(grammar, templatesPath);
 
-			expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal);
-			expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass);
-		}, 60000);
+		expect(result.total).toBeGreaterThanOrEqual(floors.factoryTotal);
+		expect(result.pass).toBeGreaterThanOrEqual(floors.factoryPass);
+	}, 60000);
 
-		it(`from() correctness passes at least ${floors.fromPass}/${floors.fromTotal}`, async () => {
-			const result = await validateFrom(grammar);
+	it(`from() correctness passes at least ${floors.fromPass}/${floors.fromTotal}`, async () => {
+		const result = await validateFrom(grammar);
 
-			expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal);
-			expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass);
-		}, 60000);
+		expect(result.total).toBeGreaterThanOrEqual(floors.fromTotal);
+		expect(result.pass).toBeGreaterThanOrEqual(floors.fromPass);
+	}, 60000);
 
-		it(`full round-trip (render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
+	it(`full read-render-parse passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
 
-			expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
-			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
-		}, 60000);
+		expect(result.total).toBeGreaterThanOrEqual(floors.rtTotal);
+		expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
+	}, 60000);
 
-		it(`round-trip AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
-			// Strict structural equality between the original parse and
-			// the reparsed tree — anonymous tokens included. Tightens
-			// `rtPass` (which only checks that the kind survives) so
-			// regressions that silently drop content like `;` / `,` /
-			// keyword tokens fail CI. The gap between `rtAstMatchPass`
-			// and `rtPass` is the outstanding fidelity debt.
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native' });
+	it(`read-render-parse AST match passes at least ${floors.rtAstMatchPass}/${floors.rtTotal}`, async () => {
+		// Strict structural equality between the original parse and
+		// the reparsed tree — anonymous tokens included. Tightens
+		// `rtPass` (which only checks that the kind survives) so
+		// regressions that silently drop content like `;` / `,` /
+		// keyword tokens fail CI. The gap between `rtAstMatchPass`
+		// and `rtPass` is the outstanding fidelity debt.
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native' });
 
-			expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
-		}, 60000);
+		expect(result.astMatchPass).toBeGreaterThanOrEqual(floors.rtAstMatchPass);
+	}, 60000);
 
-		it(`deep round-trip (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
-			// Full recursive read — deep-reads ALL named kinds, not just
-			// variant-adopted. Exercises full materialization path.
-			// Native parse + native render + recursive drill-in.
-			// Floor matches shallow RT — deep must be at least as good.
-			// Asserts structural identity (not just "kind found").
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = await validateRoundTrip(grammar, templatesPath, { backend: 'native', recursive: true });
+	it(`deep read-render-parse (recursive read → render → reparse) passes at least ${floors.rtPass}/${floors.rtTotal}`, async () => {
+		// Full recursive read — deep-reads ALL named kinds, not just
+		// variant-adopted. Exercises full materialization path.
+		// Native parse + native render + recursive drill-in.
+		// Floor matches shallow RT — deep must be at least as good.
+		// Asserts structural identity (not just "kind found").
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = await validateReadRenderParse(grammar, templatesPath, { backend: 'native', recursive: true });
 
-			expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
-			expect(result.astMatchPass).toBe(result.pass);
-		}, 120000);
+		expect(result.pass).toBeGreaterThanOrEqual(floors.rtPass);
+		expect(result.astMatchPass).toBe(result.pass);
+	}, 120000);
 
-		it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = validateTemplateCoverage(grammar, templatesPath);
+	it(`template coverage passes at least ${floors.covPass}/${floors.covTotal}`, async () => {
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = validateTemplateCoverage(grammar, templatesPath);
 
-			expect(result.total).toBeGreaterThanOrEqual(floors.covTotal);
-			expect(result.pass).toBeGreaterThanOrEqual(floors.covPass);
-		});
-	}
-);
+		expect(result.total).toBeGreaterThanOrEqual(floors.covTotal);
+		expect(result.pass).toBeGreaterThanOrEqual(floors.covPass);
+	});
+});
 
 describe('corpus validation — legacy baseline gap report', () => {
 	// These tests document the delta between the current floor and the
@@ -455,11 +447,11 @@ const ALIAS_VARIANT_KINDS: Record<string, Set<string>> = {
 	])
 };
 
-describe('readNode round-trip — structural', () => {
+describe('read projection — structural', () => {
 	it.each(['python', 'rust', 'typescript'] as const)(
 		'%s: every kind in the corpus passes the structural check',
 		async (grammar) => {
-			const result = await validateReadNodeRoundTrip(grammar);
+			const result = await validateReadProjection(grammar);
 			const known = OVERRIDE_PARSER_KNOWN_ISSUES[grammar] ?? new Set();
 			const unexpected = result.issues.filter((i) => !known.has(i.kind));
 			if (unexpected.length > 0) {
@@ -467,9 +459,7 @@ describe('readNode round-trip — structural', () => {
 					.slice(0, 10)
 					.map((i) => `  - ${i.kind} [${i.instance}]: ${i.message}`)
 					.join('\n');
-				throw new Error(
-					`readNode lost content on ${unexpected.length} kind(s) in ${grammar}:\n${lines}`
-				);
+				throw new Error(`readNode lost content on ${unexpected.length} kind(s) in ${grammar}:\n${lines}`);
 			}
 			expect(result.pass + known.size).toBeGreaterThanOrEqual(result.total);
 			expect(result.total).toBeGreaterThan(0);
@@ -483,35 +473,26 @@ describe('renderability — every node-types.json kind must be reachable', () =>
 	// by @sittir/core's render() via one of: supertype dispatch, pure leaf
 	// (direct text), or a rules-map entry. An un-renderable kind means
 	// `render(node)` will throw at runtime for any instance of that kind.
-	it.each(Object.keys(FLOORS) as GrammarName[])(
-		'%s: 100%% of named kinds are renderable',
-		async (grammar) => {
-			const templatesPath = resolveTemplatesPath(grammar);
-			const result = validateRenderable(grammar, templatesPath);
-			// Filter out alias variant kinds — these are nested-alias
-			// targets that appear in node-types.json but aren't standalone
-			// renderable nodes. They're rendered as children of their
-			// parent polymorph kind.
-			const realMissing = result.missing.filter(
-				(m) => !ALIAS_VARIANT_KINDS[grammar]?.has(m.kind)
-			);
-			if (realMissing.length > 0) {
-				const lines = realMissing
-					.slice(0, 10)
-					.map((m) => `  - ${m.kind}: ${m.reason}`)
-					.join('\n');
-				throw new Error(
-					`${realMissing.length} un-renderable kind(s) in ${grammar}:\n${lines}`
-				);
-			}
-			expect(realMissing).toHaveLength(0);
-			const aliasCount = ALIAS_VARIANT_KINDS[grammar]?.size ?? 0;
-			expect(result.renderable + aliasCount).toBeGreaterThanOrEqual(
-				result.total
-			);
-			expect(result.total).toBeGreaterThan(0);
+	it.each(Object.keys(FLOORS) as GrammarName[])('%s: 100%% of named kinds are renderable', async (grammar) => {
+		const templatesPath = resolveTemplatesPath(grammar);
+		const result = validateRenderable(grammar, templatesPath);
+		// Filter out alias variant kinds — these are nested-alias
+		// targets that appear in node-types.json but aren't standalone
+		// renderable nodes. They're rendered as children of their
+		// parent polymorph kind.
+		const realMissing = result.missing.filter((m) => !ALIAS_VARIANT_KINDS[grammar]?.has(m.kind));
+		if (realMissing.length > 0) {
+			const lines = realMissing
+				.slice(0, 10)
+				.map((m) => `  - ${m.kind}: ${m.reason}`)
+				.join('\n');
+			throw new Error(`${realMissing.length} un-renderable kind(s) in ${grammar}:\n${lines}`);
 		}
-	);
+		expect(realMissing).toHaveLength(0);
+		const aliasCount = ALIAS_VARIANT_KINDS[grammar]?.size ?? 0;
+		expect(result.renderable + aliasCount).toBeGreaterThanOrEqual(result.total);
+		expect(result.total).toBeGreaterThan(0);
+	});
 });
 
 describe('corpus validation — generator produces usable output', () => {

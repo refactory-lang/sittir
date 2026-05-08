@@ -49,10 +49,7 @@ export type ExternalRole = { role: 'indent' | 'dedent' | 'newline' };
 // Evaluate rule occurrence identity and classification
 // ---------------------------------------------------------------------------
 
-export type RuleProvenance =
-	| 'grammar-authored'
-	| 'override-authored-or-replaced'
-	| 'evaluate-synthesized';
+export type RuleProvenance = 'grammar-authored' | 'override-authored-or-replaced' | 'evaluate-synthesized';
 
 export type RulePathSegment =
 	| { readonly edge: 'content' }
@@ -447,9 +444,7 @@ export interface NodeMap {
 	readonly refineForms?: Map<string, RefineForm[]>;
 }
 
-export function computePolymorphFormKinds(
-	nodes: Map<string, AssembledNode>
-): Set<string> {
+export function computePolymorphFormKinds(nodes: Map<string, AssembledNode>): Set<string> {
 	const result = new Set<string>();
 	for (const [, node] of nodes) {
 		if (node.modelType !== 'polymorph') continue;

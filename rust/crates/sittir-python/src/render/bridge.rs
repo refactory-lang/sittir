@@ -363,7 +363,11 @@ pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str>
         (198, 240) => Some("eq"), // ("assignment", "assignment_eq")
         (198, 241) => Some("eq"), // ("assignment", "assignment_type")
         (198, 242) => Some("eq"), // ("assignment", "assignment_typed")
-        (122, 243) => Some("tuple"), // ("expression_statement", "expression_statement_tuple")
+        (122, 198) => Some("expression"), // ("expression_statement", "assignment")
+        (122, 199) => Some("expression"), // ("expression_statement", "augmented_assignment")
+        (122, 187) => Some("expression"), // ("expression_statement", "expression")
+        (122, 243) => Some("expression"), // ("expression_statement", "expression_statement_tuple")
+        (122, 202) => Some("expression"), // ("expression_statement", "yield")
         (143, 244) => Some("bare"), // ("with_clause", "with_clause_bare")
         (143, 245) => Some("bare"), // ("with_clause", "with_clause_paren")
         _ => None,
@@ -471,7 +475,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = AssignmentTypeTemplate {
-                r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -481,7 +485,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_1 = resolve_field(node, "type", true)?;
             let template = AssignmentTypedTemplate {
                 right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -1056,7 +1060,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
         }
         122 => { // "expression_statement"
             let children = resolve_children(node, &[])?;
-            let variant = resolve_variant(node);
             let children_renderables = children.renderable_items();
             let template = ExpressionStatementTemplate {
                 children: ListNonterminalView {
@@ -1065,7 +1068,6 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                variant,
             };
             template.render_into(dest)
         }
@@ -1781,7 +1783,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = TypeAliasStatementTemplate {
                 left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
                 right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
         }
@@ -1818,7 +1820,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_2 = resolve_field(node, "value", true)?;
             let template = TypedDefaultParameterTemplate {
                 name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
                 value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
             };
             template.render_into(dest)
@@ -1834,7 +1836,7 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                r#type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
             };
             template.render_into(dest)
         }

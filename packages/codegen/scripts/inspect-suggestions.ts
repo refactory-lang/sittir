@@ -7,19 +7,13 @@
 
 import { evaluate } from '../src/compiler/evaluate.ts';
 import { link } from '../src/compiler/link.ts';
-import {
-	resolveGrammarJsPath,
-	resolveOverridesPath
-} from '../src/compiler/resolve-grammar.ts';
+import { resolveGrammarJsPath, resolveOverridesPath } from '../src/compiler/resolve-grammar.ts';
 import { existsSync } from 'node:fs';
 
 const grammar = process.argv[2] ?? 'python';
 const useOverrides = process.argv[3] !== '--base';
 const overridesPath = resolveOverridesPath(grammar);
-const entryPath =
-	useOverrides && existsSync(overridesPath)
-		? overridesPath
-		: resolveGrammarJsPath(grammar);
+const entryPath = useOverrides && existsSync(overridesPath) ? overridesPath : resolveGrammarJsPath(grammar);
 console.log(`entry: ${entryPath}`);
 
 const raw = await evaluate(entryPath);

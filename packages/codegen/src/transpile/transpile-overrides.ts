@@ -21,14 +21,7 @@
  */
 
 import * as esbuild from 'esbuild';
-import {
-	mkdirSync,
-	existsSync,
-	writeFileSync,
-	copyFileSync,
-	readdirSync,
-	statSync
-} from 'node:fs';
+import { mkdirSync, existsSync, writeFileSync, copyFileSync, readdirSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,9 +54,7 @@ export interface TranspileResult {
  * and basic stats. Throws on transpile errors with esbuild's diagnostic
  * messages attached.
  */
-export async function transpileOverrides(
-	opts: TranspileOptions
-): Promise<TranspileResult> {
+export async function transpileOverrides(opts: TranspileOptions): Promise<TranspileResult> {
 	const root = opts.packagesRoot ?? packagesRoot;
 	const inputPath = join(root, opts.grammar, 'overrides.ts');
 	const outputDir = join(root, opts.grammar, '.sittir');
@@ -114,13 +105,11 @@ export async function transpileOverrides(
 		join(outputDir, 'tree-sitter.json'),
 		JSON.stringify(
 			{
-				$schema:
-					'https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json',
+				$schema: 'https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json',
 				grammars: [
 					{
 						name: opts.grammar,
-						camelcase:
-							opts.grammar.charAt(0).toUpperCase() + opts.grammar.slice(1),
+						camelcase: opts.grammar.charAt(0).toUpperCase() + opts.grammar.slice(1),
 						scope: `source.${opts.grammar}`,
 						path: '.',
 						'file-types': []
@@ -171,9 +160,7 @@ export async function transpileOverrides(
 
 	if (result.errors.length > 0) {
 		const messages = result.errors.map((e) => e.text).join('\n');
-		throw new Error(
-			`transpileOverrides(${opts.grammar}): esbuild errors:\n${messages}`
-		);
+		throw new Error(`transpileOverrides(${opts.grammar}): esbuild errors:\n${messages}`);
 	}
 
 	const meta = result.metafile!;
@@ -181,12 +168,8 @@ export async function transpileOverrides(
 	// esbuild's metafile uses path strings (relative to cwd) as keys
 	// and doesn't guarantee that the entry point is the first entry —
 	// synthesized helpers and re-exports can precede it.
-	const inputKey = Object.keys(meta.inputs).find((k) =>
-		k.endsWith('overrides.ts')
-	);
-	const outputKey = Object.keys(meta.outputs).find((k) =>
-		k.endsWith('grammar.js')
-	);
+	const inputKey = Object.keys(meta.inputs).find((k) => k.endsWith('overrides.ts'));
+	const outputKey = Object.keys(meta.outputs).find((k) => k.endsWith('grammar.js'));
 	const inputMeta = inputKey ? meta.inputs[inputKey] : undefined;
 	const outputMeta = outputKey ? meta.outputs[outputKey] : undefined;
 
@@ -208,9 +191,7 @@ export async function transpileOverrides(
 function copyExternalScannerSources(grammar: string, outputDir: string): void {
 	let basePkgPath: string;
 	try {
-		basePkgPath = dirname(
-			requireFromHere.resolve(`tree-sitter-${grammar}/package.json`)
-		);
+		basePkgPath = dirname(requireFromHere.resolve(`tree-sitter-${grammar}/package.json`));
 	} catch (e) {
 		// Narrow to MODULE_NOT_FOUND — we expect "package doesn't exist"
 		// (grammar has no external scanner) but NOT permission errors,
@@ -265,9 +246,7 @@ function externalizeTreeSitterBases(): esbuild.Plugin {
 				// Strip any leading path components down to the
 				// tree-sitter-<lang> package segment, then keep the
 				// sub-path (or default to /grammar.js).
-				const match = args.path.match(
-					/(?:^|\/)(tree-sitter-[a-z][a-z0-9-]*)(\/.+)?$/
-				);
+				const match = args.path.match(/(?:^|\/)(tree-sitter-[a-z][a-z0-9-]*)(\/.+)?$/);
 				if (!match) return null;
 				const pkg = match[1]!;
 				const sub = match[2] ?? '/grammar.js';

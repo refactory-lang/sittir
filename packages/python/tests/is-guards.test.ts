@@ -24,16 +24,10 @@ describe('python is / isTree / isNode composition', () => {
 	});
 
 	it('isNode returns true for NodeData shapes', () => {
-		expect(
-			isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })
-		).toBe(true);
+		expect(isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })).toBe(true);
 		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
-		expect(
-			isNode({ $type: TSKindId.IfStatement, _body: {} } as { readonly $type: number })
-		).toBe(true);
-		expect(
-			isNode({ $type: TSKindId.FunctionDefinition })
-		).toBe(false);
+		expect(isNode({ $type: TSKindId.IfStatement, _body: {} } as { readonly $type: number })).toBe(true);
+		expect(isNode({ $type: TSKindId.FunctionDefinition })).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
@@ -48,9 +42,7 @@ describe('python is / isTree / isNode composition', () => {
 	});
 
 	it('assert.kind throws with kind name in message on mismatch', () => {
-		expect(() => assert.classDefinition({ $type: TSKindId.IfStatement })).toThrow(
-			TypeError
-		);
+		expect(() => assert.classDefinition({ $type: TSKindId.IfStatement })).toThrow(TypeError);
 	});
 });
 

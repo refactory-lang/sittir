@@ -7,11 +7,7 @@ import {
 } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNonterminal, NodeOrTerminal } from '../compiler/node-map.ts';
-import {
-	AssembledKeyword,
-	AssembledPattern,
-	AssembledEnum
-} from '../compiler/node-map.ts';
+import { AssembledKeyword, AssembledPattern, AssembledEnum } from '../compiler/node-map.ts';
 
 // ---------------------------------------------------------------------------
 // Test helpers (mirrors resolve-effective-literal.test.ts)
@@ -40,18 +36,12 @@ function makeField(values: readonly NodeOrTerminal[]): AssembledNonterminal {
 	} as AssembledNonterminal;
 }
 
-const terminal = (
-	value: string,
-	multiplicity: NodeOrTerminal['multiplicity']
-): NodeOrTerminal => ({
+const terminal = (value: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOrTerminal => ({
 	kind: 'terminal',
 	value,
 	multiplicity
 });
-const ref = (
-	name: string,
-	multiplicity: NodeOrTerminal['multiplicity']
-): NodeOrTerminal => ({
+const ref = (name: string, multiplicity: NodeOrTerminal['multiplicity']): NodeOrTerminal => ({
 	kind: 'node-ref',
 	node: { kind: 'unresolved-ref', name },
 	multiplicity
@@ -102,36 +92,24 @@ describe('keywordPresenceKind', () => {
 
 		it("repeat(_kw_async) degenerate one-literal → 'boolean'", () => {
 			const f = makeField([ref('_kw_async', 'array')]);
-			const nm = makeNodeMap([
-				['_kw_async', makeKeyword('_kw_async', 'async')]
-			]);
+			const nm = makeNodeMap([['_kw_async', makeKeyword('_kw_async', 'async')]]);
 			expect(keywordPresenceKind(f, nm)).toBe('boolean');
 		});
 	});
 
 	describe('bitflag classification', () => {
 		it("repeat1(choice('a','b')) → 'bitflag'", () => {
-			const f = makeField([
-				terminal('a', 'nonEmptyArray'),
-				terminal('b', 'nonEmptyArray')
-			]);
+			const f = makeField([terminal('a', 'nonEmptyArray'), terminal('b', 'nonEmptyArray')]);
 			expect(keywordPresenceKind(f, makeNodeMap([]))).toBe('bitflag');
 		});
 
 		it("repeat(enum('a','b','c')) → 'bitflag'", () => {
-			const f = makeField([
-				terminal('a', 'array'),
-				terminal('b', 'array'),
-				terminal('c', 'array')
-			]);
+			const f = makeField([terminal('a', 'array'), terminal('b', 'array'), terminal('c', 'array')]);
 			expect(keywordPresenceKind(f, makeNodeMap([]))).toBe('bitflag');
 		});
 
 		it("repeat1(SYMBOL(_kw_a) | SYMBOL(_kw_b)) → 'bitflag'", () => {
-			const f = makeField([
-				ref('_kw_a', 'nonEmptyArray'),
-				ref('_kw_b', 'nonEmptyArray')
-			]);
+			const f = makeField([ref('_kw_a', 'nonEmptyArray'), ref('_kw_b', 'nonEmptyArray')]);
 			const nm = makeNodeMap([
 				['_kw_a', makeKeyword('_kw_a', 'a')],
 				['_kw_b', makeKeyword('_kw_b', 'b')]
@@ -146,20 +124,13 @@ describe('keywordPresenceKind', () => {
 			// resolveEntryLiteral returns undefined because enum isn't
 			// single-value. So the single-entry-optional branch doesn't fire.
 			const f = makeField([ref('enum_vis', 'optional')]);
-			const nm = makeNodeMap([
-				['enum_vis', makeEnum('enum_vis', ['pub', 'priv'])]
-			]);
+			const nm = makeNodeMap([['enum_vis', makeEnum('enum_vis', ['pub', 'priv'])]]);
 			expect(keywordPresenceKind(f, nm)).toBeNull();
 		});
 
 		it('repeat(choice(STRING, SYMBOL($.kind))) → null (non-literal symbol disqualifies)', () => {
-			const f = makeField([
-				terminal('const', 'array'),
-				ref('mutable_specifier', 'array')
-			]);
-			const nm = makeNodeMap([
-				['mutable_specifier', makeLeaf('mutable_specifier')]
-			]);
+			const f = makeField([terminal('const', 'array'), ref('mutable_specifier', 'array')]);
+			const nm = makeNodeMap([['mutable_specifier', makeLeaf('mutable_specifier')]]);
 			expect(keywordPresenceKind(f, nm)).toBeNull();
 		});
 
@@ -219,11 +190,7 @@ describe('keywordPresenceValues', () => {
 			terminal('unsafe', 'nonEmptyArray'),
 			terminal('const', 'nonEmptyArray')
 		]);
-		expect(keywordPresenceValues(f, makeNodeMap([]))).toEqual([
-			'async',
-			'unsafe',
-			'const'
-		]);
+		expect(keywordPresenceValues(f, makeNodeMap([]))).toEqual(['async', 'unsafe', 'const']);
 	});
 
 	it('returns [] for boolean fields', () => {
@@ -232,11 +199,7 @@ describe('keywordPresenceValues', () => {
 	});
 
 	it('dedupes repeated literals', () => {
-		const f = makeField([
-			terminal('a', 'array'),
-			terminal('b', 'array'),
-			terminal('a', 'array')
-		]);
+		const f = makeField([terminal('a', 'array'), terminal('b', 'array'), terminal('a', 'array')]);
 		// 'a' + 'b' distinct → bitflag; value list has 'a','b' in insertion order
 		expect(keywordPresenceValues(f, makeNodeMap([]))).toEqual(['a', 'b']);
 	});
@@ -248,18 +211,12 @@ describe('keywordPresenceValues', () => {
 
 describe('keywordPresenceIsNonEmptyRepeat', () => {
 	it('returns true when every entry is nonEmptyArray', () => {
-		const f = makeField([
-			terminal('a', 'nonEmptyArray'),
-			terminal('b', 'nonEmptyArray')
-		]);
+		const f = makeField([terminal('a', 'nonEmptyArray'), terminal('b', 'nonEmptyArray')]);
 		expect(keywordPresenceIsNonEmptyRepeat(f)).toBe(true);
 	});
 
 	it('returns false when any entry is array (zero-allowed)', () => {
-		const f = makeField([
-			terminal('a', 'nonEmptyArray'),
-			terminal('b', 'array')
-		]);
+		const f = makeField([terminal('a', 'nonEmptyArray'), terminal('b', 'array')]);
 		expect(keywordPresenceIsNonEmptyRepeat(f)).toBe(false);
 	});
 

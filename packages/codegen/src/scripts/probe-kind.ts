@@ -132,22 +132,16 @@ async function main(): Promise<void> {
 		process.exit(2);
 	}
 	const grammar = values.grammar as string;
-	const source = values.stdin
-		? await readStdin()
-		: (values.source as string | undefined);
+	const source = values.stdin ? await readStdin() : (values.source as string | undefined);
 	if (source === undefined) {
 		console.error('probe-kind: --source <text> or --stdin required');
 		process.exit(2);
 	}
 
-	const parsedRange = values.range
-		? parseRange(values.range as string)
-		: undefined;
+	const parsedRange = values.range ? parseRange(values.range as string) : undefined;
 	const engineRaw = (values.engine as string | undefined) ?? 'typescript';
 	if (!['typescript', 'native', 'both'].includes(engineRaw)) {
-		console.error(
-			`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`
-		);
+		console.error(`probe-kind: --engine must be 'typescript' | 'native' | 'both' (got '${engineRaw}')`);
 		process.exit(2);
 	}
 	const opts = {
@@ -156,9 +150,7 @@ async function main(): Promise<void> {
 		kind: values.kind as string | undefined,
 		range: parsedRange,
 		reparse: values.reparse === true,
-		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as
-			| 'typescript'
-			| 'native'
+		engine: (engineRaw === 'both' ? 'typescript' : engineRaw) as 'typescript' | 'native'
 	};
 	const report = await probe(grammar, source, opts);
 	let baselineReport: ProbeReport | undefined;
@@ -271,9 +263,7 @@ export async function probe(
 ): Promise<ProbeReport> {
 	const { Parser, lang } =
 		opts.baselineDir && opts.useBaselineParser
-			? await loadLanguageFromPath(
-					resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm')
-				)
+			? await loadLanguageFromPath(resolveBaselinePath(opts.baselineDir, '.sittir/parser.wasm'))
 			: await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -288,20 +278,12 @@ export async function probe(
 	let isRoot = true;
 	let probeRange: ProbeReport['probeRange'] | undefined;
 	if (opts.range) {
-		targetNode = findNodeCoveringRange(
-			tree.rootNode,
-			opts.range.start,
-			opts.range.end
-		);
-		if (!targetNode)
-			throw new Error(
-				`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`
-			);
+		targetNode = findNodeCoveringRange(tree.rootNode, opts.range.start, opts.range.end);
+		if (!targetNode) throw new Error(`probe-kind: no node covers range ${opts.range.start}–${opts.range.end}`);
 		isRoot = false;
 	} else if (opts.kind) {
 		targetNode = findFirstByKind(tree.rootNode, opts.kind);
-		if (!targetNode)
-			throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
+		if (!targetNode) throw new Error(`probe-kind: no node of kind '${opts.kind}' found`);
 		isRoot = false;
 	}
 	if (!isRoot) {
@@ -343,29 +325,20 @@ export async function probe(
 				? findInNodeData(root, opts.kind)
 				: findInNodeDataByRange(root, opts.range!.start, opts.range!.end);
 			if (!target) {
-				throw new Error(
-					`probe-kind: --engine native: no node match in NodeData tree`
-				);
+				throw new Error(`probe-kind: --engine native: no node match in NodeData tree`);
 			}
 			const targetId = (target as { $nodeId?: NodeId }).$nodeId;
-			nodeData =
-				targetId !== undefined && readTreeNodeFn
-					? readTreeNodeFn(handle, targetId)
-					: target;
+			nodeData = targetId !== undefined && readTreeNodeFn ? readTreeNodeFn(handle, targetId) : target;
 		}
 	} else {
 		const readTreeNodeFn = opts.noWrap
 			? null
 			: opts.baselineDir
-				? await loadReadTreeNodeFromPath(
-						resolveBaselinePath(opts.baselineDir, 'src/wrap.ts')
-					)
+				? await loadReadTreeNodeFromPath(resolveBaselinePath(opts.baselineDir, 'src/wrap.ts'))
 				: await loadReadTreeNode(grammar);
 		const handle = treeHandle(tree, source);
 		const nodeId = isRoot ? undefined : (targetNode.id as NodeId);
-		nodeData = readTreeNodeFn
-			? readTreeNodeFn(handle, nodeId)
-			: await fallbackReadNode(handle, nodeId);
+		nodeData = readTreeNodeFn ? readTreeNodeFn(handle, nodeId) : await fallbackReadNode(handle, nodeId);
 	}
 
 	let rendered: string | undefined;
@@ -380,10 +353,7 @@ export async function probe(
 					? nativeEngine.render(await nativeRenderPayload(grammar, nodeData))
 					: await renderNodeDataNative(grammar, nodeData)
 				: opts.baselineDir
-					? await renderNodeDataFromPath(
-							resolveBaselinePath(opts.baselineDir, 'templates'),
-							nodeData
-						)
+					? await renderNodeDataFromPath(resolveBaselinePath(opts.baselineDir, 'templates'), nodeData)
 					: await renderNodeData(grammar, nodeData);
 		renderedLen = rendered.length;
 		const originalText = probeRange ? probeRange.text : source;
@@ -394,10 +364,7 @@ export async function probe(
 				// Re-parse root is a whole program; drill down to the
 				// same-kind node for comparison when we probed a
 				// sub-tree.
-				const root2 = isRoot
-					? tree2.rootNode
-					: (findFirstByKind(tree2.rootNode, targetNode.type) ??
-						tree2.rootNode);
+				const root2 = isRoot ? tree2.rootNode : (findFirstByKind(tree2.rootNode, targetNode.type) ?? tree2.rootNode);
 				reparsedCst = dumpCst(root2, null);
 				const origShape = shapeString(cst);
 				const reparsedShape = shapeString(reparsedCst);
@@ -446,19 +413,13 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 	for (let i = 0; i < node.childCount; i++) {
 		const child = node.child(i);
 		if (!child) continue;
-		const fn =
-			typeof node.fieldNameForChild === 'function'
-				? node.fieldNameForChild(i)
-				: null;
+		const fn = typeof node.fieldNameForChild === 'function' ? node.fieldNameForChild(i) : null;
 		out.children.push(dumpCst(child, fn));
 	}
 	return out;
 }
 
-async function fallbackReadNode(
-	handle: ReturnType<typeof treeHandle>,
-	nodeId?: NodeId
-): Promise<unknown> {
+async function fallbackReadNode(handle: ReturnType<typeof treeHandle>, nodeId?: NodeId): Promise<unknown> {
 	const { readNode } = await import('@sittir/core');
 	return readNode(handle, nodeId);
 }
@@ -479,11 +440,7 @@ function findFirstByKind(node: any, kind: string): any | null {
  * Find the smallest node whose byte range exactly covers `[start, end)`.
  * Falls back to any node covering the range when no exact match exists.
  */
-function findNodeCoveringRange(
-	node: any,
-	start: number,
-	end: number
-): any | null {
+function findNodeCoveringRange(node: any, start: number, end: number): any | null {
 	if (node.startIndex > start || node.endIndex < end) return null;
 	// Try to narrow into a child.
 	for (let i = 0; i < node.childCount; i++) {
@@ -498,38 +455,27 @@ function findNodeCoveringRange(
 
 /** Normalize a CST node to a compact shape signature for diffing. */
 function shapeString(node: CstNode): string {
-	const kids =
-		node.children.length === 0
-			? ''
-			: `(${node.children.map(shapeString).join(',')})`;
+	const kids = node.children.length === 0 ? '' : `(${node.children.map(shapeString).join(',')})`;
 	return `${node.type}${kids}`;
 }
 
 function parseRange(spec: string): { start: number; end: number } {
 	const m = /^(\d+),(\d+)$/.exec(spec.trim());
-	if (!m)
-		throw new Error(`probe-kind: --range expects 'start,end' (got '${spec}')`);
+	if (!m) throw new Error(`probe-kind: --range expects 'start,end' (got '${spec}')`);
 	return { start: Number(m[1]), end: Number(m[2]) };
 }
 
-async function renderNodeData(
-	grammar: string,
-	nodeData: unknown
-): Promise<string> {
+async function renderNodeData(grammar: string, nodeData: unknown): Promise<string> {
 	const { createRenderer } = await import('@sittir/core');
 	const thisFile = import.meta.url;
-	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile)
-		.pathname;
+	const templatesPath = new URL(`../../../${grammar}/templates`, thisFile).pathname;
 	const bound = createRenderer(templatesPath);
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
 }
 
 /** @internal — render via templates from an explicit absolute path
  *  (used by --baseline mode to swap render-side artifacts). */
-async function renderNodeDataFromPath(
-	templatesPath: string,
-	nodeData: unknown
-): Promise<string> {
+async function renderNodeDataFromPath(templatesPath: string, nodeData: unknown): Promise<string> {
 	const { createRenderer } = await import('@sittir/core');
 	const bound = createRenderer(templatesPath);
 	return bound.render(nodeData as Parameters<typeof bound.render>[0]);
@@ -558,10 +504,7 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 	// artifact.
 	const pkg = nativePackages[grammar];
 	if (!pkg) throw new Error(`probe-kind: no native package for ${grammar}`);
-	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(
-		/\/$/,
-		''
-	);
+	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(/\/$/, '');
 	const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 	let mod: { SittirEngine: new () => NativeProbeEngine };
 	try {
@@ -579,10 +522,7 @@ async function loadNativeEngine(grammar: string): Promise<NativeProbeEngine> {
 	return new mod.SittirEngine();
 }
 
-async function nativeRenderPayload(
-	grammar: string,
-	nodeData: unknown
-): Promise<Record<string, unknown>> {
+async function nativeRenderPayload(grammar: string, nodeData: unknown): Promise<Record<string, unknown>> {
 	const thisFile = import.meta.url;
 	const utilsPath = new URL(`../../../${grammar}/src/utils.ts`, thisFile).href;
 	const utils = (await import(utilsPath)) as {
@@ -604,10 +544,7 @@ async function nativeRenderPayload(
  *  parse / tree dependency. The native crate uses the `tree_sitter`
  *  Rust crate + `tree_sitter_<lang>::LANGUAGE`; zero web-tree-sitter
  *  on this path. */
-async function renderNodeDataNative(
-	grammar: string,
-	nodeData: unknown
-): Promise<string> {
+async function renderNodeDataNative(grammar: string, nodeData: unknown): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
 	return engine.render(await nativeRenderPayload(grammar, nodeData));
 }
@@ -620,23 +557,16 @@ async function loadReadTreeNodeFromPath(
 ): Promise<((handle: unknown, nodeId?: number) => unknown) | null> {
 	try {
 		const mod = await import(wrapTsPath);
-		return (
-			(mod as { readTreeNode?: (h: unknown, id?: number) => unknown })
-				.readTreeNode ?? null
-		);
+		return (mod as { readTreeNode?: (h: unknown, id?: number) => unknown }).readTreeNode ?? null;
 	} catch (e) {
-		process.stderr.write(
-			`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`
-		);
+		process.stderr.write(`probe-kind: failed to load baseline wrap module at ${wrapTsPath}: ${(e as Error).message}\n`);
 		return null;
 	}
 }
 
 /** @internal — load a tree-sitter Language from an explicit wasm path
  *  (used by --baseline-parser mode). */
-async function loadLanguageFromPath(
-	wasmPath: string
-): Promise<{ Parser: typeof TS.Parser; lang: TS.Language }> {
+async function loadLanguageFromPath(wasmPath: string): Promise<{ Parser: typeof TS.Parser; lang: TS.Language }> {
 	const { Parser, Language } = await loadWebTreeSitter();
 	const lang = await Language.load(wasmPath);
 	return { Parser, lang };
@@ -647,10 +577,7 @@ async function loadLanguageFromPath(
  *  path (e.g. `packages/rust-baseline`). */
 function resolveBaselinePath(baselineDir: string, sub: string): string {
 	if (baselineDir.startsWith('/')) return `${baselineDir}/${sub}`;
-	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(
-		/\/$/,
-		''
-	);
+	const repoRoot = new URL('../../../..', import.meta.url).pathname.replace(/\/$/, '');
 	return `${repoRoot}/${baselineDir}/${sub}`;
 }
 
@@ -669,18 +596,13 @@ export interface ProbeCompare {
 	summary: string;
 }
 
-function computeCompare(
-	current: ProbeReport,
-	baseline: ProbeReport
-): ProbeCompare {
+function computeCompare(current: ProbeReport, baseline: ProbeReport): ProbeCompare {
 	const renderedEqual = current.rendered === baseline.rendered;
-	const renderedLenDelta =
-		(current.diff.renderedLen ?? 0) - (baseline.diff.renderedLen ?? 0);
+	const renderedLenDelta = (current.diff.renderedLen ?? 0) - (baseline.diff.renderedLen ?? 0);
 	const inputAstShapeEqual = shapeOf(current.cst) === shapeOf(baseline.cst);
 	let astShapeEqual: boolean | undefined;
 	if (current.astDiff && baseline.astDiff) {
-		astShapeEqual =
-			current.astDiff.reparsedShape === baseline.astDiff.reparsedShape;
+		astShapeEqual = current.astDiff.reparsedShape === baseline.astDiff.reparsedShape;
 	}
 	const summary = renderedEqual
 		? 'rendered output identical'
@@ -733,18 +655,13 @@ function findInNodeData(node: unknown, kind: string): unknown | null {
  *  whenever a child's span contains the target, fall back to the
  *  smallest containing node when no child does. Used by the native
  *  engine `--range` path where the wasm `targetNode.id` doesn't apply. */
-function findInNodeDataByRange(
-	node: unknown,
-	start: number,
-	end: number
-): unknown | null {
+function findInNodeDataByRange(node: unknown, start: number, end: number): unknown | null {
 	if (!node || typeof node !== 'object') return null;
 	const n = node as Record<string, unknown>;
 	const span = n.$span as { start: number; end: number } | undefined;
 	if (!span) return null;
 	if (span.start > start || span.end < end) return null;
-	const recurseInto = (child: unknown): unknown | null =>
-		findInNodeDataByRange(child, start, end);
+	const recurseInto = (child: unknown): unknown | null => findInNodeDataByRange(child, start, end);
 	for (const key of Object.keys(n)) {
 		if (!key.startsWith('_')) continue;
 		const v = n[key];
@@ -781,13 +698,9 @@ export interface ProbeEngineCompare {
 	summary: string;
 }
 
-function computeEngineCompare(
-	ts: ProbeReport,
-	native: ProbeReport
-): ProbeEngineCompare {
+function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngineCompare {
 	const renderedEqual = ts.rendered === native.rendered;
-	const renderedLenDelta =
-		(ts.diff.renderedLen ?? 0) - (native.diff.renderedLen ?? 0);
+	const renderedLenDelta = (ts.diff.renderedLen ?? 0) - (native.diff.renderedLen ?? 0);
 	let astShapeEqual: boolean | undefined;
 	if (ts.astDiff && native.astDiff) {
 		astShapeEqual = ts.astDiff.reparsedShape === native.astDiff.reparsedShape;
@@ -801,11 +714,7 @@ function computeEngineCompare(
 function stripBigInts(v: unknown): unknown {
 	// NodeData carries `$nodeId` as number (or bigint on some platforms);
 	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
-	return JSON.parse(
-		JSON.stringify(v, (_k, val) =>
-			typeof val === 'bigint' ? Number(val) : val
-		)
-	);
+	return JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val)));
 }
 
 async function readStdin(): Promise<string> {

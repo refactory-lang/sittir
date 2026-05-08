@@ -106,14 +106,14 @@ pub struct AssignmentEqTemplate<'a> {
 #[derive(::askama::Template)]
 #[template(path = "_assignment_type.jinja", escape = "none")]
 pub struct AssignmentTypeTemplate<'a> {
-    pub r#type: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
 #[template(path = "_assignment_typed.jinja", escape = "none")]
 pub struct AssignmentTypedTemplate<'a> {
     pub right: SingleNonterminalView<'a>,
-    pub r#type: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -422,7 +422,6 @@ pub struct ExpressionStatementTupleTemplate<'a> {
 #[template(path = "expression_statement.jinja", escape = "none")]
 pub struct ExpressionStatementTemplate<'a> {
     pub children: ListNonterminalView<'a>,
-    pub variant: &'a str,
 }
 
 #[derive(::askama::Template)]
@@ -769,7 +768,7 @@ pub struct TupleTemplate<'a> {
 pub struct TypeAliasStatementTemplate<'a> {
     pub left: SingleNonterminalView<'a>,
     pub right: SingleNonterminalView<'a>,
-    pub r#type: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]
@@ -788,7 +787,7 @@ pub struct TypeTemplate<'a> {
 #[template(path = "typed_default_parameter.jinja", escape = "none")]
 pub struct TypedDefaultParameterTemplate<'a> {
     pub name: SingleNonterminalView<'a>,
-    pub r#type: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
     pub value: SingleNonterminalView<'a>,
 }
 
@@ -796,7 +795,7 @@ pub struct TypedDefaultParameterTemplate<'a> {
 #[template(path = "typed_parameter.jinja", escape = "none")]
 pub struct TypedParameterTemplate<'a> {
     pub children: ListNonterminalView<'a>,
-    pub r#type: SingleNonterminalView<'a>,
+    pub type_: SingleNonterminalView<'a>,
 }
 
 #[derive(::askama::Template)]

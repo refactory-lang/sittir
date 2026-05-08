@@ -150,7 +150,7 @@ describe('render', () => {
 
 	it('throws on branch node without fields', () => {
 		const node = { $type: 'function_item' } as AnyNodeData;
-		expect(() => render(node)).toThrow("has no 'fields'");
+		expect(() => render(node)).toThrow('has no structure');
 	});
 
 	it('throws when a single-slot field is rendered from an empty array', () => {

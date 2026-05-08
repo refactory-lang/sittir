@@ -37,18 +37,12 @@ describe('is / isTree / isNode guard composition', () => {
 	});
 
 	it('isNode returns true for NodeData shapes, false for loose bags', () => {
-		expect(
-			isNode({ $type: TSKindId.Identifier, $text: 'foo' } as { readonly $type: number })
-		).toBe(true);
+		expect(isNode({ $type: TSKindId.Identifier, $text: 'foo' } as { readonly $type: number })).toBe(true);
 		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
 		// Use a _<name> key to signal a branch node shape.
-		expect(
-			isNode({ $type: TSKindId.Block, _name: 'x' } as { readonly $type: number })
-		).toBe(true);
+		expect(isNode({ $type: TSKindId.Block, _name: 'x' } as { readonly $type: number })).toBe(true);
 		// Loose bag without _<name> keys or $text — looks like a config object.
-		expect(
-			isNode({ $type: TSKindId.FunctionItem })
-		).toBe(false);
+		expect(isNode({ $type: TSKindId.FunctionItem })).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
@@ -65,7 +59,7 @@ describe('is / isTree / isNode guard composition', () => {
 	it('kind × shape composition narrows to NamespaceMap projection', () => {
 		// ADR-0018 Phase 2: no $fields on the interface; use _name key for isNode shape.
 		const v: FunctionItem = {
-			$type: TSKindId.FunctionItem,
+			$type: TSKindId.FunctionItem
 		} as unknown as FunctionItem;
 		if (is.functionItem(v) && isNode(v)) {
 			// Runtime path executes — structural narrowing via isNode verified.
@@ -87,9 +81,7 @@ describe('assert throw behavior', () => {
 	});
 
 	it('assert.kind throws with kind name in message', () => {
-		expect(() => assert.kind({ $type: TSKindId.Block }, 'function_item')).toThrow(
-			TypeError
-		);
+		expect(() => assert.kind({ $type: TSKindId.Block }, 'function_item')).toThrow(TypeError);
 	});
 });
 

@@ -30,10 +30,7 @@
  */
 
 import type { Rule, ChoiceRule } from './rule.ts';
-import {
-	isSyntheticFieldWrapper,
-	unwrapStructuralPassthroughs
-} from './node-map.ts';
+import { isSyntheticFieldWrapper, unwrapStructuralPassthroughs } from './node-map.ts';
 
 /**
  * Extract anonymous-string literals flanking the main content of a field
@@ -63,11 +60,7 @@ function extractFlankingLiterals(content: Rule): {
 	if (first?.type === 'string' && content.members.length >= 2) {
 		leading = first.value;
 	}
-	if (
-		last?.type === 'string' &&
-		content.members.length >= 2 &&
-		last !== first
-	) {
+	if (last?.type === 'string' && content.members.length >= 2 && last !== first) {
 		trailing = last.value;
 	}
 	return { leading, trailing };
@@ -236,11 +229,9 @@ export function renderRuleTemplate(
 	};
 }
 
-function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
+export function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
 	const guarded = new Set<string>();
-	for (const match of template.matchAll(
-		/\{%\s*if\s+([a-z0-9_]+)\s*\|\s*(?:isPresent|is_present)\s*%\}/g
-	)) {
+	for (const match of template.matchAll(/\{%\s*if\s+([a-z0-9_]+)\s*\|\s*(?:isPresent|is_present)\s*%\}/g)) {
 		const name = match[1];
 		if (name) guarded.add(name);
 	}
@@ -253,10 +244,7 @@ function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
 		if (name === 'children' || name === 'text') continue;
 		const nextView = sigil === '$$$' ? 'list' : 'scalar';
 		const prev = byName.get(name);
-		const view =
-			prev == null || prev.view === nextView
-				? nextView
-				: ('field' as const);
+		const view = prev == null || prev.view === nextView ? nextView : ('field' as const);
 		byName.set(name, {
 			name,
 			view,
@@ -275,11 +263,7 @@ function deriveWalkSlots(template: string): readonly WalkSlotUse[] {
  * detected. Hidden-symbol content is inlined at template time, so
  * follow them too.
  */
-function containsRepeat(
-	rule: Rule,
-	rules: Record<string, Rule> | undefined,
-	visiting: Set<string>
-): boolean {
+function containsRepeat(rule: Rule, rules: Record<string, Rule> | undefined, visiting: Set<string>): boolean {
 	switch (rule.type) {
 		case 'repeat':
 		case 'repeat1':
@@ -294,11 +278,7 @@ function containsRepeat(
 		case 'token':
 		case 'alias':
 		case 'terminal':
-			return containsRepeat(
-				(rule as { content: Rule }).content,
-				rules,
-				visiting
-			);
+			return containsRepeat((rule as { content: Rule }).content, rules, visiting);
 		case 'symbol': {
 			const name = (rule as { name: string }).name;
 			if (!name.startsWith('_') || !rules || visiting.has(name)) return false;
@@ -326,8 +306,7 @@ function collectRepeatedFields(
 	switch (rule.type) {
 		case 'seq':
 		case 'choice':
-			for (const m of rule.members)
-				collectRepeatedFields(m, inRepeat, out, rules, visiting);
+			for (const m of rule.members) collectRepeatedFields(m, inRepeat, out, rules, visiting);
 			return;
 		case 'repeat':
 		case 'repeat1':
@@ -340,13 +319,7 @@ function collectRepeatedFields(
 		case 'token':
 		case 'alias':
 		case 'terminal':
-			collectRepeatedFields(
-				(rule as { content: Rule }).content,
-				inRepeat,
-				out,
-				rules,
-				visiting
-			);
+			collectRepeatedFields((rule as { content: Rule }).content, inRepeat, out, rules, visiting);
 			return;
 		case 'field':
 			// A field is repeated if it sits inside a repeat (its content
@@ -356,8 +329,7 @@ function collectRepeatedFields(
 			// shape produces a multi-valued field whose values live under
 			// the same fieldNameForChild across siblings; without the
 			// `$$$` marker the template emits only the first occurrence.
-			if (inRepeat || containsRepeat(rule.content, rules, new Set()))
-				out.add(rule.name);
+			if (inRepeat || containsRepeat(rule.content, rules, new Set())) out.add(rule.name);
 			collectRepeatedFields(rule.content, inRepeat, out, rules, visiting);
 			return;
 		case 'symbol': {
@@ -408,24 +380,14 @@ function walkRuleForTemplate(
 			// first and second occurrence as the joinBy separator.
 			const unwrapField = (r: Rule): string | null => {
 				if (r.type === 'field') return r.name;
-				if (
-					r.type === 'optional' ||
-					r.type === 'variant' ||
-					r.type === 'clause' ||
-					r.type === 'group'
-				)
+				if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group')
 					return unwrapField(r.content);
 				return null;
 			};
 			const unwrapChildTarget = (r: Rule): string | null => {
 				if (r.type === 'symbol') return r.name;
 				if (r.type === 'supertype') return r.name;
-				if (
-					r.type === 'optional' ||
-					r.type === 'variant' ||
-					r.type === 'clause' ||
-					r.type === 'group'
-				)
+				if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group')
 					return unwrapChildTarget(r.content);
 				return null;
 			};
@@ -439,12 +401,9 @@ function walkRuleForTemplate(
 			// via the existing sibling-multi logic, and the inner literal is
 			// suppressed from the template so render emits via joinByTrailing
 			// without duplication.
-			const elementWithSep = (
-				r: Rule
-			): { name: string; sep: string } | null => {
+			const elementWithSep = (r: Rule): { name: string; sep: string } | null => {
 				let inner = r;
-				if (inner.type === 'repeat' || inner.type === 'repeat1')
-					inner = inner.content;
+				if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content;
 				if (inner.type !== 'seq' || inner.members.length !== 2) return null;
 				const fname = unwrapField(inner.members[0]!);
 				const sepMember = inner.members[1]!;
@@ -462,17 +421,12 @@ function walkRuleForTemplate(
 				}
 				const elemSep = elementWithSep(m);
 				if (elemSep) {
-					fieldCounts.set(
-						elemSep.name,
-						(fieldCounts.get(elemSep.name) ?? 0) + 1
-					);
-					if (!fieldSeps.has(elemSep.name))
-						fieldSeps.set(elemSep.name, elemSep.sep);
+					fieldCounts.set(elemSep.name, (fieldCounts.get(elemSep.name) ?? 0) + 1);
+					if (!fieldSeps.has(elemSep.name)) fieldSeps.set(elemSep.name, elemSep.sep);
 					continue;
 				}
 				const tgt = unwrapChildTarget(m);
-				if (tgt)
-					childTargetCounts.set(tgt, (childTargetCounts.get(tgt) ?? 0) + 1);
+				if (tgt) childTargetCounts.set(tgt, (childTargetCounts.get(tgt) ?? 0) + 1);
 			}
 			// Sibling-duplicate symbol references with the SAME target
 			// (e.g. rust or_pattern: two `_pattern` refs separated by
@@ -509,11 +463,7 @@ function walkRuleForTemplate(
 			// Restricted to genuine string-quote delimiters so block-
 			// shaped seq's (`{`, `}`, `[`, `]`, `(`, `)`) keep the
 			// statement-separating space.
-			if (
-				joinByField &&
-				!('children' in joinByField) &&
-				rule.members.length >= 3
-			) {
+			if (joinByField && !('children' in joinByField) && rule.members.length >= 3) {
 				const first = rule.members[0]!;
 				const last = rule.members[rule.members.length - 1]!;
 				if (
@@ -528,8 +478,7 @@ function walkRuleForTemplate(
 			let augmentedRepeatedFields = repeatedFields;
 			for (const [fname, cnt] of fieldCounts) {
 				if (cnt <= 1) continue;
-				if (!augmentedRepeatedFields)
-					augmentedRepeatedFields = new Set<string>();
+				if (!augmentedRepeatedFields) augmentedRepeatedFields = new Set<string>();
 				const set = augmentedRepeatedFields as Set<string>;
 				if (!set.has(fname)) set.add(fname);
 				if (joinByField && !(fname in joinByField)) {
@@ -566,8 +515,7 @@ function walkRuleForTemplate(
 				for (const [fname, cnt] of fieldCounts) {
 					if (cnt > 1 && joinByField[fname]) skipSeps.add(joinByField[fname]);
 				}
-				if (hasChildDup && joinByField['children'])
-					skipSeps.add(joinByField['children']);
+				if (hasChildDup && joinByField['children']) skipSeps.add(joinByField['children']);
 			}
 			// For members matching the `seq(field('X'), SEP)` sub-pattern
 			// where X was counted as sibling-multi above, substitute the
@@ -581,10 +529,8 @@ function walkRuleForTemplate(
 				if (cnt <= 1) return m;
 				// Peel repeat wrapper if present, then extract the field.
 				let inner = m;
-				if (inner.type === 'repeat' || inner.type === 'repeat1')
-					inner = inner.content;
-				if (inner.type === 'seq' && inner.members.length === 2)
-					return inner.members[0]!;
+				if (inner.type === 'repeat' || inner.type === 'repeat1') inner = inner.content;
+				if (inner.type === 'seq' && inner.members.length === 2) return inner.members[0]!;
 				return m;
 			};
 			const out: string[] = [];
@@ -639,10 +585,7 @@ function walkRuleForTemplate(
 						// the separator disappears alongside an absent
 						// value. Required emissions and anonymous tokens
 						// keep the unconditional push.
-						const moved = absorbLeadingSeparatorIntoJinjaConditional(
-							parts,
-							' '
-						);
+						const moved = absorbLeadingSeparatorIntoJinjaConditional(parts, ' ');
 						if (!moved) {
 							// Conversely, when the tail
 							// of out is a Jinja conditional, route the
@@ -658,20 +601,12 @@ function walkRuleForTemplate(
 							// member_expression `.` + optional optional_chain
 							// + required property, since `.` and identifier
 							// already concatenate cleanly.
-							const tailIsConditional =
-								out.length > 0 &&
-								JINJA_CONDITIONAL_FULL.test(out[out.length - 1]!);
+							const tailIsConditional = out.length > 0 && JINJA_CONDITIONAL_FULL.test(out[out.length - 1]!);
 							let absorbed = false;
 							if (tailIsConditional && out.length >= 2) {
-								const beforeLast = effectiveSpacingChar(
-									out[out.length - 2]!,
-									'last'
-								);
+								const beforeLast = effectiveSpacingChar(out[out.length - 2]!, 'last');
 								if (!needsSpace(beforeLast, firstChar, wordMatcher)) {
-									absorbed = absorbTrailingSeparatorIntoJinjaConditional(
-										out,
-										' '
-									);
+									absorbed = absorbTrailingSeparatorIntoJinjaConditional(out, ' ');
 								}
 							}
 							if (!absorbed) out.push(' ');
@@ -743,9 +678,7 @@ function walkRuleForTemplate(
 					.replace(/\s+/g, ' ')
 					.trim();
 			const firstSig = literalSig(branchResults[0]!.parts);
-			const allSameLiterals = branchResults.every(
-				(b) => literalSig(b.parts) === firstSig
-			);
+			const allSameLiterals = branchResults.every((b) => literalSig(b.parts) === firstSig);
 			if (!allSameLiterals) {
 				// Heterogeneous literals: walker can't produce a single
 				// lossless template. Ideal fix is `variant('name')`
@@ -812,10 +745,7 @@ function walkRuleForTemplate(
 				for (const p of parts) {
 					if (!p.startsWith('$') || out.includes(p)) continue;
 					const fname = placeholderField(p);
-					if (
-						fname &&
-						!['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)
-					) {
+					if (fname && !['newline', 'indent', 'dedent', 'children', 'text'].includes(fname)) {
 						out.push(emitJinjaConditional(fname, p));
 					} else {
 						out.push(p);
@@ -843,9 +773,7 @@ function walkRuleForTemplate(
 			// Grammars without a word rule fall back to `/^\w+$/`.
 			const kwString = extractSingleKeywordString(rule.content);
 			if (kwString !== null) {
-				const matches = wordMatcher
-					? wordMatcher.test(kwString)
-					: /^\w+$/.test(kwString);
+				const matches = wordMatcher ? wordMatcher.test(kwString) : /^\w+$/.test(kwString);
 				if (matches) {
 					return [emitJinjaConditional(kwString, `$${kwString.toUpperCase()}`)];
 				}
@@ -880,13 +808,8 @@ function walkRuleForTemplate(
 			//     `seq('=', field('value', ...))`.
 			//   * `optional(field)` — emit `{% if name | isPresent %}$NAME{% endif %}`.
 			const toLift: Rule =
-				rule.content.type === 'choice'
-					? rule.content
-					: ({ type: 'choice', members: [rule.content] } as Rule);
-			const lifted = liftChoiceBranchesToInlineJinja(
-				toLift as ChoiceRule,
-				seen
-			);
+				rule.content.type === 'choice' ? rule.content : ({ type: 'choice', members: [rule.content] } as Rule);
+			const lifted = liftChoiceBranchesToInlineJinja(toLift as ChoiceRule, seen);
 			if (lifted !== null) {
 				// Mark the lifted fields as seen so sibling members
 				// inside the enclosing seq don't re-emit the same slot
@@ -919,18 +842,12 @@ function walkRuleForTemplate(
 				// Inline unwrap — the seq-case helper is scoped there.
 				const peel = (r: Rule): string | null => {
 					if (r.type === 'field') return r.name;
-					if (
-						r.type === 'optional' ||
-						r.type === 'variant' ||
-						r.type === 'clause' ||
-						r.type === 'group'
-					)
+					if (r.type === 'optional' || r.type === 'variant' || r.type === 'clause' || r.type === 'group')
 						return peel(r.content);
 					return null;
 				};
 				const fname = peel(rule.content);
-				if (fname && !(fname in joinByField))
-					joinByField[fname] = rule.separator;
+				if (fname && !(fname in joinByField)) joinByField[fname] = rule.separator;
 			}
 			return walkRuleForTemplate(
 				rule.content,
@@ -1348,9 +1265,7 @@ function stripWrappers(rule: Rule): Rule {
 	}
 }
 
-function extractClauseBranch(
-	rule: Rule
-): { fieldName: string; leading: string; trailing: string } | null {
+function extractClauseBranch(rule: Rule): { fieldName: string; leading: string; trailing: string } | null {
 	if (rule.type === 'field') {
 		return { fieldName: rule.name, leading: '', trailing: '' };
 	}
@@ -1476,10 +1391,7 @@ export function findRepeatSeparator(rule: Rule): string | undefined {
  * Walks the same transparent-wrapper set as `findRepeatSeparator`
  * (seq / choice / optional / variant / clause / group / field).
  */
-export function findRepeatFlag(
-	rule: Rule,
-	flag: 'trailing' | 'leading'
-): boolean {
+export function findRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): boolean {
 	switch (rule.type) {
 		case 'repeat':
 		case 'repeat1':
@@ -1509,20 +1421,13 @@ export function findRepeatFlag(
  * specific fields whose repeats carry the flag, rather than applying it
  * globally whenever the whole rule has any trailing repeat.
  */
-export function findFieldsWithRepeatFlag(
-	rule: Rule,
-	flag: 'trailing' | 'leading'
-): Set<string> {
+export function findFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading'): Set<string> {
 	const out = new Set<string>();
 	collectFieldsWithRepeatFlag(rule, flag, out);
 	return out;
 }
 
-function collectFieldsWithRepeatFlag(
-	rule: Rule,
-	flag: 'trailing' | 'leading',
-	acc: Set<string>
-): void {
+function collectFieldsWithRepeatFlag(rule: Rule, flag: 'trailing' | 'leading', acc: Set<string>): void {
 	switch (rule.type) {
 		case 'field':
 			if (findRepeatFlag(rule.content, flag)) acc.add(rule.name);
@@ -1559,10 +1464,7 @@ function collectFieldsWithRepeatFlag(
  * unconditional `out.push(separator)`); `false` when the head fragment
  * isn't a Jinja-inline conditional.
  */
-function absorbLeadingSeparatorIntoJinjaConditional(
-	parts: string[],
-	separator: string
-): boolean {
+function absorbLeadingSeparatorIntoJinjaConditional(parts: string[], separator: string): boolean {
 	if (parts.length === 0) return false;
 	const head = parts[0]!;
 	const m = head.match(/^(\{%-? if [^%]+-?%\})/);
@@ -1583,10 +1485,7 @@ function absorbLeadingSeparatorIntoJinjaConditional(
  * unconditional `out.push(separator)`); `false` when the tail isn't a
  * Jinja-inline conditional.
  */
-function absorbTrailingSeparatorIntoJinjaConditional(
-	out: string[],
-	separator: string
-): boolean {
+function absorbTrailingSeparatorIntoJinjaConditional(out: string[], separator: string): boolean {
 	if (out.length === 0) return false;
 	const tail = out[out.length - 1]!;
 	const m = tail.match(/^(\{%-? if [^%]+-?%\})(.*)(\{%-? endif -?%\})$/);

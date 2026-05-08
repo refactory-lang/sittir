@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	emitJinjaTemplates,
-	writeJinjaTemplates
-} from '../emitters/templates.ts';
+import { emitJinjaTemplates, writeJinjaTemplates } from '../emitters/templates.ts';
 import { AssembledBranch } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { SeqRule } from '../compiler/rule.ts';
@@ -64,10 +61,7 @@ describe('T060: single-file diff on one-rule metadata change', () => {
 				['rule_a', new AssembledBranch('rule_a', ruleA(), ruleA())],
 				['rule_b', new AssembledBranch('rule_b', ruleB(), ruleB())]
 			]);
-			writeJinjaTemplates(
-				emitJinjaTemplates({ grammar: 'test', nodeMap: makeNodeMap(nodesV1) }),
-				dir
-			);
+			writeJinjaTemplates(emitJinjaTemplates({ grammar: 'test', nodeMap: makeNodeMap(nodesV1) }), dir);
 			const v1A = readFileSync(join(dir, 'rule_a.jinja'), 'utf-8');
 			const v1B = readFileSync(join(dir, 'rule_b.jinja'), 'utf-8');
 
@@ -87,10 +81,7 @@ describe('T060: single-file diff on one-rule metadata change', () => {
 				['rule_a', new AssembledBranch('rule_a', ruleAPrime, ruleAPrime)],
 				['rule_b', new AssembledBranch('rule_b', ruleB(), ruleB())]
 			]);
-			writeJinjaTemplates(
-				emitJinjaTemplates({ grammar: 'test', nodeMap: makeNodeMap(nodesV2) }),
-				dir
-			);
+			writeJinjaTemplates(emitJinjaTemplates({ grammar: 'test', nodeMap: makeNodeMap(nodesV2) }), dir);
 			const v2A = readFileSync(join(dir, 'rule_a.jinja'), 'utf-8');
 			const v2B = readFileSync(join(dir, 'rule_b.jinja'), 'utf-8');
 
@@ -127,9 +118,7 @@ describe('T060: single-file diff on one-rule metadata change', () => {
 			expect(files).not.toContain('_meta.json');
 			// Each body has the @generated header.
 			for (const f of files) {
-				expect(readFileSync(join(dir, f), 'utf-8')).toMatch(
-					/^\{#-?\s*@generated/
-				);
+				expect(readFileSync(join(dir, f), 'utf-8')).toMatch(/^\{#-?\s*@generated/);
 			}
 		} finally {
 			rmSync(dir, { recursive: true, force: true });

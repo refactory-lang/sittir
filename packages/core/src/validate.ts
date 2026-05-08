@@ -15,13 +15,8 @@
  * Full validation via tree-sitter parse.
  * Used for regression testing render rules against the grammar.
  */
-export async function validateFull(
-	source: string,
-	parser: unknown
-): Promise<string> {
-	const p = parser as
-		| { parse(source: string): { rootNode: { hasError: boolean } } | null }
-		| undefined;
+export async function validateFull(source: string, parser: unknown): Promise<string> {
+	const p = parser as { parse(source: string): { rootNode: { hasError: boolean } } | null } | undefined;
 	if (!p) {
 		throw new Error('Full validation requires a tree-sitter Parser instance');
 	}

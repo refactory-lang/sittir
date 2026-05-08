@@ -54,10 +54,7 @@ let currentRoles: Map<string, ExternalRole> | null = null;
  */
 const VALID_ROLE_NAMES = new Set(['indent', 'dedent', 'newline'] as const);
 
-export function role(
-	symbol: Rule,
-	roleName: 'indent' | 'dedent' | 'newline'
-): Rule {
+export function role(symbol: Rule, roleName: 'indent' | 'dedent' | 'newline'): Rule {
 	if (!isSymbolLike(symbol)) {
 		throw new Error(
 			`role(): first argument must be a symbol reference (e.g. $._indent), got ${JSON.stringify(symbol)}`

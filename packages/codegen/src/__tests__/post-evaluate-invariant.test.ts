@@ -23,10 +23,7 @@
 import { describe, it, expect } from 'vitest';
 import { evaluate } from '../compiler/evaluate.ts';
 import { resolveOverridesPath } from '../compiler/resolve-grammar.ts';
-import {
-	expectCompleteCatalog,
-	serializeCatalog
-} from './helpers/rule-catalog.ts';
+import { expectCompleteCatalog, serializeCatalog } from './helpers/rule-catalog.ts';
 
 const KNOWN_RULE_TYPES = new Set([
 	// Structural grouping
@@ -71,15 +68,11 @@ describe('post-evaluate invariant', () => {
 					if (!node || typeof node !== 'object') return;
 					const t = (node as { type?: unknown }).type;
 					if (typeof t !== 'string') {
-						violations.push(
-							`${ruleName}@${path.join('/')}: missing type field`
-						);
+						violations.push(`${ruleName}@${path.join('/')}: missing type field`);
 						return;
 					}
 					if (!KNOWN_RULE_TYPES.has(t)) {
-						violations.push(
-							`${ruleName}@${path.join('/')}: unknown rule type '${t}'`
-						);
+						violations.push(`${ruleName}@${path.join('/')}: unknown rule type '${t}'`);
 					}
 				});
 			}
@@ -95,16 +88,12 @@ describe('post-evaluate invariant', () => {
 				walkRule(rule, ruleName, [], (node, ruleName, path) => {
 					if (!node || typeof node !== 'object') return;
 					if ('__sittirPlaceholder' in node) {
-						violations.push(
-							`${ruleName}@${path.join('/')}: leaked __sittirPlaceholder`
-						);
+						violations.push(`${ruleName}@${path.join('/')}: leaked __sittirPlaceholder`);
 					}
 					// _needsContent is a legacy sittir-only marker on
 					// FieldRule placeholders — also must not survive.
 					if ((node as { _needsContent?: unknown })._needsContent) {
-						violations.push(
-							`${ruleName}@${path.join('/')}: leaked _needsContent placeholder`
-						);
+						violations.push(`${ruleName}@${path.join('/')}: leaked _needsContent placeholder`);
 					}
 				});
 			}
@@ -135,13 +124,8 @@ describe('post-evaluate invariant', () => {
 				// refine() form metadata — populated per ADR-0010 phase 2.
 				'refineForms'
 			]);
-			const extra = Object.keys(
-				raw as unknown as Record<string, unknown>
-			).filter((k) => !ALLOWED.has(k));
-			expect(
-				extra,
-				`unexpected RawGrammar fields: ${extra.join(', ')}`
-			).toEqual([]);
+			const extra = Object.keys(raw as unknown as Record<string, unknown>).filter((k) => !ALLOWED.has(k));
+			expect(extra, `unexpected RawGrammar fields: ${extra.join(', ')}`).toEqual([]);
 		});
 
 		it(`${grammar}: rule catalog covers every evaluated rule occurrence`, async () => {
@@ -156,9 +140,7 @@ describe('post-evaluate invariant', () => {
 			const first = await evaluate(overridesPath);
 			const second = await evaluate(overridesPath);
 
-			expect(serializeCatalog(second.ruleCatalog)).toEqual(
-				serializeCatalog(first.ruleCatalog)
-			);
+			expect(serializeCatalog(second.ruleCatalog)).toEqual(serializeCatalog(first.ruleCatalog));
 		});
 	}
 });

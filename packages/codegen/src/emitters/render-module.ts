@@ -17,14 +17,7 @@
  */
 
 import type { NodeMap } from '../compiler/types.ts';
-import type {
-	AssembledNode,
-	RenderTemplateSurface,
-	AssembledNonterminal,
-
-	AssembledSupertype,
-	UnresolvedRef
-} from '../compiler/node-map.ts';
+import type { AssembledNode, RenderTemplateSurface, AssembledNonterminal, AssembledSupertype } from '../compiler/node-map.ts';
 import {
 	AssembledBranch,
 	AssembledEnum,
@@ -33,7 +26,6 @@ import {
 	isMultiple,
 	isRequired,
 	isNodeRef,
-	isUnresolvedRef,
 	kindsOf,
 	structuralFieldsOf,
 	structuralChildrenOf
@@ -43,11 +35,11 @@ import { findRepeatSeparator } from '../compiler/template-walker.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
 import type { TemplateFile } from './template-hash.ts';
 import { computeTemplateBundleHash } from './template-hash.ts';
-import { renderModuleSrcDir } from './render-module-paths.ts';
-import {
-	collectTransportProjection,
-	type TransportLiteral
-} from './transport-projection.ts';
+import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-paths.ts';
+import { type TransportLiteral } from './transport-projection.ts';
+import { getTransportProjection } from './transport-projection-cache.ts';
+import { buildSupertypeTransportSet, classifySlot, deriveChildrenKinds, type SlotClass } from './transport-common.ts';
+import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -60,6 +52,11 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
+const SUPPORTED_GRAMMARS = ['rust', 'typescript', 'python'] as const;
+
+export function isRenderModuleGrammar(grammar: string): grammar is Grammar {
+	return (SUPPORTED_GRAMMARS as readonly string[]).includes(grammar);
+}
 
 /**
  * Output of a single emit pass. Each field names a file path
@@ -83,6 +80,40 @@ export interface RustRenderModuleEmit {
 	/** `rust/crates/sittir-{lang}/src/render/mod.rs` (T028 — exposes render_dispatch) */
 	libRs: { path: string; contents: string };
 }
+
+export interface RenderModuleTemplateCopies {
+	directory: string;
+	files: readonly { path: string; contents: string }[];
+}
+
+export interface RenderModuleBundle {
+	emit: RustRenderModuleEmit;
+	templateCopies: RenderModuleTemplateCopies;
+}
+
+interface RenderModuleEmitterConfig {
+	grammar: Grammar;
+	nodeMap: NodeMap;
+	generatedIdTables?: GeneratedIdTables;
+}
+
+const renderModuleEmitterState: { config: RenderModuleEmitterConfig | null } = {
+	config: null
+};
+
+export const renderModuleEmitter = {
+	init(config: RenderModuleEmitterConfig): void {
+		renderModuleEmitterState.config = config;
+	},
+
+	finalize(templates: EmittedTemplates): RenderModuleBundle {
+		const config = renderModuleEmitterState.config;
+		if (!config) {
+			throw new Error('renderModuleEmitter used before init()');
+		}
+		return emitRenderModuleBundle(config.grammar, templates, config.nodeMap, config.generatedIdTables);
+	}
+} as const;
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.
@@ -155,7 +186,7 @@ type EmittedNonterminalView = 'scalar' | 'list' | 'field';
 // Rust identifier safety
 // ----------------------------------------------------------------------
 
-const RUST_KEYWORDS = new Set([
+export const RUST_KEYWORDS = new Set([
 	'as',
 	'break',
 	'const',
@@ -210,16 +241,6 @@ const RUST_KEYWORDS = new Set([
 	'union'
 ]);
 
-/** Keywords that CANNOT be raw identifiers in Rust — they must be
- *  renamed. Used to emit `${kw}_` as a disambiguated field name; the
- *  `render_dispatch` arm still populates from `ctx.fields[kw]` so the
- *  template's `{{ kw }}` reference resolves. Askama's variable→field
- *  mapping doesn't handle the rename, though, so templates that
- *  reference these names will fail compilation — they require a
- *  template-author-side fix (rename the grammar field or a codegen
- *  pre-pass that renames at emit time). */
-const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self']);
-
 /**
  * Per-supertype transport enum names that collide with pre-existing
  * generated items and must be skipped during Phase 2 supertype-enum
@@ -230,15 +251,62 @@ const RUST_NON_RAWABLE_KEYWORDS = new Set(['crate', 'self', 'super', 'Self']);
  */
 const RESERVED_SUPERTYPE_ENUM_NAMES = new Set(['LiteralTransport']);
 
-/** Rust keyword → raw-identifier form. Askama lets us declare the
- *  struct field under `r#kw` and still use `{{ kw }}` in the template
- *  because askama resolves template variables by the field's raw name.
- *  A small set (`crate` / `self` / `super` / `Self`) can't be raw-
- *  identifier'd — those get a `_`-suffix rename. */
-function rustFieldIdent(id: string): string {
-	if (RUST_NON_RAWABLE_KEYWORDS.has(id)) return `${id}_`;
-	if (RUST_KEYWORDS.has(id)) return `r#${id}`;
+/** Rust field identifier mapping for generated render/transport structs.
+ *  Askama template expressions do not accept raw identifiers (`r#pub`),
+ *  so keyword-named fields use a uniform `_` suffix (`pub_`, `type_`,
+ *  `crate_`, etc.) across the Rust render module. */
+export function rustFieldIdent(id: string): string {
+	if (RUST_KEYWORDS.has(id)) return `${id}_`;
 	return id;
+}
+
+function templateFilesFromEmittedTemplates(templates: EmittedTemplates): TemplateFile[] {
+	const files: TemplateFile[] = [];
+	for (const [kind, body] of templates.bodies) {
+		files.push({ filename: `${kind}.jinja`, content: body });
+	}
+	return files;
+}
+
+function renameForRustRender(body: string): string {
+	let out = body;
+	for (const kw of RUST_KEYWORDS) {
+		const re = new RegExp(
+			`(\\{\\{-?\\s*|\\{%-?\\s*(?:if|elif)\\s+|\\{%-?\\s*for\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+in\\s+)${kw}\\b`,
+			'g'
+		);
+		out = out.replace(re, `$1${rustFieldIdent(kw)}`);
+	}
+	return out;
+}
+
+function preserveMultilineTrailingNewline(body: string): string {
+	if (!body.includes('\n') || !body.endsWith('\n')) return body;
+	return body + '\n';
+}
+
+export function planRenderModuleTemplateCopies(
+	lang: Grammar,
+	templates: EmittedTemplates
+): RenderModuleTemplateCopies {
+	const directory = renderModuleTemplatesDir(lang);
+	const files = [...templates.bodies.entries()].map(([kind, body]) => ({
+		path: `${directory}/${kind}.jinja`,
+		contents: preserveMultilineTrailingNewline(renameForRustRender(body))
+	}));
+	return { directory, files };
+}
+
+export function emitRenderModuleBundle(
+	lang: Grammar,
+	templates: EmittedTemplates,
+	nodeMap: NodeMap,
+	generatedIdTables?: GeneratedIdTables
+): RenderModuleBundle {
+	return {
+		emit: emitRenderModule(lang, templateFilesFromEmittedTemplates(templates), nodeMap, generatedIdTables),
+		templateCopies: planRenderModuleTemplateCopies(lang, templates)
+	};
 }
 
 /** Struct name: PascalCase(kind). Mirrors the AssembledNode.typeName
@@ -297,11 +365,7 @@ interface EmittedStruct {
 	hasText: boolean;
 }
 
-function emitStruct(
-	kind: string,
-	node: AssembledNode | undefined,
-	surface: RenderTemplateSurface
-): EmittedStruct {
+function emitStruct(kind: string, node: AssembledNode | undefined, surface: RenderTemplateSurface): EmittedStruct {
 	const name = structNameFor(kind, node);
 	// Build name→multiple and name→required lookups from the assembled node's
 	// structural fields so the typed dispatch emitter generates code consistent
@@ -322,9 +386,7 @@ function emitStruct(
 		...slot,
 		multiple: multipleByName.get(slot.name) ?? false,
 		// Override required from assembly if available; fall back to surface.
-		required: requiredByName.has(slot.name)
-			? (requiredByName.get(slot.name) as boolean)
-			: slot.required,
+		required: requiredByName.has(slot.name) ? (requiredByName.get(slot.name) as boolean) : slot.required,
 		// Mark whether this slot has a corresponding field in the transport struct.
 		// Virtual presentation slots (from the template walker) are not in the
 		// transport struct and must be defaulted to "" in the typed dispatch path.
@@ -337,14 +399,64 @@ function emitStruct(
 		fields,
 		hasChildren: surface.usesChildren,
 		transportHasChildren: node ? structuralChildrenOf(node).length > 0 : false,
-		childrenRequired: node
-			? hasRequiredChild(structuralChildrenOf(node))
-			: false,
-		childrenMultiple: node
-			? hasMultipleChildren(structuralChildrenOf(node))
-			: false,
+		childrenRequired: node ? hasRequiredChild(structuralChildrenOf(node)) : false,
+		childrenMultiple: node ? hasMultipleChildren(structuralChildrenOf(node)) : false,
 		hasVariant: surface.usesVariant,
 		hasText: surface.usesText
+	};
+}
+
+function mergeTemplateSurfaceFromBody(
+	body: string,
+	surface: RenderTemplateSurface | undefined
+): RenderTemplateSurface {
+	const reserved = new Set(['children', 'variant', 'text']);
+	const guarded = new Set<string>();
+	const byName = new Map<string, RenderTemplateSurface['slots'][number]>();
+	for (const slot of surface?.slots ?? []) {
+		byName.set(slot.name, { ...slot });
+	}
+	const record = (name: string, view: 'scalar' | 'list' | 'field'): void => {
+		if (reserved.has(name)) return;
+		const next = {
+			name,
+			view,
+			required: !guarded.has(name),
+			hasLeading: false,
+			hasTrailing: false
+		} as const;
+		const prev = byName.get(name);
+		if (!prev) {
+			byName.set(name, next);
+			return;
+		}
+		byName.set(name, {
+			...prev,
+			view: prev.view === next.view ? prev.view : 'field',
+			required: prev.required && next.required
+		});
+	};
+	for (const match of body.matchAll(/\{%-?\s*(?:if|elif)\s+([a-z0-9_]+)\s*\|\s*(?:isPresent|is_present)\b/g)) {
+		const name = match[1];
+		if (!name || reserved.has(name)) continue;
+		guarded.add(name);
+		record(name, 'scalar');
+	}
+	for (const match of body.matchAll(/\{\{-?\s*([a-z_][a-z0-9_]*)\b(?:\s*\|\s*([A-Za-z_][A-Za-z0-9_]*))?/g)) {
+		const name = match[1];
+		const filter = match[2];
+		if (!name) continue;
+		record(name, filter?.startsWith('join') ? 'list' : 'scalar');
+	}
+	for (const match of body.matchAll(/\{%-?\s*for\s+[A-Za-z_][A-Za-z0-9_]*\s+in\s+([a-z_][a-z0-9_]*)\b/g)) {
+		const name = match[1];
+		if (name) record(name, 'list');
+	}
+	return {
+		slots: [...byName.values()],
+		usesChildren: surface?.usesChildren ?? /\bchildren\b/.test(body),
+		usesVariant: surface?.usesVariant ?? /\bvariant\b/.test(body),
+		usesText: surface?.usesText ?? /\btext\b/.test(body)
 	};
 }
 
@@ -352,9 +464,7 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
 		lines.push(`#[derive(::askama::Template)]`);
-		lines.push(
-			`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`
-		);
+		lines.push(`#[template(path = ${JSON.stringify(`${s.kind}.jinja`)}, escape = "none")]`);
 		lines.push(`pub struct ${s.name}<'a> {`);
 		if (s.hasChildren) {
 			lines.push(`    pub children: ListNonterminalView<'a>,`);
@@ -366,9 +476,7 @@ function renderStructDefs(structs: EmittedStruct[]): string {
 			lines.push(`    pub text: &'a str,`);
 		}
 		for (const f of s.fields) {
-			lines.push(
-				`    pub ${rustFieldIdent(f.name)}: ${slotFieldType(f)},`
-			);
+			lines.push(`    pub ${rustFieldIdent(f.name)}: ${slotFieldType(f)},`);
 		}
 		lines.push(`}`);
 		lines.push('');
@@ -488,27 +596,19 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`
-	);
+	lines.push(`pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut buf = String::new();`);
 	lines.push(`    render_nodedata_into(node, &mut buf)?;`);
 	lines.push(`    Ok(buf)`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {`
-	);
+	lines.push(`pub(crate) fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {`);
 	lines.push(`    ::askama::Error::Custom(`);
-	lines.push(
-		`        format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_).into(),`
-	);
+	lines.push(`        format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_).into(),`);
 	lines.push(`    )`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`
-	);
+	lines.push(`pub(crate) fn resolve_text(node: &NodeData) -> Result<String, ::askama::Error> {`);
 	lines.push(`    if let Some(text) = &node.text {`);
 	lines.push(`        return Ok(text.to_owned());`);
 	lines.push(`    }`);
@@ -516,17 +616,13 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    if let Some(fields) = &node.fields {`);
 	lines.push(`        for value in fields.values() {`);
 	lines.push(`            match value {`);
-	lines.push(
-		`                FieldValue::Single(child) => parts.push(render_node_value(child)?),`
-	);
+	lines.push(`                FieldValue::Single(child) => parts.push(render_node_value(child)?),`);
 	lines.push(`                FieldValue::Multiple(items) => {`);
 	lines.push(`                    for child in items {`);
 	lines.push(`                        parts.push(render_node_value(child)?);`);
 	lines.push(`                    }`);
 	lines.push(`                }`);
-	lines.push(
-		`                FieldValue::Text(text) => parts.push(text.to_owned()),`
-	);
+	lines.push(`                FieldValue::Text(text) => parts.push(text.to_owned()),`);
 	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(`    }`);
@@ -538,15 +634,9 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    Ok(parts.join(""))`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {`
-	);
-	lines.push(
-		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
-	);
-	lines.push(
-		`        Some(FieldValue::Single(child)) => child.text.as_deref(),`
-	);
+	lines.push(`pub(crate) fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str> {`);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
+	lines.push(`        Some(FieldValue::Single(child)) => child.text.as_deref(),`);
 	lines.push(`        Some(FieldValue::Text(text)) => Some(text.as_str()),`);
 	lines.push(`        _ => None,`);
 	lines.push(`    }`);
@@ -555,36 +645,24 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(
 		`pub(crate) fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {`
 	);
-	lines.push(
-		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
-	);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
 	lines.push(`        None => Ok(None),`);
-	lines.push(
-		`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),`
-	);
+	lines.push(`        Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),`);
 	lines.push(`        Some(FieldValue::Single(child)) => {`);
 	lines.push(`            let rendered = render_node_value(child)?;`);
 	lines.push(`            Ok((!rendered.is_empty()).then_some(rendered))`);
 	lines.push(`        }`);
 	lines.push(`        Some(FieldValue::Multiple(_)) => {`);
 	lines.push(`            let resolved = resolve_field(node, name, false)?;`);
-	lines.push(
-		`            Ok((!resolved.scalar.is_empty()).then_some(resolved.scalar))`
-	);
+	lines.push(`            Ok((!resolved.scalar.is_empty()).then_some(resolved.scalar))`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`
-	);
-	lines.push(
-		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
-	);
+	lines.push(`pub(crate) fn resolve_required(node: &NodeData, name: &str) -> Result<String, ::askama::Error> {`);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
 	lines.push(`        None => Err(missing_required_field(node, name)),`);
-	lines.push(
-		`        Some(_) => Ok(resolve_optional(node, name)?.unwrap_or_default()),`
-	);
+	lines.push(`        Some(_) => Ok(resolve_optional(node, name)?.unwrap_or_default()),`);
 	lines.push(`    }`);
 	lines.push(`}`);
 	lines.push('');
@@ -592,9 +670,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`    matches!(text, "," | ";")`);
 	lines.push(`}`);
 	lines.push('');
-	lines.push(
-		`pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bool {`
-	);
+	lines.push(`pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bool {`);
 	lines.push(`    let fields = match &node.fields {`);
 	lines.push(`        Some(fields) => fields,`);
 	lines.push(`        None => return false,`);
@@ -621,9 +697,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`        }`);
 	lines.push(`        let values: Vec<&NodeData> = match raw {`);
 	lines.push(`            FieldValue::Single(item) => vec![item.as_ref()],`);
-	lines.push(
-		`            FieldValue::Multiple(items) => items.iter().collect(),`
-	);
+	lines.push(`            FieldValue::Multiple(items) => items.iter().collect(),`);
 	lines.push(`            FieldValue::Text(_) => Vec::new(),`);
 	lines.push(`        };`);
 	lines.push(`        for candidate in values {`);
@@ -645,9 +719,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`                continue;`);
 	lines.push(`            }`);
 	lines.push(`            if let Some(span) = child.span {`);
-	lines.push(
-		`                if span.start >= boundary && child.text.as_deref().map_or(false, is_join_flank_token) {`
-	);
+	lines.push(`                if span.start >= boundary && child.text.as_deref().map_or(false, is_join_flank_token) {`);
 	lines.push(`                    return true;`);
 	lines.push(`                }`);
 	lines.push(`            }`);
@@ -659,9 +731,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(
 		`pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {`
 	);
-	lines.push(
-		`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`
-	);
+	lines.push(`    match node.fields.as_ref().and_then(|fields| fields.get(name)) {`);
 	lines.push(`        None => {`);
 	lines.push(`            if required {`);
 	lines.push(`                Err(missing_required_field(node, name))`);
@@ -669,9 +739,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`                Ok(ResolvedField::default())`);
 	lines.push(`            }`);
 	lines.push(`        }`);
-	lines.push(
-		`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),`
-	);
+	lines.push(`        Some(FieldValue::Text(text)) => Ok(ResolvedField::from_scalar(text.to_owned())),`);
 	lines.push(`        Some(FieldValue::Single(child)) => {`);
 	lines.push(`            let rendered = render_node_value(child)?;`);
 	lines.push(`            Ok(ResolvedField::from_scalar(rendered))`);
@@ -697,9 +765,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(
 		`pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {`
 	);
-	lines.push(
-		`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`
-	);
+	lines.push(`    let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();`);
 	lines.push(`    let mut child_ordinal = 0usize;`);
 	lines.push(`    let mut first_named_idx: Option<usize> = None;`);
 	lines.push(`    let mut last_named_idx: Option<usize> = None;`);
@@ -712,17 +778,13 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`                first_named_idx = Some(index);`);
 	lines.push(`            }`);
 	lines.push(`            last_named_idx = Some(index);`);
-	lines.push(
-		`            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`
-	);
+	lines.push(`            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));`);
 	lines.push(`            child_ordinal += 1;`);
 	lines.push(`        }`);
 	lines.push(`    }`);
 	lines.push(`    if let Some(fields) = &node.fields {`);
 	lines.push(`        for (name, value) in fields {`);
-	lines.push(
-		`            if consumed_fields.iter().any(|consumed| consumed == &name.as_str()) {`
-	);
+	lines.push(`            if consumed_fields.iter().any(|consumed| consumed == &name.as_str()) {`);
 	lines.push(`                continue;`);
 	lines.push(`            }`);
 	lines.push(`            match value {`);
@@ -748,9 +810,7 @@ function renderFieldResolutionHelpers(): string[] {
 	lines.push(`            }`);
 	lines.push(`        }`);
 	lines.push(`    }`);
-	lines.push(
-		`    child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`
-	);
+	lines.push(`    child_nodes.sort_by(|left, right| left.0.cmp(&right.0).then(left.1.cmp(&right.1)));`);
 	lines.push(`    let mut children = Vec::new();`);
 	lines.push(`    for (_, _, child) in child_nodes {`);
 	lines.push(`        children.push(render_node_value(child)?);`);
@@ -795,10 +855,7 @@ function renderFieldResolutionHelpers(): string[] {
  * @param kindIdByKind - Optional map from kind string to numeric KindId.
  * @returns Rust source lines for the separator lookup function.
  */
-function renderSeparatorLookup(
-	meta: MetaData,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string[] {
+function renderSeparatorLookup(meta: MetaData, kindIdByKind?: ReadonlyMap<string, number>): string[] {
 	const lines: string[] = [];
 	if (kindIdByKind !== undefined) {
 		// Phase C: NodeData.type_ is KindId (u16). Match on numeric IDs.
@@ -807,9 +864,7 @@ function renderSeparatorLookup(
 		lines.push(`pub(crate) fn separator_for(kind_id: u16) -> &'static str {`);
 		lines.push(`    match kind_id {`);
 		const emittedSepIds = new Set<number>();
-		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) =>
-			a.localeCompare(b)
-		)) {
+		for (const [k, s] of Array.from(meta.separators.entries()).sort(([a], [b]) => a.localeCompare(b))) {
 			const id = kindIdByKind.get(k);
 			if (id !== undefined) {
 				if (emittedSepIds.has(id)) continue; // T016: skip duplicate KindId
@@ -839,24 +894,16 @@ function renderSeparatorLookup(
  * @param kindIdByKind - Optional map from kind string to numeric KindId.
  * @returns Rust source lines for the variant lookup functions.
  */
-function renderVariantLookup(
-	meta: MetaData,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string[] {
+function renderVariantLookup(meta: MetaData, kindIdByKind?: ReadonlyMap<string, number>): string[] {
 	const lines: string[] = [];
 	if (kindIdByKind !== undefined) {
-		lines.push(
-			`pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`
-		);
+		lines.push(`pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {`);
 		lines.push(`    match (parent_id, child_id) {`);
 		const sortedVariants: [string, string, string][] = [];
 		for (const [parent, map] of meta.variants) {
-			for (const [child, label] of map)
-				sortedVariants.push([parent, child, label]);
+			for (const [child, label] of map) sortedVariants.push([parent, child, label]);
 		}
-		sortedVariants.sort(
-			(a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1])
-		);
+		sortedVariants.sort((a, b) => a[0].localeCompare(b[0]) || a[1].localeCompare(b[1]));
 		const emittedVariantPairs = new Set<string>();
 		for (const [parent, child, label] of sortedVariants) {
 			const parentId = kindIdByKind.get(parent);
@@ -874,24 +921,18 @@ function renderVariantLookup(
 		lines.push(`    }`);
 		lines.push(`}`);
 	} else {
-		lines.push(
-			`pub(crate) fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`
-		);
+		lines.push(`pub(crate) fn variant_for(_parent_id: u16, _child_id: u16) -> Option<&'static str> {`);
 		lines.push(`    None`);
 		lines.push(`}`);
 	}
 	lines.push('');
 	lines.push(`pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {`);
-	lines.push(
-		`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`
-	);
+	lines.push(`    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)`);
 	lines.push(`}`);
 	lines.push('');
 	lines.push(`pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {`);
 	lines.push(`    first_named_child_kind_id(node)`);
-	lines.push(
-		`        .and_then(|child_id| variant_for(node.type_.0, child_id))`
-	);
+	lines.push(`        .and_then(|child_id| variant_for(node.type_.0, child_id))`);
 	lines.push(`        .unwrap_or("")`);
 	lines.push(`}`);
 	return lines;
@@ -905,9 +946,7 @@ function renderVariantLookup(
  */
 function renderTokenFallback(): string[] {
 	const lines: string[] = [];
-	lines.push(
-		`pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`
-	);
+	lines.push(`pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut buf = String::new();`);
 	lines.push(`    token_shaped_fallback_into(node, &mut buf)?;`);
 	lines.push(`    Ok(buf)`);
@@ -927,7 +966,9 @@ function renderTokenFallbackInto(): string[] {
 	lines.push(`            FieldValue::Text(_) => true,`);
 	lines.push(`        })`);
 	lines.push(`    });`);
-	lines.push(`    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));`);
+	lines.push(
+		`    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));`
+	);
 	lines.push(`    if fields_all_anon && children_all_anon {`);
 	lines.push(`        if let Some(text) = &node.text {`);
 	lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
@@ -987,10 +1028,7 @@ function renderTokenFallbackInto(): string[] {
  * @param kindIdByKind - Optional map from kind string to numeric KindId.
  * @returns Complete Rust source string for the support section.
  */
-function renderDirectSupport(
-	meta: MetaData,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string {
+function renderDirectSupport(meta: MetaData, kindIdByKind?: ReadonlyMap<string, number>): string {
 	return [
 		...renderFieldResolutionHelpers(),
 		'',
@@ -1000,27 +1038,19 @@ function renderDirectSupport(
 		'',
 		...renderTokenFallbackInto(),
 		'',
-		...renderTokenFallback(),
+		...renderTokenFallback()
 	].join('\n');
 }
 
 function renderPerKindFns(structs: EmittedStruct[]): string {
 	const lines: string[] = [];
 	for (const s of structs) {
-		lines.push(
-			`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`
-		);
+		lines.push(`${PER_KIND_FN_VIS}fn ${renderFnName(s.kind)}(node: &NodeData) -> Result<String, ::askama::Error> {`);
 		const consumedFieldArgs =
-			s.fields.length === 0
-				? '&[]'
-				: `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
-		lines.push(
-			`    let children = resolve_children(node, ${consumedFieldArgs})?;`
-		);
+			s.fields.length === 0 ? '&[]' : `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
+		lines.push(`    let children = resolve_children(node, ${consumedFieldArgs})?;`);
 		for (const [index, f] of s.fields.entries()) {
-			lines.push(
-				`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`
-			);
+			lines.push(`    let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
 		}
 		if (s.hasVariant) {
 			lines.push(`    let variant = resolve_variant(node);`);
@@ -1038,9 +1068,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 		}
 		for (const [index, f] of s.fields.entries()) {
 			if (f.view === 'scalar') continue;
-			lines.push(
-				`    let field_${index}_renderables = field_${index}.renderable_items();`
-			);
+			lines.push(`    let field_${index}_renderables = field_${index}.renderable_items();`);
 		}
 		lines.push(`    let template = ${s.name} {`);
 		if (s.hasChildren) {
@@ -1076,7 +1104,9 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 				// Optional scalar — use ResolvedField.kind to gate Missing vs Present.
 				lines.push(`        ${rIdent}: match field_${index}.kind {`);
 				lines.push(`            ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
-				lines.push(`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+				lines.push(
+					`            ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
+				);
 				lines.push(`        },`);
 			}
 		}
@@ -1088,10 +1118,7 @@ function renderPerKindFns(structs: EmittedStruct[]): string {
 	return lines.join('\n');
 }
 
-function renderDispatchFn(
-	_structs: EmittedStruct[],
-	_kindIdByKind?: ReadonlyMap<string, number>
-): string {
+function renderDispatchFn(_structs: EmittedStruct[], _kindIdByKind?: ReadonlyMap<string, number>): string {
 	const lines: string[] = [];
 	lines.push(`pub fn render_dispatch(node: &NodeData) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut buf = String::new();`);
@@ -1101,12 +1128,11 @@ function renderDispatchFn(
 	return lines.join('\n');
 }
 
-function renderNodedataIntoFn(
-	structs: EmittedStruct[],
-	kindIdByKind?: ReadonlyMap<string, number>
-): string {
+function renderNodedataIntoFn(structs: EmittedStruct[], kindIdByKind?: ReadonlyMap<string, number>): string {
 	const lines: string[] = [];
-	lines.push(`pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
+	lines.push(
+		`pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`
+	);
 	lines.push(`    if node.fields.is_none() && node.children.is_none() {`);
 	lines.push(`        if let Some(text) = &node.text {`);
 	lines.push(`            return dest.write_str(text).map_err(::askama::Error::from);`);
@@ -1121,11 +1147,7 @@ function renderNodedataIntoFn(
 				const visible = s.kind.replace(/^_+/, '');
 				if (kindIdByKind.has(visible)) kindAliases.push(visible);
 			}
-			const ids = new Set(
-				kindAliases
-					.map((k) => kindIdByKind.get(k))
-					.filter((id): id is number => id !== undefined)
-			);
+			const ids = new Set(kindAliases.map((k) => kindIdByKind.get(k)).filter((id): id is number => id !== undefined));
 			if (ids.size === 0) continue;
 			const newIds = [...ids].filter((id) => !emittedDispatchIds.has(id));
 			if (newIds.length === 0) continue;
@@ -1149,9 +1171,8 @@ function renderNodedataIntoFn(
 function renderInlinedMatchArm(s: EmittedStruct): string[] {
 	const lines: string[] = [];
 	const indent = '            ';
-	const consumedFieldArgs = s.fields.length === 0
-		? '&[]'
-		: `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
+	const consumedFieldArgs =
+		s.fields.length === 0 ? '&[]' : `&[${s.fields.map((field) => JSON.stringify(field.name)).join(', ')}]`;
 	lines.push(`${indent}let children = resolve_children(node, ${consumedFieldArgs})?;`);
 	for (const [index, f] of s.fields.entries()) {
 		lines.push(`${indent}let field_${index} = resolve_field(node, ${JSON.stringify(f.name)}, ${f.required})?;`);
@@ -1184,11 +1205,15 @@ function renderInlinedMatchArm(s: EmittedStruct): string[] {
 			lines.push(`${indent}        trailing: field_${index}.trailing_sep,`);
 			lines.push(`${indent}    },`);
 		} else if (f.required) {
-			lines.push(`${indent}    ${rIdent}: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+			lines.push(
+				`${indent}    ${rIdent}: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
+			);
 		} else {
 			lines.push(`${indent}    ${rIdent}: match field_${index}.kind {`);
 			lines.push(`${indent}        ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,`);
-			lines.push(`${indent}        ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`);
+			lines.push(
+				`${indent}        ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_${index}.as_scalar())),`
+			);
 			lines.push(`${indent}    },`);
 		}
 	}
@@ -1253,9 +1278,7 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 				// Heuristic pairing: first form that hasn't been paired
 				// yet with a variantChildKind.
 				if (!map.has(childKind)) {
-					const unpaired = node.forms.find(
-						(f) => !Array.from(map.values()).includes(f.name) || true
-					);
+					const unpaired = node.forms.find((f) => !Array.from(map.values()).includes(f.name) || true);
 					if (unpaired) map.set(childKind, unpaired.name);
 				}
 			}
@@ -1270,121 +1293,6 @@ function collectMetaData(nodeMap: NodeMap): MetaData {
 // ----------------------------------------------------------------------
 
 /**
- * Classification of a transport slot by its type width.
- *
- * - `concrete`      — exactly one known kind; emit `<Kind>Transport` directly.
- *                     `typeName` is the assembled node's typeName (PascalCase,
- *                     leading-underscore-stripped) used to derive the Rust
- *                     struct name and render fn name. Falls back to the kind
- *                     string when nodeMap is unavailable (test / exported path).
- * - `supertype`     — kind set is a subset of a known assembled supertype's
- *                     resolved subtypes; emit `<Supertype>Transport` enum.
- *                     `supertypeName` is the supertype's `typeName` (PascalCase).
- * - `heterogeneous` — no grammar-bound type (theoretically unreachable in
- *                     sittir's pipeline; retained as a compile-safety escape).
- */
-export type SlotClass =
-	| { readonly tag: 'concrete'; readonly kind: string; readonly typeName: string }
-	| { readonly tag: 'supertype'; readonly supertypeName: string }
-	/**
-	 * Heterogeneous slot — multiple distinct kinds, no single grammar supertype.
-	 * `useBox: true` → all child kinds are supertypes/polymorphs/multi; no concrete
-	 *   transport struct exists for any → fall back to bare `AnyTransport` (sized enum,
-	 *   no Box needed).
-	 * `useBox: false` (default) → at least one kind has a concrete transport struct;
-	 *   emit a `{TypeName}ChildTransport` per-slot enum that implements `RenderableTransport`.
-	 */
-	| { readonly tag: 'heterogeneous'; readonly useBox?: boolean };
-
-/**
- * Classify a slot's kind set against the supertype registry.
- *
- * Single source of derivation for slot class — all emitters (field type,
- * children type, render call, list buffer) MUST call this. DRY constraint.
- *
- * Tiebreak when multiple supertypes cover the kinds: the narrower supertype
- * (smallest `subtypes.size`) wins. If tied, Map insertion order (grammar order)
- * is the tiebreak — deterministic across runs.
- *
- * @param kinds - the kind set for this slot (projection.kinds for fields;
- *   deriveChildrenKinds result for children)
- * @param supertypeMap - result of `buildSupertypeTransportSet(nodeMap)`; when
- *   absent (test path / no nodeMap) multi-kind slots fall back to `heterogeneous`.
- */
-export function classifySlot(
-	kinds: readonly string[],
-	supertypeMap: ReadonlyMap<string, ReadonlySet<string>> = new Map()
-): SlotClass {
-	if (kinds.length === 1) {
-		const kind = kinds[0]!;
-		return { tag: 'concrete', kind, typeName: kind };
-	}
-	if (kinds.length === 0) {
-		return { tag: 'heterogeneous' };
-	}
-	const kindSet = new Set(kinds);
-	let bestMatch: { supertypeName: string; size: number } | undefined;
-	for (const [supertypeName, subtypes] of supertypeMap) {
-		if ([...kindSet].every((k) => subtypes.has(k))) {
-			if (bestMatch === undefined || subtypes.size < bestMatch.size) {
-				bestMatch = { supertypeName, size: subtypes.size };
-			}
-		}
-	}
-	if (bestMatch !== undefined) {
-		return { tag: 'supertype', supertypeName: bestMatch.supertypeName };
-	}
-	return { tag: 'heterogeneous' };
-}
-
-/**
- * Build a registry of supertype typeName → resolved concrete subtype set
- * from the assembled node map. Reserved for Phase 2; exported for tests.
- *
- * @param nodeMap - the assembled node map for the grammar
- */
-export function buildSupertypeTransportSet(
-	nodeMap: NodeMap
-): Map<string, ReadonlySet<string>> {
-	const result = new Map<string, ReadonlySet<string>>();
-	for (const [, node] of nodeMap.nodes) {
-		if (node.modelType !== 'supertype') continue;
-		result.set(node.typeName, new Set((node as AssembledSupertype).subtypes));
-	}
-	return result;
-}
-
-/**
- * Extract the kind set from an `AssembledNonterminal.values` array.
- * Parallel to `AssembledNonterminal.projection.kinds` for field slots.
- * Terminal values (inline string literals) are skipped — they do not
- * contribute to the transport type.
- *
- * Unresolved refs are included using their `name` (the grammar kind string,
- * e.g. `_expression`) — mirroring how `AssembledNonterminal.projection.kinds` is
- * built in `deriveFieldsRaw`. Children nodes are always unresolved in the
- * assembled IR (the `resolveSlotRefs` pass that would replace them with live
- * `AssembledNode` refs is never run). Using the name lets `classifySlotForEmit`
- * look up the node by kind in `nodeMap.nodes` and resolve the correct
- * supertype / concrete classification.
- *
- * @param child - any AssembledNonterminal (field or children slot)
- * @returns deduplicated list of resolved kind names
- */
-export function deriveChildrenKinds(child: AssembledNonterminal): string[] {
-	const kinds = new Set<string>();
-	for (const v of child.values) {
-		if (!isNodeRef(v)) continue;
-		kinds.add(
-			isUnresolvedRef(v.node)
-				? (v.node as UnresolvedRef).name
-				: (v.node as AssembledNode).kind
-		);
-	}
-	return [...kinds];
-}
-
-/**
  * Classify a slot for emit purposes — same as `classifySlot` but also:
  * - resolves `concrete` using the assembled typeName (PascalCase)
  * - downgrades `concrete` to `heterogeneous` when the single kind maps to a
@@ -1395,10 +1303,7 @@ export function deriveChildrenKinds(child: AssembledNonterminal): string[] {
  * @param kinds - the kind set for this slot
  * @param nodeMap - for modelType lookup + supertype map construction
  */
-function classifySlotForEmit(
-	kinds: readonly string[],
-	nodeMap: NodeMap
-): SlotClass {
+function classifySlotForEmit(kinds: readonly string[], nodeMap: NodeMap): SlotClass {
 	const supertypeMap = buildSupertypeTransportSet(nodeMap);
 	const cls = classifySlot(kinds, supertypeMap);
 	if (cls.tag === 'concrete') {
@@ -1557,9 +1462,7 @@ function renderTypedDispatch(
 	// dispatches branch nodes through their Askama template fns. This
 	// function is retained as the `pub fn -> String` entry point for callers
 	// that need an owned String (e.g. render_transport, parity tests).
-	lines.push(
-		`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`
-	);
+	lines.push(`pub fn render_transport_dispatch(transport: &AnyTransport) -> Result<String, ::askama::Error> {`);
 	lines.push(`    let mut s = String::new();`);
 	lines.push(`    transport.render_into(&mut s)?;`);
 	lines.push(`    Ok(s)`);
@@ -1581,36 +1484,19 @@ function renderTypedDispatch(
 	lines.push(`        match self {`);
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
-		const isLeafLikeNode =
-			node.modelType === 'pattern' ||
-			node.modelType === 'keyword' ||
-			node.modelType === 'token';
-		const isEnumNode = node instanceof AssembledEnum && !isSingleMemberEnum(node);
-		const isSingleBoolEnum = node instanceof AssembledEnum && isSingleMemberEnum(node);
+		const isLeafLikeNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
 		if (isLeafLikeNode) {
 			// Leaf/keyword/token: route through render_into so render_with_trivia! fires.
-			lines.push(
-				`            AnyTransport::${variant}(t) => t.render_into(dest),`
-			);
-		} else if (isEnumNode) {
+			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
+		} else if (node instanceof AssembledEnum) {
 			// Multi-member enum: delegate to its RenderableTransport impl which
 			// writes the static text directly via dest.write_str(match self {...}).
-			lines.push(
-				`            AnyTransport::${variant}(t) => t.render_into(dest),`
-			);
-		} else if (isSingleBoolEnum) {
-			// Single-member presence bool: static text when true, empty when false.
-			const text = JSON.stringify((node as AssembledEnum).values[0]!);
-			lines.push(
-				`            AnyTransport::${variant}(t) => if *t { dest.write_str(${text}).map_err(::askama::Error::from) } else { Ok(()) },`
-			);
+			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
 		} else {
 			// Branch/container/group/polymorph: delegate to per-kind render fn
 			// which writes directly into dest (streaming — no String intermediate).
 			const fnName = rustTypedRenderFnName(node.typeName);
-			lines.push(
-				`            AnyTransport::${variant}(t) => ${fnName}(t, dest),`
-			);
+			lines.push(`            AnyTransport::${variant}(t) => ${fnName}(t, dest),`);
 		}
 	}
 	for (const [index, literal] of literals.entries()) {
@@ -1707,8 +1593,7 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
 			}
 		} else if (childrenIsRequired) {
 			// Required bare T — render single child directly into dest.
-			const singleExpr =
-				childrenCls.tag === 'heterogeneous' ? 'node.children' : '&node.children';
+			const singleExpr = childrenCls.tag === 'heterogeneous' ? 'node.children' : '&node.children';
 			const singleWriteCall = buildSlotWriteCall(childrenCls, singleExpr);
 			lines.push(`    ${singleWriteCall}`);
 			lines.push(`    Ok(())`);
@@ -1732,25 +1617,13 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
  * Emit a simple leaf/keyword/token/enum typed render fn that writes the
  * transport text directly into dest.
  *
- * For `enum` modelType nodes:
- * - Single-member enums: transport is `bool`; write the known static text when
- *   true, nothing when false.
- * - Multi-member enums: transport is the Rust enum; write via `Display` (`t.to_string()`).
+ * For `enum` modelType nodes: transport is the Rust enum; write via `Display`
+ * (`t.to_string()`).
  * For all others: write `t.text` directly.
  */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
-	if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
-		// Single-member presence bool: write the one known static text when true.
-		const text = JSON.stringify(node.values[0]!);
-		return [
-			`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`,
-			`    if *t { dest.write_str(${text}).map_err(::askama::Error::from) } else { Ok(()) }`,
-			`}`,
-			``
-		];
-	}
 	const body =
 		node instanceof AssembledEnum
 			? `dest.write_str(&t.to_string()).map_err(::askama::Error::from)`
@@ -1805,9 +1678,7 @@ function renderTypedPolymorphFn(
  *
  * @param fields - the node's structural fields
  */
-function buildFieldKindsByName(
-	fields: readonly AssembledNonterminal[]
-): ReadonlyMap<string, readonly string[]> {
+function buildFieldKindsByName(fields: readonly AssembledNonterminal[]): ReadonlyMap<string, readonly string[]> {
 	const map = new Map<string, readonly string[]>();
 	for (const f of fields) {
 		map.set(f.name, kindsOf(f));
@@ -1826,10 +1697,7 @@ function buildFieldKindsByName(
  * @param children - the node's structural children
  * @param nodeMap - for supertype/multi detection
  */
-function classifySlotFromChildren(
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap
-): SlotClass {
+function classifySlotFromChildren(children: readonly AssembledNonterminal[], nodeMap: NodeMap): SlotClass {
 	const allKinds = [...new Set(children.flatMap((c) => deriveChildrenKinds(c)))];
 	const cls = classifySlotForEmit(allKinds, nodeMap);
 	// When the slot classifies as heterogeneous, mark whether all child kinds are
@@ -1845,12 +1713,7 @@ function classifySlotFromChildren(
  * Emit a branch/container/group typed render fn that builds the template
  * struct from the typed transport fields.
  */
-function renderTypedBranchFn(
-	node: AssembledNode,
-	struct: EmittedStruct,
-	meta: MetaData,
-	nodeMap: NodeMap
-): string[] {
+function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: MetaData, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const structName = rustTransportStructName(node);
@@ -2007,7 +1870,7 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
 	return [
 		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
 		`        .map(|t| ${mapBody})`,
-		`        .collect();`,
+		`        .collect();`
 	];
 }
 
@@ -2026,11 +1889,7 @@ function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: strin
  * @param required - When `true`, the slot type is `T`; when `false` it is `Option<T>`.
  * @param cls      - slot classification (Rust auto-coerces `&T` to `&dyn RT`).
  */
-function emitSingleChildBuffer(
-	ident: string,
-	required: boolean,
-	cls: SlotClass = { tag: 'heterogeneous' }
-): string[] {
+function emitSingleChildBuffer(ident: string, required: boolean, cls: SlotClass = { tag: 'heterogeneous' }): string[] {
 	const R = RENDERABLE_PREFIX;
 	// useBox=true: type is Box<AnyTransport> — use .as_ref() to deref through Box.
 	// All other paths (per-slot enum, concrete, supertype): Rust auto-coerces
@@ -2039,15 +1898,13 @@ function emitSingleChildBuffer(
 	if (isBox) {
 		if (required) {
 			return [
-				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`,
+				`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(node.${ident}.as_ref())];`
 			];
 		}
 		return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t.as_ref())`);
 	}
 	if (required) {
-		return [
-			`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`,
-		];
+		return [`    let ${ident}_buf: Vec<${R}Renderable<'_>> = vec![${R}Renderable::Transport(&node.${ident})];`];
 	}
 	return emitIterCollectBuffer(ident, `node.${ident}`, `${R}Renderable::Transport(t)`);
 }
@@ -2075,7 +1932,7 @@ function emitListSlotBuffer(ident: string, required: boolean): string[] {
 	}
 	return [
 		`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`,
-		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody),
+		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody)
 	];
 }
 
@@ -2190,35 +2047,14 @@ function buildTypedTemplateBody(
 			// Required single-value slot (view='scalar' or view='field', non-list).
 			if (!f.hasTransportField) {
 				// Virtual presentation slot — no backing transport field.
-				lines.push(
-					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Text("")),`
-				);
+				lines.push(`        ${rIdent}: SingleNonterminalView(${R}Renderable::Text("")),`);
 			} else if (isErased) {
 				// Heterogeneous single required field — type is Box<AnyTransport>.
 				// Deref through Box to reach &AnyTransport: &dyn RenderableTransport.
-				lines.push(
-					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`
-				);
-			} else if (
-				cls.tag === 'concrete' &&
-				nodeMap !== undefined &&
-				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
-			) {
-				// Single-member enum field: bool transport — emit static text conditional.
-				// bool does not implement RenderableTransport; use Renderable::Text directly.
-				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
-				lines.push(
-					`        ${rIdent}: SingleNonterminalView(`
-				);
-				lines.push(
-					`            if node.${rIdent} { ${R}Renderable::Text(${staticText}) } else { ${R}Renderable::Text("") }`
-				);
-				lines.push(`        ),`);
+				lines.push(`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
-				lines.push(
-					`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(&node.${rIdent})),`
-				);
+				lines.push(`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(&node.${rIdent})),`);
 			}
 		} else {
 			// Optional single-value slot.
@@ -2227,41 +2063,15 @@ function buildTypedTemplateBody(
 			} else if (isErased) {
 				// Heterogeneous single optional field — type is Option<Box<AnyTransport>>.
 				// Deref through Box to reach &AnyTransport: &dyn RenderableTransport.
-				lines.push(
-					`        ${rIdent}: match &node.${rIdent} {`
-				);
-				lines.push(
-					`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`
-				);
-				lines.push(
-					`            None => OptionalNonterminalView::Missing,`
-				);
-				lines.push(`        },`);
-			} else if (
-				cls.tag === 'concrete' &&
-				nodeMap !== undefined &&
-				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
-			) {
-				// Single-member enum field: bool transport — emit static text conditional.
-				// bool does not implement RenderableTransport; use Renderable::Text directly.
-				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
-				lines.push(`        ${rIdent}: match node.${rIdent} {`);
-				lines.push(
-					`            Some(true) => OptionalNonterminalView::Present(${R}Renderable::Text(${staticText})),`
-				);
-				lines.push(
-					`            _ => OptionalNonterminalView::Missing,`
-				);
+				lines.push(`        ${rIdent}: match &node.${rIdent} {`);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`);
+				lines.push(`            None => OptionalNonterminalView::Missing,`);
 				lines.push(`        },`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
 				lines.push(`        ${rIdent}: match &node.${rIdent} {`);
-				lines.push(
-					`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v)),`
-				);
-				lines.push(
-					`            None => OptionalNonterminalView::Missing,`
-				);
+				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v)),`);
+				lines.push(`            None => OptionalNonterminalView::Missing,`);
 				lines.push(`        },`);
 			}
 		}
@@ -2349,9 +2159,7 @@ export function emitRenderModule(
 	const structs: EmittedStruct[] = [];
 	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	// Same order the hash function sorts under — deterministic output.
-	const sortedFiles = [...files].sort((a, b) =>
-		a.filename.localeCompare(b.filename)
-	);
+	const sortedFiles = [...files].sort((a, b) => a.filename.localeCompare(b.filename));
 	for (const f of sortedFiles) {
 		if (!f.filename.endsWith('.jinja')) continue;
 		const kind = f.filename.slice(0, -'.jinja'.length);
@@ -2359,34 +2167,19 @@ export function emitRenderModule(
 		// Only user-facing nodes get templates emitted (see templates.ts
 		// emitJinjaTemplates); if the jinja file exists, the node exists
 		// and is userFacing.
-		const rendered = node?.renderTemplate(
-			nodeMap.rules ?? {},
-			wordMatcher ?? /\w/,
-			nodeMap.externals
-		);
+		const rendered = node?.renderTemplate(nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
 		structs.push(
 			emitStruct(
 				kind,
 				node,
-				rendered?.surface ?? {
-					slots: [],
-					usesChildren: false,
-					usesVariant: false,
-					usesText: false
-				}
+				mergeTemplateSurfaceFromBody(f.content, rendered?.surface)
 			)
 		);
 	}
 	const meta = collectMetaData(nodeMap);
 	const hasNumericDispatch = generatedIdTables !== undefined;
 	const kindIdByKind = generatedIdTables
-		? buildKindIdByKind(
-				collectKindEntries(
-					collectCatalogKinds(generatedIdTables),
-					nodeMap,
-					generatedIdTables
-				)
-			)
+		? buildKindIdByKind(collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables))
 		: undefined;
 
 	// --- bridge.rs ---
@@ -2481,18 +2274,14 @@ function renderTransportSupport(
 	meta: MetaData,
 	generatedIdTables?: GeneratedIdTables
 ): string {
-	const projection = collectTransportProjection(nodeMap);
+	const projection = getTransportProjection(nodeMap);
 	const nodes = projection.nodes;
 
 	// Build kind entries for numeric dispatch when parser.c metadata is available.
 	// Source from the catalog superset (children-only kinds + anon tokens) so the
 	// AnyTransport dispatch matches the TS-side TSKindId / kindIdFromName universe.
 	const kindEntries: readonly KindEnumEntry[] | undefined = generatedIdTables
-		? collectKindEntries(
-				collectCatalogKinds(generatedIdTables),
-				nodeMap,
-				generatedIdTables
-			)
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
 	const anyTransportLines = kindEntries
@@ -2519,9 +2308,7 @@ function renderTransportSupport(
 	// grammar supertype covers all kinds). Emit before transport structs since
 	// structs reference the enum type in their children field.
 	const perSlotEnums = collectPerSlotChildEnums(nodes, nodeMap);
-	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) =>
-		emitPerSlotChildEnum(entry, kidByKind, nodeMap)
-	);
+	const perSlotEnumLines: string[] = perSlotEnums.flatMap((entry) => emitPerSlotChildEnum(entry, kidByKind, nodeMap));
 
 	return [
 		...anyTransportLines,
@@ -2553,7 +2340,9 @@ function renderTransportSupport(
  */
 function commonRustUseImports(hasNumericDispatch: boolean): string {
 	const lines: string[] = [];
-	lines.push('#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]');
+	lines.push(
+		'#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]'
+	);
 	lines.push('');
 	lines.push('use ::sittir_core::filters::{');
 	lines.push('    SingleNonterminalView, ListNonterminalView,');
@@ -2658,10 +2447,7 @@ function filtersModule(): string {
  * @param nodes - assembled nodes (transport projection)
  * @param nodeMap - for classification
  */
-function collectUsedSupertypeNames(
-	nodes: readonly AssembledNode[],
-	nodeMap: NodeMap
-): Set<string> {
+function collectUsedSupertypeNames(nodes: readonly AssembledNode[], nodeMap: NodeMap): Set<string> {
 	const used = new Set<string>();
 
 	/** Accumulate supertype names from a single node's fields + children. */
@@ -2748,17 +2534,11 @@ function renderAnyTransportWithStringTag(
 		...nodes.map((node) => {
 			const variant = rustTransportVariantName(node);
 			const structName = rustTransportStructName(node);
-			return [
-				`    #[serde(rename = ${JSON.stringify(node.kind)})]`,
-				`    ${variant}(${structName}),`
-			].join('\n');
+			return [`    #[serde(rename = ${JSON.stringify(node.kind)})]`, `    ${variant}(${structName}),`].join('\n');
 		}),
 		...literals.map((literal, index) => {
 			const variant = rustLiteralTransportVariantName(literal, index);
-			return [
-				`    #[serde(rename = ${JSON.stringify(literal.kind)})]`,
-				`    ${variant},`
-			].join('\n');
+			return [`    #[serde(rename = ${JSON.stringify(literal.kind)})]`, `    ${variant},`].join('\n');
 		}),
 		'}'
 	];
@@ -2771,9 +2551,7 @@ function renderAnyTransportWithStringTag(
  *
  * @param node - the assembled polymorph node
  */
-function renderPolymorphTransportFromNapiValue(
-	node: Extract<AssembledNode, { modelType: 'polymorph' }>
-): string[] {
+function renderPolymorphTransportFromNapiValue(node: Extract<AssembledNode, { modelType: 'polymorph' }>): string[] {
 	const enumName = rustTransportStructName(node);
 	const lines: string[] = [];
 	lines.push(`#[cfg(feature = "napi-bindings")]`);
@@ -2845,10 +2623,7 @@ function emitSupertypeTransportEnum(
 
 	// Helper: is a subtype leaf-like (small, no Box needed)?
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' ||
-		n.modelType === 'keyword' ||
-		n.modelType === 'token' ||
-		n.modelType === 'enum';
+		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	// Enum declaration — Debug + Clone only; no serde, no napi object derive.
 	lines.push(`#[derive(Debug, Clone)]`);
@@ -2872,21 +2647,27 @@ function emitSupertypeTransportEnum(
 		lines.push(`    ) -> ::napi::Result<Self> {`);
 		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 		lines.push(`        let kind_id: u16 = obj.get("$type")?`);
-		lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`);
+		lines.push(
+			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
+		);
 		lines.push(`        match kind_id {`);
+		const emittedIds = new Set<number>();
 		for (const { subKind, subNode } of validSubtypes) {
-			const id = kindIdByKind.get(subKind);
-			if (id === undefined) continue; // no catalog entry — skip
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			if (isLeafLike(subNode)) {
-				lines.push(`            ${id} => Ok(Self::${variant}(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            )),`);
-			} else {
-				lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            ))),`);
+			for (const concreteKind of collectConcreteTransportKinds(subKind, nodeMap)) {
+				const id = kindIdByKind.get(concreteKind);
+				if (id === undefined || emittedIds.has(id)) continue;
+				emittedIds.add(id);
+				if (isLeafLike(subNode)) {
+					lines.push(`            ${id} => Ok(Self::${variant}(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            )),`);
+				} else {
+					lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            ))),`);
+				}
 			}
 		}
 		lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
@@ -2904,7 +2685,9 @@ function emitSupertypeTransportEnum(
 		lines.push(`        _env: ::napi::sys::napi_env,`);
 		lines.push(`        _napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName}: parser.c metadata unavailable — FromNapiValue not supported`)}))`);
+		lines.push(
+			`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName}: parser.c metadata unavailable — FromNapiValue not supported`)}))`
+		);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -2980,19 +2763,13 @@ function emitSupertypeTransportEnum(
  * @param supertypeNode - the assembled supertype node
  * @param nodeMap       - for typeName + modelType lookups
  */
-function emitSupertypeRenderHelper(
-	supertypeNode: AssembledSupertype,
-	nodeMap: NodeMap
-): string[] {
+function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: NodeMap): string[] {
 	const enumName = `${rustTypeIdent(supertypeNode.typeName)}Transport`;
 	const fnName = `render_${rustSnakeIdent(supertypeNode.typeName)}`;
 	const lines: string[] = [];
 
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' ||
-		n.modelType === 'keyword' ||
-		n.modelType === 'token' ||
-		n.modelType === 'enum';
+		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	lines.push(`fn ${fnName}(t: &${enumName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
 	lines.push(`    match t {`);
@@ -3010,6 +2787,25 @@ function emitSupertypeRenderHelper(
 	lines.push(``);
 
 	return lines;
+}
+
+function collectConcreteTransportKinds(
+	kind: string,
+	nodeMap: NodeMap,
+	seen: Set<string> = new Set()
+): string[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined) return [];
+	if (node.modelType !== 'supertype') return [kind];
+	const concreteKinds = new Set<string>();
+	for (const subtype of (node as AssembledSupertype).subtypes) {
+		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
+			concreteKinds.add(concreteKind);
+		}
+	}
+	return [...concreteKinds];
 }
 
 /**
@@ -3045,10 +2841,7 @@ function hasAnyConcreteChildKind(kinds: readonly string[], nodeMap: NodeMap): bo
 	return kinds.some((k) => concreteTransportTypeName(k, nodeMap) !== null);
 }
 
-function collectPerSlotChildEnums(
-	nodes: readonly AssembledNode[],
-	nodeMap: NodeMap
-): PerSlotChildEnum[] {
+function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
 
@@ -3116,10 +2909,7 @@ function emitPerSlotChildEnum(
 	// If no valid concrete kinds remain (all were supertypes/polymorphs), fall back
 	// to emitting an empty enum — this should be caught upstream by the caller.
 	const isLeafLike = (n: AssembledNode): boolean =>
-		n.modelType === 'pattern' ||
-		n.modelType === 'keyword' ||
-		n.modelType === 'token' ||
-		n.modelType === 'enum';
+		n.modelType === 'pattern' || n.modelType === 'keyword' || n.modelType === 'token' || n.modelType === 'enum';
 
 	lines.push(`#[derive(Debug, Clone)]`);
 	lines.push(`pub enum ${enumName} {`);
@@ -3140,7 +2930,9 @@ function emitPerSlotChildEnum(
 		lines.push(`    ) -> ::napi::Result<Self> {`);
 		lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 		lines.push(`        let kind_id: u16 = obj.get("$type")?`);
-		lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`);
+		lines.push(
+			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
+		);
 		lines.push(`        match kind_id {`);
 		for (const { kind, node, concreteName } of validKinds) {
 			const id = kindIdByKind.get(kind);
@@ -3171,7 +2963,9 @@ function emitPerSlotChildEnum(
 		lines.push(`        _env: ::napi::sys::napi_env,`);
 		lines.push(`        _napi_val: ::napi::sys::napi_value,`);
 		lines.push(`    ) -> ::napi::Result<Self> {`);
-		lines.push(`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName}: parser.c metadata unavailable — FromNapiValue not supported`)}))`);
+		lines.push(
+			`        Err(::napi::Error::from_reason(${JSON.stringify(`${enumName}: parser.c metadata unavailable — FromNapiValue not supported`)}))`
+		);
 		lines.push(`    }`);
 		lines.push(`}`);
 		lines.push(``);
@@ -3318,17 +3112,9 @@ function renderAnyTransportWithNapiFromValue(
 		const structName = rustTransportStructName(node);
 		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
 		lines.push(`            // kind: ${node.kind} (${constName})`);
-		if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
-			// Single-member presence bool: the object's presence means `true`.
-			// JS sends an object with `$type: <id>` to signal this node is present;
-			// the bool value is always `true` here (absence is handled by the parent
-			// struct's `Option<bool>` field being None when the property is missing).
-			lines.push(`            ${id} => Ok(AnyTransport::${variant}(true)),`);
-		} else {
-			lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
-			lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
-			lines.push(`            )),`);
-		}
+		lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
+		lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+		lines.push(`            )),`);
 	}
 
 	// One match arm per literal kind — unit variants, no payload.
@@ -3616,9 +3402,7 @@ function renderTransportDataToNodeFn(
 ): string[] {
 	const kindArg = kindIdExpr(kind, kindIdByKind);
 	const lines: string[] = [];
-	lines.push(
-		`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`
-	);
+	lines.push(`fn ${fnName}(transport: ${structName}) -> Result<TransportNodeData, ::askama::Error> {`);
 	lines.push('    let mut fields = TransportHashMap::new();');
 	for (const field of fields) {
 		const access = `transport.${rustFieldIdent(field.name)}`;
@@ -3643,9 +3427,7 @@ function renderTransportDataToNodeFn(
 			}
 		} else if (isRequired(field)) {
 			const bridged = buildBridgeSingleRequired(field, access, nodeMap);
-			lines.push(
-				`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`
-			);
+			lines.push(`    fields.insert(${JSON.stringify(field.name)}.to_string(), transport_field_value(${bridged})?);`);
 		} else {
 			lines.push(`    if let Some(value) = ${access} {`);
 			const bridged = buildBridgeOptionalSingle(field, 'value', nodeMap);
@@ -3689,10 +3471,7 @@ type BridgeFieldClass =
 	| { readonly kind: 'supertype'; readonly toAnyFn: string }
 	| undefined;
 
-function bridgeClassForField(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap | undefined
-): BridgeFieldClass {
+function bridgeClassForField(field: AssembledNonterminal, nodeMap: NodeMap | undefined): BridgeFieldClass {
 	if (nodeMap === undefined) return undefined;
 	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
 	if (cls.tag === 'concrete') return { kind: 'concrete', variant: rustTypeIdent(cls.typeName) };
@@ -3714,11 +3493,7 @@ function bridgeClassForField(
  * @param access - Rust expression for the field (e.g. `transport.name`)
  * @param nodeMap - for classification; absent = assume heterogeneous
  */
-function buildBridgeSingleRequired(
-	field: AssembledNonterminal,
-	access: string,
-	nodeMap: NodeMap | undefined
-): string {
+function buildBridgeSingleRequired(field: AssembledNonterminal, access: string, nodeMap: NodeMap | undefined): string {
 	const bc = bridgeClassForField(field, nodeMap);
 	if (bc === undefined) return `*${access}`; // Box<AnyTransport> → deref to AnyTransport
 	if (bc.kind === 'concrete') return `AnyTransport::${bc.variant}(${access})`;
@@ -3733,11 +3508,7 @@ function buildBridgeSingleRequired(
  * - concrete: maps to `Vec<AnyTransport>` via `AnyTransport::Variant`
  * - supertype: maps via `<supertype>_transport_to_any`
  */
-function buildBridgeListRequired(
-	field: AssembledNonterminal,
-	access: string,
-	nodeMap: NodeMap | undefined
-): string {
+function buildBridgeListRequired(field: AssembledNonterminal, access: string, nodeMap: NodeMap | undefined): string {
 	const bc = bridgeClassForField(field, nodeMap);
 	if (bc === undefined) return access;
 	if (bc.kind === 'concrete') {
@@ -3769,11 +3540,7 @@ function buildBridgeOptionalSingle(
  * For the bridge path: convert an OPTIONAL LIST field's already-unwrapped
  * value (after `if let Some(value) = access`) to `Vec<AnyTransport>`.
  */
-function buildBridgeOptionalList(
-	field: AssembledNonterminal,
-	valueExpr: string,
-	nodeMap: NodeMap | undefined
-): string {
+function buildBridgeOptionalList(field: AssembledNonterminal, valueExpr: string, nodeMap: NodeMap | undefined): string {
 	const bc = bridgeClassForField(field, nodeMap);
 	if (bc === undefined) return valueExpr;
 	if (bc.kind === 'concrete') {
@@ -3854,8 +3621,7 @@ function renderTransportChildrenBinding(
 		// all need wrapping; only useBox=true heterogeneous (already AnyTransport) is pass-through.
 		const needsWrap =
 			childrenCls !== undefined &&
-			(childrenCls.tag !== 'heterogeneous' ||
-				(childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== true));
+			(childrenCls.tag !== 'heterogeneous' || (childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== true));
 		if (reqd) {
 			const bridged = wrapVec('transport.children');
 			return [`    let children = Some(transport_children(${bridged})?);`];
@@ -3925,10 +3691,7 @@ function rustBlockCommentSafe(kind: string): string {
  *   When absent (no parser.c available), always produces the fallback.
  * @returns A Rust expression, e.g. TransportKindId(188) with a kind comment.
  */
-function kindIdExpr(
-	kind: string,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string {
+function kindIdExpr(kind: string, kindIdByKind?: ReadonlyMap<string, number>): string {
 	const id = kindIdByKind?.get(kind);
 	const safeKind = JSON.stringify(rustBlockCommentSafe(kind));
 	if (id !== undefined) {
@@ -3937,37 +3700,11 @@ function kindIdExpr(
 	return `TransportKindId(0) /* ${safeKind} — no parser symbol */`;
 }
 
-function renderTerminalTransportToNodeFn(
-	node: AssembledNode,
-	kindIdByKind?: ReadonlyMap<string, number>
-): string[] {
+function renderTerminalTransportToNodeFn(node: AssembledNode, kindIdByKind?: ReadonlyMap<string, number>): string[] {
 	const kindArg = kindIdExpr(node.kind, kindIdByKind);
 	const typeName = rustTransportStructName(node);
 
 	if (node instanceof AssembledEnum) {
-		if (isSingleMemberEnum(node)) {
-			// Single-member presence bool: transport IS `bool`.
-			// The text is the one known static literal when true; empty when false.
-			const text = JSON.stringify(node.values[0]!);
-			return [
-				`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-				'    Ok(transport_node_data(',
-				`        ${kindArg},`,
-				'        None,',
-				'        None,',
-				'        true,',
-				`        Some(if transport { ${text}.to_string() } else { String::new() }),`,
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'    ))',
-				'}',
-				''
-			];
-		}
 		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
 		// Metadata fields (source, named, span, node_handle, child_index) are not available on the
 		// enum — all default to None. The text is derived from the enum's Display impl.
@@ -4021,9 +3758,7 @@ function renderTerminalTransportToNodeFn(
  * The static text for each literal is embedded directly in the
  * `render_transport_dispatch` match arms and the `transport_to_node` arms.
  */
-function renderLiteralTransportStruct(
-	_literals: readonly TransportLiteral[]
-): string[] {
+function renderLiteralTransportStruct(_literals: readonly TransportLiteral[]): string[] {
 	return [];
 }
 
@@ -4034,8 +3769,7 @@ function renderTransportStruct(
 	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	if (node instanceof AssembledEnum) {
-		// Enum modelType: single-member enums are skipped (parent uses `bool`).
-		// Multi-member enums emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
+		// Enum modelType: emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
 		return renderEnumType(node, hasNapi, kindEntries);
 	}
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
@@ -4060,9 +3794,7 @@ function renderPolymorphTransportDefs(
 	lines.push('#[derive(Debug, Clone)]');
 	lines.push(`pub enum ${rustTransportStructName(node)} {`);
 	for (const form of node.forms) {
-		lines.push(
-			`    ${rustTransportFormVariantName(form)}(${rustTransportFormStructName(form)}),`
-		);
+		lines.push(`    ${rustTransportFormVariantName(form)}(${rustTransportFormStructName(form)}),`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -4083,13 +3815,7 @@ function renderPolymorphTransportDefs(
 	lines.push('');
 	for (const form of node.forms) {
 		lines.push(
-			...renderTransportDataStruct(
-				rustTransportFormStructName(form),
-				form,
-				form.fields,
-				form.children,
-				nodeMap
-			)
+			...renderTransportDataStruct(rustTransportFormStructName(form), form, form.fields, form.children, nodeMap)
 		);
 	}
 	return lines;
@@ -4102,10 +3828,7 @@ function renderTransportDataStruct(
 	children: readonly AssembledNonterminal[],
 	nodeMap: NodeMap
 ): string[] {
-	const isLeafNode =
-		node.modelType === 'pattern' ||
-		node.modelType === 'keyword' ||
-		node.modelType === 'token';
+	const isLeafNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
 	const lines: string[] = [];
 	// Branch/container/group/polymorph/enum use #[napi(object)] for derived
 	// FromNapiValue. Leaf/keyword/token transport structs opt out of
@@ -4204,7 +3927,12 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`        env: ::napi::sys::napi_env,`);
 	lines.push(`        napi_val: ::napi::sys::napi_value,`);
 	lines.push(`    ) -> ::napi::Result<Self> {`);
-	lines.push(`        let text = String::from_napi_value(env, napi_val)?;`);
+	lines.push(`        let text = if let Ok(text) = String::from_napi_value(env, napi_val) {`);
+	lines.push(`            text`);
+	lines.push(`        } else {`);
+	lines.push(`            let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
+	lines.push(`            obj.get("$text")?.unwrap_or_default()`);
+	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
 		lines.push(`            ${f.rustName}: None,`);
@@ -4298,11 +4026,21 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
 	{ jsName: '$span', rustName: 'transport_span', rustType: 'Option<Span>' },
 	// ADR-0017: $nodeHandle (u32) + $childIndex (u16) replace $nodeId.
 	// napi-rs 3 passes these as f64 from JS; convert in the NodeData bridge.
-	{ jsName: '$nodeHandle', rustName: 'transport_node_handle', rustType: 'Option<f64>', bridgeMap: '.map(|v| v as u32)' },
-	{ jsName: '$childIndex', rustName: 'transport_child_index', rustType: 'Option<f64>', bridgeMap: '.map(|v| v as u16)' },
+	{
+		jsName: '$nodeHandle',
+		rustName: 'transport_node_handle',
+		rustType: 'Option<f64>',
+		bridgeMap: '.map(|v| v as u32)'
+	},
+	{
+		jsName: '$childIndex',
+		rustName: 'transport_child_index',
+		rustType: 'Option<f64>',
+		bridgeMap: '.map(|v| v as u16)'
+	},
 	// $triviaData carries trivia text strings. TransportTrivia has a manual FromNapiValue
 	// impl that extracts $text from each JS array element — no serde_json needed.
-	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' },
+	{ jsName: '$triviaData', rustName: 'transport_trivia_data', rustType: 'Option<TransportTrivia>' }
 ];
 
 /**
@@ -4311,7 +4049,9 @@ const TRANSPORT_METADATA_FIELDS: readonly TransportMetadataField[] = [
  * a plain `text: String` instead.
  */
 const TRANSPORT_TEXT_FIELD: TransportMetadataField = {
-	jsName: '$text', rustName: 'transport_text', rustType: 'Option<String>'
+	jsName: '$text',
+	rustName: 'transport_text',
+	rustType: 'Option<String>'
 };
 
 /**
@@ -4358,20 +4098,16 @@ function renderTransportMetadataFields(includeText: boolean): string[] {
  * `$`-prefixed keys explicitly.
  */
 function renderLeafTransportPlainFields(): string[] {
-	return [
-		...TRANSPORT_METADATA_FIELDS.map(f => `    pub ${f.rustName}: ${f.rustType},`),
-		'    pub text: String,'
-	];
+	return [...TRANSPORT_METADATA_FIELDS.map((f) => `    pub ${f.rustName}: ${f.rustType},`), '    pub text: String,'];
 }
 
 function renderTransportField(field: AssembledNonterminal, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.name);
-	if (rustName !== field.name) {
-		// Rust keyword renamed to r#kw or kw_ — add napi js_name so the JS side
-		// still uses the original grammar field name.
-		lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(field.name)}))]`);
-	}
+	// Generator-owned NodeData stores raw fields as `_<name>` top-level keys.
+	// Keep the JS/native render boundary dumb by teaching the generated napi
+	// structs to read the same storage keys directly.
+	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.name}`)}))]`);
 	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field, nodeMap)},`);
 	return lines;
 }
@@ -4498,11 +4234,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
 			return null;
 		}
-		// Enum modelType: single-member enums are presence flags — parent struct fields
-		// use `bool` directly (JS sends true/false, no heap allocation, no enum type).
-		// Multi-member enums use the Rust enum type (XxxEnum).
 		if (node instanceof AssembledEnum) {
-			if (isSingleMemberEnum(node)) return 'bool';
 			return enumTypeName(node);
 		}
 		return `${rustTypeIdent(node.typeName)}Transport`;
@@ -4538,14 +4270,11 @@ function perSlotEnumName(typeName: string): string {
 /**
  * Rust type name for the transport representation of a node.
  *
- * For `enum` modelType nodes:
- * - Single-member enums are presence flags: the transport type is `bool`.
- * - Multi-member enums: the transport type is the Rust enum itself (`XxxEnum`).
- * All other nodes use the standard `XxxTransport` struct name.
+ * For `enum` modelType nodes: the transport type is the Rust enum itself
+ * (`XxxEnum`). All other nodes use the standard `XxxTransport` struct name.
  */
 function rustTransportStructName(node: AssembledNode): string {
 	if (node instanceof AssembledEnum) {
-		if (isSingleMemberEnum(node)) return 'bool';
 		return enumTypeName(node);
 	}
 	return `${rustTypeIdent(node.typeName)}Transport`;
@@ -4575,26 +4304,17 @@ function rustSnakeIdent(name: string): string {
 	return snake.length > 0 ? snake : 'transport';
 }
 
-function rustLiteralTransportVariantName(
-	literal: TransportLiteral,
-	index: number
-): string {
+function rustLiteralTransportVariantName(literal: TransportLiteral, index: number): string {
 	const suffix =
 		literal.kind.length === 0
 			? 'empty'
-			: [...literal.kind]
-					.map(
-						(char) => char.codePointAt(0)?.toString(16).padStart(2, '0') ?? '00'
-					)
-					.join('_');
+			: [...literal.kind].map((char) => char.codePointAt(0)?.toString(16).padStart(2, '0') ?? '00').join('_');
 	return rustTypeIdent(`Literal${index}_${suffix}`);
 }
 
 function rustTypeIdent(name: string): string {
 	const replaced = name.replace(/[^A-Za-z0-9_]/g, '_');
-	const withStart = /^[A-Za-z_]/.test(replaced)
-		? replaced
-		: `Transport${replaced}`;
+	const withStart = /^[A-Za-z_]/.test(replaced) ? replaced : `Transport${replaced}`;
 	const ident = withStart.length > 0 ? withStart : 'Transport';
 	return RUST_KEYWORDS.has(ident) ? `${ident}_` : ident;
 }
@@ -4808,7 +4528,7 @@ const LITERAL_TO_VARIANT_NAME: ReadonlyMap<string, string> = new Map([
 	['stmt', 'Stmt'],
 	['tt', 'Tt'],
 	['ty', 'Ty'],
-	['vis', 'Vis'],
+	['vis', 'Vis']
 ]);
 
 /**
@@ -4838,9 +4558,7 @@ function literalToVariantName(literal: string): string {
 	}
 
 	// Fallback: encode each code-point as hex with a leading `V` prefix.
-	const hex = [...literal]
-		.map((c) => c.codePointAt(0)!.toString(16).padStart(2, '0'))
-		.join('_');
+	const hex = [...literal].map((c) => c.codePointAt(0)!.toString(16).padStart(2, '0')).join('_');
 	return `V${hex}`;
 }
 
@@ -4854,31 +4572,6 @@ function literalToVariantName(literal: string): string {
  * with `$text`. This eliminates the enum struct entirely and lets
  * `#[napi(object)]` handle the bool field automatically.
  */
-function isSingleMemberEnum(node: AssembledEnum): boolean {
-	return node.values.length === 1;
-}
-
-/**
- * Return the static text for a kind whose transport type is `bool`, or
- * `undefined` when the kind is not a single-member enum.
- *
- * Used by `buildTypedTemplateBody` to emit static-text conditionals instead
- * of `&dyn RenderableTransport` coercions (bool does not implement the trait).
- *
- * @param kind - the catalog kind name from `cls.kind`
- * @param nodeMap - for node lookup
- */
-function singleMemberEnumTextForKind(
-	kind: string,
-	nodeMap: NodeMap
-): string | undefined {
-	const node = nodeMap.nodes.get(kind);
-	if (node === undefined) return undefined;
-	if (!(node instanceof AssembledEnum)) return undefined;
-	if (!isSingleMemberEnum(node)) return undefined;
-	return node.values[0]!;
-}
-
 /**
  * Enum type name for an `AssembledEnum` node. Appends `Enum` to the typeName
  * (PascalCase) to avoid collision with the companion `*Transport` struct naming
@@ -4894,11 +4587,6 @@ function enumTypeName(node: AssembledEnum): string {
  * Emit a Rust enum type for an `AssembledEnum` node (synthesized field-enum
  * or pre-existing grammar enum). Replaces the `text: String` leaf-struct path
  * with a closed, statically-known variant set.
- *
- * **Single-member enums are not emitted** — they are presence markers and the
- * parent struct carries `bool` instead (see `concreteTransportTypeName`).
- * Returns `[]` when `node.values.length === 1`.
- *
  * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
  * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
@@ -4912,14 +4600,7 @@ function enumTypeName(node: AssembledEnum): string {
  * @param kindEntries - catalog entries for KindId lookup; when present, emits
  *   numeric `u16` dispatch in `FromNapiValue` instead of `$text: String` matching
  */
-function renderEnumType(
-	node: AssembledEnum,
-	hasNapi: boolean,
-	kindEntries?: readonly KindEnumEntry[]
-): string[] {
-	// Single-member enums are presence flags — parent struct uses `bool`, no enum type.
-	if (isSingleMemberEnum(node)) return [];
-
+function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: readonly KindEnumEntry[]): string[] {
 	const enumName = enumTypeName(node);
 	const values = node.values;
 	const lines: string[] = [];
@@ -4967,7 +4648,9 @@ function renderEnumType(
 			// Fallback: kindEntries unavailable (parser.c not found) — read $text string.
 			lines.push(`        let obj = ::napi::bindgen_prelude::Object::from_napi_value(env, napi_val)?;`);
 			lines.push(`        let text: String = obj.get("$text")?`);
-			lines.push(`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$text property missing in ${enumName}`)}))?;`);
+			lines.push(
+				`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$text property missing in ${enumName}`)}))?;`
+			);
 			lines.push(`        match text.as_str() {`);
 			for (const v of values) {
 				const variant = literalToVariantName(v);

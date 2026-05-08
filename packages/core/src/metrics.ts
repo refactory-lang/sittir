@@ -129,10 +129,7 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 	const result = fn();
 	const afterMs = performance.now() - before;
 	const heapDelta = process.memoryUsage().heapUsed - heapBefore;
-	const outputBytes =
-		typeof result === 'string'
-			? (result as string).length
-			: JSON.stringify(result).length;
+	const outputBytes = typeof result === 'string' ? (result as string).length : JSON.stringify(result).length;
 
 	const k = _key(grammar, kind);
 	const existing = _perKind.get(k);
@@ -230,9 +227,7 @@ export function dumpMetrics(backend: 'ts' | 'native', outDir?: string): void {
 			p99Ms: Number(p99Ms.toFixed(4)),
 			outputBytes: b.outputBytes,
 			heapDeltaBytes: b.heapDeltaBytes,
-			...(backend === 'native' && b.napiCopyBytes > 0
-				? { napiCopyBytes: b.napiCopyBytes }
-				: {})
+			...(backend === 'native' && b.napiCopyBytes > 0 ? { napiCopyBytes: b.napiCopyBytes } : {})
 		};
 		perKindOut[kindName] = entry;
 		totalHeapDelta += b.heapDeltaBytes;
@@ -273,11 +268,7 @@ export function dumpMetrics(backend: 'ts' | 'native', outDir?: string): void {
 		perKind: perKindOut
 	};
 
-	writeFileSync(
-		pathJoin(dir, filename),
-		JSON.stringify(file, null, 2) + '\n',
-		'utf-8'
-	);
+	writeFileSync(pathJoin(dir, filename), JSON.stringify(file, null, 2) + '\n', 'utf-8');
 }
 
 /**

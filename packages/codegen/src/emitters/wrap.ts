@@ -16,16 +16,15 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type {
-	AssembledNonterminal,
-	AssembledNode,
-	AssembledPolymorph
-} from '../compiler/node-map.ts';
+import type { AssembledNonterminal, AssembledNode, AssembledPolymorph } from '../compiler/node-map.ts';
 import {
 	collectAliasTargetToSourceMap,
 	isMultiple,
 	isNonEmpty,
-	isRequired
+	isRequired,
+	resolveFieldStorageInfo,
+	classifyWrapEmission,
+	warnSkippedParserSymbol
 } from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import {
@@ -57,6 +56,7 @@ export interface EmitWrapConfig {
 	 * symbol by design; warn and skip.
 	 */
 	synthesizedKinds?: ReadonlySet<string>;
+	kindEntries?: readonly KindEnumEntry[];
 }
 
 /**
@@ -157,8 +157,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
-		const { fields, children } =
-			mergePolymorphFormsIntoFieldsAndChildren(node);
+		const { fields, children } = mergePolymorphFormsIntoFieldsAndChildren(node);
 		// Polymorph wraps never have container shape — they always have at least
 		// one form with fields. Pass rawFactoryName explicitly (class getters are
 		// NOT enumerable, so { ...node } would lose it).
@@ -248,10 +247,32 @@ interface WrapNode {
  *   `this._<name>` directly — the literal declares the property so
  *   TS resolves it from the inferred literal type).
  */
-function resolveFieldDrillExprs(f: AssembledNonterminal, nodeMap: NodeMap): {
+function resolveFieldDrillExprs(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap
+): {
 	storeExpr: string;
 	accessorBody: string;
 } {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind === 'boolean') {
+		return {
+			storeExpr: `coerceBooleanKeywordStorage(data._${f.name})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
+	if (storageInfo.kind === 'bitflag') {
+		return {
+			storeExpr: `coerceBitflagStorage(data._${f.name}, ${bitflagTextsExpr(storageInfo.texts)})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
+	if (storageInfo.kind === 'kindEnum') {
+		return {
+			storeExpr: `projectKindEnumStorage(data._${f.name})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
 	const elemType = fieldElementType(f, nodeMap);
 	const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
 	if (aliasEntries.length > 0) {
@@ -259,26 +280,30 @@ function resolveFieldDrillExprs(f: AssembledNonterminal, nodeMap: NodeMap): {
 		if (isMultiple(f)) {
 			return {
 				storeExpr: `data._${f.name}`,
-				accessorBody: `return drillAsAll<${elemType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
+				accessorBody: `return drillAsAll<${elemType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 			};
 		}
 		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillAs<${returnType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`,
+			accessorBody: `return drillAs<${returnType}>(this._${f.name}, tree, ${JSON.stringify(fromType)}, ${JSON.stringify(toType)})`
 		};
 	} else if (isMultiple(f)) {
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillInAll<${elemType}>(this._${f.name}, tree)`,
+			accessorBody: `return drillInAll<${elemType}>(this._${f.name}, tree)`
 		};
 	} else {
 		const returnType = isRequired(f) ? elemType : `${elemType} | undefined`;
 		return {
 			storeExpr: `data._${f.name}`,
-			accessorBody: `return drillIn<${returnType}>(this._${f.name}, tree)`,
+			accessorBody: `return drillIn<${returnType}>(this._${f.name}, tree)`
 		};
 	}
+}
+
+function bitflagTextsExpr(texts: readonly string[]): string {
+	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
 /**
@@ -333,9 +358,7 @@ function emitFieldCarryingWrap(
 	// `(data as any)` to access fields that may not exist on all union members.
 	for (const f of fields) {
 		const { storeExpr } = resolveFieldDrillExprs(f, nodeMap);
-		const expr = node.isPolymorph
-			? storeExpr.replace(/^data\./, '(data as any).')
-			: storeExpr;
+		const expr = node.isPolymorph ? storeExpr.replace(/^data\./, '(data as any).') : storeExpr;
 		lines.push(`    _${f.name}: ${expr},`);
 	}
 	// Unnamed children slot -- pass through from data (stubs; drilled lazily by consumer).
@@ -410,9 +433,7 @@ function emitInlineWithProperty(
 				`    $with: { $children: (...vs: ${restType}) => ${wrapFn}({ ${spreadData}, $children: vs }, tree) },`
 			);
 		} else {
-			lines.push(
-				`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: [v] }, tree) },`
-			);
+			lines.push(`    $with: { $child: (v: ${childElem}) => ${wrapFn}({ ${spreadData}, $children: [v] }, tree) },`);
 		}
 		return;
 	}
@@ -429,28 +450,30 @@ function emitInlineWithProperty(
 	lines.push('    $with: {');
 	for (const f of fields) {
 		const method = f.propertyName;
-		const elemType = fieldElementType(f, nodeMap);
-		if (isMultiple(f)) {
-			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-			const restType = isNonEmpty(f)
-				? `NonEmptyArray<${elemType}>`
-				: `${elemForArray}[]`;
-			lines.push(
-				`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`
-			);
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const polymorphSetterType =
+			storageInfo.kind === 'boolean'
+				? 'boolean'
+				: storageInfo.kind === 'bitflag' || storageInfo.kind === 'kindEnum'
+					? 'number'
+					: fieldElementType(f, nodeMap);
+		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			const setterValueType = node.isPolymorph
+				? polymorphSetterType
+				: `NonNullable<T.${node.typeName}['_${f.name}']>[number]`;
+			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
+			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
+			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
 		} else {
-			lines.push(
-				`      ${method}: (v: ${elemType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`
-			);
+			const setterValueType = node.isPolymorph ? polymorphSetterType : `NonNullable<T.${node.typeName}['_${f.name}']>`;
+			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
 		}
 	}
 	if (children.length > 0) {
 		const childElem = childElementType({ children }, nodeMap);
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const restType = childrenSetterRestType(children, childElem, childRest);
-		lines.push(
-			`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`
-		);
+		lines.push(`      children: (...items: ${restType}) => ${wrapFn}({ ${spreadData}, $children: items }, tree),`);
 	}
 	lines.push('    },');
 }
@@ -486,20 +509,18 @@ export const wrapEmitter = {
 	 * Compute kindEntries and capture config state for the dispatch loop.
 	 */
 	init(config: EmitWrapConfig): void {
-		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds } = config;
+		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries } = config;
 
-		const kindEntries = generatedIdTables
-			? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-			: undefined;
+		const kindEntries =
+			providedKindEntries ??
+			(generatedIdTables
+				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+				: undefined);
 
 		const typeImports = collectTypeImports(nodeMap);
 		const typeImportLine =
 			typeImports.size > 0
-				? [
-						'import type {',
-						...[...typeImports].sort().map((name) => `  ${name},`),
-						"} from './types.js';"
-					].join('\n')
+				? ['import type {', ...[...typeImports].sort().map((name) => `  ${name},`), "} from './types.js';"].join('\n')
 				: undefined;
 
 		// Capture state for dispatchNode / finalize
@@ -513,48 +534,39 @@ export const wrapEmitter = {
 		wrap.init();
 	},
 
+	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+		wrap.branch(node, _wrapEmitterKindEntries, _wrapEmitterNodeMap);
+	},
+
+	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
+		wrap.polymorph(node, _wrapEmitterKindEntries, _wrapEmitterNodeMap);
+	},
+
 	/**
-	 * Handle one node from the shared loop — applies the same filtering
-	 * as the loop in `emitWrap()` and dispatches to the wrap namespace.
+	 * Back-compat wrapper used by standalone `emitWrap()`.
 	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
-		const nodeMap = _wrapEmitterNodeMap;
-		const kindEntries = _wrapEmitterKindEntries;
-		const inlineKinds = _wrapEmitterInlineKinds;
-		const synthesizedKinds = _wrapEmitterSynthesizedKinds;
-
-		// --- Filtering (mirrors emitWrap loop) ---
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
-			if (inlineKinds?.includes(kind)) {
-				console.warn(
-					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
-					`Skipping wrap emission. ` +
-					`Future: map to decomposition.`
-				);
-			} else if (synthesizedKinds?.has(kind)) {
-				// Intentionally synthesized by evaluate — no parser symbol by design.
-			} else {
-				console.warn(
-					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
-					`NOT in the grammar's inline: array. Skipping wrap ` +
-					`emission. Investigate why tree-sitter dropped this rule.`
-				);
-			}
-			return;
+		const emission = classifyWrapEmission(kind, node, {
+			kindEntries: _wrapEmitterKindEntries,
+			inlineKinds: _wrapEmitterInlineKinds,
+			synthesizedKinds: _wrapEmitterSynthesizedKinds
+		});
+		if (
+			emission === 'skip-inline-kind' ||
+			emission === 'skip-synthesized-kind' ||
+			emission === 'skip-missing-parser-symbol'
+		) {
+			warnSkippedParserSymbol(kind, 'wrap', emission);
 		}
-
-		if (!node.rawFactoryName) return;
-
-		// --- Taxonomy dispatch ---
+		if (emission !== 'emit') return;
 		switch (node.modelType) {
 			case 'branch':
-				wrap.branch(node, kindEntries, nodeMap);
+				this.emitBranch(node);
 				break;
 			case 'polymorph':
-				wrap.polymorph(node, kindEntries, nodeMap);
+				this.emitPolymorph(node);
 				break;
 			default:
-				// Leaves, groups, supertypes, tokens — no wrap function
 				break;
 		}
 	},
@@ -580,6 +592,14 @@ export const wrapEmitter = {
 		const usesDrillInAll = /\bdrillInAll\b/.test(bodySource);
 		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
 		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
+		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
+		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
+		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
+		const utilsImports = [
+			'withMethods',
+			...(usesCoerceBoolean ? ['coerceBooleanKeywordStorage'] : []),
+			...(usesCoerceBitflag ? ['coerceBitflagStorage'] : [])
+		];
 
 		// Preamble (depends on body scan results)
 		const lines: string[] = [
@@ -594,7 +614,7 @@ export const wrapEmitter = {
 			...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 			"import type * as T from './types.js';",
 			...(typeImportLine ? [typeImportLine] : []),
-			"import { withMethods } from './utils.js';",
+			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
 			'// Drill-in helpers — call back through `readTreeNode` so the same',
@@ -648,24 +668,28 @@ export const wrapEmitter = {
 						'}'
 					]
 				: []),
+			...(usesProjectKindEnum
+				? [
+						'function projectKindEnumStorage<T>(value: T): T {',
+						'  if (!value) return value;',
+						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;',
+						'  const entry = value as unknown as _NodeData;',
+						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
+						'}'
+					]
+				: []),
 			''
 		];
 		lines.push(bodySource);
 
 		// _wrapTable — runtime dispatch by kind
-		lines.push(
-			'const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {'
-		);
+		lines.push('const _wrapTable: Record<string, (data: _NodeData, tree: TreeHandle) => unknown> = {');
 		for (const [kind, node] of nodeMap.nodes) {
 			if (!node.factoryName) continue;
 			if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 			if (node.modelType === 'branch' || node.modelType === 'polymorph') {
 				lines.push(`  '${kind}': (d, t) => wrap${node.typeName}(d as T.${node.typeName}, t),`);
-			} else if (
-				node.modelType === 'pattern' ||
-				node.modelType === 'enum' ||
-				node.modelType === 'keyword'
-			) {
+			} else if (node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword') {
 				if (kindEntries) {
 					const entry = kindEntries.find((e) => e.kind === kind);
 					if (entry) {
@@ -695,9 +719,7 @@ export const wrapEmitter = {
 			lines.push("import { KIND_NAMES } from './types.js';");
 		}
 		lines.push('/** Wrap a NodeData into its lazy read-only view. */');
-		lines.push(
-			'export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {'
-		);
+		lines.push('export function wrapNode(data: _NodeData, tree: TreeHandle): unknown {');
 		lines.push('  // The native path now returns numeric $type');
 		lines.push('  // (KindId) from Rust; the JS wasm path still returns string $type.');
 		lines.push('  // Resolve to a kind-name string for the string-keyed dispatch tables,');
@@ -710,12 +732,8 @@ export const wrapEmitter = {
 			lines.push('  const rawType = data.$type as unknown as string;');
 		}
 		lines.push('  // Canonical-hidden remap (Option Y): parser-output `$type`');
-		lines.push(
-			'  // is the visible alias target (e.g. `range_pattern_left_with_right`);'
-		);
-		lines.push(
-			'  // remap to the hidden alias source (`_range_pattern_left_with_right`)'
-		);
+		lines.push('  // is the visible alias target (e.g. `range_pattern_left_with_right`);');
+		lines.push('  // remap to the hidden alias source (`_range_pattern_left_with_right`)');
 		lines.push('  // so dispatch + downstream consumers see the canonical form.');
 		lines.push('  const canonical = _aliasTargetToSource[rawType];');
 		lines.push('  if (canonical !== undefined) {');
@@ -727,34 +745,24 @@ export const wrapEmitter = {
 		lines.push('}');
 		lines.push('');
 		lines.push('/**');
-		lines.push(
-			' * Per-handle dispatching `readNode` — the architectural seam where'
-		);
+		lines.push(' * Per-handle dispatching `readNode` — the architectural seam where');
 		lines.push(' * the engine choice (JS vs native) lives. `readTreeNode`,');
-		lines.push(
-			' * `drillIn` and `drillAs` all read through THIS function so the'
-		);
+		lines.push(' * `drillIn` and `drillAs` all read through THIS function so the');
 		lines.push(' * wrap layer is engine-agnostic. tree-sitter `Node::id()` is');
 		lines.push(' * documented as "unique within a given syntax tree" and is a');
 		lines.push(' * raw pointer cast — different parses yield different ids — so');
 		lines.push(' * the engine that parsed the tree is the only thing that can');
 		lines.push(' * dereference its ids. Native handles set `tree.read` to a');
 		lines.push(' * closure that routes through napi; wasm/JS handles leave it');
-		lines.push(
-			' * absent and fall back to `readNodeJs` (the in-process walker).'
-		);
+		lines.push(' * absent and fall back to `readNodeJs` (the in-process walker).');
 		lines.push(' */');
-		lines.push(
-			'function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {'
-		);
+		lines.push('function readNode(tree: TreeHandle, handle?: number, childIndex?: number): AnyNodeData {');
 		lines.push('  // Per-handle dispatch: native-engine handles carry a `read`');
 		lines.push('  // closure that routes through napi (engine owns the tree;');
 		lines.push('  // Navigation via handle + childIndex replaces nodeId).');
 		lines.push('  // Wasm/JS handles leave `read` absent and fall');
 		lines.push('  // back to the in-process JS walker.');
-		lines.push(
-			'  return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);'
-		);
+		lines.push('  return tree.read ? tree.read(handle, childIndex) : readNodeJs(tree, handle, childIndex);');
 		lines.push('}');
 		lines.push('');
 		lines.push('/**');
@@ -762,15 +770,9 @@ export const wrapEmitter = {
 		lines.push(' * One level deep — getters drill into subtrees on demand by');
 		lines.push(' * recursing back through this same function.');
 		lines.push(' *');
-		lines.push(
-			' * Optional `asType: { from, to }` rewrites `$type` between the read'
-		);
-		lines.push(
-			" * and the wrap when the node's actual `$type === from`. Used by"
-		);
-		lines.push(
-			' * `drillAs` for alias-target → alias-source rewrites at'
-		);
+		lines.push(' * Optional `asType: { from, to }` rewrites `$type` between the read');
+		lines.push(" * and the wrap when the node's actual `$type === from`. Used by");
+		lines.push(' * `drillAs` for alias-target → alias-source rewrites at');
 		lines.push(' * declared field sites.');
 		lines.push(' */');
 		lines.push('export function readTreeNode(');

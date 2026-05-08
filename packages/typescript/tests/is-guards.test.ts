@@ -18,25 +18,15 @@ describe('typescript is / isTree / isNode composition', () => {
 	});
 
 	it('is.kind generic form accepts numeric kinds', () => {
-		expect(
-			is.kind({ $type: TSKindId.FunctionDeclaration }, 'function_declaration')
-		).toBe(true);
-		expect(
-			is.kind({ $type: TSKindId.FunctionDeclaration }, 'class_declaration')
-		).toBe(false);
+		expect(is.kind({ $type: TSKindId.FunctionDeclaration }, 'function_declaration')).toBe(true);
+		expect(is.kind({ $type: TSKindId.FunctionDeclaration }, 'class_declaration')).toBe(false);
 	});
 
 	it('isNode returns true for NodeData shapes', () => {
-		expect(
-			isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })
-		).toBe(true);
+		expect(isNode({ $type: 1, $text: 'foo' } as { readonly $type: number })).toBe(true);
 		// ADR-0018 Phase 2: isNode checks _<name> keys (de-hoisted storage) OR $text.
-		expect(
-			isNode({ $type: TSKindId.ClassDeclaration, _name: {} } as { readonly $type: number })
-		).toBe(true);
-		expect(
-			isNode({ $type: TSKindId.FunctionDeclaration })
-		).toBe(false);
+		expect(isNode({ $type: TSKindId.ClassDeclaration, _name: {} } as { readonly $type: number })).toBe(true);
+		expect(isNode({ $type: TSKindId.FunctionDeclaration })).toBe(false);
 	});
 
 	it('isTree returns true only when a range() method is present', () => {
@@ -51,9 +41,7 @@ describe('typescript is / isTree / isNode composition', () => {
 	});
 
 	it('assert.kind throws on mismatch', () => {
-		expect(() =>
-			assert.functionDeclaration({ $type: TSKindId.ClassDeclaration })
-		).toThrow(TypeError);
+		expect(() => assert.functionDeclaration({ $type: TSKindId.ClassDeclaration })).toThrow(TypeError);
 	});
 });
 

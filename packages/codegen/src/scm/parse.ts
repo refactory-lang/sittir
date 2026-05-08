@@ -29,7 +29,7 @@ const enum TokenKind {
 	StringLiteral,
 	FieldColon,
 	Quantifier,
-	Predicate,
+	Predicate
 }
 
 interface Token {

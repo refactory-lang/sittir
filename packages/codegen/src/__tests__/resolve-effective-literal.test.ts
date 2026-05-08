@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-	resolveEffectiveLiteral,
-	isAutoStampField
-} from '../emitters/shared.ts';
+import { resolveEffectiveLiteral, isAutoStampField } from '../emitters/shared.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { AssembledNonterminal } from '../compiler/node-map.ts';
 import { AssembledKeyword, AssembledPattern } from '../compiler/node-map.ts';
@@ -38,20 +35,14 @@ function makeField(
 }
 
 /** Create a single-value field with an inline terminal literal. */
-function literalField(
-	value: string,
-	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledNonterminal {
+function literalField(value: string, multiplicity: NodeOrTerminal['multiplicity'] = 'single'): AssembledNonterminal {
 	return makeField({
 		values: [{ kind: 'terminal', value, multiplicity }]
 	});
 }
 
 /** Create a single-value field that references a grammar node kind. */
-function nodeRefField(
-	kindName: string,
-	multiplicity: NodeOrTerminal['multiplicity'] = 'single'
-): AssembledNonterminal {
+function nodeRefField(kindName: string, multiplicity: NodeOrTerminal['multiplicity'] = 'single'): AssembledNonterminal {
 	return makeField({
 		values: [
 			{
@@ -119,17 +110,13 @@ describe('resolveEffectiveLiteral', () => {
 	describe('Source B — referenced constant kind', () => {
 		it('returns the keyword text when values has exactly one hidden AssembledKeyword ref (required)', () => {
 			const field = nodeRefField('_kw_break', 'single');
-			const nodeMap = makeNodeMap([
-				['_kw_break', makeKeyword('_kw_break', 'break')]
-			]);
+			const nodeMap = makeNodeMap([['_kw_break', makeKeyword('_kw_break', 'break')]]);
 			expect(resolveEffectiveLiteral(field, nodeMap)).toBe('break');
 		});
 
 		it('returns undefined for optional single-keyword ref', () => {
 			const field = nodeRefField('_kw_async', 'optional');
-			const nodeMap = makeNodeMap([
-				['_kw_async', makeKeyword('_kw_async', 'async')]
-			]);
+			const nodeMap = makeNodeMap([['_kw_async', makeKeyword('_kw_async', 'async')]]);
 			expect(resolveEffectiveLiteral(field, nodeMap)).toBeUndefined();
 		});
 
@@ -145,9 +132,7 @@ describe('resolveEffectiveLiteral', () => {
 					multiplicity: 'single'
 				}
 			]);
-			const nodeMap = makeNodeMap([
-				['mutable_specifier', makeKeyword('mutable_specifier', 'mut')]
-			]);
+			const nodeMap = makeNodeMap([['mutable_specifier', makeKeyword('mutable_specifier', 'mut')]]);
 			expect(resolveEffectiveLiteral(field, nodeMap)).toBeUndefined();
 		});
 
@@ -193,9 +178,7 @@ describe('resolveEffectiveLiteral', () => {
 
 		it('returns undefined for a repeated field with single AssembledKeyword ref (nonEmptyArray)', () => {
 			const field = nodeRefField('_kw_async', 'nonEmptyArray');
-			const nodeMap = makeNodeMap([
-				['_kw_async', makeKeyword('_kw_async', 'async')]
-			]);
+			const nodeMap = makeNodeMap([['_kw_async', makeKeyword('_kw_async', 'async')]]);
 			expect(resolveEffectiveLiteral(field, nodeMap)).toBeUndefined();
 		});
 	});

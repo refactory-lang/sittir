@@ -95,12 +95,8 @@ function jinjaInterpolationsToLegacy(body: string): string {
 	);
 }
 
-function loadRulesFromPath(
-	templatesPath: string
-): Record<string, TemplateRule> {
-	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) =>
-		jinjaBodyToLegacyRule(body)
-	);
+function loadRulesFromPath(templatesPath: string): Record<string, TemplateRule> {
+	return loadRulesFromTemplatesPath(templatesPath, (_kind, body) => jinjaBodyToLegacyRule(body));
 }
 import type { TemplateRule, TemplateRuleObject } from '@sittir/types';
 
@@ -130,10 +126,7 @@ export interface CoverageIssue {
 // Main
 // ---------------------------------------------------------------------------
 
-export function validateTemplateCoverage(
-	grammar: string,
-	templatesPath: string
-): TemplateCoverageResult {
+export function validateTemplateCoverage(grammar: string, templatesPath: string): TemplateCoverageResult {
 	const entries = loadRawEntries(grammar);
 	const rules = loadRulesFromPath(templatesPath);
 	// Tree-sitter's `node-types.json` flattens nested-field-paths to the
@@ -152,9 +145,7 @@ export function validateTemplateCoverage(
 	// `hoistedOuterByKind` is empty and the checker behaves as it did
 	// before.
 	const grammarJson = loadGrammarJson(grammar);
-	const hoistedOuterByKind = grammarJson
-		? computeHoistedOuterFields(grammarJson)
-		: new Map<string, Set<string>>();
+	const hoistedOuterByKind = grammarJson ? computeHoistedOuterFields(grammarJson) : new Map<string, Set<string>>();
 
 	const issues: CoverageIssue[] = [];
 	let total = 0;
@@ -179,11 +170,7 @@ export function validateTemplateCoverage(
 		if (rule === undefined) continue; // validate-renderable catches this.
 
 		total++;
-		const kindIssues = checkRule(
-			entry,
-			rule,
-			hoistedOuterByKind.get(entry.type) ?? new Set()
-		);
+		const kindIssues = checkRule(entry, rule, hoistedOuterByKind.get(entry.type) ?? new Set());
 		if (kindIssues.length === 0) {
 			pass++;
 		} else {
@@ -213,10 +200,7 @@ export function validateTemplateCoverage(
  * @param clauseTemplates - The clause key → template body map for the rule.
  * @returns A set of lowercased placeholder names found across all templates.
  */
-function computeUnionPlaceholders(
-	variants: NamedTemplate[],
-	clauseTemplates: Record<string, string>
-): Set<string> {
+function computeUnionPlaceholders(variants: NamedTemplate[], clauseTemplates: Record<string, string>): Set<string> {
 	const unionPlaceholders = new Set<string>();
 	for (const { template } of variants) {
 		for (const p of extractPlaceholders(template)) unionPlaceholders.add(p);
@@ -241,10 +225,7 @@ function computeUnionPlaceholders(
  * @param variants - The named template variants to inspect.
  * @returns An array of `literal-leak` CoverageIssues, one per offending variant.
  */
-function checkVariantsForLiteralLeaks(
-	entry: RawNodeEntry,
-	variants: NamedTemplate[]
-): CoverageIssue[] {
+function checkVariantsForLiteralLeaks(entry: RawNodeEntry, variants: NamedTemplate[]): CoverageIssue[] {
 	const issues: CoverageIssue[] = [];
 	for (const { label, template } of variants) {
 		const leak = /([/&|;+\-*=<>!?~^%])\1{3,}/.exec(template);
@@ -260,11 +241,7 @@ function checkVariantsForLiteralLeaks(
 	return issues;
 }
 
-function checkRule(
-	entry: RawNodeEntry,
-	rule: TemplateRule,
-	hoistedOuterFields: Set<string>
-): CoverageIssue[] {
+function checkRule(entry: RawNodeEntry, rule: TemplateRule, hoistedOuterFields: Set<string>): CoverageIssue[] {
 	const fields = entry.fields ?? {};
 	const fieldNames = Object.keys(fields);
 	const issues: CoverageIssue[] = [];
@@ -289,10 +266,7 @@ function checkRule(
 	const unionPlaceholders = computeUnionPlaceholders(variants, clauseTemplates);
 
 	for (const fname of fieldNames) {
-		if (
-			isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)
-		)
-			continue;
+		if (isFieldReferenced(fname, unionPlaceholders, clauseKeys, clauseTemplates)) continue;
 		// Hoisted-outer flatten artifact: `fname` is declared on the
 		// kind in `node-types.json` but our simplify hoist drops the
 		// `field('fname', ...)` wrapper from the rule passed to the
@@ -307,9 +281,7 @@ function checkRule(
 		const bodies =
 			variants.length === 1
 				? JSON.stringify(variants[0]!.template)
-				: variants
-						.map((v) => `${v.label}=${JSON.stringify(v.template)}`)
-						.join(' | ');
+				: variants.map((v) => `${v.label}=${JSON.stringify(v.template)}`).join(' | ');
 		issues.push({
 			kind: entry.type,
 			type: 'missing-field',
@@ -346,8 +318,7 @@ function collectTemplates(rule: TemplateRule): NamedTemplate[] {
 	if (typeof rule === 'string') return [{ label: '', template: rule }];
 	const out: NamedTemplate[] = [];
 	const obj = rule as TemplateRuleObject;
-	if (typeof obj.template === 'string')
-		out.push({ label: '', template: obj.template });
+	if (typeof obj.template === 'string') out.push({ label: '', template: obj.template });
 	if (obj.variants && typeof obj.variants === 'object') {
 		for (const [name, tmpl] of Object.entries(obj.variants)) {
 			if (typeof tmpl === 'string') out.push({ label: name, template: tmpl });
@@ -359,33 +330,17 @@ function collectTemplates(rule: TemplateRule): NamedTemplate[] {
 function collectClauseKeys(obj: TemplateRuleObject): Set<string> {
 	const keys = new Set<string>();
 	for (const k of Object.keys(obj)) {
-		if (
-			k === 'template' ||
-			k === 'variants' ||
-			k === 'joinBy' ||
-			k === 'joinByField' ||
-			k === 'detect'
-		)
-			continue;
+		if (k === 'template' || k === 'variants' || k === 'joinBy' || k === 'joinByField' || k === 'detect') continue;
 		const v = (obj as Record<string, unknown>)[k];
 		if (typeof v === 'string') keys.add(k);
 	}
 	return keys;
 }
 
-function collectClauseTemplates(
-	obj: TemplateRuleObject
-): Record<string, string> {
+function collectClauseTemplates(obj: TemplateRuleObject): Record<string, string> {
 	const out: Record<string, string> = {};
 	for (const k of Object.keys(obj)) {
-		if (
-			k === 'template' ||
-			k === 'variants' ||
-			k === 'joinBy' ||
-			k === 'joinByField' ||
-			k === 'detect'
-		)
-			continue;
+		if (k === 'template' || k === 'variants' || k === 'joinBy' || k === 'joinByField' || k === 'detect') continue;
 		const v = (obj as Record<string, unknown>)[k];
 		if (typeof v === 'string') out[k] = v;
 	}
@@ -447,10 +402,7 @@ function isReferencedViaClausePlaceholder(
  * @param clauseTemplates - Map of clause key → clause body template string.
  * @returns True if any clause body template references the field.
  */
-function isReferencedInClauseBody(
-	fieldName: string,
-	clauseTemplates: Record<string, string>
-): boolean {
+function isReferencedInClauseBody(fieldName: string, clauseTemplates: Record<string, string>): boolean {
 	for (const body of Object.values(clauseTemplates)) {
 		if (extractPlaceholders(body).has(fieldName)) return true;
 	}
@@ -467,8 +419,7 @@ function isFieldReferenced(
 	if (placeholders.has(fieldName)) return true;
 
 	// 2. Clause placeholder reference.
-	if (isReferencedViaClausePlaceholder(fieldName, placeholders, clauseKeys))
-		return true;
+	if (isReferencedViaClausePlaceholder(fieldName, placeholders, clauseKeys)) return true;
 
 	// 3. Clause body reference.
 	if (isReferencedInClauseBody(fieldName, clauseTemplates)) return true;
@@ -506,9 +457,7 @@ function isFieldReferenced(
  *   3. Field's content has NO named-symbol / supertype sibling of the
  *      inner field (those would lose their outer-field label).
  */
-function computeHoistedOuterFields(
-	grammar: GrammarJson
-): Map<string, Set<string>> {
+function computeHoistedOuterFields(grammar: GrammarJson): Map<string, Set<string>> {
 	const rules = grammar.rules;
 	const out = new Map<string, Set<string>>();
 	for (const kind of Object.keys(rules)) {
@@ -561,11 +510,8 @@ function collectHoistedOuterFields(
 		return;
 	}
 	const n = node as { content?: unknown; members?: unknown[] };
-	if (n.content !== undefined)
-		collectHoistedOuterFields(n.content, rules, out, visited);
-	if (Array.isArray(n.members))
-		for (const m of n.members)
-			collectHoistedOuterFields(m, rules, out, visited);
+	if (n.content !== undefined) collectHoistedOuterFields(n.content, rules, out, visited);
+	if (Array.isArray(n.members)) for (const m of n.members) collectHoistedOuterFields(m, rules, out, visited);
 }
 
 /**
@@ -574,14 +520,10 @@ function collectHoistedOuterFields(
  * discriminants) instead of the internal `Rule` union. Returns true
  * when the outer field would be dropped by the simplify hoist.
  */
-function fieldHoistsViaSimplify(
-	content: unknown,
-	rules: Record<string, unknown>
-): boolean {
+function fieldHoistsViaSimplify(content: unknown, rules: Record<string, unknown>): boolean {
 	if (!content || typeof content !== 'object') return false;
 	if (isField(content)) return false; // direct field-of-field, different hoist path
-	if (!hasInnerFieldAtExposableDepthGrammar(content, rules, new Set()))
-		return false;
+	if (!hasInnerFieldAtExposableDepthGrammar(content, rules, new Set())) return false;
 	if (hasNamedSiblingOfInnerFieldGrammar(content)) return false;
 	return true;
 }
@@ -616,13 +558,8 @@ function hasInnerFieldAtExposableDepthGrammar(
 	const n = node as { type?: string; content?: unknown; members?: unknown[] };
 	// Stop at terminal-bearing or schema-isolating wrappers — STRING /
 	// PATTERN / BLANK / ALIAS{named:true} (handled above).
-	if (n.type === 'STRING' || n.type === 'PATTERN' || n.type === 'BLANK')
-		return false;
-	if (
-		n.content !== undefined &&
-		hasInnerFieldAtExposableDepthGrammar(n.content, rules, visited)
-	)
-		return true;
+	if (n.type === 'STRING' || n.type === 'PATTERN' || n.type === 'BLANK') return false;
+	if (n.content !== undefined && hasInnerFieldAtExposableDepthGrammar(n.content, rules, visited)) return true;
 	if (Array.isArray(n.members)) {
 		for (const m of n.members) {
 			if (hasInnerFieldAtExposableDepthGrammar(m, rules, visited)) return true;
@@ -717,19 +654,13 @@ interface AliasNode {
 }
 
 function isField(n: unknown): n is FieldNode {
-	return (
-		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'FIELD'
-	);
+	return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'FIELD';
 }
 function isSymbol(n: unknown): n is SymbolNode {
-	return (
-		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'SYMBOL'
-	);
+	return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'SYMBOL';
 }
 function isAlias(n: unknown): n is AliasNode {
-	return (
-		!!n && typeof n === 'object' && (n as { type?: unknown }).type === 'ALIAS'
-	);
+	return !!n && typeof n === 'object' && (n as { type?: unknown }).type === 'ALIAS';
 }
 
 /**

@@ -59,11 +59,7 @@ describe('applyEdits', () => {
 	});
 
 	it('single deletion (delta < 0)', () => {
-		const { source, format } = applyEdits(
-			'hello world',
-			[{ startPos: 5, endPos: 11, insertedText: '' }],
-			undefined
-		);
+		const { source, format } = applyEdits('hello world', [{ startPos: 5, endPos: 11, insertedText: '' }], undefined);
 		expect(source).toBe('hello');
 		expect(format).toBeUndefined();
 	});
@@ -83,11 +79,7 @@ describe('applyEdits', () => {
 			trivia: [{ offset: 10, text: ' ' }]
 		};
 		// edit at startPos 3, inserts 2 chars (delta +2) → trivia shifts to 12
-		const { format } = applyEdits(
-			'hello world',
-			[{ startPos: 3, endPos: 3, insertedText: 'XX' }],
-			fmt
-		);
+		const { format } = applyEdits('hello world', [{ startPos: 3, endPos: 3, insertedText: 'XX' }], fmt);
 		expect(format?.trivia?.[0]?.offset).toBe(12);
 	});
 
@@ -96,11 +88,7 @@ describe('applyEdits', () => {
 			trivia: [{ offset: 2, text: ' ' }]
 		};
 		// edit at startPos 5, trivia at 2 → trivia offset unchanged
-		const { format } = applyEdits(
-			'hello world',
-			[{ startPos: 5, endPos: 5, insertedText: 'XX' }],
-			fmt
-		);
+		const { format } = applyEdits('hello world', [{ startPos: 5, endPos: 5, insertedText: 'XX' }], fmt);
 		expect(format?.trivia?.[0]?.offset).toBe(2);
 	});
 

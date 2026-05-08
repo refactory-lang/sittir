@@ -48,9 +48,7 @@ describe('python type_alias_statement collision (spec 008 US7)', () => {
 
 		// Both instances share kind and the auto-stamp `type` literal
 		expect(a.$type).toBe(b.$type);
-		expect((a as unknown as Record<string, unknown>)['_type']).toBe(
-			(b as unknown as Record<string, unknown>)['_type']
-		);
+		expect((a as unknown as Record<string, unknown>)['_type']).toBe((b as unknown as Record<string, unknown>)['_type']);
 		// Left/right distinguish — sanity check the `_type` field isn't a global.
 		const aLeft = ((a as unknown as Record<string, unknown>)['_left'] as { $text?: string })?.$text;
 		const bLeft = ((b as unknown as Record<string, unknown>)['_left'] as { $text?: string })?.$text;

@@ -40,11 +40,13 @@ import type {
 	EnumRule,
 	SupertypeRule,
 	PolymorphRule,
+	PolymorphForm,
 	TerminalRule
 } from './rule.ts';
 import { isSeq, isField } from './rule.ts';
 import {
 	renderRuleTemplate,
+	deriveWalkSlots,
 	findRepeatSeparator,
 	findRepeatFlag
 } from './template-walker.ts';
@@ -2327,6 +2329,102 @@ function tryCrossFormOptionalCollapse(
 	return prefix + suffixes[0]!;
 }
 
+function inlineSingleParameterlessChildTemplate(
+	form: AssembledGroup,
+	rawTemplate: string,
+	rules?: Record<string, Rule>,
+	wordMatcher?: RegExp,
+	externals?: ReadonlySet<string>
+): string {
+	if (!rawTemplate.includes('$$$CHILDREN')) return rawTemplate;
+	if (form.children.length !== 1) return rawTemplate;
+	const slot = form.children[0]!;
+	if (slot.values.length !== 1) return rawTemplate;
+	const value = slot.values[0]!;
+	if (!isNodeRef(value) || isUnresolvedRef(value.node) || !value.node.isParameterless) return rawTemplate;
+	const stampedLiteral =
+		value.node.modelType === 'keyword' || value.node.modelType === 'token'
+			? resolveStampedLiteral(value.node.stampExpression)
+			: undefined;
+	if (stampedLiteral !== undefined) return rawTemplate.replace('$$$CHILDREN', stampedLiteral);
+	const renderedEntry = value.node.renderTemplate(rules, wordMatcher, externals);
+	return renderedEntry ? rawTemplate.replace('$$$CHILDREN', renderedEntry.template) : rawTemplate;
+}
+
+function inlineFixedParameterlessSlotPlaceholders(
+	form: AssembledGroup,
+	rawTemplate: string,
+	rules?: Record<string, Rule>,
+	wordMatcher?: RegExp,
+	externals?: ReadonlySet<string>
+): string {
+	let template = rawTemplate;
+	for (const slot of [...form.fields, ...form.children]) {
+		if (slot.values.length !== 1) continue;
+		const value = slot.values[0]!;
+		if (!isNodeRef(value) || isUnresolvedRef(value.node) || !value.node.isParameterless) continue;
+		const stampedLiteral =
+			value.node.modelType === 'keyword' || value.node.modelType === 'token' || value.node.modelType === 'enum'
+				? resolveStampedLiteral(value.node.stampExpression)
+				: undefined;
+		const renderedEntry =
+			stampedLiteral === undefined
+				? value.node.renderTemplate(rules, wordMatcher, externals)
+				: undefined;
+		const replacement = stampedLiteral ?? renderedEntry?.template;
+		if (replacement === undefined) continue;
+		const slotName = slot.name.toUpperCase();
+		template = template.replaceAll(`$$$${slotName}`, replacement);
+		template = template.replaceAll(`$${slotName}`, replacement);
+	}
+	return template;
+}
+
+function resolveStampedLiteral(stampExpression: string | undefined): string | undefined {
+	if (!stampExpression?.endsWith(' as const')) return undefined;
+	try {
+		return JSON.parse(stampExpression.slice(0, -' as const'.length)) as string;
+	} catch {
+		return undefined;
+	}
+}
+
+function longestCommonPrefix(values: readonly string[]): string {
+	if (values.length === 0) return '';
+	let prefix = values[0]!;
+	for (let i = 1; i < values.length && prefix.length > 0; i++) {
+		const value = values[i]!;
+		let common = 0;
+		while (common < prefix.length && common < value.length && prefix[common] === value[common]) common++;
+		prefix = prefix.slice(0, common);
+	}
+	return prefix;
+}
+
+function tryChildrenPresenceCollapse(
+	rawTemplates: Record<string, string>,
+	formNames: readonly string[]
+): string | null {
+	if (formNames.length < 2) return null;
+	const templates = formNames.map((name) => rawTemplates[name]!).filter((value): value is string => value != null);
+	if (templates.length !== formNames.length) return null;
+	const prefix = longestCommonPrefix(templates);
+	if (!prefix) return null;
+	const suffixes = templates.map((template) => template.slice(prefix.length));
+	const childSuffixes = [...new Set(suffixes.filter((suffix) => suffix.includes('$$$CHILDREN')))];
+	const literalSuffixes = [...new Set(suffixes.filter((suffix) => !suffix.includes('$')))];
+	if (childSuffixes.length !== 1 || literalSuffixes.length !== 1) return null;
+	const childSuffix = childSuffixes[0]!;
+	const literalSuffix = literalSuffixes[0]!;
+	if (
+		suffixes.some((suffix) => suffix !== childSuffix && suffix !== literalSuffix) ||
+		childSuffix === literalSuffix
+	) {
+		return null;
+	}
+	return `${prefix}{% if children | isPresent %}${childSuffix}{% else %}${literalSuffix}{% endif %}`;
+}
+
 /**
  * Prevent `{$$$CHILDREN}` → `{{{ children }}}` parse failure by
  * inserting a space between a literal brace and an adjacent Jinja
@@ -2945,6 +3043,10 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		return this.#forms;
 	}
 
+	get formRules(): readonly PolymorphForm[] {
+		return this.rule.forms;
+	}
+
 	/**
 	 * Flattened field list across all forms — the union of every form's
 	 * named slots (source !== 'inferred'). Used by emitters that need
@@ -3012,7 +3114,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 	renderTemplate(
 		rules?: Record<string, Rule>,
 		wordMatcher?: RegExp,
-		_externals?: ReadonlySet<string>
+		externals?: ReadonlySet<string>
 	): RenderTemplateEntry {
 		if (this.#forms.length === 0) {
 			throw new Error(
@@ -3044,8 +3146,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 				template,
 				clauses,
 				joinByField,
-				usesChildren: formUsesChildren,
-				slots
+				usesChildren: formUsesChildren
 			} = form.renderParts(
 				rules,
 				wordMatcher
@@ -3056,16 +3157,30 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 						`produced an empty template.`
 				);
 			}
-			rawTemplates[form.name] = template;
+			const normalizedTemplate = inlineSingleParameterlessChildTemplate(
+				form,
+				template,
+				rules,
+				wordMatcher,
+				externals
+			);
+			const normalizedWithFixedSlots = inlineFixedParameterlessSlotPlaceholders(
+				form,
+				normalizedTemplate,
+				rules,
+				wordMatcher,
+				externals
+			);
+			rawTemplates[form.name] = normalizedWithFixedSlots;
 			const localOptional = deriveOptionalFieldNames(form.fields);
 			for (const name of localOptional) mergedOptionalFields.add(name);
 			const wrapped =
 				localOptional.size > 0
-					? wrapOptionalFieldPlaceholders(template, localOptional)
-					: template;
+					? wrapOptionalFieldPlaceholders(normalizedWithFixedSlots, localOptional)
+					: normalizedWithFixedSlots;
 			variants[form.name] = wrapped;
 			usesChildren ||= formUsesChildren;
-			for (const slot of slots) {
+			for (const slot of deriveWalkSlots(normalizedWithFixedSlots)) {
 				const guarded =
 					slot.guarded ||
 					localOptional.has(slot.name) ||
@@ -3124,21 +3239,29 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 			if (crossFormCollapsed) {
 				templateStr = crossFormCollapsed;
 			} else {
-				// Build the `{%- if variant == "a" -%}A:$NAME{%- elif … -%}…{%- endif -%}`
-				// chain. Whitespace-controls suppress the newlines between
-				// the template fragments so the output joins cleanly.
-				const parts: string[] = [];
-				for (let i = 0; i < formNames.length; i++) {
-					const formName = formNames[i]!;
-					const keyword = i === 0 ? 'if' : 'elif';
-					parts.push(
-						`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`
-					);
-					parts.push(variants[formName]!);
+				const childrenPresenceCollapsed = tryChildrenPresenceCollapse(
+					rawTemplates,
+					formNames
+				);
+				if (childrenPresenceCollapsed) {
+					templateStr = childrenPresenceCollapsed;
+				} else {
+					// Build the `{%- if variant == "a" -%}A:$NAME{%- elif … -%}…{%- endif -%}`
+					// chain. Whitespace-controls suppress the newlines between
+					// the template fragments so the output joins cleanly.
+					const parts: string[] = [];
+					for (let i = 0; i < formNames.length; i++) {
+						const formName = formNames[i]!;
+						const keyword = i === 0 ? 'if' : 'elif';
+						parts.push(
+							`{%- ${keyword} variant == ${JSON.stringify(formName)} -%}`
+						);
+						parts.push(variants[formName]!);
+					}
+					parts.push('{%- endif -%}');
+					templateStr = parts.join('\n');
+					usesVariant = true;
 				}
-				parts.push('{%- endif -%}');
-				templateStr = parts.join('\n');
-				usesVariant = true;
 			}
 		}
 		// Inline the merged per-form clauses as `{% if x %}body{% endif %}`,
@@ -3162,6 +3285,7 @@ export class AssembledPolymorph extends AssembledNodeBase<PolymorphRule> {
 		if (mergedLeadingFields.size > 0) meta.leadingFields = mergedLeadingFields;
 		if (Object.keys(mergedJoinByField).length > 0)
 			meta.joinByField = mergedJoinByField;
+		if (mergedOptionalFields.size > 0) meta.optionalFields = mergedOptionalFields;
 		return {
 			template: translateToJinja(withClauses, meta),
 			surface: buildRenderSurface({
@@ -3329,13 +3453,10 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		opts?: { factoryName?: string; irKey?: string }
 	) {
 		super(kind, rule, opts);
-		// Single-value enums are parameterless — they produce a fixed constant.
-		// Both keyword-style hidden rules (_kw_*) and synthesised EnumRule kinds
-		// with exactly one member qualify. Field stamp is the plain literal;
-		// child stamp wraps it in a NodeData object (Terminal-compatible shape).
-		if (this.values.length === 1) {
-			this.isParameterless = true;
-			this.stampExpression = `${JSON.stringify(this.values[0])} as const`;
+		if (this.values.length < 2) {
+			throw new Error(
+				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule`
+			);
 		}
 	}
 
@@ -3344,19 +3465,6 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		return this.rule.members.map((m) => m.value);
 	}
 
-	/**
-	 * Child-context stamp for single-value enums: wrap the literal in a
-	 * Terminal-compatible NodeData object so the parent's `$children` slot
-	 * type-checks against `Terminal<kind, text>`.
-	 *
-	 * @remarks
-	 * Only meaningful when `isParameterless` is true (single-member enum).
-	 */
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.values[0] ?? '');
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
-	}
 }
 
 export class AssembledSupertype extends AssembledNodeBase<
@@ -3476,6 +3584,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 	 * standalone groups (inlined hidden seqs).
 	 */
 	readonly parentKind?: string;
+	readonly overridePassthrough?: boolean;
 
 	/** See {@link AssembledBranch.slotClass}. */
 	slotClass?: BranchSlotClass;
@@ -3501,6 +3610,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 			detectToken?: string;
 			name?: string;
 			parentKind?: string;
+			overridePassthrough?: boolean;
 		}
 	) {
 		// Groups always derive a factoryName — hidden groups emit fragment factories
@@ -3520,6 +3630,7 @@ export class AssembledGroup extends AssembledNodeBase<Rule> {
 		this.detectToken = opts?.detectToken;
 		this.name = opts?.name ?? kind;
 		this.parentKind = opts?.parentKind;
+		this.overridePassthrough = opts?.overridePassthrough;
 		this.slots = buildSlotsRecord(kind, simplifiedRule);
 	}
 
@@ -3768,4 +3879,3 @@ export function allStructuralSlotsOf(
 		return Object.values(node.slots);
 	return [];
 }
-

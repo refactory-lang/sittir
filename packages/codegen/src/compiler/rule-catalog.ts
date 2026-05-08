@@ -9,13 +9,7 @@
 
 import { assertNever } from '../polymorph-variant.ts';
 import type { Rule, RuleId, SymbolRef } from './rule.ts';
-import type {
-	RuleCatalog,
-	RuleCatalogEntry,
-	RuleClassification,
-	RulePathSegment,
-	RuleProvenance
-} from './types.ts';
+import type { RuleCatalog, RuleCatalogEntry, RuleClassification, RulePathSegment, RuleProvenance } from './types.ts';
 
 interface BuildResult {
 	readonly rule: Rule;
@@ -75,10 +69,7 @@ export function buildRuleCatalog(
 	};
 }
 
-export function attachReferenceRuleIds(
-	references: readonly SymbolRef[],
-	ruleCatalog: RuleCatalog
-): SymbolRef[] {
+export function attachReferenceRuleIds(references: readonly SymbolRef[], ruleCatalog: RuleCatalog): SymbolRef[] {
 	return references.map((ref) => {
 		const fromRuleId = ruleCatalog.rootsByKind.get(ref.from);
 		return fromRuleId ? { ...ref, fromRuleId } : { ...ref };
@@ -117,10 +108,7 @@ function identifyRule(params: IdentifyParams): BuildResult {
 	return { rule, id, classification };
 }
 
-function identifyChildren(
-	params: IdentifyParams,
-	parentId: RuleId
-): BuildResult[] {
+function identifyChildren(params: IdentifyParams, parentId: RuleId): BuildResult[] {
 	const childParams = (rule: Rule, segment: RulePathSegment, force = {}) =>
 		identifyRule({
 			rule,
@@ -136,13 +124,9 @@ function identifyChildren(
 	switch (params.rule.type) {
 		case 'seq':
 		case 'choice':
-			return params.rule.members.map((member, index) =>
-				childParams(member, { edge: 'members', index })
-			);
+			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
 		case 'enum':
-			return params.rule.members.map((member, index) =>
-				childParams(member, { edge: 'members', index })
-			);
+			return params.rule.members.map((member, index) => childParams(member, { edge: 'members', index }));
 		case 'optional':
 		case 'repeat':
 		case 'repeat1':
@@ -175,9 +159,7 @@ function identifyChildren(
 				)
 			];
 		case 'polymorph':
-			return params.rule.forms.map((form, index) =>
-				childParams(form.content, { edge: 'forms', index })
-			);
+			return params.rule.forms.map((form, index) => childParams(form.content, { edge: 'forms', index }));
 		case 'supertype':
 		case 'string':
 		case 'pattern':
@@ -191,11 +173,7 @@ function identifyChildren(
 	}
 }
 
-function withIdentifiedChildren(
-	rule: Rule,
-	id: RuleId,
-	children: readonly BuildResult[]
-): Rule {
+function withIdentifiedChildren(rule: Rule, id: RuleId, children: readonly BuildResult[]): Rule {
 	switch (rule.type) {
 		case 'seq':
 		case 'choice':
@@ -253,10 +231,7 @@ function classifyRule(
 	force: ClassificationForce
 ): RuleClassification {
 	const intrinsicKind = classifyIntrinsic(rule, children);
-	const forcedKind =
-		force.forcedBy === 'field' || force.forcedBy === 'named-alias'
-			? 'nonterminal'
-			: intrinsicKind;
+	const forcedKind = force.forcedBy === 'field' || force.forcedBy === 'named-alias' ? 'nonterminal' : intrinsicKind;
 	return {
 		ruleId: id,
 		kind: forcedKind,
@@ -266,10 +241,7 @@ function classifyRule(
 	};
 }
 
-function classifyIntrinsic(
-	rule: Rule,
-	children: readonly BuildResult[]
-): RuleClassification['kind'] {
+function classifyIntrinsic(rule: Rule, children: readonly BuildResult[]): RuleClassification['kind'] {
 	switch (rule.type) {
 		case 'symbol':
 		case 'supertype':
@@ -295,24 +267,15 @@ function classifyIntrinsic(
 		case 'enum':
 		case 'group':
 		case 'polymorph':
-			return children.some(
-				(child) => child.classification.kind === 'nonterminal'
-			)
-				? 'nonterminal'
-				: 'terminal';
+			return children.some((child) => child.classification.kind === 'nonterminal') ? 'nonterminal' : 'terminal';
 		default:
 			return assertNever(rule);
 	}
 }
 
-function createRuleId(
-	ownerKind: string,
-	path: readonly RulePathSegment[]
-): RuleId {
+function createRuleId(ownerKind: string, path: readonly RulePathSegment[]): RuleId {
 	if (path.length === 0) return `rule:${encodeURIComponent(ownerKind)}:root`;
-	return `rule:${encodeURIComponent(ownerKind)}:${path
-		.map(formatPathSegment)
-		.join('/')}`;
+	return `rule:${encodeURIComponent(ownerKind)}:${path.map(formatPathSegment).join('/')}`;
 }
 
 function formatPathSegment(segment: RulePathSegment): string {

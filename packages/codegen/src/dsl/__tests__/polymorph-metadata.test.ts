@@ -38,9 +38,7 @@ describe('polymorph metadata registration', () => {
 			});
 		});
 
-		expect(
-			ctx.polymorphVariants.filter((v) => v.parent === 'assignment')
-		).toEqual([
+		expect(ctx.polymorphVariants.filter((v) => v.parent === 'assignment')).toEqual([
 			{ parent: 'assignment', child: 'eq' },
 			{ parent: 'assignment', child: 'type' }
 		]);
@@ -80,8 +78,6 @@ describe('polymorph metadata registration', () => {
 			{ parent: 'rule_one', child: 'a' },
 			{ parent: 'rule_one', child: 'b' }
 		]);
-		expect(ctx2.polymorphVariants).toEqual([
-			{ parent: 'rule_two', child: 'x' }
-		]);
+		expect(ctx2.polymorphVariants).toEqual([{ parent: 'rule_two', child: 'x' }]);
 	});
 });

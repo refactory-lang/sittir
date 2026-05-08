@@ -51,8 +51,6 @@ describe('leaf factory guards', () => {
 		// soft-keyword mechanics. Factory leaves keep the pattern
 		// check; semantic misuse (building `identifier({text:'fn'})`)
 		// surfaces at tree-sitter reparse time instead.
-		expect(result.factories).not.toContain(
-			`throw new Error(\`identifier: text '\${text}' is a reserved keyword\`)`
-		);
+		expect(result.factories).not.toContain(`throw new Error(\`identifier: text '\${text}' is a reserved keyword\`)`);
 	});
 });

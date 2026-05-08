@@ -17,25 +17,13 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import {
-	readNode as readNodeFn,
-	dumpMetrics,
-	metricsEnabled
-} from '@sittir/core';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/core';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
-import type {
-	AnyNodeData,
-	AnyTreeNode,
-	NativeParseResult
-} from '@sittir/types';
+import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
 import type { TreeHandle } from '@sittir/core';
-import {
-	assertNever,
-	type PolymorphVariantDescriptor,
-	type PolymorphVariantMap
-} from '../polymorph-variant.ts';
+import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape } from '../emitters/factory-map.ts';
 
 // ---------------------------------------------------------------------------
@@ -94,9 +82,7 @@ const FIXTURES_DIR = fileURLToPath(new URL('../../fixtures', import.meta.url));
 
 export function loadCorpusEntries(grammar: string): CorpusEntry[] {
 	const entries: CorpusEntry[] = [];
-	const files = readdirSync(FIXTURES_DIR).filter(
-		(f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt')
-	);
+	const files = readdirSync(FIXTURES_DIR).filter((f) => f.startsWith(`${grammar}-`) && f.endsWith('.txt'));
 	for (const file of files) {
 		const content = readFileSync(join(FIXTURES_DIR, file), 'utf-8');
 		entries.push(...parseCorpus(content));
@@ -114,18 +100,10 @@ export async function loadWebTreeSitter(): Promise<{
 	Language: typeof TS.Language;
 }> {
 	const mod = await import('web-tree-sitter');
-	const Parser =
-		mod.Parser ??
-		(mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined);
-	const Language =
-		mod.Language ??
-		(mod.default && 'Language' in mod.default
-			? mod.default.Language
-			: undefined);
+	const Parser = mod.Parser ?? (mod.default && 'Parser' in mod.default ? mod.default.Parser : undefined);
+	const Language = mod.Language ?? (mod.default && 'Language' in mod.default ? mod.default.Language : undefined);
 	if (!Parser || !Language) {
-		throw new Error(
-			'web-tree-sitter: could not locate `Parser` or `Language` export'
-		);
+		throw new Error('web-tree-sitter: could not locate `Parser` or `Language` export');
 	}
 	await Parser.init();
 	return { Parser, Language };
@@ -202,17 +180,12 @@ export interface NativeEngineLike {
 	parseAndRead(source: string): string;
 	readNode(handle: number, childIndex: number): string;
 }
-export function nativeTreeHandle(
-	engine: NativeEngineLike,
-	source: string
-): TreeHandle {
+export function nativeTreeHandle(engine: NativeEngineLike, source: string): TreeHandle {
 	// Parse eagerly: populates engine tree cache and captures format in one call.
 	// Behavioral note: prior to 017, nativeTreeHandle parsed lazily on first
 	// readNode() call. Parsing is now unconditional at construction time so
 	// the format record is always available before callers access tree.format.
-	const parseResult = JSON.parse(
-		engine.parseAndRead(source)
-	) as NativeParseResult;
+	const parseResult = JSON.parse(engine.parseAndRead(source)) as NativeParseResult;
 	if (parseResult.nodeData === undefined) {
 		const keys = Object.keys(parseResult as object).join(', ');
 		throw new Error(
@@ -227,16 +200,12 @@ export function nativeTreeHandle(
 		// wrappers; reads always go through `read` below. The required
 		// rootNode slot throws to surface accidental fallbacks.
 		get rootNode(): AnyTreeNode {
-			throw new Error(
-				'nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()'
-			);
+			throw new Error('nativeTreeHandle: rootNode unavailable — native handle reads via tree.read()');
 		},
 		source,
 		read(nodeHandle?: number, childIndex?: number) {
 			if (nodeHandle === undefined) {
-				return rootData as unknown as ReturnType<
-					NonNullable<TreeHandle['read']>
-				>;
+				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
 			}
 			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<
 				NonNullable<TreeHandle['read']>
@@ -264,8 +233,7 @@ export function nativeTreeHandle(
  * invocations to amortize the (small) per-engine init. Each call
  * still parses fresh — the engine internally replaces its tree.
  */
-let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null =
-	null;
+let _cachedNativeEngine: { grammar: string; engine: NativeEngineLike } | null = null;
 const nativePackages: Record<string, string> = {
 	rust: 'sittir-rust',
 	typescript: 'sittir-typescript',
@@ -281,9 +249,7 @@ function loadNativeEngineForGrammar(grammar: string): NativeEngineLike | null {
 		const req = createRequire(import.meta.url);
 		const pkg = nativePackages[grammar];
 		if (!pkg) return null;
-		const repoRoot = fileURLToPath(
-			new URL('../../../..', import.meta.url)
-		).replace(/\/$/, '');
+		const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 		const localCratePath = `${repoRoot}/rust/crates/sittir-${grammar}`;
 		let mod: { SittirEngine: new () => NativeEngineLike };
 		try {
@@ -310,9 +276,7 @@ export function buildReadHandle(
 	if (effectiveBackend === 'native') {
 		const engine = loadNativeEngineForGrammar(grammar);
 		if (!engine) {
-			throw new Error(
-				`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`
-			);
+			throw new Error(`SITTIR_BACKEND=native but no native engine is available for grammar '${grammar}'`);
 		}
 		return nativeTreeHandle(engine, source);
 	}
@@ -328,12 +292,11 @@ export function buildReadHandle(
  * For native handles (handle.read present), uses the native coords from
  * findNativeNodeId.
  */
-export function readNodeAt(
-	handle: TreeHandle,
-	node: AnyTreeNode,
-	nativeCoords: NativeNodeCoords | null
-): AnyNodeData {
+export function readNodeAt(handle: TreeHandle, node: AnyTreeNode, nativeCoords: NativeNodeCoords | null): AnyNodeData {
 	if (nativeCoords && handle.read) {
+		if (nativeCoords.handle === undefined) {
+			return readNodeFn(handle);
+		}
 		return readNodeFn(handle, nativeCoords.handle, nativeCoords.childIndex);
 	}
 	// WASM/JS path: temporarily set rootNode to the target node and read
@@ -353,16 +316,17 @@ export function readNodeAt(
  * the position in parent's child array.
  */
 export interface NativeNodeCoords {
-	handle: number;
-	childIndex: number;
+	handle?: number;
+	childIndex?: number;
 }
 
 /**
- * For a native TreeHandle (`handle.read` is present), walk the root
- * NodeData tree to find the `$nodeHandle` + `$childIndex` of the first
- * node whose `$type` equals `kind`. Native engine handles and WASM/JS
- * engine handles occupy different navigation spaces, so WASM coordinates
- * must never be passed to a native handle's `readNode(handle, childIndex)`.
+ * For a native TreeHandle (`handle.read` is present), walk the native
+ * NodeData tree to find the parent-handle + child-index pair for the
+ * first node whose `$type` equals `kind`. Native engine handles and
+ * WASM/JS engine handles occupy different navigation spaces, so WASM
+ * coordinates must never be passed to a native handle's
+ * `readNode(handle, childIndex)`.
  *
  * Returns null when `handle` is a WASM handle (no `handle.read`) —
  * callers fall back to the JS tree's `node.id` in that case.
@@ -375,32 +339,69 @@ export function findNativeNodeId(
 	kindNameFromId?: (id: number) => string | undefined
 ): NativeNodeCoords | null {
 	if (!handle.read) return null;
+	const read = handle.read;
 	const root = handle.read();
 
-	function walk(d: AnyNodeData): NativeNodeCoords | null {
-		// $type may be numeric (parser.c-derived) or string (hidden/synthetic kind).
-		const nodeKind = typeof d.$type === 'number'
-			? (kindNameFromId?.(d.$type) ?? String(d.$type))
-			: d.$type;
-		if (nodeKind === kind && d.$nodeHandle !== undefined && d.$childIndex !== undefined) {
-			return { handle: d.$nodeHandle, childIndex: d.$childIndex };
+	function pushCandidates(value: unknown, out: AnyNodeData[]): void {
+		const candidates = Array.isArray(value) ? value : [value];
+		for (const candidate of candidates) {
+			if (candidate != null && typeof candidate === 'object' && '$type' in candidate) {
+				out.push(candidate as AnyNodeData);
+			}
 		}
+	}
+
+	function collectNativeChildNodes(d: AnyNodeData): AnyNodeData[] {
+		const out: AnyNodeData[] = [];
 		const rec = d as unknown as Record<string, unknown>;
 		for (const key of Object.keys(rec)) {
-			if (!key.startsWith('_')) continue;
-			const v = rec[key];
-			const candidates = Array.isArray(v) ? v : [v];
-			for (const c of candidates) {
-				const found = walk(c as AnyNodeData);
-				if (found !== null) return found;
+			if (key.startsWith('_')) pushCandidates(rec[key], out);
+		}
+		const legacyFields = rec.$fields;
+		if (legacyFields != null && typeof legacyFields === 'object') {
+			for (const value of Object.values(legacyFields as Record<string, unknown>)) {
+				pushCandidates(value, out);
 			}
 		}
 		const children = d.$children;
 		if (children) {
-			for (const c of children) {
-				const found = walk(c as AnyNodeData);
-				if (found !== null) return found;
+			pushCandidates(children, out);
+		}
+		return out;
+	}
+
+	function hasEmbeddedNativeChildren(d: AnyNodeData): boolean {
+		if ((d.$children?.length ?? 0) > 0) return true;
+		const rec = d as unknown as Record<string, unknown>;
+		for (const key of Object.keys(rec)) {
+			if (key.startsWith('_')) return true;
+		}
+		const legacyFields = rec.$fields;
+		if (legacyFields != null && typeof legacyFields === 'object') {
+			return Object.keys(legacyFields as Record<string, unknown>).length > 0;
+		}
+		return false;
+	}
+
+	function kindOf(d: AnyNodeData): string {
+		return typeof d.$type === 'number' ? (kindNameFromId?.(d.$type) ?? String(d.$type)) : d.$type;
+	}
+
+	if (kindOf(root) === kind) {
+		return {};
+	}
+
+	function walk(d: AnyNodeData): NativeNodeCoords | null {
+		for (const child of collectNativeChildNodes(d)) {
+			if (kindOf(child) === kind && d.$nodeHandle !== undefined && child.$childIndex !== undefined) {
+				return { handle: d.$nodeHandle, childIndex: child.$childIndex };
 			}
+			let drilled = child;
+			if (!hasEmbeddedNativeChildren(drilled) && d.$nodeHandle !== undefined && drilled.$childIndex !== undefined) {
+				drilled = read(d.$nodeHandle, drilled.$childIndex) as AnyNodeData;
+			}
+			const found = walk(drilled);
+			if (found !== null) return found;
 		}
 		return null;
 	}
@@ -455,17 +456,20 @@ export function buildKindToSupertypes(
 	return result;
 }
 
-const REPARSE_WRAPPERS: Record<
-	string,
-	Record<string, (r: string) => string>
-> = {
+const REPARSE_WRAPPERS: Record<string, Record<string, (r: string) => string>> = {
 	rust: {
+		source_file: (r) => r,
 		_expression: (r) => `fn _f() { let _ = ${r}; }`,
 		_type: (r) => `type _X = ${r};`,
 		_pattern: (r) => `fn _f() { let ${r} = (); }`,
 		_declaration_statement: (r) => r,
 		_literal: (r) => `fn _f() { let _ = ${r}; }`,
 		_literal_pattern: (r) => `fn _f() { let ${r} = (); }`,
+		parameters: (r) => `fn _f${r} {}`,
+		parameter: (r) => `fn _f(${r}) {}`,
+		arguments: (r) => `f${r};`,
+		type_parameters: (r) => `fn _f${r}() {}`,
+		type_parameter: (r) => `fn _f<${r}>() {}`,
 		// Kind-specific: `mut_pattern` only appears inside match arms and
 		// if-let conditions — NOT in plain `let` statements (tree-sitter-rust
 		// flattens `let mut x = ..` into `let_declaration` with
@@ -480,8 +484,7 @@ const REPARSE_WRAPPERS: Record<
 		// `scoped_type_identifier_in_expression_position` (ADR-0006):
 		// aliased to `scoped_type_identifier` only inside struct_expression's
 		// name field. Needs struct-literal context to round-trip.
-		scoped_type_identifier_in_expression_position: (r) =>
-			`fn _f() { let _ = ${r} { val: 1 }; }`,
+		scoped_type_identifier_in_expression_position: (r) => `fn _f() { let _ = ${r} { val: 1 }; }`,
 		// `delim_token_tree` (ADR-0006): aliased to `token_tree` at
 		// attribute.arguments and macro_invocation positions. Both kinds
 		// use structural rendering (macro token content is
@@ -495,6 +498,7 @@ const REPARSE_WRAPPERS: Record<
 		visibility_modifier: (r) => `${r} fn _f() {}`
 	},
 	typescript: {
+		program: (r) => r,
 		// Tree-sitter-typescript exposes supertypes unprefixed (no leading
 		// `_`): `declaration`, `expression`, `statement`, `type`, `pattern`.
 		// The hidden-prefix form ('_expression' etc.) existed pre-regen
@@ -506,6 +510,15 @@ const REPARSE_WRAPPERS: Record<
 		pattern: (r) => `let ${r} = null;`,
 		declaration: (r) => r,
 		statement: (r) => r,
+		formal_parameters: (r) => `function _f${r} {}`,
+		required_parameter: (r) => `function _f(${r}) {}`,
+		arguments: (r) => `_f${r};`,
+		type_parameters: (r) => `function _f${r}() {}`,
+		variable_declarator: (r) => `let ${r};`,
+		type_annotation: (r) => `let _${r};`,
+		class_body: (r) => `class _C ${r}`,
+		property_signature: (r) => `interface _I { ${r} }`,
+		index_signature: (r) => `type _T = { ${r} }`,
 		// Alias-target-specific wrappers: tree-sitter aliases are
 		// position-dependent. `interface_body` is `alias($.object_type,
 		// $.interface_body)` inside `interface_declaration.body`.
@@ -523,12 +536,19 @@ const REPARSE_WRAPPERS: Record<
 		rest_pattern: (r) => `let [${r}] = [];`
 	},
 	python: {
+		module: (r) => r,
 		// tree-sitter-python supertypes are also unprefixed.
 		expression: (r) => `_ = ${r}`,
 		type: (r) => `_: ${r} = None`,
 		pattern: (r) => `match _:\n  case ${r}: pass`,
 		simple_statement: (r) => r,
 		compound_statement: (r) => r,
+		expression_statement: (r) => r,
+		assignment: (r) => r,
+		function_definition: (r) => r,
+		parameters: (r) => `def _f${r}:\n    pass`,
+		argument_list: (r) => `_f${r}`,
+		dotted_name: (r) => `import ${r}`,
 		// Kind-specific: `list_splat` (`*args`) only appears inside
 		// argument lists, list/tuple/set literals, and expression
 		// lists. Generic expression wrapper `_ = *()` is syntactically
@@ -577,10 +597,7 @@ export interface WrapForReparseResult {
  * @returns A `WrapForReparseResult` with `text` (the spliced program) and
  *   `offset` (byte position of `rendered` inside `text`).
  */
-function applyWrapperTemplate(
-	rendered: string,
-	wrapper: (r: string) => string
-): WrapForReparseResult {
+function applyWrapperTemplate(rendered: string, wrapper: (r: string) => string): WrapForReparseResult {
 	const text = wrapper(rendered);
 	const SENTINEL = '\u0001SITTIR_SENTINEL\u0001';
 	const sentinelText = wrapper(SENTINEL);
@@ -648,8 +665,7 @@ function selectAndApplySupertypeWrapper(
 	}
 	if (reachable.size === 0) return null;
 	for (const name of WRAPPER_PRIORITY) {
-		if (reachable.has(name))
-			return applyWrapperTemplate(rendered, wrappers[name]!);
+		if (reachable.has(name)) return applyWrapperTemplate(rendered, wrappers[name]!);
 	}
 	// Reachable but not in priority list — take the first one.
 	const first = [...reachable][0]!;
@@ -663,10 +679,7 @@ function selectAndApplySupertypeWrapper(
  * fall-through (a parent-template shape that only works under variant()
  * adoption) doesn't expose the kind to reparse where it'd render empty.
  */
-export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<
-	string,
-	readonly string[]
-> = {
+export const VARIANT_ADOPTION_GATED_WRAPPERS: Record<string, readonly string[]> = {
 	rust: ['visibility_modifier']
 };
 
@@ -685,8 +698,7 @@ export function wrapForReparse(
 	// (`x`) — tree-sitter parser only sees visible names. Pre-strip
 	// for both lookups, but preserve the original `kind` for kind-
 	// specific lookups (e.g. `_expression` is itself a wrapper key).
-	const visibleKind =
-		kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
+	const visibleKind = kind.startsWith('_') && !wrappers[kind] ? kind.replace(/^_+/, '') : kind;
 	// Alias-target wrapper preference: when `kind` (renderedKind, the
 	// alias source after drillAs) differs from `targetKind` (the
 	// tree-sitter-emitted alias target), a wrapper keyed on the alias
@@ -706,25 +718,14 @@ export function wrapForReparse(
 	const direct = wrappers[kind] ?? wrappers[visibleKind];
 	if (direct) {
 		const gateKey = wrappers[kind] ? kind : visibleKind;
-		const gated =
-			VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(gateKey) ?? false;
+		const gated = VARIANT_ADOPTION_GATED_WRAPPERS[grammar]?.includes(gateKey) ?? false;
 		const adopted = opts?.adoptedVariantKinds?.has(gateKey) ?? false;
 		if (gated && !adopted) {
-			return selectAndApplySupertypeWrapper(
-				visibleKind,
-				wrappers,
-				kindToSupertypes,
-				rendered
-			);
+			return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
 		}
 		return applyWrapperTemplate(rendered, direct);
 	}
-	return selectAndApplySupertypeWrapper(
-		visibleKind,
-		wrappers,
-		kindToSupertypes,
-		rendered
-	);
+	return selectAndApplySupertypeWrapper(visibleKind, wrappers, kindToSupertypes, rendered);
 }
 
 // ---------------------------------------------------------------------------
@@ -759,9 +760,7 @@ export async function loadReadTreeNode(
 		const mod = await import(new URL(p, import.meta.url).pathname);
 		return mod.readTreeNode ?? null;
 	} catch (e) {
-		console.error(
-			`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`
-		);
+		console.error(`[validators] failed to load wrap module for ${grammar}: ${(e as Error).message}`);
 		return null;
 	}
 }
@@ -777,10 +776,7 @@ export async function loadReadTreeNode(
  * and get skipped. Leaves short-circuit when accessing a getter that
  * doesn't return a wrapped-shape value.
  */
-export function walkWrappedTree(
-	root: unknown,
-	visit: (w: WrappedNodeData) => void
-): void {
+export function walkWrappedTree(root: unknown, visit: (w: WrappedNodeData) => void): void {
 	const seen = new Set<string>();
 	const recurse = (w: unknown): void => {
 		if (!isWrappedNodeData(w)) return;
@@ -797,8 +793,7 @@ export function walkWrappedTree(
 			if (k.startsWith('$')) continue;
 			const v = w[k];
 			if (isWrappedNodeData(v)) recurse(v);
-			else if (Array.isArray(v))
-				for (const x of v) if (isWrappedNodeData(x)) recurse(x);
+			else if (Array.isArray(v)) for (const x of v) if (isWrappedNodeData(x)) recurse(x);
 		}
 	};
 	recurse(root);
@@ -811,11 +806,7 @@ export interface WrappedNodeData {
 	readonly [k: string]: unknown;
 }
 function isWrappedNodeData(v: unknown): v is WrappedNodeData {
-	return (
-		!!v &&
-		typeof v === 'object' &&
-		typeof (v as { $type?: unknown }).$type === 'number'
-	);
+	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 
 /** Relative path from codegen/src/validate to language package types.ts */
@@ -834,43 +825,31 @@ const TYPES_MODULE_PATHS: Record<string, string> = {
  * Load the static KIND_NAMES map from the grammar's generated types module.
  * Returns the Map directly for use as `RulesConfig.kindNames`.
  */
-export async function loadKindNames(
-	grammar: string
-): Promise<ReadonlyMap<number, string> | undefined> {
+export async function loadKindNames(grammar: string): Promise<ReadonlyMap<number, string> | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(
-			new URL(typesModulePath, import.meta.url).pathname
-		);
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
 		return typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 	} catch {
 		return undefined;
 	}
 }
 
-export async function loadKindNameFromId(
-	grammar: string
-): Promise<((id: number) => string | undefined) | undefined> {
+export async function loadKindNameFromId(grammar: string): Promise<((id: number) => string | undefined) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(
-			new URL(typesModulePath, import.meta.url).pathname
-		);
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
 		// Phase D: types.ts now exports KIND_NAMES (static Map) instead of
 		// kindNameFromId (function). Wrap the Map in a function to keep the
 		// validator's existing interface.
-		const kindNames = typesModule.KIND_NAMES as
-			| ReadonlyMap<number, string>
-			| undefined;
+		const kindNames = typesModule.KIND_NAMES as ReadonlyMap<number, string> | undefined;
 		if (kindNames) {
 			return (id: number) => kindNames.get(id);
 		}
 		// Legacy fallback for pre-Phase-D generated types
-		const rawFn = typesModule.kindNameFromId as
-			| ((id: number) => string)
-			| undefined;
+		const rawFn = typesModule.kindNameFromId as ((id: number) => string) | undefined;
 		if (!rawFn) return undefined;
 		return (id: number) => {
 			try {
@@ -889,15 +868,11 @@ export async function loadKindNameFromId(
  * `$type` support. Returns the raw function (which throws on unknown names)
  * so callers can wrap it in try/catch as needed.
  */
-export async function loadKindIdFromName(
-	grammar: string
-): Promise<((name: string) => number) | undefined> {
+export async function loadKindIdFromName(grammar: string): Promise<((name: string) => number) | undefined> {
 	const typesModulePath = TYPES_MODULE_PATHS[grammar];
 	if (!typesModulePath) return undefined;
 	try {
-		const typesModule = await import(
-			new URL(typesModulePath, import.meta.url).pathname
-		);
+		const typesModule = await import(new URL(typesModulePath, import.meta.url).pathname);
 		return typesModule.kindIdFromName as ((name: string) => number) | undefined;
 	} catch {
 		return undefined;
@@ -921,15 +896,7 @@ export async function loadLanguageForGrammar(grammar: string): Promise<{
 	const { Parser, Language } = await loadWebTreeSitter();
 
 	const thisDir = fileURLToPath(new URL('.', import.meta.url));
-	const overrideWasm = join(
-		thisDir,
-		'..',
-		'..',
-		'..',
-		grammar,
-		'.sittir',
-		'parser.wasm'
-	);
+	const overrideWasm = join(thisDir, '..', '..', '..', grammar, '.sittir', 'parser.wasm');
 	if (existsSync(overrideWasm)) {
 		const lang = await Language.load(overrideWasm);
 		return { Parser, Language, lang, isOverride: true };
@@ -994,6 +961,12 @@ export interface NodeToConfigOpts {
 	 *  single plumb-in for readNode-derived data that doesn't carry
 	 *  it natively. */
 	readonly polymorphVariants?: PolymorphVariantMap;
+	/** Validator-supplied CST fallback for override polymorphs whose native
+	 * read collapsed the wrapper child kind before factory dispatch. */
+	readonly firstNamedChildKindHint?: string;
+	/** Ordered CST named-child candidates for override polymorphs whose
+	 * discriminating wrapper kind is not the first named child. */
+	readonly namedChildKindHints?: readonly string[];
 	/** Internal — current parent kind during field recursion. Used with
 	 * `fieldAliasMap` to form `${parentKind}.${fieldName}` lookups. */
 	readonly _parentKind?: string;
@@ -1103,15 +1076,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	if (isAnonTokenPassthrough(c)) return child;
-	const {
-		tree,
-		factoryMap,
-		factoryShapes,
-		fieldAliasMap,
-		_depth = 0,
-		_parentKind,
-		_fieldName
-	} = opts;
+	const { tree, factoryMap, factoryShapes, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
 	if (shouldHaltRecursion(_depth, tree, factoryMap)) return child;
 	// Drill into the child to materialize its own _<name> keys / $children.
 	let drilled: ReadNodeLike = c;
@@ -1130,18 +1095,14 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	}
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
 	const rawTypeId = drilled.$type ?? c.$type;
-	const rawKind = rawTypeId !== undefined
-		? (typeof rawTypeId === 'number'
-			? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
-			: rawTypeId)
-		: undefined;
+	const rawKind =
+		rawTypeId !== undefined
+			? typeof rawTypeId === 'number'
+				? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId))
+				: rawTypeId
+			: undefined;
 	if (!rawKind) return drilled;
-	let kind = resolveAliasedKind(
-		rawKind,
-		_parentKind,
-		_fieldName,
-		fieldAliasMap
-	);
+	let kind = resolveAliasedKind(rawKind, _parentKind, _fieldName, fieldAliasMap);
 	let factory = factoryMap![kind];
 	// Phase D: kindNameFromId returns the canonical form (e.g. '_type_identifier')
 	// but factoryMap is keyed by the tree-sitter visible name ('type_identifier').
@@ -1161,21 +1122,22 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		return factory(drilled.$text ?? '');
 	}
 	const childConfig = nodeToConfig(drilled, { ...opts, _depth: _depth + 1 });
-	// 'children' shape: rest-params signature — spread `children`.
-	if (shape === 'children') {
+	// 'spread' shape: rest-params signature — spread `children`.
+	if (shape === 'spread') {
 		const kids = (childConfig.children ?? []) as unknown[];
 		return factory(...kids);
 	}
-	// 'single-field' shape: factory takes the sole field value directly,
-	// not a config object. Extract the value using factoryFields metadata.
-	if (shape === 'single-field') {
+	// 'direct' shape: factory takes one direct value rather than a config
+	// object. Field-backed direct calls use factoryFields metadata; child-
+	// backed direct calls take the first `children` element.
+	if (shape === 'direct') {
 		const { factoryFields } = opts;
 		const fieldNames = factoryFields?.[kind];
 		const rawName = fieldNames?.[0];
-		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
-			c.toUpperCase()
-		);
-		const value = camelName ? (childConfig as Record<string, unknown>)[camelName] : undefined;
+		const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+		const value = camelName
+			? (childConfig as Record<string, unknown>)[camelName]
+			: ((childConfig.children ?? []) as unknown[])[0];
 		return factory(value);
 	}
 	return factory(childConfig);
@@ -1250,17 +1212,47 @@ function assignChildrenToConfig(
 	out.children = children.map((c) => resolveChild(c, childOpts));
 }
 
-export function nodeToConfig(
-	data: ReadNodeLike,
-	opts: NodeToConfigOpts = {}
-): Record<string, unknown> {
+function promoteAnonymousChildrenToMissingFields(
+	declaredFields: readonly string[] | undefined,
+	parentKind: string | undefined,
+	children: readonly unknown[],
+	opts: NodeToConfigOpts,
+	out: Record<string, unknown>
+): boolean {
+	if (!declaredFields || !parentKind) return false;
+	const anonymousChildren = children.filter(
+		(child): child is ReadNodeLike => child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
+	);
+	if (anonymousChildren.length === 0) return false;
+	const missingFields = declaredFields.filter((name) => {
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		return out[camel] === undefined;
+	});
+	if (missingFields.length === 0) return false;
+	if (anonymousChildren.length !== missingFields.length) return false;
+	anonymousChildren.forEach((child, index) => {
+		const name = missingFields[index]!;
+		const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
+		out[camel] = resolveChild(child, {
+			...opts,
+			_parentKind: parentKind,
+			_fieldName: name,
+			firstNamedChildKindHint: undefined,
+			namedChildKindHints: undefined
+		});
+	});
+	return true;
+}
+
+export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	// $type may be numeric (TSKindId) or string (hidden/synthetic kind).
-	const parentKind = data.$type !== undefined
-		? (typeof data.$type === 'number'
-			? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
-			: data.$type)
-		: undefined;
+	const parentKind =
+		data.$type !== undefined
+			? typeof data.$type === 'number'
+				? (opts.kindNameFromId?.(data.$type) ?? String(data.$type))
+				: data.$type
+			: undefined;
 	// ADR-0018 Phase 3a: named slots are stored as `_<name>` top-level keys
 	// directly on the NodeData object (de-hoisted storage). Fall back to the
 	// legacy `$fields` wrapper for backward compatibility with old fixtures.
@@ -1274,47 +1266,52 @@ export function nodeToConfig(
 	for (const [k, v] of namedSlotEntries) {
 		if (v === undefined) continue;
 		if (!isIdentifierShapedFieldKey(k)) continue;
-		const camelKey = k.replace(/_([a-z])/g, (_m, c: string) =>
-			c.toUpperCase()
-		);
+		const camelKey = k.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
 		const childOpts: NodeToConfigOpts = {
 			...opts,
 			_parentKind: parentKind,
-			_fieldName: k
+			_fieldName: k,
+			firstNamedChildKindHint: undefined,
+			namedChildKindHints: undefined
 		};
-		out[camelKey] = Array.isArray(v)
-			? v.map((item) => resolveChild(item, childOpts))
-			: resolveChild(v, childOpts);
+		out[camelKey] = Array.isArray(v) ? v.map((item) => resolveChild(item, childOpts)) : resolveChild(v, childOpts);
 	}
 	if (data.$children) {
-		const declaredFields = parentKind
-			? opts.factoryFields?.[parentKind]
-			: undefined;
+		const declaredFields = parentKind ? opts.factoryFields?.[parentKind] : undefined;
 		const namedChildren = data.$children.filter(
-			(c) =>
-				c != null &&
-				typeof c === 'object' &&
-				(c as { $named?: boolean }).$named !== false
+			(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 		);
 		const childOpts: NodeToConfigOpts = {
 			...opts,
 			_parentKind: undefined,
-			_fieldName: undefined
+			_fieldName: undefined,
+			firstNamedChildKindHint: undefined,
+			namedChildKindHints: undefined
 		};
 		if (shouldPromoteOrphanChildren(declaredFields, out, namedChildren)) {
 			// Assign by position: first N named children → first N declared fields.
 			namedChildren.forEach((child, i) => {
 				const name = declaredFields![i]!;
-				const camel = name.replace(/_([a-z])/g, (_m, c: string) =>
-					c.toUpperCase()
-				);
+				const camel = name.replace(/_([a-z])/g, (_m, c: string) => c.toUpperCase());
 				const resolveOpts: NodeToConfigOpts = {
 					...opts,
 					_parentKind: parentKind,
-					_fieldName: name
+					_fieldName: name,
+					firstNamedChildKindHint: undefined,
+					namedChildKindHints: undefined
 				};
 				out[camel] = resolveChild(child, resolveOpts);
 			});
+		} else if (
+			promoteAnonymousChildrenToMissingFields(
+				declaredFields,
+				parentKind,
+				data.$children,
+				opts,
+				out
+			)
+		) {
+			// Ambiguous-free anonymous-token fill completed above.
 		} else {
 			assignChildrenToConfig(data.$children, childOpts, out);
 		}
@@ -1326,7 +1323,15 @@ export function nodeToConfig(
 	if (parentKind && opts.polymorphVariants) {
 		const desc = opts.polymorphVariants[parentKind];
 		if (desc && !('$variant' in out)) {
-			const v = inferPolymorphVariant(desc, data, out, parentKind, opts.kindNameFromId);
+			const v = inferPolymorphVariant(
+				desc,
+				data,
+				out,
+				parentKind,
+				opts.kindNameFromId,
+				opts.firstNamedChildKindHint,
+				opts.namedChildKindHints
+			);
 			if (v !== undefined) out.$variant = v;
 		}
 	}
@@ -1350,11 +1355,20 @@ function inferPolymorphVariant(
 	data: ReadNodeLike,
 	derivedConfig: Record<string, unknown>,
 	parentKind: string,
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	firstNamedChildKindHint?: string,
+	namedChildKindHints?: readonly string[]
 ): string | undefined {
 	switch (desc.source) {
 		case 'override':
-			return inferFromChildKind(desc.childKind, data, parentKind, kindNameFromId);
+			return inferFromChildKind(
+				desc.childKind,
+				data,
+				parentKind,
+				kindNameFromId,
+				firstNamedChildKindHint,
+				namedChildKindHints
+			);
 		case 'promoted':
 			return inferFromFieldPresence(desc.fields, derivedConfig, parentKind);
 		default:
@@ -1371,13 +1385,12 @@ function inferFromChildKind(
 	childKind: Readonly<Record<string, string>>,
 	data: ReadNodeLike,
 	parentKind: string,
-	kindNameFromId?: (id: number) => string | undefined
+	kindNameFromId?: (id: number) => string | undefined,
+	firstNamedChildKindHint?: string,
+	namedChildKindHints?: readonly string[]
 ): string | undefined {
 	const firstChild = data.$children?.find(
-		(c) =>
-			c != null &&
-			typeof c === 'object' &&
-			(c as { $named?: boolean }).$named !== false
+		(c) => c != null && typeof c === 'object' && (c as { $named?: boolean }).$named !== false
 	) as { $type?: string | number } | undefined;
 	const rawType = firstChild?.$type;
 	// Phase D: $type is numeric (TSKindId) or string (hidden/synthetic kind).
@@ -1395,18 +1408,52 @@ function inferFromChildKind(
 		// underscore for the childKind map lookup, which uses the visible name.
 		kind = rawType;
 	}
-	if (kind) {
+	const resolveVariantFromKind = (candidate: string | undefined): string | undefined => {
+		if (!candidate) return undefined;
 		// Try exact match first (e.g. for visible kinds or already-stripped names).
-		if (kind in childKind) return childKind[kind];
+		if (candidate in childKind) return childKind[candidate];
 		// Tree-sitter strips leading underscore from hidden rule names when
 		// reporting node.type, but kindNameFromId may have already returned the
 		// canonical form with underscore. Try stripping the leading underscore
 		// as a fallback.
-		const stripped = kind.startsWith('_') ? kind.slice(1) : undefined;
+		const stripped = candidate.startsWith('_') ? candidate.slice(1) : undefined;
 		if (stripped && stripped in childKind) return childKind[stripped];
-	}
+		// Some override-polymorph children arrive under a hidden helper kind
+		// whose visible variant child differs only in the prefix family
+		// (`_delim_token_tree_paren` → `token_tree_paren`). Fall back to the
+		// variant suffix when an exact kind-name match fails.
+		let bestVariant: string | undefined;
+		let bestSpecificity = -1;
+		for (const [, variant] of Object.entries(childKind)) {
+			const suffix = `_${variant}`;
+			if (candidate.endsWith(suffix) || stripped?.endsWith(suffix)) {
+				if (variant.length > bestSpecificity) {
+					bestVariant = variant;
+					bestSpecificity = variant.length;
+				}
+			}
+		}
+		return bestVariant;
+	};
+	const resolvedFromHints = (candidates: readonly (string | undefined)[]): string | undefined => {
+		for (const candidate of candidates) {
+			const resolved = resolveVariantFromKind(candidate);
+			if (resolved !== undefined) return resolved;
+		}
+		return undefined;
+	};
+	const resolved =
+		resolveVariantFromKind(kind) ??
+		resolvedFromHints(namedChildKindHints ?? []) ??
+		resolveVariantFromKind(firstNamedChildKindHint);
+	if (resolved !== undefined) return resolved;
+	const distinctHints = [...new Set((namedChildKindHints ?? []).filter((candidate) => candidate && candidate !== kind))];
 	console.warn(
 		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
+			(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
+			(firstNamedChildKindHint && firstNamedChildKindHint !== kind
+				? `CST hint '${firstNamedChildKindHint}'. `
+				: '') +
 			`Known: [${Object.keys(childKind).join(', ')}]`
 	);
 	return undefined;
@@ -1423,9 +1470,7 @@ function inferFromFieldPresence(
 	derivedConfig: Record<string, unknown>,
 	parentKind: string
 ): string | undefined {
-	const entries = Object.entries(fieldsByForm).sort(
-		([, a], [, b]) => b.length - a.length
-	);
+	const entries = Object.entries(fieldsByForm).sort(([, a], [, b]) => b.length - a.length);
 	for (const [formName, fields] of entries) {
 		if (fields.every((f) => f in derivedConfig)) return formName;
 	}
@@ -1456,7 +1501,6 @@ function inferFromFieldPresence(
  */
 export function emitValidatorMetrics(): void {
 	if (!metricsEnabled) return;
-	const backend: 'ts' | 'native' =
-		process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
+	const backend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	dumpMetrics(backend);
 }

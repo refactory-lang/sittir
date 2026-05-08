@@ -87,11 +87,9 @@ export function enrich(base: GrammarResult): GrammarResult {
 		throw new Error('enrich(): expected a grammar object, got ' + typeof base);
 	}
 	const hasWrapper = 'grammar' in base;
-	const rulesBag = (
-		hasWrapper
-			? base.grammar?.rules
-			: (base as unknown as { rules?: unknown }).rules
-	) as Record<string, Rule> | undefined;
+	const rulesBag = (hasWrapper ? base.grammar?.rules : (base as unknown as { rules?: unknown }).rules) as
+		| Record<string, Rule>
+		| undefined;
 	if (!rulesBag) return base;
 	// Extract declared supertype names so pass 3 can treat `_prefix`-
 	// stripped labels as valid field names (e.g. `optional($._expression)`
@@ -107,9 +105,7 @@ export function enrich(base: GrammarResult): GrammarResult {
 	const enrichedRules: Record<string, Rule> = {};
 	for (const name of Object.keys(rulesBag)) {
 		const rule = rulesBag[name];
-		enrichedRules[name] = rule
-			? applyEnrichPasses(name, rule, kwRules, supertypeNames)
-			: rule!;
+		enrichedRules[name] = rule ? applyEnrichPasses(name, rule, kwRules, supertypeNames) : rule!;
 	}
 	// Inject `_kw_<name>` hidden rules — user rules NEVER shadow them
 	// (they start with `_kw_`, a reserved prefix).
@@ -152,9 +148,7 @@ function applyEnrichPasses(
 		if (r === before) return r;
 	}
 	if (!process.env.SITTIR_QUIET) {
-		process.stderr.write(
-			`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`
-		);
+		process.stderr.write(`enrich: fixed-point did not converge for '${ruleName}' after ${MAX_ITERATIONS} iterations\n`);
 	}
 	return r;
 }
@@ -167,13 +161,8 @@ function applyEnrichPasses(
  * `supertypeNames.has('_expression')` and still strip the prefix when
  * composing the field name.
  */
-function extractSupertypeNames(
-	base: unknown,
-	hasWrapper: boolean
-): ReadonlySet<string> {
-	const root = hasWrapper
-		? (base as { grammar?: Record<string, unknown> }).grammar
-		: (base as Record<string, unknown>);
+function extractSupertypeNames(base: unknown, hasWrapper: boolean): ReadonlySet<string> {
+	const root = hasWrapper ? (base as { grammar?: Record<string, unknown> }).grammar : (base as Record<string, unknown>);
 	const fn = root?.supertypes;
 	if (typeof fn !== 'function') return new Set();
 	// Proxy that returns a SYMBOL-shaped object for any property access —
@@ -215,11 +204,7 @@ function detectCase(referenceRule: unknown): 'upper' | 'lower' {
 	return t.length > 0 && t === t.toUpperCase() ? 'upper' : 'lower';
 }
 
-function makeField(
-	referenceRule: unknown,
-	name: string,
-	content: unknown
-): Rule {
+function makeField(referenceRule: unknown, name: string, content: unknown): Rule {
 	// Propagate `fieldName` onto inner symbol `_ref` metadata, mirroring
 	// the runtime `field()` helper in evaluate.ts. Without this, an
 	// enrich-promoted FIELD wraps the same SYMBOL as an override-promoted
@@ -257,8 +242,7 @@ function propagateFieldName(rule: unknown, fieldName: string): void {
 	}
 	const t = r.type;
 	if (t === 'seq' || t === 'SEQ' || t === 'choice' || t === 'CHOICE') {
-		if (Array.isArray(r.members))
-			for (const m of r.members) propagateFieldName(m, fieldName);
+		if (Array.isArray(r.members)) for (const m of r.members) propagateFieldName(m, fieldName);
 		return;
 	}
 	if (
@@ -298,12 +282,7 @@ function makeSymbol(referenceRule: unknown, name: string): Rule {
  * Returns a SYMBOL reference (matching the host rule's case) that the
  * caller embeds inside the new FIELD wrapper.
  */
-function registerKwRule(
-	hostRule: Rule,
-	stringLiteral: Rule,
-	keyword: string,
-	kwRules: Record<string, Rule>
-): Rule {
+function registerKwRule(hostRule: Rule, stringLiteral: Rule, keyword: string, kwRules: Record<string, Rule>): Rule {
 	const hiddenName = `_kw_${keyword}`;
 	if (!(hiddenName in kwRules)) {
 		kwRules[hiddenName] = stringLiteral;
@@ -362,12 +341,9 @@ function peelOptional(rule: Rule): { inner: Rule; isOptional: boolean } {
 		};
 	}
 	if (isChoiceType(rule.type)) {
-		const members = (rule as unknown as { members: Array<{ type: string }> })
-			.members;
+		const members = (rule as unknown as { members: Array<{ type: string }> }).members;
 		if (members.length === 2) {
-			const blankIdx = members.findIndex(
-				(m) => m.type === 'BLANK' || m.type === 'blank'
-			);
+			const blankIdx = members.findIndex((m) => m.type === 'BLANK' || m.type === 'blank');
 			if (blankIdx !== -1) {
 				const inner = members[1 - blankIdx] as unknown as Rule;
 				return { inner, isOptional: true };
@@ -410,10 +386,7 @@ interface SymbolTarget {
  *  optional(seq) with non-anon members, or non-symbol leaves). */
 function detectSymbolTarget(member: Rule): SymbolTarget | null {
 	// Shape 1: bare SYMBOL.
-	if (
-		isSymbolType(member.type) &&
-		typeof (member as { name?: unknown }).name === 'string'
-	) {
+	if (isSymbolType(member.type) && typeof (member as { name?: unknown }).name === 'string') {
 		const name = (member as { name: string }).name;
 		return {
 			name,
@@ -442,11 +415,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 		if (isSymbolType(sn.type) && typeof sn.name === 'string') {
 			if (symIdx !== -1) return null; // >1 SYMBOL — too complex
 			symIdx = i;
-		} else if (
-			!isStringType(sn.type) &&
-			sn.type !== 'PATTERN' &&
-			sn.type !== 'pattern'
-		) {
+		} else if (!isStringType(sn.type) && sn.type !== 'PATTERN' && sn.type !== 'pattern') {
 			return null; // non-anonymous, non-symbol — too complex
 		}
 	}
@@ -459,9 +428,7 @@ function detectSymbolTarget(member: Rule): SymbolTarget | null {
 		name: sn.name,
 		symbolRule: symMember,
 		wrap: (fieldNode) => {
-			const newSeqMembers = seqMembers.map((mm, i) =>
-				i === symIdx ? fieldNode : mm
-			);
+			const newSeqMembers = seqMembers.map((mm, i) => (i === symIdx ? fieldNode : mm));
 			const newSeq = { ...seqRule, members: newSeqMembers } as Rule;
 			return rebuildOptional(member, newSeq);
 		}
@@ -511,11 +478,7 @@ function countSymbolsInRepeat(
 	// STRING / PATTERN / TOKEN / BLANK — leaves with no symbols.
 }
 
-function applySymbolToField(
-	ruleName: string,
-	rule: Rule,
-	supertypeNames: ReadonlySet<string>
-): Rule {
+function applySymbolToField(ruleName: string, rule: Rule, supertypeNames: ReadonlySet<string>): Rule {
 	if (ruleName.startsWith('_')) return rule; // skip hidden helpers
 	// Peel prec wrappers; rebuild on top after field-wrapping.
 	const precStack: Rule[] = [];
@@ -526,15 +489,12 @@ function applySymbolToField(
 	}
 	if (!isSeqType(cursor.type)) {
 		// Not a top-level seq — check for repeat/repeat1 wrapping a seq.
-		return tryPromoteInRepeatSeq(
-			ruleName, rule, cursor, precStack, supertypeNames
-		);
+		return tryPromoteInRepeatSeq(ruleName, rule, cursor, precStack, supertypeNames);
 	}
 	const members = (cursor as unknown as { members: Rule[] }).members;
 	// Count symbols across all shapes + inside repeats to prevent collisions.
 	const kindCounts = new Map<string, number>();
-	const targetByIdx: Array<SymbolTarget | null> =
-		members.map(detectSymbolTarget);
+	const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget);
 	for (const t of targetByIdx) {
 		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
 	}
@@ -553,11 +513,7 @@ function applySymbolToField(
 		}
 		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
 		if (existing.has(fieldName)) {
-			reportSkip(
-				'symbol-to-field',
-				ruleName,
-				`field '${fieldName}' already exists`
-			);
+			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists`);
 			return m;
 		}
 		existing.add(fieldName);
@@ -569,9 +525,7 @@ function applySymbolToField(
 	// seq. Promotes bare symbols inside the inner seq to field() wrappers.
 	// Pattern: seq("(", repeat(seq($.attr, $.content)), ")")
 	// → the repeat member's inner seq gets its bare symbols field-wrapped.
-	const finalMembers = promoteInsideRepeatMembers(
-		ruleName, newMembers, supertypeNames, existing, kindCounts
-	);
+	const finalMembers = promoteInsideRepeatMembers(ruleName, newMembers, supertypeNames, existing, kindCounts);
 	if (finalMembers === newMembers && !changed) return rule;
 	let result: Rule = { ...cursor, members: finalMembers } as Rule;
 	for (let i = precStack.length - 1; i >= 0; i--) {
@@ -603,9 +557,7 @@ function promoteInsideRepeatMembers(
 ): Rule[] {
 	let anyRepeatChanged = false;
 	const result = members.map((m) => {
-		const rebuilt = tryPromoteInRepeatMember(
-			ruleName, m, supertypeNames, existing, outerKindCounts
-		);
+		const rebuilt = tryPromoteInRepeatMember(ruleName, m, supertypeNames, existing, outerKindCounts);
 		if (rebuilt === null) return m;
 		anyRepeatChanged = true;
 		return rebuilt;
@@ -679,11 +631,7 @@ function tryPromoteInRepeatMember(
 		// (outer bare symbol), which variadic factories can't reconstruct.
 		if ((outerKindCounts.get(t.name) ?? 0) > 0) return im;
 		if (existing.has(fieldName)) {
-			reportSkip(
-				'symbol-to-field',
-				ruleName,
-				`field '${fieldName}' already exists (outer seq)`
-			);
+			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists (outer seq)`);
 			return im;
 		}
 		innerExisting.add(fieldName);
@@ -739,8 +687,7 @@ function tryPromoteInRepeatSeq(
 	if (!isSeqType(inner.type)) return rule;
 	const members = (inner as unknown as { members: Rule[] }).members;
 	const kindCounts = new Map<string, number>();
-	const targetByIdx: Array<SymbolTarget | null> =
-		members.map(detectSymbolTarget);
+	const targetByIdx: Array<SymbolTarget | null> = members.map(detectSymbolTarget);
 	for (const t of targetByIdx) {
 		if (t) kindCounts.set(t.name, (kindCounts.get(t.name) ?? 0) + 1);
 	}
@@ -762,11 +709,7 @@ function tryPromoteInRepeatSeq(
 		}
 		if ((kindCounts.get(t.name) ?? 0) > 1) return m;
 		if (existing.has(fieldName)) {
-			reportSkip(
-				'symbol-to-field',
-				ruleName,
-				`field '${fieldName}' already exists`
-			);
+			reportSkip('symbol-to-field', ruleName, `field '${fieldName}' already exists`);
 			return m;
 		}
 		existing.add(fieldName);
@@ -791,16 +734,10 @@ function tryPromoteInRepeatSeq(
 // Pass 2: optional keyword-prefix
 // ---------------------------------------------------------------------------
 
-function applyOptionalKeyword(
-	ruleName: string,
-	rule: Rule,
-	kwRules: Record<string, Rule>
-): Rule {
+function applyOptionalKeyword(ruleName: string, rule: Rule, kwRules: Record<string, Rule>): Rule {
 	// Peel prec wrappers so claimed-name set covers the inner seq.
 	const inner = peelPrec(rule);
-	const claimed = isSeqType(inner.type)
-		? collectFieldNamesRuntime(inner)
-		: new Set<string>();
+	const claimed = isSeqType(inner.type) ? collectFieldNamesRuntime(inner) : new Set<string>();
 	return walkOptionalKeyword(ruleName, rule, claimed, kwRules) ?? rule;
 }
 
@@ -845,20 +782,9 @@ function walkOptionalKeyword(
 	}
 	const peeled = peelOptional(rule);
 	if (peeled.isOptional) {
-		const replacement = tryPromoteInnerKeyword(
-			ruleName,
-			rule,
-			peeled.inner,
-			claimedAtSeqLevel,
-			kwRules
-		);
+		const replacement = tryPromoteInnerKeyword(ruleName, rule, peeled.inner, claimedAtSeqLevel, kwRules);
 		if (replacement !== null) return replacement;
-		const innerRewritten = walkOptionalKeyword(
-			ruleName,
-			peeled.inner,
-			claimedAtSeqLevel,
-			kwRules
-		);
+		const innerRewritten = walkOptionalKeyword(ruleName, peeled.inner, claimedAtSeqLevel, kwRules);
 		if (innerRewritten !== null) {
 			return rebuildOptional(rule, innerRewritten);
 		}
@@ -866,24 +792,14 @@ function walkOptionalKeyword(
 	}
 	if (isRepeatType(rule.type) || isFieldType(rule.type)) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(
-			ruleName,
-			content,
-			claimedAtSeqLevel,
-			kwRules
-		);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
 	// Descend through prec wrappers to reach inner seqs.
 	if (isPrecWrapper(rule as { type: string })) {
 		const content = (rule as unknown as { content: Rule }).content;
-		const out = walkOptionalKeyword(
-			ruleName,
-			content,
-			claimedAtSeqLevel,
-			kwRules
-		);
+		const out = walkOptionalKeyword(ruleName, content, claimedAtSeqLevel, kwRules);
 		if (out === null) return null;
 		return { ...rule, content: out } as Rule;
 	}
@@ -904,11 +820,7 @@ function tryPromoteInnerKeyword(
 	// `_marker` suffix avoids JS-reserved-keyword collisions.
 	const fieldName = `${kw}_marker`;
 	if (claimed.has(fieldName)) {
-		reportSkip(
-			'optional-keyword-prefix',
-			ruleName,
-			`field '${fieldName}' already exists`
-		);
+		reportSkip('optional-keyword-prefix', ruleName, `field '${fieldName}' already exists`);
 		return null;
 	}
 	claimed.add(fieldName);

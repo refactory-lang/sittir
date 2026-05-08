@@ -23,8 +23,8 @@ interface PhantomReport {
 }
 
 interface SymbolNameCollision {
-	catalogKey: string;     // e.g. "_as_pattern"
-	symbolName: string;     // e.g. "as_pattern"
+	catalogKey: string; // e.g. "_as_pattern"
+	symbolName: string; // e.g. "as_pattern"
 	catalogKeyId: number;
 	collidingKindId?: number; // id of the real kind whose name === symbolName
 }
@@ -108,7 +108,7 @@ for (const grammar of grammars) {
 			for (const c of report.symbolNameCollisions) {
 				console.log(
 					`  ${c.catalogKey} (id=${c.catalogKeyId}) symbolName="${c.symbolName}" ` +
-					`collides with catalog key id=${c.collidingKindId}`
+						`collides with catalog key id=${c.collidingKindId}`
 				);
 			}
 		} else {

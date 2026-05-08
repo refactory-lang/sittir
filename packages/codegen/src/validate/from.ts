@@ -71,16 +71,10 @@ function findUndefined(node: AnyNodeData, path = ''): string[] {
 		if (Array.isArray(value)) {
 			value.forEach((v, i) => {
 				if (typeof v === 'object' && v !== null && '$type' in v) {
-					results.push(
-						...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`)
-					);
+					results.push(...findUndefined(v as AnyNodeData, `${path}.${key}[${i}]`));
 				}
 			});
-		} else if (
-			typeof value === 'object' &&
-			value !== null &&
-			'$type' in value
-		) {
+		} else if (typeof value === 'object' && value !== null && '$type' in value) {
 			results.push(...findUndefined(value as AnyNodeData, `${path}.${key}`));
 		}
 	}
@@ -126,18 +120,14 @@ function structuralDiff(a: AnyNodeData, b: AnyNodeData): string[] {
 	const aKeysMatchingB = extractSlotKeys(a).filter((k) => bKeys.has(k));
 
 	// One-way check: fields factory declared that from() didn't fill in.
-	const missingInA = [...bKeys]
-		.filter((k) => !aKeysMatchingB.includes(k))
-		.sort();
-	if (missingInA.length)
-		diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
+	const missingInA = [...bKeys].filter((k) => !aKeysMatchingB.includes(k)).sort();
+	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
 
 	// Compare only named children — anonymous tokens (delimiters, separators)
 	// are reconstructed from templates, not carried in factory output
 	const aNamed = (a.$children ?? []).filter((c: any) => c?.$named !== false);
 	const bNamed = (b.$children ?? []).filter((c: any) => c?.$named !== false);
-	if (aNamed.length !== bNamed.length)
-		diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
+	if (aNamed.length !== bNamed.length) diffs.push(`named children: ${aNamed.length} vs ${bNamed.length}`);
 
 	return diffs;
 }
@@ -163,10 +153,7 @@ export interface FromValidationResult {
 	errors: FromValidationError[];
 }
 
-export async function validateFrom(
-	grammar: string,
-	backend?: 'native' | 'typescript'
-): Promise<FromValidationResult> {
+export async function validateFrom(grammar: string, backend?: 'native' | 'typescript'): Promise<FromValidationResult> {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
@@ -202,27 +189,20 @@ export async function validateFrom(
 	let polymorphVariants: Record<string, unknown> = {};
 	let readTreeNode: ((tree: unknown, handle?: number, childIndex?: number) => unknown) | undefined;
 	try {
-		const fromModule = await import(
-			new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname
-		);
+		const fromModule = await import(new URL(FROM_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		fromMap = fromModule._fromMap ?? {};
 	} catch {
 		/* from module unavailable */
 	}
 	try {
-		const factoryModule = await import(
-			new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname
-		);
+		const factoryModule = await import(new URL(FACTORY_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		factoryMap = factoryModule._factoryMap ?? {};
 		// Validator-only metadata (shapes, field-alias, factoryFields,
 		// polymorphVariants) lives in factory-map.json5.
 		try {
 			const mapPath = `../../../${grammar}/factory-map.json5`;
 			const { readFileSync } = await import('node:fs');
-			const content = readFileSync(
-				new URL(mapPath, import.meta.url).pathname,
-				'utf-8'
-			);
+			const content = readFileSync(new URL(mapPath, import.meta.url).pathname, 'utf-8');
 			const jsonOnly = content.replace(/^\s*\/\/.*$/gm, '').trim();
 			const mapData = JSON.parse(jsonOnly);
 			factoryShapes = mapData.factoryShapes ?? {};
@@ -236,9 +216,7 @@ export async function validateFrom(
 		/* factory module unavailable */
 	}
 	try {
-		const wrapModule = await import(
-			new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname
-		);
+		const wrapModule = await import(new URL(WRAP_MODULE_PATHS[grammar]!, import.meta.url).pathname);
 		readTreeNode = wrapModule.readTreeNode;
 	} catch {
 		/* wrap module unavailable */
@@ -288,9 +266,7 @@ export async function validateFrom(
 				const prev = handle.rootNode;
 				(handle as { rootNode: typeof prev }).rootNode = adaptNode(node1);
 				try {
-					readData = readTreeNode
-						? (readTreeNode(handle) as AnyNodeData)
-						: readNodeAt(handle, adaptNode(node1), null);
+					readData = readTreeNode ? (readTreeNode(handle) as AnyNodeData) : readNodeAt(handle, adaptNode(node1), null);
 				} finally {
 					(handle as { rootNode: typeof prev }).rootNode = prev;
 				}
@@ -308,7 +284,7 @@ export async function validateFrom(
 					// factory that must dispatch as `factory()` with no args).
 					const shape = factoryShapes[kind] ?? 'config';
 					const factory = factoryMap[kind]!;
-					if (shape === 'config' || shape === 'single-field') {
+					if (shape === 'config' || shape === 'direct') {
 						// ADR-0018: readNode emits `_<name>` top-level keys, not
 						// `$fields`. Use `nodeToConfig` which handles both shapes
 						// and recursively resolves children through factories.
@@ -320,14 +296,15 @@ export async function validateFrom(
 							polymorphVariants: polymorphVariants as any,
 							kindNameFromId
 						});
-						if (shape === 'single-field') {
-							// Gap 5: single-field factory takes value directly.
+						if (shape === 'direct') {
+							// Direct-call shape: use the sole field when metadata
+							// names one, otherwise treat it as a single child call.
 							const fieldNames = factoryFields[kind];
 							const rawName = fieldNames?.[0];
-							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) =>
-								c.toUpperCase()
-							);
-							const value = camelName ? (config as Record<string, unknown>)[camelName] : undefined;
+							const camelName = rawName?.replace(/_([a-z])/g, (_m: string, c: string) => c.toUpperCase());
+							const value = camelName
+								? (config as Record<string, unknown>)[camelName]
+								: ((readData.$children ?? []).filter((c: any) => c?.$named !== false) as unknown[])[0];
 							factoryResult = (factory as (v: unknown) => AnyNodeData)(value);
 						} else {
 							factoryResult = factory(config) as AnyNodeData;
@@ -337,20 +314,11 @@ export async function validateFrom(
 						// SITTIR_DEBUG_TEXT). For text-shaped factories, fall back to
 						// slicing the source span directly when $text is absent.
 						const textForFactory =
-							readData.$text ??
-							(readData.$span
-								? entry.source.slice(readData.$span.start, readData.$span.end)
-								: '');
-						factoryResult = (factory as (text: string) => AnyNodeData)(
-							textForFactory
-						);
+							readData.$text ?? (readData.$span ? entry.source.slice(readData.$span.start, readData.$span.end) : '');
+						factoryResult = (factory as (text: string) => AnyNodeData)(textForFactory);
 					} else {
-						const namedChildren = (readData.$children ?? []).filter(
-							(c: any) => c?.$named !== false
-						);
-						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(
-							...namedChildren
-						);
+						const namedChildren = (readData.$children ?? []).filter((c: any) => c?.$named !== false);
+						factoryResult = (factory as (...args: unknown[]) => AnyNodeData)(...namedChildren);
 					}
 				} catch {
 					skip++;

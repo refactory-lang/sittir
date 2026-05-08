@@ -21,10 +21,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-	checkRegression,
-	type RegressionVerdict
-} from '../scripts/check-baseline-regression.ts';
+import { checkRegression, type RegressionVerdict } from '../scripts/check-baseline-regression.ts';
 import type {
 	BackendBaseline,
 	GrammarEntry,
@@ -86,9 +83,7 @@ function entry(): GrammarEntry {
 	};
 }
 
-function baseline(
-	backend: 'typescript' | 'native' = 'typescript'
-): BackendBaseline {
+function baseline(backend: 'typescript' | 'native' = 'typescript'): BackendBaseline {
 	return {
 		backend,
 		commit: '0000000',
@@ -105,13 +100,9 @@ function clone<T>(v: T): T {
 	return JSON.parse(JSON.stringify(v)) as T;
 }
 
-function expectFail(
-	verdict: RegressionVerdict
-): asserts verdict is Extract<RegressionVerdict, { ok: false }> {
+function expectFail(verdict: RegressionVerdict): asserts verdict is Extract<RegressionVerdict, { ok: false }> {
 	if (verdict.ok) {
-		throw new Error(
-			`expected verdict.ok === false, got ok with summary=${verdict.summary}`
-		);
+		throw new Error(`expected verdict.ok === false, got ok with summary=${verdict.summary}`);
 	}
 }
 
@@ -142,9 +133,7 @@ describe('checkRegression', () => {
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('pass-count-drop');
-		expect(verdict.details.path).toContain(
-			'grammars.rust.validators.from.pass'
-		);
+		expect(verdict.details.path).toContain('grammars.rust.validators.from.pass');
 		expect(verdict.details.before).toBe(10);
 		expect(verdict.details.after).toBe(9);
 	});
@@ -157,9 +146,7 @@ describe('checkRegression', () => {
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');
-		expect(verdict.details.path).toContain(
-			'grammars.rust.validators.from.failingKinds'
-		);
+		expect(verdict.details.path).toContain('grammars.rust.validators.from.failingKinds');
 	});
 
 	it('schema violation detected — missing formatDeferredKinds key is rejected', () => {
@@ -168,9 +155,7 @@ describe('checkRegression', () => {
 			grammars: Record<string, GrammarEntry>;
 		};
 		// Cast to allow deletion of a required key — exercises the schema check.
-		delete (
-			head.grammars.rust.validators.from as { formatDeferredKinds?: string[] }
-		).formatDeferredKinds;
+		delete (head.grammars.rust.validators.from as { formatDeferredKinds?: string[] }).formatDeferredKinds;
 		const verdict = checkRegression(base, head);
 		expectFail(verdict);
 		expect(verdict.reason).toBe('schema-violation');

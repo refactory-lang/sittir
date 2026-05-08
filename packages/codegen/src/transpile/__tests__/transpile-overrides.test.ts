@@ -44,9 +44,7 @@ describe('transpileOverrides — integration', () => {
 
 	it('writes package.json with CommonJS type + tree-sitter metadata', async () => {
 		await transpileOverrides({ grammar: GRAMMAR });
-		const pkg = JSON.parse(
-			readFileSync(join(outputDir, 'package.json'), 'utf8')
-		);
+		const pkg = JSON.parse(readFileSync(join(outputDir, 'package.json'), 'utf8'));
 		expect(pkg.name).toBe(`tree-sitter-${GRAMMAR}`);
 		expect(pkg.type).toBe('commonjs');
 		expect(pkg['tree-sitter']).toBeInstanceOf(Array);
@@ -55,12 +53,8 @@ describe('transpileOverrides — integration', () => {
 
 	it('writes tree-sitter.json with ABI-15 schema', async () => {
 		await transpileOverrides({ grammar: GRAMMAR });
-		const cfg = JSON.parse(
-			readFileSync(join(outputDir, 'tree-sitter.json'), 'utf8')
-		);
-		expect(cfg.$schema).toMatch(
-			/tree-sitter\.github\.io.*config\.schema\.json/
-		);
+		const cfg = JSON.parse(readFileSync(join(outputDir, 'tree-sitter.json'), 'utf8'));
+		expect(cfg.$schema).toMatch(/tree-sitter\.github\.io.*config\.schema\.json/);
 		expect(cfg.grammars[0].name).toBe(GRAMMAR);
 		expect(cfg.grammars[0].scope).toBe(`source.${GRAMMAR}`);
 		expect(cfg.metadata).toBeDefined();
@@ -79,9 +73,7 @@ describe('transpileOverrides — integration', () => {
 		// The bundle should `require()` the base grammar package by
 		// name, NOT inline its whole rules object. If the externalize
 		// regex failed, we'd see the base grammar's keywords inline.
-		expect(bundled).toMatch(
-			/require\(["']tree-sitter-python\/grammar(\.js)?["']\)/
-		);
+		expect(bundled).toMatch(/require\(["']tree-sitter-python\/grammar(\.js)?["']\)/);
 		// And the bundle should NOT inline `tree-sitter-javascript`
 		// (python doesn't use it, but we verify the transitive
 		// externalization regex handles the common case by asserting
@@ -99,8 +91,6 @@ describe('transpileOverrides — integration', () => {
 	});
 
 	it('throws when overrides.ts does not exist', async () => {
-		await expect(
-			transpileOverrides({ grammar: 'nonexistent-grammar-xyz' })
-		).rejects.toThrow(/no overrides\.ts/);
+		await expect(transpileOverrides({ grammar: 'nonexistent-grammar-xyz' })).rejects.toThrow(/no overrides\.ts/);
 	});
 });

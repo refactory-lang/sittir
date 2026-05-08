@@ -9,12 +9,7 @@ export { replace, bindRange, replaceField, applyEdits } from './edit.ts';
 export { toCst } from './cst.ts';
 export { readNode } from './readNode.ts';
 export type { TreeHandle } from './readNode.ts';
-export {
-	withMetrics,
-	recordFfi,
-	dumpMetrics,
-	metricsEnabled
-} from './metrics.ts';
+export { withMetrics, recordFfi, dumpMetrics, metricsEnabled } from './metrics.ts';
 export type { MetricsFile, PerKindMetrics, FfiMetrics } from './metrics.ts';
 export {
 	assertRenderableNodeData,
@@ -22,8 +17,6 @@ export {
 	assertNativeNodeData,
 	isNativeNodeData
 } from './native-boundary.ts';
+export { normalizeNativeReadNode } from './native-read.ts';
 export { applyFormat, rebaseTrivia } from './format.ts';
-export {
-	freezeNodeData,
-	buildWithNamespace
-} from './nodeData.ts';
+export { freezeNodeData, buildWithNamespace } from './nodeData.ts';

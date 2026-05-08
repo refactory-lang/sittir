@@ -62,8 +62,7 @@ for (const grammar of GRAMMARS) {
 			violations.push({
 				file: path,
 				kind: 'yaml-regression',
-				detail:
-					'YAML template format was retired in feature 011 — remove this file'
+				detail: 'YAML template format was retired in feature 011 — remove this file'
 			});
 			continue;
 		}
@@ -96,16 +95,12 @@ function lineOf(text: string, offset: number): number {
 if (violations.length === 0) {
 	const count = GRAMMARS.map((g) => {
 		try {
-			return readdirSync(`packages/${g}/templates`).filter((f) =>
-				f.endsWith('.jinja')
-			).length;
+			return readdirSync(`packages/${g}/templates`).filter((f) => f.endsWith('.jinja')).length;
 		} catch {
 			return 0;
 		}
 	}).reduce((a, b) => a + b, 0);
-	console.log(
-		`✓ ${count} .jinja files — all headers present, no forbidden constructs, no YAML regressions`
-	);
+	console.log(`✓ ${count} .jinja files — all headers present, no forbidden constructs, no YAML regressions`);
 	process.exit(0);
 }
 

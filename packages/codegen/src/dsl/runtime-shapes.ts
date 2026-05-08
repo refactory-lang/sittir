@@ -53,15 +53,7 @@
  * at property-access sites (e.g. `(r as SeqRule).members`).
  */
 
-import type {
-	ChoiceRule,
-	FieldRule,
-	OptionalRule,
-	Rule,
-	SeqRule,
-	StringRule,
-	SymbolRule
-} from '../compiler/rule.ts';
+import type { ChoiceRule, FieldRule, OptionalRule, Rule, SeqRule, StringRule, SymbolRule } from '../compiler/rule.ts';
 
 export type RuntimeRule = { readonly type: string };
 
@@ -77,11 +69,7 @@ export type FieldLike = {
 export function isSymbolLike(v: unknown): v is SymbolLike {
 	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	if (
-		(t === 'symbol' || t === 'SYMBOL') &&
-		typeof (v as { name?: unknown }).name === 'string'
-	)
-		return true;
+	if ((t === 'symbol' || t === 'SYMBOL') && typeof (v as { name?: unknown }).name === 'string') return true;
 	return extractSymbolName(v) !== undefined;
 }
 
@@ -105,10 +93,7 @@ export function extractSymbolName(v: unknown): string | undefined {
 export function isFieldLike(v: unknown): v is FieldLike {
 	if (!v || typeof v !== 'object') return false;
 	const t = (v as { type?: unknown }).type;
-	return (
-		(t === 'field' || t === 'FIELD') &&
-		typeof (v as { name?: unknown }).name === 'string'
-	);
+	return (t === 'field' || t === 'FIELD') && typeof (v as { name?: unknown }).name === 'string';
 }
 
 /**
@@ -171,51 +156,30 @@ export function typeEq(t: unknown, lower: string): boolean {
 	return typeof t === 'string' && (t === lower || t === lower.toUpperCase());
 }
 
-export type IsRuntimeRule<T> = T extends { type: infer U }
-	? U extends Uppercase<string>
-		? false
-		: true
-	: false;
+export type IsRuntimeRule<T> = T extends { type: infer U } ? (U extends Uppercase<string> ? false : true) : false;
 
 export const isSeqType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true ? SeqRule : { type: 'SEQ'; content: Rule }) =>
-	typeEq(t, 'seq');
+): t is T & (IsRuntimeRule<T> extends true ? SeqRule : { type: 'SEQ'; content: Rule }) => typeEq(t, 'seq');
 export const isChoiceType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true
-		? ChoiceRule
-		: { type: 'CHOICE'; content: Rule }) => typeEq(t, 'choice');
+): t is T & (IsRuntimeRule<T> extends true ? ChoiceRule : { type: 'CHOICE'; content: Rule }) => typeEq(t, 'choice');
 export const isOptionalType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true
-		? OptionalRule
-		: { type: 'OPTIONAL'; content: Rule }) => typeEq(t, 'optional');
+): t is T & (IsRuntimeRule<T> extends true ? OptionalRule : { type: 'OPTIONAL'; content: Rule }) =>
+	typeEq(t, 'optional');
 export const isFieldType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true
-		? FieldRule
-		: { type: 'FIELD'; content: Rule }) => typeEq(t, 'field');
+): t is T & (IsRuntimeRule<T> extends true ? FieldRule : { type: 'FIELD'; content: Rule }) => typeEq(t, 'field');
 export const isSymbolType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true
-		? SymbolRule
-		: { type: 'SYMBOL'; content: Rule }) => typeEq(t, 'symbol');
+): t is T & (IsRuntimeRule<T> extends true ? SymbolRule : { type: 'SYMBOL'; content: Rule }) => typeEq(t, 'symbol');
 export const isStringType = <T>(
 	t: T
-): t is T &
-	(IsRuntimeRule<T> extends true
-		? StringRule
-		: { type: 'STRING'; content: Rule }) => typeEq(t, 'string');
+): t is T & (IsRuntimeRule<T> extends true ? StringRule : { type: 'STRING'; content: Rule }) => typeEq(t, 'string');
 /** Plain repeat (zero-or-more). Excludes repeat1. Callers that need
  *  either should use {@link isRepeatType}. */
 export const isPlainRepeatType = (t: unknown): boolean => typeEq(t, 'repeat');
 /** Either repeat variant — true for both `repeat` and `repeat1`. */
-export const isRepeatType = (t: unknown): boolean =>
-	typeEq(t, 'repeat') || typeEq(t, 'repeat1');
+export const isRepeatType = (t: unknown): boolean => typeEq(t, 'repeat') || typeEq(t, 'repeat1');
 export const isBlankType = (t: unknown): boolean => typeEq(t, 'blank');

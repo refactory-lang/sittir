@@ -8,15 +8,11 @@ describe('applyFormat', () => {
 	});
 
 	it('prepends boundary.leading', () => {
-		expect(applyFormat('fn foo() {}', { boundary: { leading: '  ' } })).toBe(
-			'  fn foo() {}'
-		);
+		expect(applyFormat('fn foo() {}', { boundary: { leading: '  ' } })).toBe('  fn foo() {}');
 	});
 
 	it('appends boundary.trailing', () => {
-		expect(applyFormat('fn foo() {}', { boundary: { trailing: '\n' } })).toBe(
-			'fn foo() {}\n'
-		);
+		expect(applyFormat('fn foo() {}', { boundary: { trailing: '\n' } })).toBe('fn foo() {}\n');
 	});
 
 	it('applies both boundary.leading and boundary.trailing', () => {
@@ -50,9 +46,7 @@ describe('applyFormat', () => {
 	});
 
 	it('clamps trivia offset to string length', () => {
-		expect(applyFormat('ab', { trivia: [{ offset: 100, text: '!' }] })).toBe(
-			'ab!'
-		);
+		expect(applyFormat('ab', { trivia: [{ offset: 100, text: '!' }] })).toBe('ab!');
 	});
 
 	it('applies trivia before boundary (trivia offsets are into canonical string)', () => {

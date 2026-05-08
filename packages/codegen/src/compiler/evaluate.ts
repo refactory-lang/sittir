@@ -22,6 +22,7 @@ import type {
 	EnumRule,
 	SymbolRef
 } from './rule.ts';
+import { normalizeEnumMembers } from './rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -114,18 +115,10 @@ function absorbTrailingSeparator(members: Rule[]): Rule[] | null {
 		const cur = members[i]!;
 		const next = members[i + 1];
 		const isSepRepeat =
-			(cur.type === 'repeat' || cur.type === 'repeat1') &&
-			cur.separator !== undefined &&
-			!cur.trailing;
+			(cur.type === 'repeat' || cur.type === 'repeat1') && cur.separator !== undefined && !cur.trailing;
 		const isOptionalSepLit = (r: Rule | undefined, sep: string): boolean =>
-			!!r &&
-			r.type === 'optional' &&
-			r.content.type === 'string' &&
-			r.content.value === sep;
-		if (
-			isSepRepeat &&
-			isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)
-		) {
+			!!r && r.type === 'optional' && r.content.type === 'string' && r.content.value === sep;
+		if (isSepRepeat && isOptionalSepLit(next, (cur as RepeatRule | Repeat1Rule).separator!)) {
 			// Merge — stamp trailing on the repeat and skip the next member.
 			const sepRule = cur as RepeatRule | Repeat1Rule;
 			out.push({ ...sepRule, trailing: true });
@@ -157,9 +150,7 @@ function liftCommaSep(members: Rule[]): Rule | null {
 
 	const matchesElem = (r: Rule): boolean => rulesEqual(r, elem);
 	const matchesOptionalSep = (r: Rule): boolean =>
-		r.type === 'optional' &&
-		r.content.type === 'string' &&
-		r.content.value === sep;
+		r.type === 'optional' && r.content.type === 'string' && r.content.value === sep;
 
 	// Case 1: [x, repeat(sep, x)]
 	if (members.length === 2 && repeatIdx === 1 && matchesElem(members[0]!)) {
@@ -167,12 +158,7 @@ function liftCommaSep(members: Rule[]): Rule | null {
 	}
 
 	// Case 2: [x, repeat(sep, x), optional(sep)] — trailing allowed.
-	if (
-		members.length === 3 &&
-		repeatIdx === 1 &&
-		matchesElem(members[0]!) &&
-		matchesOptionalSep(members[2]!)
-	) {
+	if (members.length === 3 && repeatIdx === 1 && matchesElem(members[0]!) && matchesOptionalSep(members[2]!)) {
 		return { type: 'repeat1', content: elem, separator: sep, trailing: true };
 	}
 
@@ -200,9 +186,7 @@ function liftCommaSep(members: Rule[]): Rule | null {
  * more than one means this isn't a commaSep shape.
  */
 function findRepeatWithSeparator(members: Rule[]): number {
-	return members.findIndex(
-		(m) => m.type === 'repeat' && m.separator !== undefined
-	);
+	return members.findIndex((m) => m.type === 'repeat' && m.separator !== undefined);
 }
 
 /**
@@ -223,10 +207,7 @@ function rulesEqual(a: Rule, b: Rule): boolean {
 			return a.name === (b as SymbolRule).name;
 		case 'enum': {
 			const bm = (b as EnumRule).members;
-			return (
-				a.members.length === bm.length &&
-				a.members.every((m, i) => m.value === bm[i]!.value)
-			);
+			return a.members.length === bm.length && a.members.every((m, i) => m.value === bm[i]!.value);
 		}
 		case 'seq':
 			return (
@@ -241,20 +222,11 @@ function rulesEqual(a: Rule, b: Rule): boolean {
 		case 'optional':
 			return rulesEqual(a.content, (b as OptionalRule).content);
 		case 'repeat':
-			return (
-				a.separator === (b as RepeatRule).separator &&
-				rulesEqual(a.content, (b as RepeatRule).content)
-			);
+			return a.separator === (b as RepeatRule).separator && rulesEqual(a.content, (b as RepeatRule).content);
 		case 'repeat1':
-			return (
-				a.separator === (b as Repeat1Rule).separator &&
-				rulesEqual(a.content, (b as Repeat1Rule).content)
-			);
+			return a.separator === (b as Repeat1Rule).separator && rulesEqual(a.content, (b as Repeat1Rule).content);
 		case 'field':
-			return (
-				a.name === (b as FieldRule).name &&
-				rulesEqual(a.content, (b as FieldRule).content)
-			);
+			return a.name === (b as FieldRule).name && rulesEqual(a.content, (b as FieldRule).content);
 		default:
 			return false;
 	}
@@ -284,8 +256,7 @@ export function choice(...members: Input[]): Rule {
 	if (normalized.length === 1) return normalized[0]!;
 
 	const isBlank = (r: Rule): boolean =>
-		(r.type === 'seq' && r.members.length === 0) ||
-		(r.type === 'choice' && r.members.length === 0);
+		(r.type === 'seq' && r.members.length === 0) || (r.type === 'choice' && r.members.length === 0);
 	const blankIdx = normalized.findIndex(isBlank);
 	if (blankIdx !== -1 && normalized.length === 2) {
 		const other = normalized[1 - blankIdx]!;
@@ -296,11 +267,7 @@ export function choice(...members: Input[]): Rule {
 
 	// Detect all-string choice → EnumRule
 	if (normalized.length > 0 && normalized.every((m) => m.type === 'string')) {
-		return {
-			type: 'enum',
-			members: normalized as StringRule[],
-			source: 'grammar'
-		};
+		return normalizeEnumMembers(normalized as StringRule[], 'grammar');
 	}
 
 	if (normalized.length >= 2 && normalized.every((m) => m.type === 'field')) {
@@ -418,9 +385,7 @@ export function optional(content: Input): Rule {
  *
  * Returns `null` if no separator shape is present.
  */
-function extractRepeatSeparator(
-	resolved: Rule
-): { content: Rule; separator: string; trailing?: boolean } | null {
+function extractRepeatSeparator(resolved: Rule): { content: Rule; separator: string; trailing?: boolean } | null {
 	if (resolved.type !== 'seq' || resolved.members.length !== 2) return null;
 	const [first, second] = resolved.members as [Rule, Rule];
 	// Canonical case: `repeat(seq(SEP, X))` or `repeat(seq(X, SEP))` with
@@ -431,10 +396,8 @@ function extractRepeatSeparator(
 	if (second.type === 'string' && first.type !== 'string') {
 		return { content: first, separator: second.value, trailing: true };
 	}
-	const firstSepChoice =
-		first.type === 'choice' ? extractFirstStringFromChoice(first) : null;
-	const secondSepChoice =
-		second.type === 'choice' ? extractFirstStringFromChoice(second) : null;
+	const firstSepChoice = first.type === 'choice' ? extractFirstStringFromChoice(first) : null;
+	const secondSepChoice = second.type === 'choice' ? extractFirstStringFromChoice(second) : null;
 	if (firstSepChoice !== null && second.type !== 'string') {
 		return { content: second, separator: firstSepChoice };
 	}
@@ -548,10 +511,7 @@ export function repeat1(content: Input): Rule {
 // $ proxy — reference tracking
 // ---------------------------------------------------------------------------
 
-export function createProxy(
-	currentRule: string,
-	refs: SymbolRef[]
-): Record<string, SymbolRuleWithRef> {
+export function createProxy(currentRule: string, refs: SymbolRef[]): Record<string, SymbolRuleWithRef> {
 	return new Proxy({} as Record<string, SymbolRuleWithRef>, {
 		get(_target, name: string): SymbolRuleWithRef {
 			const ref: SymbolRef = { refType: 'symbol', from: currentRule, to: name };
@@ -582,10 +542,7 @@ export function createProxy(
  * `inlineList` falls back to convention-only, which is the safe
  * default when Link doesn't have grammar metadata at hand.
  */
-export function isHiddenKind(
-	name: string,
-	inlineList?: readonly string[]
-): boolean {
+export function isHiddenKind(name: string, inlineList?: readonly string[]): boolean {
 	if (name.startsWith('_')) return true;
 	if (inlineList && inlineList.includes(name)) return true;
 	return false;
@@ -806,38 +763,14 @@ interface GrammarOptions {
 	// callback — `previous` is the base grammar's version in
 	// extension mode. We type the second arg loosely so extension
 	// callbacks that forward it (`previous.concat([...])`) compile.
-	rules: Record<
-		string,
-		($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input
-	>;
-	extras?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[];
-	externals?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[];
-	supertypes?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[];
-	inline?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[];
-	conflicts?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[][];
-	word?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => SymbolRuleWithRef;
-	precedences?: (
-		$: Record<string, SymbolRuleWithRef>,
-		previous?: unknown
-	) => Input[][];
+	rules: Record<string, ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input>;
+	extras?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
+	externals?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
+	supertypes?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
+	inline?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[];
+	conflicts?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
+	word?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => SymbolRuleWithRef;
+	precedences?: ($: Record<string, SymbolRuleWithRef>, previous?: unknown) => Input[][];
 }
 
 /**
@@ -845,10 +778,7 @@ interface GrammarOptions {
  * When called with one arg: fresh grammar.
  * When called with two args: grammar extension (base + overrides).
  */
-function grammarFn(
-	optionsOrBase: GrammarOptions | { grammar: any },
-	options?: GrammarOptions
-): { grammar: any } {
+function grammarFn(optionsOrBase: GrammarOptions | { grammar: any }, options?: GrammarOptions): { grammar: any } {
 	let baseRules: Record<string, Rule> = {};
 	let baseGrammar: any = null;
 	let opts: GrammarOptions;
@@ -877,14 +807,7 @@ function grammarFn(
 	let word: string | null = null;
 
 	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateRulesAndInjectSynthetics(
-			opts,
-			baseRules,
-			refs,
-			rules,
-			provenanceByKind,
-			baseGrammar !== null
-		);
+		evaluateRulesAndInjectSynthetics(opts, baseRules, refs, rules, provenanceByKind, baseGrammar !== null);
 		evaluateMetadataCallbacksInScope(
 			opts,
 			baseGrammar,
@@ -896,14 +819,9 @@ function grammarFn(
 		);
 	});
 
-	inheritBaseGrammarMetadata(
-		opts,
-		baseGrammar,
-		{ extras, externals, supertypes, inline, conflicts },
-		(w) => {
-			word = w;
-		}
-	);
+	inheritBaseGrammarMetadata(opts, baseGrammar, { extras, externals, supertypes, inline, conflicts }, (w) => {
+		word = w;
+	});
 
 	const polymorphVariants = drainPolymorphMetadata(opts);
 	const refineForms = drainRefineMetadata(opts);
@@ -939,8 +857,7 @@ function grammarFn(
 			// calls inside externals/rules. Empty when the grammar
 			// declares no roles.
 			externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
-			polymorphVariants:
-				polymorphVariants.length > 0 ? polymorphVariants : undefined,
+			polymorphVariants: polymorphVariants.length > 0 ? polymorphVariants : undefined,
 			refineForms
 		} satisfies RawGrammar
 	};
@@ -995,8 +912,7 @@ function rewriteInlineAliases(
 	provenanceByKind: Map<string, RuleProvenance>,
 	externals: ReadonlySet<string>
 ): Rule {
-	const recurse = (r: Rule): Rule =>
-		rewriteInlineAliases(r, rules, provenanceByKind, externals);
+	const recurse = (r: Rule): Rule => rewriteInlineAliases(r, rules, provenanceByKind, externals);
 	switch (rule.type) {
 		case 'alias':
 			if (rule.named && rule.value) {
@@ -1008,8 +924,7 @@ function rewriteInlineAliases(
 				// would synthesize the fictitious hidden kind `_doc_comment`
 				// because `_line_doc_content` is external (not in `rules`).
 				const isBareSymbolToKnownSource =
-					inner.type === 'symbol' &&
-					(rules[inner.name] !== undefined || externals.has(inner.name));
+					inner.type === 'symbol' && (rules[inner.name] !== undefined || externals.has(inner.name));
 				// Also skip when the alias TARGET is already a declared
 				// kind: `alias(inlineBody, $.existingKind)` just relabels
 				// the inline body as that existing kind. Tree-sitter
@@ -1086,31 +1001,19 @@ function rewriteInlineAliases(
  * @param rules - Mutable rules map; synthesized rules are added in place.
  * @param provenanceByKind - Provenance map; entries are added for each new kind.
  */
-function synthesizeFieldEnumRules(
-	rules: Record<string, Rule>,
-	provenanceByKind: Map<string, RuleProvenance>
-): void {
+function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind: Map<string, RuleProvenance>): void {
 	// First pass: collect all (parentKind, fieldName, members) triples so we
 	// can count how often each field name appears with the same member set and
 	// build the canonical-name dedup map before any rewriting happens.
 	const fieldOccurrences = collectFieldEnumOccurrences(rules);
-	const memberKeyToCanonicalName = buildCanonicalEnumNames(
-		fieldOccurrences,
-		rules
-	);
+	const memberKeyToCanonicalName = buildCanonicalEnumNames(fieldOccurrences, rules);
 
 	// Second pass: rewrite rules using the pre-computed canonical names.
 	const rewrites = new Map<string, Rule>();
-	const newRules = new Map<string, EnumRule>();
+	const newRules = new Map<string, Rule>();
 
 	for (const [parentKind, rule] of Object.entries(rules)) {
-		const rewritten = rewriteFieldEnums(
-			rule,
-			parentKind,
-			rules,
-			newRules,
-			memberKeyToCanonicalName
-		);
+		const rewritten = rewriteFieldEnums(rule, parentKind, rules, newRules, memberKeyToCanonicalName);
 		if (rewritten !== rule) rewrites.set(parentKind, rewritten);
 	}
 
@@ -1205,9 +1108,7 @@ interface FieldEnumOccurrence {
  * @param rules - The full grammar rules map after evaluate-time synthesis.
  * @returns Array of occurrence records, one per qualifying field position.
  */
-function collectFieldEnumOccurrences(
-	rules: Record<string, Rule>
-): FieldEnumOccurrence[] {
+function collectFieldEnumOccurrences(rules: Record<string, Rule>): FieldEnumOccurrence[] {
 	const occurrences: FieldEnumOccurrence[] = [];
 	for (const [parentKind, rule] of Object.entries(rules)) {
 		walkFieldEnums(rule, parentKind, rules, occurrences);
@@ -1223,12 +1124,7 @@ function collectFieldEnumOccurrences(
  * @param rules - Full rules map for symbol resolution.
  * @param out - Accumulator for discovered occurrences.
  */
-function walkFieldEnums(
-	rule: Rule,
-	parentKind: string,
-	rules: Record<string, Rule>,
-	out: FieldEnumOccurrence[]
-): void {
+function walkFieldEnums(rule: Rule, parentKind: string, rules: Record<string, Rule>, out: FieldEnumOccurrence[]): void {
 	switch (rule.type) {
 		case 'field': {
 			// Peel one level of repeat/repeat1 wrapper so that
@@ -1259,12 +1155,7 @@ function walkFieldEnums(
 		case 'clause':
 		case 'group':
 		case 'token':
-			walkFieldEnums(
-				(rule as { content: Rule }).content,
-				parentKind,
-				rules,
-				out
-			);
+			walkFieldEnums((rule as { content: Rule }).content, parentKind, rules, out);
 			return;
 		default:
 			return;
@@ -1288,10 +1179,7 @@ function walkFieldEnums(
  * @param rules - Full grammar rules map for checking existing rule names.
  * @returns Map from `memberKey` to the chosen canonical hidden kind name.
  */
-function buildCanonicalEnumNames(
-	occurrences: FieldEnumOccurrence[],
-	rules: Record<string, Rule>
-): Map<string, string> {
+function buildCanonicalEnumNames(occurrences: FieldEnumOccurrence[], rules: Record<string, Rule>): Map<string, string> {
 	// Group occurrences by memberKey.
 	const byKey = new Map<string, FieldEnumOccurrence[]>();
 	for (const occ of occurrences) {
@@ -1371,11 +1259,7 @@ function deriveCandidateName(
 
 	if (allSameFieldName) {
 		// Priority 1: field name matches an existing grammar rule with same members.
-		const existingMatch = fieldNameMatchesGrammarRule(
-			first.fieldName,
-			first.members,
-			rules
-		);
+		const existingMatch = fieldNameMatchesGrammarRule(first.fieldName, first.members, rules);
 		if (existingMatch) {
 			return { name: `_${first.fieldName}`, priority: 1 };
 		}
@@ -1402,11 +1286,7 @@ function deriveCandidateName(
  * @param rules - Full grammar rules map.
  * @returns `true` when `rules[fieldName]` resolves to the same member set.
  */
-function fieldNameMatchesGrammarRule(
-	fieldName: string,
-	members: StringRule[],
-	rules: Record<string, Rule>
-): boolean {
+function fieldNameMatchesGrammarRule(fieldName: string, members: StringRule[], rules: Record<string, Rule>): boolean {
 	const rule = rules[fieldName];
 	if (rule === undefined) return false;
 
@@ -1432,7 +1312,7 @@ function fieldNameMatchesGrammarRule(
  * @param rule - The rule tree to walk and potentially rewrite.
  * @param parentKind - The grammar kind that owns this rule (for naming).
  * @param rules - The full rules map for symbol-reference resolution.
- * @param newRules - Accumulator for synthesized `EnumRule` entries.
+ * @param newRules - Accumulator for synthesized literal-set rule entries.
  * @param memberKeyToCanonicalName - Pre-computed dedup map from the first pass.
  * @returns The rewritten rule (may be structurally identical if no change was needed).
  */
@@ -1440,23 +1320,18 @@ function rewriteFieldEnums(
 	rule: Rule,
 	parentKind: string,
 	rules: Record<string, Rule>,
-	newRules: Map<string, EnumRule>,
+	newRules: Map<string, Rule>,
 	memberKeyToCanonicalName: Map<string, string>
 ): Rule {
-	const recurse = (r: Rule): Rule =>
-		rewriteFieldEnums(r, parentKind, rules, newRules, memberKeyToCanonicalName);
+	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, parentKind, rules, newRules, memberKeyToCanonicalName);
 
 	switch (rule.type) {
 		case 'field': {
-			const synthesized = tryExtractFieldEnum(
-				rule.content,
-				rules,
-				memberKeyToCanonicalName
-			);
+			const synthesized = tryExtractFieldEnum(rule.content, rules, memberKeyToCanonicalName);
 			if (synthesized !== null) {
-				const { enumKindName, enumRule, replacementContent } = synthesized;
+				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
-					newRules.set(enumKindName, enumRule);
+					newRules.set(enumKindName, synthesizedRule);
 				}
 				// Replace the field's inline content with the replacement content rule.
 				// For bare enum: symbol(enumKindName).
@@ -1500,7 +1375,7 @@ function rewriteFieldEnums(
 /**
  * Try to extract an enum definition from a field's content.
  *
- * Returns `{ enumKindName, enumRule, replacementContent }` when the content
+ * Returns `{ enumKindName, synthesizedRule, replacementContent }` when the content
  * resolves to a closed set of string literals, or `null` when it does not
  * qualify.
  *
@@ -1528,24 +1403,19 @@ function rewriteFieldEnums(
  * @param content - The field's current content rule.
  * @param rules - Full rules map for symbol resolution.
  * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
- * @returns Synthesized kind name, enum rule, and the replacement content rule,
+ * @returns Synthesized kind name, normalized literal-set rule, and the replacement content rule,
  *   or `null` when the content does not qualify.
  */
 function tryExtractFieldEnum(
 	content: Rule,
 	rules: Record<string, Rule>,
 	memberKeyToCanonicalName: Map<string, string>
-): { enumKindName: string; enumRule: EnumRule; replacementContent: Rule } | null {
+): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
 	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
 	// is handled alongside `field(name, enum)`. The wrapper type is remembered
 	// so the rewrite can restore it around the synthesized symbol reference.
-	const repeatWrapperType =
-		content.type === 'repeat' || content.type === 'repeat1'
-			? content.type
-			: null;
-	const innerContent = repeatWrapperType !== null
-		? (content as RepeatRule | Repeat1Rule).content
-		: content;
+	const repeatWrapperType = content.type === 'repeat' || content.type === 'repeat1' ? content.type : null;
+	const innerContent = repeatWrapperType !== null ? (content as RepeatRule | Repeat1Rule).content : content;
 
 	const members = resolveToEnumMembers(innerContent, rules);
 	if (members === null || members.length === 0) return null;
@@ -1557,11 +1427,7 @@ function tryExtractFieldEnum(
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 
-	const enumRule: EnumRule = {
-		type: 'enum',
-		members,
-		source: 'grammar'
-	};
+	const synthesizedRule = normalizeEnumMembers(members, 'grammar');
 
 	const symRule: SymbolRule = { type: 'symbol', name: enumKindName, hidden: true };
 	const replacementContent: Rule =
@@ -1571,7 +1437,7 @@ function tryExtractFieldEnum(
 				? { ...(content as RepeatRule), content: symRule }
 				: { ...(content as Repeat1Rule), content: symRule };
 
-	return { enumKindName, enumRule, replacementContent };
+	return { enumKindName, synthesizedRule, replacementContent };
 }
 
 /**
@@ -1603,10 +1469,7 @@ function peelRepeatWrapper(rule: Rule): Rule {
  * resolution belongs in Link, and multi-level chains are uncommon for
  * operator fields.
  */
-function resolveToEnumMembers(
-	rule: Rule,
-	rules: Record<string, Rule>
-): StringRule[] | null {
+function resolveToEnumMembers(rule: Rule, rules: Record<string, Rule>): StringRule[] | null {
 	switch (rule.type) {
 		case 'enum':
 			// Already a collapsed choice-of-strings.
@@ -1648,9 +1511,7 @@ function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
 			// Defensive: all-string choice not yet collapsed (should not occur
 			// in normal evaluate output, but handle gracefully).
 			if (target.members.length === 0) return null;
-			const allStrings = target.members.every(
-				(m): m is StringRule => m.type === 'string'
-			);
+			const allStrings = target.members.every((m): m is StringRule => m.type === 'string');
 			return allStrings ? target.members : null;
 		}
 		default:
@@ -1671,8 +1532,7 @@ function resolveToEnumMembersOneLevelDeep(target: Rule): StringRule[] | null {
  * wire context's `polymorphVariants` array.
  */
 function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
-		.__wireContext__;
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	return wireCtx ? [...wireCtx.polymorphVariants] : [];
 }
 
@@ -1682,11 +1542,8 @@ function drainPolymorphMetadata(opts: GrammarOptions): PolymorphVariant[] {
  * the `RawGrammar.refineForms` field absent rather than an empty map
  * for downstream consumers that check presence).
  */
-function drainRefineMetadata(
-	opts: GrammarOptions
-): Map<string, RefineForm[]> | undefined {
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
-		.__wireContext__;
+function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
 	return new Map(wireCtx.refineForms);
 }
@@ -1714,10 +1571,7 @@ function drainRefineMetadata(
  * with user field/variant paths. Proper fix needs path-aware composition;
  * deferred.
  */
-function mergeEnrichOverridesIntoOptions(
-	optionsOrBase: GrammarOptions | { grammar: any },
-	opts: GrammarOptions
-): void {
+function mergeEnrichOverridesIntoOptions(optionsOrBase: GrammarOptions | { grammar: any }, opts: GrammarOptions): void {
 	const enrichOverrides = (
 		optionsOrBase as {
 			__enrichOverrides__?: Record<string, (...a: any[]) => any>;
@@ -1774,16 +1628,8 @@ function evaluateRulesAndInjectSynthetics(
 	provenanceByKind: Map<string, RuleProvenance>,
 	isExtension: boolean
 ): void {
-	evaluateRuleFunctions(
-		opts,
-		baseRules,
-		refs,
-		rules,
-		provenanceByKind,
-		isExtension
-	);
-	const wireCtx = (opts as unknown as { __wireContext__?: WireContext })
-		.__wireContext__;
+	evaluateRuleFunctions(opts, baseRules, refs, rules, provenanceByKind, isExtension);
+	const wireCtx = (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
 	if (wireCtx) {
 		injectSyntheticRules(wireCtx.deposits, rules, provenanceByKind);
 		prunePlaceholderOrphans(wireCtx, rules);
@@ -1816,10 +1662,7 @@ function evaluateRulesAndInjectSynthetics(
  * content). Skips rules whose body is non-blank (author-declared hidden
  * helpers are legitimate and can have any body).
  */
-function prunePlaceholderOrphans(
-	ctx: WireContext,
-	rules: Record<string, Rule>
-): void {
+function prunePlaceholderOrphans(ctx: WireContext, rules: Record<string, Rule>): void {
 	for (const name of Object.keys(rules)) {
 		if (!name.startsWith('_')) continue;
 		if (ctx.deposits.has(name)) continue;
@@ -1896,10 +1739,7 @@ function evaluateRuleFunctions(
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = normalize(result);
-		provenanceByKind.set(
-			name,
-			isExtension ? 'override-authored-or-replaced' : 'grammar-authored'
-		);
+		provenanceByKind.set(name, isExtension ? 'override-authored-or-replaced' : 'grammar-authored');
 	}
 }
 
@@ -1965,16 +1805,11 @@ function inheritBaseGrammarMetadata(
 ): void {
 	const inherited = baseGrammar?.grammar ?? baseGrammar;
 	if (inherited) {
-		if (!opts.externals && Array.isArray(inherited.externals))
-			sinks.externals.push(...inherited.externals);
-		if (!opts.extras && Array.isArray(inherited.extras))
-			sinks.extras.push(...inherited.extras);
-		if (!opts.supertypes && Array.isArray(inherited.supertypes))
-			sinks.supertypes.push(...inherited.supertypes);
-		if (!opts.inline && Array.isArray(inherited.inline))
-			sinks.inline.push(...inherited.inline);
-		if (!opts.conflicts && Array.isArray(inherited.conflicts))
-			sinks.conflicts.push(...inherited.conflicts);
+		if (!opts.externals && Array.isArray(inherited.externals)) sinks.externals.push(...inherited.externals);
+		if (!opts.extras && Array.isArray(inherited.extras)) sinks.extras.push(...inherited.extras);
+		if (!opts.supertypes && Array.isArray(inherited.supertypes)) sinks.supertypes.push(...inherited.supertypes);
+		if (!opts.inline && Array.isArray(inherited.inline)) sinks.inline.push(...inherited.inline);
+		if (!opts.conflicts && Array.isArray(inherited.conflicts)) sinks.conflicts.push(...inherited.conflicts);
 		if (!opts.word && inherited.word) setWord(inherited.word);
 	}
 }
@@ -2141,9 +1976,7 @@ export async function evaluate(entryPath: string): Promise<RawGrammar> {
  * our DSL props — `Record<string, unknown>` is the honest shape for the
  * bag we mutate inside this scope.
  */
-function saveAndInjectDslGlobals(
-	g: Record<string, unknown>
-): Record<string, unknown> {
+function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unknown> {
 	const dslFunctions: Record<string, unknown> = {
 		grammar: grammarFn,
 		seq,
@@ -2189,10 +2022,7 @@ async function importAndExtractGrammar(entryPath: string): Promise<RawGrammar> {
  * @param g - `globalThis` cast to a mutable string-keyed record.
  * @param savedGlobals - The snapshot returned by `saveAndInjectDslGlobals`.
  */
-function restoreSavedGlobals(
-	g: Record<string, unknown>,
-	savedGlobals: Record<string, unknown>
-): void {
+function restoreSavedGlobals(g: Record<string, unknown>, savedGlobals: Record<string, unknown>): void {
 	for (const [name, original] of Object.entries(savedGlobals)) {
 		if (original === undefined) {
 			delete g[name];

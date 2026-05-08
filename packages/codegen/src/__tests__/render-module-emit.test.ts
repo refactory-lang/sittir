@@ -18,7 +18,7 @@ import {
 	buildSupertypeTransportSet,
 	deriveChildrenKinds,
 	type SlotClass
-} from '../emitters/render-module.ts';
+} from '../emitters/transport-common.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
@@ -207,9 +207,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const src = await getRustTemplatesRs();
 		const structBody = extractStructBody(src, 'ConstItemTransport');
 		// The `name` field line should not use Box<AnyTransport>
-		const nameLine = structBody
-			.split('\n')
-			.find((l) => l.trim().startsWith('pub name:'));
+		const nameLine = structBody.split('\n').find((l) => l.trim().startsWith('pub name:'));
 		expect(nameLine).not.toContain('Box<AnyTransport>');
 	});
 
@@ -226,9 +224,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		const structBody = extractStructBody(src, 'FunctionItemTransport');
 		// name field has kinds: ["identifier", "metavariable"] — both are subtypes of
 		// rust's _path supertype → classified as PathTransport (Phase 2).
-		const nameLine = structBody
-			.split('\n')
-			.find((l) => l.trim().startsWith('pub name:'));
+		const nameLine = structBody.split('\n').find((l) => l.trim().startsWith('pub name:'));
 		expect(nameLine).toContain('PathTransport');
 	});
 
@@ -250,5 +246,11 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		// no intermediate String allocation via render_block.
 		expect(fnBody).toContain('Renderable::Transport(&node.body');
 		expect(fnBody).not.toContain('render_block');
+	});
+
+	it('leaf transport napi impls accept release strings or structured objects', async () => {
+		const src = await getRustTemplatesRs();
+		expect(src).toContain('let text = if let Ok(text) = String::from_napi_value(env, napi_val) {');
+		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
 	});
 });

@@ -37,15 +37,7 @@ import { fileURLToPath } from 'node:url';
 // imports `./hash.js` from inside the same dist directory, so the
 // mock target must be the absolute path on disk.
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const HASH_MODULE = join(
-	__dirname,
-	'..',
-	'..',
-	'packages',
-	'rust',
-	'dist',
-	'hash.js'
-);
+const HASH_MODULE = join(__dirname, '..', '..', 'packages', 'rust', 'dist', 'hash.js');
 
 describe('US1 acceptance — hash-mismatch silent fallback (T052)', () => {
 	it('falls through to js with reason containing "hash mismatch"', async () => {

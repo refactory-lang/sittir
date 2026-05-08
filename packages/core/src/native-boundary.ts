@@ -1,8 +1,6 @@
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 
-const ASSERT_ENABLED =
-	typeof process !== 'undefined' &&
-	process.env?.NODE_ENV !== 'production';
+const ASSERT_ENABLED = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -26,25 +24,15 @@ function assertBoolean(value: unknown, path: string): asserts value is boolean {
 	}
 }
 
-function assertFiniteNumber(
-	value: unknown,
-	path: string
-): asserts value is number {
+function assertFiniteNumber(value: unknown, path: string): asserts value is number {
 	if (typeof value !== 'number' || !Number.isFinite(value)) {
-		throw new TypeError(
-			`${path} must be a finite number, got ${describe(value)}`
-		);
+		throw new TypeError(`${path} must be a finite number, got ${describe(value)}`);
 	}
 }
 
-function assertNativeSource(
-	value: unknown,
-	path: string
-): asserts value is 0 | 1 | 2 {
+function assertNativeSource(value: unknown, path: string): asserts value is 0 | 1 | 2 {
 	if (value !== 0 && value !== 1 && value !== 2) {
-		throw new TypeError(
-			`${path} must be 0 (ts), 1 (sg), or 2 (factory), got ${describe(value)}`
-		);
+		throw new TypeError(`${path} must be 0 (ts), 1 (sg), or 2 (factory), got ${describe(value)}`);
 	}
 }
 
@@ -56,10 +44,7 @@ function assertNativeSpan(value: unknown, path: string): void {
 	assertFiniteNumber(value.end, `${path}.end`);
 }
 
-function assertNativeFieldValue(
-	value: unknown,
-	path: string
-): asserts value is NodeMemberValue {
+function assertNativeFieldValue(value: unknown, path: string): asserts value is NodeMemberValue {
 	if (typeof value === 'string') return;
 	if (Array.isArray(value)) {
 		for (const [index, item] of value.entries()) {
@@ -92,10 +77,7 @@ function assertNativeChildren(value: unknown, path: string): void {
  *  - nested `_<name>` storage keys and `$children` satisfy the same constraints
  *    recursively (ADR-0018 Phase 3a: `$fields` wrapper no longer emitted by readNode)
  */
-function assertNativeNodeDataInternal(
-	value: unknown,
-	path: string
-): asserts value is AnyNodeData {
+function assertNativeNodeDataInternal(value: unknown, path: string): asserts value is AnyNodeData {
 	if (!isRecord(value)) {
 		throw new TypeError(`${path} must be an object, got ${describe(value)}`);
 	}
@@ -110,16 +92,12 @@ function assertNativeNodeDataInternal(
 	}
 	// Phase D: $type must be a numeric KindId. String $type is no longer accepted.
 	if (typeof value.$type !== 'number') {
-		throw new TypeError(
-			`${path}.$type must be a number, got ${describe(value.$type)}`
-		);
+		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
 	}
 	assertNativeSource(value.$source, `${path}.$source`);
 	assertBoolean(value.$named, `${path}.$named`);
 	if (value.$format !== undefined) {
-		throw new TypeError(
-			`${path}.$format is not supported by the native render boundary; pass format separately`
-		);
+		throw new TypeError(`${path}.$format is not supported by the native render boundary; pass format separately`);
 	}
 	// Validate `_<name>` storage keys (de-hoisted surface).
 	for (const key of Object.keys(value)) {
@@ -127,15 +105,11 @@ function assertNativeNodeDataInternal(
 		if (value[key] === undefined) continue;
 		assertNativeFieldValue(value[key], `${path}.${key}`);
 	}
-	if (value.$children !== undefined)
-		assertNativeChildren(value.$children, `${path}.$children`);
+	if (value.$children !== undefined) assertNativeChildren(value.$children, `${path}.$children`);
 	if (value.$text !== undefined) assertString(value.$text, `${path}.$text`);
-	if (value.$span !== undefined)
-		assertNativeSpan(value.$span, `${path}.$span`);
-	if (value.$nodeHandle !== undefined)
-		assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
-	if (value.$childIndex !== undefined)
-		assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
+	if (value.$span !== undefined) assertNativeSpan(value.$span, `${path}.$span`);
+	if (value.$nodeHandle !== undefined) assertFiniteNumber(value.$nodeHandle, `${path}.$nodeHandle`);
+	if (value.$childIndex !== undefined) assertFiniteNumber(value.$childIndex, `${path}.$childIndex`);
 }
 
 /**
@@ -172,9 +146,7 @@ export function isRenderableNodeData(node: AnyNodeData): boolean {
  *
  * @see {@link isRenderableNodeData} for the non-throwing predicate.
  */
-export function assertRenderableNodeData(
-	node: AnyNodeData
-): asserts node is AnyNodeData {
+export function assertRenderableNodeData(node: AnyNodeData): asserts node is AnyNodeData {
 	if (!ASSERT_ENABLED) return;
 	assertNativeNodeDataInternal(node, 'node');
 }

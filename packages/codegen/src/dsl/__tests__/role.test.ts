@@ -36,12 +36,8 @@ describe('role()', () => {
 
 	it('throws when first arg is not a symbol reference', () => {
 		withRoleScope(() => {
-			expect(() => role('_indent' as unknown as Rule, 'indent')).toThrow(
-				/symbol reference/
-			);
-			expect(() =>
-				role({ type: 'string', value: '_indent' } as Rule, 'indent')
-			).toThrow(/symbol reference/);
+			expect(() => role('_indent' as unknown as Rule, 'indent')).toThrow(/symbol reference/);
+			expect(() => role({ type: 'string', value: '_indent' } as Rule, 'indent')).toThrow(/symbol reference/);
 		});
 	});
 

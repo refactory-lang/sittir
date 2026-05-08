@@ -66,11 +66,7 @@ describe('wire()', () => {
 		});
 		// Hidden rule names should be keys in opts.rules at wire-return time,
 		// which is what tree-sitter will snapshot for its ruleMap.
-		expect(Object.keys(wired.rules).sort()).toEqual([
-			'_assignment_eq',
-			'_assignment_type',
-			'assignment'
-		]);
+		expect(Object.keys(wired.rules).sort()).toEqual(['_assignment_eq', '_assignment_type', 'assignment']);
 	});
 
 	it('deposits captured content when the synthesized parent rule runs', () => {
@@ -96,12 +92,8 @@ describe('wire()', () => {
 		expect((assignmentResult as { type: string }).type).toBe('seq');
 		const members = (assignmentResult as { members: unknown[] }).members;
 		expect((members[0] as { type: string; value: string }).type).toBe('alias');
-		expect((members[0] as { type: string; value: string }).value).toBe(
-			'assignment_eq'
-		);
-		expect((members[1] as { type: string; value: string }).value).toBe(
-			'assignment_type'
-		);
+		expect((members[0] as { type: string; value: string }).value).toBe('assignment_eq');
+		expect((members[1] as { type: string; value: string }).value).toBe('assignment_type');
 
 		// The hidden-rule fns should now return the captured content.
 		const eqFn = wired.rules._assignment_eq!;
@@ -170,13 +162,11 @@ describe('wire()', () => {
 			name: 'test',
 			rules: {
 				assignment: ($, original) => {
-					observedKindDuringAssignment =
-						getCurrentWireContext()?.currentRuleKind ?? null;
+					observedKindDuringAssignment = getCurrentWireContext()?.currentRuleKind ?? null;
 					return original;
 				},
 				ident: (_$, _prev) => {
-					observedKindDuringIdent =
-						getCurrentWireContext()?.currentRuleKind ?? null;
+					observedKindDuringIdent = getCurrentWireContext()?.currentRuleKind ?? null;
 					return { type: 'pattern', value: '[a-z]+' };
 				}
 			}
@@ -228,10 +218,8 @@ describe('wire()', () => {
 			},
 			polymorphs: { assignment: { '0': 'ne' } }
 		});
-		const ctxA = (wiredA as unknown as { __wireContext__: unknown })
-			.__wireContext__;
-		const ctxB = (wiredB as unknown as { __wireContext__: unknown })
-			.__wireContext__;
+		const ctxA = (wiredA as unknown as { __wireContext__: unknown }).__wireContext__;
+		const ctxB = (wiredB as unknown as { __wireContext__: unknown }).__wireContext__;
 		expect(ctxA).not.toBe(ctxB);
 
 		// Run A's assignment — deposits should appear in A's context only.
@@ -261,9 +249,7 @@ describe('wire()', () => {
 		const assignmentFn = wired.rules.assignment!;
 		assignmentFn.call({}, {}, origSeq);
 		assignmentFn.call({}, {}, origSeq);
-		const ctx = (
-			wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }
-		).__wireContext__;
+		const ctx = (wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }).__wireContext__;
 		expect(ctx.polymorphVariants).toHaveLength(2); // not 4
 	});
 
@@ -283,9 +269,7 @@ describe('wire()', () => {
 			]
 		};
 		wired.rules.assignment!.call({}, {}, origSeq);
-		const ctx = (
-			wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }
-		).__wireContext__;
+		const ctx = (wired as unknown as { __wireContext__: { polymorphVariants: unknown[] } }).__wireContext__;
 		expect(ctx.polymorphVariants).toEqual([
 			{ parent: 'assignment', child: 'eq' },
 			{ parent: 'assignment', child: 'type' }

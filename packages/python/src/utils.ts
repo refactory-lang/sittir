@@ -2,20 +2,10 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
-import type { Comment, AnyTransport, NamespaceMap } from './types.js';
-import { KIND_NAMES, kindIdFromName } from './types.js';
+import type { Comment, NamespaceMap } from './types.js';
+import { kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 
-/**
- * Wrap a factory-built node literal with the four `$`-prefixed shared
- * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).
- *
- * Generic on `T` so the literal type flows through unchanged — the
- * return type is `T & { ... methods ... }` so callers retain narrow
- * per-kind property types. No spread (rule 6), no `defineProperty`
- * (rule 1) — methods are merged via `Object.assign` and become
- * enumerable members of the returned object.
- */
 export function withMethods<T extends object>(
   node: T
 ): T & {
@@ -43,16 +33,6 @@ export function withMethods<T extends object>(
   });
 }
 
-/**
- * Type guard: returns true if `v` is a NodeData.
- *
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
- *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
- *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
- *   - `$children` (container nodes whose children arrive without field names),
- *   - `$source` (provenance tag stamped by `readNode` and every factory).
- */
 export function isNodeData<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
 ): v is NamespaceMap[K]['Node'];
@@ -61,16 +41,13 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'number') return false;
-  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));
-  return hasDehoistedFields
+  const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
+  return hasStoredFields
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
     || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
 }
 
-/**
- * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
- */
 export function isTreeNode<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']
 ): v is NamespaceMap[K]['Tree'];
@@ -99,492 +76,67 @@ export function hasKindOf<K extends keyof NamespaceMap>(
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
-/**
- * Convert NodeData/factory output into the data-only native transport shape.
- */
-export function toNativeRenderTransport(node: unknown): AnyTransport {
-  const projected = projectTransportValue(node, 'node');
-  return projected as AnyTransport;
+export function toNativeRenderTransport(node: unknown): unknown {
+  return node;
 }
 
-const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);
+export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (Array.isArray(value)) return value.length > 0 ? true : undefined;
+  return true;
+}
 
-type NativeTransportAlternative = { readonly type: string; readonly text?: string };
-type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
-type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
-type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
-
-const nativeTransportAliasTargetToSource: Record<string, string> = {
-  "assignment_eq": "_assignment_eq",
-  "assignment_type": "_assignment_type",
-  "assignment_typed": "_assignment_typed",
-  "async_marker": "_async_marker",
-  "augmented_assignment_operator": "_augmented_assignment_operator",
-  "binary_operator_operator": "_binary_operator_operator",
-  "boolean_operator_operator": "_boolean_operator_operator",
-  "comprehension_clauses": "_comprehension_clauses",
-  "dict_pattern_kv": "_dict_pattern_kv",
-  "expression_within_for_in_clause": "_expression_within_for_in_clause",
-  "expressions": "_expressions",
-  "f_expression": "_f_expression",
-  "left_hand_side": "_left_hand_side",
-  "match_block": "_match_block",
-  "match_block_block": "_match_block_block",
-  "named_expression_lhs": "_named_expression_lhs",
-  "newline": "_newline",
-  "right_hand_side": "_right_hand_side",
-  "simple_pattern": "_simple_pattern",
-  "simple_pattern_negative": "_simple_pattern_negative",
-  "simple_statement": "_simple_statement",
-  "simple_statements": "_simple_statements",
-  "statement": "_statement",
-  "suite": "_suite",
-  "type_alias_statement_type": "_type_alias_statement_type",
-  "unary_operator_operator": "_unary_operator_operator",
-};
-
-const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
-  "_import_list": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "_match_block_block": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "alternative", multiple: true, required: true, alternatives: [{"type":"case_clause"}] as const },
-    ],
-  },
-  "class_pattern": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "arguments", multiple: true, required: true, alternatives: [{"type":"case_pattern"}] as const },
-    ],
-  },
-  "comparison_operator": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const,
-    fields: [
-      { name: "operators", multiple: true, required: true, alternatives: [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const },
-    ],
-  },
-  "except_clause": {
-    childrenRequired: true,
-    childAlternatives: [{"type":"_suite"}] as const,
-    fields: [
-      { name: "value", multiple: true, required: false, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "exec_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "in_clause", multiple: true, required: false, alternatives: [{"type":"in","text":"in"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "for_in_clause": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "right", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"lambda_within_for_in_clause"}] as const },
-    ],
-  },
-  "future_import_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "if_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "alternative", multiple: true, required: false, alternatives: [{"type":"elif_clause"},{"type":"else_clause"}] as const },
-    ],
-  },
-  "import_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "match_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "subject", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "print_statement": {
-    childrenRequired: false,
-    childAlternatives: [{"type":"chevron"}] as const,
-    fields: [
-      { name: "argument", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "string": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "content", multiple: true, required: true, alternatives: [{"type":"interpolation"},{"type":"string_content"}] as const },
-    ],
-  },
-  "subscript": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "subscript", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"slice"}] as const },
-    ],
-  },
-  "try_statement": {
-    childrenRequired: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "except_clauses", multiple: true, required: true, alternatives: [{"type":"except_clause"}] as const },
-    ],
-  },
-};
-
-const nativeTransportVariantRules: Record<string, readonly NativeTransportVariantRule[]> = {
-  "assignment": [
-    {
-      variant: "eq",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_assignment_eq"}] as const },
-    },
-    {
-      variant: "type",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_assignment_type"}] as const },
-    },
-    {
-      variant: "typed",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, alternatives: [{"type":"_assignment_typed"}] as const },
-    },
-  ],
-  "expression_statement": [
-    {
-      variant: "tuple",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"expression_statement_tuple"}] as const },
-    },
-  ],
-  "with_clause": [
-    {
-      variant: "bare",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"with_clause_bare"}] as const },
-    },
-    {
-      variant: "paren",
-      fields: [
-      ],
-      children: { required: true, alternatives: [{"type":"_with_clause_paren"}] as const },
-    },
-  ],
-};
-
-const nativeTransportTerminalKinds: ReadonlySet<string> = new Set([
-  "(",
-  ")",
-  "*",
-  "**",
-  ",",
-  "-",
-  "->",
-  ".",
-  "...",
-  "/",
-  ":",
-  ":=",
-  "=",
-  ">>",
-  "@",
-  "False",
-  "None",
-  "True",
-  "[",
-  "\\",
-  "]",
-  "_",
-  "__future__",
-  "_async_marker",
-  "_augmented_assignment_operator",
-  "_binary_operator_operator",
-  "_boolean_operator_operator",
-  "_dedent",
-  "_identifier",
-  "_indent",
-  "_is_not",
-  "_kw_async_marker",
-  "_kw_type",
-  "_newline",
-  "_not_escape_sequence",
-  "_not_in",
-  "_string_content",
-  "_type_alias_statement_type",
-  "_unary_operator_operator",
-  "as",
-  "assert",
-  "async",
-  "break",
-  "break_statement",
-  "case",
-  "class",
-  "comment",
-  "continue",
-  "continue_statement",
-  "def",
-  "del",
-  "elif",
-  "ellipsis",
-  "else",
-  "escape_interpolation",
-  "escape_sequence",
-  "except",
-  "exec",
-  "false",
-  "finally",
-  "float",
-  "for",
-  "from",
-  "global",
-  "identifier",
-  "if",
-  "import",
-  "import_prefix",
-  "in",
-  "integer",
-  "keyword_separator",
-  "line_continuation",
-  "match",
-  "none",
-  "nonlocal",
-  "not",
-  "pass",
-  "pass_statement",
-  "positional_separator",
-  "print",
-  "raise",
-  "return",
-  "string_end",
-  "string_start",
-  "true",
-  "try",
-  "type_conversion",
-  "while",
-  "wildcard_import",
-  "with",
-  "{",
-  "|",
-  "}",
-]);
-
-const nativeTransportTerminalFieldsByKind: Record<string, ReadonlySet<string>> = {
-  "aliased_import": new Set(["alias"]),
-  "attribute": new Set(["attribute"]),
-  "augmented_assignment": new Set(["operator"]),
-  "binary_operator": new Set(["operator"]),
-  "boolean_operator": new Set(["operator"]),
-  "class_definition": new Set(["name"]),
-  "comparison_operator": new Set(["operators"]),
-  "complex_pattern": new Set(["imaginary","real"]),
-  "for_in_clause": new Set(["async_marker"]),
-  "for_statement": new Set(["async_marker"]),
-  "function_definition": new Set(["async_marker","name"]),
-  "generic_type": new Set(["identifier"]),
-  "interpolation": new Set(["type_conversion"]),
-  "keyword_pattern": new Set(["identifier"]),
-  "member_type": new Set(["identifier"]),
-  "relative_import": new Set(["import_prefix"]),
-  "splat_pattern": new Set(["identifier"]),
-  "splat_type": new Set(["identifier"]),
-  "string": new Set(["string_end","string_start"]),
-  "type_alias_statement": new Set(["type"]),
-  "typed_default_parameter": new Set(["name"]),
-  "unary_operator": new Set(["operator"]),
-  "with_statement": new Set(["async_marker"]),
-};
-
-function collapseTerminalFields(projected: Record<string, unknown>, kind: string): void {
-  const fields = nativeTransportTerminalFieldsByKind[kind];
-  if (!fields) return;
-  for (const fieldName of fields) {
-    const value = projected[fieldName];
-    if (value === undefined) continue;
-    if (Array.isArray(value)) {
-      projected[fieldName] = value.map((item) => collapseIfTerminal(item));
-    } else {
-      projected[fieldName] = collapseIfTerminal(value);
+export function coerceBitflagStorage(value: unknown, texts: readonly string[]): number | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (typeof value === 'number') return value === 0 ? undefined : value;
+  if (Array.isArray(value)) {
+    let acc = 0;
+    for (const item of value) {
+      const bits = coerceBitflagStorage(item, texts) ?? 0;
+      acc |= bits;
     }
+    return acc === 0 ? undefined : acc;
   }
+  const text = extractNodeText(value);
+  if (text === undefined) return undefined;
+  const index = texts.indexOf(text);
+  if (index < 0) return undefined;
+  return 1 << index;
 }
 
-function collapseIfTerminal(value: unknown): unknown {
-  if (typeof value === 'string') return value;
-  if (!isRecord(value)) return value;
-  if (typeof value.$text === 'string' && typeof value.$type !== 'undefined') {
-    return value.$text;
+export function coerceKindEnumStorage<T = unknown>(
+  value: unknown,
+  byText: readonly (readonly [string, number])[] = []
+): T {
+  if (value === undefined || value === null) return undefined as T;
+  if (typeof value === 'number') return value as T;
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => coerceKindEnumStorage(item, byText))
+      .filter((item) => item !== undefined) as T;
   }
-  return value;
+  const text = extractNodeText(value);
+  if (text !== undefined) {
+    const mapped = byText.find(([candidate]) => candidate === text);
+    if (mapped) return mapped[1] as T;
+  }
+  if (isRecord(value) && typeof value.$type === "number") return value.$type as T;
+  if (typeof value === 'string') {
+    const mapped = byText.find(([candidate]) => candidate === value);
+    return (mapped ? mapped[1] : kindIdFromName(value)) as T;
+  }
+  return value as T;
+}
+
+function extractNodeText(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (isNodeData(value)) {
+    return typeof value.$text === 'string' ? value.$text : undefined;
+  }
+  if (isRecord(value) && typeof value.$text === "string") return value.$text;
+  return undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function projectTransportValue(value: unknown, path: string): unknown {
-  if (Array.isArray(value)) {
-    return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
-  }
-  if (typeof value === 'string') {
-    return { $type: value, $text: value };
-  }
-  if (!isRecord(value)) return value;
-  // $type must be numeric (TSKindId). However, factory-constructed
-  // children can carry a string kind name when kindIdFromName was not invoked
-  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution
-  // via kindIdFromName so the full projection pipeline runs.
-  let numericType: number | undefined;
-  if (typeof value.$type === "number") {
-    numericType = value.$type;
-  } else if (typeof value.$type === "string") {
-    try {
-      const kindStr = nativeTransportType(value.$type);
-      numericType = kindIdFromName(kindStr);
-    } catch {
-      // Unknown kind name — cannot project, return as-is.
-    }
-  }
-  if (numericType === undefined) return value;
-
-  // Resolve the wire kind name (including alias rewriting) for internal
-  // routing. $type is always numeric after projection.
-  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
-
-  const projected: Record<string, unknown> = {};
-  const isFactory = value.$source === 2;
-  for (const key of transportMetadataKeys) {
-    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
-    if (key in value) projected[key] = value[key];
-  }
-  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.
-  // Temporarily store string kind for routing; converted to numeric below.
-  projected.$type = resolvedKind;
-
-  for (const [key, child] of Object.entries(value)) {
-    if (transportMetadataKeys.has(key)) continue;
-    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
-    if (typeof child === "function") continue;
-    const projKey = key.startsWith('_') ? key.slice(1) : key;
-    if (projKey in projected) continue;
-    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);
-  }
-
-  projectRawChildrenIntoFields(projected, resolvedKind);
-  inferNativeTransportVariant(projected, resolvedKind);
-  collapseTerminalFields(projected, resolvedKind);
-
-  projected.$type = kindIdFromName(resolvedKind);
-
-  return projected;
-}
-
-function nativeTransportType(kind: string): string {
-  return nativeTransportAliasTargetToSource[kind] ?? kind;
-}
-
-function projectRawChildrenIntoFields(projected: Record<string, unknown>, kind: string): void {
-  const rules = nativeTransportRawChildFieldRules[kind];
-  const children = projected.$children;
-  if (!rules || !Array.isArray(children)) return;
-  const keep: unknown[] = [];
-  const usedForField = new Set<number>();
-  for (const field of rules.fields) {
-    if (projected[field.name] !== undefined) continue;
-    const matches = children.map((child, index) => ({ child, index })).filter(({ child }) => transportValueMatches(child, field.alternatives));
-    if (field.multiple) {
-      if (matches.length > 0 || field.required) {
-        projected[field.name] = matches.map(({ child }) => child);
-        for (const { index } of matches) usedForField.add(index);
-      }
-    } else if (matches.length === 1) {
-      projected[field.name] = matches[0]!.child;
-      usedForField.add(matches[0]!.index);
-    }
-  }
-  for (let index = 0; index < children.length; index++) {
-    const child = children[index];
-    if (!usedForField.has(index) || transportValueMatches(child, rules.childAlternatives)) keep.push(child);
-  }
-  if (keep.length > 0 || rules.childrenRequired) {
-    projected.$children = keep;
-  } else {
-    delete projected.$children;
-  }
-}
-
-function inferNativeTransportVariant(projected: Record<string, unknown>, kind: string): void {
-  if (typeof projected.$variant === "string") return;
-  const rules = nativeTransportVariantRules[kind];
-  if (!rules) return;
-  const matches = rules.filter((rule) => transportVariantMatches(projected, rule));
-  if (matches.length === 1) projected.$variant = matches[0]!.variant;
-}
-
-function transportVariantMatches(node: Record<string, unknown>, rule: NativeTransportVariantRule): boolean {
-  for (const field of rule.fields) {
-    const value = node[field.name];
-    if (value === undefined) {
-      if (field.required) return false;
-      continue;
-    }
-    const ok = field.multiple ? transportArrayMatches(value, field.alternatives) : transportValueMatches(value, field.alternatives);
-    if (!ok) return false;
-  }
-  if (rule.children) {
-    const children = node.$children;
-    if (children === undefined) return !rule.children.required;
-    return transportArrayMatches(children, rule.children.alternatives);
-  }
-  return true;
-}
-
-function transportArrayMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  return Array.isArray(value) && value.every((item) => transportValueMatches(item, alternatives));
-}
-
-function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  if (typeof value === 'string') {
-    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
-  }
-  if (!isRecord(value)) return false;
-  // $type may be a numeric KindId (projected structured node) or a string
-  // (terminal node converted from a literal string via the string fast-path).
-  const vt = value.$type;
-  if (typeof vt !== "string" && typeof vt !== "number") return false;
-  return alternatives.some((candidate) => {
-    // Compare numeric vs numeric (kindIdFromName converts candidate string kind);
-    // compare string vs string for literal terminals.
-    const typeMatch = typeof vt === "number"
-      ? vt === kindIdFromName(candidate.type)
-      : vt === candidate.type;
-    if (!typeMatch) return false;
-    return candidate.text === undefined || value.$text === candidate.text;
-  });
 }

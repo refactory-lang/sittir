@@ -5,10 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const GRAMMARS = ['python', 'rust', 'typescript'] as const;
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
-	/\/$/,
-	''
-);
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 type Grammar = (typeof GRAMMARS)[number];
 
@@ -28,10 +25,7 @@ function readTsHash(grammar: Grammar): CheckedInHash {
 }
 
 function readNativeHash(grammar: Grammar): CheckedInHash {
-	const path = resolve(
-		repoRoot,
-		`rust/crates/sittir-${grammar}/src/render/hash.rs`
-	);
+	const path = resolve(repoRoot, `rust/crates/sittir-${grammar}/src/render/hash.rs`);
 	const text = readFileSync(path, 'utf8');
 	const match = /TEMPLATE_BUNDLE_HASH: &str = "([0-9a-f]{64})"/.exec(text);
 	if (!match?.[1]) {

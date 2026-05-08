@@ -66,9 +66,7 @@ function dsl(): RuntimeDsl {
 	return globalThis as unknown as RuntimeDsl;
 }
 
-function nativeRequired<K extends keyof RuntimeDsl>(
-	name: K
-): NonNullable<RuntimeDsl[K]> {
+function nativeRequired<K extends keyof RuntimeDsl>(name: K): NonNullable<RuntimeDsl[K]> {
 	const fn = dsl()[name];
 	if (typeof fn !== 'function') {
 		throw new Error(
@@ -140,14 +138,10 @@ export class ApplyPathSkip extends Error {
  */
 export function parsePath(pathStr: string): PathSegment[] {
 	if (typeof pathStr !== 'string' || pathStr.length === 0) {
-		throw new Error(
-			`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`
-		);
+		throw new Error(`parsePath: path must be a non-empty string, got ${JSON.stringify(pathStr)}`);
 	}
 	if (pathStr.startsWith('/') || pathStr.endsWith('/')) {
-		throw new Error(
-			`parsePath: leading/trailing slash not allowed in path '${pathStr}'`
-		);
+		throw new Error(`parsePath: leading/trailing slash not allowed in path '${pathStr}'`);
 	}
 	const parts = pathStr.split('/');
 	const segments: PathSegment[] = [];
@@ -164,9 +158,7 @@ export function parsePath(pathStr: string): PathSegment[] {
 			// Field-traversal syntax: name:.
 			segments.push({ kind: 'fieldName', name: part.slice(0, -1) });
 		} else if (part === '*') {
-			throw new Error(
-				`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`
-			);
+			throw new Error(`parsePath: path segment '*' is no longer valid — use '_' for wildcard; see ADR-0010`);
 		} else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(part)) {
 			throw new Error(
 				`parsePath: bare kind name '${part}' is no longer valid as a path segment — use '(${part})' instead; see ADR-0010`
@@ -193,20 +185,13 @@ export function parsePath(pathStr: string): PathSegment[] {
 // Local accessors for the container/wrapper field shapes RuntimeRule
 // doesn't expose structurally. Consolidated so the casts live in one
 // spot rather than scattered through applyPath's branches.
-const membersOf = (r: RuntimeRule): RuntimeRule[] =>
-	(r as unknown as { members: RuntimeRule[] }).members;
-const contentOf = (r: RuntimeRule): RuntimeRule =>
-	(r as unknown as { content: RuntimeRule }).content;
+const membersOf = (r: RuntimeRule): RuntimeRule[] => (r as unknown as { members: RuntimeRule[] }).members;
+const contentOf = (r: RuntimeRule): RuntimeRule => (r as unknown as { content: RuntimeRule }).content;
 
 export function applyPath(
 	rule: RuntimeRule,
 	segments: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	if (segments.length === 0) {
@@ -249,9 +234,7 @@ export function applyPath(
 		default: {
 			// Exhaustiveness guard — TypeScript narrows `head` to `never` here.
 			const _exhaustive: never = head;
-			throw new Error(
-				`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`
-			);
+			throw new Error(`applyPath: unknown segment kind '${(_exhaustive as PathSegment).kind}'`);
 		}
 	}
 }
@@ -275,12 +258,7 @@ export function applyPath(
 function descendThroughPrecWrapper(
 	rule: RuntimeRule,
 	segments: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	const newStack = precStack ? [...precStack, rule] : [rule];
@@ -308,12 +286,7 @@ function descendThroughSingleWrapper(
 	rule: RuntimeRule,
 	head: PathSegment,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	switch (head.kind) {
@@ -363,12 +336,7 @@ function descendThroughAlias(
 	rule: RuntimeRule,
 	head: PathSegment,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	switch (head.kind) {
@@ -409,10 +377,7 @@ function descendThroughAlias(
  * round-tripping through it would require reconstructing the original
  * target shape. Direct spread preserves exactly what we received.
  */
-function reconstructAlias(
-	rule: RuntimeRule,
-	newContent: RuntimeRule
-): RuntimeRule {
+function reconstructAlias(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	return {
 		...(rule as unknown as Record<string, unknown>),
 		content: newContent
@@ -441,12 +406,7 @@ function descendThroughNamedField(
 	rule: RuntimeRule,
 	fieldName: string,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	if (!isFieldType(rule.type)) {
@@ -487,12 +447,7 @@ function dispatchKindMatch(
 	rule: RuntimeRule,
 	kindName: string,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	return applyKindMatch(rule, kindName, rest, patch, precStack, false);
@@ -513,28 +468,14 @@ function applyKindMatch(
 	rule: RuntimeRule,
 	targetKind: string,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): RuntimeRule {
 	// Track whether we matched anything so callers can error on zero.
-	const result = walkKindMatch(
-		rule,
-		targetKind,
-		rest,
-		patch,
-		precStack,
-		insideNamedField
-	);
+	const result = walkKindMatch(rule, targetKind, rest, patch, precStack, insideNamedField);
 	if (!result.matched) {
-		throw new ApplyPathSkip(
-			`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`
-		);
+		throw new ApplyPathSkip(`applyPath: kind '${targetKind}' matched zero occurrences in this subtree`);
 	}
 	return result.rule;
 }
@@ -562,12 +503,7 @@ function applyKindMatchToSymbol(
 	rule: RuntimeRule,
 	targetKind: string,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): { rule: RuntimeRule; matched: boolean } {
@@ -587,12 +523,7 @@ function walkKindMatch(
 	rule: RuntimeRule,
 	targetKind: string,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined,
 	insideNamedField: boolean
 ): { rule: RuntimeRule; matched: boolean } {
@@ -604,14 +535,7 @@ function walkKindMatch(
 	// Prec wrappers are transparent.
 	if (isPrecWrapperShape(rule)) {
 		const stack = precStack ? [...precStack, rule] : [rule];
-		const inner = walkKindMatch(
-			contentOf(rule),
-			targetKind,
-			rest,
-			patch,
-			stack,
-			insideNamedField
-		);
+		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, stack, insideNamedField);
 		return {
 			rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -619,28 +543,14 @@ function walkKindMatch(
 	}
 
 	if (t === 'symbol' || t === 'SYMBOL') {
-		return applyKindMatchToSymbol(
-			rule,
-			targetKind,
-			rest,
-			patch,
-			precStack,
-			insideNamedField
-		);
+		return applyKindMatchToSymbol(rule, targetKind, rest, patch, precStack, insideNamedField);
 	}
 
 	// Field: descend into content but mark insideNamedField=true so nested
 	// `_expression` references inside already-fielded symbols don't get
 	// re-wrapped.
 	if (t === 'field' || t === 'FIELD') {
-		const inner = walkKindMatch(
-			contentOf(rule),
-			targetKind,
-			rest,
-			patch,
-			precStack,
-			true
-		);
+		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, true);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -649,14 +559,7 @@ function walkKindMatch(
 
 	// Other wrappers — descend transparently.
 	if (isWrapperType(t)) {
-		const inner = walkKindMatch(
-			contentOf(rule),
-			targetKind,
-			rest,
-			patch,
-			precStack,
-			insideNamedField
-		);
+		const inner = walkKindMatch(contentOf(rule), targetKind, rest, patch, precStack, insideNamedField);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -668,14 +571,7 @@ function walkKindMatch(
 		const members = [...membersOf(rule)];
 		let anyMatched = false;
 		for (let i = 0; i < members.length; i++) {
-			const inner = walkKindMatch(
-				members[i]!,
-				targetKind,
-				rest,
-				patch,
-				precStack,
-				insideNamedField
-			);
+			const inner = walkKindMatch(members[i]!, targetKind, rest, patch, precStack, insideNamedField);
 			if (inner.matched) {
 				members[i] = inner.rule;
 				anyMatched = true;
@@ -719,10 +615,7 @@ function isWalkableNode(rule: unknown): rule is RuntimeRule {
  * native ensures the result has the correct rule-type case and
  * inherits any normalization the runtime applies.
  */
-export function reconstructContainer(
-	rule: RuntimeRule,
-	members: RuntimeRule[]
-): RuntimeRule {
+export function reconstructContainer(rule: RuntimeRule, members: RuntimeRule[]): RuntimeRule {
 	const t = rule.type;
 	if (isSeqType(t)) return nativeRequired('seq')(...members);
 	if (isChoiceType(t)) return nativeRequired('choice')(...members);
@@ -742,10 +635,7 @@ export function reconstructContainer(
  *   - Unknown wrapper types — safer to throw than silently emit a
  *     hand-rolled shape that may be wrong-case in tree-sitter runtime.
  */
-export function reconstructWrapper(
-	rule: RuntimeRule,
-	newContent: RuntimeRule
-): RuntimeRule {
+export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const t = rule.type;
 	if (t === 'optional') return nativeRequired('optional')(newContent);
 	if (t === 'repeat' || t === 'REPEAT' || t === 'repeat1' || t === 'REPEAT1') {
@@ -777,10 +667,7 @@ export function reconstructWrapper(
  * @param newContent - The replacement content for the repeat body.
  * @returns Reconstructed repeat rule with metadata fields restored if present.
  */
-function reconstructRepeatWithMetadata(
-	rule: RuntimeRule,
-	newContent: RuntimeRule
-): RuntimeRule {
+function reconstructRepeatWithMetadata(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const r = rule as {
 		type: string;
 		separator?: unknown;
@@ -788,9 +675,10 @@ function reconstructRepeatWithMetadata(
 		trailing?: unknown;
 	};
 	const t = r.type;
-	const baseNode = nativeRequired(
-		t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1'
-	)(newContent) as Record<string, unknown>;
+	const baseNode = nativeRequired(t === 'repeat' || t === 'REPEAT' ? 'repeat' : 'repeat1')(newContent) as Record<
+		string,
+		unknown
+	>;
 	if (r.separator !== undefined) baseNode.separator = r.separator;
 	if (r.leading !== undefined) baseNode.leading = r.leading;
 	if (r.trailing !== undefined) baseNode.trailing = r.trailing;
@@ -809,18 +697,14 @@ const PREC_VARIANT_MAP = {
 	prec_dynamic: 'dynamic'
 } as const;
 
-export function reconstructPrec(
-	rule: RuntimeRule,
-	newContent: RuntimeRule
-): RuntimeRule {
+export function reconstructPrec(rule: RuntimeRule, newContent: RuntimeRule): RuntimeRule {
 	const t = rule.type.toLowerCase();
 	const value = (rule as { value?: number }).value ?? 0;
 	const prec = nativeRequired('prec');
 	const variant = PREC_VARIANT_MAP[t as keyof typeof PREC_VARIANT_MAP];
 	if (variant) {
 		const fn = prec[variant];
-		if (typeof fn !== 'function')
-			throw new Error(`transform: native prec.${variant} not available`);
+		if (typeof fn !== 'function') throw new Error(`transform: native prec.${variant} not available`);
 		return fn(value, newContent);
 	}
 	return prec(value, newContent);
@@ -835,10 +719,7 @@ export function reconstructPrec(
 export function wrapInPrecStack(
 	content: RuntimeRule,
 	precStack: readonly RuntimeRule[] | undefined,
-	reconstructPrec: (
-		wrapper: RuntimeRule,
-		newContent: RuntimeRule
-	) => RuntimeRule
+	reconstructPrec: (wrapper: RuntimeRule, newContent: RuntimeRule) => RuntimeRule
 ): RuntimeRule {
 	if (!precStack?.length) return content;
 	let result = content;
@@ -856,26 +737,14 @@ function applyToMembers(
 	rule: RuntimeRule,
 	head: PathSegment,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack?: readonly RuntimeRule[]
 ): RuntimeRule {
 	const members = [...membersOf(rule)];
 
 	switch (head.kind) {
 		case 'index':
-			return applyToIndexedMember(
-				rule,
-				members,
-				head.value,
-				rest,
-				patch,
-				precStack
-			);
+			return applyToIndexedMember(rule, members, head.value, rest, patch, precStack);
 
 		case 'wildcard':
 			return applyWildcardToMembers(rule, members, rest, patch, precStack);
@@ -883,9 +752,7 @@ function applyToMembers(
 		case 'kind-match':
 		case 'fieldName': {
 			// Dispatched before reaching applyToMembers — should never arrive here.
-			throw new Error(
-				`applyToMembers: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`
-			);
+			throw new Error(`applyToMembers: unexpected segment kind '${head.kind}' — this is a bug in applyPath dispatch`);
 		}
 		default: {
 			const _exhaustive: never = head;
@@ -918,19 +785,12 @@ function applyToIndexedMember(
 	members: RuntimeRule[],
 	indexValue: number,
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	const idx = indexValue < 0 ? members.length + indexValue : indexValue;
 	if (idx < 0 || idx >= members.length) {
-		throw new ApplyPathSkip(
-			`applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`
-		);
+		throw new ApplyPathSkip(`applyPath: index ${indexValue} out of bounds in ${rule.type} of length ${members.length}`);
 	}
 	members[idx] = applyPath(members[idx]!, rest, patch, precStack);
 	return reconstructContainer(rule, members);
@@ -959,18 +819,11 @@ function applyWildcardToMembers(
 	rule: RuntimeRule,
 	members: RuntimeRule[],
 	rest: readonly PathSegment[],
-	patch:
-		| RuntimeRule
-		| ((
-				member: RuntimeRule,
-				precStack?: readonly RuntimeRule[]
-		  ) => RuntimeRule),
+	patch: RuntimeRule | ((member: RuntimeRule, precStack?: readonly RuntimeRule[]) => RuntimeRule),
 	precStack: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
 	if (members.length === 0) {
-		throw new ApplyPathSkip(
-			`applyPath: wildcard matched zero members in empty ${rule.type}`
-		);
+		throw new ApplyPathSkip(`applyPath: wildcard matched zero members in empty ${rule.type}`);
 	}
 	let anyApplied = false;
 	for (let i = 0; i < members.length; i++) {

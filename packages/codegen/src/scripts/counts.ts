@@ -8,25 +8,22 @@
  */
 
 import { resolve } from 'node:path';
-import { validateFactoryRoundTrip } from '../validate/factory-roundtrip.ts';
+import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { validateFrom } from '../validate/from.ts';
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { validateTemplateCoverage } from '../validate/template-coverage.ts';
 
 function templatesPath(grammar: string): string {
-	return resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${grammar}/templates`
-	);
+	return resolve(new URL('../../../..', import.meta.url).pathname, `packages/${grammar}/templates`);
 }
 
 async function runGrammar(grammar: string): Promise<string> {
 	const tp = templatesPath(grammar);
 	const [from, rt, cov, fac] = await Promise.all([
-		validateFrom(grammar),
-		validateRoundTrip(grammar, tp, { backend: 'native' }),
+		validateFrom(grammar, 'native'),
+		validateReadRenderParse(grammar, tp, { backend: 'native' }),
 		Promise.resolve(validateTemplateCoverage(grammar, tp)),
-		validateFactoryRoundTrip(grammar, tp)
+		validateFactoryRenderParse(grammar, tp, 'native')
 	]);
 	return [
 		`${grammar}:`,

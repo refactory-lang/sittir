@@ -13,21 +13,10 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import type {
-	AssembledNode,
-	AssembledSupertype
-} from '../compiler/node-map.ts';
+import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts';
 import { isValidIdent } from './shared.ts';
-import {
-	collectKindEntries,
-	collectCatalogKinds,
-	hasCatalogEntry
-} from './kind-discriminant.ts';
-import {
-	collectRefineKindInfos,
-	refineFormFactoryName,
-	camelCase as refineCamelCase
-} from './refine-emit.ts';
+import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
+import { collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -42,11 +31,7 @@ export function emitIr(config: EmitIrConfig): string {
 	const { nodeMap, generatedIdTables, grammarRoles } = config;
 
 	const kindEntries = generatedIdTables
-		? collectKindEntries(
-				collectCatalogKinds(generatedIdTables),
-				nodeMap,
-				generatedIdTables
-			)
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
 		: undefined;
 
 	const refineInfos = collectRefineKindInfos(nodeMap);
@@ -60,8 +45,8 @@ export function emitIr(config: EmitIrConfig): string {
 		'// `ir.<supertype>.*` — grouped namespaces: each member re-keyed by its',
 		'//   supertype-stripped short name (e.g. `ir.expression.binary` === `ir.binaryExpression`).',
 		'//',
-		'// Both surfaces resolve to the same `_attach(F.factory, { from: FR.fromFn })`',
-		'// bundle — identical runtime shape, identical tree-shake behaviour.',
+		'// Both surfaces resolve to the same callable bundle: branch / polymorph',
+		'// entries default to `from()` and expose the strict factory as `.strict`.',
 		'//',
 		'// Edge case: `readNode()` output has no `$source` provenance. If you want',
 		'// to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)',
@@ -114,12 +99,7 @@ export function emitIr(config: EmitIrConfig): string {
 			const sub = nodeMap.nodes.get(subKind);
 			if (!sub) continue;
 			if (!sub.rawFactoryName) continue;
-			if (
-				sub.modelType === 'supertype' ||
-				sub.modelType === 'group' ||
-				sub.modelType === 'token'
-			)
-				continue;
+			if (sub.modelType === 'supertype' || sub.modelType === 'group' || sub.modelType === 'token') continue;
 			// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 			// never appear at runtime; no factory was emitted for them.
 			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
@@ -130,11 +110,7 @@ export function emitIr(config: EmitIrConfig): string {
 			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
 				if (!sub.fromFunctionName) continue;
 				memberEntries.push(`  ${memberKey}: ${bundleExpr(sub)},`);
-			} else if (
-				sub.modelType === 'keyword' ||
-				sub.modelType === 'pattern' ||
-				sub.modelType === 'enum'
-			) {
+			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
 				memberEntries.push(`  ${memberKey}: F.${sub.rawFactoryName},`);
 			}
 		}
@@ -148,13 +124,52 @@ export function emitIr(config: EmitIrConfig): string {
 		groupBlocks.push('');
 	}
 	if (groupBlocks.length > 0) {
-		lines.push(
-			'// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.'
-		);
-		lines.push(
-			'// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).'
-		);
+		lines.push('// Supertype-grouped sub-namespaces — tree-shakeable top-level consts.');
+		lines.push('// Also attached to `ir.*` below for nested access (e.g. `ir.expression.binary`).');
 		lines.push(...groupBlocks);
+	}
+
+	const flatKeys = new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (kind.startsWith('_')) continue;
+		if (!node.irKey || !node.rawFactoryName) continue;
+		if (!isValidIdent(node.irKey)) continue;
+		if (
+			node.modelType !== 'branch' &&
+			node.modelType !== 'polymorph' &&
+			node.modelType !== 'keyword' &&
+			node.modelType !== 'pattern' &&
+			node.modelType !== 'enum'
+		) {
+			continue;
+		}
+		if ((node.modelType === 'branch' || node.modelType === 'polymorph') && !node.fromFunctionName) continue;
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		flatKeys.add(node.irKey);
+	}
+	const shortAliasBundles = new Map<string, string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		const sup = node as AssembledSupertype;
+		for (const subKind of sup.subtypes) {
+			if (subKind.startsWith('_')) continue;
+			const sub = nodeMap.nodes.get(subKind);
+			if (!sub?.rawFactoryName) continue;
+			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
+			const alias = memberKeyFor(subKind, kind);
+			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
+			let bundle: string | undefined;
+			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
+				if (!sub.fromFunctionName) continue;
+				bundle = bundleExpr(sub, refineByKind.get(subKind));
+			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
+				bundle = `F.${sub.rawFactoryName}`;
+			} else {
+				continue;
+			}
+			if (shortAliasBundles.has(alias)) continue;
+			shortAliasBundles.set(alias, bundle);
+		}
 	}
 
 	// ------------------------------------------------------------------
@@ -183,8 +198,8 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_')) continue;
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
-		if (node.modelType !== 'branch' && node.modelType !== 'polymorph')
-			continue;
+		if (usedGroupNames.has(node.irKey)) continue;
+		if (node.modelType !== 'branch' && node.modelType !== 'polymorph') continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
@@ -198,6 +213,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'keyword') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		if (usedGroupNames.has(node.irKey)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
@@ -211,16 +227,22 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'pattern' && node.modelType !== 'enum') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		if (usedGroupNames.has(node.irKey)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
 	}
+	if (shortAliasBundles.size > 0) {
+		lines.push('');
+		lines.push('  // Supertype-stripped short aliases');
+		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+			lines.push(`  ${alias}: ${bundle},`);
+		}
+	}
 	if (groupNames.length > 0 || hasFrom) {
 		lines.push('');
-		lines.push(
-			'  // Supertype-grouped sub-namespaces (also exported standalone above)'
-		);
+		lines.push('  // Supertype-grouped sub-namespaces (also exported standalone above)');
 		for (const g of groupNames) {
 			lines.push(`  ${g},`);
 		}
@@ -241,28 +263,26 @@ export function emitIr(config: EmitIrConfig): string {
  * Factory+from bundle expression, shared by flat and grouped emission.
  * Polymorphs with >1 form also carry per-variant form bundles. Kinds
  * with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`).
+ * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches and
+ * polymorphs call the loose `from()` path by default and expose the raw
+ * factory as `.strict`.
  */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 	if (node.modelType === 'polymorph' && node.forms.length > 1) {
 		const variantEntries = node.forms
 			.filter((form) => form.rawFactoryName && form.fromFunctionName)
-			.map(
-				(form) =>
-					`${JSON.stringify(form.name)}: _attach(F.${form.rawFactoryName}, { from: FR.${form.fromFunctionName} })`
-			);
-		return `_attach(F.${node.rawFactoryName}, { from: FR.${node.fromFunctionName}, ${variantEntries.join(', ')} })`;
+			.flatMap((form) => {
+				const value = `_attach(FR.${form.fromFunctionName}, { from: FR.${form.fromFunctionName}, strict: F.${form.rawFactoryName} })`;
+				const camelKey = JSON.stringify(toCamel(form.name));
+				const keys = [camelKey];
+				if (toCamel(form.name) !== form.name) keys.push(JSON.stringify(form.name));
+				return keys.map((key) => `${key}: ${value}`);
+			});
+		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName}, ${variantEntries.join(', ')} })`;
 	}
-	if (refineInfo && refineInfo.forms.length > 0) {
-		const baseFn = node.rawFactoryName!;
-		const fromFn = node.fromFunctionName!;
-		const formEntries = refineInfo.forms
-			.map(
-				(form) =>
-					`${refineCamelCase(form.name)}: F.${refineFormFactoryName(baseFn, form.name)}`
-			)
-			.join(', ');
-		return `_attach(F.${baseFn}, { from: FR.${fromFn}, ${formEntries} })`;
+	void refineInfo;
+	if (node.modelType === 'branch') {
+		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName} })`;
 	}
 	return `_attach(F.${node.rawFactoryName}, { from: FR.${node.fromFunctionName} })`;
 }
@@ -326,11 +346,7 @@ function toCamel(snake: string): string {
  * internal representation may use the hidden prefix (e.g. `type_identifier`
  * in SCM → `_type_identifier` in grammar).
  */
-function resolveRoleNodes(
-	role: Role,
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-): AssembledNode[] {
+function resolveRoleNodes(role: Role, grammarRoles: GrammarRoles, nodeMap: NodeMap): AssembledNode[] {
 	const kindNames = grammarRoles.get(role);
 	const nodes: AssembledNode[] = [];
 	const seen = new Set<string>();
@@ -349,11 +365,7 @@ function resolveRoleNodes(
  * Leaf modelTypes: pattern, enum, keyword.
  */
 function isLeafFactory(node: AssembledNode): boolean {
-	return (
-		node.modelType === 'pattern' ||
-		node.modelType === 'enum' ||
-		node.modelType === 'keyword'
-	);
+	return node.modelType === 'pattern' || node.modelType === 'enum' || node.modelType === 'keyword';
 }
 
 /**
@@ -374,10 +386,7 @@ function returnTypeExpr(node: AssembledNode): string {
  *
  * @returns Lines to prepend before the `ir` const. Empty if no roles have kinds.
  */
-function emitFromNamespace(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-): string[] {
+function emitFromNamespace(grammarRoles: GrammarRoles, nodeMap: NodeMap): string[] {
 	const fns: string[] = [];
 
 	emitFromBoolean(grammarRoles, nodeMap, fns);
@@ -406,16 +415,12 @@ function emitFromNamespace(
  * - Keyword pair: `true_()` / `false_()` (Python, TypeScript)
  * - Single leaf: direct factory call
  */
-function emitFromBoolean(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromBoolean(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('boolean', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
 	// Strategy 1: single leaf/enum factory that accepts text (e.g., booleanLiteral('true' | 'false'))
-	const leafNode = nodes.find(n => isLeafFactory(n) && n.modelType !== 'keyword');
+	const leafNode = nodes.find((n) => isLeafFactory(n) && n.modelType !== 'keyword');
 	if (leafNode) {
 		fns.push(`  boolean(value: boolean): ${returnTypeExpr(leafNode)} {`);
 		fns.push(`    return F.${leafNode.rawFactoryName}(value ? 'true' : 'false');`);
@@ -424,8 +429,8 @@ function emitFromBoolean(
 	}
 
 	// Strategy 2: keyword pair — look for `true` and `false` keyword kinds
-	const trueNode = nodes.find(n => n.kind === 'true');
-	const falseNode = nodes.find(n => n.kind === 'false');
+	const trueNode = nodes.find((n) => n.kind === 'true');
+	const falseNode = nodes.find((n) => n.kind === 'false');
 	if (trueNode && falseNode) {
 		const retType = `${returnTypeExpr(trueNode)} | ${returnTypeExpr(falseNode)}`;
 		fns.push(`  boolean(value: boolean): ${retType} {`);
@@ -447,19 +452,15 @@ function emitFromBoolean(
  * `from.number(value: number)` — resolves integers to integer-kind, floats to
  * float-kind. When only one number kind exists, routes everything there.
  */
-function emitFromNumber(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromNumber(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('number', grammarRoles, nodeMap);
 	const leafNodes = nodes.filter(isLeafFactory);
 	if (leafNodes.length === 0) return;
 
 	// Identify integer and float kinds via the number.float sub-role
 	const floatNodes = resolveRoleNodes('number.float', grammarRoles, nodeMap).filter(isLeafFactory);
-	const floatSet = new Set(floatNodes.map(n => n.kind));
-	const intNodes = leafNodes.filter(n => !floatSet.has(n.kind));
+	const floatSet = new Set(floatNodes.map((n) => n.kind));
+	const intNodes = leafNodes.filter((n) => !floatSet.has(n.kind));
 
 	const intNode = intNodes[0];
 	const floatNode = floatNodes[0];
@@ -473,8 +474,12 @@ function emitFromNumber(
 		fns.push(`        : F.${floatNode.rawFactoryName}(String(value));`);
 		fns.push(`    },`);
 		fns.push(`    {`);
-		fns.push(`      integer(value: number): ${returnTypeExpr(intNode)} { return F.${intNode.rawFactoryName}(String(value)); },`);
-		fns.push(`      float(value: number): ${returnTypeExpr(floatNode)} { return F.${floatNode.rawFactoryName}(String(value)); },`);
+		fns.push(
+			`      integer(value: number): ${returnTypeExpr(intNode)} { return F.${intNode.rawFactoryName}(String(value)); },`
+		);
+		fns.push(
+			`      float(value: number): ${returnTypeExpr(floatNode)} { return F.${floatNode.rawFactoryName}(String(value)); },`
+		);
 		fns.push(`    }`);
 		fns.push(`  ),`);
 	} else {
@@ -498,20 +503,13 @@ function emitFromNumber(
  * `string` (not `char`, `raw`, `template`, `regex`). This picks
  * `string_literal` for Rust and `string` for TypeScript/Python.
  */
-function emitFromString(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromString(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('string', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
 	// Find the primary string kind — prefer kinds containing "string"
 	// but not "char", "raw", "template", "regex"
-	const primaryNode = nodes.find(n =>
-		/string/.test(n.kind) &&
-		!/char|raw|template|regex/.test(n.kind)
-	);
+	const primaryNode = nodes.find((n) => /string/.test(n.kind) && !/char|raw|template|regex/.test(n.kind));
 	if (!primaryNode) return;
 
 	// If it's a leaf, emit directly
@@ -537,11 +535,7 @@ function emitFromString(
  * Discriminates by prefix: `//` or `#` → line comment, `/*` → block comment.
  * When only one comment kind exists, routes everything there.
  */
-function emitFromComment(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromComment(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const nodes = resolveRoleNodes('trivia', grammarRoles, nodeMap);
 	if (nodes.length === 0) return;
 
@@ -559,8 +553,8 @@ function emitFromComment(
 
 	if (leafNodes.length > 1) {
 		const retType = leafNodes.map(returnTypeExpr).join(' | ');
-		const lineNode = leafNodes.find(n => /line/.test(n.kind));
-		const blockNode = leafNodes.find(n => /block/.test(n.kind));
+		const lineNode = leafNodes.find((n) => /line/.test(n.kind));
+		const blockNode = leafNodes.find((n) => /block/.test(n.kind));
 		if (lineNode && blockNode) {
 			fns.push(`  comment: Object.assign(`);
 			fns.push(`    function comment(text: string): ${retType} {`);
@@ -570,7 +564,9 @@ function emitFromComment(
 			fns.push(`    },`);
 			fns.push(`    {`);
 			fns.push(`      line(text: string): ${returnTypeExpr(lineNode)} { return F.${lineNode.rawFactoryName}(text); },`);
-			fns.push(`      block(text: string): ${returnTypeExpr(blockNode)} { return F.${blockNode.rawFactoryName}(text); },`);
+			fns.push(
+				`      block(text: string): ${returnTypeExpr(blockNode)} { return F.${blockNode.rawFactoryName}(text); },`
+			);
 			fns.push(`    }`);
 			fns.push(`  ),`);
 			return;
@@ -594,24 +590,20 @@ function emitFromComment(
  * Excludes `type.builtin` kinds. When the type kind is a branch that takes
  * an identifier child, composes `F.typeIdentifier(F.identifier(name))`.
  */
-function emitFromType(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromType(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	// Get type kinds, excluding builtin types
 	const typeKinds = grammarRoles.get('type');
 	const builtinKinds = new Set(grammarRoles.get('type.builtin'));
-	const filteredKinds = typeKinds.filter(k => !builtinKinds.has(k));
+	const filteredKinds = typeKinds.filter((k) => !builtinKinds.has(k));
 
 	// Find the type-identifier node (not plain `identifier`).
 	// Probe both bare and hidden-prefixed names since SCM captures use
 	// unprefixed names but the grammar may use `_type_identifier`.
 	const resolveNode = (k: string) => nodeMap.nodes.get(k) ?? nodeMap.nodes.get(`_${k}`);
-	const typeIdKind = filteredKinds.find(k => k !== 'identifier' && resolveNode(k) !== undefined);
+	const typeIdKind = filteredKinds.find((k) => k !== 'identifier' && resolveNode(k) !== undefined);
 	if (!typeIdKind) {
 		// No type-specific kind — check if `identifier` is the only option
-		const identKind = filteredKinds.find(k => k === 'identifier' && resolveNode(k) !== undefined);
+		const identKind = filteredKinds.find((k) => k === 'identifier' && resolveNode(k) !== undefined);
 		if (identKind) {
 			const node = resolveNode(identKind)!;
 			if (isLeafFactory(node)) {
@@ -648,15 +640,11 @@ function emitFromType(
  * `variable.builtin` since some grammars (TypeScript) capture `identifier`
  * under both `@variable` and `@variable.builtin`.
  */
-function emitFromIdentifier(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromIdentifier(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const varKinds = grammarRoles.get('variable');
 
 	// Find the `identifier` kind specifically — not `this`, `super`, `self`
-	const identKind = varKinds.find(k => k === 'identifier');
+	const identKind = varKinds.find((k) => k === 'identifier');
 	if (!identKind) return;
 
 	const node = nodeMap.nodes.get(identKind);
@@ -672,17 +660,13 @@ function emitFromIdentifier(
  * These are direct references to the grammar-specific `ir.*` entry,
  * not wrapper functions. E.g., `from.function = ir.functionItem`.
  */
-function emitFromAliases(
-	grammarRoles: GrammarRoles,
-	nodeMap: NodeMap,
-	fns: string[],
-): void {
+function emitFromAliases(grammarRoles: GrammarRoles, nodeMap: NodeMap, fns: string[]): void {
 	const ALIAS_ROLES: readonly { role: Role; canonicalName: string }[] = [
 		{ role: 'definition.function', canonicalName: 'function' },
 		{ role: 'definition.class', canonicalName: 'class' },
 		{ role: 'definition.method', canonicalName: 'method' },
 		{ role: 'definition.module', canonicalName: 'module' },
-		{ role: 'definition.interface', canonicalName: 'interface' },
+		{ role: 'definition.interface', canonicalName: 'interface' }
 	];
 
 	for (const { role, canonicalName } of ALIAS_ROLES) {
@@ -696,4 +680,3 @@ function emitFromAliases(
 		fns.push(`  get ${canonicalName}() { return ir.${irKey}; },`);
 	}
 }
-

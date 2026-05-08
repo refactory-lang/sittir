@@ -44,10 +44,7 @@ function mkSeq(members: Rule[]): SeqRule {
 
 /** Inner rule: two fields `left` + `right`. */
 function makeInnerRule(): SeqRule {
-	return mkSeq([
-		mkField('left', mkSymbol('expr')),
-		mkField('right', mkSymbol('expr'))
-	]);
+	return mkSeq([mkField('left', mkSymbol('expr')), mkField('right', mkSymbol('expr'))]);
 }
 
 /** Form rule: one child slot pointing at `inner_binary`. */
@@ -159,10 +156,7 @@ describe('resolveHoistedForm — collision guard', () => {
 			expect(result).toBeDefined();
 			expect(result!.innerKind).toBe('inner_binary');
 			expect(result!.innerFactoryName).toBe('innerBinary');
-			expect(result!.innerFields.map((f) => f.propertyName)).toEqual([
-				'left',
-				'right'
-			]);
+			expect(result!.innerFields.map((f) => f.propertyName)).toEqual(['left', 'right']);
 			expect(warn).not.toHaveBeenCalled();
 		} finally {
 			warn.mockRestore();
@@ -179,9 +173,6 @@ describe('resolveHoistedForm — collision guard', () => {
 		const nodeMap = makeNodeMap({ inner_binary: inner });
 		const result = resolveHoistedForm(form, nodeMap);
 		expect(result).toBeDefined();
-		expect(result!.innerFields.map((f) => f.propertyName)).toEqual([
-			'left',
-			'right'
-		]);
+		expect(result!.innerFields.map((f) => f.propertyName)).toEqual(['left', 'right']);
 	});
 });

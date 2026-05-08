@@ -20,11 +20,7 @@ export interface VariantPlaceholder {
 }
 
 export function isVariantPlaceholder(v: unknown): v is VariantPlaceholder {
-	return (
-		!!v &&
-		typeof v === 'object' &&
-		(v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'variant'
-	);
+	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'variant';
 }
 
 export function variant(name: string): VariantPlaceholder {

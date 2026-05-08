@@ -1,22 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import {
-	mkdtempSync,
-	readdirSync,
-	readFileSync,
-	writeFileSync,
-	rmSync
-} from 'node:fs';
+import { mkdtempSync, readdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-	emitJinjaTemplates,
-	writeJinjaTemplates
-} from '../emitters/templates.ts';
-import {
-	AssembledBranch,
-	AssembledPattern,
-	AssembledKeyword
-} from '../compiler/node-map.ts';
+import { emitJinjaTemplates, writeJinjaTemplates } from '../emitters/templates.ts';
+import { AssembledBranch, AssembledPattern, AssembledKeyword } from '../compiler/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { SeqRule } from '../compiler/rule.ts';
 
@@ -33,10 +20,7 @@ function makeMinimalNodeMap(): NodeMap {
 	};
 	const nodes = new Map<string, any>([
 		['function_item', new AssembledBranch('function_item', nameRule, nameRule)],
-		[
-			'identifier',
-			new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })
-		],
+		['identifier', new AssembledPattern('identifier', { type: 'pattern', value: '[a-z]+' })],
 		['kw_fn', new AssembledKeyword('kw_fn', { type: 'string', value: 'fn' })]
 	]);
 	return {
@@ -78,9 +62,7 @@ describe('emitJinjaTemplates — T021 pure function', () => {
 		const nm = makeMinimalNodeMap();
 		const result = emitJinjaTemplates({ grammar: 'test', nodeMap: nm });
 		expect(Array.from(result.bodies.keys())).toEqual(['function_item']);
-		expect(Array.from(result.bodies.keys())).not.toContain(
-			'rust/crates/sittir-test/function_item'
-		);
+		expect(Array.from(result.bodies.keys())).not.toContain('rust/crates/sittir-test/function_item');
 	});
 });
 
@@ -97,9 +79,7 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			writeJinjaTemplates(emitted, tmp);
 			const files = readdirSync(tmp).filter((f) => f.endsWith('.jinja'));
 			expect(files.sort()).toEqual(['block.jinja', 'function_item.jinja']);
-			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain(
-				'{{ name }}'
-			);
+			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain('{{ name }}');
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}
@@ -119,9 +99,7 @@ describe('writeJinjaTemplates — T022 stale-file cleanup', () => {
 			const files = readdirSync(tmp).filter((f) => f.endsWith('.jinja'));
 			expect(files).toEqual(['function_item.jinja']);
 			// The surviving file has the new content
-			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain(
-				'new'
-			);
+			expect(readFileSync(join(tmp, 'function_item.jinja'), 'utf-8')).toContain('new');
 		} finally {
 			rmSync(tmp, { recursive: true, force: true });
 		}

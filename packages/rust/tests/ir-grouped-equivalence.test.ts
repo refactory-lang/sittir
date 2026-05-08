@@ -12,10 +12,11 @@ import { TSKindId } from '../src/types.ts';
 
 describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
+		const irExpression = ir.expression as typeof expression;
 		// `ir.binary` (flat) and `ir.expression.binary` (grouped) point
 		// at the same _attach bundle.
-		expect(ir.expression.binary).toBe(ir.binary);
-		expect(ir.expression.binary.from).toBe(ir.binary.from);
+		expect(irExpression.binary).toBe(ir.binary);
+		expect(irExpression.binary.from).toBe(ir.binary.from);
 	});
 
 	it('grouped namespace attached to ir is the same object as standalone export', () => {
@@ -24,14 +25,14 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 	});
 
 	it('produces structurally identical output via flat vs grouped', () => {
+		const irExpression = ir.expression as typeof expression;
 		// ADR-0018 Phase 2: $type must be numeric TSKindId (string $type removed in Phase D).
 		// binary_expression's `operator` is an AutoStamp field (excluded from Config —
 		// factory derives it from the grammar). Pass only user-supplied fields: left + right.
-		type BinaryConfig = Parameters<typeof ir.binary>[0];
-		const leaf = { $type: TSKindId.IntegerLiteral, $text: '1' } as unknown as BinaryConfig['left'];
-		const leaf2 = { $type: TSKindId.IntegerLiteral, $text: '2' } as unknown as BinaryConfig['right'];
+		const leaf = { $type: TSKindId.IntegerLiteral, $text: '1' } as any;
+		const leaf2 = { $type: TSKindId.IntegerLiteral, $text: '2' } as any;
 		const flat = ir.binary({ left: leaf, right: leaf2 });
-		const grouped = ir.expression.binary({ left: leaf, right: leaf2 });
+		const grouped = irExpression.binary({ left: leaf, right: leaf2 });
 		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));
 	});
 

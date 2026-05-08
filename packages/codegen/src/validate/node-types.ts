@@ -50,10 +50,7 @@ export type NodeTypesDiscrepancy =
  * Non-mutating. Returns a structured result you can format or
  * assert against in tests.
  */
-export function validateAgainstNodeTypes(
-	grammar: string,
-	linked: LinkedGrammar
-): NodeTypesValidationResult {
+export function validateAgainstNodeTypes(grammar: string, linked: LinkedGrammar): NodeTypesValidationResult {
 	let rawEntries: RawNodeEntry[];
 	try {
 		rawEntries = loadRawEntries(grammar);
@@ -93,9 +90,7 @@ export function validateAgainstNodeTypes(
 		// should be classified as `supertype` or an equivalent
 		// choice of the same subtype set.
 		if (entry.subtypes) {
-			const expected = new Set(
-				entry.subtypes.filter((s) => s.named).map((s) => s.type)
-			);
+			const expected = new Set(entry.subtypes.filter((s) => s.named).map((s) => s.type));
 			if (rule.type === 'supertype') {
 				const actual = new Set(rule.subtypes);
 				if (!setsEqual(expected, actual)) {
@@ -103,8 +98,7 @@ export function validateAgainstNodeTypes(
 						kind: 'supertype_mismatch',
 						node: entry.type,
 						detail:
-							`expected subtypes {${[...expected].sort().join(', ')}}, ` +
-							`got {${[...actual].sort().join(', ')}}`
+							`expected subtypes {${[...expected].sort().join(', ')}}, ` + `got {${[...actual].sort().join(', ')}}`
 					});
 				} else {
 					matched++;
@@ -133,9 +127,7 @@ export function validateAgainstNodeTypes(
 				discrepancies.push({
 					kind: 'supertype_mismatch',
 					node: entry.type,
-					detail:
-						`node-types.json marks '${entry.type}' as a supertype, ` +
-						`but Link classified it as '${rule.type}'`
+					detail: `node-types.json marks '${entry.type}' as a supertype, ` + `but Link classified it as '${rule.type}'`
 				});
 			}
 		} else {
@@ -152,9 +144,7 @@ export function validateAgainstNodeTypes(
 }
 
 /** Human-readable summary — one line per discrepancy, max 200 chars. */
-export function formatNodeTypesValidationReport(
-	result: NodeTypesValidationResult
-): string {
+export function formatNodeTypesValidationReport(result: NodeTypesValidationResult): string {
 	const lines: string[] = [];
 	const icon = result.discrepancies.length === 0 ? '  v' : '  x';
 	lines.push(

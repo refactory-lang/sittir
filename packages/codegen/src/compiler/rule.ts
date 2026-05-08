@@ -105,12 +105,7 @@ export interface FieldRule {
 	readonly type: 'field';
 	readonly name: string;
 	readonly content: Rule;
-	readonly source?:
-		| 'grammar'
-		| 'override'
-		| 'inlined'
-		| 'enriched'
-		| 'inferred';
+	readonly source?: 'grammar' | 'override' | 'inlined' | 'enriched' | 'inferred';
 	readonly nameFrom?: 'grammar' | 'kind' | 'override' | 'usage';
 	/**
 	 * True if the field's value is rendered as an indented block — its
@@ -171,6 +166,26 @@ export interface EnumRule {
 	readonly source?: RuleSource;
 }
 
+/**
+ * Normalize a closed literal set to the canonical rule shape.
+ *
+ * @remarks
+ * Multi-member sets remain `EnumRule`. A single literal collapses to that
+ * `StringRule` so downstream phases classify it as the corresponding
+ * keyword/token instead of carrying a degenerate enum shape.
+ */
+export function normalizeEnumMembers(
+	members: readonly StringRule[],
+	source?: RuleSource
+): StringRule | EnumRule {
+	if (members.length === 1) return members[0]!;
+	return {
+		type: 'enum',
+		members,
+		source
+	} satisfies EnumRule;
+}
+
 export interface SupertypeRule {
 	readonly type: 'supertype';
 	readonly name: string;
@@ -213,10 +228,28 @@ export interface TerminalRule {
  * `modelType: 'polymorph'` and builds one form per variant — no
  * simplifyRule or content guessing.
  */
+export interface PolymorphForm {
+	readonly name: string;
+	readonly content: Rule;
+	/**
+	 * For override polymorphs, the real visible parse-tree child kind used by
+	 * variant() adoption (e.g. `with_clause_paren`). Absent on passthrough
+	 * forms that keep their original bare symbol arm.
+	 */
+	readonly visibleChildKind?: string;
+	/**
+	 * Runtime child kinds that select this form in readNode→factory/.from()
+	 * resolution. May name a concrete kind (`assignment`) or a supertype
+	 * (`expression`) that later expands to concrete child kinds in the
+	 * validator metadata emitter.
+	 */
+	readonly discriminatorKinds?: readonly string[];
+}
+
 export interface PolymorphRule {
 	readonly type: 'polymorph';
 	/** Ordered list of forms (one per variant, in declaration order). */
-	readonly forms: Array<{ readonly name: string; readonly content: Rule }>;
+	readonly forms: Array<PolymorphForm>;
 	/** Always 'promoted' today — Link synthesises polymorphs from shape. */
 	readonly source?: RuleSource;
 }
@@ -304,12 +337,10 @@ export const isField = (r: Rule): r is FieldRule => r.type === 'field';
 export const isVariant = (r: Rule): r is VariantRule => r.type === 'variant';
 export const isClause = (r: Rule): r is ClauseRule => r.type === 'clause';
 export const isEnum = (r: Rule): r is EnumRule => r.type === 'enum';
-export const isSupertype = (r: Rule): r is SupertypeRule =>
-	r.type === 'supertype';
+export const isSupertype = (r: Rule): r is SupertypeRule => r.type === 'supertype';
 export const isGroup = (r: Rule): r is GroupRule => r.type === 'group';
 export const isTerminal = (r: Rule): r is TerminalRule => r.type === 'terminal';
-export const isPolymorph = (r: Rule): r is PolymorphRule =>
-	r.type === 'polymorph';
+export const isPolymorph = (r: Rule): r is PolymorphRule => r.type === 'polymorph';
 export const isString = (r: Rule): r is StringRule => r.type === 'string';
 export const isPattern = (r: Rule): r is PatternRule => r.type === 'pattern';
 export const isIndent = (r: Rule): r is IndentRule => r.type === 'indent';

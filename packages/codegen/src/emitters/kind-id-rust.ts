@@ -19,11 +19,7 @@
 
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
-import {
-	collectKindEntries,
-	collectCatalogKinds,
-	kindIdMemberName
-} from './kind-discriminant.ts';
+import { collectKindEntries, collectCatalogKinds, kindIdMemberName } from './kind-discriminant.ts';
 
 export interface EmitKindIdRustConfig {
 	/** Grammar name, e.g. `'rust'` | `'typescript'` | `'python'`. */
@@ -90,11 +86,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	// Source from the catalog superset so `kind_ids.rs` constants match
 	// the AnyTransport::FromNapiValue dispatch (which sources from the
 	// same superset). Coverage gap fix (Phase B).
-	const entries = collectKindEntries(
-		collectCatalogKinds(generatedIdTables),
-		nodeMap,
-		generatedIdTables
-	);
+	const entries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
 
 	const lines: string[] = [
 		`// @generated from packages/${grammar}/.sittir/src/parser.c — do not hand-edit.`,
@@ -106,7 +98,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		`// symbol id.`,
 		``,
 		`use ::sittir_core::types::KindId;`,
-		``,
+		``
 	];
 
 	for (const entry of entries) {

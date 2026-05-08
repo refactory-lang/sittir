@@ -41,9 +41,7 @@ describe('US1 acceptance — native-backend codemod (T050)', () => {
 
 	it('produces files byte-identical to the JS-captured baseline', async () => {
 		const results = await runCodemodOnDir(CORPUS_DIR);
-		const baselineFiles = new Set(
-			readdirSync(BASELINE_DIR).filter((n) => n.endsWith('.rs'))
-		);
+		const baselineFiles = new Set(readdirSync(BASELINE_DIR).filter((n) => n.endsWith('.rs')));
 		expect(results.length).toBeGreaterThanOrEqual(20);
 		for (const r of results) {
 			const name = basename(r.path);

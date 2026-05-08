@@ -291,10 +291,7 @@ describe('Error wrapping — T028 / FR-018', () => {
 		// variable definedness.
 		const tmp = mkdtempSync(join(tmpdir(), 'sittir-nunjucks-render-'));
 		try {
-			writeFileSync(
-				join(tmp, 'uses_undef.jinja'),
-				'{{ something | no_such_filter }}'
-			);
+			writeFileSync(join(tmp, 'uses_undef.jinja'), '{{ something | no_such_filter }}');
 			const { render } = createRendererFromConfig(emptyConfig, {
 				templatesDir: tmp
 			});

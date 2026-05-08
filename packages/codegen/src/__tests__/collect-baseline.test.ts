@@ -58,86 +58,47 @@ describe('collect-baseline', () => {
 					diffs.push(`line ${i + 1}:\n  a: ${aLines[i]}\n  b: ${bLines[i]}`);
 				}
 			}
-			throw new Error(
-				`serialised output differs across runs\n${diffs.join('\n')}`
-			);
+			throw new Error(`serialised output differs across runs\n${diffs.join('\n')}`);
 		}
 		expect(sa).toBe(sb);
 	}, 600_000);
 
 	it('schema conformance — top-level, per-grammar, per-validator keys match contract', () => {
 		// Round-trip through serialise/parse to verify what's persisted is what's checked.
-		const parsed = JSON.parse(baseline.serialiseBaseline(result)) as Record<
-			string,
-			unknown
-		>;
+		const parsed = JSON.parse(baseline.serialiseBaseline(result)) as Record<string, unknown>;
 
-		expect(Object.keys(parsed).sort()).toEqual([
-			'backend',
-			'commit',
-			'grammars',
-			'totals'
-		]);
+		expect(Object.keys(parsed).sort()).toEqual(['backend', 'commit', 'grammars', 'totals']);
 
 		const grammars = parsed['grammars'] as Record<string, unknown>;
 		expect(Object.keys(grammars)).toEqual([...grammarKeys]);
 
 		for (const g of grammarKeys) {
 			const entry = grammars[g] as Record<string, unknown>;
-			expect(Object.keys(entry).sort()).toEqual([
-				'parityFixtures',
-				'validators'
-			]);
+			expect(Object.keys(entry).sort()).toEqual(['parityFixtures', 'validators']);
 
 			const validators = entry['validators'] as Record<string, unknown>;
-			expect(Object.keys(validators)).toEqual([
-				'coverage',
-				'factoryRoundtrip',
-				'from',
-				'roundtrip'
-			]);
+			expect(Object.keys(validators)).toEqual(['coverage', 'factoryRoundtrip', 'from', 'roundtrip']);
 
 			// Each validator entry has failingKinds AND formatDeferredKinds.
 			// Roundtrip variants additionally have astMatchPass.
-			for (const vname of [
-				'coverage',
-				'factoryRoundtrip',
-				'from',
-				'roundtrip'
-			] as const) {
+			for (const vname of ['coverage', 'factoryRoundtrip', 'from', 'roundtrip'] as const) {
 				const v = validators[vname] as Record<string, unknown>;
 				const expected =
 					vname === 'from' || vname === 'coverage'
 						? ['failingKinds', 'formatDeferredKinds', 'pass', 'total']
-						: [
-								'astMatchPass',
-								'failingKinds',
-								'formatDeferredKinds',
-								'pass',
-								'total'
-							];
+						: ['astMatchPass', 'failingKinds', 'formatDeferredKinds', 'pass', 'total'];
 				expect(Object.keys(v).sort()).toEqual(expected);
 			}
 
 			const fixtures = entry['parityFixtures'] as Record<string, unknown>;
-			expect(Object.keys(fixtures).sort()).toEqual([
-				'failingByKind',
-				'formatDeferredByKind',
-				'pass',
-				'total'
-			]);
+			expect(Object.keys(fixtures).sort()).toEqual(['failingByKind', 'formatDeferredByKind', 'pass', 'total']);
 		}
 	});
 
 	it('failingKinds and formatDeferredKinds arrays are sorted ascending', () => {
 		for (const grammar of grammarKeys) {
 			const validators = result.grammars[grammar].validators;
-			for (const name of [
-				'from',
-				'coverage',
-				'roundtrip',
-				'factoryRoundtrip'
-			] as const) {
+			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
 				const fk = validators[name].failingKinds;
 				const fdk = validators[name].formatDeferredKinds;
 				expect(Array.isArray(fk)).toBe(true);
@@ -166,12 +127,7 @@ describe('collect-baseline', () => {
 		// be empty at baseline since no triage has run yet.)
 		for (const grammar of grammarKeys) {
 			const validators = result.grammars[grammar].validators;
-			for (const name of [
-				'from',
-				'coverage',
-				'roundtrip',
-				'factoryRoundtrip'
-			] as const) {
+			for (const name of ['from', 'coverage', 'roundtrip', 'factoryRoundtrip'] as const) {
 				expect(Array.isArray(validators[name].failingKinds)).toBe(true);
 				expect(Array.isArray(validators[name].formatDeferredKinds)).toBe(true);
 				// At baseline, no triage has been performed.
@@ -214,22 +170,18 @@ describe('collect-baseline', () => {
 		// mode) is correct by construction: any caller that uses the
 		// default importer and gets a rejection here surfaces it.
 		const badImport = () => Promise.reject(new Error('module not found'));
-		await expect(
-			baseline.loadBoundaryRender('rust', badImport)
-		).rejects.toThrow(
+		await expect(baseline.loadBoundaryRender('rust', badImport)).rejects.toThrow(
 			/failed to import native boundary for grammar 'rust'.*packages\/rust\/src\/boundary\.ts.*module not found/
 		);
 	});
 
-	it("native parity fixtures load the grammar-owned boundary path", async () => {
+	it('native parity fixtures load the grammar-owned boundary path', async () => {
 		const seen: string[] = [];
 		await baseline.collectParityFixtures('rust', 'native', async (path) => {
 			seen.push(path);
 			return { render: () => '' };
 		});
-		expect(seen).toEqual([
-			expect.stringMatching(/packages\/rust\/src\/boundary\.ts$/)
-		]);
+		expect(seen).toEqual([expect.stringMatching(/packages\/rust\/src\/boundary\.ts$/)]);
 	});
 
 	it('parity render exceptions surface with fixture context', async () => {
@@ -242,9 +194,9 @@ describe('collect-baseline', () => {
 				throw new Error('boom');
 			}
 		});
-		await expect(
-			baseline.collectParityFixtures('python', 'native', throwingImportFn)
-		).rejects.toThrow(/\[python\]\[native\]\[render #0\].*boom/);
+		await expect(baseline.collectParityFixtures('python', 'native', throwingImportFn)).rejects.toThrow(
+			/\[python\]\[native\]\[render #0\].*boom/
+		);
 	});
 
 	it('native baseline failures point at bundle drift instead of looking like parity noise', async () => {
@@ -253,12 +205,8 @@ describe('collect-baseline', () => {
 		// quietly slipping to TS-backed numbers labelled "native".
 		await expect(
 			baseline.collectParityFixtures('python', 'native', async () => {
-				throw new Error(
-					"SITTIR_BACKEND=native but no native engine is available for grammar 'python'"
-				);
+				throw new Error("SITTIR_BACKEND=native but no native engine is available for grammar 'python'");
 			})
-		).rejects.toThrow(
-			/no native engine is available for grammar/
-		);
+		).rejects.toThrow(/no native engine is available for grammar/);
 	}, 600_000);
 });

@@ -1,10 +1,4 @@
-import {
-	existsSync,
-	statSync,
-	mkdirSync,
-	copyFileSync,
-	readFileSync
-} from 'node:fs';
+import { existsSync, statSync, mkdirSync, copyFileSync, readFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { loadWebTreeSitter } from '../validate/common.ts';
@@ -13,10 +7,7 @@ export interface CompileOptions {
 	force?: boolean;
 }
 
-export async function compileParser(
-	grammarDir: string,
-	options?: CompileOptions
-): Promise<string> {
+export async function compileParser(grammarDir: string, options?: CompileOptions): Promise<string> {
 	const sittirDir = join(grammarDir, '.sittir');
 	const grammarJs = join(sittirDir, 'grammar.js');
 	const wasmPath = join(sittirDir, 'parser.wasm');
@@ -70,21 +61,8 @@ function syncExternalScanner(grammarDir: string, sittirDir: string): void {
 
 	const grammarName = grammarDir.split('/').pop() ?? '';
 	const candidates = [
-		join(
-			grammarDir,
-			'node_modules',
-			`tree-sitter-${grammarName}`,
-			'src',
-			'scanner.c'
-		),
-		join(
-			grammarDir,
-			'node_modules',
-			`tree-sitter-${grammarName}`,
-			grammarName,
-			'src',
-			'scanner.c'
-		)
+		join(grammarDir, 'node_modules', `tree-sitter-${grammarName}`, 'src', 'scanner.c'),
+		join(grammarDir, 'node_modules', `tree-sitter-${grammarName}`, grammarName, 'src', 'scanner.c')
 	];
 	const baseScanner = candidates.find((p) => existsSync(p));
 	if (!baseScanner) return;

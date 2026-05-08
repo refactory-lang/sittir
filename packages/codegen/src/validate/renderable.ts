@@ -59,10 +59,7 @@ export interface MissingKind {
  * @param templatesPath  Path to either a `.jinja` templates directory
  *                       (feature 011) or a legacy `templates directory` file.
  */
-export function validateRenderable(
-	grammar: string,
-	templatesPath: string
-): RenderableResult {
+export function validateRenderable(grammar: string, templatesPath: string): RenderableResult {
 	const rawEntries = loadRawEntries(grammar);
 	const ruleKinds = collectRuleKindsFromPath(templatesPath);
 
@@ -117,10 +114,7 @@ export function validateRenderable(
  *     (e.g. `impl_item_semi`). `node-types.json` lists them as pure
  *     leaves; `readNode` captures `$text` and the fast-path renders.
  */
-export function validateRenderableFromNodeMap(
-	grammar: string,
-	nodeMap: NodeMap
-): RenderableResult {
+export function validateRenderableFromNodeMap(grammar: string, nodeMap: NodeMap): RenderableResult {
 	const rawEntries = loadRawEntries(grammar);
 	const lookup = buildRuleLookup(nodeMap);
 
@@ -159,8 +153,7 @@ export function validateRenderableFromNodeMap(
  */
 function isPureLeafEntry(entry: RawNodeEntry): boolean {
 	if (entry.subtypes && entry.subtypes.length > 0) return false;
-	const hasFields =
-		entry.fields !== undefined && Object.keys(entry.fields).length > 0;
+	const hasFields = entry.fields !== undefined && Object.keys(entry.fields).length > 0;
 	const hasChildren = entry.children !== undefined;
 	return !hasFields && !hasChildren;
 }
@@ -188,10 +181,7 @@ function isNamedEntry(entry: RawNodeEntry): boolean {
 
 type Path = 'supertype' | 'leaf' | 'rule';
 
-function classifyRenderability(
-	entry: RawNodeEntry,
-	ruleKinds: Set<string>
-): Path | null {
+function classifyRenderability(entry: RawNodeEntry, ruleKinds: Set<string>): Path | null {
 	// 1. Supertype — dispatched, never rendered directly.
 	if (entry.subtypes && entry.subtypes.length > 0) return 'supertype';
 
@@ -219,7 +209,6 @@ function reasonFor(entry: RawNodeEntry, _ruleKinds: Set<string>): string {
 // Rule-map extraction
 // ---------------------------------------------------------------------------
 
-
 // ---------------------------------------------------------------------------
 // Formatting
 // ---------------------------------------------------------------------------
@@ -228,8 +217,7 @@ export function formatRenderableReport(result: RenderableResult): string {
 	const lines: string[] = [];
 	const icon = result.missing.length === 0 ? 'v' : 'x';
 	lines.push(
-		`  ${icon} ${result.renderable}/${result.total} kinds renderable` +
-			` (${result.missing.length} un-renderable)`
+		`  ${icon} ${result.renderable}/${result.total} kinds renderable` + ` (${result.missing.length} un-renderable)`
 	);
 	if (result.missing.length > 0) {
 		for (const m of result.missing) {

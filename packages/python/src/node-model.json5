@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 233,
+  "nodeCount": 232,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -38,7 +38,11 @@
     "assignment__form_eq",
     "assignment__form_type",
     "assignment__form_typed",
+    "expression_statement__form_assignment",
+    "expression_statement__form_augmented_assignment",
+    "expression_statement__form_expression",
     "expression_statement__form_tuple",
+    "expression_statement__form_yield",
     "with_clause__form_bare",
     "with_clause__form_paren"
   ],
@@ -80,6 +84,16 @@
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
       "text": "**"
+    },
+    {
+      "kind": "+",
+      "modelType": "token",
+      "typeName": "Plus",
+      "irKey": "plus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "text": "+"
     },
     {
       "kind": ",",
@@ -440,16 +454,14 @@
     },
     {
       "kind": "_async_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "AsyncMarker",
       "factoryName": "asyncMarker",
       "irKey": "asyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "values": [
-        "async"
-      ]
+      "text": "async"
     },
     {
       "kind": "_augmented_assignment_operator",
@@ -472,32 +484,6 @@
         "&=",
         "^=",
         "|="
-      ]
-    },
-    {
-      "kind": "_binary_operator_operator",
-      "modelType": "enum",
-      "typeName": "BinaryOperatorOperator",
-      "factoryName": "binaryOperatorOperator",
-      "irKey": "binaryOperatorOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "values": [
-        "+"
-      ]
-    },
-    {
-      "kind": "_boolean_operator_operator",
-      "modelType": "enum",
-      "typeName": "BooleanOperatorOperator",
-      "factoryName": "booleanOperatorOperator",
-      "irKey": "booleanOperatorOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"and\" as const",
-      "values": [
-        "and"
       ]
     },
     {
@@ -1163,19 +1149,6 @@
       ]
     },
     {
-      "kind": "_type_alias_statement_type",
-      "modelType": "enum",
-      "typeName": "TypeAliasStatementType",
-      "factoryName": "typeAliasStatementType",
-      "irKey": "typeAliasStatementType",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"type\" as const",
-      "values": [
-        "type"
-      ]
-    },
-    {
       "kind": "_unary_operator_operator",
       "modelType": "enum",
       "typeName": "UnaryOperatorOperator",
@@ -1284,6 +1257,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "and",
+      "modelType": "keyword",
+      "typeName": "And",
+      "irKey": "and",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"and\" as const",
+      "text": "and"
     },
     {
       "kind": "argument_list",
@@ -1447,7 +1430,7 @@
       "modelType": "branch",
       "typeName": "AssertStatement",
       "factoryName": "assertStatement",
-      "irKey": "assert",
+      "irKey": "assertStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -1856,18 +1839,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_binary_operator_operator",
-              "unresolved": true
+              "value": "+"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_binary_operator_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -1962,18 +1942,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_boolean_operator_operator",
-              "unresolved": true
+              "value": "and"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_boolean_operator_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -2017,7 +1994,7 @@
       "modelType": "keyword",
       "typeName": "BreakStatement",
       "factoryName": "breakStatement",
-      "irKey": "break",
+      "irKey": "breakStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"break\" as const",
@@ -2257,7 +2234,7 @@
       "modelType": "branch",
       "typeName": "ClassDefinition",
       "factoryName": "classDefinition",
-      "irKey": "class",
+      "irKey": "classDefinition",
       "hidden": false,
       "fields": [
         {
@@ -2660,7 +2637,7 @@
       "modelType": "branch",
       "typeName": "ConditionalExpression",
       "factoryName": "conditionalExpression",
-      "irKey": "conditional",
+      "irKey": "conditionalExpression",
       "hidden": false,
       "fields": [
         {
@@ -2807,7 +2784,7 @@
       "modelType": "keyword",
       "typeName": "ContinueStatement",
       "factoryName": "continueStatement",
-      "irKey": "continue",
+      "irKey": "continueStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"continue\" as const",
@@ -2818,7 +2795,7 @@
       "modelType": "branch",
       "typeName": "DecoratedDefinition",
       "factoryName": "decoratedDefinition",
-      "irKey": "decorated",
+      "irKey": "decoratedDefinition",
       "hidden": false,
       "fields": [
         {
@@ -3007,7 +2984,7 @@
       "modelType": "branch",
       "typeName": "DeleteStatement",
       "factoryName": "deleteStatement",
-      "irKey": "delete",
+      "irKey": "deleteStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -3482,7 +3459,7 @@
       "modelType": "branch",
       "typeName": "ExecStatement",
       "factoryName": "execStatement",
-      "irKey": "exec",
+      "irKey": "execStatement",
       "hidden": false,
       "fields": [
         {
@@ -3610,9 +3587,39 @@
       "source": "override",
       "polymorphSource": "override",
       "variantChildKinds": [
-        "expression_statement_tuple"
+        "expression",
+        "expression_statement_tuple",
+        "assignment",
+        "augmented_assignment",
+        "yield"
       ],
       "forms": [
+        {
+          "kind": "expression_statement__form_expression",
+          "name": "expression",
+          "typeName": "ExpressionStatementUFormExpression",
+          "factoryName": "expressionStatementUFormExpression",
+          "irKey": "expressionStatementUFormExpression",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "expression",
+              "propertyName": "expression",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "expression",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
         {
           "kind": "expression_statement__form_tuple",
           "name": "tuple",
@@ -3633,6 +3640,84 @@
                   "kind": "node-ref",
                   "multiplicity": "single",
                   "name": "_expression_statement_tuple",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_assignment",
+          "name": "assignment",
+          "typeName": "ExpressionStatementUFormAssignment",
+          "factoryName": "expressionStatementUFormAssignment",
+          "irKey": "expressionStatementUFormAssignment",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "assignment",
+              "propertyName": "assignment",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "assignment",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_augmented_assignment",
+          "name": "augmented_assignment",
+          "typeName": "ExpressionStatementUFormAugmentedAssignment",
+          "factoryName": "expressionStatementUFormAugmentedAssignment",
+          "irKey": "expressionStatementUFormAugmentedAssignment",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "augmented_assignment",
+              "propertyName": "augmentedAssignment",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "augmented_assignment",
+                  "unresolved": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "expression_statement__form_yield",
+          "name": "yield",
+          "typeName": "ExpressionStatementUFormYield",
+          "factoryName": "expressionStatementUFormYield",
+          "irKey": "expressionStatementUFormYield",
+          "parentKind": "expression_statement",
+          "fields": [],
+          "children": [
+            {
+              "name": "yield",
+              "propertyName": "yield",
+              "required": true,
+              "multiple": false,
+              "nonEmpty": false,
+              "values": [
+                {
+                  "kind": "node-ref",
+                  "multiplicity": "single",
+                  "name": "yield",
                   "unresolved": true
                 }
               ]
@@ -3826,7 +3911,7 @@
       "modelType": "branch",
       "typeName": "ForStatement",
       "factoryName": "forStatement",
-      "irKey": "for",
+      "irKey": "forStatement",
       "hidden": false,
       "fields": [
         {
@@ -3988,7 +4073,7 @@
       "modelType": "branch",
       "typeName": "FunctionDefinition",
       "factoryName": "functionDefinition",
-      "irKey": "function",
+      "irKey": "functionDefinition",
       "hidden": false,
       "fields": [
         {
@@ -4137,7 +4222,7 @@
       "modelType": "branch",
       "typeName": "FutureImportStatement",
       "factoryName": "futureImportStatement",
-      "irKey": "futureImport",
+      "irKey": "futureImportStatement",
       "hidden": false,
       "fields": [
         {
@@ -4178,7 +4263,7 @@
       "modelType": "branch",
       "typeName": "GeneratorExpression",
       "factoryName": "generatorExpression",
-      "irKey": "generator",
+      "irKey": "generatorExpression",
       "hidden": false,
       "fields": [
         {
@@ -4295,7 +4380,7 @@
       "modelType": "branch",
       "typeName": "GlobalStatement",
       "factoryName": "globalStatement",
-      "irKey": "global",
+      "irKey": "globalStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -4374,7 +4459,7 @@
       "modelType": "branch",
       "typeName": "IfStatement",
       "factoryName": "ifStatement",
-      "irKey": "if",
+      "irKey": "ifStatement",
       "hidden": false,
       "fields": [
         {
@@ -4471,7 +4556,7 @@
       "modelType": "branch",
       "typeName": "ImportFromStatement",
       "factoryName": "importFromStatement",
-      "irKey": "importFrom",
+      "irKey": "importFromStatement",
       "hidden": false,
       "fields": [
         {
@@ -4548,7 +4633,7 @@
       "modelType": "branch",
       "typeName": "ImportStatement",
       "factoryName": "importStatement",
-      "irKey": "import",
+      "irKey": "importStatement",
       "hidden": false,
       "fields": [
         {
@@ -5185,7 +5270,7 @@
       "modelType": "branch",
       "typeName": "MatchStatement",
       "factoryName": "matchStatement",
-      "irKey": "match",
+      "irKey": "matchStatement",
       "hidden": false,
       "fields": [
         {
@@ -5328,7 +5413,7 @@
       "modelType": "branch",
       "typeName": "NamedExpression",
       "factoryName": "namedExpression",
-      "irKey": "named",
+      "irKey": "namedExpression",
       "hidden": false,
       "fields": [
         {
@@ -5406,7 +5491,7 @@
       "modelType": "branch",
       "typeName": "NonlocalStatement",
       "factoryName": "nonlocalStatement",
-      "irKey": "nonlocal",
+      "irKey": "nonlocalStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -5577,7 +5662,7 @@
       "modelType": "branch",
       "typeName": "ParenthesizedExpression",
       "factoryName": "parenthesizedExpression",
-      "irKey": "parenthesized",
+      "irKey": "parenthesizedExpression",
       "hidden": false,
       "fields": [],
       "children": [
@@ -5651,7 +5736,7 @@
       "modelType": "keyword",
       "typeName": "PassStatement",
       "factoryName": "passStatement",
-      "irKey": "pass",
+      "irKey": "passStatement",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"pass\" as const",
@@ -5770,7 +5855,7 @@
       "modelType": "branch",
       "typeName": "PrintStatement",
       "factoryName": "printStatement",
-      "irKey": "print",
+      "irKey": "printStatement",
       "hidden": false,
       "fields": [
         {
@@ -5836,7 +5921,7 @@
       "modelType": "branch",
       "typeName": "RaiseStatement",
       "factoryName": "raiseStatement",
-      "irKey": "raise",
+      "irKey": "raiseStatement",
       "hidden": false,
       "fields": [
         {
@@ -5953,7 +6038,7 @@
       "modelType": "branch",
       "typeName": "ReturnStatement",
       "factoryName": "returnStatement",
-      "irKey": "return",
+      "irKey": "returnStatement",
       "hidden": false,
       "fields": [],
       "children": [
@@ -6473,7 +6558,7 @@
       "modelType": "branch",
       "typeName": "TryStatement",
       "factoryName": "tryStatement",
-      "irKey": "try",
+      "irKey": "tryStatement",
       "hidden": false,
       "fields": [
         {
@@ -6702,7 +6787,7 @@
       "modelType": "branch",
       "typeName": "TypeAliasStatement",
       "factoryName": "typeAliasStatement",
-      "irKey": "typeAlias",
+      "irKey": "typeAliasStatement",
       "hidden": false,
       "fields": [
         {
@@ -6714,18 +6799,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_type_alias_statement_type",
-              "unresolved": true
+              "value": "type"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_type_alias_statement_type"
-            ]
+            "kinds": []
           }
         },
         {
@@ -7116,7 +7198,7 @@
       "modelType": "branch",
       "typeName": "WhileStatement",
       "factoryName": "whileStatement",
-      "irKey": "while",
+      "irKey": "whileStatement",
       "hidden": false,
       "fields": [
         {
@@ -7338,7 +7420,7 @@
       "modelType": "branch",
       "typeName": "WithItem",
       "factoryName": "withItem",
-      "irKey": "with",
+      "irKey": "withItem",
       "hidden": false,
       "fields": [
         {

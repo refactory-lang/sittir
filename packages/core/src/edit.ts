@@ -1,13 +1,5 @@
 // @generated-header: false (hand-written core — preserved across regeneration)
-import type {
-	AnyNodeData,
-	Edit,
-	ReplaceTarget,
-	AnyTreeNode,
-	Renderable,
-	KindOf,
-	FormatRecord
-} from './types.ts';
+import type { AnyNodeData, Edit, ReplaceTarget, AnyTreeNode, Renderable, KindOf, FormatRecord } from './types.ts';
 import { rebaseTrivia } from './format.ts';
 
 export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
@@ -16,10 +8,7 @@ export type { ReplaceTarget, AnyTreeNode, Renderable, KindOf };
 // replace — loosely typed, any AnyNodeData
 // ---------------------------------------------------------------------------
 
-export function replace(
-	target: ReplaceTarget,
-	replacement: AnyNodeData & Renderable
-): Edit {
+export function replace(target: ReplaceTarget, replacement: AnyNodeData & Renderable): Edit {
 	const range = target.range();
 	return {
 		startPos: range.start.index,
@@ -39,9 +28,7 @@ export function replace(
  * The generated `edit(target)` creates the right factory for the target's kind,
  * then calls `bindRange()` to attach the range.
  */
-export function bindRange<
-	T extends { readonly type: string; render(): string }
->(
+export function bindRange<T extends { readonly type: string; render(): string }>(
 	target: ReplaceTarget,
 	factoryOutput: T
 ): T & { toEdit(): Edit; replace(): Edit } {
@@ -64,19 +51,14 @@ export function bindRange<
 // replaceField — type-safe field replacement via selector lambda
 // ---------------------------------------------------------------------------
 
-export function replaceField<
-	TNode extends { readonly type: string },
-	TField extends ReplaceTarget
->(
+export function replaceField<TNode extends { readonly type: string }, TField extends ReplaceTarget>(
 	target: TNode,
 	selector: (node: TNode) => TField | undefined,
 	replacement: AnyNodeData & Renderable
 ): Edit {
 	const fieldNode = selector(target);
 	if (!fieldNode) {
-		throw new Error(
-			`Cannot replace undefined field on '${target.type}' — field is not present on the target node`
-		);
+		throw new Error(`Cannot replace undefined field on '${target.type}' — field is not present on the target node`);
 	}
 	const range = fieldNode.range();
 	return {
@@ -134,25 +116,16 @@ export function applyEdits(
 /** Splice a single edit into the source string. */
 function applyOneEdit(source: string, edit: Edit): string {
 	if (edit.startPos < 0 || edit.startPos > source.length)
-		throw new Error(
-			`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`
-		);
+		throw new Error(`applyEdits: startPos ${edit.startPos} out of bounds (source length ${source.length})`);
 	if (edit.endPos < edit.startPos || edit.endPos > source.length)
 		throw new Error(
 			`applyEdits: endPos ${edit.endPos} out of bounds (startPos ${edit.startPos}, source length ${source.length})`
 		);
-	return (
-		source.slice(0, edit.startPos) +
-		edit.insertedText +
-		source.slice(edit.endPos)
-	);
+	return source.slice(0, edit.startPos) + edit.insertedText + source.slice(edit.endPos);
 }
 
 /** Rebase the format record for a single edit, returning undefined if absent. */
-function rebaseOneEdit(
-	format: FormatRecord | undefined,
-	edit: Edit
-): FormatRecord | undefined {
+function rebaseOneEdit(format: FormatRecord | undefined, edit: Edit): FormatRecord | undefined {
 	if (!format) return undefined;
 	const delta = edit.insertedText.length - (edit.endPos - edit.startPos);
 	return rebaseTrivia(format, edit.startPos, delta);

@@ -1,38 +1,23 @@
 //! readNode shape-gate tests. Spec 012 T025.
 //!
 //! For each of the three in-scope grammars (rust / typescript / python),
-//! we parse a small source and assert the emitted `NodeData` has
-//! **exactly** the 9 allowed `$`-prefixed top-level fields and no
-//! others — SC-007 shape gate. Walks the entire tree to check every
-//! emitted NodeData (not just the root), so enrichment fields that
+//! we parse a small source and assert the emitted `NodeData` has the
+//! fixed allowed `$`-metadata keys plus de-hoisted `_<slot>` storage and
+//! no others — SC-007 shape gate. Walks the entire read payload to check
+//! every emitted NodeData (not just the root), so enrichment fields that
 //! might slip in on leaves vs branches are both covered.
 //!
 //! Also sanity-checks that `$source` is always `"ts"` from this code
-//! path, that `$childIndex` values are set on non-root nodes, and that
-//! field-slot arity produces `Single` vs `Multiple` correctly.
+//! path, that child stubs carry parent-handle + `$childIndex`, and that
+//! recursive `$fields` payloads no longer appear on native reads.
 
 use serde_json::Value;
 use sittir_core::read_node::read_node;
 use sittir_core::types::{NodeData, Source};
 
-/// The ten top-level keys permitted on the wire, per data-model.md §1
-/// (nine structural + `$triviaData`).
-const ALLOWED_TOP_LEVEL_KEYS: &[&str] = &[
-    "$type",
-    "$source",
-    "$named",
-    "$fields",
-    "$children",
-    "$text",
-    "$span",
-    "$nodeHandle",
-    "$childIndex",
-    "$triviaData",
-];
-
 /// Recursively assert that every object-shaped JSON node in `value`
 /// (matching the NodeData wire shape) has only keys in
-/// [`ALLOWED_TOP_LEVEL_KEYS`]. Descends into `$fields` values and
+/// the de-hoisted NodeData contract. Descends into `_<slot>` values and
 /// `$children` array entries.
 fn assert_shape(value: &Value, path: &str) {
     match value {
@@ -42,16 +27,17 @@ fn assert_shape(value: &Value, path: &str) {
             if map.contains_key("$type") {
                 for key in map.keys() {
                     assert!(
-                        ALLOWED_TOP_LEVEL_KEYS.contains(&key.as_str()),
+                        is_allowed_node_key(key),
                         "unexpected top-level key at {path}: {key}"
                     );
                 }
-                // Recurse into $fields values.
-                if let Some(fields) = map.get("$fields") {
-                    if let Value::Object(fmap) = fields {
-                        for (fname, fval) in fmap {
-                            assert_shape(fval, &format!("{path}.$fields.{fname}"));
-                        }
+                assert!(
+                    !map.contains_key("$fields"),
+                    "legacy $fields wrapper leaked into read payload at {path}"
+                );
+                for (key, value) in map {
+                    if key.starts_with('_') {
+                        assert_shape(value, &format!("{path}.{key}"));
                     }
                 }
                 // Recurse into $children.
@@ -77,7 +63,7 @@ fn parse_and_read(language: tree_sitter::Language, source: &str) -> NodeData {
     let mut parser = tree_sitter::Parser::new();
     parser.set_language(&language).expect("set language");
     let tree = parser.parse(source, None).expect("parse succeeds");
-    read_node(&tree, source, None)
+    read_node(&tree, source, None, Some(0))
 }
 
 #[test]
@@ -88,9 +74,7 @@ fn rust_top_level_node_has_allowed_keys_only() {
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "rust.root");
     assert_eq!(node.source, Source::Ts, "source must be ts");
-    // node_handle is None at read time (stamped by ParsedTree::push_node
-    // after the read returns); child_index is None for root.
-    assert!(node.node_handle.is_none(), "root node_handle not stamped by raw read_node");
+    assert_eq!(node.node_handle, Some(0), "root carries its reserved handle");
     assert!(node.child_index.is_none(), "root has no child_index");
     assert!(node.span.is_some(), "span populated");
 }
@@ -135,51 +119,67 @@ fn no_enrichment_fields_on_any_node() {
 
 #[test]
 fn child_index_set_on_non_root_nodes() {
-    // Every non-root NodeData carries a `$childIndex` indicating its
-    // position within the parent's children array. Root has no
-    // child_index. node_handle is None at raw read_node time (stamped
-    // by ParsedTree::push_node).
+    // Every child stub carries the parent handle + `$childIndex`.
+    // Root has no child_index.
     let lang: tree_sitter::Language = tree_sitter_python::LANGUAGE.into();
     let source = "x = 1\ny = 2\n";
     let node = parse_and_read(lang, source);
     let json = serde_json::to_value(&node).expect("serialize");
-    let mut child_indices: Vec<u16> = Vec::new();
-    collect_child_indices(&json, &mut child_indices, false);
-    assert!(!child_indices.is_empty(), "should see child_index on non-root nodes");
+    let mut child_meta: Vec<(u16, u32)> = Vec::new();
+    collect_child_meta(&json, &mut child_meta, false);
+    assert!(!child_meta.is_empty(), "should see child stubs in read payload");
+    assert!(child_meta.iter().all(|(_, handle)| *handle == 0));
     // Root must NOT have a child_index.
     assert!(node.child_index.is_none(), "root must not have a childIndex");
-    // Root must NOT have node_handle at raw read time (stamped later).
-    assert!(node.node_handle.is_none(), "root node_handle not stamped by raw read_node");
+    assert_eq!(node.node_handle, Some(0));
 }
 
-/// Pre-order walk over the JSON NodeData tree, collecting `$childIndex`
-/// values. Recurses through `$fields` and `$children`.
-fn collect_child_indices(value: &Value, out: &mut Vec<u16>, is_child: bool) {
+/// Pre-order walk over the JSON NodeData tree, collecting child stub
+/// `(childIndex, nodeHandle)` pairs. Recurses through `_<slot>` values
+/// and `$children`.
+fn collect_child_meta(value: &Value, out: &mut Vec<(u16, u32)>, is_child: bool) {
     match value {
         Value::Object(map) => {
             if is_child {
-                if let Some(Value::Number(n)) = map.get("$childIndex") {
-                    if let Some(idx) = n.as_u64() {
-                        out.push(idx as u16);
+                if let (Some(Value::Number(idx)), Some(Value::Number(handle))) =
+                    (map.get("$childIndex"), map.get("$nodeHandle"))
+                {
+                    if let (Some(idx), Some(handle)) = (idx.as_u64(), handle.as_u64()) {
+                        out.push((idx as u16, handle as u32));
                     }
                 }
             }
-            if let Some(Value::Object(fmap)) = map.get("$fields") {
-                for fv in fmap.values() {
-                    collect_child_indices(fv, out, true);
+            for (key, value) in map {
+                if key.starts_with('_') {
+                    collect_child_meta(value, out, true);
                 }
             }
             if let Some(Value::Array(arr)) = map.get("$children") {
                 for c in arr {
-                    collect_child_indices(c, out, true);
+                    collect_child_meta(c, out, true);
                 }
             }
         }
         Value::Array(arr) => {
             for v in arr {
-                collect_child_indices(v, out, true);
+                collect_child_meta(v, out, true);
             }
         }
         _ => {}
     }
+}
+
+fn is_allowed_node_key(key: &str) -> bool {
+    matches!(
+        key,
+        "$type"
+            | "$source"
+            | "$named"
+            | "$children"
+            | "$text"
+            | "$span"
+            | "$nodeHandle"
+            | "$childIndex"
+            | "$triviaData"
+    ) || key.starts_with('_')
 }

@@ -1,12 +1,9 @@
-import { validateRoundTrip } from '../validate/roundtrip.ts';
+import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { resolve } from 'node:path';
 
 for (const g of ['rust', 'python', 'typescript']) {
-	const tp = resolve(
-		new URL('../../../..', import.meta.url).pathname,
-		`packages/${g}/templates`
-	);
-	const r = await validateRoundTrip(g, tp);
+	const tp = resolve(new URL('../../../..', import.meta.url).pathname, `packages/${g}/templates`);
+	const r = await validateReadRenderParse(g, tp);
 	console.log(
 		g,
 		'pass=',

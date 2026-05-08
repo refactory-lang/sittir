@@ -76,12 +76,8 @@ describe('prepare() — ADR-0013 Task 3', () => {
 		const prepared = prepare(node, ctx as any);
 		// Both clause + $$$CHILDREN resolve in prepare; alpha is consumed
 		// by the clause and thus not re-emitted in $$$CHILDREN.
-		const clauseSub = prepared.substitutions!.find((s) =>
-			s.value.startsWith('<')
-		);
-		const childrenSub = prepared.substitutions!.find(
-			(s) => !s.value.startsWith('<')
-		);
+		const clauseSub = prepared.substitutions!.find((s) => s.value.startsWith('<'));
+		const childrenSub = prepared.substitutions!.find((s) => !s.value.startsWith('<'));
 		expect(clauseSub?.value).toBe('<A>');
 		expect(childrenSub?.value).toBe('B,C');
 	});

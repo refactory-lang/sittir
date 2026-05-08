@@ -17,10 +17,7 @@ import type { FormatRecord, FormatTrivia } from './types.ts';
  * 3. `slots` and `literals` adjustments are reserved for future phases;
  *    if present they are noted but do not alter the output in Phase 1.
  */
-export function applyFormat(
-	canonicalRender: string,
-	format: FormatRecord
-): string {
+export function applyFormat(canonicalRender: string, format: FormatRecord): string {
 	let result = canonicalRender;
 
 	result = applyTrivia(result, format);
@@ -72,11 +69,7 @@ function applyTrivia(s: string, format: FormatRecord): string {
  * FR-004: rebaseTrivia is the single derivation for trivia offset adjustment
  * after any edit. Callers must not adjust offsets manually.
  */
-export function rebaseTrivia(
-	format: FormatRecord,
-	editStart: number,
-	delta: number
-): FormatRecord {
+export function rebaseTrivia(format: FormatRecord, editStart: number, delta: number): FormatRecord {
 	const trivia = rebaseTriviaItems(format.trivia, editStart, delta);
 	const kinds = rebaseKinds(format.kinds, editStart, delta);
 	return {

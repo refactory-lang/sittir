@@ -136,7 +136,7 @@ const CAPTURE_TO_ROLE: readonly CaptureRoleMapping[] = [
 	{ captureBase: 'definition.interface', role: 'definition.interface', source: 'tags' },
 
 	// tags.scm references
-	{ captureBase: 'reference.call', role: 'reference.call', source: 'tags' },
+	{ captureBase: 'reference.call', role: 'reference.call', source: 'tags' }
 ];
 
 // ---------------------------------------------------------------------------
@@ -182,10 +182,7 @@ function readIfExists(filePath: string): string | undefined {
  * @param queryFile - Which query file array to inspect (`'highlights'` or `'tags'`).
  * @returns Array of parent grammar names (e.g. `['javascript']`).
  */
-function resolveParentGrammarsFromConfig(
-	grammarRoot: string,
-	queryFile: QueryFile,
-): string[] {
+function resolveParentGrammarsFromConfig(grammarRoot: string, queryFile: QueryFile): string[] {
 	const configPath = join(grammarRoot, 'tree-sitter.json');
 	const configSource = readIfExists(configPath);
 	if (!configSource) return [];
@@ -201,13 +198,11 @@ function resolveParentGrammarsFromConfig(
 			if (!entries) continue;
 
 			// The field can be a string or an array of strings.
-			const entryList = Array.isArray(entries) ? entries as string[] : [entries as string];
+			const entryList = Array.isArray(entries) ? (entries as string[]) : [entries as string];
 
 			for (const entry of entryList) {
 				// Match patterns like "node_modules/tree-sitter-<lang>/queries/<file>.scm"
-				const pattern = new RegExp(
-					`tree-sitter-([\\w-]+)/queries/${queryFile}\\.scm`,
-				);
+				const pattern = new RegExp(`tree-sitter-([\\w-]+)/queries/${queryFile}\\.scm`);
 				const match = pattern.exec(entry);
 				if (match && match[1]) {
 					parents.push(match[1]);
@@ -229,19 +224,13 @@ function resolveParentGrammarsFromConfig(
  * @param visited - Set of already-visited grammar names (prevents cycles).
  * @param queryFile - Which query file to read (`'highlights'` or `'tags'`).
  */
-function collectCaptures(
-	grammarName: string,
-	visited: Set<string>,
-	queryFile: QueryFile,
-): SCMCapture[] {
+function collectCaptures(grammarName: string, visited: Set<string>, queryFile: QueryFile): SCMCapture[] {
 	if (visited.has(grammarName)) return [];
 	visited.add(grammarName);
 
 	const grammarRoot = resolveGrammarRoot(grammarName);
 	if (!grammarRoot) {
-		console.warn(
-			`[sittir] ${queryFile}.scm not found: tree-sitter-${grammarName} is not installed`,
-		);
+		console.warn(`[sittir] ${queryFile}.scm not found: tree-sitter-${grammarName} is not installed`);
 		return [];
 	}
 
@@ -250,9 +239,7 @@ function collectCaptures(
 	if (!source) {
 		// tags.scm is optional — only warn for highlights.scm
 		if (queryFile === 'highlights') {
-			console.warn(
-				`[sittir] highlights.scm not found at ${filePath}`,
-			);
+			console.warn(`[sittir] highlights.scm not found at ${filePath}`);
 		}
 		return [];
 	}
@@ -281,14 +268,8 @@ function collectCaptures(
  * - It exactly equals the mapping's captureBase, OR
  * - It starts with the mapping's captureBase followed by a dot.
  */
-function captureMatchesMapping(
-	captureName: string,
-	mapping: CaptureRoleMapping,
-): boolean {
-	return (
-		captureName === mapping.captureBase ||
-		captureName.startsWith(mapping.captureBase + '.')
-	);
+function captureMatchesMapping(captureName: string, mapping: CaptureRoleMapping): boolean {
+	return captureName === mapping.captureBase || captureName.startsWith(mapping.captureBase + '.');
 }
 
 /**
@@ -318,7 +299,7 @@ function baseRoleOf(role: Role): Role | undefined {
 const FALLBACK_PROBES: readonly [Role, readonly string[]][] = [
 	['boolean', ['boolean_literal', 'true', 'false']],
 	['number', ['integer_literal', 'float_literal', 'integer', 'float', 'number']],
-	['number.float', ['float_literal', 'float']],
+	['number.float', ['float_literal', 'float']]
 ];
 
 /**
@@ -336,7 +317,7 @@ const FALLBACK_PROBES: readonly [Role, readonly string[]][] = [
  */
 function applyFallbackProbes(
 	roleKinds: Map<Role, Set<string>>,
-	addToRole: (role: Role, kindName: string) => void,
+	addToRole: (role: Role, kindName: string) => void
 ): void {
 	for (const [role, candidates] of FALLBACK_PROBES) {
 		const existing = roleKinds.get(role);
@@ -442,7 +423,7 @@ export function extractGrammarRoles(grammar: string): GrammarRoles {
 		entries,
 		get(role: Role): string[] {
 			return roleMap.get(role) ?? [];
-		},
+		}
 	};
 }
 
@@ -461,7 +442,7 @@ export function extractTriviaRoles(grammar: string): TriviaRoleMap {
 	const roles = extractGrammarRoles(grammar);
 	return {
 		grammar,
-		triviaKinds: roles.get('trivia'),
+		triviaKinds: roles.get('trivia')
 	};
 }
 
@@ -470,10 +451,8 @@ export function extractTriviaRoles(grammar: string): TriviaRoleMap {
  *
  * @param grammars - Grammar names to compare (defaults to all three).
  */
-export function printRoleDiagnostic(
-	grammars: string[] = ['rust', 'typescript', 'python'],
-): void {
-	const results = grammars.map(g => extractGrammarRoles(g));
+export function printRoleDiagnostic(grammars: string[] = ['rust', 'typescript', 'python']): void {
+	const results = grammars.map((g) => extractGrammarRoles(g));
 
 	// Collect all roles that appear in any grammar
 	const allRoles = new Set<Role>();
@@ -487,8 +466,8 @@ export function printRoleDiagnostic(
 	console.log(header.replace(/[^|]/g, '-'));
 
 	for (const role of [...allRoles].sort()) {
-		const cells = grammars.map(g => {
-			const gr = results.find(r => r.grammar === g)!;
+		const cells = grammars.map((g) => {
+			const gr = results.find((r) => r.grammar === g)!;
 			const kinds = gr.get(role as Role);
 			return kinds.length > 0 ? kinds.join(', ') : '—';
 		});

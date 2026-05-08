@@ -6,10 +6,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import {
-	computeTemplateBundleHash,
-	type TemplateFile
-} from './template-hash.ts';
+import { computeTemplateBundleHash, type TemplateFile } from './template-hash.ts';
 
 const files: TemplateFile[] = [
 	{ filename: 'function_item.jinja', content: '{{ name }}' },
@@ -34,12 +31,8 @@ describe('computeTemplateBundleHash', () => {
 
 	it('normalizes CRLF to LF before hashing', () => {
 		// Same logical content with Windows line endings must match LF.
-		const lf: TemplateFile[] = [
-			{ filename: 'a.jinja', content: 'line1\nline2\nline3' }
-		];
-		const crlf: TemplateFile[] = [
-			{ filename: 'a.jinja', content: 'line1\r\nline2\r\nline3' }
-		];
+		const lf: TemplateFile[] = [{ filename: 'a.jinja', content: 'line1\nline2\nline3' }];
+		const crlf: TemplateFile[] = [{ filename: 'a.jinja', content: 'line1\r\nline2\r\nline3' }];
 		expect(computeTemplateBundleHash(lf)).toBe(computeTemplateBundleHash(crlf));
 	});
 
@@ -47,15 +40,9 @@ describe('computeTemplateBundleHash', () => {
 		// CR-only line endings are archaic but legal. They should NOT
 		// be normalized — the hash reflects the bytes the Rust engine
 		// will see. Only CRLF->LF is reversed (Git autocrlf mirror).
-		const cr: TemplateFile[] = [
-			{ filename: 'a.jinja', content: 'line1\rline2' }
-		];
-		const lf: TemplateFile[] = [
-			{ filename: 'a.jinja', content: 'line1\nline2' }
-		];
-		expect(computeTemplateBundleHash(cr)).not.toBe(
-			computeTemplateBundleHash(lf)
-		);
+		const cr: TemplateFile[] = [{ filename: 'a.jinja', content: 'line1\rline2' }];
+		const lf: TemplateFile[] = [{ filename: 'a.jinja', content: 'line1\nline2' }];
+		expect(computeTemplateBundleHash(cr)).not.toBe(computeTemplateBundleHash(lf));
 	});
 
 	it('changes the hash on any byte-level edit', () => {
@@ -71,15 +58,9 @@ describe('computeTemplateBundleHash', () => {
 	});
 
 	it('distinguishes filename changes from content changes', () => {
-		const renamed: TemplateFile[] = [
-			{ filename: 'renamed.jinja', content: '{{ name }}' }
-		];
-		const original: TemplateFile[] = [
-			{ filename: 'function_item.jinja', content: '{{ name }}' }
-		];
-		expect(computeTemplateBundleHash(renamed)).not.toBe(
-			computeTemplateBundleHash(original)
-		);
+		const renamed: TemplateFile[] = [{ filename: 'renamed.jinja', content: '{{ name }}' }];
+		const original: TemplateFile[] = [{ filename: 'function_item.jinja', content: '{{ name }}' }];
+		expect(computeTemplateBundleHash(renamed)).not.toBe(computeTemplateBundleHash(original));
 	});
 
 	it('framing separator prevents boundary collisions', () => {

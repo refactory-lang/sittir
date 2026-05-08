@@ -28,10 +28,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(
-	/\/$/,
-	''
-);
+const repoRoot = fileURLToPath(new URL('../../../..', import.meta.url)).replace(/\/$/, '');
 
 // ---------------------------------------------------------------------------
 // Schema types — mirror packages/core/src/metrics.ts
@@ -100,11 +97,7 @@ const REGRESSION_THRESHOLD_PCT = 10;
  * no I/O, no env-var reads. Caller wires the env-var (warnOnly) and exit
  * codes around it.
  */
-export function evaluateVerdict(
-	baseline: PerfBaseline,
-	fresh: MetricsFile,
-	warnOnly: boolean
-): Verdict {
+export function evaluateVerdict(baseline: PerfBaseline, fresh: MetricsFile, warnOnly: boolean): Verdict {
 	if (baseline.schemaVersion !== fresh.schemaVersion) {
 		return {
 			kind: 'schema-mismatch',
@@ -189,11 +182,7 @@ export interface CheckResult {
  * @param warnOnly     - When true, regressions print a warning instead of
  *   exiting non-zero. Driven by `SITTIR_METRICS_FFI_WARN_ONLY=1` in the CLI.
  */
-export function checkPerfBaseline(
-	baselinePath: string,
-	metricsPath: string,
-	warnOnly: boolean
-): CheckResult {
+export function checkPerfBaseline(baselinePath: string, metricsPath: string, warnOnly: boolean): CheckResult {
 	const baseline = readJson<PerfBaseline>(baselinePath);
 	const fresh = readJson<MetricsFile>(metricsPath);
 	const verdict = evaluateVerdict(baseline, fresh, warnOnly);
@@ -211,8 +200,7 @@ export function checkPerfBaseline(
 			return {
 				exitCode: 1,
 				verdict,
-				stderrLine:
-					'[ERROR] native metrics missing ffi block — cannot evaluate perf gate'
+				stderrLine: '[ERROR] native metrics missing ffi block — cannot evaluate perf gate'
 			};
 		case 'schema-mismatch':
 			return {
@@ -247,10 +235,7 @@ interface CliArgs {
 }
 
 function parseArgs(argv: readonly string[]): CliArgs {
-	let baseline = resolve(
-		repoRoot,
-		'specs/054-post-016-perf-tracking/baselines/perf-native.json'
-	);
+	let baseline = resolve(repoRoot, 'specs/054-post-016-perf-tracking/baselines/perf-native.json');
 	let metrics = resolve(process.cwd(), 'metrics-native.json');
 	for (let i = 0; i < argv.length; i++) {
 		const a = argv[i];
@@ -259,9 +244,7 @@ function parseArgs(argv: readonly string[]): CliArgs {
 		} else if (a === '--metrics' && i + 1 < argv.length) {
 			metrics = resolve(process.cwd(), argv[++i]!);
 		} else if (a === '--help' || a === '-h') {
-			process.stdout.write(
-				'Usage: check-perf-baseline.ts [--baseline <path>] [--metrics <path>]\n'
-			);
+			process.stdout.write('Usage: check-perf-baseline.ts [--baseline <path>] [--metrics <path>]\n');
 			process.exit(0);
 		}
 	}

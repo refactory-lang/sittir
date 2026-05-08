@@ -19,9 +19,7 @@ export type PolymorphVariantDescriptor =
 			readonly fields: Readonly<Record<string, readonly string[]>>;
 	  };
 
-export type PolymorphVariantMap = Readonly<
-	Record<string, PolymorphVariantDescriptor>
->;
+export type PolymorphVariantMap = Readonly<Record<string, PolymorphVariantDescriptor>>;
 
 /**
  * Exhaustiveness helper. Place at the end of every switch on a

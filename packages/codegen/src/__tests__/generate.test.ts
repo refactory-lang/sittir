@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 
 vi.mock('../compiler/generated-metadata.ts', async () => {
-	const actual = await vi.importActual<
-		typeof import('../compiler/generated-metadata.ts')
-	>('../compiler/generated-metadata.ts');
+	const actual = await vi.importActual<typeof import('../compiler/generated-metadata.ts')>(
+		'../compiler/generated-metadata.ts'
+	);
 	return {
 		...actual,
 		loadGeneratedIdTables: vi.fn(async () => undefined)

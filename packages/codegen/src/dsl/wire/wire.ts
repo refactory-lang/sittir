@@ -99,10 +99,7 @@ export function getCurrentWireContext(): WireContext | null {
  * `true` when the context absorbed the call, `false` when there is no
  * active context (caller falls back to the legacy accumulator).
  */
-export function wireRegisterSyntheticRule(
-	name: string,
-	content: RuntimeRule
-): boolean {
+export function wireRegisterSyntheticRule(name: string, content: RuntimeRule): boolean {
 	if (!currentContext) return false;
 	currentContext.deposits.set(name, content);
 	return true;
@@ -123,14 +120,9 @@ export function wireRegisterSyntheticRule(
  * suffix twice for one parent without the second entry overwriting
  * the first at JS object-literal level.
  */
-export function wireRegisterPolymorphVariant(
-	parent: string,
-	child: string
-): boolean {
+export function wireRegisterPolymorphVariant(parent: string, child: string): boolean {
 	if (!currentContext) return false;
-	const exists = currentContext.polymorphVariants.some(
-		(v) => v.parent === parent && v.child === child
-	);
+	const exists = currentContext.polymorphVariants.some((v) => v.parent === parent && v.child === child);
 	if (!exists) {
 		currentContext.polymorphVariants.push({ parent, child });
 	}
@@ -145,9 +137,7 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
 	if (!currentContext) return false;
 	if (names.length === 0) return true;
 	const key = names.join('\u0000');
-	const exists = currentContext.conflictGroups.some(
-		(g) => g.join('\u0000') === key
-	);
+	const exists = currentContext.conflictGroups.some((g) => g.join('\u0000') === key);
 	if (!exists) {
 		currentContext.conflictGroups.push([...names]);
 	}
@@ -168,10 +158,7 @@ export function wireRegisterConflict(names: readonly string[]): boolean {
  * Returns `true` when the context absorbed the call, `false` when
  * there is no active context.
  */
-export function wireRegisterRefineForms(
-	kind: string,
-	forms: RefineForm[]
-): boolean {
+export function wireRegisterRefineForms(kind: string, forms: RefineForm[]): boolean {
 	if (!currentContext) return false;
 	currentContext.refineForms.set(kind, forms);
 	return true;
@@ -238,9 +225,7 @@ export function withWireContext<T>(
  * keys, preserving the pre-generics behaviour of every call site that
  * doesn't supply a base type.
  */
-export type GrammarBase =
-	| Record<string, unknown>
-	| { readonly rules: Record<string, unknown> };
+export type GrammarBase = Record<string, unknown> | { readonly rules: Record<string, unknown> };
 
 /** @internal — extract the rule-kind string union from a base grammar.
  *  Handles both shapes: `{ rules: { … } }` (tree-sitter native) and
@@ -310,8 +295,7 @@ export type PatchMap = Record<string, unknown>;
  */
 export interface WireConfig<Base extends GrammarBase = GrammarBase> {
 	readonly name?: string;
-	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> &
-		Record<string, RuleFn>;
+	readonly rules: Partial<Record<BaseKind<Base>, RuleFn>> & Record<string, RuleFn>;
 	readonly polymorphs?: PolymorphsConfig<Base>;
 	readonly transforms?: TransformsConfig<Base>;
 	readonly conflicts?: ConflictsFn;
@@ -348,11 +332,7 @@ export interface WiredOpts {
 }
 
 type RuleFn = (this: unknown, $: unknown, previous?: unknown) => unknown;
-type ConflictsFn = (
-	this: unknown,
-	$: unknown,
-	previous?: unknown[][]
-) => unknown[][];
+type ConflictsFn = (this: unknown, $: unknown, previous?: unknown[][]) => unknown[][];
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 /**
@@ -365,9 +345,7 @@ type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
  *   `Object.keys()` snapshot; content resolves via deferred-content fns
  *   as tree-sitter iterates.
  */
-export function wire<Base extends GrammarBase = GrammarBase>(
-	config: WireConfig<Base>
-): WiredOpts {
+export function wire<Base extends GrammarBase = GrammarBase>(config: WireConfig<Base>): WiredOpts {
 	const context: WireContext = {
 		deposits: new Map(),
 		polymorphVariants: [],
@@ -471,11 +449,7 @@ function buildPolymorphParentFn(
 		patches[path] = variantPlaceholder(suffix);
 	}
 	const isHidden = parent.startsWith('_');
-	return function wiredPolymorphParent(
-		this: unknown,
-		$: unknown,
-		original: unknown
-	): unknown {
+	return function wiredPolymorphParent(this: unknown, $: unknown, original: unknown): unknown {
 		let base: unknown;
 		if (userFn) {
 			base = userFn.call(this, $, original);
@@ -484,10 +458,7 @@ function buildPolymorphParentFn(
 		} else {
 			base = original;
 		}
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(
-			base,
-			patches
-		);
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, patches);
 	};
 }
 
@@ -533,21 +504,13 @@ function injectHiddenRulePlaceholders(
  * Used by wire's injectHiddenRulePlaceholders AND transform.ts's
  * variant-resolution paths so both agree on the rule name.
  */
-export function polymorphVisibleName(
-	parentKind: string,
-	suffix: string
-): string {
-	const visibleParent = parentKind.startsWith('_')
-		? parentKind.slice(1)
-		: parentKind;
+export function polymorphVisibleName(parentKind: string, suffix: string): string {
+	const visibleParent = parentKind.startsWith('_') ? parentKind.slice(1) : parentKind;
 	return `${visibleParent}_${suffix}`;
 }
 
 /** Hidden rule name for a polymorph variant — underscore-prefixed visible form. */
-export function polymorphHiddenName(
-	parentKind: string,
-	suffix: string
-): string {
+export function polymorphHiddenName(parentKind: string, suffix: string): string {
 	return `_${polymorphVisibleName(parentKind, suffix)}`;
 }
 
@@ -557,10 +520,7 @@ export function polymorphHiddenName(
  * the author already has a `rules:` entry for the same kind, compose:
  * user fn runs first, transform patches apply on its output.
  */
-function composeOrSynthesizeTransformParents(
-	rules: Record<string, RuleFn>,
-	transforms: TransformsConfig
-): void {
+function composeOrSynthesizeTransformParents(rules: Record<string, RuleFn>, transforms: TransformsConfig): void {
 	for (const [kind, entry] of Object.entries(transforms)) {
 		if (!entry) continue;
 		const patchSets = Array.isArray(entry) ? entry : [entry];
@@ -576,20 +536,10 @@ function composeOrSynthesizeTransformParents(
  * rest-parameter signature so multi-patch-set rules behave exactly as
  * they did when the call was written inline in the rule body.
  */
-function buildTransformParentFn(
-	patchSets: readonly PatchMap[],
-	userFn: RuleFn | undefined
-): RuleFn {
-	return function wiredTransformParent(
-		this: unknown,
-		$: unknown,
-		original: unknown
-	): unknown {
+function buildTransformParentFn(patchSets: readonly PatchMap[], userFn: RuleFn | undefined): RuleFn {
+	return function wiredTransformParent(this: unknown, $: unknown, original: unknown): unknown {
 		const base = userFn ? userFn.call(this, $, original) : original;
-		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(
-			base,
-			...patchSets
-		);
+		return (transformFn as unknown as (o: unknown, ...p: unknown[]) => unknown)(base, ...patchSets);
 	};
 }
 
@@ -644,20 +594,17 @@ function registerHiddenRuleForPlaceholder(
 ): void {
 	if (isFieldPlaceholder(value)) {
 		const hiddenName = `_kw_${value.name}`;
-		if (!(hiddenName in rules))
-			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 	if (isVariantPlaceholder(value)) {
 		const hiddenName = `_${parentKind}_${value.name}`;
-		if (!(hiddenName in rules))
-			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 	if (isAliasPlaceholder(value)) {
 		const hiddenName = `_${value.name}`;
-		if (!(hiddenName in rules))
-			rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
+		if (!(hiddenName in rules)) rules[hiddenName] = makeDeferredContentFn(context, hiddenName);
 		return;
 	}
 }
@@ -688,15 +635,8 @@ function registerHiddenRuleForPlaceholder(
  *      Normally consumed by `evaluate`'s `prunePlaceholderOrphans` so
  *      BLANK orphans don't pollute the grammar.
  */
-function makeDeferredContentFn(
-	context: WireContext,
-	hiddenName: string
-): RuleFn {
-	return function deferredHiddenRule(
-		this: unknown,
-		_$: unknown,
-		previous?: unknown
-	): unknown {
+function makeDeferredContentFn(context: WireContext, hiddenName: string): RuleFn {
+	return function deferredHiddenRule(this: unknown, _$: unknown, previous?: unknown): unknown {
 		const body = context.deposits.get(hiddenName);
 		if (body) return body;
 		if (previous !== undefined) return previous;
@@ -711,10 +651,7 @@ function makeDeferredContentFn(
  * restores both values so nested / re-entrant grammar calls don't leak
  * state into each other.
  */
-function wrapAllRuleFns(
-	rules: Record<string, RuleFn>,
-	context: WireContext
-): void {
+function wrapAllRuleFns(rules: Record<string, RuleFn>, context: WireContext): void {
 	for (const [name, fn] of Object.entries(rules)) {
 		rules[name] = wrapOneRuleFn(name, fn, context);
 	}
@@ -725,11 +662,7 @@ function wrapAllRuleFns(
  * currentRuleKind, installs this context, runs the fn, restores.
  */
 function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
-	return function wiredRuleFn(
-		this: unknown,
-		$: unknown,
-		previous?: unknown
-	): unknown {
+	return function wiredRuleFn(this: unknown, $: unknown, previous?: unknown): unknown {
 		const prevContext = currentContext;
 		const prevKind = context.currentRuleKind;
 		currentContext = context;
@@ -753,10 +686,7 @@ function wrapOneRuleFn(name: string, fn: RuleFn, context: WireContext): RuleFn {
  * invokes the callback, the wrapped fn still passes the user's list
  * through unchanged.
  */
-function wrapConflictsCallback(
-	userConflicts: ConflictsFn | undefined,
-	context: WireContext
-): ConflictsFn | undefined {
+function wrapConflictsCallback(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn | undefined {
 	return buildWiredConflictsFn(userConflicts, context);
 }
 
@@ -776,22 +706,11 @@ function wrapConflictsCallback(
  * @param context - The active wire context whose `conflictGroups` are drained.
  * @returns A wrapped conflicts callback that appends symbolized group entries.
  */
-function buildWiredConflictsFn(
-	userConflicts: ConflictsFn | undefined,
-	context: WireContext
-): ConflictsFn {
-	return function wiredConflicts(
-		this: unknown,
-		$: unknown,
-		previous?: unknown[][]
-	): unknown[][] {
-		const base = userConflicts
-			? userConflicts.call(this, $, previous)
-			: (previous ?? []);
+function buildWiredConflictsFn(userConflicts: ConflictsFn | undefined, context: WireContext): ConflictsFn {
+	return function wiredConflicts(this: unknown, $: unknown, previous?: unknown[][]): unknown[][] {
+		const base = userConflicts ? userConflicts.call(this, $, previous) : (previous ?? []);
 		if (context.conflictGroups.length === 0) return base as unknown[][];
-		const symbolized = context.conflictGroups.map((group) =>
-			group.map((name) => symbolizeRef($, name))
-		);
+		const symbolized = context.conflictGroups.map((group) => group.map((name) => symbolizeRef($, name)));
 		return [...(base as unknown[][]), ...symbolized];
 	};
 }

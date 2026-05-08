@@ -25,12 +25,7 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledSupertype } from '../compiler/node-map.ts';
 import { snakeToCamel } from '../compiler/node-map.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import {
-	collectKindEntries,
-	kindDiscriminantExpr,
-	kindIdMemberName,
-	type KindEnumEntry
-} from './kind-discriminant.ts';
+import { collectKindEntries, kindDiscriminantExpr, kindIdMemberName, type KindEnumEntry } from './kind-discriminant.ts';
 import { collectAllKinds } from './types.ts';
 
 export interface EmitIsConfig {
@@ -244,9 +239,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push('// Per-grammar type guards: is / assert / isTree / isNode.');
 	lines.push('// Composition: kind × shape = concrete type via NamespaceMap.');
 	lines.push('');
-	lines.push(
-		"import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';"
-	);
+	lines.push("import type { AnyNodeData, AnyTreeNodeOf as AnyTreeNode } from '@sittir/types';");
 	// When kindEntries is present, emit a value-import for TSKindId so guard
 	// bodies can compare numeric discriminants (Phase D numeric-only path).
 	if (kindEntries) {
@@ -283,31 +276,23 @@ export function emitIs(config: EmitIsConfig): string {
 	// The runtime guard body (_sg) only matches numeric IDs in Phase D, so
 	// passing a string-$type value safely returns false.
 	for (const s of supertypes) {
-		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`
-		);
+		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number }): v is ${s.typeName};`);
 	}
 	lines.push('}');
 	lines.push('');
 
 	// AssertGuards — same shape as IsGuards but with `asserts v is T`.
-	lines.push(
-		'// AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.'
-	);
+	lines.push('// AssertGuards — assertion form of IsGuards; throws TypeError on mismatch.');
 	lines.push('export interface AssertGuards {');
 	for (const s of structuralKinds) {
 		const narrowType = s.member ? `TSKindId.${s.member}` : 'number';
-		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: number }): asserts v is { readonly $type: ${narrowType} };`
-		);
+		lines.push(`    ${s.guardKey}(v: { readonly $type: number }): asserts v is { readonly $type: ${narrowType} };`);
 	}
 	lines.push(
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): asserts v is { readonly $type: number };`
 	);
 	for (const s of supertypes) {
-		lines.push(
-			`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is ${s.typeName};`
-		);
+		lines.push(`    ${s.guardKey}(v: { readonly $type: string | number }): asserts v is ${s.typeName};`);
 	}
 	lines.push('}');
 	lines.push('');
@@ -317,34 +302,22 @@ export function emitIs(config: EmitIsConfig): string {
 		// Phase D: all producers emit numeric $type. Guards compare numeric
 		// TSKindId only — the string-comparison arm has been removed.
 		lines.push('// Runtime: kind guards compare numeric TSKindId only (Phase D).');
-		lines.push(
-			'function _g(id: number): (v: { readonly $type: number }) => boolean {'
-		);
+		lines.push('function _g(id: number): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => v.$type === id;');
 		lines.push('}');
-		lines.push(
-			'function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {'
-		);
+		lines.push('function _sg(ids: ReadonlySet<number>): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => ids.has(v.$type);');
 		lines.push('}');
 	} else {
 		// Legacy / unit-test callers without generatedIdTables: string-only
 		// fallback. This path is only reached in tests that bypass the full
 		// codegen pipeline and do not supply generatedIdTables.
-		lines.push(
-			'// Runtime: kind guards = string equality; supertype guards = Set.has.'
-		);
-		lines.push(
-			'// Building from literal string arrays keeps the runtime footprint minimal.'
-		);
-		lines.push(
-			'function _g(k: string): (v: { readonly $type: number }) => boolean {'
-		);
+		lines.push('// Runtime: kind guards = string equality; supertype guards = Set.has.');
+		lines.push('// Building from literal string arrays keeps the runtime footprint minimal.');
+		lines.push('function _g(k: string): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => (v.$type as unknown) === k;');
 		lines.push('}');
-		lines.push(
-			'function _sg(ks: ReadonlySet<string>): (v: { readonly $type: number }) => boolean {'
-		);
+		lines.push('function _sg(ks: ReadonlySet<string>): (v: { readonly $type: number }) => boolean {');
 		lines.push('    return (v) => ks.has(v.$type as unknown as string);');
 		lines.push('}');
 	}
@@ -358,15 +331,11 @@ export function emitIs(config: EmitIsConfig): string {
 		if (kindEntries) {
 			if (s.memberIds.length > 0) {
 				const ids = s.memberIds.join(', ');
-				lines.push(
-					`const _supertype_${s.guardKey}_ids = new Set<number>([${ids}]);`
-				);
+				lines.push(`const _supertype_${s.guardKey}_ids = new Set<number>([${ids}]);`);
 			}
 		} else {
 			const members = s.memberKinds.map((k) => JSON.stringify(k)).join(', ');
-			lines.push(
-				`const _supertype_${s.guardKey} = new Set<string>([${members}]);`
-			);
+			lines.push(`const _supertype_${s.guardKey} = new Set<string>([${members}]);`);
 		}
 	}
 	if (supertypes.length > 0) lines.push('');
@@ -378,12 +347,7 @@ export function emitIs(config: EmitIsConfig): string {
 	// symbol; the guard returns false in that case (TSGrammar-only kinds can
 	// never match a numeric runtime $type anyway).
 	if (kindEntries && kindEntries.length > 0) {
-		const entries = kindEntries
-			.map(
-				(e) =>
-					`    [${JSON.stringify(e.kind)}, TSKindId.${e.member}]`
-			)
-			.join(',\n');
+		const entries = kindEntries.map((e) => `    [${JSON.stringify(e.kind)}, TSKindId.${e.member}]`).join(',\n');
 		lines.push('const _kindIdByKind = new Map<string, number>([');
 		lines.push(entries + ',');
 		lines.push(']);');
@@ -403,28 +367,20 @@ export function emitIs(config: EmitIsConfig): string {
 	}
 	if (kindEntries) {
 		// Phase D: kind() compares only numeric $type via the map lookup.
-		lines.push(
-			`    kind: (v: { readonly $type: number }, k: string): boolean => {`
-		);
+		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => {`);
 		lines.push(`        const id = _kindIdByKind.get(k);`);
 		lines.push(`        return id !== undefined && v.$type === id;`);
 		lines.push(`    },`);
 	} else {
 		// Legacy / unit-test callers without generatedIdTables: string equality.
-		lines.push(
-			`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`
-		);
+		lines.push(`    kind: (v: { readonly $type: number }, k: string): boolean => (v.$type as unknown) === k,`);
 	}
 	for (const s of supertypes) {
 		if (kindEntries && s.memberIds.length > 0) {
-			lines.push(
-				`    ${s.guardKey}: _sg(_supertype_${s.guardKey}_ids),`
-			);
+			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}_ids),`);
 		} else if (kindEntries) {
 			// All member kinds are TSGrammar-only; emit with empty id set.
-			lines.push(
-				`    ${s.guardKey}: _sg(new Set<number>()),`
-			);
+			lines.push(`    ${s.guardKey}: _sg(new Set<number>()),`);
 		} else {
 			lines.push(`    ${s.guardKey}: _sg(_supertype_${s.guardKey}),`);
 		}
@@ -437,9 +393,7 @@ export function emitIs(config: EmitIsConfig): string {
 	// as the expected-type label. The generic `assert.kind(v, k)` uses the
 	// second argument `k` as the expected-type label instead — otherwise
 	// the error message would say `expected 'kind'`, which is useless.
-	lines.push(
-		'// assert — reuses `is` runtime logic via closure; TypeError on mismatch.'
-	);
+	lines.push('// assert — reuses `is` runtime logic via closure; TypeError on mismatch.');
 	lines.push('type _AnyGuard = (...args: unknown[]) => boolean;');
 	lines.push('function _makeAssert(name: string, guard: _AnyGuard) {');
 	lines.push('    return (...args: unknown[]): void => {');
@@ -469,57 +423,37 @@ export function emitIs(config: EmitIsConfig): string {
 	// Build assert entries by wrapping each is entry. Keys must match
 	// is's exactly.
 	for (const s of structuralKinds) {
-		lines.push(
-			`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`
-		);
+		lines.push(`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`);
 	}
 	lines.push(`    kind: _makeAssertKind(is.kind as _AnyGuard),`);
 	for (const s of supertypes) {
-		lines.push(
-			`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`
-		);
+		lines.push(`    ${s.guardKey}: _makeAssert('${s.guardKey}', is.${s.guardKey} as _AnyGuard),`);
 	}
 	lines.push('} as unknown as AssertGuards;');
 	lines.push('');
 
 	// Shape guards — isTree / isNode — overloaded signatures.
-	lines.push(
-		'// Shape guards — narrow through NamespaceMap when kind is already known.'
-	);
-	lines.push(
-		'// Overload 1: typed input whose type is a NamespaceMap key → narrow to Tree/Node projection.'
-	);
-	lines.push(
-		'// Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.'
-	);
+	lines.push('// Shape guards — narrow through NamespaceMap when kind is already known.');
+	lines.push('// Overload 1: typed input whose type is a NamespaceMap key → narrow to Tree/Node projection.');
+	lines.push('// Overload 2: generic unknown → fall back to AnyTreeNode / AnyNodeData.');
 	lines.push('');
-	lines.push(
-		'export function isTree<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>('
-	);
+	lines.push('export function isTree<T extends { readonly $type: K }, K extends keyof NamespaceMap & string>(');
 	lines.push('    v: T,');
 	lines.push(`): v is T & NamespaceMap[K]['Tree'];`);
 	lines.push('export function isTree(v: unknown): v is AnyTreeNode;');
 	lines.push('export function isTree(v: unknown): boolean {');
-	lines.push(
-		`    return typeof (v as { range?: unknown })?.range === 'function';`
-	);
+	lines.push(`    return typeof (v as { range?: unknown })?.range === 'function';`);
 	lines.push('}');
 	lines.push('');
 	// isNode accepts string | number $type: hidden/synthetic kinds (e.g. "_suite")
 	// have no parser.c entry and emit string $type; AnyNodeData.$type: string | number.
-	lines.push(
-		'export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;'
-	);
-	lines.push(
-		'export function isNode(v: { readonly $type: string | number }): boolean {'
-	);
+	lines.push('export function isNode(v: { readonly $type: string | number }): v is AnyNodeData;');
+	lines.push('export function isNode(v: { readonly $type: string | number }): boolean {');
 	lines.push('    const o = v as Record<string, unknown>;');
 	// ADR-0018 Phase 2: factory/wrap nodes use `_<name>` storage keys (de-hoisted
 	// surface). Any top-level `_*` key indicates a branch node with named fields.
 	// Leaf nodes have `$text` instead.
-	lines.push(
-		`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`
-	);
+	lines.push(`    const hasFields = Object.keys(o).some((k) => k.startsWith('_'));`);
 	lines.push(`    return hasFields || typeof o['$text'] === 'string';`);
 	lines.push('}');
 	lines.push('');

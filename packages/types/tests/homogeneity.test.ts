@@ -9,10 +9,7 @@
 import { describe, it } from 'vitest';
 import type { ConfigOf, FromInputOf } from '../src/index.ts';
 
-type Equals<A, B> =
-	(<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2
-		? true
-		: false;
+type Equals<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
 function expectTrue<_T extends true>(): void {}
 function expectFalse<_T extends false>(): void {}

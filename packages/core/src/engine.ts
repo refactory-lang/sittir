@@ -8,12 +8,7 @@
 // Engine config wins over inferred tree format; detached NodeData must not
 // borrow inferred tree format.
 
-import type {
-	AnyNodeData,
-	Edit,
-	FormatRecord,
-	NativeParseResult
-} from './types.ts';
+import type { AnyNodeData, Edit, FormatRecord, NativeParseResult } from './types.ts';
 import { createRenderer } from './loader.ts';
 import { applyEdits as coreApplyEdits } from './edit.ts';
 import { applyFormat } from './format.ts';
@@ -102,9 +97,7 @@ interface NativeModuleShape {
  * Grammar packages use a richer `BackendStatus` in backend.ts; this is
  * the structural minimum that `createGrammarEngine` branches on.
  */
-type BackendStatusShape =
-	| { readonly name: 'native'; readonly native: NativeModuleShape }
-	| { readonly name: string };
+type BackendStatusShape = { readonly name: 'native'; readonly native: NativeModuleShape } | { readonly name: string };
 
 // ---------------------------------------------------------------------------
 // GrammarEngineConfig + createGrammarEngine
@@ -151,18 +144,14 @@ interface NativeParseResultShape {
  * Mirrors the per-grammar `getNativeBackendEngine()` helper that
  * previously lived in each grammar's hand-written `engine.ts`.
  */
-function getNativeEngine(
-	config: GrammarEngineConfig,
-	options?: EngineOptions
-): SittirEngineLike | null {
+function getNativeEngine(config: GrammarEngineConfig, options?: EngineOptions): SittirEngineLike | null {
 	const status = config.getActiveBackend();
 	if (status.name !== 'native') return null;
 
 	try {
-		const nativeOptions = options?.format
-			? { format: JSON.stringify(options.format) }
-			: undefined;
+		const nativeOptions = options?.format ? { format: JSON.stringify(options.format) } : undefined;
 		const engine = new (status as { name: 'native'; native: NativeModuleShape }).native.SittirEngine(nativeOptions);
+		let currentSource = '';
 
 		function renderNativeNode(
 			node: Parameters<SittirEngineLike['render']>[0],
@@ -174,7 +163,7 @@ function getNativeEngine(
 			if (opts?.ignoreFormat === true) {
 				throw new Error(
 					'ignoreFormat option not yet supported by native engine. ' +
-					'Use JS engine or wait for Task 4 (engine-owned format state).'
+						'Use JS engine or wait for Task 4 (engine-owned format state).'
 				);
 			}
 			return createRenderHandle(
@@ -208,27 +197,27 @@ function getNativeEngine(
 
 			reader: {
 				parseAndRead(source: string) {
+					currentSource = source;
 					const json = engine.parseAndRead(source);
 					const parsed = JSON.parse(json) as NativeParseResultShape;
+					const root = parsed.nodeData;
 					// Native parseAndRead returns { nodeData, format? }
 					return {
-						root: parsed.nodeData,
+						root,
 						tree: {
 							get rootNode(): never {
-								throw new Error(
-									'rootNode unavailable on native engine handle; use tree.read()'
-								);
+								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
 							},
 							source,
 							read: (handle, childIndex) => {
-								if (handle === undefined) return parsed.nodeData;
+								if (handle === undefined) return root;
 								const nodeJson = engine.readNode(handle, childIndex ?? 0);
 								return JSON.parse(nodeJson) as AnyNodeData;
 							},
 							render: (handle, opts) => {
 								const node =
 									handle === undefined
-										? parsed.nodeData
+										? root
 										: (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
 								return renderNativeNode(node, opts).toString();
 							},
@@ -264,10 +253,7 @@ function getNativeEngine(
  * @param options - Engine-level options (format, etc.)
  * @returns An engine implementing `SittirEngineLike`.
  */
-export function createGrammarEngine(
-	config: GrammarEngineConfig,
-	options?: EngineOptions
-): SittirEngineLike {
+export function createGrammarEngine(config: GrammarEngineConfig, options?: EngineOptions): SittirEngineLike {
 	const native = getNativeEngine(config, options);
 	if (native) return native;
 
@@ -417,11 +403,7 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 	const { templatesPath, format: engineFormat, parse, kindNames } = options;
 	const renderer = createRenderer(templatesPath, { kindNames });
 
-	function renderNode(
-		node: AnyNodeData,
-		treeFormat?: FormatRecord,
-		ignoreFormat = false
-	): string {
+	function renderNode(node: AnyNodeData, treeFormat?: FormatRecord, ignoreFormat = false): string {
 		// Render the canonical template output first.
 		const canonical = renderer.render(node);
 
@@ -476,9 +458,7 @@ export function createJsEngine(options: JsEngineOptions): SittirEngineLike {
 			},
 
 			readNode(_handle: number, _childIndex = 0): AnyNodeData {
-				throw new Error(
-					'readNode(handle, childIndex) requires a tree handle from parseAndRead()'
-				);
+				throw new Error('readNode(handle, childIndex) requires a tree handle from parseAndRead()');
 			}
 		};
 	}

@@ -86,6 +86,112 @@ describe('engine', () => {
 		expect(typeof engine.reader?.readNode).toBe('function');
 	});
 
+	it('passes through native reader payloads already in JS readNode shape', async () => {
+		vi.doMock('../src/backend.js', () => ({
+			getActiveBackend: () => ({
+				name: 'native',
+				hashMatch: true,
+				native: {
+					SittirEngine: class {
+						render(_node: Record<string, unknown>): string {
+							return 'ok';
+						}
+						applyEdits(source: string): string {
+							return source;
+						}
+						parseAndRead(_source: string): string {
+							return JSON.stringify({
+								nodeData: {
+									$type: TSKindId.FunctionItem,
+									$source: 0,
+									$named: true,
+									$span: { start: 0, end: 10 },
+									$nodeHandle: 0,
+									_name: {
+										$type: TSKindId.Identifier,
+										$source: 0,
+										$named: true,
+										$text: 'main',
+										$span: { start: 3, end: 7 },
+										$nodeHandle: 0,
+										$childIndex: 1
+									},
+									_pub: {
+										$type: TSKindId.Pub,
+										$source: 0,
+										$named: false,
+										$text: 'pub',
+										$span: { start: 0, end: 3 },
+										$nodeHandle: 0,
+										$childIndex: 0
+									}
+								}
+							});
+						}
+						readNode(_handle: number, _childIndex: number): string {
+							return JSON.stringify({
+								$type: TSKindId.FunctionItem,
+								$source: 0,
+								$named: true,
+								$span: { start: 0, end: 10 },
+								$nodeHandle: 7,
+								_name: {
+									$type: TSKindId.Identifier,
+									$source: 0,
+									$named: true,
+									$text: 'main',
+									$span: { start: 3, end: 7 },
+									$nodeHandle: 7,
+									$childIndex: 1
+								},
+								_pub: {
+									$type: TSKindId.Pub,
+									$source: 0,
+									$named: false,
+									$text: 'pub',
+									$span: { start: 0, end: 3 },
+									$nodeHandle: 7,
+									$childIndex: 0
+								}
+							});
+						}
+						dispose(): void {}
+					}
+				}
+			})
+		}));
+
+		const { createEngine } = await import('../src/engine.js');
+		const engine = createEngine();
+		const parsed = engine.reader?.parseAndRead('pub fn main');
+		expect(parsed).toBeDefined();
+		if (!parsed || !engine.reader) throw new Error('expected native engine reader');
+
+		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
+		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
+			$text: 'main',
+			$nodeHandle: 0,
+			$childIndex: 1
+		});
+		expect(parsed.root.$children).toBeUndefined();
+		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
+			$text: 'pub',
+			$nodeHandle: 0,
+			$childIndex: 0,
+			$named: false
+		});
+
+		const child = parsed.tree.read?.(0, 1);
+		expect(child).toBeDefined();
+		expect((child as unknown as Record<string, unknown>).$fields).toBeUndefined();
+		expect((child as unknown as Record<string, unknown>)._name).toMatchObject({
+			$text: 'main',
+			$nodeHandle: 7,
+			$childIndex: 1
+		});
+		expect(engine.reader.readNode(0, 1)).toEqual(child);
+	});
+
 	it('native engine rejects ignoreFormat option (Task 4 requirement)', async () => {
 		// Mock a native backend
 		vi.doMock('../src/backend.js', () => ({
