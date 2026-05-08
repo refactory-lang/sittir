@@ -49,6 +49,7 @@ import {
 } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from './kind-id-rust.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
+import type { CodegenEmitter } from './emitter.ts';
 
 /** Grammars the emitter supports. Matches the three per-grammar packages. */
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -91,29 +92,70 @@ export interface RenderModuleBundle {
 	templateCopies: RenderModuleTemplateCopies;
 }
 
-interface RenderModuleEmitterConfig {
+export interface RenderModuleEmitterConfig {
 	grammar: Grammar;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 }
 
-const renderModuleEmitterState: { config: RenderModuleEmitterConfig | null } = {
-	config: null
-};
+type RenderModuleCollectedEntry = AssembledNode;
 
-export const renderModuleEmitter = {
-	init(config: RenderModuleEmitterConfig): void {
-		renderModuleEmitterState.config = config;
-	},
+function collectRenderModuleEntry(node: AssembledNode): RenderModuleCollectedEntry {
+	return node;
+}
+
+interface SynthesizeRenderModuleBundleConfig {
+	grammar: Grammar;
+	nodeMap: NodeMap;
+	generatedIdTables?: GeneratedIdTables;
+	entries: readonly RenderModuleCollectedEntry[];
+	templates: EmittedTemplates;
+}
+
+function synthesizeRenderModuleBundle(config: SynthesizeRenderModuleBundleConfig): RenderModuleBundle {
+	const { grammar, nodeMap, generatedIdTables, entries, templates } = config;
+	void entries;
+	return emitRenderModuleBundle(grammar, templates, nodeMap, generatedIdTables);
+}
+
+export class RenderModuleEmitter implements CodegenEmitter<RenderModuleBundle, EmittedTemplates> {
+	readonly #grammar: Grammar;
+	readonly #nodeMap: NodeMap;
+	readonly #generatedIdTables?: GeneratedIdTables;
+	readonly #entries: RenderModuleCollectedEntry[] = [];
+
+	constructor(config: RenderModuleEmitterConfig) {
+		this.#grammar = config.grammar;
+		this.#nodeMap = config.nodeMap;
+		this.#generatedIdTables = config.generatedIdTables;
+	}
+
+	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {
+		this.#entries.push(collectRenderModuleEntry(node));
+	}
+
+	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
+		this.#entries.push(collectRenderModuleEntry(node));
+	}
+
+	emitPolymorph(node: Extract<AssembledNode, { modelType: 'polymorph' }>): void {
+		this.#entries.push(collectRenderModuleEntry(node));
+	}
+
+	emitGroup(node: Extract<AssembledNode, { modelType: 'group' }>): void {
+		this.#entries.push(collectRenderModuleEntry(node));
+	}
 
 	finalize(templates: EmittedTemplates): RenderModuleBundle {
-		const config = renderModuleEmitterState.config;
-		if (!config) {
-			throw new Error('renderModuleEmitter used before init()');
-		}
-		return emitRenderModuleBundle(config.grammar, templates, config.nodeMap, config.generatedIdTables);
+		return synthesizeRenderModuleBundle({
+			grammar: this.#grammar,
+			nodeMap: this.#nodeMap,
+			generatedIdTables: this.#generatedIdTables,
+			entries: this.#entries,
+			templates
+		});
 	}
-} as const;
+}
 
 function hashRsHeader(lang: Grammar): string {
 	return `// @generated from packages/${lang}/templates/*.jinja — do not hand-edit.

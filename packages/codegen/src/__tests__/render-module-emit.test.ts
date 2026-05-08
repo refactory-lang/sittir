@@ -20,6 +20,8 @@ import {
 	type SlotClass
 } from '../emitters/transport-common.ts';
 import { emitRenderModule } from '../emitters/render-module.ts';
+import { emitAll } from '../emitters/emit.ts';
+import { runRenderModuleEmitter } from '../emitters/render-module-runner.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
 import { evaluate } from '../compiler/evaluate.ts';
@@ -248,9 +250,43 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 		expect(fnBody).not.toContain('render_block');
 	});
 
-	it('leaf transport napi impls accept release strings or structured objects', async () => {
+it('leaf transport napi impls accept release strings or structured objects', async () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('let text = if let Ok(text) = String::from_napi_value(env, napi_val) {');
 		expect(src).toContain('obj.get("$text")?.unwrap_or_default()');
 	});
 });
+
+async function buildRustFixtureForParity() {
+	const grammar = 'rust' as const;
+	const grammarJsPath = resolveGrammarJsPath(grammar);
+	const overridesPath = resolveOverridesPath(grammar);
+	const entryPath = existsSync(overridesPath) ? overridesPath : grammarJsPath;
+	const raw = await evaluate(entryPath);
+	const linked = link(raw);
+	const optimized = optimize(linked);
+	const nodeMap = assemble(optimized);
+	const generatedIdTables = await loadGeneratedIdTables(grammar);
+	const jinjaTemplates = emitJinjaTemplates({ grammar, nodeMap });
+	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
+}
+
+it('adapter path matches emitAll render-module output', async () => {
+	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
+
+	const viaEmitAll = emitAll({
+		grammar,
+		nodeMap,
+		generatedIdTables,
+		emitRenderModule: true
+	}).renderModule;
+
+	const viaAdapter = runRenderModuleEmitter({
+		grammar,
+		nodeMap,
+		generatedIdTables,
+		jinjaTemplates
+	});
+
+	expect(viaAdapter).toEqual(viaEmitAll);
+}, 60_000);

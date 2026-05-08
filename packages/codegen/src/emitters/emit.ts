@@ -18,7 +18,7 @@ import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { EmittedTemplates } from './templates.ts';
 import type { GrammarRoles } from '../scm/extract-roles.ts';
-import type { RenderModuleBundle } from './render-module.ts';
+import type { Grammar, RenderModuleBundle } from './render-module.ts';
 
 import { factoryEmitter } from './factories.ts';
 import { fromEmitter } from './from.ts';
@@ -33,7 +33,7 @@ import { templateEmitter } from './templates.ts';
 import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
-import { isRenderModuleGrammar, renderModuleEmitter } from './render-module.ts';
+import { isRenderModuleGrammar, RenderModuleEmitter } from './render-module.ts';
 import {
 	classifyFactoryEmission,
 	classifyFromEmission,
@@ -70,11 +70,14 @@ export interface EmitAllResult {
 	renderModule?: RenderModuleBundle;
 }
 
-type RenderModuleEmission = 'emit' | 'skip-disabled' | 'skip-unsupported-grammar';
+type RenderModuleEmission =
+	| { tag: 'emit'; validGrammar: Grammar }
+	| { tag: 'skip' };
 
 function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
-	if (emitRenderModule !== true) return 'skip-disabled';
-	return isRenderModuleGrammar(grammar) ? 'emit' : 'skip-unsupported-grammar';
+	if (emitRenderModule !== true) return { tag: 'skip' };
+	if (!isRenderModuleGrammar(grammar)) return { tag: 'skip' };
+	return { tag: 'emit', validGrammar: grammar };
 }
 
 /**
@@ -135,13 +138,14 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		nodeMap
 	});
 
-	if (renderModuleEmission === 'emit' && isRenderModuleGrammar(grammar)) {
-		renderModuleEmitter.init({
-			grammar,
-			nodeMap,
-			generatedIdTables
-		});
-	}
+	const renderModuleEmitterInst =
+		renderModuleEmission.tag === 'emit'
+			? new RenderModuleEmitter({
+					grammar: renderModuleEmission.validGrammar,
+					nodeMap,
+					generatedIdTables
+			  })
+			: undefined;
 
 	// -----------------------------------------------------------------
 	// 2. ONE loop — taxonomy dispatch happens HERE
@@ -186,22 +190,26 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
 				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
 				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
+				renderModuleEmitterInst?.emitLeaf?.(node);
 				break;
 			case 'branch':
 				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
 				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
 				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
+				renderModuleEmitterInst?.emitBranch?.(node);
 				break;
 			case 'polymorph':
 				if (factoryEmission === 'emit') factoryEmitter.emitPolymorph(node);
 				if (fromEmission === 'emit') fromEmitter.emitPolymorph(node);
 				if (wrapEmission === 'emit') wrapEmitter.emitPolymorph(node);
 				if (templateEmission === 'emit') templateEmitter.emitPolymorph(node);
+				renderModuleEmitterInst?.emitPolymorph?.(node);
 				break;
 			case 'group':
 				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
 				if (templateEmission === 'emit') templateEmitter.emitGroup(node);
+				renderModuleEmitterInst?.emitGroup?.(node);
 				break;
 			case 'token':
 			case 'supertype':
@@ -217,7 +225,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
 	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule = renderModuleEmission === 'emit' ? renderModuleEmitter.finalize(jinjaTemplates) : undefined;
+	const renderModule = renderModuleEmitterInst?.finalize(jinjaTemplates);
 
 	// -----------------------------------------------------------------
 	// 4. Run emitters that use their own internal iteration
