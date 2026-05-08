@@ -1,14 +1,33 @@
-import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
+import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit, NodeTrivia } from '@sittir/types';
 
-export interface WithMethodsRuntime {
+export interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: unknown[]): unknown;
+	$trivia(...args: unknown[]): T & WithMethodsRuntime<T>;
 }
 
-export function withMethods<T extends object, M extends object>(node: T, methods: M): T & M {
-	return Object.assign(node, methods);
+export interface WithMethodsEngine {
+	render(node: AnyNodeData): string;
+	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
+}
+
+export function withMethods<T extends object>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+	return Object.assign(node, {
+		$render(this: AnyNodeData): string {
+			return engine.render(this);
+		},
+		$toEdit(this: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit {
+			return engine.toEdit(this, startOrRange, endPos);
+		},
+		$replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
+			return engine.toEdit(this, target.range());
+		},
+		$trivia(this: AnyNodeData, ...args: unknown[]) {
+			setTriviaData(this, toTriviaData(args));
+			return this as unknown as T & WithMethodsRuntime<T>;
+		}
+	});
 }
 
 export function isNodeData(v: unknown): v is AnyNodeData {
@@ -69,4 +88,19 @@ function extractNodeText(value: unknown): string | undefined {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function toTriviaData(args: readonly unknown[]): NodeTrivia {
+	if (args.length === 1 && isTriviaObject(args[0])) {
+		return args[0];
+	}
+	return { leading: args as readonly AnyNodeData[] };
+}
+
+function isTriviaObject(value: unknown): value is NodeTrivia {
+	return isRecord(value) && ('leading' in value || 'trailing' in value);
+}
+
+function setTriviaData(node: AnyNodeData, triviaData: NodeTrivia): void {
+	(node as unknown as Record<string, unknown>).$triviaData = triviaData;
 }
