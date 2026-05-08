@@ -131,6 +131,13 @@ impl SittirEngine {
     }
 
     #[napi]
+    pub fn render_to_file(&self, transport: AnyTransport, path: String) -> Result<()> {
+        let rendered = self.render(transport)?;
+        std::fs::write(&path, rendered)
+            .map_err(|e| Error::from_reason(format!("render_to_file failed for {path}: {e}")))
+    }
+
+    #[napi]
     pub fn apply_edits(&self, source: String, edits: Vec<Edit>) -> Result<String> {
         self.engine
             .apply_edits(source, edits)

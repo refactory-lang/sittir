@@ -36,6 +36,7 @@ export declare class SittirEngine {
   readNode(handle: number, childIndex: number): string
   /** Render a typed transport object (napi-native, numeric `$type`). */
   render(transport: AnyTransport): string
+  renderToFile(transport: AnyTransport, path: string): void
   applyEdits(source: string, edits: Array<Edit>): string
   dispose(): void
 }

@@ -86,7 +86,7 @@ describe('engine', () => {
 		expect(typeof engine.reader?.readNode).toBe('function');
 	});
 
-	it('normalizes native reader payloads to JS readNode shape', async () => {
+	it('passes through native reader payloads already in JS readNode shape', async () => {
 		vi.doMock('../src/backend.js', () => ({
 			getActiveBackend: () => ({
 				name: 'native',
@@ -107,26 +107,24 @@ describe('engine', () => {
 									$named: true,
 									$span: { start: 0, end: 10 },
 									$nodeHandle: 0,
-									$fields: {
-										name: {
-											$type: TSKindId.Identifier,
-											$source: 0,
-											$named: true,
-											$text: 'main',
-											$span: { start: 3, end: 7 },
-											$childIndex: 1
-										}
+									_name: {
+										$type: TSKindId.Identifier,
+										$source: 0,
+										$named: true,
+										$text: 'main',
+										$span: { start: 3, end: 7 },
+										$nodeHandle: 0,
+										$childIndex: 1
 									},
-									$children: [
-										{
-											$type: TSKindId.Pub,
-											$source: 0,
-											$named: false,
-											$text: 'pub',
-											$span: { start: 0, end: 3 },
-											$childIndex: 0
-										}
-									]
+									_pub: {
+										$type: TSKindId.Pub,
+										$source: 0,
+										$named: false,
+										$text: 'pub',
+										$span: { start: 0, end: 3 },
+										$nodeHandle: 0,
+										$childIndex: 0
+									}
 								}
 							});
 						}
@@ -137,26 +135,24 @@ describe('engine', () => {
 								$named: true,
 								$span: { start: 0, end: 10 },
 								$nodeHandle: 7,
-								$fields: {
-									name: {
-										$type: TSKindId.Identifier,
-										$source: 0,
-										$named: true,
-										$text: 'main',
-										$span: { start: 3, end: 7 },
-										$childIndex: 1
-									}
+								_name: {
+									$type: TSKindId.Identifier,
+									$source: 0,
+									$named: true,
+									$text: 'main',
+									$span: { start: 3, end: 7 },
+									$nodeHandle: 7,
+									$childIndex: 1
 								},
-								$children: [
-									{
-										$type: TSKindId.Pub,
-										$source: 0,
-										$named: false,
-										$text: 'pub',
-										$span: { start: 0, end: 3 },
-										$childIndex: 0
-									}
-								]
+								_pub: {
+									$type: TSKindId.Pub,
+									$source: 0,
+									$named: false,
+									$text: 'pub',
+									$span: { start: 0, end: 3 },
+									$nodeHandle: 7,
+									$childIndex: 0
+								}
 							});
 						}
 						dispose(): void {}
@@ -306,6 +302,55 @@ describe('engine', () => {
 
 		expect(() => render(undefined, { ignoreFormat: true })).toThrow(
 			/ignoreFormat option not yet supported by native engine/
+		);
+	});
+
+	it('native render handle save delegates to engine-side renderToFile', async () => {
+		const renderToFile = vi.fn();
+		const render = vi.fn((_node: Record<string, unknown>) => 'fn main() {}');
+		vi.doMock('../src/backend.js', () => ({
+			getActiveBackend: () => ({
+				name: 'native',
+				hashMatch: true,
+				native: {
+					SittirEngine: class {
+						render(node: Record<string, unknown>): string {
+							return render(node);
+						}
+						renderToFile(nodeData: Record<string, unknown>, path: string): void {
+							renderToFile(nodeData, path);
+						}
+						applyEdits(
+							source: string,
+							_edits: {
+								startPos: number;
+								endPos: number;
+								insertedText: string;
+							}[]
+						): string {
+							return source;
+						}
+						dispose(): void {}
+					}
+				}
+			})
+		}));
+
+		const { createEngine } = await import('../src/engine.js');
+		const engine = createEngine();
+		const rendered = engine.render({
+			$type: TSKindId.Identifier,
+			$source: 2 as const,
+			$named: true,
+			$text: 'x'
+		});
+
+		rendered.save('/tmp/sittir-rust-render.txt');
+		expect(renderToFile).toHaveBeenCalledOnce();
+		expect(render).not.toHaveBeenCalled();
+		expect(renderToFile).toHaveBeenCalledWith(
+			expect.objectContaining({ $type: TSKindId.Identifier }),
+			'/tmp/sittir-rust-render.txt'
 		);
 	});
 });
