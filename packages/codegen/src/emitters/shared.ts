@@ -20,6 +20,8 @@ import {
 	isNonEmpty,
 	allSlotsOf
 } from '../compiler/node-map.ts';
+import type { KindEnumEntry } from './kind-discriminant.ts';
+import { hasCatalogEntry } from './kind-discriminant.ts';
 
 // Re-export derived helpers so emitters can import from one place.
 export { isRequired, isMultiple, isNonEmpty };
@@ -196,14 +198,13 @@ export function resolveEffectiveLiteral(field: AssembledNonterminal, nodeMap: No
 	//
 	// Handled sub-cases:
 	//   - AssembledKeyword (literal keyword rule)
-	//   - Single-value AssembledEnum (synthesised by evaluate for choice-of-one-literal
-	//     hidden kinds — e.g. python's `_type_alias_statement_type: $ => 'type'`).
+	//   - AssembledToken with a single string body
 	if (isNodeRef(v)) {
 		const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
 		if (kindName.startsWith('_')) {
 			const ref = nodeMap.nodes.get(kindName);
 			if (ref instanceof AssembledKeyword) return ref.text;
-			if (ref instanceof AssembledEnum && ref.values.length === 1) return ref.values[0]!;
+			if (ref instanceof AssembledToken) return ref.text;
 		}
 	}
 
@@ -462,6 +463,16 @@ export type TypeComponent =
 	| { kind: 'literal'; value: string }
 	| { kind: 'missing'; value: string; rawKind: string };
 
+function resolveAliasedSlotKind(
+	slot: { aliasSources?: Record<string, string> },
+	kind: string,
+	nodeMap: NodeMap
+): string {
+	const source = slot.aliasSources?.[kind];
+	if (!source) return kind;
+	return nodeMap.nodes.get(source) ? source : kind;
+}
+
 /**
  * Compute the shared {@link TypeComponent} list for a field slot.
  *
@@ -484,11 +495,6 @@ export type TypeComponent =
  */
 export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMap): TypeComponent[] {
 	const out: TypeComponent[] = [];
-	const resolveAliased = (t: string): string => {
-		const source = field.aliasSources?.[t];
-		if (!source) return t;
-		return nodeMap.nodes.get(source) ? source : t;
-	};
 	for (const v of field.values) {
 		if (isTerminalValue(v)) {
 			out.push({ kind: 'literal', value: v.value });
@@ -496,7 +502,7 @@ export function fieldTypeComponents(field: AssembledNonterminal, nodeMap: NodeMa
 		}
 		if (!isNodeRef(v)) continue;
 		const rawName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-		const t = resolveAliased(rawName);
+		const t = resolveAliasedSlotKind(field, rawName, nodeMap);
 		const lit = resolveHiddenKeywordLiteral(t, nodeMap);
 		if (lit !== undefined) {
 			out.push({ kind: 'literal', value: lit });
@@ -650,8 +656,6 @@ export function resolveHoistedForm(form: AssembledGroup, nodeMap: NodeMap): Hois
  *   - TerminalValue → its `.value`.
  *   - NodeRef to a hidden `_kw_*` keyword kind (AssembledKeyword) or
  *     hidden single-string AssembledToken → the keyword/token text.
- *   - NodeRef to a single-value AssembledEnum (`members.length === 1`)
- *     → that member's value.
  *
  * Any other shape (non-literal node ref, unresolved ref) returns undefined.
  */
@@ -662,15 +666,10 @@ function resolveEntryLiteral(entry: NodeOrTerminal, nodeMap: NodeMap): string | 
 	// Hidden `_kw_*` / hidden single-string token — uses the existing helper.
 	const lit = resolveHiddenKeywordLiteral(kindName, nodeMap);
 	if (lit !== undefined) return lit;
-	// Single-value enum — structurally identical to a bare literal.
-	const ref = nodeMap.nodes.get(kindName);
-	if (ref instanceof AssembledEnum) {
-		const values = ref.values;
-		if (values.length === 1) return values[0];
-	}
 	// Hidden non-underscore keyword resolution (defensive — keeps the
 	// helper symmetric with resolveHiddenKeywordLiteral, which only
 	// returns for `_`-prefixed kinds).
+	const ref = nodeMap.nodes.get(kindName);
 	if (!kindName.startsWith('_')) {
 		if (ref instanceof AssembledKeyword) return ref.text;
 		if (ref instanceof AssembledToken) return ref.text;
@@ -773,6 +772,74 @@ export function keywordPresenceValues(field: AssembledNonterminal, nodeMap: Node
 export function keywordPresenceIsNonEmptyRepeat(field: AssembledNonterminal): boolean {
 	if (field.values.length === 0) return false;
 	return field.values.every((v) => v.multiplicity === 'nonEmptyArray');
+}
+
+export type FieldStorageKind = 'verbatim' | 'boolean' | 'bitflag' | 'kindEnum';
+
+export interface FieldStorageInfo {
+	readonly kind: FieldStorageKind;
+	readonly texts: readonly string[];
+	readonly enumKinds: readonly string[];
+	readonly collapsesMultiplicity: boolean;
+}
+
+/**
+ * Shared classification for the public field-storage contract emitted by the
+ * generator.
+ */
+export function resolveFieldStorageInfo(field: AssembledNonterminal, nodeMap: NodeMap): FieldStorageInfo {
+	const keywordKind = keywordPresenceKind(field, nodeMap);
+	if (keywordKind === 'boolean') {
+		const text = keywordPresenceValue(field, nodeMap);
+		return {
+			kind: 'boolean',
+			texts: text ? [text] : [],
+			enumKinds: [],
+			collapsesMultiplicity: true
+		};
+	}
+	if (keywordKind === 'bitflag') {
+		return {
+			kind: 'bitflag',
+			texts: keywordPresenceValues(field, nodeMap),
+			enumKinds: [],
+			collapsesMultiplicity: true
+		};
+	}
+
+	const enumKinds: string[] = [];
+	const texts: string[] = [];
+	const seenKinds = new Set<string>();
+	const seenTexts = new Set<string>();
+	for (const value of field.values) {
+		if (!isNodeRef(value)) {
+			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+		}
+		const rawKind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		const resolvedKind = resolveAliasedSlotKind(field, rawKind, nodeMap);
+		const node = nodeMap.nodes.get(resolvedKind);
+		if (!(node instanceof AssembledEnum) || node.values.length <= 1) {
+			return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+		}
+		if (!seenKinds.has(resolvedKind)) {
+			seenKinds.add(resolvedKind);
+			enumKinds.push(resolvedKind);
+		}
+		for (const text of node.values) {
+			if (seenTexts.has(text)) continue;
+			seenTexts.add(text);
+			texts.push(text);
+		}
+	}
+	if (enumKinds.length === 0) {
+		return { kind: 'verbatim', texts: [], enumKinds: [], collapsesMultiplicity: false };
+	}
+	return {
+		kind: 'kindEnum',
+		texts,
+		enumKinds,
+		collapsesMultiplicity: false
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -973,4 +1040,114 @@ export function classifyFactoryShape(
 		default:
 			return null;
 	}
+}
+
+export interface ParserSymbolDispatchContext {
+	kindEntries?: readonly KindEnumEntry[];
+	inlineKinds?: readonly string[];
+	synthesizedKinds?: ReadonlySet<string>;
+}
+
+export type ParserSymbolEmission = 'emit' | 'skip-inline-kind' | 'skip-synthesized-kind' | 'skip-missing-parser-symbol';
+
+export function classifyParserSymbolEmission(kind: string, context: ParserSymbolDispatchContext): ParserSymbolEmission {
+	const { kindEntries, inlineKinds, synthesizedKinds } = context;
+	if (!kindEntries || hasCatalogEntry(kindEntries, kind)) return 'emit';
+	if (inlineKinds?.includes(kind)) return 'skip-inline-kind';
+	if (synthesizedKinds?.has(kind)) return 'skip-synthesized-kind';
+	return 'skip-missing-parser-symbol';
+}
+
+export function warnSkippedParserSymbol(
+	kind: string,
+	emitter: 'factory' | 'wrap',
+	emission: Exclude<ParserSymbolEmission, 'emit'>
+): void {
+	switch (emission) {
+		case 'skip-inline-kind':
+			console.warn(
+				`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
+					`Skipping ${emitter} emission. ` +
+					`Future: map to decomposition.`
+			);
+			return;
+		case 'skip-synthesized-kind':
+			return;
+		case 'skip-missing-parser-symbol':
+			console.warn(
+				`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
+					`NOT in the grammar's inline: array. Skipping ${emitter} ` +
+					`emission. Investigate why tree-sitter dropped this rule.`
+			);
+			return;
+	}
+}
+
+function isHiddenStructuralFactoryKind(kind: string, node: AssembledNode): boolean {
+	return kind.startsWith('_') && node.modelType !== 'token' && node.modelType !== 'multi';
+}
+
+export interface FactoryDispatchContext extends ParserSymbolDispatchContext {
+	nodeMap: NodeMap;
+}
+
+export type FactoryEmission =
+	| 'emit'
+	| Exclude<ParserSymbolEmission, 'emit'>
+	| 'skip-non-surface-kind'
+	| 'skip-polymorph-form'
+	| 'skip-hidden-keyword-literal'
+	| 'skip-no-factory-name';
+
+export function classifyFactoryEmission(
+	kind: string,
+	node: AssembledNode,
+	context: FactoryDispatchContext
+): FactoryEmission {
+	if (!node.userFacing && !isHiddenStructuralFactoryKind(kind, node)) return 'skip-non-surface-kind';
+	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
+	if (resolveHiddenKeywordLiteral(kind, context.nodeMap) !== undefined) return 'skip-hidden-keyword-literal';
+	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
+	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
+	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
+}
+
+export interface FromDispatchContext {
+	nodeMap: NodeMap;
+	kindEntries?: readonly KindEnumEntry[];
+}
+
+export type FromEmission =
+	| 'emit'
+	| Exclude<ParserSymbolEmission, 'emit'>
+	| 'skip-hidden-kind'
+	| 'skip-polymorph-form'
+	| 'skip-no-from-surface';
+
+export function classifyFromEmission(kind: string, node: AssembledNode, context: FromDispatchContext): FromEmission {
+	if (kind.startsWith('_')) return 'skip-hidden-kind';
+	if (context.nodeMap.polymorphFormKinds.has(kind)) return 'skip-polymorph-form';
+	const parserSymbolEmission = classifyParserSymbolEmission(kind, { kindEntries: context.kindEntries });
+	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
+	return node.rawFactoryName && node.fromFunctionName ? 'emit' : 'skip-no-from-surface';
+}
+
+export type WrapEmission = 'emit' | Exclude<ParserSymbolEmission, 'emit'> | 'skip-no-factory-name';
+
+export function classifyWrapEmission(
+	kind: string,
+	node: AssembledNode,
+	context: ParserSymbolDispatchContext
+): WrapEmission {
+	const parserSymbolEmission = classifyParserSymbolEmission(kind, context);
+	if (parserSymbolEmission !== 'emit') return parserSymbolEmission;
+	return node.rawFactoryName ? 'emit' : 'skip-no-factory-name';
+}
+
+export type TemplateEmission = 'emit' | 'skip-non-user-facing' | 'skip-polymorph-form-group';
+
+export function classifyTemplateEmission(node: AssembledNode): TemplateEmission {
+	if (!node.userFacing) return 'skip-non-user-facing';
+	if (node.modelType === 'group' && node.parentKind) return 'skip-polymorph-form-group';
+	return 'emit';
 }

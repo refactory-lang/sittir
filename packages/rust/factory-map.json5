@@ -5,17 +5,13 @@
 {
   "factoryShapes": {
     "__range_expression_binary_operator": "text",
-    "__visibility_modifier_in_path_in": "text",
-    "__visibility_modifier_pub_pub": "text",
     "_array_expression_list": "config",
     "_array_expression_semi": "config",
-    "_binary_expression_operator": "text",
     "_closure_expression_async_marker": "text",
     "_closure_expression_block": "config",
     "_closure_expression_expr": "config",
     "_closure_expression_static_marker": "text",
     "_compound_assignment_expr_operator": "text",
-    "_crate": "text",
     "_delim_token_tree_brace": "spread",
     "_delim_token_tree_bracket": "spread",
     "_delim_token_tree_paren": "spread",
@@ -27,9 +23,7 @@
     "_foreign_mod_item_body": "config",
     "_function_type_fn_form": "config",
     "_function_type_trait_form": "config",
-    "_generic_type_with_turbofish_turbofish": "text",
     "_impl_item_body": "config",
-    "_impl_item_negative": "text",
     "_let_chain": "spread",
     "_line_comment_content": "text",
     "_line_comment_doc": "config",
@@ -42,7 +36,6 @@
     "_mod_item_inline": "config",
     "_move_marker": "text",
     "_mutable_specifier": "text",
-    "_operator": "text",
     "_or_pattern_binary": "config",
     "_or_pattern_prefix": "config",
     "_pointer_type_const": "text",
@@ -58,7 +51,6 @@
     "_reference_expression_raw_const": "text",
     "_reference_expression_raw_mut": "config",
     "_reserved_identifier": "spread",
-    "_self": "text",
     "_struct_item_brace": "config",
     "_struct_item_tuple": "config",
     "_token_binding_pattern_type": "text",
@@ -194,8 +186,8 @@
     "removed_trait_bound": "direct",
     "return_expression": "config",
     "scoped_identifier": "config",
-    "scoped_type_identifier": "direct",
-    "scoped_type_identifier_in_expression_position": "direct",
+    "scoped_type_identifier": "config",
+    "scoped_type_identifier_in_expression_position": "config",
     "scoped_use_list": "config",
     "self": "text",
     "self_parameter": "direct",
@@ -209,7 +201,7 @@
     "struct_item": "config",
     "struct_pattern": "config",
     "super": "text",
-    "token_binding_pattern": "direct",
+    "token_binding_pattern": "config",
     "token_repetition": "spread",
     "token_repetition_pattern": "spread",
     "token_tree_paren": "spread",
@@ -234,7 +226,7 @@
     "type_item": "config",
     "type_parameter": "config",
     "type_parameters": "config",
-    "unary_expression": "direct",
+    "unary_expression": "config",
     "union_item": "config",
     "unit_expression": "text",
     "unit_type": "text",
@@ -257,14 +249,15 @@
     "_outer_block_doc_comment_marker": "text",
     "_inner_block_doc_comment_marker": "text",
     "_line_doc_content": "text",
-    "fn": "text",
     "async": "text",
+    "static": "text",
+    "fn": "text",
     "in": "text",
     "move": "text",
     "pub": "text",
     "ref": "text",
-    "static": "text",
     "unsafe": "text",
+    "mut": "text",
     "as": "text",
     "await": "text",
     "break": "text",
@@ -292,7 +285,6 @@
     "dyn": "text",
     "else": "text",
     "extern": "text",
-    "mut": "text",
     "try": "text",
     "yield": "text"
   },
@@ -348,6 +340,7 @@
       "body"
     ],
     "_field_pattern_named": [
+      "name",
       "pattern"
     ],
     "_field_pattern_shorthand": [
@@ -380,6 +373,7 @@
     ],
     "_range_expression_binary": [
       "start",
+      "operator",
       "end"
     ],
     "_range_expression_postfix": [
@@ -416,6 +410,7 @@
       "right"
     ],
     "associated_type": [
+      "name",
       "type_parameters",
       "bounds",
       "where_clause"
@@ -452,6 +447,7 @@
     ],
     "compound_assignment_expr": [
       "left",
+      "operator",
       "right"
     ],
     "const_block": [
@@ -476,6 +472,7 @@
     ],
     "enum_item": [
       "visibility_modifier",
+      "name",
       "type_parameters",
       "where_clause",
       "body"
@@ -496,6 +493,7 @@
     ],
     "field_declaration": [
       "visibility_modifier",
+      "name",
       "type"
     ],
     "field_expression": [
@@ -646,10 +644,12 @@
       "name"
     ],
     "scoped_type_identifier": [
-      "path"
+      "path",
+      "name"
     ],
     "scoped_type_identifier_in_expression_position": [
-      "path"
+      "path",
+      "name"
     ],
     "scoped_use_list": [
       "path",
@@ -677,10 +677,12 @@
       "body"
     ],
     "token_binding_pattern": [
-      "name"
+      "name",
+      "type"
     ],
     "trait_item": [
       "visibility_modifier",
+      "name",
       "type_parameters",
       "bounds",
       "where_clause",
@@ -697,6 +699,7 @@
       "elements"
     ],
     "type_binding": [
+      "name",
       "type_arguments",
       "type"
     ],
@@ -706,12 +709,14 @@
     ],
     "type_item": [
       "visibility_modifier",
+      "name",
       "type_parameters",
       "where_clause",
       "type",
       "trailing_where_clause"
     ],
     "type_parameter": [
+      "name",
       "bounds",
       "default_type"
     ],
@@ -719,10 +724,12 @@
       "attributes"
     ],
     "unary_expression": [
+      "operator",
       "operand"
     ],
     "union_item": [
       "visibility_modifier",
+      "name",
       "type_parameters",
       "where_clause",
       "body"

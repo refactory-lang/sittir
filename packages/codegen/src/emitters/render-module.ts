@@ -93,7 +93,6 @@ export interface RenderModuleBundle {
 
 interface RenderModuleEmitterConfig {
 	grammar: Grammar;
-	templates: EmittedTemplates;
 	nodeMap: NodeMap;
 	generatedIdTables?: GeneratedIdTables;
 }
@@ -107,12 +106,12 @@ export const renderModuleEmitter = {
 		renderModuleEmitterState.config = config;
 	},
 
-	finalize(): RenderModuleBundle {
+	finalize(templates: EmittedTemplates): RenderModuleBundle {
 		const config = renderModuleEmitterState.config;
 		if (!config) {
 			throw new Error('renderModuleEmitter used before init()');
 		}
-		return emitRenderModuleBundle(config.grammar, config.templates, config.nodeMap, config.generatedIdTables);
+		return emitRenderModuleBundle(config.grammar, templates, config.nodeMap, config.generatedIdTables);
 	}
 } as const;
 
@@ -1486,21 +1485,13 @@ function renderTypedDispatch(
 	for (const node of nodes) {
 		const variant = rustTransportVariantName(node);
 		const isLeafLikeNode = node.modelType === 'pattern' || node.modelType === 'keyword' || node.modelType === 'token';
-		const isEnumNode = node instanceof AssembledEnum && !isSingleMemberEnum(node);
-		const isSingleBoolEnum = node instanceof AssembledEnum && isSingleMemberEnum(node);
 		if (isLeafLikeNode) {
 			// Leaf/keyword/token: route through render_into so render_with_trivia! fires.
 			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
-		} else if (isEnumNode) {
+		} else if (node instanceof AssembledEnum) {
 			// Multi-member enum: delegate to its RenderableTransport impl which
 			// writes the static text directly via dest.write_str(match self {...}).
 			lines.push(`            AnyTransport::${variant}(t) => t.render_into(dest),`);
-		} else if (isSingleBoolEnum) {
-			// Single-member presence bool: static text when true, empty when false.
-			const text = JSON.stringify((node as AssembledEnum).values[0]!);
-			lines.push(
-				`            AnyTransport::${variant}(t) => if *t { dest.write_str(${text}).map_err(::askama::Error::from) } else { Ok(()) },`
-			);
 		} else {
 			// Branch/container/group/polymorph: delegate to per-kind render fn
 			// which writes directly into dest (streaming — no String intermediate).
@@ -1626,25 +1617,13 @@ function renderTypedBranchFallbackFn(node: AssembledNode, nodeMap: NodeMap): str
  * Emit a simple leaf/keyword/token/enum typed render fn that writes the
  * transport text directly into dest.
  *
- * For `enum` modelType nodes:
- * - Single-member enums: transport is `bool`; write the known static text when
- *   true, nothing when false.
- * - Multi-member enums: transport is the Rust enum; write via `Display` (`t.to_string()`).
+ * For `enum` modelType nodes: transport is the Rust enum; write via `Display`
+ * (`t.to_string()`).
  * For all others: write `t.text` directly.
  */
 function renderTypedLeafFn(node: AssembledNode): string[] {
 	const fnName = rustTypedRenderFnName(node.typeName);
 	const typeName = rustTransportStructName(node);
-	if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
-		// Single-member presence bool: write the one known static text when true.
-		const text = JSON.stringify(node.values[0]!);
-		return [
-			`fn ${fnName}(t: &${typeName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`,
-			`    if *t { dest.write_str(${text}).map_err(::askama::Error::from) } else { Ok(()) }`,
-			`}`,
-			``
-		];
-	}
 	const body =
 		node instanceof AssembledEnum
 			? `dest.write_str(&t.to_string()).map_err(::askama::Error::from)`
@@ -2073,19 +2052,6 @@ function buildTypedTemplateBody(
 				// Heterogeneous single required field — type is Box<AnyTransport>.
 				// Deref through Box to reach &AnyTransport: &dyn RenderableTransport.
 				lines.push(`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(node.${rIdent}.as_ref())),`);
-			} else if (
-				cls.tag === 'concrete' &&
-				nodeMap !== undefined &&
-				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
-			) {
-				// Single-member enum field: bool transport — emit static text conditional.
-				// bool does not implement RenderableTransport; use Renderable::Text directly.
-				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
-				lines.push(`        ${rIdent}: SingleNonterminalView(`);
-				lines.push(
-					`            if node.${rIdent} { ${R}Renderable::Text(${staticText}) } else { ${R}Renderable::Text("") }`
-				);
-				lines.push(`        ),`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
 				lines.push(`        ${rIdent}: SingleNonterminalView(${R}Renderable::Transport(&node.${rIdent})),`);
@@ -2100,18 +2066,6 @@ function buildTypedTemplateBody(
 				lines.push(`        ${rIdent}: match &node.${rIdent} {`);
 				lines.push(`            Some(v) => OptionalNonterminalView::Present(${R}Renderable::Transport(v.as_ref())),`);
 				lines.push(`            None => OptionalNonterminalView::Missing,`);
-				lines.push(`        },`);
-			} else if (
-				cls.tag === 'concrete' &&
-				nodeMap !== undefined &&
-				singleMemberEnumTextForKind(cls.kind, nodeMap) !== undefined
-			) {
-				// Single-member enum field: bool transport — emit static text conditional.
-				// bool does not implement RenderableTransport; use Renderable::Text directly.
-				const staticText = JSON.stringify(singleMemberEnumTextForKind(cls.kind, nodeMap)!);
-				lines.push(`        ${rIdent}: match node.${rIdent} {`);
-				lines.push(`            Some(true) => OptionalNonterminalView::Present(${R}Renderable::Text(${staticText})),`);
-				lines.push(`            _ => OptionalNonterminalView::Missing,`);
 				lines.push(`        },`);
 			} else {
 				// Concrete or supertype — Rust auto-coerces to &dyn RenderableTransport.
@@ -2697,19 +2651,23 @@ function emitSupertypeTransportEnum(
 			`            .ok_or_else(|| ::napi::Error::from_reason(${JSON.stringify(`$type property missing in ${enumName}`)}))?;`
 		);
 		lines.push(`        match kind_id {`);
+		const emittedIds = new Set<number>();
 		for (const { subKind, subNode } of validSubtypes) {
-			const id = kindIdByKind.get(subKind);
-			if (id === undefined) continue; // no catalog entry — skip
 			const variant = rustTypeIdent(subNode.typeName);
 			const typeName = rustTransportStructName(subNode);
-			if (isLeafLike(subNode)) {
-				lines.push(`            ${id} => Ok(Self::${variant}(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            )),`);
-			} else {
-				lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
-				lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
-				lines.push(`            ))),`);
+			for (const concreteKind of collectConcreteTransportKinds(subKind, nodeMap)) {
+				const id = kindIdByKind.get(concreteKind);
+				if (id === undefined || emittedIds.has(id)) continue;
+				emittedIds.add(id);
+				if (isLeafLike(subNode)) {
+					lines.push(`            ${id} => Ok(Self::${variant}(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            )),`);
+				} else {
+					lines.push(`            ${id} => Ok(Self::${variant}(Box::new(`);
+					lines.push(`                ${typeName}::from_napi_value(env, napi_val)?`);
+					lines.push(`            ))),`);
+				}
 			}
 		}
 		lines.push(`            other => Err(::napi::Error::from_reason(format!(`);
@@ -2829,6 +2787,25 @@ function emitSupertypeRenderHelper(supertypeNode: AssembledSupertype, nodeMap: N
 	lines.push(``);
 
 	return lines;
+}
+
+function collectConcreteTransportKinds(
+	kind: string,
+	nodeMap: NodeMap,
+	seen: Set<string> = new Set()
+): string[] {
+	if (seen.has(kind)) return [];
+	seen.add(kind);
+	const node = nodeMap.nodes.get(kind);
+	if (node === undefined) return [];
+	if (node.modelType !== 'supertype') return [kind];
+	const concreteKinds = new Set<string>();
+	for (const subtype of (node as AssembledSupertype).subtypes) {
+		for (const concreteKind of collectConcreteTransportKinds(subtype, nodeMap, seen)) {
+			concreteKinds.add(concreteKind);
+		}
+	}
+	return [...concreteKinds];
 }
 
 /**
@@ -3135,17 +3112,9 @@ function renderAnyTransportWithNapiFromValue(
 		const structName = rustTransportStructName(node);
 		const constName = toScreamingSnakeCase(kindIdMemberName(nodeMap, node.kind), node.kind);
 		lines.push(`            // kind: ${node.kind} (${constName})`);
-		if (node instanceof AssembledEnum && isSingleMemberEnum(node)) {
-			// Single-member presence bool: the object's presence means `true`.
-			// JS sends an object with `$type: <id>` to signal this node is present;
-			// the bool value is always `true` here (absence is handled by the parent
-			// struct's `Option<bool>` field being None when the property is missing).
-			lines.push(`            ${id} => Ok(AnyTransport::${variant}(true)),`);
-		} else {
-			lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
-			lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
-			lines.push(`            )),`);
-		}
+		lines.push(`            ${id} => Ok(AnyTransport::${variant}(`);
+		lines.push(`                ${structName}::from_napi_value(env, napi_val)?`);
+		lines.push(`            )),`);
 	}
 
 	// One match arm per literal kind — unit variants, no payload.
@@ -3736,29 +3705,6 @@ function renderTerminalTransportToNodeFn(node: AssembledNode, kindIdByKind?: Rea
 	const typeName = rustTransportStructName(node);
 
 	if (node instanceof AssembledEnum) {
-		if (isSingleMemberEnum(node)) {
-			// Single-member presence bool: transport IS `bool`.
-			// The text is the one known static literal when true; empty when false.
-			const text = JSON.stringify(node.values[0]!);
-			return [
-				`fn ${rustTransportToNodeFnName(node.typeName)}(transport: ${typeName}) -> Result<TransportNodeData, ::askama::Error> {`,
-				'    Ok(transport_node_data(',
-				`        ${kindArg},`,
-				'        None,',
-				'        None,',
-				'        true,',
-				`        Some(if transport { ${text}.to_string() } else { String::new() }),`,
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'        None,',
-				'    ))',
-				'}',
-				''
-			];
-		}
 		// Multi-member enum: the transport type IS the Rust enum (no wrapper struct).
 		// Metadata fields (source, named, span, node_handle, child_index) are not available on the
 		// enum — all default to None. The text is derived from the enum's Display impl.
@@ -3823,8 +3769,7 @@ function renderTransportStruct(
 	kindEntries?: readonly KindEnumEntry[]
 ): string[] {
 	if (node instanceof AssembledEnum) {
-		// Enum modelType: single-member enums are skipped (parent uses `bool`).
-		// Multi-member enums emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
+		// Enum modelType: emit a Rust enum type with FromNapiValue / Display / RenderableTransport.
 		return renderEnumType(node, hasNapi, kindEntries);
 	}
 	if (node.modelType === 'polymorph' && node.forms.length > 0) {
@@ -4159,11 +4104,10 @@ function renderLeafTransportPlainFields(): string[] {
 function renderTransportField(field: AssembledNonterminal, nodeMap: NodeMap): string[] {
 	const lines: string[] = [];
 	const rustName = rustFieldIdent(field.name);
-	if (rustName !== field.name) {
-		// Rust keyword renamed to r#kw or kw_ — add napi js_name so the JS side
-		// still uses the original grammar field name.
-		lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(field.name)}))]`);
-	}
+	// Generator-owned NodeData stores raw fields as `_<name>` top-level keys.
+	// Keep the JS/native render boundary dumb by teaching the generated napi
+	// structs to read the same storage keys directly.
+	lines.push(`    #[cfg_attr(feature = "napi-bindings", napi(js_name = ${JSON.stringify(`_${field.name}`)}))]`);
 	lines.push(`    pub ${rustName}: ${rustTransportFieldType(field, nodeMap)},`);
 	return lines;
 }
@@ -4290,11 +4234,7 @@ function concreteTransportTypeName(kind: string, nodeMap: NodeMap): string | nul
 		if (node.modelType === 'supertype' || node.modelType === 'multi' || node.modelType === 'polymorph') {
 			return null;
 		}
-		// Enum modelType: single-member enums are presence flags — parent struct fields
-		// use `bool` directly (JS sends true/false, no heap allocation, no enum type).
-		// Multi-member enums use the Rust enum type (XxxEnum).
 		if (node instanceof AssembledEnum) {
-			if (isSingleMemberEnum(node)) return 'bool';
 			return enumTypeName(node);
 		}
 		return `${rustTypeIdent(node.typeName)}Transport`;
@@ -4330,14 +4270,11 @@ function perSlotEnumName(typeName: string): string {
 /**
  * Rust type name for the transport representation of a node.
  *
- * For `enum` modelType nodes:
- * - Single-member enums are presence flags: the transport type is `bool`.
- * - Multi-member enums: the transport type is the Rust enum itself (`XxxEnum`).
- * All other nodes use the standard `XxxTransport` struct name.
+ * For `enum` modelType nodes: the transport type is the Rust enum itself
+ * (`XxxEnum`). All other nodes use the standard `XxxTransport` struct name.
  */
 function rustTransportStructName(node: AssembledNode): string {
 	if (node instanceof AssembledEnum) {
-		if (isSingleMemberEnum(node)) return 'bool';
 		return enumTypeName(node);
 	}
 	return `${rustTypeIdent(node.typeName)}Transport`;
@@ -4635,28 +4572,6 @@ function literalToVariantName(literal: string): string {
  * with `$text`. This eliminates the enum struct entirely and lets
  * `#[napi(object)]` handle the bool field automatically.
  */
-function isSingleMemberEnum(node: AssembledEnum): boolean {
-	return node.values.length === 1;
-}
-
-/**
- * Return the static text for a kind whose transport type is `bool`, or
- * `undefined` when the kind is not a single-member enum.
- *
- * Used by `buildTypedTemplateBody` to emit static-text conditionals instead
- * of `&dyn RenderableTransport` coercions (bool does not implement the trait).
- *
- * @param kind - the catalog kind name from `cls.kind`
- * @param nodeMap - for node lookup
- */
-function singleMemberEnumTextForKind(kind: string, nodeMap: NodeMap): string | undefined {
-	const node = nodeMap.nodes.get(kind);
-	if (node === undefined) return undefined;
-	if (!(node instanceof AssembledEnum)) return undefined;
-	if (!isSingleMemberEnum(node)) return undefined;
-	return node.values[0]!;
-}
-
 /**
  * Enum type name for an `AssembledEnum` node. Appends `Enum` to the typeName
  * (PascalCase) to avoid collision with the companion `*Transport` struct naming
@@ -4672,11 +4587,6 @@ function enumTypeName(node: AssembledEnum): string {
  * Emit a Rust enum type for an `AssembledEnum` node (synthesized field-enum
  * or pre-existing grammar enum). Replaces the `text: String` leaf-struct path
  * with a closed, statically-known variant set.
- *
- * **Single-member enums are not emitted** — they are presence markers and the
- * parent struct carries `bool` instead (see `concreteTransportTypeName`).
- * Returns `[]` when `node.values.length === 1`.
- *
  * Emits for multi-member enums:
  * - `#[derive(Debug, Clone, Copy)] pub enum XxxEnum { ... }`
  * - `impl FromNapiValue` — reads a plain `u16` KindId (no heap allocation)
@@ -4691,9 +4601,6 @@ function enumTypeName(node: AssembledEnum): string {
  *   numeric `u16` dispatch in `FromNapiValue` instead of `$text: String` matching
  */
 function renderEnumType(node: AssembledEnum, hasNapi: boolean, kindEntries?: readonly KindEnumEntry[]): string[] {
-	// Single-member enums are presence flags — parent struct uses `bool`, no enum type.
-	if (isSingleMemberEnum(node)) return [];
-
 	const enumName = enumTypeName(node);
 	const values = node.values;
 	const lines: string[] = [];

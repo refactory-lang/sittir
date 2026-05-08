@@ -22,6 +22,7 @@ import type {
 	EnumRule,
 	SymbolRef
 } from './rule.ts';
+import { normalizeEnumMembers } from './rule.ts';
 import type { RawGrammar } from './types.ts';
 import type { RuleProvenance } from './types.ts';
 import { attachReferenceRuleIds, buildRuleCatalog } from './rule-catalog.ts';
@@ -266,11 +267,7 @@ export function choice(...members: Input[]): Rule {
 
 	// Detect all-string choice → EnumRule
 	if (normalized.length > 0 && normalized.every((m) => m.type === 'string')) {
-		return {
-			type: 'enum',
-			members: normalized as StringRule[],
-			source: 'grammar'
-		};
+		return normalizeEnumMembers(normalized as StringRule[], 'grammar');
 	}
 
 	if (normalized.length >= 2 && normalized.every((m) => m.type === 'field')) {
@@ -1013,7 +1010,7 @@ function synthesizeFieldEnumRules(rules: Record<string, Rule>, provenanceByKind:
 
 	// Second pass: rewrite rules using the pre-computed canonical names.
 	const rewrites = new Map<string, Rule>();
-	const newRules = new Map<string, EnumRule>();
+	const newRules = new Map<string, Rule>();
 
 	for (const [parentKind, rule] of Object.entries(rules)) {
 		const rewritten = rewriteFieldEnums(rule, parentKind, rules, newRules, memberKeyToCanonicalName);
@@ -1315,7 +1312,7 @@ function fieldNameMatchesGrammarRule(fieldName: string, members: StringRule[], r
  * @param rule - The rule tree to walk and potentially rewrite.
  * @param parentKind - The grammar kind that owns this rule (for naming).
  * @param rules - The full rules map for symbol-reference resolution.
- * @param newRules - Accumulator for synthesized `EnumRule` entries.
+ * @param newRules - Accumulator for synthesized literal-set rule entries.
  * @param memberKeyToCanonicalName - Pre-computed dedup map from the first pass.
  * @returns The rewritten rule (may be structurally identical if no change was needed).
  */
@@ -1323,7 +1320,7 @@ function rewriteFieldEnums(
 	rule: Rule,
 	parentKind: string,
 	rules: Record<string, Rule>,
-	newRules: Map<string, EnumRule>,
+	newRules: Map<string, Rule>,
 	memberKeyToCanonicalName: Map<string, string>
 ): Rule {
 	const recurse = (r: Rule): Rule => rewriteFieldEnums(r, parentKind, rules, newRules, memberKeyToCanonicalName);
@@ -1332,9 +1329,9 @@ function rewriteFieldEnums(
 		case 'field': {
 			const synthesized = tryExtractFieldEnum(rule.content, rules, memberKeyToCanonicalName);
 			if (synthesized !== null) {
-				const { enumKindName, enumRule, replacementContent } = synthesized;
+				const { enumKindName, synthesizedRule, replacementContent } = synthesized;
 				if (!newRules.has(enumKindName)) {
-					newRules.set(enumKindName, enumRule);
+					newRules.set(enumKindName, synthesizedRule);
 				}
 				// Replace the field's inline content with the replacement content rule.
 				// For bare enum: symbol(enumKindName).
@@ -1378,7 +1375,7 @@ function rewriteFieldEnums(
 /**
  * Try to extract an enum definition from a field's content.
  *
- * Returns `{ enumKindName, enumRule, replacementContent }` when the content
+ * Returns `{ enumKindName, synthesizedRule, replacementContent }` when the content
  * resolves to a closed set of string literals, or `null` when it does not
  * qualify.
  *
@@ -1406,14 +1403,14 @@ function rewriteFieldEnums(
  * @param content - The field's current content rule.
  * @param rules - Full rules map for symbol resolution.
  * @param memberKeyToCanonicalName - Pre-computed dedup map (first pass).
- * @returns Synthesized kind name, enum rule, and the replacement content rule,
+ * @returns Synthesized kind name, normalized literal-set rule, and the replacement content rule,
  *   or `null` when the content does not qualify.
  */
 function tryExtractFieldEnum(
 	content: Rule,
 	rules: Record<string, Rule>,
 	memberKeyToCanonicalName: Map<string, string>
-): { enumKindName: string; enumRule: EnumRule; replacementContent: Rule } | null {
+): { enumKindName: string; synthesizedRule: Rule; replacementContent: Rule } | null {
 	// Peel one level of repeat/repeat1 wrapper so `field(name, repeat(enum))`
 	// is handled alongside `field(name, enum)`. The wrapper type is remembered
 	// so the rewrite can restore it around the synthesized symbol reference.
@@ -1430,11 +1427,7 @@ function tryExtractFieldEnum(
 	const enumKindName = memberKeyToCanonicalName.get(memberKey);
 	if (enumKindName === undefined) return null;
 
-	const enumRule: EnumRule = {
-		type: 'enum',
-		members,
-		source: 'grammar'
-	};
+	const synthesizedRule = normalizeEnumMembers(members, 'grammar');
 
 	const symRule: SymbolRule = { type: 'symbol', name: enumKindName, hidden: true };
 	const replacementContent: Rule =
@@ -1444,7 +1437,7 @@ function tryExtractFieldEnum(
 				? { ...(content as RepeatRule), content: symRule }
 				: { ...(content as Repeat1Rule), content: symRule };
 
-	return { enumKindName, enumRule, replacementContent };
+	return { enumKindName, synthesizedRule, replacementContent };
 }
 
 /**

@@ -166,6 +166,26 @@ export interface EnumRule {
 	readonly source?: RuleSource;
 }
 
+/**
+ * Normalize a closed literal set to the canonical rule shape.
+ *
+ * @remarks
+ * Multi-member sets remain `EnumRule`. A single literal collapses to that
+ * `StringRule` so downstream phases classify it as the corresponding
+ * keyword/token instead of carrying a degenerate enum shape.
+ */
+export function normalizeEnumMembers(
+	members: readonly StringRule[],
+	source?: RuleSource
+): StringRule | EnumRule {
+	if (members.length === 1) return members[0]!;
+	return {
+		type: 'enum',
+		members,
+		source
+	} satisfies EnumRule;
+}
+
 export interface SupertypeRule {
 	readonly type: 'supertype';
 	readonly name: string;

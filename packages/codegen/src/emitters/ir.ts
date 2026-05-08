@@ -16,7 +16,7 @@ import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNode, AssembledSupertype } from '../compiler/node-map.ts';
 import { isValidIdent } from './shared.ts';
 import { collectKindEntries, collectCatalogKinds, hasCatalogEntry } from './kind-discriminant.ts';
-import { collectRefineKindInfos, refineFormFactoryName, camelCase as refineCamelCase } from './refine-emit.ts';
+import { collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
 import type { GrammarRoles, Role } from '../scm/extract-roles.ts';
 
@@ -45,8 +45,8 @@ export function emitIr(config: EmitIrConfig): string {
 		'// `ir.<supertype>.*` — grouped namespaces: each member re-keyed by its',
 		'//   supertype-stripped short name (e.g. `ir.expression.binary` === `ir.binaryExpression`).',
 		'//',
-		'// Both surfaces resolve to the same `_attach(F.factory, { from: FR.fromFn })`',
-		'// bundle — identical runtime shape, identical tree-shake behaviour.',
+		'// Both surfaces resolve to the same callable bundle: branch / polymorph',
+		'// entries default to `from()` and expose the strict factory as `.strict`.',
 		'//',
 		'// Edge case: `readNode()` output has no `$source` provenance. If you want',
 		'// to feed it directly into `.from()`, use the typed wrapper (`readTreeNode`)',
@@ -129,6 +129,49 @@ export function emitIr(config: EmitIrConfig): string {
 		lines.push(...groupBlocks);
 	}
 
+	const flatKeys = new Set<string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (kind.startsWith('_')) continue;
+		if (!node.irKey || !node.rawFactoryName) continue;
+		if (!isValidIdent(node.irKey)) continue;
+		if (
+			node.modelType !== 'branch' &&
+			node.modelType !== 'polymorph' &&
+			node.modelType !== 'keyword' &&
+			node.modelType !== 'pattern' &&
+			node.modelType !== 'enum'
+		) {
+			continue;
+		}
+		if ((node.modelType === 'branch' || node.modelType === 'polymorph') && !node.fromFunctionName) continue;
+		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
+		flatKeys.add(node.irKey);
+	}
+	const shortAliasBundles = new Map<string, string>();
+	for (const [kind, node] of nodeMap.nodes) {
+		if (node.modelType !== 'supertype') continue;
+		const sup = node as AssembledSupertype;
+		for (const subKind of sup.subtypes) {
+			if (subKind.startsWith('_')) continue;
+			const sub = nodeMap.nodes.get(subKind);
+			if (!sub?.rawFactoryName) continue;
+			if (kindEntries && !hasCatalogEntry(kindEntries, subKind)) continue;
+			const alias = memberKeyFor(subKind, kind);
+			if (!isValidIdent(alias) || flatKeys.has(alias) || usedGroupNames.has(alias)) continue;
+			let bundle: string | undefined;
+			if (sub.modelType === 'branch' || sub.modelType === 'polymorph') {
+				if (!sub.fromFunctionName) continue;
+				bundle = bundleExpr(sub, refineByKind.get(subKind));
+			} else if (sub.modelType === 'keyword' || sub.modelType === 'pattern' || sub.modelType === 'enum') {
+				bundle = `F.${sub.rawFactoryName}`;
+			} else {
+				continue;
+			}
+			if (shortAliasBundles.has(alias)) continue;
+			shortAliasBundles.set(alias, bundle);
+		}
+	}
+
 	// ------------------------------------------------------------------
 	// `from` — canonical factories for native-value → NodeData.
 	// Spec 023 US6: grammar-agnostic AST construction from boolean,
@@ -155,6 +198,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (kind.startsWith('_')) continue;
 		if (!node.irKey || !node.rawFactoryName || !node.fromFunctionName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		if (usedGroupNames.has(node.irKey)) continue;
 		if (node.modelType !== 'branch' && node.modelType !== 'polymorph') continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
@@ -169,6 +213,7 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'keyword') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		if (usedGroupNames.has(node.irKey)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
@@ -182,10 +227,18 @@ export function emitIr(config: EmitIrConfig): string {
 		if (node.modelType !== 'pattern' && node.modelType !== 'enum') continue;
 		if (!node.irKey || !node.rawFactoryName) continue;
 		if (!isValidIdent(node.irKey)) continue;
+		if (usedGroupNames.has(node.irKey)) continue;
 		// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
 		// never appear at runtime; no factory was emitted for them.
 		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) continue;
 		lines.push(`  ${node.irKey}: F.${node.rawFactoryName},`);
+	}
+	if (shortAliasBundles.size > 0) {
+		lines.push('');
+		lines.push('  // Supertype-stripped short aliases');
+		for (const [alias, bundle] of [...shortAliasBundles.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+			lines.push(`  ${alias}: ${bundle},`);
+		}
 	}
 	if (groupNames.length > 0 || hasFrom) {
 		lines.push('');
@@ -210,31 +263,24 @@ export function emitIr(config: EmitIrConfig): string {
  * Factory+from bundle expression, shared by flat and grouped emission.
  * Polymorphs with >1 form also carry per-variant form bundles. Kinds
  * with refine() metadata carry per-form bundles keyed by the form's
- * camelCase short name (e.g. `ir.interfaceBody.curly`). Non-polymorph
- * branches call the loose `from()` path by default and expose the raw
+ * camelCase short name (e.g. `ir.interfaceBody.curly`). Branches and
+ * polymorphs call the loose `from()` path by default and expose the raw
  * factory as `.strict`.
  */
 function bundleExpr(node: AssembledNode, refineInfo?: RefineKindInfo): string {
 	if (node.modelType === 'polymorph' && node.forms.length > 1) {
 		const variantEntries = node.forms
 			.filter((form) => form.rawFactoryName && form.fromFunctionName)
-			.map(
-				(form) =>
-					`${JSON.stringify(toCamel(form.name))}: _attach(F.${form.rawFactoryName}, { from: FR.${form.fromFunctionName} })`
-			);
-		return `_attach(F.${node.rawFactoryName}, { from: FR.${node.fromFunctionName}, ${variantEntries.join(', ')} })`;
+			.flatMap((form) => {
+				const value = `_attach(FR.${form.fromFunctionName}, { from: FR.${form.fromFunctionName}, strict: F.${form.rawFactoryName} })`;
+				const camelKey = JSON.stringify(toCamel(form.name));
+				const keys = [camelKey];
+				if (toCamel(form.name) !== form.name) keys.push(JSON.stringify(form.name));
+				return keys.map((key) => `${key}: ${value}`);
+			});
+		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName}, ${variantEntries.join(', ')} })`;
 	}
-	if (refineInfo && refineInfo.forms.length > 0) {
-		const baseFn = node.rawFactoryName!;
-		const fromFn = node.fromFunctionName!;
-		const formEntries = refineInfo.forms
-			.map((form) => `${refineCamelCase(form.name)}: F.${refineFormFactoryName(baseFn, form.name)}`)
-			.join(', ');
-		if (node.modelType === 'branch') {
-			return `_attach(FR.${fromFn}, { from: FR.${fromFn}, strict: F.${baseFn}, ${formEntries} })`;
-		}
-		return `_attach(F.${baseFn}, { from: FR.${fromFn}, ${formEntries} })`;
-	}
+	void refineInfo;
 	if (node.modelType === 'branch') {
 		return `_attach(FR.${node.fromFunctionName}, { from: FR.${node.fromFunctionName}, strict: F.${node.rawFactoryName} })`;
 	}

@@ -15,7 +15,6 @@
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import type { NodeId } from '@sittir/types';
-import type { AnyTransport } from './types.js';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
 const NATIVE_RENDER_TRANSPORT_ABI = 1;
@@ -52,12 +51,9 @@ export interface NativeEngine {
 	parseAndRead(source: string): string;
 	findAndRead(source: string, pattern: string): string;
 	readNode(nodeId: NodeId): string;
-	render(node: AnyTransport): string;
-	renderToFile?(node: AnyTransport, path: string): void;
-	applyEdits(
-		source: string,
-		edits: { startPos: number; endPos: number; insertedText: string }[]
-	): string;
+	render(node: unknown): string;
+	renderToFile?(node: unknown, path: string): void;
+	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	dispose(): void;
 }
 

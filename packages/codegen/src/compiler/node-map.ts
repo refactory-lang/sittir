@@ -3453,13 +3453,10 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		opts?: { factoryName?: string; irKey?: string }
 	) {
 		super(kind, rule, opts);
-		// Single-value enums are parameterless — they produce a fixed constant.
-		// Both keyword-style hidden rules (_kw_*) and synthesised EnumRule kinds
-		// with exactly one member qualify. Field stamp is the plain literal;
-		// child stamp wraps it in a NodeData object (Terminal-compatible shape).
-		if (this.values.length === 1) {
-			this.isParameterless = true;
-			this.stampExpression = `${JSON.stringify(this.values[0])} as const`;
+		if (this.values.length < 2) {
+			throw new Error(
+				`AssembledEnum '${kind}' must have at least two members; normalize single-literal sets upstream to StringRule`
+			);
 		}
 	}
 
@@ -3468,19 +3465,6 @@ export class AssembledEnum extends AssembledLeaf<EnumRule> {
 		return this.rule.members.map((m) => m.value);
 	}
 
-	/**
-	 * Child-context stamp for single-value enums: wrap the literal in a
-	 * Terminal-compatible NodeData object so the parent's `$children` slot
-	 * type-checks against `Terminal<kind, text>`.
-	 *
-	 * @remarks
-	 * Only meaningful when `isParameterless` is true (single-member enum).
-	 */
-	override get stampChildExpression(): string {
-		const kind = JSON.stringify(this.kind);
-		const text = JSON.stringify(this.values[0] ?? '');
-		return `{ $type: ${kind} as const, $text: ${text} as const, $source: 2 as const, $named: false as const }`;
-	}
 }
 
 export class AssembledSupertype extends AssembledNodeBase<

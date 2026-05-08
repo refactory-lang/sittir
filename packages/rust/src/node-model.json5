@@ -1,6 +1,6 @@
 {
   "name": "rust",
-  "nodeCount": 365,
+  "nodeCount": 359,
   "word": "identifier",
   "supertypes": [
     "_condition",
@@ -417,32 +417,6 @@
       ]
     },
     {
-      "kind": "__visibility_modifier_in_path_in",
-      "modelType": "enum",
-      "typeName": "VisibilityModifierInPathIn",
-      "factoryName": "visibilityModifierInPathIn",
-      "irKey": "visibilityModifierInPathIn",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"in\" as const",
-      "values": [
-        "in"
-      ]
-    },
-    {
-      "kind": "__visibility_modifier_pub_pub",
-      "modelType": "enum",
-      "typeName": "VisibilityModifierPubPub",
-      "factoryName": "visibilityModifierPubPub",
-      "irKey": "visibilityModifierPubPub",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"pub\" as const",
-      "values": [
-        "pub"
-      ]
-    },
-    {
       "kind": "_array_expression_list",
       "modelType": "group",
       "typeName": "ArrayExpressionList",
@@ -598,30 +572,15 @@
       "children": []
     },
     {
-      "kind": "_binary_expression_operator",
-      "modelType": "enum",
-      "typeName": "BinaryExpressionOperator",
-      "factoryName": "binaryExpressionOperator",
-      "irKey": "binaryExpressionOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"&&\" as const",
-      "values": [
-        "&&"
-      ]
-    },
-    {
       "kind": "_closure_expression_async_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "ClosureExpressionAsyncMarker",
       "factoryName": "closureExpressionAsyncMarker",
       "irKey": "closureExpressionAsyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "values": [
-        "async"
-      ]
+      "text": "async"
     },
     {
       "kind": "_closure_expression_block",
@@ -722,16 +681,14 @@
     },
     {
       "kind": "_closure_expression_static_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "ClosureExpressionStaticMarker",
       "factoryName": "closureExpressionStaticMarker",
       "irKey": "closureExpressionStaticMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"static\" as const",
-      "values": [
-        "static"
-      ]
+      "text": "static"
     },
     {
       "kind": "_compound_assignment_expr_operator",
@@ -807,19 +764,6 @@
         "unsafe_block",
         "while_expression",
         "yield_expression"
-      ]
-    },
-    {
-      "kind": "_crate",
-      "modelType": "enum",
-      "typeName": "_Crate",
-      "factoryName": "_crate",
-      "irKey": "_crate",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"crate\" as const",
-      "values": [
-        "crate"
       ]
     },
     {
@@ -1371,19 +1315,6 @@
       "children": []
     },
     {
-      "kind": "_generic_type_with_turbofish_turbofish",
-      "modelType": "enum",
-      "typeName": "GenericTypeWithTurbofishTurbofish",
-      "factoryName": "genericTypeWithTurbofishTurbofish",
-      "irKey": "genericTypeWithTurbofishTurbofish",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"::\" as const",
-      "values": [
-        "::"
-      ]
-    },
-    {
       "kind": "_impl_item_body",
       "modelType": "branch",
       "typeName": "_ImplItemBody",
@@ -1419,16 +1350,13 @@
     },
     {
       "kind": "_impl_item_negative",
-      "modelType": "enum",
+      "modelType": "token",
       "typeName": "ImplItemNegative",
-      "factoryName": "implItemNegative",
       "irKey": "implItemNegative",
-      "hidden": false,
+      "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"!\" as const",
-      "values": [
-        "!"
-      ]
+      "text": "!"
     },
     {
       "kind": "_impl_item_semi",
@@ -1930,29 +1858,25 @@
     },
     {
       "kind": "_move_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "MoveMarker",
       "factoryName": "moveMarker",
       "irKey": "moveMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"move\" as const",
-      "values": [
-        "move"
-      ]
+      "text": "move"
     },
     {
       "kind": "_mutable_specifier",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "_MutableSpecifier",
       "factoryName": "_mutableSpecifier",
       "irKey": "_mutableSpecifier",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"mut\" as const",
-      "values": [
-        "mut"
-      ]
+      "text": "mut"
     },
     {
       "kind": "_non_delim_token",
@@ -2403,16 +2327,13 @@
     },
     {
       "kind": "_operator",
-      "modelType": "enum",
+      "modelType": "token",
       "typeName": "Operator",
-      "factoryName": "operator",
       "irKey": "operator",
-      "hidden": false,
+      "hidden": true,
       "isParameterless": true,
       "stampExpression": "\"..\" as const",
-      "values": [
-        ".."
-      ]
+      "text": ".."
     },
     {
       "kind": "_or_pattern_binary",
@@ -2968,16 +2889,14 @@
     },
     {
       "kind": "_ref_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "RefMarker",
       "factoryName": "refMarker",
       "irKey": "refMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"ref\" as const",
-      "values": [
-        "ref"
-      ]
+      "text": "ref"
     },
     {
       "kind": "_reference_expression_raw_const",
@@ -3039,19 +2958,6 @@
             }
           ]
         }
-      ]
-    },
-    {
-      "kind": "_self",
-      "modelType": "enum",
-      "typeName": "_Self",
-      "factoryName": "_self",
-      "irKey": "_self",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"self\" as const",
-      "values": [
-        "self"
       ]
     },
     {
@@ -3492,16 +3398,14 @@
     },
     {
       "kind": "_unsafe_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "UnsafeMarker",
       "factoryName": "unsafeMarker",
       "irKey": "unsafeMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"unsafe\" as const",
-      "values": [
-        "unsafe"
-      ]
+      "text": "unsafe"
     },
     {
       "kind": "_use_clause",
@@ -3568,18 +3472,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__visibility_modifier_in_path_in",
-              "unresolved": true
+              "value": "in"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "__visibility_modifier_in_path_in"
-            ]
+            "kinds": []
           }
         }
       ],
@@ -3621,18 +3522,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "__visibility_modifier_pub_pub",
-              "unresolved": true
+              "value": "pub"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "__visibility_modifier_pub_pub"
-            ]
+            "kinds": []
           }
         }
       ],
@@ -4377,18 +4275,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_binary_expression_operator",
-              "unresolved": true
+              "value": "&&"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_binary_expression_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -6400,18 +6295,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_crate",
-              "unresolved": true
+              "value": "crate"
             }
           ],
           "source": "enriched",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_crate"
-            ]
+            "kinds": []
           }
         },
         {
@@ -8228,18 +8120,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_generic_type_with_turbofish_turbofish",
-              "unresolved": true
+              "value": "::"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_generic_type_with_turbofish_turbofish"
-            ]
+            "kinds": []
           }
         },
         {
@@ -12240,18 +12129,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_self",
-              "unresolved": true
+              "value": "self"
             }
           ],
           "source": "enriched",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_self"
-            ]
+            "kinds": []
           }
         }
       ],

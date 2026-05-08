@@ -27,7 +27,7 @@ import type {
 	SymbolRule,
 	StringRule
 } from './rule.ts';
-import { isField, isSeq, isChoice, isString } from './rule.ts';
+import { isField, isSeq, isChoice, isString, normalizeEnumMembers } from './rule.ts';
 import type {
 	RawGrammar,
 	LinkedGrammar,
@@ -1729,11 +1729,7 @@ function classifyHiddenRule(name: string, rule: Rule, supertypes: Set<string>, _
  */
 function classifyHiddenChoiceRule(name: string, rule: ChoiceRule, supertypes: Set<string>): Rule {
 	if (rule.members.every((m): m is StringRule => m.type === 'string')) {
-		return {
-			type: 'enum',
-			members: rule.members,
-			source: 'promoted'
-		} satisfies EnumRule;
+		return normalizeEnumMembers(rule.members, 'promoted');
 	}
 
 	const supertypeCompatible = (m: Rule): boolean =>

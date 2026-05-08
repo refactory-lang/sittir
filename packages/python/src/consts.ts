@@ -128,8 +128,6 @@ export const LEAF_KINDS = [
   '__future__',
   '_async_marker',
   '_augmented_assignment_operator',
-  '_binary_operator_operator',
-  '_boolean_operator_operator',
   '_dedent',
   '_identifier',
   '_indent',
@@ -139,8 +137,8 @@ export const LEAF_KINDS = [
   '_newline',
   '_not_in',
   '_string_content',
-  '_type_alias_statement_type',
   '_unary_operator_operator',
+  'and',
   'as',
   'assert',
   'async',
@@ -201,9 +199,11 @@ export const KEYWORDS = [
   'True',
   '_',
   '__future__',
+  '_async_marker',
   '_kw_async_marker',
   '_kw_type',
   '_not_escape_sequence',
+  'and',
   'as',
   'assert',
   'async',
@@ -250,6 +250,7 @@ export const OPERATORS = [
   "(",
   "*",
   "**",
+  "+",
   ",",
   "-",
   "->",
@@ -310,6 +311,7 @@ export const TREE_SITTER_KIND_ID_BY_KIND = {
   "class": 44,
   "_": 48,
   "not": 54,
+  "and": 55,
   "ellipsis": 87,
   "escape_sequence": 89,
   "type_conversion": 92,
@@ -484,6 +486,7 @@ export const TREE_SITTER_KIND_BY_KIND_ID = {
   [44]: "class",
   [48]: "_",
   [54]: "not",
+  [55]: "and",
   [87]: "ellipsis",
   [89]: "escape_sequence",
   [92]: "type_conversion",
@@ -658,6 +661,7 @@ export const TREE_SITTER_KIND_ID_JSON = [
   { name: "class", id: 44, enumName: "AnonClass", cName: "anon_sym_class" },
   { name: "_", id: 48, enumName: "Anon", cName: "anon_sym__" },
   { name: "not", id: 54, enumName: "AnonNot", cName: "anon_sym_not" },
+  { name: "and", id: 55, enumName: "AnonAnd", cName: "anon_sym_and" },
   { name: "ellipsis", id: 87, enumName: "Ellipsis", cName: "sym_ellipsis" },
   { name: "escape_sequence", id: 89, enumName: "EscapeSequence", cName: "sym_escape_sequence" },
   { name: "type_conversion", id: 92, enumName: "TypeConversion", cName: "sym_type_conversion" },
@@ -1419,12 +1423,6 @@ export const enum Operators {
   IsNot = 1 << 10,
 }
 
-/** Valid values for `_async_marker` nodes. */
-export const _ASYNC_MARKERS = [
-  'async',
-] as const;
-export type AsyncMarkerValue = (typeof _ASYNC_MARKERS)[number];
-
 /** Valid values for `_augmented_assignment_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
   '+=',
@@ -1443,30 +1441,12 @@ export const _AUGMENTED_ASSIGNMENT_OPERATORS = [
 ] as const;
 export type AugmentedAssignmentOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_OPERATORS)[number];
 
-/** Valid values for `_binary_operator_operator` nodes. */
-export const _BINARY_OPERATOR_OPERATORS = [
-  '+',
-] as const;
-export type BinaryOperatorOperatorValue = (typeof _BINARY_OPERATOR_OPERATORS)[number];
-
-/** Valid values for `_boolean_operator_operator` nodes. */
-export const _BOOLEAN_OPERATOR_OPERATORS = [
-  'and',
-] as const;
-export type BooleanOperatorOperatorValue = (typeof _BOOLEAN_OPERATOR_OPERATORS)[number];
-
 /** Valid values for `_identifier` nodes. */
 export const _IDENTIFIERS = [
   '*',
   '**',
 ] as const;
 export type IdentifierValue = (typeof _IDENTIFIERS)[number];
-
-/** Valid values for `_type_alias_statement_type` nodes. */
-export const _TYPE_ALIAS_STATEMENT_TYPES = [
-  'type',
-] as const;
-export type TypeAliasStatementTypeValue = (typeof _TYPE_ALIAS_STATEMENT_TYPES)[number];
 
 /** Valid values for `_unary_operator_operator` nodes. */
 export const _UNARY_OPERATOR_OPERATORS = [

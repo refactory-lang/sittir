@@ -116,15 +116,17 @@ function cloneJsonValue<T extends BoundaryNodeValue>(value: T): T {
 	return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function toBoundaryFieldValue(value: unknown): BoundaryNodeValue {
-	if (typeof value === 'string') {
+function normalizeBoundaryValue(value: unknown): BoundaryNodeValue {
+	if (value === null) return null;
+	if (typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {
 		return value;
 	}
-
 	if (Array.isArray(value)) {
-		return value.map((item) => toBoundaryNodeData(item)) as BoundaryNodeValue;
+		return value.map((item) => normalizeBoundaryValue(item)) as BoundaryNodeValue;
 	}
-
+	if (typeof value !== 'object') {
+		throw new TypeError(`Unsupported boundary value: ${typeof value}`);
+	}
 	return toBoundaryNodeData(value) as BoundaryNodeValue;
 }
 
@@ -134,50 +136,28 @@ export function toBoundaryNodeData(nodeData: unknown): object {
 	}
 
 	const node = nodeData as Record<string, unknown>;
-	// Preserve numeric $type as-is (Phase D: TSKindId-based). Only stringify
-	// when $type is already a string (hidden/synthetic kinds like "_suite").
-	const rawType = node.$type;
-	// $source MUST be numeric (0=ts, 1=sg, 2=factory) for napi boundary.
-	// Coerce string values ('ts'/'sg'/'factory') to their numeric equivalents.
 	const SOURCE_MAP: Record<string, number> = { ts: 0, sg: 1, factory: 2 };
-	const rawSource = node.$source;
-	const numericSource = typeof rawSource === 'string' ? (SOURCE_MAP[rawSource] ?? 0) : (rawSource ?? 0);
-	const boundary: Record<string, BoundaryNodeValue> = {
-		$type: typeof rawType === 'number' ? rawType : String(rawType),
-		$source: numericSource as number,
-		$named: Boolean(node.$named)
-	};
-
-	if (node.$fields && typeof node.$fields === 'object') {
-		const fields = node.$fields as Record<string, unknown>;
-		boundary.$fields = Object.fromEntries(
-			Object.entries(fields).map(([name, value]) => [name, toBoundaryFieldValue(value)])
-		);
+	const boundary: Record<string, BoundaryNodeValue> = {};
+	for (const [key, value] of Object.entries(node)) {
+		if (typeof value === 'function') continue;
+		if (key === '$source') {
+			boundary.$source = typeof value === 'string' ? (SOURCE_MAP[value] ?? 0) : ((value ?? 0) as number);
+			continue;
+		}
+		if (key === '$children' && Array.isArray(value)) {
+			boundary.$children = value.map((child) => normalizeBoundaryValue(child)) as BoundaryNodeValue;
+			continue;
+		}
+		if (key === '$span' && value && typeof value === 'object') {
+			boundary.$span = cloneJsonValue(value as BoundaryNodeValue);
+			continue;
+		}
+		if (key === '$type') {
+			boundary.$type = typeof value === 'number' ? value : String(value);
+			continue;
+		}
+		boundary[key] = normalizeBoundaryValue(value);
 	}
-
-	if (Array.isArray(node.$children)) {
-		boundary.$children = node.$children.map((child) => toBoundaryNodeData(child)) as BoundaryNodeValue;
-	} else if (boundary.$fields) {
-		// napi structs with Vec<T> $children fields cannot accept undefined —
-		// ensure branch nodes always carry $children (empty array when absent).
-		boundary.$children = [];
-	}
-
-	if (typeof node.$text === 'string') {
-		boundary.$text = node.$text;
-	}
-
-	if (node.$span && typeof node.$span === 'object') {
-		boundary.$span = cloneJsonValue(node.$span as BoundaryNodeValue);
-	}
-
-	if (typeof node.$nodeHandle === 'number') {
-		boundary.$nodeHandle = node.$nodeHandle;
-	}
-	if (typeof node.$childIndex === 'number') {
-		boundary.$childIndex = node.$childIndex;
-	}
-
 	return boundary;
 }
 
@@ -194,55 +174,12 @@ export function toBoundaryNodeData(nodeData: unknown): object {
  *   because napi `Vec<T>` fields cannot accept undefined.
  */
 function toNativeTransport(obj: unknown): unknown {
-	if (!obj || typeof obj !== 'object') return obj;
-	if (Array.isArray(obj)) return obj.map(toNativeTransport);
-
-	const node = obj as Record<string, unknown>;
-	const result: Record<string, unknown> = {};
-
-	// Copy metadata fields
-	for (const [key, value] of Object.entries(node)) {
-		if (key === '$fields') continue; // flatten below
-		if (key === '$children') {
-			result[key] = Array.isArray(value) ? value.map(toNativeTransport) : [];
-		} else if (key === '$source') {
-			// Coerce string $source to numeric for napi Source enum
-			if (typeof value === 'string') {
-				const SOURCE_MAP: Record<string, number> = {
-					ts: 0,
-					sg: 1,
-					factory: 2
-				};
-				result[key] = SOURCE_MAP[value] ?? 0;
-			} else {
-				result[key] = value ?? 0;
-			}
-		} else {
-			result[key] = value;
-		}
-	}
-
-	// Flatten $fields into top-level (napi structs read fields at root)
-	if (node.$fields && typeof node.$fields === 'object') {
-		const fields = node.$fields as Record<string, unknown>;
-		for (const [fk, fv] of Object.entries(fields)) {
-			result[fk] = toNativeTransport(fv);
-		}
-	}
-
-	// Ensure $children exists on branch nodes
-	if ((node.$fields || node.$children) && !('$children' in result)) {
-		result.$children = [];
-	}
-
-	return result;
+	return normalizeBoundaryValue(obj);
 }
 
 export function renderNativeNodeData(engine: NativeEngine, nodeData: object): string {
-	// Phase B: render() accepts a JS object directly (napi-native AnyTransport
-	// decoded from the napi value). The old string-JSON path was removed.
-	// Convert from readNode nested shape ($fields wrapper) to the flat transport
-	// shape expected by napi structs, and ensure $source is numeric.
+	// Native render accepts the generator-owned shape directly; normalize only
+	// JSON-compatible values and numeric $source for test fixtures.
 	return engine.render(toNativeTransport(nodeData) as object);
 }
 

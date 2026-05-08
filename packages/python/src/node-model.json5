@@ -1,6 +1,6 @@
 {
   "name": "python",
-  "nodeCount": 233,
+  "nodeCount": 232,
   "word": "identifier",
   "supertypes": [
     "_compound_statement",
@@ -84,6 +84,16 @@
       "isParameterless": true,
       "stampExpression": "\"**\" as const",
       "text": "**"
+    },
+    {
+      "kind": "+",
+      "modelType": "token",
+      "typeName": "Plus",
+      "irKey": "plus",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"+\" as const",
+      "text": "+"
     },
     {
       "kind": ",",
@@ -444,16 +454,14 @@
     },
     {
       "kind": "_async_marker",
-      "modelType": "enum",
+      "modelType": "keyword",
       "typeName": "AsyncMarker",
       "factoryName": "asyncMarker",
       "irKey": "asyncMarker",
       "hidden": false,
       "isParameterless": true,
       "stampExpression": "\"async\" as const",
-      "values": [
-        "async"
-      ]
+      "text": "async"
     },
     {
       "kind": "_augmented_assignment_operator",
@@ -476,32 +484,6 @@
         "&=",
         "^=",
         "|="
-      ]
-    },
-    {
-      "kind": "_binary_operator_operator",
-      "modelType": "enum",
-      "typeName": "BinaryOperatorOperator",
-      "factoryName": "binaryOperatorOperator",
-      "irKey": "binaryOperatorOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"+\" as const",
-      "values": [
-        "+"
-      ]
-    },
-    {
-      "kind": "_boolean_operator_operator",
-      "modelType": "enum",
-      "typeName": "BooleanOperatorOperator",
-      "factoryName": "booleanOperatorOperator",
-      "irKey": "booleanOperatorOperator",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"and\" as const",
-      "values": [
-        "and"
       ]
     },
     {
@@ -1167,19 +1149,6 @@
       ]
     },
     {
-      "kind": "_type_alias_statement_type",
-      "modelType": "enum",
-      "typeName": "TypeAliasStatementType",
-      "factoryName": "typeAliasStatementType",
-      "irKey": "typeAliasStatementType",
-      "hidden": false,
-      "isParameterless": true,
-      "stampExpression": "\"type\" as const",
-      "values": [
-        "type"
-      ]
-    },
-    {
       "kind": "_unary_operator_operator",
       "modelType": "enum",
       "typeName": "UnaryOperatorOperator",
@@ -1288,6 +1257,16 @@
         }
       ],
       "children": []
+    },
+    {
+      "kind": "and",
+      "modelType": "keyword",
+      "typeName": "And",
+      "irKey": "and",
+      "hidden": true,
+      "isParameterless": true,
+      "stampExpression": "\"and\" as const",
+      "text": "and"
     },
     {
       "kind": "argument_list",
@@ -1860,18 +1839,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_binary_operator_operator",
-              "unresolved": true
+              "value": "+"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_binary_operator_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -1966,18 +1942,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_boolean_operator_operator",
-              "unresolved": true
+              "value": "and"
             }
           ],
           "source": "grammar",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_boolean_operator_operator"
-            ]
+            "kinds": []
           }
         },
         {
@@ -6826,18 +6799,15 @@
           "nonEmpty": false,
           "values": [
             {
-              "kind": "node-ref",
+              "kind": "terminal",
               "multiplicity": "single",
-              "name": "_type_alias_statement_type",
-              "unresolved": true
+              "value": "type"
             }
           ],
           "source": "override",
           "projection": {
             "typeName": "",
-            "kinds": [
-              "_type_alias_statement_type"
-            ]
+            "kinds": []
           }
         },
         {

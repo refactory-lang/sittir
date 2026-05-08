@@ -59,6 +59,16 @@ function testTypeDiscriminant(
 	return kindDiscriminantExpr(kind, nodeMap, kindEntries);
 }
 
+function dummyNodeLiteral(
+	kind: string,
+	dummyText: string,
+	nodeMap: NodeMap | undefined,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const typeExpr = nodeMap ? testTypeDiscriminant(kind, kindEntries, nodeMap) : `'${kind}'`;
+	return `{ $type: ${typeExpr}, $text: '${dummyText}', $source: 2, $named: true } as any`;
+}
+
 export function emitTests(config: EmitTestsConfig): string {
 	const { nodeMap } = config;
 	// Use catalog kinds (parser-symbol universe) as the basis for kindEntries.
@@ -103,7 +113,11 @@ export function emitTests(config: EmitTestsConfig): string {
 				// is now `'branch'` with `isContainerShape === true`.
 				// Container-shape branches still need the rest-param test
 				// scaffolding.
-				if (node.isContainerShape) {
+				if (
+					node.isContainerShape ||
+					((node.fields.length === 0 || node.fields.every((field) => isAutoStampField(field, nodeMap))) &&
+						node.children.length > 0)
+				) {
 					emitContainerTest(lines, node, kind, key, kindEntries, nodeMap);
 				} else {
 					emitBranchTest(lines, node, kind, key, nodeMap, kindEntries);
@@ -163,7 +177,7 @@ function emitBranchTest(
 			const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
 			const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
 			const dummy = concrete
-				? `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`
+				? dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)
 				: `'test' as any`;
 			typeConfigParts.push(`children: [${dummy}] as any`);
 		}
@@ -174,7 +188,7 @@ function emitBranchTest(
 		const concrete = firstKind ? resolveConcreteKind(firstKind, nodeMap, kindEntries) : undefined;
 		const dummyText = concrete ? dummyTextForKind(concrete, nodeMap) : 'test';
 		const dummy = concrete
-			? `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`
+			? dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)
 			: `'test' as any`;
 		renderConfigParts.push(`children: [${dummy}] as any`);
 	}
@@ -309,7 +323,13 @@ function emitPolymorphTest(
 			const innerChildNonEmpty = resolveInnerContainerNonEmptyChild(hoist.innerNode, nodeMap, kindEntries);
 			if (innerChildNonEmpty) configParts.push(`children: [${innerChildNonEmpty}]`);
 		}
-		const configArg = configParts.length > 0 ? `{ ${configParts.join(', ')} }` : '{}';
+		if (!configParts.some((part) => part.startsWith('children:'))) {
+			const requiredFormChild = resolveRequiredFormChildDummy(form.children, nodeMap, kindEntries);
+			if (requiredFormChild) configParts.push(`children: [${requiredFormChild}]`);
+		}
+		const hasChildrenConfig = configParts.some((part) => part.startsWith('children:'));
+		const configArg =
+			configParts.length > 0 ? `{ ${configParts.join(', ')} }${hasChildrenConfig ? ' as any' : ''}` : '{}';
 		const callExpr = useDirectCall ? `ir.${key}(${configArg})` : `ir.${key}.${form.name}(${configArg})`;
 		lines.push(`    const node = ${callExpr};`);
 		lines.push(`    expect(node.$type).toBe(${testTypeDiscriminant(kind, kindEntries, nodeMap)});`);
@@ -556,7 +576,21 @@ function resolveInnerContainerNonEmptyChild(
 	if (kinds.length === 0) return null;
 	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
 	const dummyText = dummyTextForKind(concrete, nodeMap);
-	return `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`;
+	return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
+}
+
+function resolveRequiredFormChildDummy(
+	children: readonly AssembledNonterminal[],
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | null {
+	const requiredChild = children.find((child) => isRequired(child));
+	if (!requiredChild) return null;
+	const kinds = slotKindNames(requiredChild);
+	if (kinds.length === 0) return null;
+	const concrete = resolveConcreteKind(kinds[0]!, nodeMap, kindEntries);
+	const dummyText = dummyTextForKind(concrete, nodeMap);
+	return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
 }
 
 function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?: readonly KindEnumEntry[]): string {
@@ -577,14 +611,14 @@ function dummyValue(field: AssembledNonterminal, nodeMap?: NodeMap, kindEntries?
 		if (kinds.length > 0) {
 			const concrete = nodeMap ? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries) : kinds[0]!;
 			const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
-			return `[{ $type: '${concrete}', $text: '${dummyText}', $source: 'factory', $named: true } as any]`;
+			return `[${dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries)}]`;
 		}
 		return `['test' as any]`;
 	}
 	if (kinds.length > 0) {
 		const concrete = nodeMap ? resolveConcreteKind(kinds[0]!, nodeMap, kindEntries) : kinds[0]!;
 		const dummyText = nodeMap ? dummyTextForKind(concrete, nodeMap) : 'test';
-		return `{ $type: '${concrete}', $text: '${dummyText}', $source: 2, $named: true } as any`;
+		return dummyNodeLiteral(concrete, dummyText, nodeMap, kindEntries);
 	}
 	return "'test' as any";
 }

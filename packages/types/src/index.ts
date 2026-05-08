@@ -97,36 +97,48 @@ export type AutoStamp<T> = T & { readonly __autoStamp__?: never };
 type IsAutoStamp<T> = '__autoStamp__' extends keyof T ? true : false;
 
 /**
- * BooleanKeyword<T> — brands a storage entry as a boolean-keyword
- * position (ADR-0012). The underlying NodeData value is still `T`
- * (typically a keyword/terminal node such as `MutableSpecifier`), so
- * render and readNode round-trip shapes are unchanged. At the Config /
- * Loose surface the field projects to `boolean` — the factory
- * constructs the keyword node when the caller passes `true`, omits it
- * when the caller passes `false` / `undefined`.
- *
- * Factories still accept a passthrough `T` at runtime (so NodeData
- * produced by `readNode` flows back through the factory without
- * translation).
+ * BooleanKeyword<TText> — brands boolean storage for a keyword-presence
+ * position. NodeData stores `boolean`; the brand preserves the keyword's
+ * literal text so ConfigOf / FromInputOf can continue to widen to the
+ * ergonomic string form when desired.
  */
-export type BooleanKeyword<T> = T & { readonly __booleanKeyword__?: never };
+export type BooleanKeyword<TText extends string = never> = boolean & {
+	readonly __booleanKeyword__?: TText;
+};
 
 /** @internal — true when T carries the BooleanKeyword brand key. */
-type IsBooleanKeyword<T> = '__booleanKeyword__' extends keyof T ? true : false;
+type IsBooleanKeyword<T> = T extends { readonly __booleanKeyword__?: unknown } ? true : false;
+
+/** @internal — extract the keyword text out of a BooleanKeyword brand. */
+type BooleanKeywordText<T> = T extends { readonly __booleanKeyword__?: infer V } ? V : never;
 
 /**
- * Bitflag<E, T> — brands a storage entry as a bitflag position (ADR-0012).
- * `E` is the const-enum type the Config / Loose surface expose (e.g.
- * `FunctionMod`); `T` is the underlying NodeData container type that
- * remains on the data surface (render / readNode round-trip preserved).
+ * Bitflag<E, TStorage> — brands numeric bitflag storage (ADR-0012).
+ * `E` is the const-enum type the Config / Loose surface expose; the
+ * underlying NodeData storage is numeric and native-aligned.
  */
-export type Bitflag<E, T> = T & { readonly __bitflag__?: E };
+export type Bitflag<E, TStorage extends number = number> = TStorage & { readonly __bitflag__?: E };
 
 /** @internal — true when T carries the Bitflag brand key. */
-type IsBitflag<T> = '__bitflag__' extends keyof T ? true : false;
+type IsBitflag<T> = T extends { readonly __bitflag__?: unknown } ? true : false;
 
 /** @internal — extract the const-enum type out of a Bitflag<E, T> brand. */
 type BitflagEnum<T> = T extends { readonly __bitflag__?: infer E } ? E : never;
+
+/**
+ * KindEnum<TText, TStorage> — brands native-aligned KindId storage for
+ * multi-member enum-backed fields while retaining the enum's string surface
+ * for ConfigOf / FromInputOf widening.
+ */
+export type KindEnum<TText extends string, TStorage extends number = number> = TStorage & {
+	readonly __kindEnum__?: TText;
+};
+
+/** @internal — true when T carries the KindEnum brand key. */
+type IsKindEnum<T> = T extends { readonly __kindEnum__?: unknown } ? true : false;
+
+/** @internal — extract the string input surface out of a KindEnum brand. */
+type KindEnumText<T> = T extends { readonly __kindEnum__?: infer V } ? V : never;
 
 /**
  * Terminal node shape — shared by every leaf, keyword, and enum.
@@ -526,6 +538,12 @@ type FieldsOf<T> = T extends { readonly $fields: infer F }
 	? F
 	: { [K in keyof T as K extends `_${infer N}` ? N : never]: T[K] };
 
+/** @internal — optional generator-emitted config/from widening hints keyed by raw field name. */
+type InputHintsOf<T> = T extends { readonly __inputHints__?: infer H } ? H : {};
+
+/** @internal — field input type prefers generator hints over storage type. */
+type FieldInputType<T, K extends keyof FieldsOf<T>> = K extends keyof InputHintsOf<T> ? InputHintsOf<T>[K] : FieldsOf<T>[K];
+
 /**
  * Extract the child-slot shape for the Config/Loose bag surface —
  * consumer code writes `config.children`, not `config.$children`. The
@@ -600,11 +618,13 @@ export type ConfigOf<T> = T extends unknown
 			{
 				[K in keyof FieldsOf<T> as IsAutoStamp<FieldsOf<T>[K]> extends true
 					? never
-					: CamelCase<K & string>]: IsBooleanKeywordSlot<FieldsOf<T>[K]> extends true
-					? boolean | undefined
-					: IsBitflagSlot<FieldsOf<T>[K]> extends true
-						? BitflagSlotEnum<FieldsOf<T>[K]> | undefined
-						: FieldsOf<T>[K];
+					: CamelCase<K & string>]: IsBooleanKeywordSlot<FieldInputType<T, K>> extends true
+					? boolean | BooleanKeywordSlotText<FieldInputType<T, K>> | undefined
+					: IsBitflagSlot<FieldInputType<T, K>> extends true
+						? BitflagSlotEnum<FieldInputType<T, K>> | undefined
+						: IsKindEnumSlot<FieldInputType<T, K>> extends true
+							? KindEnumSlotInput<FieldInputType<T, K>> | undefined
+						: FieldInputType<T, K>;
 			} &
 				// Child surface: polymorph variants with a single-child tuple hoist
 				// the inner child's Config up when the inner has meaningful Config
@@ -660,12 +680,23 @@ export type ConfigOf<T> = T extends unknown
 type IsBooleanKeywordSlot<T> =
 	IsBooleanKeyword<T> extends true ? true : T extends readonly (infer E)[] ? IsBooleanKeyword<E> : false;
 
+/** @internal — extract the keyword text out of a BooleanKeyword slot. */
+type BooleanKeywordSlotText<T> = T extends readonly (infer E)[] ? BooleanKeywordText<E> : BooleanKeywordText<T>;
+
 /** @internal — detect Bitflag brand through slot array wrappers. */
 type IsBitflagSlot<T> = IsBitflag<T> extends true ? true : T extends readonly (infer E)[] ? IsBitflag<E> : false;
 
 /** @internal — extract the const-enum type out of a Bitflag brand, including
  * through an array wrapper. */
 type BitflagSlotEnum<T> = T extends readonly (infer E)[] ? BitflagEnum<E> : BitflagEnum<T>;
+
+/** @internal — detect KindEnum brand through slot array wrappers. */
+type IsKindEnumSlot<T> = IsKindEnum<T> extends true ? true : T extends readonly (infer E)[] ? IsKindEnum<E> : false;
+
+/** @internal — widen a KindEnum slot back to its string-friendly input surface. */
+type KindEnumSlotInput<T> = T extends readonly (infer E)[]
+	? readonly (KindEnumText<E> | E)[]
+	: KindEnumText<T> | T;
 
 /**
  * TreeNodeOf<T> — parsed tree node derived from a concrete node interface.
@@ -760,11 +791,11 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
 	: {}) & {
 	readonly [K in keyof FieldsOf<T> as K extends RequiredNonAutoStampKeys<FieldsOf<T>>
 		? CamelCase<K>
-		: never]: WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & {
 	readonly [K in keyof FieldsOf<T> as K extends OptionalNonAutoStampKeys<FieldsOf<T>>
 		? CamelCase<K>
-		: never]?: WidenSlotValue<FieldsOf<T>[K], Scalars, Strings, [...Depth, 0], NsMap, Visited>;
+		: never]?: WidenSlotValue<FieldInputType<T, K>, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
 } & (T extends { readonly $children: infer C }
 		? {
 				readonly children?: WidenChildSlot<C, Scalars, Strings, [...Depth, 0], NsMap, Visited>;
@@ -777,11 +808,11 @@ type FromInputBody<T, Scalars, Strings, Depth extends number[], NsMap, Visited e
  * branch can detect $type cycles. */
 type WidenSlotValue<T, Scalars, Strings, Depth extends number[], NsMap, Visited extends string[] = []> =
 	IsBooleanKeywordSlot<T> extends true
-		? boolean | T | (T extends readonly (infer E)[] ? E : T) extends infer U
-			? U | (U extends { readonly $text: infer V } ? V : never)
-			: never
+		? boolean | BooleanKeywordSlotText<T> | T
 		: IsBitflagSlot<T> extends true
 			? BitflagSlotEnum<T> | readonly string[] | string | T
+			: IsKindEnumSlot<T> extends true
+				? KindEnumSlotInput<T>
 			: WidenValue<T, Scalars, Strings, Depth, NsMap, Visited>;
 
 /** Keys of T that are required (not optional). */
@@ -931,9 +962,11 @@ type WidenValue<
 		// node-projection branch, otherwise the structural match below
 		// swallows them.
 		IsBooleanKeyword<T> extends true
-		? boolean | T | (T extends { readonly $text: infer V } ? V : never)
+		? boolean | BooleanKeywordText<T> | T
 		: IsBitflag<T> extends true
 			? BitflagEnum<T> | readonly string[] | string | T
+			: IsKindEnum<T> extends true
+				? KindEnumText<T> | T
 			: T extends readonly (infer E)[]
 				? [readonly []] extends [T]
 					?

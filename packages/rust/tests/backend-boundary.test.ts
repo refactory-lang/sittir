@@ -171,7 +171,7 @@ describe('boundary', () => {
 		);
 	});
 
-	it('rejects payloads that do not satisfy the native wire contract', async () => {
+	it('does not pre-validate payloads against a JS transport contract', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${Object.keys(node).length}`);
 		mockNativeBackend(
 			class {
@@ -191,13 +191,11 @@ describe('boundary', () => {
 			$named: true,
 			$children: [identifier, 'oops']
 		} as const;
-		expect(() => render(invalidNode)).toThrow(
-			/unsupported native transport kind|node\.\$children\[\d+\]|must be one of/
-		);
-		expect(renderSpy).not.toHaveBeenCalled();
+		expect(render(invalidNode)).toMatch(/^ok:/);
+		expect(renderSpy).toHaveBeenCalledWith(invalidNode);
 	});
 
-	it('rejects per-node format metadata at the native render boundary', async () => {
+	it('does not strip per-node format metadata before native render', async () => {
 		const renderSpy = vi.fn((node: Record<string, unknown>) => `ok:${String(node.$type)}`);
 		mockNativeBackend(
 			class {
@@ -215,8 +213,8 @@ describe('boundary', () => {
 			...identifier,
 			$format: { boundary: { leading: '\t' } }
 		};
-		expect(() => render(invalidNode)).toThrow(/node\.\$format is not supported by the native render boundary/);
-		expect(renderSpy).not.toHaveBeenCalled();
+		expect(render(invalidNode)).toBe('ok:1');
+		expect(renderSpy).toHaveBeenCalledWith(invalidNode);
 	});
 
 	it('uses engine-owned format when native render is called without per-call format args', async () => {

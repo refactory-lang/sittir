@@ -207,24 +207,17 @@ export const NODE_KINDS = [
 /** All leaf/terminal node kind strings. */
 export const LEAF_KINDS = [
   '__error_recovery',
+  '__for_header_kind',
   '__for_header_operator',
-  '__for_header_var_kind_kind',
   '__number_operator',
-  '__public_field_definition_access_first_declare_marker',
-  '__public_field_definition_accessor_opt_accessor_marker',
   '_abstract_marker',
   '_accessibility_modifier',
   '_accessor_kind',
-  '_asserts_annotation_asserts',
-  '_assignment_expression_using_marker',
   '_async_marker',
   '_augmented_assignment_expression_operator',
   '_automatic_semicolon',
-  '_binary_expression_operator',
   '_const_marker',
   '_export_specifier_export_kind',
-  '_for_in_statement_await_marker',
-  '_for_statement_initializer',
   '_function_signature_automatic_semicolon',
   '_import_attribute_object',
   '_kind',
@@ -240,8 +233,6 @@ export const LEAF_KINDS = [
   '_object_type_closing',
   '_object_type_opening',
   '_operator',
-  '_optional_chain',
-  '_optional_marker',
   '_override_modifier',
   '_public_field_definition_optionality_marker',
   '_readonly_marker',
@@ -332,6 +323,11 @@ export const ALL_KINDS = [...NODE_KINDS, ...LEAF_KINDS] as const;
 
 /** Language keywords (alphabetic anonymous tokens). */
 export const KEYWORDS = [
+  '__for_header_kind',
+  '_abstract_marker',
+  '_asserts_annotation_asserts',
+  '_async_marker',
+  '_const_marker',
   '_kw_abstract_marker',
   '_kw_accessor_marker',
   '_kw_asserts',
@@ -344,6 +340,11 @@ export const KEYWORDS = [
   '_kw_static_marker',
   '_kw_type_predicate',
   '_kw_using_marker',
+  '_optional_chain',
+  '_optional_marker',
+  '_override_modifier',
+  '_readonly_marker',
+  '_static_marker',
   'abstract',
   'accessor',
   'as',
@@ -410,6 +411,7 @@ export const OPERATORS = [
   "\"",
   "${",
   "&",
+  "&&",
   "'",
   "(",
   ")",
@@ -2291,36 +2293,12 @@ export const __FOR_HEADER_OPERATORS = [
 ] as const;
 export type ForHeaderOperatorValue = (typeof __FOR_HEADER_OPERATORS)[number];
 
-/** Valid values for `__for_header_var_kind_kind` nodes. */
-export const __FOR_HEADER_VAR_KIND_KINDS = [
-  'var',
-] as const;
-export type ForHeaderVarKindKindValue = (typeof __FOR_HEADER_VAR_KIND_KINDS)[number];
-
 /** Valid values for `__number_operator` nodes. */
 export const __NUMBER_OPERATORS = [
   '-',
   '+',
 ] as const;
 export type NumberOperatorValue = (typeof __NUMBER_OPERATORS)[number];
-
-/** Valid values for `__public_field_definition_access_first_declare_marker` nodes. */
-export const __PUBLIC_FIELD_DEFINITION_ACCESS_FIRST_DECLARE_MARKERS = [
-  'declare',
-] as const;
-export type PublicFieldDefinitionAccessFirstDeclareMarkerValue = (typeof __PUBLIC_FIELD_DEFINITION_ACCESS_FIRST_DECLARE_MARKERS)[number];
-
-/** Valid values for `__public_field_definition_accessor_opt_accessor_marker` nodes. */
-export const __PUBLIC_FIELD_DEFINITION_ACCESSOR_OPT_ACCESSOR_MARKERS = [
-  'accessor',
-] as const;
-export type PublicFieldDefinitionAccessorOptAccessorMarkerValue = (typeof __PUBLIC_FIELD_DEFINITION_ACCESSOR_OPT_ACCESSOR_MARKERS)[number];
-
-/** Valid values for `_abstract_marker` nodes. */
-export const _ABSTRACT_MARKERS = [
-  'abstract',
-] as const;
-export type AbstractMarkerValue = (typeof _ABSTRACT_MARKERS)[number];
 
 /** Valid values for `_accessibility_modifier` nodes. */
 export const _ACCESSIBILITY_MODIFIERS = [
@@ -2337,24 +2315,6 @@ export const _ACCESSOR_KINDS = [
   '*',
 ] as const;
 export type AccessorKindValue = (typeof _ACCESSOR_KINDS)[number];
-
-/** Valid values for `_asserts_annotation_asserts` nodes. */
-export const _ASSERTS_ANNOTATION_ASSERTSS = [
-  ':',
-] as const;
-export type AssertsAnnotationAssertsValue = (typeof _ASSERTS_ANNOTATION_ASSERTSS)[number];
-
-/** Valid values for `_assignment_expression_using_marker` nodes. */
-export const _ASSIGNMENT_EXPRESSION_USING_MARKERS = [
-  'using',
-] as const;
-export type AssignmentExpressionUsingMarkerValue = (typeof _ASSIGNMENT_EXPRESSION_USING_MARKERS)[number];
-
-/** Valid values for `_async_marker` nodes. */
-export const _ASYNC_MARKERS = [
-  'async',
-] as const;
-export type AsyncMarkerValue = (typeof _ASYNC_MARKERS)[number];
 
 /** Valid values for `_augmented_assignment_expression_operator` nodes. */
 export const _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS = [
@@ -2376,36 +2336,12 @@ export const _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS = [
 ] as const;
 export type AugmentedAssignmentExpressionOperatorValue = (typeof _AUGMENTED_ASSIGNMENT_EXPRESSION_OPERATORS)[number];
 
-/** Valid values for `_binary_expression_operator` nodes. */
-export const _BINARY_EXPRESSION_OPERATORS = [
-  '&&',
-] as const;
-export type BinaryExpressionOperatorValue = (typeof _BINARY_EXPRESSION_OPERATORS)[number];
-
-/** Valid values for `_const_marker` nodes. */
-export const _CONST_MARKERS = [
-  'const',
-] as const;
-export type ConstMarkerValue = (typeof _CONST_MARKERS)[number];
-
 /** Valid values for `_export_specifier_export_kind` nodes. */
 export const _EXPORT_SPECIFIER_EXPORT_KINDS = [
   'type',
   'typeof',
 ] as const;
 export type ExportSpecifierExportKindValue = (typeof _EXPORT_SPECIFIER_EXPORT_KINDS)[number];
-
-/** Valid values for `_for_in_statement_await_marker` nodes. */
-export const _FOR_IN_STATEMENT_AWAIT_MARKERS = [
-  'await',
-] as const;
-export type ForInStatementAwaitMarkerValue = (typeof _FOR_IN_STATEMENT_AWAIT_MARKERS)[number];
-
-/** Valid values for `_for_statement_initializer` nodes. */
-export const _FOR_STATEMENT_INITIALIZERS = [
-  ';',
-] as const;
-export type ForStatementInitializerValue = (typeof _FOR_STATEMENT_INITIALIZERS)[number];
 
 /** Valid values for `_import_attribute_object` nodes. */
 export const _IMPORT_ATTRIBUTE_OBJECTS = [
@@ -2442,42 +2378,12 @@ export const _OPERATORS = [
 ] as const;
 export type OperatorValue = (typeof _OPERATORS)[number];
 
-/** Valid values for `_optional_chain` nodes. */
-export const _OPTIONAL_CHAINS = [
-  '?.',
-] as const;
-export type OptionalChainValue = (typeof _OPTIONAL_CHAINS)[number];
-
-/** Valid values for `_optional_marker` nodes. */
-export const _OPTIONAL_MARKERS = [
-  '?',
-] as const;
-export type OptionalMarkerValue = (typeof _OPTIONAL_MARKERS)[number];
-
-/** Valid values for `_override_modifier` nodes. */
-export const _OVERRIDE_MODIFIERS = [
-  'override',
-] as const;
-export type OverrideModifierValue = (typeof _OVERRIDE_MODIFIERS)[number];
-
 /** Valid values for `_public_field_definition_optionality_marker` nodes. */
 export const _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS = [
   '?',
   '!',
 ] as const;
 export type PublicFieldDefinitionOptionalityMarkerValue = (typeof _PUBLIC_FIELD_DEFINITION_OPTIONALITY_MARKERS)[number];
-
-/** Valid values for `_readonly_marker` nodes. */
-export const _READONLY_MARKERS = [
-  'readonly',
-] as const;
-export type ReadonlyMarkerValue = (typeof _READONLY_MARKERS)[number];
-
-/** Valid values for `_static_marker` nodes. */
-export const _STATIC_MARKERS = [
-  'static',
-] as const;
-export type StaticMarkerValue = (typeof _STATIC_MARKERS)[number];
 
 /** Valid values for `_unary_expression_operator` nodes. */
 export const _UNARY_EXPRESSION_OPERATORS = [

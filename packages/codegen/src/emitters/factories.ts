@@ -32,11 +32,12 @@ import {
 	fieldTypeComponents,
 	isValidIdent,
 	keywordPresenceKind,
-	keywordPresenceValue,
-	keywordPresenceValues,
+	resolveFieldStorageInfo,
 	resolveHiddenKeywordLiteral,
 	classifyFactoryShape,
-	classifyChildFactorySurface
+	classifyChildFactorySurface,
+	classifyFactoryEmission,
+	warnSkippedParserSymbol
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -57,6 +58,7 @@ export interface EmitFactoriesConfig {
 	 * (legacy callers / unit tests), falls back to string `$type: 'kind' as const`.
 	 */
 	generatedIdTables?: GeneratedIdTables;
+	kindEntries?: readonly KindEnumEntry[];
 	/**
 	 * Kind names listed in the grammar's `inline:` array. When a kind has no
 	 * parser symbol AND appears here, it's a deliberately inlined rule — warn
@@ -100,18 +102,6 @@ export function emitFactories(config: EmitFactoriesConfig): string {
  */
 function collectUsesNonEmptyArray(nodeMap: NodeMap): boolean {
 	return [...nodeMap.nodes.values()].some((n) => allSlotsOf(n).some((f) => isNonEmpty(f)));
-}
-
-/**
- * Whether any factory's `$with` setter has a boolean-keyword field — when
- * true, the generated `factories.ts` needs the `BooleanKeyword` type
- * import from `@sittir/types`. Mirrors the gating pattern of
- * `collectUsesNonEmptyArray` / `collectUsesHoistedPolymorphForm`.
- */
-function collectUsesBooleanKeyword(nodeMap: NodeMap): boolean {
-	return [...nodeMap.nodes.values()].some((n) =>
-		allSlotsOf(n).some((f) => keywordPresenceKind(f, nodeMap) === 'boolean')
-	);
 }
 
 /**
@@ -159,111 +149,6 @@ function emitFluentSetterHelpers(): string[] {
  *   AND narrows the static type of the argument so the subsequent assignment /
  *   spread type-checks without a cast.
  */
-/**
- * Emit the keyword-presence runtime helpers.
- *
- * - `_bf` — bitflag field. Accepts a number (const-enum OR) and emits
- *   the underlying NodeData container. (Only emitted when at least one
- *   bitflag field exists in the grammar.)
- *
- * Scalar / repeat-of-one-literal boolean-keyword fields no longer need a
- * runtime helper: the generated factory emits them inline as
- * `config.foo ? 'literal' : undefined` (scalar) or
- * `config.foo ? ['literal'] : undefined` (repeat-of-one). The render
- * engine accepts string values in `$fields` directly (see
- * `core/render.ts::buildNunjucksTemplateContext.renderChild`), so the
- * previous NodeData-wrapping (`$type: '_kw_foo', $text: 'foo', …`) was
- * redundant ceremony — the literal is the only load-bearing payload.
- * Only emit the helpers actually needed — keeps the generated file
- * lean for grammars with no bitflag fields (all three current
- * grammars).
- */
-function emitKeywordPresenceHelpers(nodeMap: NodeMap): string[] {
-	const needs = scanKeywordPresenceNeeds(nodeMap);
-	const lines: string[] = [];
-	if (needs.bitflag) {
-		lines.push(
-			'function _bf<T>(v: unknown, kinds: readonly string[], texts: readonly string[], named: boolean): readonly T[] | undefined {',
-			'  if (v === undefined || v === null) return undefined;',
-			"  if (typeof v !== 'number') return v as readonly T[];",
-			'  const out: T[] = [];',
-			'  for (let i = 0; i < kinds.length; i++) {',
-			'    if ((v & (1 << i)) !== 0) out.push({ $type: kinds[i]!, $text: texts[i]!, $named: named, $source: 2 } as unknown as T);',
-			'  }',
-			'  return out;',
-			'}'
-		);
-	}
-	return lines;
-}
-
-/**
- * Walk the NodeMap and record which keyword-presence helpers the
- * factory emitter actually needs. Drives conditional helper emission.
- */
-function scanKeywordPresenceNeeds(nodeMap: NodeMap): { bitflag: boolean } {
-	let bitflag = false;
-	for (const [, node] of nodeMap.nodes) {
-		for (const f of allSlotsOf(node)) {
-			if (keywordPresenceKind(f, nodeMap) === 'bitflag') bitflag = true;
-		}
-	}
-	return { bitflag };
-}
-
-/**
- * Compute the `(kind, text, named)` triple for a keyword-presence field.
- * Only used by bitflag emission — the `_bf` helper still stamps a
- * NodeData container per bit so it needs the full triple. Scalar /
- * array-boolean fields now inline as `config.x ? 'text' : undefined`
- * and don't consult this function.
- *
- * Resolution order matches `resolveEntryLiteral`:
- *   - Direct terminal → kind = text = the literal string, named = false.
- *   - NodeRef to hidden `_kw_*` / hidden single-string token → kind is
- *     the `_kw_*` kind name, text is the literal, named = false.
- *   - NodeRef to a visible keyword / single-value enum → kind is the
- *     visible kind name, text is the literal, named = true.
- *
- * Returns `undefined` if no entry resolves (shouldn't happen for a
- * field that already classified as boolean / bitflag, but returned
- * defensively).
- */
-function resolveKeywordPresenceTriple(
-	field: AssembledNonterminal,
-	literal: string,
-	nodeMap: NodeMap
-): { kind: string; text: string; named: boolean } | undefined {
-	for (const v of field.values) {
-		if (isTerminalValue(v) && v.value === literal) {
-			return { kind: literal, text: literal, named: false };
-		}
-		if (isNodeRef(v)) {
-			const kindName = isUnresolvedRef(v.node) ? v.node.name : v.node.kind;
-			// Hidden keyword: name matches the literal via _kw_* helper.
-			const hiddenLit = resolveHiddenKeywordLiteral(kindName, nodeMap);
-			if (hiddenLit === literal) {
-				return { kind: kindName, text: literal, named: false };
-			}
-			// Visible keyword / single-enum — named, full kind name.
-			const ref = nodeMap.nodes.get(kindName);
-			if (ref && !kindName.startsWith('_')) {
-				if (ref.modelType === 'keyword' && (ref as { text: string }).text === literal) {
-					return { kind: kindName, text: literal, named: true };
-				}
-				if (
-					ref.modelType === 'enum' &&
-					(ref as { values: string[] }).values.includes(literal) &&
-					(ref as { values: string[] }).values.length === 1
-				) {
-					return { kind: kindName, text: literal, named: true };
-				}
-			}
-		}
-	}
-	return undefined;
-}
-
 function emitNonEmptyAssertHelper(): string[] {
 	return [
 		'function _assertNonEmpty<T>(',
@@ -274,6 +159,16 @@ function emitNonEmptyAssertHelper(): string[] {
 		'  if (arr.length === 0) {',
 		'    throw new Error(`${label}: requires at least one element`);',
 		'  }',
+		'}'
+	];
+}
+
+function emitConfigChildrenHelper(): string[] {
+	return [
+		'function _configChildren<T>(config: unknown, fallback: T): T {',
+		"  if (config === null || config === undefined || typeof config !== 'object') return fallback;",
+		"  if (!('children' in config)) return fallback;",
+		'  return ((config as { readonly children?: T }).children ?? fallback);',
 		'}'
 	];
 }
@@ -754,107 +649,63 @@ function autoStampExpression(f: AssembledNonterminal, nodeMap: NodeMap): string 
 	return stampExpressionFor(f, nodeMap);
 }
 
-/**
- * Build the RHS expression for a factory field assignment when the
- * field classifies as keyword-presence.
- *
- * Scalar boolean:   `config?.propertyName ? '<text>' : undefined`
- * Array  boolean:   `config?.propertyName ? ['<text>'] : undefined`
- *   (degenerate repeat-of-one-literal)
- * Bitflag:          `_bf(config?.propertyName, [<kinds>], [<texts>], <named>)`
- *
- * The scalar / array-boolean forms used to wrap the literal in a
- * NodeData via the `_bk` / `_bkArr` helpers. That wrapping was
- * redundant — the render engine accepts plain string values in
- * `$fields` (see `core/render.ts::buildNunjucksTemplateContext.renderChild`),
- * and the kind / named metadata never flowed anywhere load-bearing.
- * Inlining the ternary here drops the helpers, their imports, and
- * the `T.Kw<Keyword>` type references that the helpers forced on
- * the generated factories.
- *
- * Returns `undefined` when the field doesn't classify as keyword-presence.
- */
-function keywordPresenceAssignmentExpr(
-	f: AssembledNonterminal,
-	configAccess: string,
-	nodeMap: NodeMap
-): string | undefined {
-	const kw = keywordPresenceKind(f, nodeMap);
-	if (kw === null) return undefined;
-	const access = `${configAccess}.${f.configKey}`;
-	if (kw === 'boolean') {
-		const lit = keywordPresenceValue(f, nodeMap);
-		if (lit === undefined) return undefined;
-		// `as const` keeps the emitted literal narrow when the expression
-		// flows into an object-literal context — without it, TypeScript
-		// widens `"ref"` to `string` which fails the `$fields` interface
-		// slot's `BooleanKeyword<"ref">` constraint.
-		const textLit = `${JSON.stringify(lit)} as const`;
-		return isMultiple(f) ? `${access} ? [${textLit}] : undefined` : `${access} ? ${textLit} : undefined`;
-	}
-	// bitflag
-	const lits = keywordPresenceValues(f, nodeMap);
-	if (lits.length === 0) return undefined;
-	const triples = lits
-		.map((l) => resolveKeywordPresenceTriple(f, l, nodeMap))
-		.filter((t): t is { kind: string; text: string; named: boolean } => t !== undefined);
-	if (triples.length !== lits.length) return undefined;
-	const kinds = `[${triples.map((t) => JSON.stringify(t.kind)).join(', ')}]`;
-	const texts = `[${triples.map((t) => JSON.stringify(t.text)).join(', ')}]`;
-	// All bitflag entries have the same `named` flag (they're all hidden
-	// `_kw_*` OR all direct-terminal OR all visible-keyword — the
-	// grammar won't mix them). Use the first triple's flag.
-	const named = triples[0]!.named;
-	// Pass the element type as `<T>` so `_bf<T>(...)` returns
-	// `readonly T[] | undefined` matching the slot's `Bitflag<E, T>`-branded
-	// tuple shape — without it the field assignment sees `readonly unknown[]`
-	// and the `$fields` shape stops satisfying AnyNodeData's NodeMemberValue
-	// index signature. Element type uses the literal-string union (matching
-	// the `texts` array passed at runtime).
-	const elementType = triples.map((t) => JSON.stringify(t.text)).join(' | ');
-	return `_bf<${elementType}>(${access}, ${kinds}, ${texts}, ${named})`;
+function bitflagTextsExpr(texts: readonly string[]): string {
+	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
-/**
- * Resolve an AssembledNonterminal's element type to a concrete TS type expression
- * for the factory surface — each resolved node kind is prefixed with `T.` so
- * the reference resolves against the `import * as T from './types.js'` import.
- *
- * Delegates to the shared {@link fieldTypeComponents} walker so the node-ref
- * / literal / alias-source / hidden-keyword / missing-kind logic stays in one
- * place (types.ts::fieldTypeExpr is the same walk with no prefix).
- */
-/**
- * Whether every value of a slot resolves to a leaf-shaped kind whose only
- * meaningful state is `$text` — the four "terminal" model types (`leaf`,
- * `keyword`, `token`, `enum`) plus inline `TerminalValue`s.
- *
- * When true, factory storage hoists `config.<name>.$text` directly into the
- * `_<name>` slot instead of holding the wrapped NodeData. The wrapper carries
- * no information beyond `$text` for these kinds, so storing the string is
- * lossless and avoids an allocation per node.
- *
- * Returns false when any value resolves to a structural kind (branch, group,
- * polymorph, multi, supertype) because those carry sub-state the wrapper is
- * needed to preserve. UnresolvedRef values also force false — without
- * resolution we cannot prove leaf-shape.
- */
-/**
- * Storage expression for a slot: `config<opt>.<propertyName>` plus a
- * trailing `.$text` access when the slot is all-leaf. Optional fields
- * read through `?.$text` to short-circuit when the field is absent.
- *
- * Used by every factory emit path (branch, refine-form, container,
- * polymorph stub, hoisted form, leaf) so the leaf-hoist optimization
- * is applied uniformly.
- */
-function slotStorageExpr(f: AssembledNonterminal, configAccess: string, nodeMap: NodeMap): string {
-	const base = `${configAccess}.${f.configKey}`;
-	if (!isAllLeafSlot(f, nodeMap)) return base;
-	// Optional field → optional chaining on `.$text` so absent values stay
-	// undefined rather than throwing on the property access.
-	const sep = isRequired(f) ? '.' : '?.';
-	return `${base}${sep}$text`;
+function kindEnumTextMapExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind !== 'kindEnum' || !kindEntries) return '[]';
+	const byText: Array<readonly [string, string]> = [];
+	for (const value of f.values) {
+		if (!isNodeRef(value)) continue;
+		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
+		const resolved = nodeMap.nodes.get(kind);
+		if (!resolved || resolved.modelType !== 'enum') continue;
+		for (const text of resolved.values) {
+			const discriminant = hasCatalogEntry(kindEntries, text)
+				? kindDiscriminantExpr(text, nodeMap, kindEntries)
+				: hasCatalogEntry(kindEntries, resolved.kind)
+					? kindDiscriminantExpr(resolved.kind, nodeMap, kindEntries)
+					: `kindIdFromName(${JSON.stringify(resolved.kind)})`;
+			byText.push([text, discriminant]);
+		}
+	}
+	return `[${byText.map(([text, discriminant]) => `[${JSON.stringify(text)}, ${discriminant}] as const`).join(', ')}]`;
+}
+
+function slotStorageFromValueExpr(
+	f: AssembledNonterminal,
+	valueExpr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	switch (storageInfo.kind) {
+		case 'boolean':
+			return `coerceBooleanKeywordStorage(${valueExpr})`;
+		case 'bitflag':
+			return `coerceBitflagStorage(${valueExpr}, ${bitflagTextsExpr(storageInfo.texts)})`;
+		case 'kindEnum':
+			return kindEntries
+				? `coerceKindEnumStorage(${valueExpr}, ${kindEnumTextMapExpr(f, nodeMap, kindEntries)})`
+				: valueExpr;
+		case 'verbatim':
+			return valueExpr;
+	}
+}
+
+function slotStorageExpr(
+	f: AssembledNonterminal,
+	configAccess: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	return slotStorageFromValueExpr(f, `${configAccess}.${f.configKey}`, nodeMap, kindEntries);
 }
 
 /**
@@ -871,38 +722,14 @@ function setterValueSignature(f: AssembledNonterminal, elemType: string): string
 
 /**
  * Param type for a single-valued setter:
- *   - boolean-keyword: `BooleanKeyword<elemType>` to match the storage brand.
- *   - bitflag: derive from the factory's own param via
- *     `Parameters<typeof <fn>>[0]['<propName>']` so the param matches the
- *     ConfigOf-derived flattened enum type without the emitter having to
- *     compute the enum name itself.
+ *   - storage-rewritten fields: derive from the factory's own config slot.
  *   - default: plain `elemType`.
  */
 function setterElemType(f: AssembledNonterminal, elemType: string, fn: string, nodeMap: NodeMap): string {
-	const kw = keywordPresenceKind(f, nodeMap);
-	if (kw === 'boolean') return `BooleanKeyword<${elemType}>`;
-	if (kw === 'bitflag') return `Parameters<typeof ${fn}>[0]['${f.configKey}']`;
-	return elemType;
-}
-
-function isAllLeafSlot(f: AssembledNonterminal, _nodeMap: NodeMap): boolean {
-	if (f.values.length === 0) return false;
-	for (const v of f.values) {
-		// Mixed terminal + node-ref slots fail the hoist because the runtime
-		// value can be a bare string (no `.$text`). Hoist applies ONLY when
-		// every value is a NodeRef pointing to a leaf-shaped kind so the
-		// runtime value is always a NodeData wrapper carrying `$text`.
-		if (v.kind !== 'node-ref') return false;
-		// Post-hydrate (assemble.ts hydrateSlotRefs runs before emit phase),
-		// `v.node` is always a resolved AssembledNode. UnresolvedRef would
-		// have thrown at hydrate time. External-token refs (which legitimately
-		// remain unresolved) are not leaf-shaped here either.
-		if (isUnresolvedRef(v.node)) return false;
-		const m = v.node.modelType;
-		if (m === 'pattern' || m === 'keyword' || m === 'token' || m === 'enum') continue;
-		return false;
+	if (resolveFieldStorageInfo(f, nodeMap).kind !== 'verbatim') {
+		return `NonNullable<Parameters<typeof ${fn}>[0]>['${f.configKey}']`;
 	}
-	return true;
+	return elemType;
 }
 
 export function fieldElementType(f: AssembledNonterminal, nodeMap: NodeMap): string {
@@ -1030,10 +857,14 @@ function emitFieldCarryingFactory(
 			if (!childrenUserConfigurable) {
 				lines.push(`  const children = [${stampedItems.join(', ')}] as const;`);
 			} else {
-				lines.push(`  const children = ${configAccess}.children ?? [${stampedItems.join(', ')}];`);
+				lines.push(
+					`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [${stampedItems.join(', ')}] as unknown as T.${node.typeName}['$children']);`
+				);
 			}
 		} else {
-			lines.push(`  const children = ${configAccess}.children ?? [];`);
+			lines.push(
+				`  const children = _configChildren<T.${node.typeName}['$children']>(${configAccess}, [] as unknown as T.${node.typeName}['$children']);`
+			);
 		}
 	}
 
@@ -1051,15 +882,10 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${stamp};`);
+			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		const kwExpr = keywordPresenceAssignmentExpr(f, configAccess, nodeMap);
-		if (kwExpr !== undefined) {
-			lines.push(`  const _${f.name} = ${kwExpr};`);
-			continue;
-		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, configAccess, nodeMap)};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, configAccess, nodeMap, kindEntries)};`);
 	}
 
 	// Step 2: emit the literal. Storage uses property shorthand so the local
@@ -1095,11 +921,8 @@ function emitFieldCarryingFactory(
 	for (const f of fields) {
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName;
-		// Bitflag fields: even though storage is `NonEmptyArray<...>`, the
-		// Config (per ConfigOf) flattens to a single bitflag enum value, so
-		// the setter takes ONE value — not a rest-array.
-		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
-		if (isMultiple(f) && !isBitflag) {
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
@@ -1115,7 +938,9 @@ function emitFieldCarryingFactory(
 		const childElem = childElementType({ children }, nodeMap);
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const restType = childrenSetterRestType(children, childElem, childRest);
-		lines.push(`      children: (...items: ${restType}) => ${fn}({ ...${configAccess}, children: items }),`);
+		lines.push(
+			`      children: (...items: ${restType}) => ${fn}({ ...${configAccess}, children: items } as unknown as Parameters<typeof ${fn}>[0]),`
+		);
 	}
 	lines.push('    },');
 	lines.push('  });');
@@ -1149,9 +974,8 @@ function emitSingleFieldFactory(
 	const fn = node.rawFactoryName!;
 	const typeKind = node.modelType === 'group' ? (node.parentKind ?? node.kind) : node.kind;
 	const variantName = node.modelType === 'group' ? resolvePolymorphFormVariantName(node as AssembledGroup) : undefined;
-	const elemType = fieldElementType(soleField, nodeMap);
+	const elemType = `T.${node.typeName}.Config['${soleField.configKey}']`;
 	const paramName = soleField.propertyName;
-	const isLeaf = isAllLeafSlot(soleField, nodeMap);
 	const fieldOptional = !isRequired(soleField);
 	const optMark = fieldOptional ? '?' : '';
 
@@ -1163,17 +987,10 @@ function emitSingleFieldFactory(
 	for (const f of allFields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${stamp};`);
+			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		// This is the sole non-stamp field — read from parameter directly.
-		// Optional fields use optional chaining on `.$text`.
-		if (isLeaf) {
-			const sep = fieldOptional ? '?.' : '.';
-			lines.push(`  const _${f.name} = ${paramName}${sep}$text;`);
-		} else {
-			lines.push(`  const _${f.name} = ${paramName};`);
-		}
+		lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, paramName, nodeMap, kindEntries)};`);
 	}
 
 	// Emit the literal object with withMethods wrapper.
@@ -1293,26 +1110,25 @@ function emitRefineFormFactory(
 	// is not emitted as a top-level namespace.
 	lines.push(`export function ${formFn}(config${opt}: T.${info.typeName}.${formShortName}.Config) {`);
 	if (hasChildren) {
-		lines.push(`  const children = config${opt}.children ?? [];`);
+		lines.push(
+			`  const children = _configChildren<T.${formTypeName}['$children']>(config${opt}, [] as unknown as T.${formTypeName}['$children']);`
+		);
 	}
 	// Shape A: storage hoist + property shorthand + pure getters + $with.
 	for (const f of fields) {
 		const narrowedLit = narrowed.get(f.name);
 		if (narrowedLit !== undefined) {
-			lines.push(`  const _${f.name} = ${JSON.stringify(narrowedLit)} as const;`);
+			lines.push(
+				`  const _${f.name} = ${slotStorageFromValueExpr(f, `${JSON.stringify(narrowedLit)} as const`, nodeMap, kindEntries)};`
+			);
 			continue;
 		}
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${stamp};`);
+			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		const kwExpr = keywordPresenceAssignmentExpr(f, `config${opt}`, nodeMap);
-		if (kwExpr !== undefined) {
-			lines.push(`  const _${f.name} = ${kwExpr};`);
-			continue;
-		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(node.kind, nodeMap, kindEntries)},`);
@@ -1336,8 +1152,8 @@ function emitRefineFormFactory(
 		if (narrowed.has(f.name)) continue;
 		if (autoStampExpression(f, nodeMap) !== undefined) continue;
 		const method = f.propertyName;
-		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
-		if (isMultiple(f) && !isBitflag) {
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		if (isMultiple(f) && storageInfo.kind === 'verbatim') {
 			const elemType = fieldElementType(f, nodeMap);
 			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
@@ -1353,7 +1169,9 @@ function emitRefineFormFactory(
 		const childElem = childElementType({ children: node.children }, nodeMap);
 		const childRest = childElem.includes(' | ') ? `(${childElem})` : childElem;
 		const restType = childrenSetterRestType(node.children, childElem, childRest);
-		lines.push(`      children: (...items: ${restType}) => ${formFn}({ ...config, children: items }),`);
+		lines.push(
+			`      children: (...items: ${restType}) => ${formFn}({ ...config, children: items } as unknown as Parameters<typeof ${formFn}>[0]),`
+		);
 	}
 	lines.push('    },');
 	lines.push('  });');
@@ -1732,7 +1550,9 @@ function emitHoistedPolymorphFormFactory(
 		if (anyMultiple) {
 			// Spread coalesces missing children to an empty list — varargs
 			// inner factory accepts the empty case.
-			lines.push(`  const inner = ${hoist.innerFactoryName}(...(config?.children ?? []));`);
+			lines.push(
+				`  const inner = ${hoist.innerFactoryName}(..._configChildren<Parameters<typeof ${hoist.innerFactoryName}>>(config, [] as unknown as Parameters<typeof ${hoist.innerFactoryName}>));`
+			);
 		} else {
 			// Single-child inner factory takes one required NodeData. Tests
 			// and lenient consumers pass `{}` to form factories; we preserve
@@ -1744,7 +1564,10 @@ function emitHoistedPolymorphFormFactory(
 			// "trust the caller to provide this — runtime will see undefined
 			// if they didn't, same as before."
 			lines.push(
-				`  const inner = ${hoist.innerFactoryName}((config?.children ?? [])[0] as Parameters<typeof ${hoist.innerFactoryName}>[0]);`
+				`  const _innerChildren = _configChildren<readonly [Parameters<typeof ${hoist.innerFactoryName}>[0]] | []>(config, []);`
+			);
+			lines.push(
+				`  const inner = ${hoist.innerFactoryName}(_innerChildren[0] as Parameters<typeof ${hoist.innerFactoryName}>[0]);`
 			);
 		}
 	} else if (hoist.innerFactoryName !== undefined) {
@@ -1768,15 +1591,10 @@ function emitHoistedPolymorphFormFactory(
 		for (const f of hoist.innerFields) {
 			const stamp = autoStampExpression(f, nodeMap);
 			if (stamp !== undefined) {
-				lines.push(`  const _${f.name} = ${stamp};`);
+				lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 				continue;
 			}
-			const kwExpr = keywordPresenceAssignmentExpr(f, `config${opt}`, nodeMap);
-			if (kwExpr !== undefined) {
-				lines.push(`  const _${f.name} = ${kwExpr};`);
-				continue;
-			}
-			lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
+			lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 		}
 		lines.push('  const inner = withMethods({');
 		lines.push(`    $type: ${factoryTypeDiscriminant(innerKind, nodeMap, kindEntries)},`);
@@ -1800,10 +1618,10 @@ function emitHoistedPolymorphFormFactory(
 	for (const f of formFields) {
 		const stamp = autoStampExpression(f, nodeMap);
 		if (stamp !== undefined) {
-			lines.push(`  const _${f.name} = ${stamp};`);
+			lines.push(`  const _${f.name} = ${slotStorageFromValueExpr(f, stamp, nodeMap, kindEntries)};`);
 			continue;
 		}
-		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap)};`);
+		lines.push(`  const _${f.name} = ${slotStorageExpr(f, `config${opt}`, nodeMap, kindEntries)};`);
 	}
 	lines.push('  return withMethods({');
 	lines.push(`    $type: ${factoryTypeDiscriminant(parentKind, nodeMap, kindEntries)},`);
@@ -1835,8 +1653,8 @@ function emitHoistedPolymorphFormFactory(
 	// — same rules as non-hoisted setters (rule 3, consistent across paths).
 	const withEntries: string[] = [];
 	const buildHoistedSetter = (f: AssembledNonterminal, patchSource: 'form' | 'inner'): string => {
-		const isBitflag = keywordPresenceKind(f, nodeMap) === 'bitflag';
-		const fMultiple = isMultiple(f) && !isBitflag;
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const fMultiple = isMultiple(f) && storageInfo.kind === 'verbatim';
 		const rawElem = fieldElementType(f, nodeMap);
 		const elemType = setterElemType(f, rawElem, fn, nodeMap);
 		const param = fMultiple
@@ -2169,31 +1987,40 @@ export const factoryEmitter = {
 	 * Produce the preamble and capture config state for the dispatch loop.
 	 */
 	init(config: EmitFactoriesConfig): void {
-		const { nodeMap, strict = false, generatedIdTables, inlineKinds, synthesizedKinds } = config;
+		const {
+			nodeMap,
+			strict = false,
+			generatedIdTables,
+			kindEntries: providedKindEntries,
+			inlineKinds,
+			synthesizedKinds
+		} = config;
 
-		const kindEntries = generatedIdTables
-			? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-			: undefined;
+		const kindEntries =
+			providedKindEntries ??
+			(generatedIdTables
+				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+				: undefined);
 
 		const lines: string[] = ['// Auto-generated by @sittir/codegen — do not edit', ''];
 
 		lines.push(`import type * as T from './types.js';`);
 		if (kindEntries) {
-			lines.push(`import { TSKindId } from './types.js';`);
+			lines.push(`import { TSKindId, kindIdFromName } from './types.js';`);
 		}
 		const usesNonEmptyArray = collectUsesNonEmptyArray(nodeMap);
 		const usesConfigOf = collectUsesHoistedPolymorphForm(nodeMap);
-		const usesBooleanKeyword = collectUsesBooleanKeyword(nodeMap);
 		const utilImports = ['AnyNodeData', 'FluentNode'];
 		if (usesConfigOf) utilImports.push('ConfigOf');
 		if (usesNonEmptyArray) utilImports.push('NonEmptyArray');
-		if (usesBooleanKeyword) utilImports.push('BooleanKeyword');
 		lines.push(`import type { ${utilImports.sort().join(', ')} } from '@sittir/types';`);
-		lines.push("import { withMethods } from './utils.js';");
+		lines.push(
+			"import { coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage, withMethods } from './utils.js';"
+		);
 		lines.push('');
 		lines.push(...emitFluentSetterHelpers());
+		lines.push(...emitConfigChildrenHelper());
 		lines.push(...emitNonEmptyAssertHelper());
-		lines.push(...emitKeywordPresenceHelpers(nodeMap));
 		lines.push('');
 
 		const leafReConsts = buildLeafReConsts(nodeMap, lines);
@@ -2220,38 +2047,6 @@ export const factoryEmitter = {
 		factory.init();
 	},
 
-	shouldEmit(kind: string, node: AssembledNode): boolean {
-		const nodeMap = _emitterNodeMap;
-		const kindEntries = _emitterKindEntries;
-		const inlineKinds = _emitterInlineKinds;
-		const synthesizedKinds = _emitterSynthesizedKinds;
-
-		const isHiddenGroup = kind.startsWith('_') && node.modelType !== 'token' && node.modelType !== 'multi';
-		if (!node.userFacing && !isHiddenGroup) return false;
-		if (nodeMap.polymorphFormKinds.has(kind)) return false;
-		if (resolveHiddenKeywordLiteral(kind, nodeMap) !== undefined) return false;
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
-			if (inlineKinds?.includes(kind)) {
-				console.warn(
-					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
-						`Skipping factory emission. ` +
-						`Future: map to decomposition.`
-				);
-			} else if (synthesizedKinds?.has(kind)) {
-				// Intentionally synthesized by evaluate — no parser symbol by design.
-			} else {
-				console.warn(
-					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
-						`NOT in the grammar's inline: array. Skipping factory ` +
-						`emission. Investigate why tree-sitter dropped this rule.`
-				);
-			}
-			return false;
-		}
-
-		return !!node.rawFactoryName;
-	},
-
 	emitLeaf(node: Extract<AssembledNode, { modelType: 'pattern' | 'keyword' | 'enum' }>): void {
 		factory.leaf(node, _emitterNodeMap, _emitterLeafReConsts, _emitterKindEntries);
 	},
@@ -2275,8 +2070,20 @@ export const factoryEmitter = {
 	dispatchNode(kind: string, node: AssembledNode): void {
 		const nodeMap = _emitterNodeMap;
 		const kindEntries = _emitterKindEntries;
-
-		if (!this.shouldEmit(kind, node)) return;
+		const emission = classifyFactoryEmission(kind, node, {
+			nodeMap,
+			kindEntries,
+			inlineKinds: _emitterInlineKinds,
+			synthesizedKinds: _emitterSynthesizedKinds
+		});
+		if (
+			emission === 'skip-inline-kind' ||
+			emission === 'skip-synthesized-kind' ||
+			emission === 'skip-missing-parser-symbol'
+		) {
+			warnSkippedParserSymbol(kind, 'factory', emission);
+		}
+		if (emission !== 'emit') return;
 
 		// --- Taxonomy dispatch ---
 		const prevLen = _factoryOutput.length;

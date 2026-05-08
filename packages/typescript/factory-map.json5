@@ -5,20 +5,14 @@
 {
   "factoryShapes": {
     "__for_header_operator": "text",
-    "__for_header_var_kind_kind": "text",
     "__number_operator": "text",
-    "__public_field_definition_access_first_declare_marker": "text",
-    "__public_field_definition_accessor_opt_accessor_marker": "text",
     "_abstract_marker": "text",
     "_accessibility_modifier": "text",
     "_accessor_kind": "text",
     "_arrow_function__call_signature": "config",
     "_arrow_function_parameter": "config",
-    "_asserts_annotation_asserts": "text",
-    "_assignment_expression_using_marker": "text",
     "_async_marker": "text",
     "_augmented_assignment_expression_operator": "text",
-    "_binary_expression_operator": "text",
     "_call_expression_call": "config",
     "_call_expression_member": "config",
     "_call_expression_template_call": "config",
@@ -42,8 +36,6 @@
     "_for_header_let_const_kind": "config",
     "_for_header_lhs": "config",
     "_for_header_var_kind": "config",
-    "_for_in_statement_await_marker": "text",
-    "_for_statement_initializer": "text",
     "_import_attribute_object": "text",
     "_import_clause_default_import": "spread",
     "_import_clause_named_imports": "spread",
@@ -59,8 +51,6 @@
     "_object_type_closing": "text",
     "_object_type_opening": "text",
     "_operator": "text",
-    "_optional_chain": "text",
-    "_optional_marker": "text",
     "_override_modifier": "text",
     "_parenthesized_expression_sequence": "spread",
     "_parenthesized_expression_typed": "config",
@@ -106,7 +96,7 @@
     "augmented_assignment_expression": "config",
     "await_expression": "direct",
     "binary_expression": "config",
-    "break_statement": "direct",
+    "break_statement": "config",
     "call_expression": "config",
     "call_signature": "config",
     "catch_clause": "config",
@@ -123,8 +113,8 @@
     "constraint": "direct",
     "construct_signature": "config",
     "constructor_type": "config",
-    "continue_statement": "direct",
-    "debugger_statement": "config",
+    "continue_statement": "config",
+    "debugger_statement": "direct",
     "decorator": "direct",
     "decorator_call_expression": "config",
     "decorator_member_expression": "config",
@@ -142,7 +132,7 @@
     "export_statement_equals_export": "spread",
     "export_statement_namespace_export": "spread",
     "export_statement": "config",
-    "expression_statement": "direct",
+    "expression_statement": "config",
     "extends_clause": "config",
     "extends_type_clause": "config",
     "false": "text",
@@ -178,7 +168,7 @@
     "index_signature_mapped_type_clause": "direct",
     "index_signature": "config",
     "index_type_query": "direct",
-    "infer_type": "direct",
+    "infer_type": "config",
     "instantiation_expression": "config",
     "interface_declaration": "config",
     "internal_module": "config",
@@ -205,7 +195,7 @@
     "namespace_export": "direct",
     "namespace_import": "direct",
     "nested_identifier": "config",
-    "nested_type_identifier": "direct",
+    "nested_type_identifier": "config",
     "new_expression": "config",
     "non_null_expression": "direct",
     "null": "text",
@@ -237,7 +227,7 @@
     "required_parameter": "config",
     "rest_pattern": "direct",
     "rest_type": "direct",
-    "return_statement": "config",
+    "return_statement": "direct",
     "satisfies_expression": "config",
     "sequence_expression": "spread",
     "spread_element": "direct",
@@ -257,7 +247,7 @@
     "template_type": "direct",
     "ternary_expression": "config",
     "this": "text",
-    "throw_statement": "direct",
+    "throw_statement": "config",
     "true": "text",
     "try_statement": "config",
     "tuple_parameter": "config",
@@ -271,7 +261,7 @@
     "type_predicate": "config",
     "type_predicate_annotation": "direct",
     "type_query": "direct",
-    "unary_expression": "direct",
+    "unary_expression": "config",
     "undefined": "text",
     "unescaped_double_jsx_string_fragment": "text",
     "unescaped_double_string_fragment": "text",
@@ -290,20 +280,22 @@
     "||": "text",
     "jsx_text": "text",
     "_function_signature_automatic_semicolon": "text",
+    "var": "text",
+    "abstract": "text",
+    "async": "text",
+    "const": "text",
     "export": "text",
     "default": "text",
     "as": "text",
     "namespace": "text",
     "from": "text",
-    "abstract": "text",
     "accessor": "text",
-    "async": "text",
     "await": "text",
-    "const": "text",
     "declare": "text",
     "readonly": "text",
     "static": "text",
     "using": "text",
+    "override": "text",
     "global": "text",
     "break": "text",
     "catch": "text",
@@ -325,7 +317,6 @@
     "infer": "text",
     "interface": "text",
     "in": "text",
-    "override": "text",
     "return": "text",
     "satisfies": "text",
     "case": "text",
@@ -334,7 +325,6 @@
     "try": "text",
     "is": "text",
     "typeof": "text",
-    "var": "text",
     "with": "text",
     "yield": "text"
   },
@@ -458,6 +448,7 @@
       "source"
     ],
     "_for_header_let_const_kind": [
+      "kind",
       "left"
     ],
     "_for_header_lhs": [
@@ -481,6 +472,7 @@
       "value"
     ],
     "_number": [
+      "operator",
       "argument"
     ],
     "_type_query_call_expression": [
@@ -508,18 +500,23 @@
       "index"
     ],
     "_update_expression_postfix": [
-      "argument"
+      "argument",
+      "operator"
     ],
     "_update_expression_prefix": [
+      "operator",
       "argument"
     ],
     "abstract_class_declaration": [
       "decorator",
+      "name",
       "type_parameters",
       "class_heritage",
       "body"
     ],
     "abstract_method_signature": [
+      "accessibility_modifier",
+      "accessor_kind",
       "name",
       "type_parameters",
       "parameters",
@@ -559,6 +556,7 @@
     ],
     "augmented_assignment_expression": [
       "left",
+      "operator",
       "right"
     ],
     "await_expression": [
@@ -569,7 +567,8 @@
       "right"
     ],
     "break_statement": [
-      "label"
+      "label",
+      "semicolon"
     ],
     "call_signature": [
       "type_parameters",
@@ -583,15 +582,18 @@
     ],
     "class": [
       "decorator",
+      "name",
       "type_parameters",
       "class_heritage",
       "body"
     ],
     "class_declaration": [
       "decorator",
+      "name",
       "type_parameters",
       "class_heritage",
-      "body"
+      "body",
+      "automatic_semicolon"
     ],
     "class_static_block": [
       "body"
@@ -619,7 +621,11 @@
       "type"
     ],
     "continue_statement": [
-      "label"
+      "label",
+      "semicolon"
+    ],
+    "debugger_statement": [
+      "semicolon"
     ],
     "decorator_call_expression": [
       "function",
@@ -635,7 +641,8 @@
     ],
     "do_statement": [
       "body",
-      "condition"
+      "condition",
+      "semicolon"
     ],
     "else_clause": [
       "statement"
@@ -649,6 +656,7 @@
       "body"
     ],
     "export_specifier": [
+      "export_kind",
       "name",
       "alias"
     ],
@@ -694,7 +702,8 @@
       "name",
       "type_parameters",
       "parameters",
-      "return_type"
+      "return_type",
+      "semicolon"
     ],
     "function_type": [
       "type_parameters",
@@ -726,7 +735,8 @@
     ],
     "import_alias": [
       "name",
-      "value"
+      "value",
+      "semicolon"
     ],
     "import_attribute": [
       "object"
@@ -741,12 +751,14 @@
     "import_statement": [
       "import_clause",
       "from_clause",
-      "import_attribute"
+      "import_attribute",
+      "semicolon"
     ],
     "index_type_query": [
       "primary_type"
     ],
     "infer_type": [
+      "type_identifier",
       "type"
     ],
     "instantiation_expression": [
@@ -754,6 +766,7 @@
       "type_arguments"
     ],
     "interface_declaration": [
+      "name",
       "type_parameters",
       "extends_type_clause",
       "body"
@@ -784,17 +797,22 @@
       "body"
     ],
     "lexical_declaration": [
-      "declarators"
+      "kind",
+      "declarators",
+      "semicolon"
     ],
     "lookup_type": [
       "primary_type",
       "index_type"
     ],
     "mapped_type_clause": [
+      "name",
       "type",
       "alias"
     ],
     "method_definition": [
+      "accessibility_modifier",
+      "accessor_kind",
       "name",
       "type_parameters",
       "parameters",
@@ -802,6 +820,8 @@
       "body"
     ],
     "method_signature": [
+      "accessibility_modifier",
+      "accessor_kind",
       "name",
       "type_parameters",
       "parameters",
@@ -819,7 +839,8 @@
       "property"
     ],
     "nested_type_identifier": [
-      "module"
+      "module",
+      "name"
     ],
     "new_expression": [
       "constructor",
@@ -834,7 +855,9 @@
       "right"
     ],
     "object_type": [
-      "members"
+      "opening",
+      "members",
+      "closing"
     ],
     "omitting_type_annotation": [
       "type"
@@ -871,12 +894,14 @@
       "statements"
     ],
     "property_signature": [
+      "accessibility_modifier",
       "name",
       "type"
     ],
     "public_field_definition": [
       "decorator",
       "name",
+      "optionality_marker",
       "type",
       "value"
     ],
@@ -896,6 +921,9 @@
     "rest_type": [
       "type"
     ],
+    "return_statement": [
+      "semicolon"
+    ],
     "satisfies_expression": [
       "expression",
       "type_annotation"
@@ -904,7 +932,8 @@
       "expression"
     ],
     "statement_block": [
-      "statements"
+      "statements",
+      "automatic_semicolon"
     ],
     "subscript_expression": [
       "object",
@@ -936,8 +965,10 @@
       "type"
     ],
     "type_alias_declaration": [
+      "name",
       "type_parameters",
-      "value"
+      "value",
+      "semicolon"
     ],
     "type_annotation": [
       "type"
@@ -947,6 +978,7 @@
       "expression"
     ],
     "type_parameter": [
+      "name",
       "constraint",
       "value"
     ],
@@ -958,6 +990,7 @@
       "type_predicate"
     ],
     "unary_expression": [
+      "operator",
       "argument"
     ],
     "union_type": [
@@ -965,7 +998,8 @@
       "right"
     ],
     "variable_declaration": [
-      "declarators"
+      "declarators",
+      "semicolon"
     ],
     "variable_declarator": [
       "name",

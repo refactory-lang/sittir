@@ -80,20 +80,16 @@ import {
 	slotKindNames,
 	slotLiteralValues,
 	resolveHiddenKeywordLiteral,
-	combineSlotCardinality,
 	referencedKinds,
 	fieldTypeComponents,
 	isValidIdent,
-	keywordPresenceKind
+	resolveFieldStorageInfo
 } from './shared.ts';
 import { resolveBitflagConstName } from './consts.ts';
 import { refineFormTypeName, collectRefineKindInfos } from './refine-emit.ts';
 import type { RefineKindInfo } from './refine-emit.ts';
-import { resolveTransportReferenceKind } from './transport-projection.ts';
-import { getTransportProjection } from './transport-projection-cache.ts';
 
 type StructuralNode = AssembledBranch | AssembledPolymorph | AssembledGroup;
-type TerminalNode = AssembledPattern | AssembledKeyword | AssembledToken | AssembledEnum;
 
 export interface EmitTypesConfig {
 	grammar: string;
@@ -225,7 +221,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 					ftn,
 					nodeMap,
 					lookupUnion,
-					kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries)
+					kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
+					kindEntries
 				);
 			}
 			if (node.forms.length > 1) {
@@ -238,7 +235,14 @@ export function emitTypes(config: EmitTypesConfig): string {
 			}
 			polymorphTypeNames.set(node.kind, formTypeNames);
 		} else {
-			emitInterface(lines, node, nodeMap, lookupUnion, kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries));
+			emitInterface(
+				lines,
+				node,
+				nodeMap,
+				lookupUnion,
+				kindDiscriminantOrLiteral(node.kind, nodeMap, kindEntries),
+				kindEntries
+			);
 		}
 	}
 	lines.push('');
@@ -381,8 +385,6 @@ export function emitTypes(config: EmitTypesConfig): string {
 	}
 	lines.push('');
 
-	emitTransportDeclarations(lines, supertypes, nodeMap, generatedTypes, kindEntries);
-
 	// Splice in the bitflag const-enum import after the main header imports.
 	// Collected during emit so only consts actually referenced by `Bitflag<>`
 	// expressions are imported — no dead identifiers.
@@ -397,12 +399,13 @@ export function emitTypes(config: EmitTypesConfig): string {
 	// Patch the @sittir/types import: include only names referenced in the
 	// emitted body. Always-used: NodeData/NodeConfig/TreeNode/NodeKind/NodeNs/
 	// AnyTreeNodeOf/Terminal/NonEmptyArray/AutoStamp/BooleanKeyword. Optional:
-	// ConfigOf (used by polymorph dispatcher signatures), Bitflag (used by
+	// ConfigOf (used by polymorph dispatcher signatures), Bitflag / KindEnum (used by
 	// bitflag-typed fields). Empty grammars don't pull either, so emitting
 	// them unconditionally trips `no-unused-vars` on the generated package.
 	const body = lines.slice(sittirImportIndex + 1).join('\n');
 	const usesConfigOf = /\bConfigOf\b/.test(body);
 	const usesBitflag = /\bBitflag\b/.test(body);
+	const usesKindEnum = /\bKindEnum\b/.test(body);
 	const importedNames = [
 		'NodeData as BaseNodeData',
 		'NodeConfig as BaseNodeConfig',
@@ -415,7 +418,8 @@ export function emitTypes(config: EmitTypesConfig): string {
 		'NonEmptyArray',
 		'AutoStamp',
 		'BooleanKeyword',
-		...(usesBitflag ? ['Bitflag'] : [])
+		...(usesBitflag ? ['Bitflag'] : []),
+		...(usesKindEnum ? ['KindEnum'] : [])
 	];
 	lines[sittirImportIndex] = `import type { ${importedNames.join(', ')} } from '@sittir/types';`;
 
@@ -538,430 +542,6 @@ function collectNodesByCategory(nodeMap: NodeMap): NodeCategories {
 export function collectAllKinds(nodeMap: NodeMap): readonly string[] {
 	const { structNodes, leafKinds } = collectNodesByCategory(nodeMap);
 	return [...structNodes.map((n) => n.kind), ...leafKinds];
-}
-
-// ---------------------------------------------------------------------------
-// Native transport type emission
-// ---------------------------------------------------------------------------
-
-/**
- * Emit the data-only native render transport projection.
- *
- * @remarks
- * This projection deliberately reuses each assembled node's
- * `structuralFields` / `structuralChildren` and the shared slot component
- * walker. It is a typed view over the same grammar facts as the normal
- * NodeData interfaces, but it never exposes fluent methods or runtime helper
- * intersections.
- */
-function emitTransportDeclarations(
-	lines: string[],
-	supertypes: { kind: string; subtypes: string[] }[],
-	nodeMap: NodeMap,
-	generatedTypes: Set<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	const projection = getTransportProjection(nodeMap);
-	const transportNodeKinds = projection.nodeKinds;
-
-	lines.push('// Native render transport types — data-only JS → native boundary');
-	lines.push('export interface TerminalTransport<ID extends number = number, V extends string = string> {');
-	lines.push('  readonly $type: ID;');
-	lines.push('  readonly $source?: 0 | 1 | 2;');
-	lines.push('  readonly $named?: boolean;');
-	lines.push('  readonly $text: V;');
-	lines.push('  readonly $span?: { readonly start: number; readonly end: number };');
-	lines.push('  readonly $nodeHandle?: number;');
-	lines.push('  readonly $childIndex?: number;');
-	lines.push('}');
-	lines.push('');
-	lines.push(
-		'export interface LiteralTransport<ID extends number = number, V extends string = string> extends TerminalTransport<ID, V> {}'
-	);
-	lines.push('');
-
-	for (const node of projection.nodes) {
-		switch (node.modelType) {
-			case 'branch':
-			case 'polymorph':
-			case 'group':
-				emitStructuralTransportNamespace(lines, node, nodeMap, transportNodeKinds, kindEntries);
-				break;
-			case 'pattern':
-			case 'keyword':
-			case 'token':
-			case 'enum':
-				emitTerminalTransportNamespace(lines, node.kind, node, kindEntries);
-				break;
-			case 'supertype':
-			case 'multi':
-				break;
-		}
-	}
-
-	for (const st of supertypes) {
-		const node = nodeMap.nodes.get(st.kind);
-		if (!node || !generatedTypes.has(node.typeName)) continue;
-		const members = st.subtypes
-			.map((kind) => nodeMap.nodes.get(kind))
-			.filter((member): member is AssembledNode => {
-				return member !== undefined && generatedTypes.has(member.typeName) && transportNodeKinds.has(member.kind);
-			})
-			.map((member) => `${member.typeName}.Transport`);
-		if (members.length === 0) continue;
-		lines.push(`export namespace ${node.typeName} {`);
-		lines.push(`  export type Transport = ${members.join(' | ')};`);
-		lines.push('}');
-		lines.push('');
-	}
-
-	lines.push('export type TransportFor<K extends SyntaxKind | keyof KindMap> =');
-	for (const node of projection.nodes) {
-		const kind = node.kind;
-		lines.push(`  K extends ${JSON.stringify(kind)} ? ${node.typeName}.Transport :`);
-	}
-	lines.push('  never;');
-	lines.push('');
-
-	lines.push('export type AnyTransport =');
-	for (const node of projection.nodes) {
-		lines.push(`  | ${node.typeName}.Transport`);
-	}
-	for (const literal of projection.literals) {
-		const disc = resolveTransportDiscriminant(literal.kind, kindEntries);
-		lines.push(`  | LiteralTransport<${disc}, ${JSON.stringify(literal.text)}>`);
-	}
-	lines.push(';');
-	lines.push('');
-}
-
-function emitStructuralTransportNamespace(
-	lines: string[],
-	node: StructuralNode,
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	if (node.modelType === 'polymorph' && node.forms.length > 0) {
-		emitPolymorphTransportNamespace(lines, node, nodeMap, transportNodeKinds, kindEntries);
-		return;
-	}
-	emitTransportInterfaceNamespace(
-		lines,
-		node.typeName,
-		node.kind,
-		undefined,
-		structuralFieldsOf(node),
-		structuralChildrenOf(node),
-		nodeMap,
-		transportNodeKinds,
-		kindEntries
-	);
-}
-
-function emitPolymorphTransportNamespace(
-	lines: string[],
-	node: AssembledPolymorph,
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	const formTypeNames: string[] = [];
-	for (const form of node.forms) {
-		const typeName = resolvePolymorphFormTypeName(form);
-		formTypeNames.push(typeName);
-		emitTransportInterfaceNamespace(
-			lines,
-			typeName,
-			node.kind,
-			form.name,
-			form.fields,
-			form.children,
-			nodeMap,
-			transportNodeKinds,
-			kindEntries
-		);
-	}
-
-	lines.push(`export namespace ${node.typeName} {`);
-	if (formTypeNames.length > 1) {
-		lines.push(`  export type Transport = ${formTypeNames.map((name) => `${name}.Transport`).join(' | ')};`);
-	} else {
-		lines.push(`  export type Transport = ${formTypeNames[0]}.Transport;`);
-	}
-	lines.push('}');
-	lines.push('');
-}
-
-function emitTransportInterfaceNamespace(
-	lines: string[],
-	typeName: string,
-	kind: string,
-	variant: string | undefined,
-	fields: readonly AssembledNonterminal[],
-	children: readonly AssembledNonterminal[],
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	lines.push(`export namespace ${typeName} {`);
-	lines.push('  export interface Transport {');
-	lines.push(`    readonly $type: ${kindDiscriminantOrLiteral(kind, nodeMap, kindEntries)};`);
-	if (variant !== undefined) {
-		lines.push(`    readonly $variant: '${variant}';`);
-	}
-	lines.push('    readonly $source?: 0 | 1 | 2;');
-	lines.push('    readonly $named?: boolean;');
-	lines.push('    readonly $text?: string;');
-	lines.push('    readonly $span?: { readonly start: number; readonly end: number };');
-	lines.push('    readonly $nodeHandle?: number;');
-	lines.push('    readonly $childIndex?: number;');
-
-	if (fields.length > 0) {
-		for (const field of fields) {
-			const opt = isRequired(field) ? '' : '?';
-			const typeExpr = transportFieldTypeExpr(field, nodeMap, transportNodeKinds, kindEntries);
-			if (isMultiple(field)) {
-				lines.push(`    readonly ${quoteKey(field.name)}${opt}: readonly (${typeExpr})[];`);
-			} else {
-				lines.push(`    readonly ${quoteKey(field.name)}${opt}: ${typeExpr};`);
-			}
-		}
-	}
-
-	if (children.length > 0) {
-		const childTypes = children
-			.map((child) => transportChildTypeExpr(child, nodeMap, transportNodeKinds, kindEntries))
-			.filter((expr) => expr.length > 0);
-		if (childTypes.length > 0) {
-			const union = [...new Set(childTypes)].join(' | ');
-			const cardinality = combineSlotCardinality(children);
-			const opt = cardinality.required ? '' : '?';
-			if (cardinality.multiple) {
-				lines.push(`    readonly $children${opt}: readonly (${union})[];`);
-			} else {
-				lines.push(`    readonly $children${opt}: ${union};`);
-			}
-		}
-	}
-
-	lines.push('  }');
-	lines.push('}');
-	lines.push('');
-}
-
-/**
- * Resolve a literal value (e.g. `"async"`, `";"`, `"+"`) to its
- * `TSKindId.X` expression. Falls back to `number` when no catalog entry
- * is found, matching the `TerminalTransport<ID extends number>` constraint.
- */
-function resolveTransportDiscriminant(value: string, kindEntries: readonly KindEnumEntry[] | undefined): string {
-	if (!kindEntries) return 'number';
-	const entry = findKindEntry(kindEntries, value);
-	if (entry) return `TSKindId.${entry.member}`;
-	return 'number';
-}
-
-/**
- * Resolve the discriminant for a terminal node's transport type.
- *
- * For keyword nodes, resolves the keyword text to its TSKindId.
- * For token nodes with known text, resolves that text.
- * For enum nodes, this path is not normally reached (handled above).
- * Falls back to `number` for unresolvable cases.
- */
-function terminalTransportDiscriminant(
-	kind: string,
-	node: TerminalNode,
-	kindEntries: readonly KindEnumEntry[] | undefined
-): string {
-	// Hidden _kw_* kinds are inlined by tree-sitter (visible=false); at
-	// runtime the CST node carries the anonymous token's symbol, not the
-	// _kw_ wrapper's. Skip the kind-name lookup and resolve through the
-	// text value to the real anon token's TSKindId.
-	if (!kind.startsWith('_kw_') && kindEntries) {
-		const kindEntry = findKindEntry(kindEntries, kind);
-		if (kindEntry) return `TSKindId.${kindEntry.member}`;
-	}
-	if (node.modelType === 'keyword') {
-		return resolveTransportDiscriminant(node.text, kindEntries);
-	}
-	if (node.modelType === 'token' && node.text !== undefined) {
-		return resolveTransportDiscriminant(node.text, kindEntries);
-	}
-	return 'number';
-}
-
-/**
- * Emit the transport namespace for a terminal node.
- *
- * - Non-enum terminals: `Transport = TerminalTransport<kind, text>`
- * - Single-member enum: `Transport = boolean` — presence flag. JS sends
- *   `true` when the marker is present; `false`/absent when not. Matches
- *   the Rust `bool` transport on the FFI boundary.
- * - Multi-member enum: emit a `const enum TypeName { Variant = TSKindId.X, ... }`
- *   (zero-cost, numeric KindId-backed) then `Transport = TypeName`. This
- *   unifies the JS and Rust sides: both use the same numeric wire value.
- *
- * @param kindEntries - catalog entries for KindId lookup; when present,
- *   multi-member enums get `const enum` members backed by `TSKindId.*`.
- *   When absent, falls back to `TerminalTransport<kind, union>`.
- */
-function emitTerminalTransportNamespace(
-	lines: string[],
-	kind: string,
-	node: TerminalNode,
-	kindEntries?: readonly KindEnumEntry[]
-): void {
-	// Single-member enum: presence flag → boolean
-	if (node instanceof AssembledEnum && node.values.length === 1) {
-		lines.push(`export namespace ${node.typeName} {`);
-		lines.push(`  export type Transport = boolean;`);
-		lines.push('}');
-		lines.push('');
-		return;
-	}
-
-	// Multi-member enum with kindEntries: emit a `const enum Values` inside the
-	// namespace, backed by TSKindId. Using a namespace-internal const enum avoids
-	// a top-level name collision with `export type RangeExpressionBinaryOperator`
-	// already declared in the types section of this file.
-	//
-	// Developer usage: `RangeExpressionBinaryOperator.Values.DotDot`
-	// Wire value: same numeric KindId as Rust's `u16` dispatch — zero-cost.
-	if (node instanceof AssembledEnum && node.values.length > 1 && kindEntries !== undefined) {
-		const enumName = node.typeName;
-		// Build members — look up each value's KindEntry. Skip values without
-		// a catalog entry (they'll have no TSKindId member to reference).
-		// Use entry.member as the variant name: it is the same PascalCase name
-		// used by TSKindId, so `Values.AmpAmp = TSKindId.AmpAmp`.
-		const members: Array<{ variant: string; member: string }> = [];
-		for (const value of node.values) {
-			const entry = findKindEntry(kindEntries, value);
-			if (entry === undefined) continue;
-			members.push({ variant: entry.member, member: entry.member });
-		}
-		if (members.length > 0) {
-			lines.push(`export namespace ${enumName} {`);
-			lines.push(`  export const enum Values {`);
-			for (const { variant, member } of members) {
-				lines.push(`    ${variant} = TSKindId.${member},`);
-			}
-			lines.push(`  }`);
-			lines.push(`  export type Transport = Values;`);
-			lines.push('}');
-			lines.push('');
-			return;
-		}
-		// Fall through: no catalog entries for any member — use string union fallback.
-	}
-
-	// Default: TerminalTransport with text union
-	const transportDiscriminant = terminalTransportDiscriminant(kind, node, kindEntries);
-	lines.push(`export namespace ${node.typeName} {`);
-	lines.push(
-		`  export type Transport = TerminalTransport<${transportDiscriminant}, ${terminalTransportTextType(node)}>;`
-	);
-	lines.push('}');
-	lines.push('');
-}
-
-function transportFieldTypeExpr(
-	field: AssembledNonterminal,
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	const components = fieldTypeComponents(field, nodeMap);
-	if (components.length === 0) return 'TerminalTransport';
-	const parts = components.map((component) =>
-		transportComponentTypeExpr(component, nodeMap, transportNodeKinds, kindEntries)
-	);
-	return [...new Set(parts)].join(' | ');
-}
-
-function transportChildTypeExpr(
-	child: AssembledNonterminal,
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	const parts: string[] = [];
-	for (const value of child.values) {
-		if (isTerminalValue(value)) {
-			const disc = resolveTransportDiscriminant(value.value, kindEntries);
-			parts.push(`LiteralTransport<${disc}, ${JSON.stringify(value.value)}>`);
-			continue;
-		}
-		if (!isNodeRef(value)) continue;
-		const kind = isUnresolvedRef(value.node) ? value.node.name : value.node.kind;
-		parts.push(transportTypeForKind(kind, nodeMap, transportNodeKinds, kindEntries));
-	}
-	return [...new Set(parts)].join(' | ');
-}
-
-function transportComponentTypeExpr(
-	component: ReturnType<typeof fieldTypeComponents>[number],
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	if (component.kind === 'literal') {
-		const disc = resolveTransportDiscriminant(component.value, kindEntries);
-		return `LiteralTransport<${disc}, ${JSON.stringify(component.value)}>`;
-	}
-	if (component.kind === 'missing') {
-		return 'TerminalTransport';
-	}
-	return transportTypeForKind(component.rawKind, nodeMap, transportNodeKinds, kindEntries);
-}
-
-function transportTypeForKind(
-	kind: string,
-	nodeMap: NodeMap,
-	transportNodeKinds: ReadonlySet<string>,
-	kindEntries?: readonly KindEnumEntry[]
-): string {
-	const resolvedKind = resolveTransportReferenceKind(kind, nodeMap);
-	if (resolvedKind !== kind) {
-		return transportTypeForKind(resolvedKind, nodeMap, transportNodeKinds, kindEntries);
-	}
-
-	const literal = resolveHiddenKeywordLiteral(kind, nodeMap);
-	if (literal !== undefined) {
-		const disc = resolveTransportDiscriminant(literal, kindEntries);
-		return `TerminalTransport<${disc}, ${JSON.stringify(literal)}>`;
-	}
-	const node = nodeMap.nodes.get(kind);
-	if (!node) return 'TerminalTransport';
-	if (!transportNodeKinds.has(kind) && isTerminalTransportNode(node)) {
-		const disc = terminalTransportDiscriminant(kind, node, kindEntries);
-		return `TerminalTransport<${disc}, ${terminalTransportTextType(node)}>`;
-	}
-	return `${node.typeName}.Transport`;
-}
-
-function isTerminalTransportNode(node: AssembledNode): node is TerminalNode {
-	switch (node.modelType) {
-		case 'pattern':
-		case 'keyword':
-		case 'token':
-		case 'enum':
-			return true;
-		default:
-			return false;
-	}
-}
-
-function terminalTransportTextType(node: TerminalNode): string {
-	if (node.modelType === 'keyword') return JSON.stringify(node.text);
-	if (node.modelType === 'token' && node.text !== undefined) {
-		return JSON.stringify(node.text);
-	}
-	if (node.modelType === 'enum') {
-		return node.values.map((value) => JSON.stringify(value)).join(' | ');
-	}
-	return 'string';
 }
 
 // ---------------------------------------------------------------------------
@@ -1475,7 +1055,8 @@ function emitInterface(
 	node: StructuralNode,
 	nodeMap: NodeMap,
 	lookupUnion?: LookupUnion,
-	kindDiscriminant = JSON.stringify(node.kind)
+	kindDiscriminant = JSON.stringify(node.kind),
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	const fields = structuralFieldsOf(node);
 	const children = structuralChildrenOf(node);
@@ -1495,30 +1076,30 @@ function emitInterface(
 		// Storage keys: `readonly _name?: T` (enumerable, serializable)
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
 			const opt = isRequired(f) ? '' : '?';
-			// ADR-0012: boolean-keyword / bitflag brand takes precedence over
-			// AutoStamp (auto-stamp applies to required-single fields, these
-			// brands apply to optional / repeat slots — non-overlapping).
-			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
-			if (isMultiple(f)) {
-				emitFieldArrayDeclaration(lines, `_${f.name}`, opt, wrappedType, isNonEmpty(f));
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+				emitFieldArrayDeclaration(lines, `_${f.name}`, opt, storageType, isNonEmpty(f));
 			} else {
-				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${storageType};`);
 			}
 		}
+		emitFieldInputHints(lines, fields, node.kind, nodeMap, kindEntries);
 		// Accessor function types: `name(): T` (non-enumerable at runtime —
 		// declared here for type-safety so consumers can call node.name()).
 		for (const f of fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
 			const propName = f.propertyName;
-			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
 			const opt = isRequired(f) ? '' : '?';
-			if (isMultiple(f)) {
+			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
 				// Multiple accessor returns the array type (same as storage type).
-				const arrType = isNonEmpty(f) ? `NonEmptyArray<${wrappedType}>` : `readonly (${wrappedType})[]`;
+				const arrType = isNonEmpty(f) ? `NonEmptyArray<${storageType}>` : `readonly (${storageType})[]`;
 				lines.push(`  ${propName}(): ${arrType};`);
 			} else {
-				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);
 			}
 		}
 	}
@@ -1650,7 +1231,8 @@ function emitFormInterface(
 	typeName: string,
 	nodeMap: NodeMap,
 	lookupUnion?: LookupUnion,
-	kindDiscriminant = JSON.stringify(node.kind)
+	kindDiscriminant = JSON.stringify(node.kind),
+	kindEntries?: readonly KindEnumEntry[]
 ): void {
 	lines.push(`export interface ${typeName} {`);
 	// Canonical-hidden architecture (Option Y): UForm interfaces declare
@@ -1672,23 +1254,26 @@ function emitFormInterface(
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const opt = isRequired(f) ? '' : '?';
-			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
-			if (isMultiple(f)) {
-				lines.push(`  readonly _${f.name}${opt}: readonly (${wrappedType})[];`);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
+			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+				lines.push(`  readonly _${f.name}${opt}: readonly (${storageType})[];`);
 			} else {
-				lines.push(`  readonly _${f.name}${opt}: ${wrappedType};`);
+				lines.push(`  readonly _${f.name}${opt}: ${storageType};`);
 			}
 		}
+		emitFieldInputHints(lines, form.fields, node.kind, nodeMap, kindEntries);
 		// Accessor function types: `name(): T`
 		for (const f of form.fields) {
 			const typeExpr = fieldTypeExpr(f, nodeMap, lookupUnion);
 			const propName = f.propertyName;
-			const wrappedType = wrapFieldTypeForBrand(f, node.kind, nodeMap, typeExpr);
+			const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+			const storageType = storageFieldTypeExpr(f, nodeMap, typeExpr);
 			const opt = isRequired(f) ? '' : '?';
-			if (isMultiple(f)) {
-				lines.push(`  ${propName}(): readonly (${wrappedType})[];`);
+			if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+				lines.push(`  ${propName}(): readonly (${storageType})[];`);
 			} else {
-				lines.push(`  ${propName}(): ${wrappedType}${opt ? ' | undefined' : ''};`);
+				lines.push(`  ${propName}(): ${storageType}${opt ? ' | undefined' : ''};`);
 			}
 		}
 	}
@@ -1840,16 +1425,92 @@ function fieldTypeExpr(field: AssembledNonterminal, nodeMap?: NodeMap, lookupUni
  * requires required+non-repeated, boolean requires optional, bitflag
  * requires repeat.
  */
-function wrapFieldTypeForBrand(f: AssembledNonterminal, kind: string, nodeMap: NodeMap, typeExpr: string): string {
-	const kw = keywordPresenceKind(f, nodeMap);
-	if (kw === 'boolean') return `BooleanKeyword<${typeExpr}>`;
-	if (kw === 'bitflag') {
-		const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number';
-		if (constName !== 'number') referencedBitflagConsts.add(constName);
-		return `Bitflag<${constName}, ${typeExpr}>`;
+function stringUnion(values: readonly string[]): string {
+	return values.length === 0 ? 'never' : values.map((value) => JSON.stringify(value)).join(' | ');
+}
+
+function enumStorageDiscriminantExpr(
+	storageInfo: ReturnType<typeof resolveFieldStorageInfo>,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string {
+	if (!kindEntries) return 'number';
+	const members = new Set<string>();
+	for (const enumKind of storageInfo.enumKinds) {
+		const node = nodeMap.nodes.get(enumKind);
+		if (!(node instanceof AssembledEnum)) continue;
+		for (const value of node.values) {
+			const entry = findKindEntry(kindEntries, value);
+			if (entry) members.add(`TSKindId.${entry.member}`);
+		}
+	}
+	return members.size === 0 ? 'number' : [...members].join(' | ');
+}
+
+function storageFieldTypeExpr(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	typeExpr: string
+): string {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind === 'boolean') {
+		return 'boolean';
+	}
+	if (storageInfo.kind === 'bitflag') {
+		return 'number';
+	}
+	if (storageInfo.kind === 'kindEnum') {
+		return 'number';
 	}
 	if (isAutoStampField(f, nodeMap)) return `AutoStamp<${typeExpr}>`;
 	return typeExpr;
+}
+
+function fieldInputHintTypeExpr(
+	f: AssembledNonterminal,
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): string | undefined {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind === 'boolean') {
+		return `BooleanKeyword<${stringUnion(storageInfo.texts)}>`;
+	}
+	if (storageInfo.kind === 'bitflag') {
+		const constName = resolveBitflagConstName(kind, f, nodeMap) ?? 'number';
+		if (constName !== 'number') referencedBitflagConsts.add(constName);
+		return `Bitflag<${constName}, number>`;
+	}
+	if (storageInfo.kind === 'kindEnum') {
+		return `KindEnum<${stringUnion(storageInfo.texts)}, ${enumStorageDiscriminantExpr(storageInfo, nodeMap, kindEntries)}>`;
+	}
+	return undefined;
+}
+
+function emitFieldInputHints(
+	lines: string[],
+	fields: readonly AssembledNonterminal[],
+	kind: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[] | undefined
+): void {
+	const hintLines = fields
+		.map((field) => {
+			const hintType = fieldInputHintTypeExpr(field, kind, nodeMap, kindEntries);
+			if (!hintType) return undefined;
+			const opt = isRequired(field) ? '' : '?';
+			const storageInfo = resolveFieldStorageInfo(field, nodeMap);
+			if (isMultiple(field) && !storageInfo.collapsesMultiplicity) {
+				const arrType = isNonEmpty(field) ? `NonEmptyArray<${hintType}>` : `readonly (${hintType})[]`;
+				return `    readonly ${quoteKey(field.name)}${opt}: ${arrType};`;
+			}
+			return `    readonly ${quoteKey(field.name)}${opt}: ${hintType};`;
+		})
+		.filter((line): line is string => line !== undefined);
+	if (hintLines.length === 0) return;
+	lines.push('  readonly __inputHints__?: {');
+	lines.push(...hintLines);
+	lines.push('  };');
 }
 
 function toPascal(kind: string): string {

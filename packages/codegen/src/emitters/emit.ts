@@ -32,7 +32,15 @@ import { emitTypeTests } from './type-test.ts';
 import { templateEmitter } from './templates.ts';
 import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
+import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
 import { isRenderModuleGrammar, renderModuleEmitter } from './render-module.ts';
+import {
+	classifyFactoryEmission,
+	classifyFromEmission,
+	classifyTemplateEmission,
+	classifyWrapEmission,
+	warnSkippedParserSymbol
+} from './shared.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -62,6 +70,13 @@ export interface EmitAllResult {
 	renderModule?: RenderModuleBundle;
 }
 
+type RenderModuleEmission = 'emit' | 'skip-disabled' | 'skip-unsupported-grammar';
+
+function classifyRenderModuleEmission(grammar: string, emitRenderModule: boolean | undefined): RenderModuleEmission {
+	if (emitRenderModule !== true) return 'skip-disabled';
+	return isRenderModuleGrammar(grammar) ? 'emit' : 'skip-unsupported-grammar';
+}
+
 /**
  * Single-loop orchestrator: initializes all emitters, iterates
  * `nodeMap.nodes` once dispatching to each, then finalizes all.
@@ -80,8 +95,11 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		triviaKinds,
 		grammarRoles,
 		emitRenderModule
-	} =
-		config;
+	} = config;
+	const renderModuleEmission = classifyRenderModuleEmission(grammar, emitRenderModule);
+	const kindEntries = generatedIdTables
+		? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+		: undefined;
 
 	// -----------------------------------------------------------------
 	// 1. Initialize per-node-dispatch emitters (preamble, internal state)
@@ -91,6 +109,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		nodeMap,
 		strict,
 		generatedIdTables,
+		kindEntries,
 		inlineKinds,
 		synthesizedKinds
 	});
@@ -98,13 +117,15 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	fromEmitter.init({
 		grammar,
 		nodeMap,
-		generatedIdTables
+		generatedIdTables,
+		kindEntries
 	});
 
 	wrapEmitter.init({
 		grammar,
 		nodeMap,
 		generatedIdTables,
+		kindEntries,
 		inlineKinds,
 		synthesizedKinds
 	});
@@ -114,38 +135,73 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		nodeMap
 	});
 
+	if (renderModuleEmission === 'emit' && isRenderModuleGrammar(grammar)) {
+		renderModuleEmitter.init({
+			grammar,
+			nodeMap,
+			generatedIdTables
+		});
+	}
+
 	// -----------------------------------------------------------------
 	// 2. ONE loop — taxonomy dispatch happens HERE
 	// -----------------------------------------------------------------
 	for (const [kind, node] of nodeMap.nodes) {
-		const emitFactory = factoryEmitter.shouldEmit(kind, node);
-		const emitFrom = fromEmitter.shouldEmit(kind, node);
-		const emitWrap = wrapEmitter.shouldEmit(kind, node);
-		const emitTemplate = templateEmitter.shouldEmit(node);
+		const factoryEmission = classifyFactoryEmission(kind, node, {
+			nodeMap,
+			kindEntries,
+			inlineKinds,
+			synthesizedKinds
+		});
+		if (
+			factoryEmission === 'skip-inline-kind' ||
+			factoryEmission === 'skip-synthesized-kind' ||
+			factoryEmission === 'skip-missing-parser-symbol'
+		) {
+			warnSkippedParserSymbol(kind, 'factory', factoryEmission);
+		}
+
+		const fromEmission = classifyFromEmission(kind, node, {
+			nodeMap,
+			kindEntries
+		});
+		const wrapEmission = classifyWrapEmission(kind, node, {
+			kindEntries,
+			inlineKinds,
+			synthesizedKinds
+		});
+		if (
+			wrapEmission === 'skip-inline-kind' ||
+			wrapEmission === 'skip-synthesized-kind' ||
+			wrapEmission === 'skip-missing-parser-symbol'
+		) {
+			warnSkippedParserSymbol(kind, 'wrap', wrapEmission);
+		}
+		const templateEmission = classifyTemplateEmission(node);
 
 		switch (node.modelType) {
 			case 'pattern':
 			case 'keyword':
 			case 'enum':
-				if (emitFactory) factoryEmitter.emitLeaf(node);
-				if (emitFrom) fromEmitter.emitLeaf(node);
-				if (emitTemplate) templateEmitter.emitLeaf(node);
+				if (factoryEmission === 'emit') factoryEmitter.emitLeaf(node);
+				if (fromEmission === 'emit') fromEmitter.emitLeaf(node);
+				if (templateEmission === 'emit') templateEmitter.emitLeaf(node);
 				break;
 			case 'branch':
-				if (emitFactory) factoryEmitter.emitBranch(node);
-				if (emitFrom) fromEmitter.emitBranch(node);
-				if (emitWrap) wrapEmitter.emitBranch(node);
-				if (emitTemplate) templateEmitter.emitBranch(node);
+				if (factoryEmission === 'emit') factoryEmitter.emitBranch(node);
+				if (fromEmission === 'emit') fromEmitter.emitBranch(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitBranch(node);
+				if (templateEmission === 'emit') templateEmitter.emitBranch(node);
 				break;
 			case 'polymorph':
-				if (emitFactory) factoryEmitter.emitPolymorph(node);
-				if (emitFrom) fromEmitter.emitPolymorph(node);
-				if (emitWrap) wrapEmitter.emitPolymorph(node);
-				if (emitTemplate) templateEmitter.emitPolymorph(node);
+				if (factoryEmission === 'emit') factoryEmitter.emitPolymorph(node);
+				if (fromEmission === 'emit') fromEmitter.emitPolymorph(node);
+				if (wrapEmission === 'emit') wrapEmitter.emitPolymorph(node);
+				if (templateEmission === 'emit') templateEmitter.emitPolymorph(node);
 				break;
 			case 'group':
-				if (emitFactory) factoryEmitter.emitGroup(node);
-				if (emitTemplate) templateEmitter.emitGroup(node);
+				if (factoryEmission === 'emit') factoryEmitter.emitGroup(node);
+				if (templateEmission === 'emit') templateEmitter.emitGroup(node);
 				break;
 			case 'token':
 			case 'supertype':
@@ -161,16 +217,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const from = fromEmitter.finalize();
 	const wrap = wrapEmitter.finalize();
 	const jinjaTemplates = templateEmitter.finalize();
-	const renderModule =
-		emitRenderModule && isRenderModuleGrammar(grammar)
-			? (renderModuleEmitter.init({
-					grammar,
-					templates: jinjaTemplates,
-					nodeMap,
-					generatedIdTables
-				}),
-				renderModuleEmitter.finalize())
-			: undefined;
+	const renderModule = renderModuleEmission === 'emit' ? renderModuleEmitter.finalize(jinjaTemplates) : undefined;
 
 	// -----------------------------------------------------------------
 	// 4. Run emitters that use their own internal iteration

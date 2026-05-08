@@ -167,14 +167,14 @@ describe('engine', () => {
 		expect(parsed).toBeDefined();
 		if (!parsed || !engine.reader) throw new Error('expected native engine reader');
 
-		expect((parsed.root as Record<string, unknown>).$fields).toBeUndefined();
-		expect((parsed.root as Record<string, unknown>)._name).toMatchObject({
+		expect((parsed.root as unknown as Record<string, unknown>).$fields).toBeUndefined();
+		expect((parsed.root as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
 			$nodeHandle: 0,
 			$childIndex: 1
 		});
 		expect(parsed.root.$children).toBeUndefined();
-		expect((parsed.root as Record<string, unknown>)._pub).toMatchObject({
+		expect((parsed.root as unknown as Record<string, unknown>)._pub).toMatchObject({
 			$text: 'pub',
 			$nodeHandle: 0,
 			$childIndex: 0,
@@ -183,8 +183,8 @@ describe('engine', () => {
 
 		const child = parsed.tree.read?.(0, 1);
 		expect(child).toBeDefined();
-		expect((child as Record<string, unknown>).$fields).toBeUndefined();
-		expect((child as Record<string, unknown>)._name).toMatchObject({
+		expect((child as unknown as Record<string, unknown>).$fields).toBeUndefined();
+		expect((child as unknown as Record<string, unknown>)._name).toMatchObject({
 			$text: 'main',
 			$nodeHandle: 7,
 			$childIndex: 1

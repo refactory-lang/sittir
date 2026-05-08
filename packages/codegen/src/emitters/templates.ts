@@ -31,6 +31,7 @@ import { AssembledGroup } from '../compiler/node-map.ts';
 import type { AssembledNode } from '../compiler/node-map.ts';
 import type { Rule } from '../compiler/rule.ts';
 import { compileWordMatcher } from '../compiler/common.ts';
+import { classifyTemplateEmission } from './shared.ts';
 
 export interface EmitTemplatesConfig {
 	grammar: string;
@@ -60,7 +61,7 @@ const GENERATED_HEADER =
 const templateEmitterState: TemplateEmitterState = {
 	config: null,
 	wordMatcher: null,
-	bodies: new Map(),
+	bodies: new Map()
 };
 
 export const templateEmitter = {
@@ -68,12 +69,6 @@ export const templateEmitter = {
 		templateEmitterState.config = config;
 		templateEmitterState.wordMatcher = compileWordMatcher(config.nodeMap.word, config.nodeMap.rules ?? {}) ?? /\w/;
 		templateEmitterState.bodies = new Map();
-	},
-
-	shouldEmit(node: AssembledNode): boolean {
-		if (!node.userFacing) return false;
-		if (node instanceof AssembledGroup && node.parentKind) return false;
-		return true;
 	},
 
 	emitLeaf(node: AssembledNode): void {
@@ -94,7 +89,7 @@ export const templateEmitter = {
 
 	finalize(): EmittedTemplates {
 		return { bodies: new Map(templateEmitterState.bodies) };
-	},
+	}
 } as const;
 
 /**
@@ -106,43 +101,25 @@ export const templateEmitter = {
  * enums / non-polymorph-form groups / multis) are skipped — the
  * renderer's fallback handles them.
  */
-export function emitJinjaTemplates(
-	config: EmitTemplatesConfig
-): EmittedTemplates {
+export function emitJinjaTemplates(config: EmitTemplatesConfig): EmittedTemplates {
 	const { nodeMap } = config;
 	const wordMatcher = compileWordMatcher(nodeMap.word, nodeMap.rules ?? {});
 	const bodies = new Map<string, string>();
 	for (const node of nodeMap.nodes.values()) {
-		// Single source of truth: `node.userFacing` is set at assemble
-		// time per the shouldEmit rules (visible kind / polymorph /
-		// alias source). Skips tokens, multis, and non-alias-source
-		// hidden helpers.
-		if (!node.userFacing) continue;
-		// Polymorph-form groups get their own file via
-		// `AssembledGroup.renderTemplate()`; skip the top-level form
-		// here to avoid double emission when the form kind is also
-		// registered under the parent polymorph.
-		if (node instanceof AssembledGroup && node.parentKind) continue;
+		const emission = classifyTemplateEmission(node);
+		if (emission !== 'emit') continue;
 		let body: string | null;
 		try {
-			body = emitBodyForNode(
-				node,
-				nodeMap.rules ?? {},
-				wordMatcher ?? /\w/,
-				nodeMap.externals
-			);
+			body = emitBodyForNode(node, nodeMap.rules ?? {}, wordMatcher ?? /\w/, nodeMap.externals);
 		} catch (err) {
 			// Re-throw with grammar + kind context so the emitter caller
 			// gets an actionable error message. `{ cause }` preserves
 			// the original stack for Error.cause-aware debuggers (Node
 			// 16.9+), matching the renderNunjucks wrap in core/render.ts.
 			const detail = err instanceof Error ? err.message : String(err);
-			throw new Error(
-				`emitJinjaTemplates: failed on ${config.grammar}/${node.kind}: ${detail}`,
-				{
-					cause: err
-				}
-			);
+			throw new Error(`emitJinjaTemplates: failed on ${config.grammar}/${node.kind}: ${detail}`, {
+				cause: err
+			});
 		}
 		if (body === null) continue;
 		// Canonical-hidden architecture (Option Y): templates are emitted
@@ -165,12 +142,7 @@ function emitTemplateForNode(node: AssembledNode): void {
 	if (!config || !wordMatcher) {
 		throw new Error('templateEmitter used before init()');
 	}
-	const body = emitBodyForNode(
-		node,
-		config.nodeMap.rules ?? {},
-		wordMatcher,
-		config.nodeMap.externals
-	);
+	const body = emitBodyForNode(node, config.nodeMap.rules ?? {}, wordMatcher, config.nodeMap.externals);
 	if (body === null) return;
 	templateEmitterState.bodies.set(node.kind, `${GENERATED_HEADER}\n${body}`);
 }
@@ -235,10 +207,7 @@ function emitBodyForNode(
 	return template;
 }
 
-export function writeJinjaTemplates(
-	emitted: EmittedTemplates,
-	outputDir: string
-): void {
+export function writeJinjaTemplates(emitted: EmittedTemplates, outputDir: string): void {
 	fs.mkdirSync(outputDir, { recursive: true });
 	for (const [kind, body] of emitted.bodies) {
 		fs.writeFileSync(join(outputDir, `${kind}.jinja`), body, 'utf-8');

@@ -13,19 +13,19 @@ const invalidInputs = [
 		label: 'NaN handle',
 		handle: Number.NaN,
 		childIndex: 0,
-		expected: /no tree cached|convert/
+		expected: /no tree cached|no tree parsed|convert/
 	},
 	{
 		label: 'negative handle',
 		handle: -1,
 		childIndex: 0,
-		expected: /no tree cached|out of bounds|convert/
+		expected: /no tree cached|no tree parsed|out of bounds|convert/
 	},
 	{
 		label: 'fractional handle',
 		handle: 1.5,
 		childIndex: 0,
-		expected: /no tree cached|out of bounds|convert/
+		expected: /no tree cached|no tree parsed|out of bounds|convert/
 	}
 ] as const;
 

@@ -2,20 +2,10 @@
 // Shared client-side resolution utilities for .from() and factories
 
 import type { AnyNodeData, AnyTreeNodeOf, ByteRange, Edit } from '@sittir/types';
-import type { Comment, AnyTransport, NamespaceMap } from './types.js';
-import { KIND_NAMES, kindIdFromName } from './types.js';
+import type { Comment, NamespaceMap } from './types.js';
+import { kindIdFromName } from './types.js';
 import { render, toEdit } from './boundary.ts';
 
-/**
- * Wrap a factory-built node literal with the four `$`-prefixed shared
- * methods (`$render`, `$toEdit`, `$replace`, `$trivia`).
- *
- * Generic on `T` so the literal type flows through unchanged — the
- * return type is `T & { ... methods ... }` so callers retain narrow
- * per-kind property types. No spread (rule 6), no `defineProperty`
- * (rule 1) — methods are merged via `Object.assign` and become
- * enumerable members of the returned object.
- */
 export function withMethods<T extends object>(
   node: T
 ): T & {
@@ -43,16 +33,6 @@ export function withMethods<T extends object>(
   });
 }
 
-/**
- * Type guard: returns true if `v` is a NodeData.
- *
- * Accepts any node produced by `readNode`, a factory, or `.from()` — distinguished
- * from loose config bags by the presence of any of:
- *   - `_*` storage keys (branch nodes with named fields, de-hoisted),
- *   - `$text` (leaf nodes, or branch nodes with `SITTIR_DEBUG_TEXT=1`),
- *   - `$children` (container nodes whose children arrive without field names),
- *   - `$source` (provenance tag stamped by `readNode` and every factory).
- */
 export function isNodeData<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']
 ): v is NamespaceMap[K]['Node'];
@@ -61,16 +41,13 @@ export function isNodeData(v: unknown): v is AnyNodeData {
   if (v === null || typeof v !== 'object') return false;
   const o = v as Record<string, unknown>;
   if (typeof o['$type'] !== 'number') return false;
-  const hasDehoistedFields = Object.keys(o).some((k) => k.startsWith('_'));
-  return hasDehoistedFields
+  const hasStoredFields = Object.keys(o).some((k) => k.startsWith('_'));
+  return hasStoredFields
     || typeof o['$text'] === 'string'
     || Array.isArray(o['$children'])
     || o['$source'] === 0 || o['$source'] === 1 || o['$source'] === 2;
 }
 
-/**
- * Type guard: returns true if `v` is a TreeNode (SgNode-compatible).
- */
 export function isTreeNode<K extends keyof NamespaceMap>(
   v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']
 ): v is NamespaceMap[K]['Tree'];
@@ -99,809 +76,67 @@ export function hasKindOf<K extends keyof NamespaceMap>(
   return 'kind' in v && (v as Record<string, unknown>).kind === kind;
 }
 
-/**
- * Convert NodeData/factory output into the data-only native transport shape.
- */
-export function toNativeRenderTransport(node: unknown): AnyTransport {
-  const projected = projectTransportValue(node, 'node');
-  return projected as AnyTransport;
+export function toNativeRenderTransport(node: unknown): unknown {
+  return node;
 }
 
-const transportMetadataKeys = new Set(['$type', '$variant', '$source', '$named', '$text', '$span', '$nodeHandle', '$childIndex']);
-
-type NativeTransportAlternative = { readonly type: string; readonly text?: string };
-type NativeTransportFieldRule = { readonly name: string; readonly multiple: boolean; readonly required: boolean; readonly alternatives: readonly NativeTransportAlternative[] };
-type NativeTransportRawChildRule = { readonly childrenRequired: boolean; readonly childrenMultiple: boolean; readonly childAlternatives: readonly NativeTransportAlternative[]; readonly fields: readonly NativeTransportFieldRule[] };
-type NativeTransportVariantRule = { readonly variant: string; readonly fields: readonly NativeTransportFieldRule[]; readonly children?: { readonly required: boolean; readonly multiple: boolean; readonly alternatives: readonly NativeTransportAlternative[] } };
-
-const nativeTransportAliasTargetToSource: Record<string, string> = {
-  "assignment_eq": "_assignment_eq",
-  "assignment_type": "_assignment_type",
-  "assignment_typed": "_assignment_typed",
-  "async_marker": "_async_marker",
-  "augmented_assignment_operator": "_augmented_assignment_operator",
-  "binary_operator_operator": "_binary_operator_operator",
-  "boolean_operator_operator": "_boolean_operator_operator",
-  "comprehension_clauses": "_comprehension_clauses",
-  "dict_pattern_kv": "_dict_pattern_kv",
-  "expression_within_for_in_clause": "_expression_within_for_in_clause",
-  "expressions": "_expressions",
-  "f_expression": "_f_expression",
-  "left_hand_side": "_left_hand_side",
-  "match_block": "_match_block",
-  "match_block_block": "_match_block_block",
-  "named_expression_lhs": "_named_expression_lhs",
-  "newline": "_newline",
-  "right_hand_side": "_right_hand_side",
-  "simple_pattern": "_simple_pattern",
-  "simple_pattern_negative": "_simple_pattern_negative",
-  "simple_statement": "_simple_statement",
-  "simple_statements": "_simple_statements",
-  "statement": "_statement",
-  "suite": "_suite",
-  "type_alias_statement_type": "_type_alias_statement_type",
-  "unary_operator_operator": "_unary_operator_operator",
-};
-
-const nativeTransportRawChildFieldRules: Record<string, NativeTransportRawChildRule> = {
-  "_as_pattern": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"case_pattern"},{"type":"identifier"}] as const,
-    fields: [
-    ],
-  },
-  "_comprehension_clauses": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"for_in_clause"},{"type":"if_clause"}] as const,
-    fields: [
-    ],
-  },
-  "_import_list": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "_list_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"case_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "_match_block": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_match_block_block"}] as const,
-    fields: [
-    ],
-  },
-  "_match_block_block": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "alternative", multiple: true, required: true, alternatives: [{"type":"case_clause"}] as const },
-    ],
-  },
-  "_simple_pattern_negative": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"integer"},{"type":"float"}] as const,
-    fields: [
-    ],
-  },
-  "_simple_statements": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"future_import_statement"},{"type":"import_statement"},{"type":"import_from_statement"},{"type":"print_statement"},{"type":"assert_statement"},{"type":"expression_statement"},{"type":"return_statement"},{"type":"delete_statement"},{"type":"raise_statement"},{"type":"pass_statement","text":"pass"},{"type":"break_statement","text":"break"},{"type":"continue_statement","text":"continue"},{"type":"global_statement"},{"type":"nonlocal_statement"},{"type":"exec_statement"},{"type":"type_alias_statement"}] as const,
-    fields: [
-    ],
-  },
-  "_suite": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_simple_statements"},{"type":"block"},{"type":"_newline"}] as const,
-    fields: [
-    ],
-  },
-  "_tuple_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"case_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "_with_clause_paren": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"with_item"}] as const,
-    fields: [
-    ],
-  },
-  "argument_list": {
-    childrenRequired: false,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"list_splat"},{"type":"dictionary_splat"},{"type":"parenthesized_list_splat"},{"type":"keyword_argument"}] as const,
-    fields: [
-    ],
-  },
-  "assert_statement": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "block": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"_simple_statements"},{"type":"if_statement"},{"type":"for_statement"},{"type":"while_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"function_definition"},{"type":"class_definition"},{"type":"decorated_definition"},{"type":"match_statement"}] as const,
-    fields: [
-    ],
-  },
-  "case_clause": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"case_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "case_pattern": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_as_pattern"},{"type":"keyword_pattern"},{"type":"class_pattern"},{"type":"splat_pattern"},{"type":"union_pattern"},{"type":"_list_pattern"},{"type":"_tuple_pattern"},{"type":"dict_pattern"},{"type":"string"},{"type":"concatenated_string"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"_simple_pattern_negative"},{"type":"complex_pattern"},{"type":"dotted_name"}] as const,
-    fields: [
-    ],
-  },
-  "class_pattern": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "arguments", multiple: true, required: true, alternatives: [{"type":"case_pattern"}] as const },
-    ],
-  },
-  "comparison_operator": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"}] as const,
-    fields: [
-      { name: "operators", multiple: true, required: true, alternatives: [{"type":"<","text":"<"},{"type":"<=","text":"<="},{"type":"==","text":"=="},{"type":"!=","text":"!="},{"type":">=","text":">="},{"type":">","text":">"},{"type":"<>","text":"<>"},{"type":"in","text":"in"},{"type":"not in","text":"not in"},{"type":"is","text":"is"},{"type":"is not","text":"is not"}] as const },
-    ],
-  },
-  "complex_pattern": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"integer"},{"type":"float"}] as const,
-    fields: [
-    ],
-  },
-  "concatenated_string": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"string"}] as const,
-    fields: [
-    ],
-  },
-  "decorated_definition": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"decorator"}] as const,
-    fields: [
-    ],
-  },
-  "delete_statement": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
-    fields: [
-    ],
-  },
-  "dict_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"_key_value_pattern"},{"type":"splat_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "dictionary": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"pair"},{"type":"dictionary_splat"}] as const,
-    fields: [
-    ],
-  },
-  "dictionary_comprehension": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
-    fields: [
-    ],
-  },
-  "dictionary_splat_pattern": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"}] as const,
-    fields: [
-    ],
-  },
-  "dotted_name": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"}] as const,
-    fields: [
-    ],
-  },
-  "except_clause": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_suite"}] as const,
-    fields: [
-      { name: "value", multiple: true, required: false, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "exec_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "in_clause", multiple: true, required: false, alternatives: [{"type":"in","text":"in"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "expression_list": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":",","text":","}] as const,
-    fields: [
-    ],
-  },
-  "expression_statement_tuple": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "for_in_clause": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "right", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"lambda_within_for_in_clause"}] as const },
-    ],
-  },
-  "format_specifier": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"interpolation"}] as const,
-    fields: [
-    ],
-  },
-  "future_import_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "generator_expression": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
-    fields: [
-    ],
-  },
-  "global_statement": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"}] as const,
-    fields: [
-    ],
-  },
-  "if_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "alternative", multiple: true, required: false, alternatives: [{"type":"elif_clause"},{"type":"else_clause"}] as const },
-    ],
-  },
-  "import_from_statement": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"wildcard_import","text":"*"},{"type":"dotted_name"},{"type":"aliased_import"}] as const,
-    fields: [
-    ],
-  },
-  "import_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "name", multiple: true, required: true, alternatives: [{"type":"dotted_name"},{"type":"aliased_import"}] as const },
-    ],
-  },
-  "lambda_parameters": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"},{"type":"typed_parameter"},{"type":"default_parameter"},{"type":"typed_default_parameter"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"keyword_separator","text":"*"},{"type":"positional_separator","text":"/"},{"type":"dictionary_splat_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "list": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
-    fields: [
-    ],
-  },
-  "list_comprehension": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
-    fields: [
-    ],
-  },
-  "list_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "list_splat_pattern": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"}] as const,
-    fields: [
-    ],
-  },
-  "match_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "subject", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "module": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"_simple_statements"},{"type":"if_statement"},{"type":"for_statement"},{"type":"while_statement"},{"type":"try_statement"},{"type":"with_statement"},{"type":"function_definition"},{"type":"class_definition"},{"type":"decorated_definition"},{"type":"match_statement"}] as const,
-    fields: [
-    ],
-  },
-  "nonlocal_statement": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"}] as const,
-    fields: [
-    ],
-  },
-  "parameters": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"},{"type":"typed_parameter"},{"type":"default_parameter"},{"type":"typed_default_parameter"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"keyword_separator","text":"*"},{"type":"positional_separator","text":"/"},{"type":"dictionary_splat_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "parenthesized_expression": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"}] as const,
-    fields: [
-    ],
-  },
-  "parenthesized_list_splat": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"parenthesized_list_splat"},{"type":"list_splat"}] as const,
-    fields: [
-    ],
-  },
-  "pattern_list": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":",","text":","}] as const,
-    fields: [
-    ],
-  },
-  "print_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"chevron"}] as const,
-    fields: [
-      { name: "argument", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    ],
-  },
-  "raise_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
-    fields: [
-    ],
-  },
-  "return_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
-    fields: [
-    ],
-  },
-  "set": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
-    fields: [
-    ],
-  },
-  "set_comprehension": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"_comprehension_clauses"}] as const,
-    fields: [
-    ],
-  },
-  "string": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "content", multiple: true, required: true, alternatives: [{"type":"interpolation"},{"type":"string_content"}] as const },
-    ],
-  },
-  "string_content": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"escape_interpolation"},{"type":"escape_sequence"},{"type":"_not_escape_sequence","text":"\\"},{"type":"_string_content"}] as const,
-    fields: [
-    ],
-  },
-  "subscript": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "subscript", multiple: true, required: true, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"slice"}] as const },
-    ],
-  },
-  "try_statement": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [] as const,
-    fields: [
-      { name: "except_clauses", multiple: true, required: true, alternatives: [{"type":"except_clause"}] as const },
-    ],
-  },
-  "tuple": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"yield"},{"type":"list_splat"},{"type":"parenthesized_list_splat"}] as const,
-    fields: [
-    ],
-  },
-  "tuple_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "type": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"splat_type"},{"type":"generic_type"},{"type":"union_type"},{"type":"constrained_type"},{"type":"member_type"}] as const,
-    fields: [
-    ],
-  },
-  "type_parameter": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"type"}] as const,
-    fields: [
-    ],
-  },
-  "typed_parameter": {
-    childrenRequired: true,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"identifier"},{"type":"list_splat_pattern"},{"type":"dictionary_splat_pattern"}] as const,
-    fields: [
-    ],
-  },
-  "union_pattern": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"class_pattern"},{"type":"splat_pattern"},{"type":"union_pattern"},{"type":"_list_pattern"},{"type":"_tuple_pattern"},{"type":"dict_pattern"},{"type":"string"},{"type":"concatenated_string"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"_simple_pattern_negative"},{"type":"complex_pattern"},{"type":"dotted_name"}] as const,
-    fields: [
-    ],
-  },
-  "with_clause_bare": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"with_item"}] as const,
-    fields: [
-    ],
-  },
-  "with_clause_paren": {
-    childrenRequired: true,
-    childrenMultiple: true,
-    childAlternatives: [{"type":"with_item"}] as const,
-    fields: [
-    ],
-  },
-  "yield": {
-    childrenRequired: false,
-    childrenMultiple: false,
-    childAlternatives: [{"type":"from","text":"from"},{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"},{"type":"expression_list"}] as const,
-    fields: [
-    ],
-  },
-};
-
-const nativeTransportVariantRules: Record<string, readonly NativeTransportVariantRule[]> = {
-  "assignment": [
-    {
-      variant: "eq",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_eq"}] as const },
-    },
-    {
-      variant: "type",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_type"}] as const },
-    },
-    {
-      variant: "typed",
-      fields: [
-        { name: "left", multiple: false, required: true, alternatives: [{"type":"identifier"},{"type":"subscript"},{"type":"attribute"},{"type":"list_splat_pattern"},{"type":"tuple_pattern"},{"type":"list_pattern"},{"type":"pattern_list"}] as const },
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_assignment_typed"}] as const },
-    },
-  ],
-  "expression_statement": [
-    {
-      variant: "expression",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"comparison_operator"},{"type":"not_operator"},{"type":"boolean_operator"},{"type":"lambda"},{"type":"await"},{"type":"binary_operator"},{"type":"identifier"},{"type":"string"},{"type":"concatenated_string"},{"type":"integer"},{"type":"float"},{"type":"true","text":"True"},{"type":"false","text":"False"},{"type":"none","text":"None"},{"type":"unary_operator"},{"type":"attribute"},{"type":"subscript"},{"type":"call"},{"type":"list"},{"type":"list_comprehension"},{"type":"dictionary"},{"type":"dictionary_comprehension"},{"type":"set"},{"type":"set_comprehension"},{"type":"tuple"},{"type":"parenthesized_expression"},{"type":"generator_expression"},{"type":"ellipsis","text":"..."},{"type":"list_splat_pattern"},{"type":"conditional_expression"},{"type":"named_expression"},{"type":"as_pattern"}] as const },
-    },
-    {
-      variant: "tuple",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"expression_statement_tuple"}] as const },
-    },
-    {
-      variant: "assignment",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"assignment"}] as const },
-    },
-    {
-      variant: "augmented_assignment",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"augmented_assignment"}] as const },
-    },
-    {
-      variant: "yield",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"yield"}] as const },
-    },
-  ],
-  "with_clause": [
-    {
-      variant: "bare",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"with_clause_bare"}] as const },
-    },
-    {
-      variant: "paren",
-      fields: [
-      ],
-      children: { required: true, multiple: false, alternatives: [{"type":"_with_clause_paren"}] as const },
-    },
-  ],
-};
-
-const nativeTransportBooleanKeywordFieldsByKind: Record<string, ReadonlySet<string>> = {
-  "binary_operator": new Set(["operator"]),
-  "boolean_operator": new Set(["operator"]),
-  "for_in_clause": new Set(["async_marker"]),
-  "for_statement": new Set(["async_marker"]),
-  "function_definition": new Set(["async_marker"]),
-  "type_alias_statement": new Set(["type"]),
-  "with_statement": new Set(["async_marker"]),
-};
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function coerceKeywordPresenceFields(projected: Record<string, unknown>, kind: string): void {
-  const fields = nativeTransportBooleanKeywordFieldsByKind[kind];
-  if (!fields) return;
-  for (const fieldName of fields) {
-    const value = projected[fieldName];
-    if (value === undefined) continue;
-    if (typeof value === 'boolean') continue;
-    if (Array.isArray(value)) {
-      projected[fieldName] = value.length > 0;
-      continue;
-    }
-    projected[fieldName] = true;
-  }
-}
-
-function coerceNativeTransportChildren(projected: Record<string, unknown>, kind: string): void {
-  const children = projected.$children;
-  if (!Array.isArray(children)) return;
-  const variant = typeof projected.$variant === "string" ? projected.$variant : undefined;
-  if (variant !== undefined) {
-    const variantRule = nativeTransportVariantRules[kind]?.find((candidate) => candidate.variant === variant);
-    if (variantRule?.children && !variantRule.children.multiple) {
-      if (children.length === 0 && !variantRule.children.required) { delete projected.$children; return; }
-      projected.$children = children[0];
-      return;
-    }
-  }
-  const rawRule = nativeTransportRawChildFieldRules[kind];
-  if (rawRule && !rawRule.childrenMultiple) {
-    if (children.length === 0 && !rawRule.childrenRequired) { delete projected.$children; return; }
-    projected.$children = children[0];
-  }
-}
-
-function projectTransportValue(value: unknown, path: string): unknown {
-  if (Array.isArray(value)) {
-    return value.map((item, index) => projectTransportValue(item, `${path}[${index}]`));
-  }
-  if (typeof value === 'string') {
-    return { $type: value, $text: value };
-  }
-  if (!isRecord(value)) return value;
-  // $type must be numeric (TSKindId). However, factory-constructed
-  // children can carry a string kind name when kindIdFromName was not invoked
-  // (e.g. generated nodes.test.ts fixtures with `as any`). Attempt resolution
-  // via kindIdFromName so the full projection pipeline runs.
-  let numericType: number | undefined;
-  if (typeof value.$type === "number") {
-    numericType = value.$type;
-  } else if (typeof value.$type === "string") {
-    try {
-      const kindStr = nativeTransportType(value.$type);
-      numericType = kindIdFromName(kindStr);
-    } catch {
-      // Unknown kind name — cannot project, return as-is.
-    }
-  }
-  if (numericType === undefined) return value;
-
-  // Resolve the wire kind name (including alias rewriting) for internal
-  // routing. $type is always numeric after projection.
-  const resolvedKind = nativeTransportType(KIND_NAMES.get(numericType) ?? String(numericType));
-
-  const projected: Record<string, unknown> = {};
-  const isFactory = value.$source === 2;
-  for (const key of transportMetadataKeys) {
-    if (isFactory && (key === '$span' || key === '$nodeHandle' || key === '$childIndex')) continue;
-    if (key in value) projected[key] = value[key];
-  }
-  // $source is numeric (0=ts, 1=sg, 2=factory) — passes through unchanged.
-  // Temporarily store string kind for routing; converted to numeric below.
-  projected.$type = resolvedKind;
-
-  for (const [key, child] of Object.entries(value)) {
-    if (transportMetadataKeys.has(key)) continue;
-    if (key === 'render' || key === 'toEdit' || key === 'replace') continue;
-    if (typeof child === "function") continue;
-    const projKey = key.startsWith('_') ? key.slice(1) : key;
-    if (projKey in projected) continue;
-    projected[projKey] = projectTransportValue(child, `${path}.${projKey}`);
-  }
-
-  projectRawChildrenIntoFields(projected, resolvedKind);
-  inferNativeTransportVariant(projected, resolvedKind);
-  coerceNativeTransportChildren(projected, resolvedKind);
-  coerceKeywordPresenceFields(projected, resolvedKind);
-
-  projected.$type = kindIdFromName(resolvedKind);
-
-  return projected;
-}
-
-function nativeTransportType(kind: string): string {
-  return nativeTransportAliasTargetToSource[kind] ?? kind;
-}
-
-function projectRawChildrenIntoFields(projected: Record<string, unknown>, kind: string): void {
-  const rules = nativeTransportRawChildFieldRules[kind];
-  const children = projected.$children;
-  if (!rules || !Array.isArray(children)) return;
-  const keep: unknown[] = [];
-  const usedForField = new Set<number>();
-  for (const field of rules.fields) {
-    if (projected[field.name] !== undefined) continue;
-    const matches = children.map((child, index) => ({ child, index })).filter(({ child }) => transportValueMatches(child, field.alternatives));
-    if (field.multiple) {
-      if (matches.length > 0 || field.required) {
-        projected[field.name] = matches.map(({ child }) => child);
-        for (const { index } of matches) usedForField.add(index);
-      }
-    } else if (matches.length === 1) {
-      projected[field.name] = matches[0]!.child;
-      usedForField.add(matches[0]!.index);
-    }
-  }
-  for (let index = 0; index < children.length; index++) {
-    const child = children[index];
-    if (!usedForField.has(index) || transportValueMatches(child, rules.childAlternatives)) keep.push(child);
-  }
-  if (keep.length > 0 || rules.childrenRequired) {
-    projected.$children = keep;
-  } else {
-    delete projected.$children;
-  }
-}
-
-function inferNativeTransportVariant(projected: Record<string, unknown>, kind: string): void {
-  if (typeof projected.$variant === "string") return;
-  const rules = nativeTransportVariantRules[kind];
-  if (!rules) return;
-  const matches = rules.filter((rule) => transportVariantMatches(projected, rule));
-  if (matches.length === 1) projected.$variant = matches[0]!.variant;
-}
-
-function transportVariantMatches(node: Record<string, unknown>, rule: NativeTransportVariantRule): boolean {
-  for (const field of rule.fields) {
-    const value = node[field.name];
-    if (value === undefined) {
-      if (field.required) return false;
-      continue;
-    }
-    const ok = field.multiple ? transportArrayMatches(value, field.alternatives) : transportValueMatches(value, field.alternatives);
-    if (!ok) return false;
-  }
-  if (rule.children) {
-    const children = node.$children;
-    if (children === undefined) return !rule.children.required;
-    return transportArrayMatches(children, rule.children.alternatives);
-  }
+export function coerceBooleanKeywordStorage(value: unknown): true | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (Array.isArray(value)) return value.length > 0 ? true : undefined;
   return true;
 }
 
-function transportArrayMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  return Array.isArray(value) && value.every((item) => transportValueMatches(item, alternatives));
+export function coerceBitflagStorage(value: unknown, texts: readonly string[]): number | undefined {
+  if (value === undefined || value === null || value === false) return undefined;
+  if (typeof value === 'number') return value === 0 ? undefined : value;
+  if (Array.isArray(value)) {
+    let acc = 0;
+    for (const item of value) {
+      const bits = coerceBitflagStorage(item, texts) ?? 0;
+      acc |= bits;
+    }
+    return acc === 0 ? undefined : acc;
+  }
+  const text = extractNodeText(value);
+  if (text === undefined) return undefined;
+  const index = texts.indexOf(text);
+  if (index < 0) return undefined;
+  return 1 << index;
 }
 
-function transportValueMatches(value: unknown, alternatives: readonly NativeTransportAlternative[]): boolean {
-  if (typeof value === 'string') {
-    return alternatives.some((candidate) => candidate.text !== undefined && candidate.text === value);
+export function coerceKindEnumStorage<T = unknown>(
+  value: unknown,
+  byText: readonly (readonly [string, number])[] = []
+): T {
+  if (value === undefined || value === null) return undefined as T;
+  if (typeof value === 'number') return value as T;
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => coerceKindEnumStorage(item, byText))
+      .filter((item) => item !== undefined) as T;
   }
-  if (!isRecord(value)) return false;
-  // $type may be a numeric KindId (projected structured node) or a string
-  // (terminal node converted from a literal string via the string fast-path).
-  const vt = value.$type;
-  if (typeof vt !== "string" && typeof vt !== "number") return false;
-  return alternatives.some((candidate) => {
-    // Compare numeric vs numeric (kindIdFromName converts candidate string kind);
-    // compare string vs string for literal terminals.
-    const typeMatch = typeof vt === "number"
-      ? vt === kindIdFromName(candidate.type)
-      : vt === candidate.type;
-    if (!typeMatch) return false;
-    return candidate.text === undefined || value.$text === candidate.text;
-  });
+  const text = extractNodeText(value);
+  if (text !== undefined) {
+    const mapped = byText.find(([candidate]) => candidate === text);
+    if (mapped) return mapped[1] as T;
+  }
+  if (isRecord(value) && typeof value.$type === "number") return value.$type as T;
+  if (typeof value === 'string') {
+    const mapped = byText.find(([candidate]) => candidate === value);
+    return (mapped ? mapped[1] : kindIdFromName(value)) as T;
+  }
+  return value as T;
+}
+
+function extractNodeText(value: unknown): string | undefined {
+  if (typeof value === 'string') return value;
+  if (isNodeData(value)) {
+    return typeof value.$text === 'string' ? value.$text : undefined;
+  }
+  if (isRecord(value) && typeof value.$text === "string") return value.$text;
+  return undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }

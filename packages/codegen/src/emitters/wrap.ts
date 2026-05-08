@@ -17,7 +17,15 @@
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../compiler/generated-metadata.ts';
 import type { AssembledNonterminal, AssembledNode, AssembledPolymorph } from '../compiler/node-map.ts';
-import { collectAliasTargetToSourceMap, isMultiple, isNonEmpty, isRequired } from './shared.ts';
+import {
+	collectAliasTargetToSourceMap,
+	isMultiple,
+	isNonEmpty,
+	isRequired,
+	resolveFieldStorageInfo,
+	classifyWrapEmission,
+	warnSkippedParserSymbol
+} from './shared.ts';
 import { fieldElementType, childElementType, childrenSetterRestType } from './factories.ts';
 import {
 	collectKindEntries,
@@ -48,6 +56,7 @@ export interface EmitWrapConfig {
 	 * symbol by design; warn and skip.
 	 */
 	synthesizedKinds?: ReadonlySet<string>;
+	kindEntries?: readonly KindEnumEntry[];
 }
 
 /**
@@ -245,6 +254,25 @@ function resolveFieldDrillExprs(
 	storeExpr: string;
 	accessorBody: string;
 } {
+	const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+	if (storageInfo.kind === 'boolean') {
+		return {
+			storeExpr: `coerceBooleanKeywordStorage(data._${f.name})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
+	if (storageInfo.kind === 'bitflag') {
+		return {
+			storeExpr: `coerceBitflagStorage(data._${f.name}, ${bitflagTextsExpr(storageInfo.texts)})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
+	if (storageInfo.kind === 'kindEnum') {
+		return {
+			storeExpr: `projectKindEnumStorage(data._${f.name})`,
+			accessorBody: `return this._${f.name}`
+		};
+	}
 	const elemType = fieldElementType(f, nodeMap);
 	const aliasEntries = f.aliasSources ? Object.entries(f.aliasSources) : [];
 	if (aliasEntries.length > 0) {
@@ -272,6 +300,10 @@ function resolveFieldDrillExprs(
 			accessorBody: `return drillIn<${returnType}>(this._${f.name}, tree)`
 		};
 	}
+}
+
+function bitflagTextsExpr(texts: readonly string[]): string {
+	return `[${texts.map((text) => JSON.stringify(text)).join(', ')}]`;
 }
 
 /**
@@ -418,13 +450,23 @@ function emitInlineWithProperty(
 	lines.push('    $with: {');
 	for (const f of fields) {
 		const method = f.propertyName;
-		const elemType = fieldElementType(f, nodeMap);
-		if (isMultiple(f)) {
-			const elemForArray = elemType.includes(' | ') ? `(${elemType})` : elemType;
-			const restType = isNonEmpty(f) ? `NonEmptyArray<${elemType}>` : `${elemForArray}[]`;
+		const storageInfo = resolveFieldStorageInfo(f, nodeMap);
+		const polymorphSetterType =
+			storageInfo.kind === 'boolean'
+				? 'boolean'
+				: storageInfo.kind === 'bitflag' || storageInfo.kind === 'kindEnum'
+					? 'number'
+					: fieldElementType(f, nodeMap);
+		if (isMultiple(f) && !storageInfo.collapsesMultiplicity) {
+			const setterValueType = node.isPolymorph
+				? polymorphSetterType
+				: `NonNullable<T.${node.typeName}['_${f.name}']>[number]`;
+			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
+			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
 			lines.push(`      ${method}: (...v: ${restType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
 		} else {
-			lines.push(`      ${method}: (v: ${elemType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
+			const setterValueType = node.isPolymorph ? polymorphSetterType : `NonNullable<T.${node.typeName}['_${f.name}']>`;
+			lines.push(`      ${method}: (v: ${setterValueType}) => ${wrapFn}({ ${spreadData}, _${f.name}: v }, tree),`);
 		}
 	}
 	if (children.length > 0) {
@@ -467,11 +509,13 @@ export const wrapEmitter = {
 	 * Compute kindEntries and capture config state for the dispatch loop.
 	 */
 	init(config: EmitWrapConfig): void {
-		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds } = config;
+		const { nodeMap, generatedIdTables, inlineKinds, synthesizedKinds, kindEntries: providedKindEntries } = config;
 
-		const kindEntries = generatedIdTables
-			? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
-			: undefined;
+		const kindEntries =
+			providedKindEntries ??
+			(generatedIdTables
+				? collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables)
+				: undefined);
 
 		const typeImports = collectTypeImports(nodeMap);
 		const typeImportLine =
@@ -490,34 +534,6 @@ export const wrapEmitter = {
 		wrap.init();
 	},
 
-	shouldEmit(kind: string, node: AssembledNode): boolean {
-		const kindEntries = _wrapEmitterKindEntries;
-		const inlineKinds = _wrapEmitterInlineKinds;
-		const synthesizedKinds = _wrapEmitterSynthesizedKinds;
-
-		// --- Filtering (mirrors emitWrap loop) ---
-		if (kindEntries && !hasCatalogEntry(kindEntries, kind)) {
-			if (inlineKinds?.includes(kind)) {
-				console.warn(
-					`[codegen] '${kind}' is in inline: array — no parser symbol expected. ` +
-						`Skipping wrap emission. ` +
-						`Future: map to decomposition.`
-				);
-			} else if (synthesizedKinds?.has(kind)) {
-				// Intentionally synthesized by evaluate — no parser symbol by design.
-			} else {
-				console.warn(
-					`[codegen] VAPORIZED: '${kind}' has no parser symbol and is ` +
-						`NOT in the grammar's inline: array. Skipping wrap ` +
-						`emission. Investigate why tree-sitter dropped this rule.`
-				);
-			}
-			return false;
-		}
-
-		return !!node.rawFactoryName;
-	},
-
 	emitBranch(node: Extract<AssembledNode, { modelType: 'branch' }>): void {
 		wrap.branch(node, _wrapEmitterKindEntries, _wrapEmitterNodeMap);
 	},
@@ -530,7 +546,19 @@ export const wrapEmitter = {
 	 * Back-compat wrapper used by standalone `emitWrap()`.
 	 */
 	dispatchNode(kind: string, node: AssembledNode): void {
-		if (!this.shouldEmit(kind, node)) return;
+		const emission = classifyWrapEmission(kind, node, {
+			kindEntries: _wrapEmitterKindEntries,
+			inlineKinds: _wrapEmitterInlineKinds,
+			synthesizedKinds: _wrapEmitterSynthesizedKinds
+		});
+		if (
+			emission === 'skip-inline-kind' ||
+			emission === 'skip-synthesized-kind' ||
+			emission === 'skip-missing-parser-symbol'
+		) {
+			warnSkippedParserSymbol(kind, 'wrap', emission);
+		}
+		if (emission !== 'emit') return;
 		switch (node.modelType) {
 			case 'branch':
 				this.emitBranch(node);
@@ -564,6 +592,14 @@ export const wrapEmitter = {
 		const usesDrillInAll = /\bdrillInAll\b/.test(bodySource);
 		const usesDrillAs = /\bdrillAs\b/.test(bodySource);
 		const usesDrillAsAll = /\bdrillAsAll\b/.test(bodySource);
+		const usesProjectKindEnum = /\bprojectKindEnumStorage\b/.test(bodySource);
+		const usesCoerceBoolean = /\bcoerceBooleanKeywordStorage\b/.test(bodySource);
+		const usesCoerceBitflag = /\bcoerceBitflagStorage\b/.test(bodySource);
+		const utilsImports = [
+			'withMethods',
+			...(usesCoerceBoolean ? ['coerceBooleanKeywordStorage'] : []),
+			...(usesCoerceBitflag ? ['coerceBitflagStorage'] : [])
+		];
 
 		// Preamble (depends on body scan results)
 		const lines: string[] = [
@@ -578,7 +614,7 @@ export const wrapEmitter = {
 			...(kindEntries ? ["import { TSKindId } from './types.js';"] : []),
 			"import type * as T from './types.js';",
 			...(typeImportLine ? [typeImportLine] : []),
-			"import { withMethods } from './utils.js';",
+			`import { ${utilsImports.join(', ')} } from './utils.js';`,
 			"import * as _factories from './factories.js';",
 			'',
 			'// Drill-in helpers — call back through `readTreeNode` so the same',
@@ -629,6 +665,16 @@ export const wrapEmitter = {
 						'  if (!entries) return [];',
 						'  const arr = Array.isArray(entries) ? entries : [entries];',
 						'  return arr.map(e => drillAs<T>(e, tree, fromType, toType));',
+						'}'
+					]
+				: []),
+			...(usesProjectKindEnum
+				? [
+						'function projectKindEnumStorage<T>(value: T): T {',
+						'  if (!value) return value;',
+						'  if (Array.isArray(value)) return value.map(entry => projectKindEnumStorage(entry)) as unknown as T;',
+						'  const entry = value as unknown as _NodeData;',
+						'  return typeof entry.$type === "number" ? (entry.$type as T) : value;',
 						'}'
 					]
 				: []),
