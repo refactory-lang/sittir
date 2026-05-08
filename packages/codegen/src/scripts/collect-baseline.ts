@@ -490,7 +490,7 @@ if (isCli) {
 	// Emit metrics file when SITTIR_METRICS=1 is set. The import is
 	// deferred so the hot path stays free of the `os` module load.
 	if (process.env['SITTIR_METRICS'] === '1') {
-		const { dumpMetrics } = await import('@sittir/core');
+		const { dumpMetrics } = await import('@sittir/common');
 		dumpMetrics(metricsBackend);
 	}
 }

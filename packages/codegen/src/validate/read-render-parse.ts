@@ -8,8 +8,9 @@
  * Requires web-tree-sitter + language WASM files.
  */
 
-import { readNode, createRenderer } from '@sittir/core';
-import type { TreeHandle } from '@sittir/core';
+import { readNode } from '@sittir/common';
+import { createRenderer } from '@sittir/core';
+import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData } from '@sittir/types';
 import { deriveRuleKinds } from './templates-path.ts';
 import { loadRawEntries } from './node-types-loader.ts';

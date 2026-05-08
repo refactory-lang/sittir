@@ -25,7 +25,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 
-import { readNode, createRenderer } from '@sittir/core';
+import { readNode } from '@sittir/common';
+import { createRenderer } from '@sittir/core';
 import {
 	loadCorpusEntries,
 	loadLanguageForGrammar,

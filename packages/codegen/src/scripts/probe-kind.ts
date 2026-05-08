@@ -420,7 +420,7 @@ function dumpCst(node: any, fieldName: string | null): CstNode {
 }
 
 async function fallbackReadNode(handle: ReturnType<typeof treeHandle>, nodeId?: NodeId): Promise<unknown> {
-	const { readNode } = await import('@sittir/core');
+	const { readNode } = await import('@sittir/common');
 	return readNode(handle, nodeId);
 }
 

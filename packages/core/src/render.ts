@@ -21,8 +21,7 @@ import type {
 	FormatRecord
 } from './types.ts';
 import { createNunjucksEnvironment } from './templates/nunjucks-env.ts';
-import { withMetrics } from './metrics.ts';
-import { applyFormat } from './format.ts';
+import { withMetrics, applyFormat } from '@sittir/common';
 
 export type { RulesConfig };
 

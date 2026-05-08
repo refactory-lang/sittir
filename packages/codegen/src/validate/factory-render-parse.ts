@@ -10,7 +10,8 @@
  * 5. Re-parse and verify the kind exists
  */
 
-import { readNode, createRenderer } from '@sittir/core';
+import { readNode } from '@sittir/common';
+import { createRenderer } from '@sittir/core';
 import type { AnyNodeData, NodeMemberValue } from '@sittir/types';
 import type { PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape } from '../emitters/factory-map.ts';
@@ -519,16 +520,16 @@ function buildFactoryNodeData(
 						namedChildKindHints,
 						kindNameFromId
 					})
- 				: nodeToConfig(readData, {
+				: nodeToConfig(readData, {
 						factoryMap,
 						factoryShapes,
 						fieldAliasMap,
 						factoryFields,
- 						polymorphVariants,
- 						firstNamedChildKindHint,
- 						namedChildKindHints,
- 						kindNameFromId
- 					});
+						polymorphVariants,
+						firstNamedChildKindHint,
+						namedChildKindHints,
+						kindNameFromId
+					});
 			if (shape === 'direct') {
 				// Direct-call shape: extract the sole field value when metadata
 				// names one, otherwise treat it as a single child call.

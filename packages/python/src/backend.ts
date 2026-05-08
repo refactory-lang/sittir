@@ -19,7 +19,7 @@ import type {
 	NativeBackendStatusLike,
 	NativeEngineLike as CoreNativeEngineLike,
 	NativeModuleLike
-} from '@sittir/core/engine';
+} from '@sittir/common/engine';
 import { TEMPLATE_BUNDLE_HASH } from './hash.js';
 
 const NATIVE_RENDER_TRANSPORT_ABI = 1;

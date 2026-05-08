@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createGrammarEngine, type GrammarEngineConfig } from '../src/engine.ts';
-import type { AnyNodeData } from '../src/types.ts';
+import { createNativeEngine, type GrammarEngineConfig } from '../../common/src/engine.ts';
+import type { AnyNodeData } from '@sittir/types';
 
-describe('createGrammarEngine native boundary', () => {
+describe('createNativeEngine native boundary', () => {
 	it('rejects non-data render inputs before transport projection', () => {
 		const render = vi.fn((_node: unknown) => 'ok');
 		const toNativeRenderTransport = vi.fn((node: AnyNodeData) => node);
@@ -36,10 +36,7 @@ describe('createGrammarEngine native boundary', () => {
 								$text: 'x'
 							});
 						}
-						applyEdits(
-							source: string,
-							_edits: { startPos: number; endPos: number; insertedText: string }[]
-						): string {
+						applyEdits(source: string, _edits: { startPos: number; endPos: number; insertedText: string }[]): string {
 							return source;
 						}
 						dispose(): void {}
@@ -47,7 +44,7 @@ describe('createGrammarEngine native boundary', () => {
 				}
 			})
 		} satisfies GrammarEngineConfig;
-		const engine = createGrammarEngine(config);
+		const engine = createNativeEngine(config);
 		const invalid = {
 			$type: 1 as const,
 			$source: 2 as const,
@@ -58,7 +55,8 @@ describe('createGrammarEngine native boundary', () => {
 			}
 		};
 
-		expect(() => engine.render(invalid)).toThrow(/only plain data objects can cross the native render boundary/);
+		expect(engine).not.toBeNull();
+		expect(() => engine!.render(invalid)).toThrow(/only plain data objects can cross the native render boundary/);
 		expect(toNativeRenderTransport).not.toHaveBeenCalled();
 		expect(render).not.toHaveBeenCalled();
 	});

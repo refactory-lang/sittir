@@ -1,7 +1,7 @@
 {
 	"name": "@sittir/core",
 	"version": "0.1.0",
-	"description": "Grammar-driven render engine, validation, CST, and Edit creation for sittir",
+	"description": "JavaScript backend implementation for sittir",
 	"keywords": [
 		"ast-grep",
 		"cst",
@@ -44,7 +44,8 @@
 	"dependencies": {
 		"@sittir/types": "workspace:*",
 		"nunjucks": "^3.2.4",
-		"yaml": "^2.8.3"
+		"yaml": "^2.8.3",
+		"@sittir/common": "workspace:*"
 	},
 	"devDependencies": {
 		"@ast-grep/napi": "^0.42.1",

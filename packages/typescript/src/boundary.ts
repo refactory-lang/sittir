@@ -12,7 +12,7 @@
 
 import type { AnyNodeData, ByteRange, Edit } from '@sittir/types';
 import { createEngine } from './engine.js';
-import type { SittirEngineLike } from '@sittir/core/engine';
+import type { SittirEngineLike } from '@sittir/common/engine';
 
 let defaultEngine: SittirEngineLike | null = null;
 

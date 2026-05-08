@@ -1,6 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import type { AnyNodeData, Edit, FormatRecord } from '@sittir/types';
 import type { TreeHandle } from './readNode.ts';
+import { assertRenderableNodeData } from './native-boundary.ts';
 
 export interface EngineOptions {
 	readonly format?: FormatRecord;
@@ -12,10 +13,7 @@ export interface RenderHandle {
 	print(): string;
 }
 
-export function createRenderHandle(
-	renderText: () => string,
-	saveImpl?: (path: string) => boolean
-): RenderHandle {
+export function createRenderHandle(renderText: () => string, saveImpl?: (path: string) => boolean): RenderHandle {
 	let cached: string | undefined;
 	function getText(): string {
 		if (cached === undefined) cached = renderText();
@@ -42,10 +40,7 @@ export interface NativeEngineLike<TTransport = unknown> {
 	readNode(handle: number, childIndex: number): string;
 	render(node: TTransport): string;
 	renderToFile?(node: TTransport, path: string): void;
-	applyEdits(
-		source: string,
-		edits: { startPos: number; endPos: number; insertedText: string }[]
-	): string;
+	applyEdits(source: string, edits: { startPos: number; endPos: number; insertedText: string }[]): string;
 	dispose(): void;
 }
 
@@ -72,9 +67,7 @@ export type BackendStatusLike<TModule extends NativeModuleLike = NativeModuleLik
 	| NativeBackendStatusLike<TModule>
 	| JsBackendStatusLike;
 
-export type NativeRenderTransportProjector<TTransport = unknown> = (
-	node: AnyNodeData
-) => TTransport;
+export type NativeRenderTransportProjector<TTransport = unknown> = (node: AnyNodeData) => TTransport;
 
 export interface GrammarEngineConfig<
 	TTransport = unknown,
@@ -101,4 +94,97 @@ export interface SittirEngineLike {
 export interface ParseAndReadResult {
 	root: AnyNodeData;
 	tree: TreeHandle;
+}
+
+interface NativeParseResultShape {
+	readonly nodeData: AnyNodeData;
+	readonly format?: FormatRecord;
+}
+
+export function createNativeEngine<
+	TTransport = unknown,
+	TModule extends NativeModuleLike<TTransport> = NativeModuleLike<TTransport>
+>(config: GrammarEngineConfig<TTransport, TModule>, options?: EngineOptions): SittirEngineLike | null {
+	const status = config.getActiveBackend();
+	if (status.name !== 'native') return null;
+
+	try {
+		const nativeOptions = options?.format ? { format: JSON.stringify(options.format) } : undefined;
+		const engine = new status.native.SittirEngine(nativeOptions);
+
+		function renderNativeNode(
+			node: Parameters<SittirEngineLike['render']>[0],
+			opts?: Parameters<SittirEngineLike['render']>[1]
+		): RenderHandle {
+			assertRenderableNodeData(node);
+			const transport = config.toNativeRenderTransport(node);
+			if (opts?.ignoreFormat === true) {
+				throw new Error(
+					'ignoreFormat option not yet supported by native engine. ' +
+						'Use JS engine or wait for Task 4 (engine-owned format state).'
+				);
+			}
+			return createRenderHandle(
+				() => engine.render(transport),
+				(path) => {
+					if (engine.renderToFile) {
+						engine.renderToFile(transport, path);
+						return true;
+					}
+					return false;
+				}
+			);
+		}
+
+		return {
+			render(node, opts) {
+				return renderNativeNode(node, opts);
+			},
+
+			applyEdits(source, edits) {
+				return engine.applyEdits(
+					source,
+					edits.map((edit) => ({ ...edit }))
+				);
+			},
+
+			dispose() {
+				engine.dispose();
+			},
+
+			reader: {
+				parseAndRead(source: string) {
+					const json = engine.parseAndRead(source);
+					const parsed = JSON.parse(json) as NativeParseResultShape;
+					const root = parsed.nodeData;
+					return {
+						root,
+						tree: {
+							get rootNode(): never {
+								throw new Error('rootNode unavailable on native engine handle; use tree.read()');
+							},
+							source,
+							read: (handle, childIndex) => {
+								if (handle === undefined) return root;
+								const nodeJson = engine.readNode(handle, childIndex ?? 0);
+								return JSON.parse(nodeJson) as AnyNodeData;
+							},
+							render: (handle, opts) => {
+								const node = handle === undefined ? root : (JSON.parse(engine.readNode(handle, 0)) as AnyNodeData);
+								return renderNativeNode(node, opts).toString();
+							},
+							format: parsed.format
+						} satisfies TreeHandle
+					};
+				},
+
+				readNode(handle: number, childIndex = 0) {
+					const json = engine.readNode(handle, childIndex);
+					return JSON.parse(json) as AnyNodeData;
+				}
+			}
+		};
+	} catch {
+		return null;
+	}
 }

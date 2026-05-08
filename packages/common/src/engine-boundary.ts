@@ -1,4 +1,4 @@
-export { createRenderHandle } from './engine.ts';
+export { createNativeEngine, createRenderHandle } from './engine.ts';
 export type {
 	BackendStatusLike,
 	EngineOptions,

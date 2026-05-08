@@ -17,12 +17,12 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/core';
+import { readNode as readNodeFn, dumpMetrics, metricsEnabled } from '@sittir/common';
 import type * as TS from 'web-tree-sitter';
 import type { SgNode as _SgNode, Range } from '@ast-grep/wasm';
 
 import type { AnyNodeData, AnyTreeNode, NativeParseResult } from '@sittir/types';
-import type { TreeHandle } from '@sittir/core';
+import type { TreeHandle } from '@sittir/common';
 import { assertNever, type PolymorphVariantDescriptor, type PolymorphVariantMap } from '../polymorph-variant.ts';
 import type { FactoryShape } from '../emitters/factory-map.ts';
 
@@ -207,9 +207,7 @@ export function nativeTreeHandle(engine: NativeEngineLike, source: string): Tree
 			if (nodeHandle === undefined) {
 				return rootData as unknown as ReturnType<NonNullable<TreeHandle['read']>>;
 			}
-			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<
-				NonNullable<TreeHandle['read']>
-			>;
+			return JSON.parse(engine.readNode(nodeHandle, childIndex ?? 0)) as ReturnType<NonNullable<TreeHandle['read']>>;
 		},
 		...(parseResult.format !== undefined && { format: parseResult.format })
 	};
@@ -1221,7 +1219,8 @@ function promoteAnonymousChildrenToMissingFields(
 ): boolean {
 	if (!declaredFields || !parentKind) return false;
 	const anonymousChildren = children.filter(
-		(child): child is ReadNodeLike => child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
+		(child): child is ReadNodeLike =>
+			child != null && typeof child === 'object' && (child as ReadNodeLike).$named === false
 	);
 	if (anonymousChildren.length === 0) return false;
 	const missingFields = declaredFields.filter((name) => {
@@ -1302,15 +1301,7 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts = {}): R
 				};
 				out[camel] = resolveChild(child, resolveOpts);
 			});
-		} else if (
-			promoteAnonymousChildrenToMissingFields(
-				declaredFields,
-				parentKind,
-				data.$children,
-				opts,
-				out
-			)
-		) {
+		} else if (promoteAnonymousChildrenToMissingFields(declaredFields, parentKind, data.$children, opts, out)) {
 			// Ambiguous-free anonymous-token fill completed above.
 		} else {
 			assignChildrenToConfig(data.$children, childOpts, out);
@@ -1447,13 +1438,13 @@ function inferFromChildKind(
 		resolvedFromHints(namedChildKindHints ?? []) ??
 		resolveVariantFromKind(firstNamedChildKindHint);
 	if (resolved !== undefined) return resolved;
-	const distinctHints = [...new Set((namedChildKindHints ?? []).filter((candidate) => candidate && candidate !== kind))];
+	const distinctHints = [
+		...new Set((namedChildKindHints ?? []).filter((candidate) => candidate && candidate !== kind))
+	];
 	console.warn(
 		`[nodeToConfig] polymorph '${parentKind}' (source=override): no variant matched first child kind '${kind ?? '<none>'}'. ` +
 			(distinctHints.length > 0 ? `CST named children [${distinctHints.join(', ')}]. ` : '') +
-			(firstNamedChildKindHint && firstNamedChildKindHint !== kind
-				? `CST hint '${firstNamedChildKindHint}'. `
-				: '') +
+			(firstNamedChildKindHint && firstNamedChildKindHint !== kind ? `CST hint '${firstNamedChildKindHint}'. ` : '') +
 			`Known: [${Object.keys(childKind).join(', ')}]`
 	);
 	return undefined;
