@@ -34,7 +34,7 @@ function nodeMapWith(nodes: Map<string, AssembledNode>, polymorphFormKinds: Read
 	} satisfies NodeMap;
 }
 
-function makeMinimalNodeMap(): NodeMap {
+export function makeMinimalNodeMap(): NodeMap {
 	const callRule: SeqRule = {
 		type: 'seq',
 		members: [
