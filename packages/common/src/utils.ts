@@ -12,7 +12,7 @@ export interface WithMethodsEngine {
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
 }
 
-export function withMethods<T extends object>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
 	return Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return engine.render(this);

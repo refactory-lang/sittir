@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { AnyNodeData } from '@sittir/types';
 import {
 	withMethods,
 	isNodeData,
@@ -45,6 +46,10 @@ describe('@sittir/common/utils runtime surface', () => {
 		});
 		expect(node.$trivia({ trailing: [node] })).toBe(node);
 		expect((node as Record<string, unknown>).$triviaData).toEqual({ trailing: [node] });
+		const triviaNodeA: AnyNodeData = { $type: 2, $source: 2, $text: 'a' };
+		const triviaNodeB: AnyNodeData = { $type: 3, $source: 2, $text: 'b' };
+		expect(node.$trivia(triviaNodeA, triviaNodeB)).toBe(node);
+		expect((node as Record<string, unknown>).$triviaData).toEqual({ leading: [triviaNodeA, triviaNodeB] });
 		expect(render).toHaveBeenCalledTimes(1);
 		expect(render).toHaveBeenCalledWith(node);
 		expect(toEdit).toHaveBeenCalledTimes(2);
