@@ -1,12 +1,11 @@
 import type { AssembledNode } from '../compiler/node-map.ts';
 
-export interface LoopDrivenEmitter<TConfig, TResult> {
-	init(config: TConfig): void;
+export interface LoopDrivenEmitter<TResult, TFinalizeArg = void> {
 	emitLeaf?(node: AssembledNode): void;
 	emitBranch?(node: AssembledNode): void;
 	emitPolymorph?(node: AssembledNode): void;
 	emitGroup?(node: AssembledNode): void;
-	finalize(): TResult;
+	finalize(arg: TFinalizeArg): TResult;
 }
 
 /** Constructor-based emitter with no init() lifecycle phase. */

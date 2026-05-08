@@ -5,7 +5,7 @@
  * entry point (`emitAll`) that iterates `nodeMap.nodes` once and
  * dispatches to every emitter per node.
  *
- * Emitters that already have `init()`/`collect()` namespace APIs
+ * Emitters that already have `collect()` namespace APIs
  * (factory, from, wrap, templates) get true per-node dispatch in the loop.
  * Emitters that use category collection or complex multi-pass patterns
  * (types, ir, is, consts, test, factoryMap, clientUtils,
@@ -29,7 +29,7 @@ import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { emitTypeTests } from './type-test.ts';
-import { templateEmitter } from './templates.ts';
+import { TemplateEmitter } from './templates.ts';
 import { emitFactoryMap } from './factory-map.ts';
 import { emitClientUtils } from './client-utils.ts';
 import { collectCatalogKinds, collectKindEntries } from './kind-discriminant.ts';
@@ -133,10 +133,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		synthesizedKinds
 	});
 
-	templateEmitter.init({
-		grammar,
-		nodeMap
-	});
+	const templateEmitter = new TemplateEmitter({ grammar, nodeMap });
 
 	const renderModuleEmitterInst =
 		renderModuleEmission.tag === 'emit'
