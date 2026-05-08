@@ -19,8 +19,7 @@ import {
 	deriveChildrenKinds,
 	type SlotClass
 } from '../emitters/transport-common.ts';
-import { emitRenderModule } from '../emitters/render-module.ts';
-import { emitAll } from '../emitters/emit.ts';
+import { emitRenderModule, emitRenderModuleBundle } from '../emitters/render-module.ts';
 import { runRenderModuleEmitter } from '../emitters/render-module-runner.ts';
 import type { AssembledNonterminal, AssembledNode } from '../compiler/node-map.ts';
 import { isNodeRef, isUnresolvedRef } from '../compiler/node-map.ts';
@@ -271,22 +270,19 @@ async function buildRustFixtureForParity() {
 	return { grammar, nodeMap, generatedIdTables, jinjaTemplates };
 }
 
-it('adapter path matches emitAll render-module output', async () => {
+it('collectMetaData path matches buildMetaDataFromEntries path (render metadata parity)', async () => {
 	const { grammar, nodeMap, generatedIdTables, jinjaTemplates } = await buildRustFixtureForParity();
 
-	const viaEmitAll = emitAll({
-		grammar,
-		nodeMap,
-		generatedIdTables,
-		emitRenderModule: true
-	}).renderModule;
+	// Old path: emitRenderModuleBundle → emitRenderModule (no precomputed) → collectMetaData(nodeMap)
+	const viaOldPath = emitRenderModuleBundle(grammar, jinjaTemplates, nodeMap, generatedIdTables);
 
-	const viaAdapter = runRenderModuleEmitter({
+	// New path: RenderModuleEmitter collecting loop → buildMetaDataFromEntries → emitRenderModule(precomputed)
+	const viaNewPath = runRenderModuleEmitter({
 		grammar,
 		nodeMap,
 		generatedIdTables,
 		jinjaTemplates
 	});
 
-	expect(viaAdapter).toEqual(viaEmitAll);
+	expect(viaNewPath.emit).toEqual(viaOldPath.emit);
 }, 60_000);
