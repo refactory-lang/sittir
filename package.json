@@ -37,6 +37,7 @@
 		"@changesets/changelog-github": "^0.6.0",
 		"@changesets/cli": "^2.30.0",
 		"@napi-rs/cli": "^3.0.0",
+		"@sittir/common": "workspace:*",
 		"@sittir/python": "workspace:*",
 		"@sittir/rust": "workspace:*",
 		"@sittir/typescript": "workspace:*",
