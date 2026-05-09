@@ -260,10 +260,14 @@ const isCli = (() => {
 	}
 })();
 
-if (isCli) {
-	const args = parseArgs(process.argv.slice(2));
+export async function run(argv: string[]): Promise<number> {
+	const args = parseArgs(argv);
 	const warnOnly = process.env['SITTIR_METRICS_FFI_WARN_ONLY'] === '1';
 	const result = checkPerfBaseline(args.baseline, args.metrics, warnOnly);
 	if (result.stderrLine) process.stderr.write(`${result.stderrLine}\n`);
-	process.exit(result.exitCode);
+	return result.exitCode;
+}
+
+if (isCli) {
+	process.exit(await run(process.argv.slice(2)));
 }

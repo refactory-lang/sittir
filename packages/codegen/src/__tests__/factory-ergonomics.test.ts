@@ -106,4 +106,32 @@ describe('factory ergonomics', () => {
 			expect(content).not.toMatch(/F\.label\(\{/);
 		});
 	});
+
+	describe('examples cleanup contract', () => {
+		it('keeps literal-string visibility modifier dispatch in rust from()', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/from.ts'), 'utf-8');
+			expect(content).toMatch(/case "crate": return visibilityModifierUFormCrateFrom\(\)/);
+			expect(content).toMatch(/case "pub": return visibilityModifierUFormPubFrom\(\)/);
+		});
+
+		it('emits visibilityModifier input hints on rust functionItem loose inputs', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/types.ts'), 'utf-8');
+			expect(content).toMatch(
+				/export interface FunctionItem[\s\S]*readonly __inputHints__\?: \{[\s\S]*readonly visibility_modifier\?:[\s\S]*"crate"[\s\S]*"pub"/
+			);
+		});
+
+		it('keeps branch and polymorph ir bundles exposing strict explicitly', async () => {
+			const { readFileSync } = await import('node:fs');
+			const { resolve } = await import('node:path');
+			const content = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
+
+			expect(content).toContain('.strict');
+			expect(content).toContain('from: FR.');
+		});
+	});
 });

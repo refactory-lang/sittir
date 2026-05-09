@@ -27,7 +27,9 @@
 //! Task 3 plan. The three view tests from that file now live at the
 //! bottom of this module.
 
-use sittir_core::filters::{joinby, lower, upper, NonterminalView, ListNonterminalView, Renderable};
+use sittir_core::filters::{
+    joinby, lower, upper, ListNonterminalView, NonterminalView, Renderable,
+};
 
 // ---------------------------------------------------------------------------
 // Helpers — build a ListNonterminalView from string literals for use in tests.
@@ -95,48 +97,84 @@ fn joinby_empty_input_produces_empty_output() {
 fn joinby_plain_matches_ts_join() {
     // filters.rs:67 — was: joinby(&["a", "b", "c"], ...)
     let view = text_view!(", ", false, false, "a", "b", "c");
-    assert_eq!(joinby(&view, ", ", false, false).unwrap().0.to_string(), "a, b, c");
+    assert_eq!(
+        joinby(&view, ", ", false, false).unwrap().0.to_string(),
+        "a, b, c"
+    );
     let view2 = text_view!("", false, false, "a", "b", "c");
-    assert_eq!(joinby(&view2, "", false, false).unwrap().0.to_string(), "abc");
+    assert_eq!(
+        joinby(&view2, "", false, false).unwrap().0.to_string(),
+        "abc"
+    );
     let view3 = text_view!(" | ", false, false, "a", "b", "c");
-    assert_eq!(joinby(&view3, " | ", false, false).unwrap().0.to_string(), "a | b | c");
+    assert_eq!(
+        joinby(&view3, " | ", false, false).unwrap().0.to_string(),
+        "a | b | c"
+    );
 }
 
 #[test]
 fn joinby_single_element_no_separator_needed() {
     // filters.rs:76 — was: joinby(&["only"], ...)
     let view = text_view!(", ", false, false, "only");
-    assert_eq!(joinby(&view, ", ", false, false).unwrap().0.to_string(), "only");
+    assert_eq!(
+        joinby(&view, ", ", false, false).unwrap().0.to_string(),
+        "only"
+    );
     // Flanks still apply — a single element with trailing=true gets
     // the separator appended; matches TS joinWithTrailing.
-    assert_eq!(joinby(&view, ", ", false, true).unwrap().0.to_string(), "only, ");
-    assert_eq!(joinby(&view, ", ", true, false).unwrap().0.to_string(), ", only");
-    assert_eq!(joinby(&view, ", ", true, true).unwrap().0.to_string(), ", only, ");
+    assert_eq!(
+        joinby(&view, ", ", false, true).unwrap().0.to_string(),
+        "only, "
+    );
+    assert_eq!(
+        joinby(&view, ", ", true, false).unwrap().0.to_string(),
+        ", only"
+    );
+    assert_eq!(
+        joinby(&view, ", ", true, true).unwrap().0.to_string(),
+        ", only, "
+    );
 }
 
 #[test]
 fn joinby_trailing_matches_ts_joinWithTrailing() {
     // filters.rs:87 — was: joinby(&["a", "b"], ...)
     let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(joinby(&view, ", ", false, true).unwrap().0.to_string(), "a, b, ");
+    assert_eq!(
+        joinby(&view, ", ", false, true).unwrap().0.to_string(),
+        "a, b, "
+    );
     let view2 = text_view!(";", false, false, "a", "b");
-    assert_eq!(joinby(&view2, ";", false, true).unwrap().0.to_string(), "a;b;");
+    assert_eq!(
+        joinby(&view2, ";", false, true).unwrap().0.to_string(),
+        "a;b;"
+    );
 }
 
 #[test]
 fn joinby_leading_matches_ts_joinWithLeading() {
     // filters.rs:94 — was: joinby(&["a", "b"], ...)
     let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(joinby(&view, ", ", true, false).unwrap().0.to_string(), ", a, b");
+    assert_eq!(
+        joinby(&view, ", ", true, false).unwrap().0.to_string(),
+        ", a, b"
+    );
 }
 
 #[test]
 fn joinby_both_flanks_matches_ts_joinWithFlanks() {
     // filters.rs:100 — was: joinby(&["a", "b"], ...) / joinby(&["x", "y", "z"], ...)
     let view = text_view!(", ", false, false, "a", "b");
-    assert_eq!(joinby(&view, ", ", true, true).unwrap().0.to_string(), ", a, b, ");
+    assert_eq!(
+        joinby(&view, ", ", true, true).unwrap().0.to_string(),
+        ", a, b, "
+    );
     let view3 = text_view!("|", false, false, "x", "y", "z");
-    assert_eq!(joinby(&view3, "|", true, true).unwrap().0.to_string(), "|x|y|z|");
+    assert_eq!(
+        joinby(&view3, "|", true, true).unwrap().0.to_string(),
+        "|x|y|z|"
+    );
 }
 
 #[test]
@@ -145,7 +183,10 @@ fn joinby_preserves_empty_string_elements() {
     // A non-empty slice with empty-string elements still renders with
     // separators between them — matches TS `["","","a"].join(",") == ",,a"`.
     let view = text_view!(",", false, false, "", "", "a");
-    assert_eq!(joinby(&view, ",", false, false).unwrap().0.to_string(), ",,a");
+    assert_eq!(
+        joinby(&view, ",", false, false).unwrap().0.to_string(),
+        ",,a"
+    );
 }
 
 // -------------------------------------------------------------------
@@ -174,7 +215,10 @@ fn join_with_trailing_emits_flank_when_anon_text_matches_sep() {
         ..FlankValues::default()
     };
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithTrailing(&view, &values, ",").unwrap().0.to_string(), "a,b,");
+    assert_eq!(
+        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
+        "a,b,"
+    );
 }
 
 #[test]
@@ -186,7 +230,10 @@ fn join_with_trailing_skips_flank_when_anon_text_differs() {
         ..FlankValues::default()
     };
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithTrailing(&view, &values, ",").unwrap().0.to_string(), "a,b");
+    assert_eq!(
+        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
+        "a,b"
+    );
 }
 
 #[test]
@@ -195,7 +242,10 @@ fn join_with_trailing_skips_flank_when_anon_absent() {
     // filters.rs:162 — updated: &["a", "b"] → ListNonterminalView
     let values = FlankValues::default();
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithTrailing(&view, &values, ",").unwrap().0.to_string(), "a,b");
+    assert_eq!(
+        joinWithTrailing(&view, &values, ",").unwrap().0.to_string(),
+        "a,b"
+    );
 }
 
 #[test]
@@ -206,7 +256,10 @@ fn join_with_leading_mirrors_trailing_semantics() {
         ..FlankValues::default()
     };
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithLeading(&view, &values, ",").unwrap().0.to_string(), ",a,b");
+    assert_eq!(
+        joinWithLeading(&view, &values, ",").unwrap().0.to_string(),
+        ",a,b"
+    );
 }
 
 #[test]
@@ -218,7 +271,10 @@ fn join_with_flanks_independent_per_side() {
         leading_anon: None,
     };
     let view = text_view!(",", false, false, "a");
-    assert_eq!(joinWithFlanks(&view, &values, ",").unwrap().0.to_string(), "a,");
+    assert_eq!(
+        joinWithFlanks(&view, &values, ",").unwrap().0.to_string(),
+        "a,"
+    );
 }
 
 #[test]
@@ -229,7 +285,10 @@ fn join_with_flanks_both_sides_match() {
         leading_anon: Some(",".into()),
     };
     let view = text_view!(",", false, false, "a", "b");
-    assert_eq!(joinWithFlanks(&view, &values, ",").unwrap().0.to_string(), ",a,b,");
+    assert_eq!(
+        joinWithFlanks(&view, &values, ",").unwrap().0.to_string(),
+        ",a,b,"
+    );
 }
 
 // -------------------------------------------------------------------
@@ -238,8 +297,17 @@ fn join_with_flanks_both_sides_match() {
 
 #[test]
 fn joinby_returns_streaming_safe_joined() {
-    let items = [Renderable::Text("a"), Renderable::Text("b"), Renderable::Text("c")];
-    let view = ListNonterminalView { items: &items, separator: ", ", leading: false, trailing: false };
+    let items = [
+        Renderable::Text("a"),
+        Renderable::Text("b"),
+        Renderable::Text("c"),
+    ];
+    let view = ListNonterminalView {
+        items: &items,
+        separator: ", ",
+        leading: false,
+        trailing: false,
+    };
     let safe: askama::filters::Safe<sittir_core::filters::Joined<'_>> =
         joinby(&view, ", ", false, false).expect("joinby");
     assert_eq!(safe.0.to_string(), "a, b, c");
@@ -248,7 +316,12 @@ fn joinby_returns_streaming_safe_joined() {
 #[test]
 fn joinby_with_flanks_streams_through_safe() {
     let items = [Renderable::Text("x")];
-    let view = ListNonterminalView { items: &items, separator: ";", leading: false, trailing: false };
+    let view = ListNonterminalView {
+        items: &items,
+        separator: ";",
+        leading: false,
+        trailing: false,
+    };
     let safe = joinby(&view, ";", true, true).expect("joinby");
     assert_eq!(safe.0.to_string(), ";x;");
 }
@@ -260,7 +333,12 @@ fn joinby_with_flanks_streams_through_safe() {
 #[test]
 fn listview_holds_renderables() {
     let items = [Renderable::Text("foo"), Renderable::Text("bar")];
-    let view = ListNonterminalView { items: &items, separator: ", ", leading: false, trailing: false };
+    let view = ListNonterminalView {
+        items: &items,
+        separator: ", ",
+        leading: false,
+        trailing: false,
+    };
     assert_eq!(view.to_string(), "foo, bar");
 }
 

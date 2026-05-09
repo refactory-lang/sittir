@@ -84,38 +84,48 @@ async function diagnoseGrammar(grammar: string): Promise<PhantomReport> {
 	return { grammar, phantoms, catalogKinds, nodeMapKinds, symbolNameCollisions };
 }
 
-const args = process.argv.slice(2);
-const grammars = args.length ? args : ['rust', 'typescript', 'python'];
+export async function run(argv: string[]): Promise<number> {
+	const grammars = argv.length ? argv : ['rust', 'typescript', 'python'];
 
-for (const grammar of grammars) {
-	try {
-		console.log(`\n=== ${grammar.toUpperCase()} ===`);
-		const report = await diagnoseGrammar(grammar);
+	for (const grammar of grammars) {
+		try {
+			console.log(`\n=== ${grammar.toUpperCase()} ===`);
+			const report = await diagnoseGrammar(grammar);
 
-		console.log(`nodeMap kinds:    ${report.nodeMapKinds.size}`);
-		console.log(`catalog kinds:    ${report.catalogKinds.size}`);
-		console.log(`phantom kinds:    ${report.phantoms.length}`);
+			console.log(`nodeMap kinds:    ${report.nodeMapKinds.size}`);
+			console.log(`catalog kinds:    ${report.catalogKinds.size}`);
+			console.log(`phantom kinds:    ${report.phantoms.length}`);
 
-		if (report.phantoms.length > 0) {
-			console.log('\nPhantom kinds (in nodeMap, no parser symbol):');
-			for (const k of report.phantoms) {
-				console.log(`  ${k}`);
+			if (report.phantoms.length > 0) {
+				console.log('\nPhantom kinds (in nodeMap, no parser symbol):');
+				for (const k of report.phantoms) {
+					console.log(`  ${k}`);
+				}
 			}
-		}
 
-		if (report.symbolNameCollisions.length > 0) {
-			console.log('\nSymbolName collisions (symbolName === another catalog key):');
-			for (const c of report.symbolNameCollisions) {
-				console.log(
-					`  ${c.catalogKey} (id=${c.catalogKeyId}) symbolName="${c.symbolName}" ` +
-						`collides with catalog key id=${c.collidingKindId}`
-				);
+			if (report.symbolNameCollisions.length > 0) {
+				console.log('\nSymbolName collisions (symbolName === another catalog key):');
+				for (const c of report.symbolNameCollisions) {
+					console.log(
+						`  ${c.catalogKey} (id=${c.catalogKeyId}) symbolName="${c.symbolName}" ` +
+							`collides with catalog key id=${c.collidingKindId}`
+					);
+				}
+			} else {
+				console.log('\nNo symbolName collisions found.');
 			}
-		} else {
-			console.log('\nNo symbolName collisions found.');
+		} catch (e) {
+			console.log(`${grammar}: ERROR ${(e as Error).message}`);
+			console.log((e as Error).stack);
 		}
-	} catch (e) {
-		console.log(`${grammar}: ERROR ${(e as Error).message}`);
-		console.log((e as Error).stack);
 	}
+	return 0;
+}
+
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
+if (_isMain) {
+	run(process.argv.slice(2)).then(process.exit).catch((e) => {
+		process.stderr.write(`diagnose-phantom-kinds: ${(e as Error).stack ?? e}\n`);
+		process.exit(1);
+	});
 }

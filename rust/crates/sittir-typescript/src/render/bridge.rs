@@ -5,21 +5,25 @@
 // resolve_children, separator_for, variant_for, etc. Used by both
 // dispatch and templates modules.
 
-#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(
+    dead_code,
+    unused_imports,
+    non_snake_case,
+    non_camel_case_types,
+    unused_mut,
+    unused_variables
+)]
 
-use ::sittir_core::filters::{
-    SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView,
-};
+use ::sittir_core::filters::{ListNonterminalView, OptionalNonterminalView, SingleNonterminalView};
 use ::sittir_core::types::{
-    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    FieldValue, NodeData, NodeTrivia, RenderableTransport, Source, Span, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
-use ::askama::Template as _AskamaTemplate;
 use super::templates::*;
+use ::askama::Template as _AskamaTemplate;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ResolvedFieldKind {
@@ -51,7 +55,12 @@ impl ResolvedField {
         }
     }
 
-    pub(crate) fn from_items(items: Vec<String>, separator: &'static str, leading_sep: bool, trailing_sep: bool) -> Self {
+    pub(crate) fn from_items(
+        items: Vec<String>,
+        separator: &'static str,
+        leading_sep: bool,
+        trailing_sep: bool,
+    ) -> Self {
         let mut scalar = String::new();
         if leading_sep && !items.is_empty() {
             scalar.push_str(separator);
@@ -82,7 +91,10 @@ impl ResolvedField {
     }
 
     pub(crate) fn renderable_items(&self) -> Vec<::sittir_core::filters::Renderable<'_>> {
-        self.items.iter().map(|s| ::sittir_core::filters::Renderable::Text(s.as_str())).collect()
+        self.items
+            .iter()
+            .map(|s| ::sittir_core::filters::Renderable::Text(s.as_str()))
+            .collect()
     }
 }
 
@@ -94,7 +106,11 @@ pub(crate) fn render_node_value(node: &NodeData) -> Result<String, ::askama::Err
 
 pub(crate) fn missing_required_field(node: &NodeData, name: &str) -> ::askama::Error {
     ::askama::Error::Custom(
-        format!("render_nodedata_into: missing required field '{}' on '{}'", name, node.type_).into(),
+        format!(
+            "render_nodedata_into: missing required field '{}' on '{}'",
+            name, node.type_
+        )
+        .into(),
     )
 }
 
@@ -132,7 +148,10 @@ pub(crate) fn resolve_leaf<'a>(node: &'a NodeData, name: &str) -> Option<&'a str
     }
 }
 
-pub(crate) fn resolve_optional(node: &NodeData, name: &str) -> Result<Option<String>, ::askama::Error> {
+pub(crate) fn resolve_optional(
+    node: &NodeData,
+    name: &str,
+) -> Result<Option<String>, ::askama::Error> {
     match node.fields.as_ref().and_then(|fields| fields.get(name)) {
         None => Ok(None),
         Some(FieldValue::Text(text)) => Ok((!text.is_empty()).then(|| text.to_owned())),
@@ -193,7 +212,9 @@ pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bo
                 continue;
             }
             if let Some(span) = candidate.span {
-                if span.start >= boundary && candidate.text.as_deref().map_or(false, is_join_flank_token) {
+                if span.start >= boundary
+                    && candidate.text.as_deref().map_or(false, is_join_flank_token)
+                {
                     return true;
                 }
             }
@@ -205,7 +226,9 @@ pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bo
                 continue;
             }
             if let Some(span) = child.span {
-                if span.start >= boundary && child.text.as_deref().map_or(false, is_join_flank_token) {
+                if span.start >= boundary
+                    && child.text.as_deref().map_or(false, is_join_flank_token)
+                {
                     return true;
                 }
             }
@@ -214,7 +237,11 @@ pub(crate) fn detect_field_trailing_sep(node: &NodeData, field_name: &str) -> bo
     false
 }
 
-pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Result<ResolvedField, ::askama::Error> {
+pub(crate) fn resolve_field(
+    node: &NodeData,
+    name: &str,
+    required: bool,
+) -> Result<ResolvedField, ::askama::Error> {
     match node.fields.as_ref().and_then(|fields| fields.get(name)) {
         None => {
             if required {
@@ -246,7 +273,10 @@ pub(crate) fn resolve_field(node: &NodeData, name: &str, required: bool) -> Resu
     }
 }
 
-pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Result<ResolvedField, ::askama::Error> {
+pub(crate) fn resolve_children(
+    node: &NodeData,
+    consumed_fields: &[&str],
+) -> Result<ResolvedField, ::askama::Error> {
     let mut child_nodes: Vec<(u32, usize, &NodeData)> = Vec::new();
     let mut child_ordinal = 0usize;
     let mut first_named_idx: Option<usize> = None;
@@ -260,26 +290,41 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
                 first_named_idx = Some(index);
             }
             last_named_idx = Some(index);
-            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));
+            child_nodes.push((
+                child.span.map_or(u32::MAX, |span| span.start),
+                child_ordinal,
+                child,
+            ));
             child_ordinal += 1;
         }
     }
     if let Some(fields) = &node.fields {
         for (name, value) in fields {
-            if consumed_fields.iter().any(|consumed| consumed == &name.as_str()) {
+            if consumed_fields
+                .iter()
+                .any(|consumed| consumed == &name.as_str())
+            {
                 continue;
             }
             match value {
                 FieldValue::Single(child) => {
                     if child.named {
-                        child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child.as_ref()));
+                        child_nodes.push((
+                            child.span.map_or(u32::MAX, |span| span.start),
+                            child_ordinal,
+                            child.as_ref(),
+                        ));
                         child_ordinal += 1;
                     }
                 }
                 FieldValue::Multiple(items) => {
                     for child in items {
                         if child.named {
-                            child_nodes.push((child.span.map_or(u32::MAX, |span| span.start), child_ordinal, child));
+                            child_nodes.push((
+                                child.span.map_or(u32::MAX, |span| span.start),
+                                child_ordinal,
+                                child,
+                            ));
                             child_ordinal += 1;
                         }
                     }
@@ -299,13 +344,15 @@ pub(crate) fn resolve_children(node: &NodeData, consumed_fields: &[&str]) -> Res
         if let Some(first) = first_named_idx {
             if first > 0 {
                 if let Some(before) = items.get(first - 1) {
-                    leading_sep = !before.named && before.text.as_deref().map_or(false, is_join_flank_token);
+                    leading_sep =
+                        !before.named && before.text.as_deref().map_or(false, is_join_flank_token);
                 }
             }
         }
         if let Some(last) = last_named_idx {
             if let Some(after) = items.get(last + 1) {
-                trailing_sep = !after.named && after.text.as_deref().map_or(false, is_join_flank_token);
+                trailing_sep =
+                    !after.named && after.text.as_deref().map_or(false, is_join_flank_token);
             }
         }
     }
@@ -344,36 +391,40 @@ pub(crate) fn separator_for(kind_id: u16) -> &'static str {
 
 pub(crate) fn variant_for(parent_id: u16, child_id: u16) -> Option<&'static str> {
     match (parent_id, child_id) {
-        (227, 357) => Some("parameter"), // ("arrow_function", "arrow_function__call_signature")
-        (227, 356) => Some("parameter"), // ("arrow_function", "arrow_function_parameter")
-        (231, 387) => Some("call"), // ("call_expression", "call_expression_call")
-        (231, 389) => Some("call"), // ("call_expression", "call_expression_member")
-        (231, 388) => Some("call"), // ("call_expression", "call_expression_template_call")
+        (227, 357) => Some("_call_signature"), // ("arrow_function", "arrow_function__call_signature")
+        (227, 356) => Some("parameter"),       // ("arrow_function", "arrow_function_parameter")
+        (231, 387) => Some("call"),            // ("call_expression", "call_expression_call")
+        (231, 389) => Some("member"),          // ("call_expression", "call_expression_member")
+        (231, 388) => Some("template_call"), // ("call_expression", "call_expression_template_call")
         (222, 358) => Some("extends_clause"), // ("class_heritage", "class_heritage_extends_clause")
-        (222, 359) => Some("extends_clause"), // ("class_heritage", "class_heritage_implements_clause")
-        (167, 352) => Some("default"), // ("export_statement", "export_statement_default")
-        (167, 385) => Some("default"), // ("export_statement", "export_statement_equals_export")
-        (167, 386) => Some("default"), // ("export_statement", "export_statement_namespace_export")
-        (167, 384) => Some("default"), // ("export_statement", "export_statement_type_export")
-        (175, 362) => Some("namespace_import"), // ("import_clause", "import_clause_default_import")
-        (175, 361) => Some("namespace_import"), // ("import_clause", "import_clause_named_imports")
+        (222, 359) => Some("implements_clause"), // ("class_heritage", "class_heritage_implements_clause")
+        (167, 352) => Some("default"),           // ("export_statement", "export_statement_default")
+        (167, 385) => Some("equals_export"), // ("export_statement", "export_statement_equals_export")
+        (167, 386) => Some("namespace_export"), // ("export_statement", "export_statement_namespace_export")
+        (167, 384) => Some("type_export"), // ("export_statement", "export_statement_type_export")
+        (175, 362) => Some("default_import"), // ("import_clause", "import_clause_default_import")
+        (175, 361) => Some("named_imports"), // ("import_clause", "import_clause_named_imports")
         (175, 360) => Some("namespace_import"), // ("import_clause", "import_clause_namespace_import")
-        (179, 364) => Some("name"), // ("import_specifier", "import_specifier_as")
-        (179, 363) => Some("name"), // ("import_specifier", "import_specifier_name")
-        (345, 365) => Some("colon"), // ("index_signature", "index_signature_colon")
-        (345, 366) => Some("colon"), // ("index_signature", "index_signature_mapped_type_clause")
-        (209, 383) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_sequence")
+        (179, 364) => Some("as"),               // ("import_specifier", "import_specifier_as")
+        (179, 363) => Some("name"),             // ("import_specifier", "import_specifier_name")
+        (345, 365) => Some("colon"),            // ("index_signature", "index_signature_colon")
+        (345, 366) => Some("mapped_type_clause"), // ("index_signature", "index_signature_mapped_type_clause")
+        (209, 383) => Some("sequence"), // ("parenthesized_expression", "parenthesized_expression_sequence")
         (209, 382) => Some("typed"), // ("parenthesized_expression", "parenthesized_expression_typed")
         (247, 390) => Some("double"), // ("string", "string_double")
-        (247, 391) => Some("double"), // ("string", "string_single")
+        (247, 391) => Some("single"), // ("string", "string_single")
         (245, 392) => Some("postfix"), // ("update_expression", "update_expression_postfix")
-        (245, 393) => Some("postfix"), // ("update_expression", "update_expression_prefix")
+        (245, 393) => Some("prefix"), // ("update_expression", "update_expression_prefix")
         _ => None,
     }
 }
 
 pub(crate) fn first_named_child_kind_id(node: &NodeData) -> Option<u16> {
-    node.children.as_ref()?.iter().find(|child| child.named).map(|child| child.type_.0)
+    node.children
+        .as_ref()?
+        .iter()
+        .find(|child| child.named)
+        .map(|child| child.type_.0)
 }
 
 pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
@@ -382,7 +433,10 @@ pub(crate) fn resolve_variant(node: &NodeData) -> &'static str {
         .unwrap_or("")
 }
 
-pub(crate) fn token_shaped_fallback_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+pub(crate) fn token_shaped_fallback_into(
+    node: &NodeData,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     let fields_all_anon = node.fields.as_ref().map_or(true, |fields| {
         fields.values().all(|value| match value {
             FieldValue::Single(item) => !item.named,
@@ -390,7 +444,10 @@ pub(crate) fn token_shaped_fallback_into(node: &NodeData, dest: &mut dyn ::std::
             FieldValue::Text(_) => true,
         })
     });
-    let children_all_anon = node.children.as_ref().map_or(true, |children| children.iter().all(|child| !child.named));
+    let children_all_anon = node
+        .children
+        .as_ref()
+        .map_or(true, |children| children.iter().all(|child| !child.named));
     if fields_all_anon && children_all_anon {
         if let Some(text) = &node.text {
             return dest.write_str(text).map_err(::askama::Error::from);
@@ -428,10 +485,16 @@ pub(crate) fn token_shaped_fallback_into(node: &NodeData, dest: &mut dyn ::std::
                 }
             }
         }
-        if wrote_any { return Ok(()); }
+        if wrote_any {
+            return Ok(());
+        }
     }
     Err(::askama::Error::Custom(
-        format!("render_nodedata_into: no template for kind '{}'", node.type_).into(),
+        format!(
+            "render_nodedata_into: no template for kind '{}'",
+            node.type_
+        )
+        .into(),
     ))
 }
 
@@ -441,80 +504,122 @@ pub(crate) fn token_shaped_fallback(node: &NodeData) -> Result<String, ::askama:
     Ok(buf)
 }
 
-pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
+pub fn render_nodedata_into(
+    node: &NodeData,
+    dest: &mut dyn ::std::fmt::Write,
+) -> Result<(), ::askama::Error> {
     if node.fields.is_none() && node.children.is_none() {
         if let Some(text) = &node.text {
             return dest.write_str(text).map_err(::askama::Error::from);
         }
     }
     match node.type_.0 {
-        357 => { // "_arrow_function__call_signature" | "arrow_function__call_signature"
-            let children = resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
+        357 => {
+            // "_arrow_function__call_signature" | "arrow_function__call_signature"
+            let children =
+                resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
             let field_0 = resolve_field(node, "parameters", true)?;
             let field_1 = resolve_field(node, "return_type", false)?;
             let field_2 = resolve_field(node, "type_parameters", false)?;
             let template = _ArrowFunctionUCallSignatureTemplate {
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 return_type: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        356 => { // "_arrow_function_parameter" | "arrow_function_parameter"
+        356 => {
+            // "_arrow_function_parameter" | "arrow_function_parameter"
             let children = resolve_children(node, &["parameter"])?;
             let field_0 = resolve_field(node, "parameter", true)?;
             let template = _ArrowFunctionParameterTemplate {
-                parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                parameter: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        387 => { // "_call_expression_call" | "call_expression_call"
+        387 => {
+            // "_call_expression_call" | "call_expression_call"
             let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let field_2 = resolve_field(node, "type_arguments", false)?;
             let template = CallExpressionCallTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_arguments: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        389 => { // "_call_expression_member" | "call_expression_member"
+        389 => {
+            // "_call_expression_member" | "call_expression_member"
             let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let field_2 = resolve_field(node, "type_arguments", false)?;
             let template = CallExpressionMemberTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_arguments: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        388 => { // "_call_expression_template_call" | "call_expression_template_call"
+        388 => {
+            // "_call_expression_template_call" | "call_expression_template_call"
             let children = resolve_children(node, &["arguments", "function"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let template = CallExpressionTemplateCallTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        373 => { // "_class_body_member" | "class_body_member"
+        373 => {
+            // "_class_body_member" | "class_body_member"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ClassBodyMemberTemplate {
@@ -527,7 +632,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        372 => { // "_class_body_method_sig" | "class_body_method_sig"
+        372 => {
+            // "_class_body_method_sig" | "class_body_method_sig"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ClassBodyMethodSigTemplate {
@@ -540,7 +646,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        371 => { // "_class_body_method" | "class_body_method"
+        371 => {
+            // "_class_body_method" | "class_body_method"
             let children = resolve_children(node, &["decorator"])?;
             let field_0 = resolve_field(node, "decorator", true)?;
             let children_renderables = children.renderable_items();
@@ -561,7 +668,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        358 => { // "_class_heritage_extends_clause" | "class_heritage_extends_clause"
+        358 => {
+            // "_class_heritage_extends_clause" | "class_heritage_extends_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ClassHeritageExtendsClauseTemplate {
@@ -574,7 +682,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        359 => { // "_class_heritage_implements_clause" | "class_heritage_implements_clause"
+        359 => {
+            // "_class_heritage_implements_clause" | "class_heritage_implements_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ClassHeritageImplementsClauseTemplate {
@@ -587,7 +696,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        370 => { // "_export_statement_default_decl_arm_default_kw_value" | "export_statement_default_decl_arm_default_kw_value"
+        370 => {
+            // "_export_statement_default_decl_arm_default_kw_value" | "export_statement_default_decl_arm_default_kw_value"
             let children = resolve_children(node, &["value"])?;
             let field_0 = resolve_field(node, "value", true)?;
             let children_renderables = children.renderable_items();
@@ -598,11 +708,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        355 => { // "_export_statement_default_decl_arm_default_kw" | "export_statement_default_decl_arm_default_kw"
+        355 => {
+            // "_export_statement_default_decl_arm_default_kw" | "export_statement_default_decl_arm_default_kw"
             let children = resolve_children(node, &["declaration"])?;
             let field_0 = resolve_field(node, "declaration", false)?;
             let children_renderables = children.renderable_items();
@@ -615,12 +728,17 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 declaration: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        354 => { // "_export_statement_default_decl_arm" | "export_statement_default_decl_arm"
+        354 => {
+            // "_export_statement_default_decl_arm" | "export_statement_default_decl_arm"
             let children = resolve_children(node, &["declaration", "decorator"])?;
             let field_0 = resolve_field(node, "declaration", false)?;
             let field_1 = resolve_field(node, "decorator", true)?;
@@ -635,7 +753,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 declaration: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 decorator: ListNonterminalView {
                     items: field_1_renderables.as_slice(),
@@ -646,7 +768,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        369 => { // "_export_statement_default_from_arm_clause_from" | "export_statement_default_from_arm_clause_from"
+        369 => {
+            // "_export_statement_default_from_arm_clause_from" | "export_statement_default_from_arm_clause_from"
             let children = resolve_children(node, &["source"])?;
             let field_0 = resolve_field(node, "source", true)?;
             let children_renderables = children.renderable_items();
@@ -657,11 +780,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        368 => { // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
+        368 => {
+            // "_export_statement_default_from_arm_ns_from" | "export_statement_default_from_arm_ns_from"
             let children = resolve_children(node, &["source"])?;
             let field_0 = resolve_field(node, "source", true)?;
             let children_renderables = children.renderable_items();
@@ -672,19 +798,25 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        367 => { // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
+        367 => {
+            // "_export_statement_default_from_arm_star_from" | "export_statement_default_from_arm_star_from"
             let children = resolve_children(node, &["source"])?;
             let field_0 = resolve_field(node, "source", true)?;
             let template = ExportStatementDefaultFromArmStarFromTemplate {
-                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        353 => { // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
+        353 => {
+            // "_export_statement_default_from_arm" | "export_statement_default_from_arm"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ExportStatementDefaultFromArmTemplate {
@@ -697,7 +829,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        385 => { // "_export_statement_equals_export" | "export_statement_equals_export"
+        385 => {
+            // "_export_statement_equals_export" | "export_statement_equals_export"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementEqualsExportTemplate {
@@ -710,7 +843,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        386 => { // "_export_statement_namespace_export" | "export_statement_namespace_export"
+        386 => {
+            // "_export_statement_namespace_export" | "export_statement_namespace_export"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ExportStatementNamespaceExportTemplate {
@@ -723,7 +857,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        384 => { // "_export_statement_type_export" | "export_statement_type_export"
+        384 => {
+            // "_export_statement_type_export" | "export_statement_type_export"
             let children = resolve_children(node, &["source"])?;
             let field_0 = resolve_field(node, "source", false)?;
             let children_renderables = children.renderable_items();
@@ -736,12 +871,17 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 source: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        376 => { // "_for_header_let_const_kind" | "for_header_let_const_kind"
+        376 => {
+            // "_for_header_let_const_kind" | "for_header_let_const_kind"
             let children = resolve_children(node, &["kind", "left"])?;
             let field_0 = resolve_field(node, "kind", true)?;
             let field_1 = resolve_field(node, "left", true)?;
@@ -753,35 +893,52 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        374 => { // "_for_header_lhs" | "for_header_lhs"
+        374 => {
+            // "_for_header_lhs" | "for_header_lhs"
             let children = resolve_children(node, &["left"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let template = ForHeaderLhsTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        375 => { // "_for_header_var_kind" | "for_header_var_kind"
+        375 => {
+            // "_for_header_var_kind" | "for_header_var_kind"
             let children = resolve_children(node, &["kind", "left", "value"])?;
             let field_0 = resolve_field(node, "kind", true)?;
             let field_1 = resolve_field(node, "left", true)?;
             let field_2 = resolve_field(node, "value", false)?;
             let template = ForHeaderVarKindTemplate {
-                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 value: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        362 => { // "_import_clause_default_import" | "import_clause_default_import"
+        362 => {
+            // "_import_clause_default_import" | "import_clause_default_import"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ImportClauseDefaultImportTemplate {
@@ -794,7 +951,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        361 => { // "_import_clause_named_imports" | "import_clause_named_imports"
+        361 => {
+            // "_import_clause_named_imports" | "import_clause_named_imports"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ImportClauseNamedImportsTemplate {
@@ -807,7 +965,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        360 => { // "_import_clause_namespace_import" | "import_clause_namespace_import"
+        360 => {
+            // "_import_clause_namespace_import" | "import_clause_namespace_import"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ImportClauseNamespaceImportTemplate {
@@ -820,35 +979,49 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        364 => { // "_import_specifier_as" | "import_specifier_as"
+        364 => {
+            // "_import_specifier_as" | "import_specifier_as"
             let children = resolve_children(node, &["alias", "name"])?;
             let field_0 = resolve_field(node, "alias", true)?;
             let field_1 = resolve_field(node, "name", true)?;
             let template = ImportSpecifierAsTemplate {
-                alias: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                alias: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        363 => { // "_import_specifier_name" | "import_specifier_name"
+        363 => {
+            // "_import_specifier_name" | "import_specifier_name"
             let children = resolve_children(node, &["name"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let template = _ImportSpecifierNameTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        365 => { // "_index_signature_colon" | "index_signature_colon"
+        365 => {
+            // "_index_signature_colon" | "index_signature_colon"
             let children = resolve_children(node, &["index_type", "name"])?;
             let field_0 = resolve_field(node, "index_type", true)?;
             let field_1 = resolve_field(node, "name", true)?;
             let template = IndexSignatureColonTemplate {
-                index_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                index_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        366 => { // "_index_signature_mapped_type_clause" | "index_signature_mapped_type_clause"
+        366 => {
+            // "_index_signature_mapped_type_clause" | "index_signature_mapped_type_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _IndexSignatureMappedTypeClauseTemplate {
@@ -861,25 +1034,34 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        239 => { // "_initializer"
+        239 => {
+            // "_initializer"
             let children = resolve_children(node, &["value"])?;
             let field_0 = resolve_field(node, "value", true)?;
             let template = InitializerTemplate {
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        331 | 103 => { // "_number" | "number"
+        331 | 103 => {
+            // "_number" | "number"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let template = _NumberTemplate {
-                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        383 => { // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
+        383 => {
+            // "_parenthesized_expression_sequence" | "parenthesized_expression_sequence"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _ParenthesizedExpressionSequenceTemplate {
@@ -892,7 +1074,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        382 => { // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
+        382 => {
+            // "_parenthesized_expression_typed" | "parenthesized_expression_typed"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", false)?;
             let children_renderables = children.renderable_items();
@@ -905,25 +1088,37 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 type_: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        420 => { // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
+        420 => {
+            // "_public_field_definition_abstract_first" | "public_field_definition_abstract_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", true)?;
             let field_1 = resolve_field(node, "readonly_marker", false)?;
             let template = PublicFieldDefinitionAbstractFirstTemplate {
-                abstract_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                abstract_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 readonly_marker: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        421 => { // "_public_field_definition_access_first" | "public_field_definition_access_first"
+        421 => {
+            // "_public_field_definition_access_first" | "public_field_definition_access_first"
             let children = resolve_children(node, &["declare_marker"])?;
             let field_0 = resolve_field(node, "declare_marker", false)?;
             let children_renderables = children.renderable_items();
@@ -936,20 +1131,28 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 declare_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        422 => { // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
+        422 => {
+            // "_public_field_definition_accessor_opt" | "public_field_definition_accessor_opt"
             let children = resolve_children(node, &["accessor_marker"])?;
             let field_0 = resolve_field(node, "accessor_marker", true)?;
             let template = PublicFieldDefinitionAccessorOptTemplate {
-                accessor_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                accessor_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        423 => { // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
+        423 => {
+            // "_public_field_definition_declare_first" | "public_field_definition_declare_first"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = PublicFieldDefinitionDeclareFirstTemplate {
@@ -962,20 +1165,28 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        424 => { // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
+        424 => {
+            // "_public_field_definition_readonly_first" | "public_field_definition_readonly_first"
             let children = resolve_children(node, &["abstract_marker", "readonly_marker"])?;
             let field_0 = resolve_field(node, "abstract_marker", false)?;
             let field_1 = resolve_field(node, "readonly_marker", true)?;
             let template = PublicFieldDefinitionReadonlyFirstTemplate {
                 abstract_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                readonly_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                readonly_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        425 => { // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
+        425 => {
+            // "_public_field_definition_static_mods" | "public_field_definition_static_mods"
             let children = resolve_children(node, &["readonly_marker", "static_marker"])?;
             let field_0 = resolve_field(node, "readonly_marker", false)?;
             let field_1 = resolve_field(node, "static_marker", true)?;
@@ -989,13 +1200,20 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 readonly_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                static_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                static_marker: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        390 => { // "_string_double" | "string_double"
+        390 => {
+            // "_string_double" | "string_double"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _StringDoubleTemplate {
@@ -1008,7 +1226,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        391 => { // "_string_single" | "string_single"
+        391 => {
+            // "_string_single" | "string_single"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = _StringSingleTemplate {
@@ -1021,7 +1240,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        430 => { // "_type_identifier" | "type_identifier"
+        430 => {
+            // "_type_identifier" | "type_identifier"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TypeIdentifierTemplate {
@@ -1034,88 +1254,138 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        304 => { // "_type_query_call_expression_in_type_annotation"
+        304 => {
+            // "_type_query_call_expression_in_type_annotation"
             let children = resolve_children(node, &["arguments", "function"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let template = TypeQueryCallExpressionInTypeAnnotationTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        324 => { // "_type_query_call_expression"
+        324 => {
+            // "_type_query_call_expression"
             let children = resolve_children(node, &["arguments", "function"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let template = TypeQueryCallExpressionTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        325 => { // "_type_query_instantiation_expression"
+        325 => {
+            // "_type_query_instantiation_expression"
             let children = resolve_children(node, &["function", "type_arguments"])?;
             let field_0 = resolve_field(node, "function", true)?;
             let field_1 = resolve_field(node, "type_arguments", true)?;
             let template = TypeQueryInstantiationExpressionTemplate {
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        303 => { // "_type_query_member_expression_in_type_annotation"
+        303 => {
+            // "_type_query_member_expression_in_type_annotation"
             let children = resolve_children(node, &["object", "property"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_1 = resolve_field(node, "property", true)?;
             let template = TypeQueryMemberExpressionInTypeAnnotationTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        322 => { // "_type_query_member_expression"
+        322 => {
+            // "_type_query_member_expression"
             let children = resolve_children(node, &["object", "property"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_1 = resolve_field(node, "property", true)?;
             let template = TypeQueryMemberExpressionTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        323 => { // "_type_query_subscript_expression"
+        323 => {
+            // "_type_query_subscript_expression"
             let children = resolve_children(node, &["index", "object"])?;
             let field_0 = resolve_field(node, "index", true)?;
             let field_1 = resolve_field(node, "object", true)?;
             let template = TypeQuerySubscriptExpressionTemplate {
-                index: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                index: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        392 => { // "_update_expression_postfix" | "update_expression_postfix"
+        392 => {
+            // "_update_expression_postfix" | "update_expression_postfix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let template = UpdateExpressionPostfixTemplate {
-                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        393 => { // "_update_expression_prefix" | "update_expression_prefix"
+        393 => {
+            // "_update_expression_prefix" | "update_expression_prefix"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let template = UpdateExpressionPrefixTemplate {
-                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        282 => { // "abstract_class_declaration"
-            let children = resolve_children(node, &["body", "class_heritage", "decorator", "name", "type_parameters"])?;
+        282 => {
+            // "abstract_class_declaration"
+            let children = resolve_children(
+                node,
+                &[
+                    "body",
+                    "class_heritage",
+                    "decorator",
+                    "name",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "class_heritage", false)?;
             let field_2 = resolve_field(node, "decorator", true)?;
@@ -1123,10 +1393,16 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_4 = resolve_field(node, "type_parameters", false)?;
             let field_2_renderables = field_2.renderable_items();
             let template = AbstractClassDeclarationTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 class_heritage: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 decorator: ListNonterminalView {
                     items: field_2_renderables.as_slice(),
@@ -1134,16 +1410,35 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_2.leading_sep,
                     trailing: field_2.trailing_sep,
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 type_parameters: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        270 => { // "abstract_method_signature"
-            let children = resolve_children(node, &["accessibility_modifier", "accessor_kind", "name", "optional_marker", "override_modifier", "parameters", "return_type", "type_parameters"])?;
+        270 => {
+            // "abstract_method_signature"
+            let children = resolve_children(
+                node,
+                &[
+                    "accessibility_modifier",
+                    "accessor_kind",
+                    "name",
+                    "optional_marker",
+                    "override_modifier",
+                    "parameters",
+                    "return_type",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "accessibility_modifier", false)?;
             let field_1 = resolve_field(node, "accessor_kind", false)?;
             let field_2 = resolve_field(node, "name", true)?;
@@ -1155,42 +1450,74 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = AbstractMethodSignatureTemplate {
                 accessibility_modifier: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 accessor_kind: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 optional_marker: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 override_modifier: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_5.as_scalar(),
+                )),
                 return_type: match field_6.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_6.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_7.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_7.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_7.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        300 => { // "adding_type_annotation"
+        300 => {
+            // "adding_type_annotation"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = AddingTypeAnnotationTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        281 => { // "ambient_declaration"
+        281 => {
+            // "ambient_declaration"
             let children = resolve_children(node, &["declaration"])?;
             let field_0 = resolve_field(node, "declaration", true)?;
             let children_renderables = children.renderable_items();
@@ -1202,11 +1529,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                declaration: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                declaration: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        252 => { // "arguments"
+        252 => {
+            // "arguments"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ArgumentsTemplate {
@@ -1219,7 +1549,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        218 => { // "array_pattern"
+        218 => {
+            // "array_pattern"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ArrayPatternTemplate {
@@ -1232,15 +1563,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        346 => { // "array_type"
+        346 => {
+            // "array_type"
             let children = resolve_children(node, &["primary_type"])?;
             let field_0 = resolve_field(node, "primary_type", true)?;
             let template = ArrayTypeTemplate {
-                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        217 => { // "array"
+        217 => {
+            // "array"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ArrayTemplate {
@@ -1253,7 +1588,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        227 => { // "arrow_function"
+        227 => {
+            // "arrow_function"
             let children = resolve_children(node, &["async_marker", "body"])?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
@@ -1267,13 +1603,20 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        274 => { // "as_expression"
+        274 => {
+            // "as_expression"
             let children = resolve_children(node, &["expression", "type_annotation"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let field_1 = resolve_field(node, "type_annotation", true)?;
@@ -1285,21 +1628,29 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_annotation: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_annotation: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        306 => { // "asserts_annotation"
+        306 => {
+            // "asserts_annotation"
             let children = resolve_children(node, &["asserts"])?;
             let field_0 = resolve_field(node, "asserts", true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = AssertsAnnotationTemplate {
-                asserts: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                asserts: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        305 => { // "asserts"
+        305 => {
+            // "asserts"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = AssertsTemplate {
@@ -1312,77 +1663,116 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        236 => { // "assignment_expression"
+        236 => {
+            // "assignment_expression"
             let children = resolve_children(node, &["left", "right", "using_marker"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let field_1 = resolve_field(node, "right", true)?;
             let field_2 = resolve_field(node, "using_marker", false)?;
             let template = AssignmentExpressionTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 using_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        215 => { // "assignment_pattern"
+        215 => {
+            // "assignment_pattern"
             let children = resolve_children(node, &["left", "right"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let field_1 = resolve_field(node, "right", true)?;
             let template = AssignmentPatternTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        238 => { // "augmented_assignment_expression"
+        238 => {
+            // "augmented_assignment_expression"
             let children = resolve_children(node, &["left", "operator", "right"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let field_2 = resolve_field(node, "right", true)?;
             let template = AugmentedAssignmentExpressionTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        233 => { // "await_expression"
+        233 => {
+            // "await_expression"
             let children = resolve_children(node, &["expression"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let template = AwaitExpressionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        243 => { // "binary_expression"
+        243 => {
+            // "binary_expression"
             let children = resolve_children(node, &["left", "operator", "right"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let field_2 = resolve_field(node, "right", true)?;
             let template = BinaryExpressionTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        197 => { // "break_statement"
+        197 => {
+            // "break_statement"
             let children = resolve_children(node, &["label", "semicolon"])?;
             let field_0 = resolve_field(node, "label", false)?;
             let field_1 = resolve_field(node, "semicolon", true)?;
             let template = BreakStatementTemplate {
                 label: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        231 => { // "call_expression"
+        231 => {
+            // "call_expression"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = CallExpressionTemplate {
@@ -1395,43 +1785,67 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        338 => { // "call_signature"
-            let children = resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
+        338 => {
+            // "call_signature"
+            let children =
+                resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
             let field_0 = resolve_field(node, "parameters", true)?;
             let field_1 = resolve_field(node, "return_type", false)?;
             let field_2 = resolve_field(node, "type_parameters", false)?;
             let template = CallSignatureTemplate {
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 return_type: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        207 => { // "catch_clause"
+        207 => {
+            // "catch_clause"
             let children = resolve_children(node, &["body", "parameter", "type"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "parameter", false)?;
             let field_2 = resolve_field(node, "type", false)?;
             let template = CatchClauseTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 parameter: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 type_: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        256 => { // "class_body"
+        256 => {
+            // "class_body"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ClassBodyTemplate {
@@ -1444,8 +1858,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        221 => { // "class_declaration"
-            let children = resolve_children(node, &["automatic_semicolon", "body", "class_heritage", "decorator", "name", "type_parameters"])?;
+        221 => {
+            // "class_declaration"
+            let children = resolve_children(
+                node,
+                &[
+                    "automatic_semicolon",
+                    "body",
+                    "class_heritage",
+                    "decorator",
+                    "name",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "automatic_semicolon", false)?;
             let field_1 = resolve_field(node, "body", true)?;
             let field_2 = resolve_field(node, "class_heritage", false)?;
@@ -1456,12 +1881,22 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ClassDeclarationTemplate {
                 automatic_semicolon: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 class_heritage: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 decorator: ListNonterminalView {
                     items: field_3_renderables.as_slice(),
@@ -1469,15 +1904,22 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_3.leading_sep,
                     trailing: field_3.trailing_sep,
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_4.as_scalar(),
+                )),
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        222 => { // "class_heritage"
+        222 => {
+            // "class_heritage"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ClassHeritageTemplate {
@@ -1490,7 +1932,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        258 => { // "class_static_block"
+        258 => {
+            // "class_static_block"
             let children = resolve_children(node, &["body"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let children_renderables = children.renderable_items();
@@ -1501,12 +1944,24 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        220 => { // "class"
-            let children = resolve_children(node, &["body", "class_heritage", "decorator", "name", "type_parameters"])?;
+        220 => {
+            // "class"
+            let children = resolve_children(
+                node,
+                &[
+                    "body",
+                    "class_heritage",
+                    "decorator",
+                    "name",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "class_heritage", false)?;
             let field_2 = resolve_field(node, "decorator", true)?;
@@ -1514,10 +1969,16 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let field_4 = resolve_field(node, "type_parameters", false)?;
             let field_2_renderables = field_2.renderable_items();
             let template = ClassTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 class_heritage: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 decorator: ListNonterminalView {
                     items: field_2_renderables.as_slice(),
@@ -1527,47 +1988,75 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 name: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        265 => { // "computed_property_name"
+        265 => {
+            // "computed_property_name"
             let children = resolve_children(node, &["expression"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let template = ComputedPropertyNameTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        318 => { // "conditional_type"
-            let children = resolve_children(node, &["alternative", "consequence", "left", "right"])?;
+        318 => {
+            // "conditional_type"
+            let children =
+                resolve_children(node, &["alternative", "consequence", "left", "right"])?;
             let field_0 = resolve_field(node, "alternative", true)?;
             let field_1 = resolve_field(node, "consequence", true)?;
             let field_2 = resolve_field(node, "left", true)?;
             let field_3 = resolve_field(node, "right", true)?;
             let template = ConditionalTypeTemplate {
-                alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        343 => { // "constraint"
+        343 => {
+            // "constraint"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = ConstraintTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        344 => { // "construct_signature"
-            let children = resolve_children(node, &["abstract_marker", "parameters", "type", "type_parameters"])?;
+        344 => {
+            // "construct_signature"
+            let children = resolve_children(
+                node,
+                &["abstract_marker", "parameters", "type", "type_parameters"],
+            )?;
             let field_0 = resolve_field(node, "abstract_marker", false)?;
             let field_1 = resolve_field(node, "parameters", true)?;
             let field_2 = resolve_field(node, "type", false)?;
@@ -1575,22 +2064,40 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ConstructSignatureTemplate {
                 abstract_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        313 => { // "constructor_type"
-            let children = resolve_children(node, &["abstract_marker", "parameters", "type", "type_parameters"])?;
+        313 => {
+            // "constructor_type"
+            let children = resolve_children(
+                node,
+                &["abstract_marker", "parameters", "type", "type_parameters"],
+            )?;
             let field_0 = resolve_field(node, "abstract_marker", false)?;
             let field_1 = resolve_field(node, "parameters", true)?;
             let field_2 = resolve_field(node, "type", true)?;
@@ -1598,64 +2105,101 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ConstructorTypeTemplate {
                 abstract_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 type_parameters: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        198 => { // "continue_statement"
+        198 => {
+            // "continue_statement"
             let children = resolve_children(node, &["label", "semicolon"])?;
             let field_0 = resolve_field(node, "label", false)?;
             let field_1 = resolve_field(node, "semicolon", true)?;
             let template = ContinueStatementTemplate {
                 label: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        199 => { // "debugger_statement"
+        199 => {
+            // "debugger_statement"
             let children = resolve_children(node, &["semicolon"])?;
             let field_0 = resolve_field(node, "semicolon", true)?;
             let template = DebuggerStatementTemplate {
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        255 => { // "decorator_call_expression"
+        255 => {
+            // "decorator_call_expression"
             let children = resolve_children(node, &["arguments", "function", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", true)?;
             let field_1 = resolve_field(node, "function", true)?;
             let field_2 = resolve_field(node, "type_arguments", false)?;
             let template = DecoratorCallExpressionTemplate {
-                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                function: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_arguments: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        254 => { // "decorator_member_expression"
+        254 => {
+            // "decorator_member_expression"
             let children = resolve_children(node, &["object", "property"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_1 = resolve_field(node, "property", true)?;
             let template = DecoratorMemberExpressionTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        272 => { // "decorator_parenthesized_expression"
+        272 => {
+            // "decorator_parenthesized_expression"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = DecoratorParenthesizedExpressionTemplate {
@@ -1668,7 +2212,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        253 => { // "decorator"
+        253 => {
+            // "decorator"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = DecoratorTemplate {
@@ -1681,48 +2226,69 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        342 => { // "default_type"
+        342 => {
+            // "default_type"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = DefaultTypeTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        194 => { // "do_statement"
+        194 => {
+            // "do_statement"
             let children = resolve_children(node, &["body", "condition", "semicolon"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "condition", true)?;
             let field_2 = resolve_field(node, "semicolon", false)?;
             let template = DoStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 semicolon: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        187 => { // "else_clause"
+        187 => {
+            // "else_clause"
             let children = resolve_children(node, &["statement"])?;
             let field_0 = resolve_field(node, "statement", true)?;
             let template = ElseClauseTemplate {
-                statement: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                statement: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        292 => { // "enum_assignment"
+        292 => {
+            // "enum_assignment"
             let children = resolve_children(node, &["name", "value"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "value", true)?;
             let template = EnumAssignmentTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        291 => { // "enum_body"
+        291 => {
+            // "enum_body"
             let children = resolve_children(node, &["name"])?;
             let field_0 = resolve_field(node, "name", false)?;
             let children_renderables = children.renderable_items();
@@ -1743,22 +2309,32 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        290 => { // "enum_declaration"
+        290 => {
+            // "enum_declaration"
             let children = resolve_children(node, &["body", "const_marker", "name"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "const_marker", false)?;
             let field_2 = resolve_field(node, "name", true)?;
             let template = EnumDeclarationTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 const_marker: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        169 => { // "export_clause"
+        169 => {
+            // "export_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ExportClauseTemplate {
@@ -1771,7 +2347,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        170 => { // "export_specifier"
+        170 => {
+            // "export_specifier"
             let children = resolve_children(node, &["alias", "export_kind", "name"])?;
             let field_0 = resolve_field(node, "alias", false)?;
             let field_1 = resolve_field(node, "export_kind", false)?;
@@ -1779,17 +2356,28 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ExportSpecifierTemplate {
                 alias: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 export_kind: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        167 => { // "export_statement"
+        167 => {
+            // "export_statement"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ExportStatementTemplate {
@@ -1802,7 +2390,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        182 => { // "expression_statement"
+        182 => {
+            // "expression_statement"
             let children = resolve_children(node, &["semicolon"])?;
             let field_0 = resolve_field(node, "semicolon", true)?;
             let children_renderables = children.renderable_items();
@@ -1813,11 +2402,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        278 => { // "extends_clause"
+        278 => {
+            // "extends_clause"
             let children = resolve_children(node, &["type_arguments", "value"])?;
             let field_0 = resolve_field(node, "type_arguments", false)?;
             let field_1 = resolve_field(node, "value", true)?;
@@ -1826,7 +2418,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ExtendsClauseTemplate {
                 type_arguments: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 value: ListNonterminalView {
                     items: field_1_renderables.as_slice(),
@@ -1837,7 +2433,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        289 => { // "extends_type_clause"
+        289 => {
+            // "extends_type_clause"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let field_0_renderables = field_0.renderable_items();
@@ -1851,23 +2448,30 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        208 => { // "finally_clause"
+        208 => {
+            // "finally_clause"
             let children = resolve_children(node, &["body"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let template = FinallyClauseTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        333 => { // "flow_maybe_type"
+        333 => {
+            // "flow_maybe_type"
             let children = resolve_children(node, &["primary_type"])?;
             let field_0 = resolve_field(node, "primary_type", true)?;
             let template = FlowMaybeTypeTemplate {
-                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        191 => { // "for_in_statement"
+        191 => {
+            // "for_in_statement"
             let children = resolve_children(node, &["await_marker", "body", "operator", "right"])?;
             let field_0 = resolve_field(node, "await_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
@@ -1883,32 +2487,55 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 await_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        190 => { // "for_statement"
-            let children = resolve_children(node, &["body", "condition", "increment", "initializer"])?;
+        190 => {
+            // "for_statement"
+            let children =
+                resolve_children(node, &["body", "condition", "increment", "initializer"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "condition", true)?;
             let field_2 = resolve_field(node, "increment", false)?;
             let field_3 = resolve_field(node, "initializer", true)?;
             let template = ForStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 increment: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                initializer: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                initializer: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        257 => { // "formal_parameters"
+        257 => {
+            // "formal_parameters"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = FormalParametersTemplate {
@@ -1921,8 +2548,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        224 => { // "function_declaration"
-            let children = resolve_children(node, &["async_marker", "body", "name", "parameters", "return_type", "type_parameters"])?;
+        224 => {
+            // "function_declaration"
+            let children = resolve_children(
+                node,
+                &[
+                    "async_marker",
+                    "body",
+                    "name",
+                    "parameters",
+                    "return_type",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
             let field_2 = resolve_field(node, "name", true)?;
@@ -1939,24 +2577,53 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 return_type: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        223 => { // "function_expression"
-            let children = resolve_children(node, &["async_marker", "body", "name", "parameters", "return_type", "type_parameters"])?;
+        223 => {
+            // "function_expression"
+            let children = resolve_children(
+                node,
+                &[
+                    "async_marker",
+                    "body",
+                    "name",
+                    "parameters",
+                    "return_type",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
             let field_2 = resolve_field(node, "name", false)?;
@@ -1966,27 +2633,58 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = FunctionExpressionTemplate {
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 name: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 return_type: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        271 => { // "function_signature"
-            let children = resolve_children(node, &["async_marker", "name", "parameters", "return_type", "semicolon", "type_parameters"])?;
+        271 => {
+            // "function_signature"
+            let children = resolve_children(
+                node,
+                &[
+                    "async_marker",
+                    "name",
+                    "parameters",
+                    "return_type",
+                    "semicolon",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "name", true)?;
             let field_2 = resolve_field(node, "parameters", true)?;
@@ -2003,39 +2701,78 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 return_type: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_4.as_scalar(),
+                )),
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        351 => { // "function_type"
-            let children = resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
+        351 => {
+            // "function_type"
+            let children =
+                resolve_children(node, &["parameters", "return_type", "type_parameters"])?;
             let field_0 = resolve_field(node, "parameters", true)?;
             let field_1 = resolve_field(node, "return_type", true)?;
             let field_2 = resolve_field(node, "type_parameters", false)?;
             let template = FunctionTypeTemplate {
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                return_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                return_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_parameters: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        226 => { // "generator_function_declaration"
-            let children = resolve_children(node, &["async_marker", "body", "name", "parameters", "return_type", "type_parameters"])?;
+        226 => {
+            // "generator_function_declaration"
+            let children = resolve_children(
+                node,
+                &[
+                    "async_marker",
+                    "body",
+                    "name",
+                    "parameters",
+                    "return_type",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
             let field_2 = resolve_field(node, "name", true)?;
@@ -2052,24 +2789,53 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 return_type: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        225 => { // "generator_function"
-            let children = resolve_children(node, &["async_marker", "body", "name", "parameters", "return_type", "type_parameters"])?;
+        225 => {
+            // "generator_function"
+            let children = resolve_children(
+                node,
+                &[
+                    "async_marker",
+                    "body",
+                    "name",
+                    "parameters",
+                    "return_type",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "async_marker", false)?;
             let field_1 = resolve_field(node, "body", true)?;
             let field_2 = resolve_field(node, "name", false)?;
@@ -2079,36 +2845,62 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = GeneratorFunctionTemplate {
                 async_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 name: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 return_type: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        319 => { // "generic_type"
+        319 => {
+            // "generic_type"
             let children = resolve_children(node, &["name", "type_arguments"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "type_arguments", true)?;
             let template = GenericTypeTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        188 => { // "if_statement"
+        188 => {
+            // "if_statement"
             let children = resolve_children(node, &["alternative", "condition", "consequence"])?;
             let field_0 = resolve_field(node, "alternative", false)?;
             let field_1 = resolve_field(node, "condition", true)?;
@@ -2116,14 +2908,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = IfStatementTemplate {
                 alternative: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        280 => { // "implements_clause"
+        280 => {
+            // "implements_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ImplementsClauseTemplate {
@@ -2136,7 +2937,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        286 => { // "import_alias"
+        286 => {
+            // "import_alias"
             let children = resolve_children(node, &["name", "semicolon", "value"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "semicolon", true)?;
@@ -2149,22 +2951,32 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        180 => { // "import_attribute"
+        180 => {
+            // "import_attribute"
             let children = resolve_children(node, &["object"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = ImportAttributeTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        175 => { // "import_clause"
+        175 => {
+            // "import_clause"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ImportClauseTemplate {
@@ -2177,17 +2989,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        277 => { // "import_require_clause"
+        277 => {
+            // "import_require_clause"
             let children = resolve_children(node, &["identifier", "source"])?;
             let field_0 = resolve_field(node, "identifier", true)?;
             let field_1 = resolve_field(node, "source", true)?;
             let template = ImportRequireClauseTemplate {
-                identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                source: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        179 => { // "import_specifier"
+        179 => {
+            // "import_specifier"
             let children = resolve_children(node, &["import_kind"])?;
             let field_0 = resolve_field(node, "import_kind", false)?;
             let children_renderables = children.renderable_items();
@@ -2200,13 +3018,21 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 import_kind: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        174 => { // "import_statement"
-            let children = resolve_children(node, &["import_attribute", "import_clause", "semicolon", "source"])?;
+        174 => {
+            // "import_statement"
+            let children = resolve_children(
+                node,
+                &["import_attribute", "import_clause", "semicolon", "source"],
+            )?;
             let field_0 = resolve_field(node, "import_attribute", false)?;
             let field_1 = resolve_field(node, "import_clause", false)?;
             let field_2 = resolve_field(node, "semicolon", true)?;
@@ -2221,21 +3047,36 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 import_attribute: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 import_clause: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 source: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        345 => { // "index_signature"
+        345 => {
+            // "index_signature"
             let children = resolve_children(node, &["sign", "type"])?;
             let field_0 = resolve_field(node, "sign", false)?;
             let field_1 = resolve_field(node, "type", true)?;
@@ -2249,100 +3090,157 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 sign: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        327 => { // "index_type_query"
+        327 => {
+            // "index_type_query"
             let children = resolve_children(node, &["primary_type"])?;
             let field_0 = resolve_field(node, "primary_type", true)?;
             let template = IndexTypeQueryTemplate {
-                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        317 => { // "infer_type"
+        317 => {
+            // "infer_type"
             let children = resolve_children(node, &["type", "type_identifier"])?;
             let field_0 = resolve_field(node, "type", false)?;
             let field_1 = resolve_field(node, "type_identifier", true)?;
             let template = InferTypeTemplate {
                 type_: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                type_identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                type_identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        276 => { // "instantiation_expression"
+        276 => {
+            // "instantiation_expression"
             let children = resolve_children(node, &["expression", "type_arguments"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let field_1 = resolve_field(node, "type_arguments", true)?;
             let template = InstantiationExpressionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        288 => { // "interface_declaration"
-            let children = resolve_children(node, &["body", "extends_type_clause", "name", "type_parameters"])?;
+        288 => {
+            // "interface_declaration"
+            let children = resolve_children(
+                node,
+                &["body", "extends_type_clause", "name", "type_parameters"],
+            )?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "extends_type_clause", false)?;
             let field_2 = resolve_field(node, "name", true)?;
             let field_3 = resolve_field(node, "type_parameters", false)?;
             let template = InterfaceDeclarationTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 extends_type_clause: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 type_parameters: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        284 => { // "internal_module"
+        284 => {
+            // "internal_module"
             let children = resolve_children(node, &["body", "name"])?;
             let field_0 = resolve_field(node, "body", false)?;
             let field_1 = resolve_field(node, "name", true)?;
             let template = InternalModuleTemplate {
                 body: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        350 => { // "intersection_type"
+        350 => {
+            // "intersection_type"
             let children = resolve_children(node, &["left", "right"])?;
             let field_0 = resolve_field(node, "left", false)?;
             let field_1 = resolve_field(node, "right", true)?;
             let template = IntersectionTypeTemplate {
                 left: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        203 => { // "labeled_statement"
+        203 => {
+            // "labeled_statement"
             let children = resolve_children(node, &["body", "label"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "label", true)?;
             let template = LabeledStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                label: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                label: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        184 => { // "lexical_declaration"
+        184 => {
+            // "lexical_declaration"
             let children = resolve_children(node, &["declarators", "kind", "semicolon"])?;
             let field_0 = resolve_field(node, "declarators", true)?;
             let field_1 = resolve_field(node, "kind", true)?;
@@ -2355,12 +3253,17 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                kind: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        330 => { // "literal_type"
+        330 => {
+            // "literal_type"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = LiteralTypeTemplate {
@@ -2373,17 +3276,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        328 => { // "lookup_type"
+        328 => {
+            // "lookup_type"
             let children = resolve_children(node, &["index_type", "primary_type"])?;
             let field_0 = resolve_field(node, "index_type", true)?;
             let field_1 = resolve_field(node, "primary_type", true)?;
             let template = LookupTypeTemplate {
-                index_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                index_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                primary_type: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        329 => { // "mapped_type_clause"
+        329 => {
+            // "mapped_type_clause"
             let children = resolve_children(node, &["alias", "name", "type"])?;
             let field_0 = resolve_field(node, "alias", false)?;
             let field_1 = resolve_field(node, "name", true)?;
@@ -2391,30 +3300,64 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = MappedTypeClauseTemplate {
                 alias: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        234 => { // "member_expression"
+        234 => {
+            // "member_expression"
             let children = resolve_children(node, &["object", "optional_chain", "property"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_1 = resolve_field(node, "optional_chain", false)?;
             let field_2 = resolve_field(node, "property", true)?;
             let template = MemberExpressionTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 optional_chain: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        261 => { // "method_definition"
-            let children = resolve_children(node, &["accessibility_modifier", "accessor_kind", "async_marker", "body", "name", "optional_marker", "override_modifier", "parameters", "readonly_marker", "return_type", "static_marker", "type_parameters"])?;
+        261 => {
+            // "method_definition"
+            let children = resolve_children(
+                node,
+                &[
+                    "accessibility_modifier",
+                    "accessor_kind",
+                    "async_marker",
+                    "body",
+                    "name",
+                    "optional_marker",
+                    "override_modifier",
+                    "parameters",
+                    "readonly_marker",
+                    "return_type",
+                    "static_marker",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "accessibility_modifier", false)?;
             let field_1 = resolve_field(node, "accessor_kind", false)?;
             let field_2 = resolve_field(node, "async_marker", false)?;
@@ -2430,48 +3373,106 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = MethodDefinitionTemplate {
                 accessibility_modifier: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 accessor_kind: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 async_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_4.as_scalar(),
+                )),
                 optional_marker: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
                 override_modifier: match field_6.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_6.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_7.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_7.as_scalar(),
+                )),
                 readonly_marker: match field_8.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_8.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_8.as_scalar(),
+                        ))
+                    }
                 },
                 return_type: match field_9.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_9.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_9.as_scalar(),
+                        ))
+                    }
                 },
                 static_marker: match field_10.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_10.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_10.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_11.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_11.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_11.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        269 => { // "method_signature"
-            let children = resolve_children(node, &["accessibility_modifier", "accessor_kind", "async_marker", "name", "optional_marker", "override_modifier", "parameters", "readonly_marker", "return_type", "static_marker", "type_parameters"])?;
+        269 => {
+            // "method_signature"
+            let children = resolve_children(
+                node,
+                &[
+                    "accessibility_modifier",
+                    "accessor_kind",
+                    "async_marker",
+                    "name",
+                    "optional_marker",
+                    "override_modifier",
+                    "parameters",
+                    "readonly_marker",
+                    "return_type",
+                    "static_marker",
+                    "type_parameters",
+                ],
+            )?;
             let field_0 = resolve_field(node, "accessibility_modifier", false)?;
             let field_1 = resolve_field(node, "accessor_kind", false)?;
             let field_2 = resolve_field(node, "async_marker", false)?;
@@ -2486,59 +3487,107 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = MethodSignatureTemplate {
                 accessibility_modifier: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 accessor_kind: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 async_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
                 optional_marker: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 override_modifier: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
-                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+                parameters: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_6.as_scalar(),
+                )),
                 readonly_marker: match field_7.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_7.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_7.as_scalar(),
+                        ))
+                    }
                 },
                 return_type: match field_8.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_8.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_8.as_scalar(),
+                        ))
+                    }
                 },
                 static_marker: match field_9.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_9.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_9.as_scalar(),
+                        ))
+                    }
                 },
                 type_parameters: match field_10.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_10.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_10.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        283 => { // "module"
+        283 => {
+            // "module"
             let children = resolve_children(node, &["body", "name"])?;
             let field_0 = resolve_field(node, "body", false)?;
             let field_1 = resolve_field(node, "name", true)?;
             let template = ModuleTemplate {
                 body: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        178 => { // "named_imports"
+        178 => {
+            // "named_imports"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = NamedImportsTemplate {
@@ -2551,7 +3600,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        168 => { // "namespace_export"
+        168 => {
+            // "namespace_export"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = NamespaceExportTemplate {
@@ -2564,35 +3614,49 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        177 => { // "namespace_import"
+        177 => {
+            // "namespace_import"
             let children = resolve_children(node, &["identifier"])?;
             let field_0 = resolve_field(node, "identifier", true)?;
             let template = NamespaceImportTemplate {
-                identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                identifier: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        219 => { // "nested_identifier"
+        219 => {
+            // "nested_identifier"
             let children = resolve_children(node, &["object", "property"])?;
             let field_0 = resolve_field(node, "object", true)?;
             let field_1 = resolve_field(node, "property", true)?;
             let template = NestedIdentifierTemplate {
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                property: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        287 => { // "nested_type_identifier"
+        287 => {
+            // "nested_type_identifier"
             let children = resolve_children(node, &["module", "name"])?;
             let field_0 = resolve_field(node, "module", true)?;
             let field_1 = resolve_field(node, "name", true)?;
             let template = NestedTypeIdentifierTemplate {
-                module: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                module: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        232 => { // "new_expression"
+        232 => {
+            // "new_expression"
             let children = resolve_children(node, &["arguments", "constructor", "type_arguments"])?;
             let field_0 = resolve_field(node, "arguments", false)?;
             let field_1 = resolve_field(node, "constructor", true)?;
@@ -2600,35 +3664,54 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = NewExpressionTemplate {
                 arguments: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                constructor: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                constructor: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_arguments: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        268 => { // "non_null_expression"
+        268 => {
+            // "non_null_expression"
             let children = resolve_children(node, &["expression"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let template = NonNullExpressionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        216 => { // "object_assignment_pattern"
+        216 => {
+            // "object_assignment_pattern"
             let children = resolve_children(node, &["left", "right"])?;
             let field_0 = resolve_field(node, "left", true)?;
             let field_1 = resolve_field(node, "right", true)?;
             let template = ObjectAssignmentPatternTemplate {
-                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                left: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        214 => { // "object_pattern"
+        214 => {
+            // "object_pattern"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ObjectPatternTemplate {
@@ -2641,25 +3724,31 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        337 => { // "object_type"
+        337 => {
+            // "object_type"
             let children = resolve_children(node, &["closing", "members", "opening"])?;
             let field_0 = resolve_field(node, "closing", true)?;
             let field_1 = resolve_field(node, "members", false)?;
             let field_2 = resolve_field(node, "opening", true)?;
             let field_1_renderables = field_1.renderable_items();
             let template = ObjectTypeTemplate {
-                closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                closing: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 members: ListNonterminalView {
                     items: field_1_renderables.as_slice(),
                     separator: field_1.separator,
                     leading: field_1.leading_sep,
                     trailing: field_1.trailing_sep,
                 },
-                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                opening: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        213 => { // "object"
+        213 => {
+            // "object"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ObjectTemplate {
@@ -2672,24 +3761,34 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        299 => { // "omitting_type_annotation"
+        299 => {
+            // "omitting_type_annotation"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = OmittingTypeAnnotationTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        301 => { // "opting_type_annotation"
+        301 => {
+            // "opting_type_annotation"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = OptingTypeAnnotationTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        297 => { // "optional_parameter"
-            let children = resolve_children(node, &["decorator", "pattern", "readonly_marker", "type", "value"])?;
+        297 => {
+            // "optional_parameter"
+            let children = resolve_children(
+                node,
+                &["decorator", "pattern", "readonly_marker", "type", "value"],
+            )?;
             let field_0 = resolve_field(node, "decorator", true)?;
             let field_1 = resolve_field(node, "pattern", true)?;
             let field_2 = resolve_field(node, "readonly_marker", false)?;
@@ -2710,61 +3809,94 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 readonly_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 type_: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 value: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        309 => { // "optional_tuple_parameter"
+        309 => {
+            // "optional_tuple_parameter"
             let children = resolve_children(node, &["name", "type"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "type", true)?;
             let template = OptionalTupleParameterTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        310 => { // "optional_type"
+        310 => {
+            // "optional_type"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = OptionalTypeTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        263 => { // "pair_pattern"
+        263 => {
+            // "pair_pattern"
             let children = resolve_children(node, &["key", "value"])?;
             let field_0 = resolve_field(node, "key", true)?;
             let field_1 = resolve_field(node, "value", true)?;
             let template = PairPatternTemplate {
-                key: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                key: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        262 => { // "pair"
+        262 => {
+            // "pair"
             let children = resolve_children(node, &["key", "value"])?;
             let field_0 = resolve_field(node, "key", true)?;
             let field_1 = resolve_field(node, "value", true)?;
             let template = PairTemplate {
-                key: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                key: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        209 => { // "parenthesized_expression"
+        209 => {
+            // "parenthesized_expression"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = ParenthesizedExpressionTemplate {
@@ -2777,15 +3909,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        334 => { // "parenthesized_type"
+        334 => {
+            // "parenthesized_type"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = ParenthesizedTypeTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        166 => { // "program"
+        166 => {
+            // "program"
             let children = resolve_children(node, &["hash_bang_line", "statements"])?;
             let field_0 = resolve_field(node, "hash_bang_line", false)?;
             let field_1 = resolve_field(node, "statements", true)?;
@@ -2793,7 +3929,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = ProgramTemplate {
                 hash_bang_line: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 statements: ListNonterminalView {
                     items: field_1_renderables.as_slice(),
@@ -2804,8 +3944,20 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        339 => { // "property_signature"
-            let children = resolve_children(node, &["accessibility_modifier", "name", "optional_marker", "override_modifier", "readonly_marker", "static_marker", "type"])?;
+        339 => {
+            // "property_signature"
+            let children = resolve_children(
+                node,
+                &[
+                    "accessibility_modifier",
+                    "name",
+                    "optional_marker",
+                    "override_modifier",
+                    "readonly_marker",
+                    "static_marker",
+                    "type",
+                ],
+            )?;
             let field_0 = resolve_field(node, "accessibility_modifier", false)?;
             let field_1 = resolve_field(node, "name", true)?;
             let field_2 = resolve_field(node, "optional_marker", false)?;
@@ -2816,34 +3968,64 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = PropertySignatureTemplate {
                 accessibility_modifier: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 optional_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 override_modifier: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 readonly_marker: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
                 static_marker: match field_5.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_5.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_5.as_scalar(),
+                        ))
+                    }
                 },
                 type_: match field_6.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_6.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_6.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        266 => { // "public_field_definition"
-            let children = resolve_children(node, &["decorator", "name", "optionality_marker", "type", "value"])?;
+        266 => {
+            // "public_field_definition"
+            let children = resolve_children(
+                node,
+                &["decorator", "name", "optionality_marker", "type", "value"],
+            )?;
             let field_0 = resolve_field(node, "decorator", true)?;
             let field_1 = resolve_field(node, "name", true)?;
             let field_2 = resolve_field(node, "optionality_marker", false)?;
@@ -2864,45 +4046,73 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 optionality_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 type_: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 value: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        348 => { // "readonly_type"
+        348 => {
+            // "readonly_type"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = ReadonlyTypeTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        250 => { // "regex"
+        250 => {
+            // "regex"
             let children = resolve_children(node, &["flags", "pattern"])?;
             let field_0 = resolve_field(node, "flags", false)?;
             let field_1 = resolve_field(node, "pattern", true)?;
             let template = RegexTemplate {
                 flags: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        296 => { // "required_parameter"
-            let children = resolve_children(node, &["decorator", "pattern", "readonly_marker", "type", "value"])?;
+        296 => {
+            // "required_parameter"
+            let children = resolve_children(
+                node,
+                &["decorator", "pattern", "readonly_marker", "type", "value"],
+            )?;
             let field_0 = resolve_field(node, "decorator", true)?;
             let field_1 = resolve_field(node, "pattern", true)?;
             let field_2 = resolve_field(node, "readonly_marker", false)?;
@@ -2923,23 +4133,38 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                pattern: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 readonly_marker: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
                 type_: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
                 value: match field_4.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_4.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_4.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        260 => { // "rest_pattern"
+        260 => {
+            // "rest_pattern"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = RestPatternTemplate {
@@ -2952,15 +4177,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        311 => { // "rest_type"
+        311 => {
+            // "rest_type"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = RestTypeTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        200 => { // "return_statement"
+        200 => {
+            // "return_statement"
             let children = resolve_children(node, &["semicolon"])?;
             let field_0 = resolve_field(node, "semicolon", true)?;
             let children_renderables = children.renderable_items();
@@ -2971,21 +4200,29 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        275 => { // "satisfies_expression"
+        275 => {
+            // "satisfies_expression"
             let children = resolve_children(node, &["expression", "type_annotation"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let field_1 = resolve_field(node, "type_annotation", true)?;
             let template = SatisfiesExpressionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_annotation: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_annotation: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        246 => { // "sequence_expression"
+        246 => {
+            // "sequence_expression"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = SequenceExpressionTemplate {
@@ -2998,15 +4235,19 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        241 => { // "spread_element"
+        241 => {
+            // "spread_element"
             let children = resolve_children(node, &["expression"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let template = SpreadElementTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        186 => { // "statement_block"
+        186 => {
+            // "statement_block"
             let children = resolve_children(node, &["automatic_semicolon", "statements"])?;
             let field_0 = resolve_field(node, "automatic_semicolon", false)?;
             let field_1 = resolve_field(node, "statements", true)?;
@@ -3014,7 +4255,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = StatementBlockTemplate {
                 automatic_semicolon: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 statements: ListNonterminalView {
                     items: field_1_renderables.as_slice(),
@@ -3025,7 +4270,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        247 => { // "string"
+        247 => {
+            // "string"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = StringTemplate {
@@ -3038,22 +4284,32 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        235 => { // "subscript_expression"
+        235 => {
+            // "subscript_expression"
             let children = resolve_children(node, &["index", "object", "optional_chain"])?;
             let field_0 = resolve_field(node, "index", true)?;
             let field_1 = resolve_field(node, "object", true)?;
             let field_2 = resolve_field(node, "optional_chain", false)?;
             let template = SubscriptExpressionTemplate {
-                index: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                index: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 optional_chain: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        204 => { // "switch_body"
+        204 => {
+            // "switch_body"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = SwitchBodyTemplate {
@@ -3066,7 +4322,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        205 => { // "switch_case"
+        205 => {
+            // "switch_case"
             let children = resolve_children(node, &["body", "value"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "value", true)?;
@@ -3078,11 +4335,14 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        206 => { // "switch_default"
+        206 => {
+            // "switch_default"
             let children = resolve_children(node, &["body"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_0_renderables = field_0.renderable_items();
@@ -3096,17 +4356,23 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        189 => { // "switch_statement"
+        189 => {
+            // "switch_statement"
             let children = resolve_children(node, &["body", "value"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "value", true)?;
             let template = SwitchStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        316 => { // "template_literal_type"
+        316 => {
+            // "template_literal_type"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TemplateLiteralTypeTemplate {
@@ -3119,7 +4385,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        248 => { // "template_string"
+        248 => {
+            // "template_string"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TemplateStringTemplate {
@@ -3132,7 +4399,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        249 => { // "template_substitution"
+        249 => {
+            // "template_substitution"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TemplateSubstitutionTemplate {
@@ -3145,7 +4413,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        315 => { // "template_type"
+        315 => {
+            // "template_type"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TemplateTypeTemplate {
@@ -3158,19 +4427,27 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        242 => { // "ternary_expression"
+        242 => {
+            // "ternary_expression"
             let children = resolve_children(node, &["alternative", "condition", "consequence"])?;
             let field_0 = resolve_field(node, "alternative", true)?;
             let field_1 = resolve_field(node, "condition", true)?;
             let field_2 = resolve_field(node, "consequence", true)?;
             let template = TernaryExpressionTemplate {
-                alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
-                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                alternative: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
+                consequence: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        201 => { // "throw_statement"
+        201 => {
+            // "throw_statement"
             let children = resolve_children(node, &["semicolon"])?;
             let field_0 = resolve_field(node, "semicolon", true)?;
             let children_renderables = children.renderable_items();
@@ -3181,39 +4458,58 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: children.leading_sep,
                     trailing: children.trailing_sep,
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        195 => { // "try_statement"
+        195 => {
+            // "try_statement"
             let children = resolve_children(node, &["body", "finalizer", "handler"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "finalizer", false)?;
             let field_2 = resolve_field(node, "handler", false)?;
             let template = TryStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 finalizer: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 handler: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        308 => { // "tuple_parameter"
+        308 => {
+            // "tuple_parameter"
             let children = resolve_children(node, &["name", "type"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "type", true)?;
             let template = TupleParameterTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        347 => { // "tuple_type"
+        347 => {
+            // "tuple_type"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TupleTypeTemplate {
@@ -3226,32 +4522,48 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        293 => { // "type_alias_declaration"
-            let children = resolve_children(node, &["name", "semicolon", "type_parameters", "value"])?;
+        293 => {
+            // "type_alias_declaration"
+            let children =
+                resolve_children(node, &["name", "semicolon", "type_parameters", "value"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "semicolon", true)?;
             let field_2 = resolve_field(node, "type_parameters", false)?;
             let field_3 = resolve_field(node, "value", true)?;
             let template = TypeAliasDeclarationTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
                 type_parameters: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
-                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                value: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_3.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        302 => { // "type_annotation"
+        302 => {
+            // "type_annotation"
             let children = resolve_children(node, &["type"])?;
             let field_0 = resolve_field(node, "type", true)?;
             let template = TypeAnnotationTemplate {
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        336 => { // "type_arguments"
+        336 => {
+            // "type_arguments"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TypeArgumentsTemplate {
@@ -3264,18 +4576,25 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        273 => { // "type_assertion"
+        273 => {
+            // "type_assertion"
             let children = resolve_children(node, &["expression", "type_arguments"])?;
             let field_0 = resolve_field(node, "expression", true)?;
             let field_1 = resolve_field(node, "type_arguments", true)?;
             let template = TypeAssertionTemplate {
-                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                expression: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_arguments: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        341 => { // "type_parameter"
-            let children = resolve_children(node, &["const_marker", "constraint", "name", "value"])?;
+        341 => {
+            // "type_parameter"
+            let children =
+                resolve_children(node, &["const_marker", "constraint", "name", "value"])?;
             let field_0 = resolve_field(node, "const_marker", false)?;
             let field_1 = resolve_field(node, "constraint", false)?;
             let field_2 = resolve_field(node, "name", true)?;
@@ -3283,21 +4602,36 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             let template = TypeParameterTemplate {
                 const_marker: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
                 constraint: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_2.as_scalar(),
+                )),
                 value: match field_3.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_3.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_3.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        340 => { // "type_parameters"
+        340 => {
+            // "type_parameters"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TypeParametersTemplate {
@@ -3310,26 +4644,35 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        321 => { // "type_predicate_annotation"
+        321 => {
+            // "type_predicate_annotation"
             let children = resolve_children(node, &["type_predicate"])?;
             let field_0 = resolve_field(node, "type_predicate", true)?;
             let field_0_renderables = field_0.renderable_items();
             let template = TypePredicateAnnotationTemplate {
-                type_predicate: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                type_predicate: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        320 => { // "type_predicate"
+        320 => {
+            // "type_predicate"
             let children = resolve_children(node, &["name", "type"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "type", true)?;
             let template = TypePredicateTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                type_: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        326 => { // "type_query"
+        326 => {
+            // "type_query"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = TypeQueryTemplate {
@@ -3342,30 +4685,43 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        244 => { // "unary_expression"
+        244 => {
+            // "unary_expression"
             let children = resolve_children(node, &["argument", "operator"])?;
             let field_0 = resolve_field(node, "argument", true)?;
             let field_1 = resolve_field(node, "operator", true)?;
             let template = UnaryExpressionTemplate {
-                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                argument: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                operator: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        349 => { // "union_type"
+        349 => {
+            // "union_type"
             let children = resolve_children(node, &["left", "right"])?;
             let field_0 = resolve_field(node, "left", false)?;
             let field_1 = resolve_field(node, "right", true)?;
             let template = UnionTypeTemplate {
                 left: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
-                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                right: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        245 => { // "update_expression"
+        245 => {
+            // "update_expression"
             let children = resolve_children(node, &[])?;
             let children_renderables = children.renderable_items();
             let template = UpdateExpressionTemplate {
@@ -3378,7 +4734,8 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
             };
             template.render_into(dest)
         }
-        183 => { // "variable_declaration"
+        183 => {
+            // "variable_declaration"
             let children = resolve_children(node, &["declarators", "semicolon"])?;
             let field_0 = resolve_field(node, "declarators", true)?;
             let field_1 = resolve_field(node, "semicolon", true)?;
@@ -3390,49 +4747,73 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                     leading: field_0.leading_sep,
                     trailing: field_0.trailing_sep,
                 },
-                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                semicolon: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        185 => { // "variable_declarator"
+        185 => {
+            // "variable_declarator"
             let children = resolve_children(node, &["name", "type", "value"])?;
             let field_0 = resolve_field(node, "name", true)?;
             let field_1 = resolve_field(node, "type", false)?;
             let field_2 = resolve_field(node, "value", false)?;
             let template = VariableDeclaratorTemplate {
-                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                name: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
                 type_: match field_1.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_1.as_scalar(),
+                        ))
+                    }
                 },
                 value: match field_2.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_2.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_2.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)
         }
-        193 => { // "while_statement"
+        193 => {
+            // "while_statement"
             let children = resolve_children(node, &["body", "condition"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "condition", true)?;
             let template = WhileStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                condition: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        196 => { // "with_statement"
+        196 => {
+            // "with_statement"
             let children = resolve_children(node, &["body", "object"])?;
             let field_0 = resolve_field(node, "body", true)?;
             let field_1 = resolve_field(node, "object", true)?;
             let template = WithStatementTemplate {
-                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
-                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(field_1.as_scalar())),
+                body: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_0.as_scalar(),
+                )),
+                object: SingleNonterminalView(::sittir_core::filters::Renderable::Text(
+                    field_1.as_scalar(),
+                )),
             };
             template.render_into(dest)
         }
-        212 => { // "yield_expression"
+        212 => {
+            // "yield_expression"
             let children = resolve_children(node, &["expression"])?;
             let field_0 = resolve_field(node, "expression", false)?;
             let children_renderables = children.renderable_items();
@@ -3445,7 +4826,11 @@ pub fn render_nodedata_into(node: &NodeData, dest: &mut dyn ::std::fmt::Write) -
                 },
                 expression: match field_0.kind {
                     ResolvedFieldKind::Missing => OptionalNonterminalView::Missing,
-                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(field_0.as_scalar())),
+                    ResolvedFieldKind::Scalar | ResolvedFieldKind::List => {
+                        OptionalNonterminalView::Present(::sittir_core::filters::Renderable::Text(
+                            field_0.as_scalar(),
+                        ))
+                    }
                 },
             };
             template.render_into(dest)

@@ -615,18 +615,22 @@ const isCli = (() => {
 	}
 })();
 
-if (isCli) {
-	const { base: basePath, head: headPath } = parseArgs(process.argv.slice(2));
+export async function run(argv: string[]): Promise<number> {
+	const { base: basePath, head: headPath } = parseArgs(argv);
 	const base = readJsonFile(basePath) as BackendBaseline;
 	const head = readJsonFile(headPath) as BackendBaseline;
 	const verdict = checkRegression(base, head);
 	if (verdict.ok) {
 		process.stdout.write(`${verdict.summary}\n`);
-		process.exit(0);
+		return 0;
 	} else {
 		process.stderr.write(
 			`${JSON.stringify({ reason: verdict.reason, summary: verdict.summary, details: verdict.details }, null, 2)}\n`
 		);
-		process.exit(1);
+		return 1;
 	}
+}
+
+if (isCli) {
+	process.exit(await run(process.argv.slice(2)));
 }

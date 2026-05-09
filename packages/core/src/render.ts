@@ -88,6 +88,46 @@ function resolveKindName(type: number | string, ctx: InternalRenderContext): str
 	return ctx.kindNames?.get(type) ?? String(type);
 }
 
+const TOKEN_PART_TEXT: Readonly<Record<string, string>> = {
+	lbrace: '{',
+	rbrace: '}',
+	lparen: '(',
+	rparen: ')',
+	lbrack: '[',
+	rbrack: ']',
+	comma: ',',
+	semi: ';',
+	colon: ':',
+	dot: '.',
+	plus: '+',
+	dash: '-',
+	star: '*',
+	slash: '/',
+	percent: '%',
+	bang: '!',
+	eq: '=',
+	lt: '<',
+	gt: '>',
+	amp: '&',
+	pipe: '|',
+	caret: '^',
+	tilde: '~',
+	qmark: '?',
+	at: '@',
+	hash: '#',
+	backtick: '`'
+};
+
+function renderNumericScalar(value: number, ctx: InternalRenderContext): string {
+	const kindName = ctx.kindNames?.get(value);
+	if (!kindName) return String(value);
+	const tokenParts = kindName.split('_');
+	if (tokenParts.every((part) => TOKEN_PART_TEXT[part] !== undefined)) {
+		return tokenParts.map((part) => TOKEN_PART_TEXT[part]!).join('');
+	}
+	return kindName;
+}
+
 // ---------------------------------------------------------------------------
 // Field-access helpers — ADR-0018 Phase 2 dual-shape compatibility
 // ---------------------------------------------------------------------------
@@ -1055,7 +1095,7 @@ function resolveJoinBy(ruleObj: Record<string, unknown> | undefined, varName: st
 /** Render a field value — handles AnyNodeData, string, and number. */
 function renderValue(value: AnyNodeData | string | number, ctx: InternalRenderContext): string {
 	if (typeof value === 'string') return value;
-	if (typeof value === 'number') return String(value);
+	if (typeof value === 'number') return renderNumericScalar(value, ctx);
 	// Guard against undefined / null reaching the NodeData branch. Callers
 	// that iterate a parent's fields can legitimately see an optional-field
 	// slot come through undefined; they should filter before calling here,
@@ -1221,7 +1261,7 @@ function buildNunjucksTemplateContext(
 ): TemplateContext {
 	const renderChild = (value: AnyNodeData | string | number): string => {
 		if (typeof value === 'string') return value;
-		if (typeof value === 'number') return String(value);
+		if (typeof value === 'number') return renderNumericScalar(value, ctx);
 		return renderNunjucks(value, ctx, env, templatesDir);
 	};
 

@@ -1,30 +1,26 @@
-import { ir, snippets, template } from '@sittir/rust';
+import { writeFileSync } from 'node:fs';
+import { ir } from '@sittir/rust';
 
 export function generateCacheModule() {
-	const file = ir.sourceFile({
+	const file = ir.sourceFile.from({
 		statements: [
-			ir.useDeclaration.from({ path: 'std::collections::HashMap' }),
-			ir.structItem
-				.from({
-					visibilityModifier: 'pub',
-					name: 'Cache',
-					body: { name: 'entries', type: 'HashMap<String, String>' }
-				})
-				.$trivia(ir.docComment('/// In-memory key-value cache.')),
-			snippets.implBlock
-				.fill({
-					TYPE: ir.typeIdentifier('Cache'),
-					METHODS: snippets.pubMethod
-						.fill({
-							NAME: ir.identifier('new'),
-							RET: ir.typeIdentifier('Self'),
-							BODY: template('Self { entries: HashMap::new() }').fill({}).read()
-						})
-						.read()
-				})
-				.read()
-		]
+			ir.structItem.unit.from({
+				visibilityModifier: 'pub',
+				name: ir.from.type('Cache'),
+			}),
+			ir.functionItem.from({
+				visibilityModifier: 'pub',
+				name: 'new_cache',
+				parameters: ir.parameters.strict(),
+				body: ir.block.strict(),
+			}),
+		],
 	});
 
 	return file.$render();
+}
+
+export function saveCacheModule(path: string) {
+	writeFileSync(path, generateCacheModule(), 'utf8');
+	return path;
 }

@@ -21,6 +21,7 @@ import {
 	validateReadRenderParse,
 	formatReadRenderParseReport,
 } from '@sittir/codegen/validate/read-render-parse';
+import type { ValidateReadRenderParseOptions } from '@sittir/codegen/validate/read-render-parse';
 import { validateTemplateCoverage } from '@sittir/codegen/validate/template-coverage';
 
 export type Grammar = 'rust' | 'typescript' | 'python';
@@ -29,10 +30,7 @@ export type Backend = 'native' | 'typescript';
 // Re-export result types so callers only need @sittir/validator.
 export type { FromValidationResult, FromValidationError } from '@sittir/codegen/validate/from';
 export type { FactoryRenderParseResult } from '@sittir/codegen/validate/factory-render-parse';
-export type {
-	ReadRenderParseResult,
-	ValidateReadRenderParseOptions,
-} from '@sittir/codegen/validate/read-render-parse';
+export type { ReadRenderParseResult, ValidateReadRenderParseOptions } from '@sittir/codegen/validate/read-render-parse';
 export type {
 	TemplateCoverageResult,
 	CoverageIssue,
@@ -61,8 +59,9 @@ export function runRt(
 	grammar: Grammar,
 	templatesPath: string,
 	backend: Backend = 'native',
+	options: Pick<ValidateReadRenderParseOptions, 'recursive'> = {},
 ) {
-	return validateReadRenderParse(grammar, templatesPath, { backend });
+	return validateReadRenderParse(grammar, templatesPath, { backend, recursive: options.recursive });
 }
 
 /** Run template-coverage structural validation (synchronous). */

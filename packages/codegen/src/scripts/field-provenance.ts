@@ -94,8 +94,9 @@ function walkRule(kind: string, node: unknown, path: string[], rows: FieldRow[])
 	}
 }
 
-function main(): void {
+export async function run(argv: string[]): Promise<number> {
 	const { values } = parseArgs({
+		args: argv,
 		options: {
 			grammar: { type: 'string' },
 			kind: { type: 'string' },
@@ -109,7 +110,7 @@ function main(): void {
 		process.stderr.write(
 			'Usage: field-provenance.ts --grammar <name> [--kind K] [--redundant] [--source override|enriched|grammar|inferred]\n'
 		);
-		process.exit(1);
+		return 1;
 	}
 
 	const gjPath = resolve(
@@ -144,6 +145,13 @@ function main(): void {
 		const flag = r.redundantNested ? 'REDUNDANT_NESTED' : '';
 		process.stdout.write([r.kind, r.path, r.name, r.source, flag].join('\t') + '\n');
 	}
+	return 0;
 }
 
-main();
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
+if (_isMain) {
+	run(process.argv.slice(2)).then(process.exit).catch((e) => {
+		process.stderr.write(`field-provenance: ${(e as Error).stack ?? e}\n`);
+		process.exit(1);
+	});
+}

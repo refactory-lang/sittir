@@ -124,7 +124,7 @@ This feature operates on existing in-memory entities (validator results, NodeDat
 
 - `pnpm -r run type-check` passes (tsgo strict).
 - `oxlint --deny-warnings packages/{rust,typescript,python}/src` reports 0 warnings.
-- `npx tsx scripts/check-jinja-templates.ts` reports 0 violations.
+- `npx tsx packages/tools/src/validate/jinja.ts` reports 0 violations.
 - `pnpm test` matches the committed `baselines/ts.json` exactly (zero unexpected diffs).
 - New regression-checker job: `collect-baseline` output diffed against parent commit's JSON shows no count drops.
 

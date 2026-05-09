@@ -41,6 +41,44 @@ import { writeJinjaTemplates } from './emitters/templates.ts';
 import { renderModuleSrcDir } from './emitters/render-module-paths.ts';
 import { extractParityFixtures, serializeFixtures, fixturesOutputPath } from './emitters/parity-fixtures.ts';
 
+type ToolsDispatch = (argv: string[]) => Promise<number>;
+
+/**
+ * Keep the tools router names local to avoid a codegen ↔ tools package cycle.
+ * The codegen CLI delegates to the tools source entrypoint only when the first
+ * argument is one of these known tool subcommands.
+ */
+const TOOL_NAMES = new Set([
+	'probe-kind',
+	'probe-stages',
+	'probe-parity',
+	'profile',
+	'profile-factory',
+	'bench',
+	'bench-codemod',
+	'counts',
+	'diff-failures',
+	'check-baseline',
+	'check-perf',
+	'check-jinja',
+	'list-kinds',
+	'classify',
+	'phantom-kinds',
+	'field-provenance',
+	'inspect-type',
+	'inspect-refs',
+	'compare-overrides',
+	'walk',
+	'exercise'
+]);
+
+const firstArg = process.argv[2];
+if (firstArg !== undefined && TOOL_NAMES.has(firstArg)) {
+	const toolsCliPath = new URL('../../tools/src/cli.ts', import.meta.url).pathname;
+	const { dispatch }: { dispatch: ToolsDispatch } = await import(toolsCliPath);
+	process.exit(await dispatch(process.argv.slice(2)));
+}
+
 interface CodegenConfig {
 	grammar: string;
 	nodes?: string[];

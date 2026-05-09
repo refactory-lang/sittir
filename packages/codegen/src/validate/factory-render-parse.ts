@@ -39,7 +39,9 @@ import {
 
 /** Find a node anywhere in the tree by its exact byte span. */
 function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSNode | null {
-	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
+	// Descend before accepting the current node so same-span wrapper/parent pairs
+	// resolve to the deepest CST node; override-polymorph inference needs the
+	// discriminating wrapper kind rather than the enclosing container kind.
 	for (let i = 0; i < node.childCount; i++) {
 		const c = node.child(i);
 		if (!c) continue;
@@ -47,6 +49,7 @@ function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSN
 		const hit = findNodeBySpan(c, startIndex, endIndex);
 		if (hit) return hit;
 	}
+	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
 	return null;
 }
 
@@ -454,6 +457,7 @@ function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveTyp
  *
  * @param readData - NodeData produced by `readNode`, possibly with `$type` overridden.
  * @param renderedKind - The walker-resolved kind (used for factory + shape lookup).
+ * @param cstNodeKindHint - CST node-kind fallback when the wrapper node itself discriminates the variant.
  * @param firstNamedChildKindHint - First CST named-child fallback for legacy callers.
  * @param namedChildKindHints - Ordered CST named-child fallback candidates.
  * @param factoryMap - Map from kind to factory function.
@@ -474,6 +478,7 @@ function resolveNodeForKind(kind: string, rootNode: TSNode, nodeIdToEffectiveTyp
 function buildFactoryNodeData(
 	readData: AnyNodeData,
 	renderedKind: string,
+	cstNodeKindHint: string | undefined,
 	firstNamedChildKindHint: string | undefined,
 	namedChildKindHints: readonly string[],
 	factoryMap: Record<string, (config?: any) => unknown>,
@@ -516,6 +521,7 @@ function buildFactoryNodeData(
 						fieldAliasMap,
 						factoryFields,
 						polymorphVariants,
+						cstNodeKindHint,
 						firstNamedChildKindHint,
 						namedChildKindHints,
 						kindNameFromId
@@ -526,6 +532,7 @@ function buildFactoryNodeData(
 						fieldAliasMap,
 						factoryFields,
 						polymorphVariants,
+						cstNodeKindHint,
 						firstNamedChildKindHint,
 						namedChildKindHints,
 						kindNameFromId
@@ -810,6 +817,7 @@ export async function validateFactoryRenderParse(
 			const factoryData = buildFactoryNodeData(
 				readData,
 				renderedKind,
+				node1.type,
 				cstNamedChildKinds[0],
 				cstNamedChildKinds,
 				factoryMap,

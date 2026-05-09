@@ -482,7 +482,7 @@ const isCli = (() => {
 	}
 })();
 
-if (isCli) {
+export async function run(_argv: string[]): Promise<number> {
 	const metricsBackend: 'ts' | 'native' = process.env.SITTIR_BACKEND === 'native' ? 'native' : 'ts';
 	const baseline = await collectBaseline(process.env.SITTIR_BACKEND);
 	process.stdout.write(serialiseBaseline(baseline));
@@ -493,4 +493,9 @@ if (isCli) {
 		const { dumpMetrics } = await import('@sittir/common');
 		dumpMetrics(metricsBackend);
 	}
+	return 0;
+}
+
+if (isCli) {
+	process.exit(await run(process.argv.slice(2)));
 }

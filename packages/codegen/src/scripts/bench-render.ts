@@ -398,16 +398,7 @@ function formatSpeedupColumn(results: BenchResult[]): string {
 // CLI entry
 // ---------------------------------------------------------------------------
 
-const isCli = (() => {
-	if (process.argv[1] == null) return false;
-	try {
-		return pathToFileURL(process.argv[1]).href === import.meta.url;
-	} catch {
-		return false;
-	}
-})();
-
-if (isCli) {
+export async function run(_argv: string[]): Promise<number> {
 	const gcAvailable = typeof (global as { gc?: unknown }).gc === 'function';
 	process.stderr.write(`bench-render: N=${N} iterations per backend per grammar\n`);
 	process.stderr.write(`bench-render: warmup=${WARMUP_ITERATIONS}\n`);
@@ -433,4 +424,21 @@ if (isCli) {
 		process.stderr.write('\n=== Speedup (mean time per render) ===\n');
 		process.stderr.write(`${speedup}\n`);
 	}
+	return 0;
+}
+
+const isCli = (() => {
+	if (process.argv[1] == null) return false;
+	try {
+		return pathToFileURL(process.argv[1]).href === import.meta.url;
+	} catch {
+		return false;
+	}
+})();
+
+if (isCli) {
+	run(process.argv.slice(2)).then(process.exit).catch((e) => {
+		process.stderr.write(`bench-render: ${(e as Error).stack ?? e}\n`);
+		process.exit(1);
+	});
 }

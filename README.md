@@ -31,6 +31,7 @@ For a complete target-API walkthrough across factories, `.from()`, rendering, te
 | [`@sittir/core`](packages/core)             | JS backend implementation — render engine, CST, Edit creation (wraps `@sittir/common`) |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
 | [`@sittir/codegen`](packages/codegen)       | Five-phase compiler: reads grammar.json + node-types.json, emits everything          |
+| [`@sittir/tools`](packages/tools)           | Developer diagnostics and exercise CLI tools (`probe-*`, `counts`, `walk`, `exercise`) |
 | [`@sittir/validator`](packages/validator)   | Canonical validation facade: `counts`, `probe-factory`, `history` CLI + run APIs     |
 | [`@sittir/rust`](packages/rust)             | 210 generated Rust node kinds                                                        |
 | [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds                                                  |
@@ -153,8 +154,10 @@ for (const match of matches) {
        └── utils.ts         └── utils.ts           └── utils.ts
 
   @sittir/common ─ readNode(), NodeData contracts, Edit, ByteRange (backend-neutral)
-  @sittir/core ─── render(), validate(), edit(), CST (JS backend implementation)
+  @sittir/core ─── render(), edit(), CST (JS backend implementation)
+  @sittir/tools ── developer diagnostics, profiling, discovery, and exercise CLIs
   @sittir/types ── AnyNodeData, ConfigOf<T>, TreeNodeOf<T>, ByteRange, Edit
+  @sittir/validator ─ counts / history / probe-factory facade + run APIs
 ```
 
 ### Compiler Pipeline

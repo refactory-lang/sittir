@@ -41,7 +41,7 @@ fn rust_engine() -> Engine {
     Engine {
         name: "rust",
         render: sittir_rust::render::render_dispatch,
-        language: tree_sitter_rust::LANGUAGE.into(),
+        language: sittir_rust::language(),
         enabled: true,
     }
 }
@@ -50,7 +50,7 @@ fn typescript_engine() -> Engine {
     Engine {
         name: "typescript",
         render: sittir_typescript::render::render_dispatch,
-        language: tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
+        language: sittir_typescript::language(),
         enabled: true,
     }
 }
@@ -59,7 +59,7 @@ fn python_engine() -> Engine {
     Engine {
         name: "python",
         render: sittir_python::render::render_dispatch,
-        language: tree_sitter_python::LANGUAGE.into(),
+        language: sittir_python::language(),
         enabled: true,
     }
 }
@@ -124,9 +124,7 @@ fn assert_roundtrip_parity(
         return;
     }
     let mut parser = Parser::new();
-    parser
-        .set_language(&engine.language)
-        .expect("set_language");
+    parser.set_language(&engine.language).expect("set_language");
     let tree = match parser.parse(wrapped_text, None) {
         Some(t) => t,
         None => panic!(
@@ -166,7 +164,8 @@ fn assert_roundtrip_parity(
     // the reparsed source. Byte-identical render parity (SC-001a)
     // stays strict; semantic s-exp parity (SC-001b) is downgraded
     // to a warn-only diagnostic until the grammar versions align.
-    if actual_reparse_tree != expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok() {
+    if actual_reparse_tree != expected_reparse_tree && std::env::var("SITTIR_PARITY_STRICT").is_ok()
+    {
         panic!(
             "[{}][roundtrip #{idx}] pattern={pattern} reparse s-expression divergence (strict mode)\n  expected: {expected_reparse_tree}\n  actual:   {actual_reparse_tree}",
             engine.name
@@ -209,7 +208,11 @@ fn run_parity_suite(engine: Engine) {
     let mut rt_count = 0usize;
     for (idx, fx) in fixtures.iter().enumerate() {
         match fx {
-            ParityFixture::Render { input, expected_output, .. } => {
+            ParityFixture::Render {
+                input,
+                expected_output,
+                ..
+            } => {
                 assert_render_parity(&engine, idx, input, expected_output);
                 render_count += 1;
             }

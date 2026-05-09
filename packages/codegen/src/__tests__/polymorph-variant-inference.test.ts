@@ -152,6 +152,29 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 		expect(cfg.$variant).toBe('paren');
 	});
 
+	it('falls back to the CST node kind when the intermediate wrapper owns the discriminator', () => {
+		const data = {
+			$type: KIND.token_tree,
+			$children: [{ $type: KIND.some_unregistered, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_paren: 'paren',
+						token_tree_bracket: 'bracket'
+					}
+				}
+			},
+			cstNodeKindHint: 'token_tree_paren',
+			firstNamedChildKindHint: 'some_unregistered',
+			namedChildKindHints: ['some_unregistered'],
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('paren');
+	});
+
 	it('falls back to later CST named children when the discriminating wrapper is not first', () => {
 		const data = {
 			$type: KIND.assignment,
@@ -172,6 +195,73 @@ describe('nodeToConfig — polymorph $variant (override source)', () => {
 			kindNameFromId
 		});
 		expect(cfg.$variant).toBe('type');
+	});
+
+	it('uses structural marker tokens from anonymous slots when wrapper kinds are absent', () => {
+		const data = {
+			$type: KIND.assignment,
+			$children: [{ $type: KIND.some_unregistered, $named: true }],
+			'_,': { $type: KIND.dotdot, $named: false }
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				assignment: {
+					source: 'override',
+					childKind: {
+						assignment_with_comma: 'with_comma',
+						assignment_block_ending: 'block_ending'
+					}
+				}
+			},
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('with_comma');
+	});
+
+	it('uses weighted structural tokens from CST and child kinds to select the best variant', () => {
+		const data = {
+			$type: KIND.token_tree,
+			_function: { $type: KIND.x, $named: true },
+			_arguments: { $type: KIND.dotdot, $named: true }
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_call: 'call',
+						token_tree_template_call: 'template_call',
+						token_tree_member: 'member'
+					}
+				}
+			},
+			cstNodeKindHint: 'token_tree',
+			namedChildKindHints: ['member_expression', 'arguments'],
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('member');
+	});
+
+	it('falls back to the first two-form variant when no shared marker token is present', () => {
+		const data = {
+			$type: KIND.token_tree,
+			$children: [{ $type: KIND.some_unregistered, $named: true }]
+		};
+		const cfg = nodeToConfig(data, {
+			polymorphVariants: {
+				token_tree: {
+					source: 'override',
+					childKind: {
+						token_tree_typed: 'typed',
+						token_tree_sequence: 'sequence'
+					}
+				}
+			},
+			cstNodeKindHint: 'token_tree',
+			namedChildKindHints: ['member_expression'],
+			kindNameFromId
+		});
+		expect(cfg.$variant).toBe('typed');
 	});
 });
 

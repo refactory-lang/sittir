@@ -15,7 +15,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CORPUS="${ROOT}/tests/acceptance/fixtures/codemod-sample"
-RUNNER="${ROOT}/scripts/bench-codemod-runner.ts"
+RUNNER="${ROOT}/packages/tools/src/profile/codemod.ts"
 
 if [ ! -d "${CORPUS}" ]; then
     echo "bench-codemod: corpus directory not found: ${CORPUS}" >&2

@@ -20,15 +20,17 @@
 	"scripts": {
 		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"test": "vitest run",
+		"test": "vitest run --config vitest.config.ts",
 		"type-check": "tsgo --noEmit"
 	},
 	"dependencies": {
 		"@sittir/codegen": "workspace:*",
 		"@sittir/core": "workspace:*",
-		"@sittir/types": "workspace:*"
+		"@sittir/types": "workspace:*",
+		"@sittir/validator": "workspace:*"
 	},
 	"devDependencies": {
-		"@types/node": "^25.6.0"
+		"@types/node": "^25.6.0",
+		"typescript": "^6.0.3"
 	}
 }

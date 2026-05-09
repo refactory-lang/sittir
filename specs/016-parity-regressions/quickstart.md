@@ -73,7 +73,7 @@ All three regenerate even if your fix only targets one grammar — FR-006 requir
 ```sh
 pnpm -r run type-check                                    # tsgo strict
 npx oxlint --deny-warnings packages/{rust,typescript,python}/src
-npx tsx scripts/check-jinja-templates.ts                  # 509 .jinja headers
+npx tsx packages/tools/src/validate/jinja.ts             # .jinja headers + invariants
 ```
 
 If any of these fail, your fix introduced a phase-0 regression — fix it in the same commit (FR-007).

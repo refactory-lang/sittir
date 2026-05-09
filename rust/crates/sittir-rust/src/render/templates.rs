@@ -11,21 +11,25 @@
 // fields is caught at compile time (FR-008). If you see a build error
 // here, the codegen is out of sync: regenerate via the command above.
 
-#![allow(dead_code, unused_imports, non_snake_case, non_camel_case_types, unused_mut, unused_variables)]
+#![allow(
+    dead_code,
+    unused_imports,
+    non_snake_case,
+    non_camel_case_types,
+    unused_mut,
+    unused_variables
+)]
 
-use ::sittir_core::filters::{
-    SingleNonterminalView, ListNonterminalView,
-    OptionalNonterminalView,
-};
+use ::sittir_core::filters::{ListNonterminalView, OptionalNonterminalView, SingleNonterminalView};
 use ::sittir_core::types::{
-    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,
+    FieldValue, NodeData, NodeTrivia, RenderableTransport, Source, Span, TransportTrivia,
 };
 
 #[cfg(feature = "napi-bindings")]
 use ::napi_derive::napi;
 
-use ::askama::Template as _AskamaTemplate;
 use super::bridge::*;
+use ::askama::Template as _AskamaTemplate;
 
 pub mod filters {
     //! Askama resolves custom-filter names by searching for a
@@ -33,7 +37,7 @@ pub mod filters {
     //! module wraps the canonical sittir_core implementations with
     //! the `#[askama::filter_fn]` attribute so Askama can call them
     //! from templates.
-    use ::sittir_core::filters::{Joined, JoinSource};
+    use ::sittir_core::filters::{JoinSource, Joined};
 
     #[::askama::filter_fn]
     pub fn joinby<'a, T: JoinSource<'a> + ?Sized>(
@@ -85,10 +89,7 @@ pub mod filters {
         ::sittir_core::filters::joinWithFlanks(xs, values, sep)
     }
 
-    pub use ::sittir_core::filters::{
-        upper, lower,
-        isBlank, isPresent,
-    };
+    pub use ::sittir_core::filters::{isBlank, isPresent, lower, upper};
 }
 
 #[derive(::askama::Template)]
@@ -1178,7 +1179,10 @@ pub struct ScopedIdentifierTemplate<'a> {
 }
 
 #[derive(::askama::Template)]
-#[template(path = "scoped_type_identifier_in_expression_position.jinja", escape = "none")]
+#[template(
+    path = "scoped_type_identifier_in_expression_position.jinja",
+    escape = "none"
+)]
 pub struct ScopedTypeIdentifierInExpressionPositionTemplate<'a> {
     pub name: SingleNonterminalView<'a>,
     pub path: OptionalNonterminalView<'a>,
@@ -1538,4 +1542,3 @@ pub struct WhileExpressionTemplate<'a> {
 pub struct YieldExpressionTemplate<'a> {
     pub children: ListNonterminalView<'a>,
 }
-

@@ -1,28 +1,34 @@
-import { createEngine, wrap } from '@sittir/rust';
+import { createEngine, ir, is, wrapNode } from '@sittir/rust';
+import { isTypedNodeData, nodeText, parseSource } from './helpers.ts';
 
 export function readSource(source: string) {
 	const engine = createEngine();
-	return engine.parseAndRead(source);
+	return parseSource(engine, source).root;
 }
 
-export function readShallowThenDrillIn(source: string) {
+export function readFirstFunction(source: string) {
 	const engine = createEngine();
-	const shallow = engine.parseAndRead(source, { depth: 1 });
-	const fn = shallow.$children[0];
-	const body = engine.readNode(fn._body.$nodeHandle, fn._body.$childIndex);
+	const { root, tree } = parseSource(engine, source);
+	const first = (root.$children ?? [])[0];
+	if (!isTypedNodeData(first) || !is.functionItem(first)) return undefined;
+	const fn = wrapNode(first, tree) as ReturnType<typeof ir.functionItem>;
 
-	return { shallow, fn, body };
+	return {
+		name: nodeText(fn.name()),
+		body: fn.body(),
+	};
 }
 
 export function wrappedLazyAccess(source: string) {
 	const engine = createEngine();
-	const tree = engine.parseAndRead(source);
-	const shallow = engine.parseAndRead(source, { depth: 1 });
-	const fn = wrap(shallow.$children[0], tree);
+	const { root, tree } = parseSource(engine, source);
+	const first = (root.$children ?? [])[0];
+	if (!isTypedNodeData(first) || !is.functionItem(first)) return undefined;
+	const fn = wrapNode(first, tree) as ReturnType<typeof ir.functionItem>;
 
 	return {
-		name: fn.name(),
+		name: nodeText(fn.name()),
 		body: fn.body(),
-		statements: fn.body().$children
+		statements: fn.body().$children,
 	};
 }

@@ -90,21 +90,21 @@ describe('@sittir/validator cli surface — runHistoryCli behavior', () => {
 describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 	beforeEach(() => { vi.clearAllMocks(); });
 
-	it('calls all four run helpers for each requested grammar', async () => {
+	it('defaults to native backend for each requested grammar', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
 		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('rust', 'native');
-		expect(vi.mocked(runRt)).toHaveBeenCalled();
+		expect(vi.mocked(runRt)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
 		expect(vi.mocked(runCoverage)).toHaveBeenCalled();
-		expect(vi.mocked(runFactory)).toHaveBeenCalled();
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
 		logSpy.mockRestore();
 	});
 
-	it('prints counts output to stdout', async () => {
+	it('prints backend-labeled counts output to stdout', async () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli(['rust']);
 		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
-		expect(allOutput).toMatch(/rust:/);
+		expect(allOutput).toMatch(/rust\/native:/);
 		logSpy.mockRestore();
 	});
 
@@ -112,6 +112,61 @@ describe('@sittir/validator cli surface — runCountsCli behavior', () => {
 		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 		await runCountsCli([]);
 		expect(vi.mocked(runFrom)).toHaveBeenCalledTimes(3);
+		logSpy.mockRestore();
+	});
+
+	it('maps js backend to the internal typescript backend', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runCountsCli(['python'], 'js');
+		expect(vi.mocked(runFrom)).toHaveBeenCalledWith('python', 'typescript');
+		expect(vi.mocked(runRt)).toHaveBeenCalledWith('python', '/fake/templates', 'typescript');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('python', '/fake/templates', 'typescript');
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/python\/js:/);
+		logSpy.mockRestore();
+	});
+
+	it('runs both backends when backend=all', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runCountsCli(['rust'], 'all');
+		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(1, 'rust', 'native');
+		expect(vi.mocked(runFrom)).toHaveBeenNthCalledWith(2, 'rust', 'typescript');
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/rust\/native:/);
+		expect(allOutput).toMatch(/rust\/js:/);
+		logSpy.mockRestore();
+	});
+});
+
+describe('@sittir/validator cli surface — runProbeFactoryCli behavior', () => {
+	beforeEach(() => { vi.clearAllMocks(); });
+
+	it('defaults to native backend', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runProbeFactoryCli(['rust']);
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'native');
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/=== rust\/native ===/);
+		logSpy.mockRestore();
+	});
+
+	it('maps js backend to the internal typescript backend', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runProbeFactoryCli(['rust'], 'js');
+		expect(vi.mocked(runFactory)).toHaveBeenCalledWith('rust', '/fake/templates', 'typescript');
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/=== rust\/js ===/);
+		logSpy.mockRestore();
+	});
+
+	it('runs both backends when backend=all', async () => {
+		const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		await runProbeFactoryCli(['rust'], 'all');
+		expect(vi.mocked(runFactory)).toHaveBeenNthCalledWith(1, 'rust', '/fake/templates', 'native');
+		expect(vi.mocked(runFactory)).toHaveBeenNthCalledWith(2, 'rust', '/fake/templates', 'typescript');
+		const allOutput = logSpy.mock.calls.map((c) => String(c[0])).join('\n');
+		expect(allOutput).toMatch(/=== rust\/native ===/);
+		expect(allOutput).toMatch(/=== rust\/js ===/);
 		logSpy.mockRestore();
 	});
 });

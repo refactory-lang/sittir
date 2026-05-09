@@ -975,8 +975,8 @@ type WidenValue<
 					:
 							| NonEmptyArray<WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>>
 							| WidenValue<E, Scalars, Strings, Depth, NsMap, Visited>
-				: T extends {
-							readonly $type: infer K extends string;
+			: T extends {
+							readonly $type: infer K extends string | number;
 							readonly $text: string;
 					  }
 					?

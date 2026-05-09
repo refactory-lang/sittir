@@ -197,6 +197,28 @@ importers:
         specifier: ^5.6.0
         version: 5.6.0
 
+  packages/tools:
+    dependencies:
+      '@sittir/codegen':
+        specifier: workspace:*
+        version: link:../codegen
+      '@sittir/core':
+        specifier: workspace:*
+        version: link:../core
+      '@sittir/types':
+        specifier: workspace:*
+        version: link:../types
+      '@sittir/validator':
+        specifier: workspace:*
+        version: link:../validator
+    devDependencies:
+      '@types/node':
+        specifier: ^25.6.0
+        version: 25.6.0
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
   packages/types:
     dependencies:
       type-fest:

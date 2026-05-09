@@ -1,0 +1,19 @@
+{
+	"extends": "../tsconfig.json",
+	"compilerOptions": {
+		"rootDir": ".",
+		"noEmit": true,
+		"composite": false,
+		"declaration": false,
+		"declarationMap": false,
+		"incremental": false
+	},
+	"include": [
+		"./helpers.ts",
+		"./01-construct-nodes.ts",
+		"./02-render-round-trip.ts",
+		"./07-read-source.ts",
+		"./09-type-guards.ts"
+	],
+	"exclude": []
+}

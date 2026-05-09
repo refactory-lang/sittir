@@ -20,8 +20,15 @@ const config: RulesConfig = {
 			joinBy: ' '
 		},
 		parameter: '$NAME: $TYPE',
-		binary_expression: '$LEFT $OPERATOR $RIGHT'
-	}
+		binary_expression: '$LEFT $OPERATOR $RIGHT',
+		lexical_declaration: '$KIND $DECLARATORS $SEMICOLON',
+		object_type: '$OPENING $MEMBERS $CLOSING'
+	},
+	kindNames: new Map<number, string>([
+		[16, 'let'],
+		[5, '{'],
+		[7, '}']
+	])
 };
 
 const { render } = createRenderer(config);
@@ -129,6 +136,30 @@ describe('render', () => {
 			}
 		};
 		expect(render(node)).toBe('a + b');
+	});
+
+	it('renders numeric keyword fields via kindNames lookup', () => {
+		const node: AnyNodeData = {
+			$type: 'lexical_declaration',
+			$fields: {
+				kind: 16,
+				declarators: [{ $type: 'identifier', $text: 'bar' }],
+				semicolon: ';'
+			}
+		};
+		expect(render(node)).toBe('let bar ;');
+	});
+
+	it('renders numeric delimiter fields via kindNames lookup', () => {
+		const node: AnyNodeData = {
+			$type: 'object_type',
+			$fields: {
+				opening: 5,
+				members: [{ $type: 'identifier', $text: 'foo: string' }],
+				closing: 7
+			}
+		};
+		expect(render(node)).toBe('{ foo: string }');
 	});
 
 	it('renders block with children', () => {

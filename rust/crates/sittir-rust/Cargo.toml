@@ -23,7 +23,8 @@ napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
-tree-sitter-rust = "0.24"
+tree-sitter-language = { workspace = true }
 
 [build-dependencies]
 napi-build = "2"
+cc = { workspace = true }

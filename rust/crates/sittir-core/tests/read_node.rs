@@ -74,7 +74,11 @@ fn rust_top_level_node_has_allowed_keys_only() {
     let json = serde_json::to_value(&node).expect("serialize");
     assert_shape(&json, "rust.root");
     assert_eq!(node.source, Source::Ts, "source must be ts");
-    assert_eq!(node.node_handle, Some(0), "root carries its reserved handle");
+    assert_eq!(
+        node.node_handle,
+        Some(0),
+        "root carries its reserved handle"
+    );
     assert!(node.child_index.is_none(), "root has no child_index");
     assert!(node.span.is_some(), "span populated");
 }
@@ -127,10 +131,16 @@ fn child_index_set_on_non_root_nodes() {
     let json = serde_json::to_value(&node).expect("serialize");
     let mut child_meta: Vec<(u16, u32)> = Vec::new();
     collect_child_meta(&json, &mut child_meta, false);
-    assert!(!child_meta.is_empty(), "should see child stubs in read payload");
+    assert!(
+        !child_meta.is_empty(),
+        "should see child stubs in read payload"
+    );
     assert!(child_meta.iter().all(|(_, handle)| *handle == 0));
     // Root must NOT have a child_index.
-    assert!(node.child_index.is_none(), "root must not have a childIndex");
+    assert!(
+        node.child_index.is_none(),
+        "root must not have a childIndex"
+    );
     assert_eq!(node.node_handle, Some(0));
 }
 

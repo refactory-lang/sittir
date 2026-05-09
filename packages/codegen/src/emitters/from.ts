@@ -34,6 +34,7 @@ import {
 	resolveHiddenKeywordLiteral,
 	resolveSingleFieldFactorySlot,
 	resolveFieldStorageInfo,
+	collectPolymorphLiteralDispatchCases,
 	stampExpressionFor,
 	isHiddenInfraSlot,
 	type BranchSlotClass,
@@ -983,11 +984,6 @@ interface PolymorphFromNode {
  * @param nodeMap - Grammar-wide node map for hidden-literal detection.
  * @returns The emitted dispatcher function source string.
  */
-interface PolymorphLiteralDispatchCase {
-	readonly literal: string;
-	readonly formFromFn: string;
-}
-
 interface PolymorphKindDispatchCase {
 	readonly kind: string;
 	readonly formFromFn: string;
@@ -1003,58 +999,6 @@ function usesHoistedConfigSurface(form: AssembledGroup, nodeMap: NodeMap): boole
 	if (!(inner instanceof AssembledBranch || inner instanceof AssembledGroup)) return false;
 	if (!inner.rawFactoryName) return false;
 	return inner.fields.length > 0 || inner.children.some((slot) => !isAutoStampSlot(slot, nodeMap));
-}
-
-function resolvePolymorphLiteralKind(kindName: string, nodeMap: NodeMap, seen = new Set<string>()): string | undefined {
-	if (seen.has(kindName)) return undefined;
-	seen.add(kindName);
-	const direct = resolveHiddenKeywordLiteral(kindName, nodeMap);
-	if (direct !== undefined) return direct;
-	const node = nodeMap.nodes.get(kindName);
-	if (!(node instanceof AssembledGroup) || node.fields.length > 0 || node.children.length !== 1) return undefined;
-	const child = node.children[0]!;
-	const literals = new Set<string>();
-	for (const lit of slotLiteralValues(child)) literals.add(lit);
-	for (const childKind of slotKindNames(child)) {
-		const lit = resolvePolymorphLiteralKind(childKind, nodeMap, seen);
-		if (lit !== undefined) literals.add(lit);
-	}
-	return literals.size === 1 ? [...literals][0]! : undefined;
-}
-
-function collectPolymorphLiteralDispatchCases(
-	forms: readonly AssembledGroup[],
-	nodeMap: NodeMap
-): PolymorphLiteralDispatchCase[] {
-	const formByLiteral = new Map<string, string>();
-	const ambiguous = new Set<string>();
-	for (const form of forms) {
-		if (!form.fromFunctionName) continue;
-		const configurableFields = form.fields.filter((field) => !isAutoStampField(field, nodeMap));
-		if (configurableFields.some((field) => isRequired(field))) continue;
-		const configurableChildren = form.children.filter((child) => !isAutoStampSlot(child, nodeMap));
-		if (configurableChildren.some((child) => isRequired(child) && !(isMultiple(child) && !isNonEmpty(child)))) continue;
-		const literals = new Set<string>();
-		literals.add(form.name);
-		for (const child of form.children) {
-			for (const lit of slotLiteralValues(child)) literals.add(lit);
-			for (const kind of slotKindNames(child)) {
-				const lit = resolvePolymorphLiteralKind(kind, nodeMap);
-				if (lit !== undefined) literals.add(lit);
-			}
-		}
-		if (literals.size !== 1) continue;
-		const literal = [...literals][0]!;
-		if (ambiguous.has(literal)) continue;
-		const existing = formByLiteral.get(literal);
-		if (existing !== undefined && existing !== form.fromFunctionName) {
-			formByLiteral.delete(literal);
-			ambiguous.add(literal);
-			continue;
-		}
-		formByLiteral.set(literal, form.fromFunctionName);
-	}
-	return [...formByLiteral.entries()].map(([literal, formFromFn]) => ({ literal, formFromFn }));
 }
 
 function collectPolymorphKindDispatchCases(

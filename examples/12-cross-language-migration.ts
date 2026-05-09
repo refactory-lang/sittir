@@ -1,31 +1,32 @@
-import { createEngine as createTsEngine, wrap as wrapTs, is } from '@sittir/typescript';
-import { snippets as pySnippets } from '@sittir/python';
+import { createEngine as createTsEngine, ir as tsIr, is, wrapNode } from '@sittir/typescript';
+import { nodeText, parseSource } from './helpers.ts';
 
 const typeMap: Record<string, string> = {
 	string: 'str',
 	number: 'int',
-	boolean: 'bool'
+	boolean: 'bool',
 };
 
 export function interfaceToPythonDataclass(tsSource: string) {
 	const tsEngine = createTsEngine();
-	const tree = tsEngine.parseAndRead(tsSource);
-	const iface = wrapTs(tree.$children[0], tree);
+	const { root, tree } = parseSource(tsEngine, tsSource);
+	const ifaceNode = (root.$children ?? []).find(is.interfaceDeclaration);
+	if (!ifaceNode) {
+		throw new Error('Expected a top-level TypeScript interface declaration.');
+	}
+	const iface = wrapNode(ifaceNode, tree) as ReturnType<typeof tsIr.interfaceDeclaration>;
 
-	const fields = iface
-		.body()
-		.$children.filter((member) => is.propertySignature(member))
-		.map((member) => {
-			const wrappedMember = wrapTs(member, tree);
-			const name = wrappedMember.name();
-			const pyType = typeMap[wrappedMember.type()] || wrappedMember.type();
-			return `${name}: ${pyType}`;
-		});
+	const fields = iface.body().$children.filter(is.propertySignature).map((member) => {
+		const wrappedMember = wrapNode(member, tree) as ReturnType<typeof tsIr.propertySignature>;
+		const name = nodeText(wrappedMember.name());
+		const rawType = wrappedMember.type()?.type().$render() ?? 'Any';
+		const pyType = typeMap[rawType] ?? rawType;
+		return `    ${name}: ${pyType}`;
+	});
 
-	return pySnippets.dataclass
-		.from({
-			NAME: iface.name(),
-			FIELDS: fields
-		})
-		.render();
+	return [
+		'@dataclass',
+		`class ${iface.name().$render()}:`,
+		...(fields.length > 0 ? fields : ['    pass']),
+	].join('\n');
 }

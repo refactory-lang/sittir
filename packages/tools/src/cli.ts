@@ -13,15 +13,19 @@ const TOOLS: Record<string, string> = {
 	'probe-parity': './probe/parity.js',
 	// Profiling
 	profile: './profile/failures.js',
+	'profile-factory': './profile/factory.js',
 	bench: './profile/bench.js',
+	'bench-codemod': './profile/codemod.js',
 	// Validation
 	counts: './validate/counts.js',
 	'diff-failures': './validate/diff.js',
 	'check-baseline': './validate/baseline.js',
 	'check-perf': './validate/perf.js',
+	'check-jinja': './validate/jinja.js',
 	// Discovery
 	'list-kinds': './discover/list-kinds.js',
 	classify: './discover/classify.js',
+	'phantom-kinds': './discover/phantom.js',
 	'field-provenance': './discover/provenance.js',
 	// Inspection
 	'inspect-type': './inspect/type.js',
@@ -77,17 +81,21 @@ function printHelp(): void {
 		'',
 		'Profiling:',
 		'  profile           unified validator failure aggregation',
+		'  profile-factory   factory validator profiling (shallow/recursive/ast)',
 		'  bench             native vs JS render benchmark',
+		'  bench-codemod     codemod corpus benchmark',
 		'',
 		'Validation:',
 		'  counts            per-grammar validator pass/total',
 		'  diff-failures     per-kind validator failures',
 		'  check-baseline    baseline regression gate',
 		'  check-perf        native perf regression gate',
+		'  check-jinja       per-rule .jinja invariant check',
 		'',
 		'Discovery:',
 		'  list-kinds        list groups, unaliased, phantom kinds',
 		'  classify          kind classification through compiler phases',
+		'  phantom-kinds     diagnose parser kinds missing from node-types',
 		'  field-provenance  field source tracking (override/enriched/grammar)',
 		'',
 		'Inspection:',
@@ -100,4 +108,16 @@ function printHelp(): void {
 		'  exercise          round-trip exercise harness',
 	];
 	process.stdout.write(lines.join('\n') + '\n');
+}
+
+const _isMain = import.meta.url === `file://${process.argv[1]}`;
+if (_isMain) {
+	dispatch(process.argv.slice(2))
+		.then((code) => {
+			process.exit(code);
+		})
+		.catch((error) => {
+			process.stderr.write(`sittir tools: ${String(error)}\n`);
+			process.exit(1);
+		});
 }

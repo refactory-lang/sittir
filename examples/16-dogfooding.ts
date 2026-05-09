@@ -1,4 +1,4 @@
-import { snippets, template, ir } from '@sittir/typescript';
+import { ir } from '@sittir/typescript';
 
 interface GrammarModel {
 	kinds: string[];
@@ -13,21 +13,19 @@ function pascalCase(value: string) {
 }
 
 export function emitIsModule(grammar: GrammarModel): string {
-	const guards = grammar.kinds.map((kind) =>
-		snippets.typeGuard
-			.fill({
-				NAME: ir.identifier(`is${pascalCase(kind)}`),
-				TYPE: ir.typeReference(pascalCase(kind)),
-				KIND: ir.stringLiteral(kind)
-			})
-			.render()
-	);
-
-	const dispatchObj = template('export const is = { $...ENTRIES }')
-		.fill({
-			ENTRIES: grammar.kinds.map((kind) => ir.shorthandPropertyAssignment(ir.identifier(`is${pascalCase(kind)}`)))
-		})
-		.render();
-
-	return [...guards, dispatchObj].join('\n\n');
+	return ir.program.from({
+		statements: [
+			ir.interfaceDeclaration.from({
+				name: 'IsGuards',
+				body: {
+					members: grammar.kinds.map((kind) =>
+						ir.propertySignature.from({
+							name: `is${pascalCase(kind)}`,
+							type: { type: 'boolean' },
+						}),
+					),
+				},
+			}),
+		],
+	}).$render();
 }

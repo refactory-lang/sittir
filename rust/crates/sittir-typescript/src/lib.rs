@@ -2,6 +2,19 @@
 
 pub mod render;
 
+use tree_sitter_language::LanguageFn;
+
+unsafe extern "C" {
+    fn tree_sitter_typescript() -> *const ();
+}
+
+/// The generated `.sittir` TypeScript parser.
+pub const LANGUAGE: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_typescript) };
+
+pub fn language() -> tree_sitter::Language {
+    LANGUAGE.into()
+}
+
 #[cfg(feature = "napi-bindings")]
 use napi::bindgen_prelude::*;
 #[cfg(feature = "napi-bindings")]
@@ -26,7 +39,7 @@ struct TypeScriptGrammar;
 #[cfg(feature = "napi-bindings")]
 impl EngineGrammar for TypeScriptGrammar {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
-        let language: tree_sitter::Language = tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into();
+        let language = crate::language();
         parser
             .set_language(&language)
             .map_err(|e| format!("failed to set parser language: {e}"))
@@ -88,9 +101,7 @@ impl SittirEngine {
     #[napi]
     pub fn parse_and_read(&mut self, source: String) -> Result<String> {
         let mut parsed = self.engine.parse(source).map_err(Error::from_reason)?;
-        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            parsed.read_root()
-        }));
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| parsed.read_root()));
         match result {
             Ok(data) => {
                 let format = parsed.format().cloned();
@@ -101,16 +112,18 @@ impl SittirEngine {
                 })
                 .map_err(|e| Error::from_reason(format!("serialize ParseResult failed: {e}")))
             }
-            Err(payload) => Err(Error::from_reason(panic_msg(payload, "parse_and_read panicked"))),
+            Err(payload) => Err(Error::from_reason(panic_msg(
+                payload,
+                "parse_and_read panicked",
+            ))),
         }
     }
 
     #[napi]
     pub fn read_node(&mut self, handle: f64, child_index: f64) -> Result<String> {
-        let parsed = self
-            .parsed
-            .as_mut()
-            .ok_or_else(|| Error::from_reason("no tree parsed — call parseAndRead first".to_string()))?;
+        let parsed = self.parsed.as_mut().ok_or_else(|| {
+            Error::from_reason("no tree parsed — call parseAndRead first".to_string())
+        })?;
         parsed
             .read_child(handle as u32, child_index as u16)
             .map_err(Error::from_reason)

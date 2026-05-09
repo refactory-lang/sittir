@@ -8,7 +8,11 @@ fn text_renderable_displays_str() {
 
 #[test]
 fn joined_renderable_streams_separator() {
-    let items = [Renderable::Text("a"), Renderable::Text("b"), Renderable::Text("c")];
+    let items = [
+        Renderable::Text("a"),
+        Renderable::Text("b"),
+        Renderable::Text("c"),
+    ];
     let joined = Joined::new(&items, ", ", false, false);
     assert_eq!(joined.to_string(), "a, b, c");
 }
@@ -18,7 +22,9 @@ fn joined_renderable_writes_via_fast_writable() {
     let items = [Renderable::Text("x"), Renderable::Text("y")];
     let joined = Joined::new(&items, "+", false, false);
     let mut out = String::new();
-    joined.write_into(&mut out, &askama::NO_VALUES).expect("FastWritable");
+    joined
+        .write_into(&mut out, &askama::NO_VALUES)
+        .expect("FastWritable");
     assert_eq!(out, "x+y");
 }
 

@@ -114,8 +114,14 @@ fn no_unexpected_top_level_keys() {
             "unexpected top-level key on the wire: {key}"
         );
     }
-    assert!(v.get("_name").is_some(), "named slots serialize as top-level _<slot> keys");
-    assert!(v.get("$fields").is_none(), "legacy $fields wrapper must not serialize");
+    assert!(
+        v.get("_name").is_some(),
+        "named slots serialize as top-level _<slot> keys"
+    );
+    assert!(
+        v.get("$fields").is_none(),
+        "legacy $fields wrapper must not serialize"
+    );
 }
 
 #[test]
@@ -189,7 +195,10 @@ fn deserialization_accepts_missing_optionals() {
 fn deserialization_accepts_legacy_fields_wrapper_for_compatibility() {
     let legacy = r#"{"$type":188,"$source":0,"$named":true,"$fields":{"name":{"$type":1,"$source":0,"$named":true,"$text":"foo"}}}"#;
     let parsed: NodeData = serde_json::from_str(legacy).unwrap();
-    assert!(parsed.fields.as_ref().is_some_and(|fields| fields.contains_key("name")));
+    assert!(parsed
+        .fields
+        .as_ref()
+        .is_some_and(|fields| fields.contains_key("name")));
 }
 
 fn is_allowed_node_key(key: &str) -> bool {

@@ -1,23 +1,24 @@
-import { snippets, template, ir } from '@sittir/typescript';
+import { ir } from '@sittir/typescript';
 
-export function renderComposedImplBlock() {
-	const method = snippets.pubMethod
-		.fill({
-			NAME: ir.identifier.identifier('new');
-			PARAMS: ir.typeParameter.from({ name: 'host', type: ir.identifier('String') }),
-			RET: ir.identifier('Self'),
-			BODY: template('Self { $...FIELDS }')
-				.fill({
-					FIELDS: [ir.fieldInitializer.from({ name: 'host', value: ir.stringLiteral.from('host')})]
-				})
-				.read()
-		})
-		.read();
+interface GrammarSummary {
+	name: string;
+	kindCount: number;
+}
 
-	return snippets.implBlock
-		.fill({
-			TYPE: ir.typeIdentifier('Config'),
-			METHODS: method
-		})
-		.render();
+export function renderSummaryInterface(summary: GrammarSummary) {
+	return ir.interfaceDeclaration.from({
+		name: summary.name,
+		body: {
+			members: [
+				ir.propertySignature.from({
+					name: 'kindCount',
+					type: { type: 'number' },
+				}),
+				ir.propertySignature.from({
+					name: 'hasKinds',
+					type: { type: 'boolean' },
+				}),
+			],
+		},
+	}).$render();
 }
