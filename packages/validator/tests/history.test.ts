@@ -1,11 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { appendFileSync, existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import { existsSync, unlinkSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-// We test the module's internals by pointing HISTORY_PATH at a temp file.
-// Instead of importing and running the real path, we test the exported functions
-// against the actual validation-history.jsonl file and a scratch copy.
 
 import { appendHistory, readHistory, historyPath } from '../src/history.ts';
 import type { ValidationRun } from '../src/history.ts';
@@ -41,9 +37,14 @@ describe('@sittir/validator history surface', () => {
 		expect(REAL_HISTORY.endsWith('.jsonl')).toBe(true);
 	});
 
-	it('readHistory returns an array', () => {
+	it('readHistory on the real file returns an array (no schema-header leak)', () => {
 		const runs = readHistory();
 		expect(Array.isArray(runs)).toBe(true);
+		// Every element returned must look like a real ValidationRun — no schema-header objects.
+		for (const r of runs) {
+			expect(typeof r.ts).toBe('string');
+			expect(typeof r.grammar).toBe('string');
+		}
 	});
 
 	it('exports appendHistory as a function', () => {
@@ -53,36 +54,57 @@ describe('@sittir/validator history surface', () => {
 
 describe('@sittir/validator history round-trip (scratch file)', () => {
 	beforeEach(() => {
-		// Start with the schema line so readHistory skips non-run lines.
+		process.env['SITTIR_HISTORY_PATH'] = SCRATCH;
 		writeFileSync(SCRATCH, '');
 	});
 
 	afterEach(() => {
+		delete process.env['SITTIR_HISTORY_PATH'];
 		if (existsSync(SCRATCH)) unlinkSync(SCRATCH);
 	});
 
-	it('appended entry is readable back', () => {
-		// Directly append to scratch file to avoid touching real history.
+	it('appendHistory + readHistory round-trips a single entry', () => {
 		const entry = makeEntry({ grammar: 'typescript', backend: 'typescript' });
-		appendFileSync(SCRATCH, JSON.stringify(entry) + '\n', 'utf8');
-
-		const raw = readFileSync(SCRATCH, 'utf8').trim().split('\n');
-		const parsed = raw.map((l) => JSON.parse(l) as ValidationRun);
-		expect(parsed).toHaveLength(1);
-		expect(parsed[0]!.grammar).toBe('typescript');
-		expect(parsed[0]!.backend).toBe('typescript');
-		expect(parsed[0]!.fromPass).toBe(10);
+		appendHistory(entry);
+		const runs = readHistory();
+		expect(runs).toHaveLength(1);
+		expect(runs[0]!.grammar).toBe('typescript');
+		expect(runs[0]!.backend).toBe('typescript');
+		expect(runs[0]!.fromPass).toBe(10);
 	});
 
-	it('multiple appends accumulate correctly', () => {
+	it('multiple appendHistory calls accumulate correctly', () => {
 		for (const g of ['rust', 'typescript', 'python'] as const) {
-			const entry = makeEntry({ grammar: g });
-			appendFileSync(SCRATCH, JSON.stringify(entry) + '\n', 'utf8');
+			appendHistory(makeEntry({ grammar: g }));
 		}
-		const raw = readFileSync(SCRATCH, 'utf8').trim().split('\n');
-		expect(raw).toHaveLength(3);
-		const grammars = raw.map((l) => (JSON.parse(l) as ValidationRun).grammar);
-		expect(grammars).toEqual(['rust', 'typescript', 'python']);
+		const runs = readHistory();
+		expect(runs).toHaveLength(3);
+		expect(runs.map((r) => r.grammar)).toEqual(['rust', 'typescript', 'python']);
+	});
+
+	it('readHistory skips schema/header lines', () => {
+		// Pre-populate the scratch file with a schema header line (as the real file has).
+		const schemaLine = JSON.stringify({
+			schema: 'v1',
+			description: 'sittir validation history',
+			fields: ['ts', 'grammar'],
+		});
+		writeFileSync(SCRATCH, schemaLine + '\n');
+
+		// Now append a real entry and verify only that entry is returned.
+		appendHistory(makeEntry({ grammar: 'python' }));
+		const runs = readHistory();
+		expect(runs).toHaveLength(1);
+		expect(runs[0]!.grammar).toBe('python');
+	});
+
+	it('readHistory returns empty array for empty file', () => {
+		expect(readHistory()).toEqual([]);
+	});
+
+	it('readHistory returns empty array when file does not exist', () => {
+		if (existsSync(SCRATCH)) unlinkSync(SCRATCH);
+		expect(readHistory()).toEqual([]);
 	});
 
 	it('ValidationRun shape has all required keys', () => {

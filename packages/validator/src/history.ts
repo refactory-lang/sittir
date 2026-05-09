@@ -32,26 +32,41 @@ export interface ValidationRun {
 	factoryAstMatchPass: number;
 }
 
-const HISTORY_PATH = resolve(
-	fileURLToPath(new URL('..', import.meta.url)),
-	'validation-history.jsonl',
-);
+/**
+ * Resolve the history file path. Evaluated at call time so tests can override
+ * it via the `SITTIR_HISTORY_PATH` environment variable without requiring a
+ * module reload.
+ */
+function getHistoryPath(): string {
+	return (
+		process.env['SITTIR_HISTORY_PATH'] ??
+		resolve(fileURLToPath(new URL('..', import.meta.url)), 'validation-history.jsonl')
+	);
+}
+
+/** Return true when a parsed JSONL line represents a real `ValidationRun`. */
+function isValidationRun(entry: unknown): entry is ValidationRun {
+	if (typeof entry !== 'object' || entry === null) return false;
+	return !('schema' in entry) && typeof (entry as { ts?: unknown })['ts'] === 'string';
+}
 
 /** Append a single validation run entry to the history file. */
 export function appendHistory(entry: ValidationRun): void {
-	appendFileSync(HISTORY_PATH, JSON.stringify(entry) + '\n', 'utf8');
+	appendFileSync(getHistoryPath(), JSON.stringify(entry) + '\n', 'utf8');
 }
 
-/** Read all past validation runs from the history file. */
+/** Read all past validation runs from the history file, skipping non-run lines (e.g. schema headers). */
 export function readHistory(): ValidationRun[] {
-	if (!existsSync(HISTORY_PATH)) return [];
-	return readFileSync(HISTORY_PATH, 'utf8')
+	const path = getHistoryPath();
+	if (!existsSync(path)) return [];
+	return readFileSync(path, 'utf8')
 		.split('\n')
 		.filter((line) => line.trim() && !line.startsWith('//'))
-		.map((line) => JSON.parse(line) as ValidationRun);
+		.map((line) => JSON.parse(line) as unknown)
+		.filter(isValidationRun);
 }
 
 /** Resolve the absolute path to the history file (useful for tooling). */
 export function historyPath(): string {
-	return HISTORY_PATH;
+	return getHistoryPath();
 }

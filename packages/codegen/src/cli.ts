@@ -14,6 +14,23 @@ import { validateFactoryRenderParse, formatFactoryRenderParseReport } from './va
 import { validateFrom, formatFromReport } from './validate/from.ts';
 import { validateRenderableFromNodeMap, formatRenderableReport } from './validate/renderable.ts';
 import { validateReadProjection, formatReadProjectionReport } from './validate/read-projection.ts';
+
+// Facade-aligned helpers for the --roundtrip validator passes.
+// @sittir/validator cannot be imported here (it depends on this package),
+// so these thin wrappers mirror its runRt / runFactory / runFrom API to keep
+// the roundtrip call-sites at the same abstraction level as the validator facade.
+/** @see @sittir/validator's `runRt` */
+function runRt(grammar: string, tp: string, backend: 'native' | 'typescript' = 'native') {
+	return validateReadRenderParse(grammar, tp, { backend });
+}
+/** @see @sittir/validator's `runFactory` */
+function runFactory(grammar: string, tp: string, backend: 'native' | 'typescript' = 'native') {
+	return validateFactoryRenderParse(grammar, tp, backend);
+}
+/** @see @sittir/validator's `runFrom` */
+function runFrom(grammar: string, backend: 'native' | 'typescript' = 'native') {
+	return validateFrom(grammar, backend);
+}
 import { join, dirname, resolve } from 'node:path';
 import { generate } from './compiler/generate.ts';
 import { emitSuggested } from './emitters/suggested.ts';
@@ -388,15 +405,15 @@ if (cliArgs.roundtrip) {
 	// path (feature 011). createRenderer auto-detects directory vs
 	// legacy YAML file.
 	const templatesDir = join(dirname(outDir), 'templates');
-	const readRenderParseResult = await validateReadRenderParse(config.grammar, templatesDir);
+	const readRenderParseResult = await runRt(config.grammar, templatesDir);
 	console.log(formatReadRenderParseReport(readRenderParseResult));
 
 	// Factory render-parse (corpus → readNode → factory() → render → re-parse)
-	const factoryRenderParseResult = await validateFactoryRenderParse(config.grammar, templatesDir);
+	const factoryRenderParseResult = await runFactory(config.grammar, templatesDir);
 	console.log(formatFactoryRenderParseReport(factoryRenderParseResult));
 
 	// from() correctness (structural comparison: from() vs factory())
-	const fromResult = await validateFrom(config.grammar);
+	const fromResult = await runFrom(config.grammar);
 	console.log(formatFromReport(fromResult));
 
 	// Collect render-parse failures into a structured diagnostic list and
