@@ -18,7 +18,7 @@ Given any tree-sitter grammar, sittir generates:
 - **Grammar-agnostic pipeline** — works with any tree-sitter grammar without modification. All language-specific knowledge flows through override configuration.
 - **Five-phase compiler** — Evaluate → Link → Optimize → Assemble → Emit. Each phase has a single responsibility and produces a well-defined intermediate representation.
 - **Override DSL** — `transform()`, `enrich()`, `role()` primitives let grammar maintainers patch field labels, add mechanical promotions, and declare structural roles without rewriting rules.
-- **Small runtime surface** — generated packages depend on `@sittir/core` and `@sittir/types`, with optional native render packages when installed.
+- **Small runtime surface** — generated packages depend on `@sittir/common` (shared contracts) and `@sittir/types`, with an optional JS backend via `@sittir/core` and optional native render packages when installed.
 - **Deterministic output** — same grammar version produces byte-identical generated code. No timestamps, random identifiers, or order-dependent iteration.
 
 For a complete target-API walkthrough across factories, `.from()`, rendering, templates, codemods, lazy reads, and cross-language migrations, see [Use Cases & Examples](docs/use-cases-and-examples.md). Source-form TypeScript companions live in [`examples/`](examples/).
@@ -27,9 +27,11 @@ For a complete target-API walkthrough across factories, `.from()`, rendering, te
 
 | Package                                     | Description                                                                          |
 | ------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [`@sittir/core`](packages/core)             | Grammar-driven render engine, validation, CST, Edit creation                         |
+| [`@sittir/common`](packages/common)         | Shared backend-neutral runtime contracts and primitives (`readNode`, `NodeData`, `Edit`) |
+| [`@sittir/core`](packages/core)             | JS backend implementation — render engine, CST, Edit creation (wraps `@sittir/common`) |
 | [`@sittir/types`](packages/types)           | Pure TypeScript types (zero runtime) — `AnyNodeData`, `ConfigOf<T>`, `TreeNodeOf<T>` |
 | [`@sittir/codegen`](packages/codegen)       | Five-phase compiler: reads grammar.json + node-types.json, emits everything          |
+| [`@sittir/validator`](packages/validator)   | Canonical validation facade: `counts`, `probe-factory`, `history` CLI + run APIs     |
 | [`@sittir/rust`](packages/rust)             | 210 generated Rust node kinds                                                        |
 | [`@sittir/typescript`](packages/typescript) | 269 generated TypeScript node kinds                                                  |
 | [`@sittir/python`](packages/python)         | 176 generated Python node kinds                                                      |
@@ -150,7 +152,8 @@ for (const match of matches) {
        ├── consts.ts        ├── consts.ts          ├── consts.ts
        └── utils.ts         └── utils.ts           └── utils.ts
 
-  @sittir/core ─── render(), validate(), readNode(), edit(), CST
+  @sittir/common ─ readNode(), NodeData contracts, Edit, ByteRange (backend-neutral)
+  @sittir/core ─── render(), validate(), edit(), CST (JS backend implementation)
   @sittir/types ── AnyNodeData, ConfigOf<T>, TreeNodeOf<T>, ByteRange, Edit
 ```
 
@@ -174,7 +177,7 @@ NodeData + target ──▶ node.replace(target) / toEdit(...) ──▶ Edit { 
 Render input (AnyNodeData) ─────────▶ Source text (Jinja template expansion)
 ```
 
-- `readNode()` (core) maps parse tree fields to raw `NodeData`.
+- `readNode()` (common) maps parse tree fields to raw `NodeData` — shared across JS and native backends.
 - `readTreeNode()` (generated, per-grammar) adds override routing and lazy getters — the client entry point.
 - `node.replace(target)` renders the replacement through the generated package backend and pairs it with the target's byte range — one call to go from NodeData to a text edit.
 
