@@ -15,6 +15,7 @@
  */
 
 import { fileURLToPath } from 'node:url';
+import { Command } from 'commander';
 import { runFrom, runRt, runCoverage, runFactory, defaultTemplatesPath, type Grammar } from './run.ts';
 import { readHistory } from './history.ts';
 
@@ -115,30 +116,28 @@ export function runHistoryCli(args: string[]): void {
 
 // Main dispatch — only executed when this file is the direct entrypoint.
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	const [subcommand, ...rest] = process.argv.slice(2);
-	switch (subcommand) {
-		case 'counts':
-			await runCountsCli(rest);
-			break;
-		case 'probe-factory':
-			await runProbeFactoryCli(rest);
-			break;
-		case 'history':
-			runHistoryCli(rest);
-			break;
-		default:
-			console.error(
-				[
-					'Usage: npx tsx packages/validator/src/cli.ts <subcommand> [options]',
-					'',
-					'Subcommands:',
-					'  counts [grammar...]         per-grammar raw pass/total counts',
-					'  probe-factory [grammar...]  factory error bucketing (top 8 buckets)',
-					'  history [n]                 print last N history entries (default 10)',
-					'',
-					'Grammars: rust, typescript, python  (defaults to all three)',
-				].join('\n'),
-			);
-			process.exit(1);
-	}
+	const program = new Command()
+		.name('sittir-validator')
+		.description('Validation utilities for sittir grammar packages')
+		.addHelpCommand(true);
+
+	program
+		.command('counts')
+		.description('Per-grammar raw pass/total counts for all four validators')
+		.argument('[grammars...]', 'Grammars to validate (rust, typescript, python); defaults to all')
+		.action(async (grammars: string[]) => runCountsCli(grammars));
+
+	program
+		.command('probe-factory')
+		.description('Factory-render-parse error bucketing (top-8 buckets)')
+		.argument('[grammars...]', 'Grammars to validate (rust, typescript, python); defaults to all')
+		.action(async (grammars: string[]) => runProbeFactoryCli(grammars));
+
+	program
+		.command('history')
+		.description('Print last N validation history entries')
+		.argument('[n]', 'Number of entries to show', '10')
+		.action((n: string) => runHistoryCli([n]));
+
+	await program.parseAsync(process.argv);
 }

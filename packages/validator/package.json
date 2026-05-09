@@ -20,7 +20,8 @@
 		"type-check": "tsgo --noEmit"
 	},
 	"dependencies": {
-		"@sittir/codegen": "workspace:*"
+		"@sittir/codegen": "workspace:*",
+		"commander": "^14.0.0"
 	},
 	"devDependencies": {
 		"@types/node": "^25.6.0"

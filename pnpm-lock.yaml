@@ -230,6 +230,9 @@ importers:
       '@sittir/codegen':
         specifier: workspace:*
         version: link:../codegen
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.3
     devDependencies:
       '@types/node':
         specifier: ^25.6.0
@@ -1695,6 +1698,10 @@ packages:
 
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
+
+  commander@14.0.3:
+    resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
+    engines: {node: '>=20'}
 
   commander@5.1.0:
     resolution: {integrity: sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==}
@@ -3662,6 +3669,8 @@ snapshots:
       typanion: 3.14.0
 
   colorette@2.0.20: {}
+
+  commander@14.0.3: {}
 
   commander@5.1.0: {}
 
