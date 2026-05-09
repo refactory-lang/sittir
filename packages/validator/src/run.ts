@@ -43,8 +43,8 @@ export { formatFromReport, formatFactoryRenderParseReport, formatReadRenderParse
 
 /** Resolve the on-disk templates directory for a grammar, relative to this package's location. */
 export function defaultTemplatesPath(grammar: Grammar): string {
-	// packages/validator/ → packages/
-	const packagesDir = resolve(fileURLToPath(new URL('..', import.meta.url)));
+	// packages/validator/src/ → ../../ → packages/
+	const packagesDir = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 	return resolve(packagesDir, grammar, 'templates');
 }
 

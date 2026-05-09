@@ -36,3 +36,5 @@ export {
 } from './history.ts';
 
 export type { ValidationRun } from './history.ts';
+
+export { runCountsCli, runProbeFactoryCli, runHistoryCli } from './cli.ts';

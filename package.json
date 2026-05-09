@@ -24,6 +24,7 @@
 		"lint": "oxlint -c oxlint.config.ts .",
 		"lint:fix": "oxlint -c oxlint.config.ts --fix .",
 		"test": "vitest run",
+		"validate": "tsx packages/validator/src/cli.ts counts",
 		"test:coverage": "vitest run --coverage",
 		"test:watch": "vitest --watch",
 		"type-check": "pnpm -r run type-check",

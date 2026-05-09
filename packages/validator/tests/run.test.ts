@@ -31,11 +31,11 @@ describe('@sittir/validator run surface', () => {
 		expect(typeof defaultTemplatesPath).toBe('function');
 	});
 
-	it('defaultTemplatesPath returns a string containing the grammar name', () => {
+	it('defaultTemplatesPath resolves to packages/<grammar>/templates', () => {
 		const p = defaultTemplatesPath('rust');
 		expect(typeof p).toBe('string');
-		expect(p).toContain('rust');
-		expect(p).toContain('templates');
+		// Absolute path ending in packages/rust/templates (platform-agnostic check)
+		expect(p).toMatch(/packages[/\\]rust[/\\]templates$/);
 	});
 
 	it('defaultTemplatesPath differs per grammar', () => {

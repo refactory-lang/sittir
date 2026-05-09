@@ -9,5 +9,5 @@
 		"types": ["node"]
 	},
 	"include": ["src", "tests"],
-	"exclude": ["node_modules", "dist", "src/emitters/*-ir.ts", "tests/unit/emitters/*-ir.test.ts"]
+	"exclude": ["node_modules", "dist", "src/emitters/*-ir.ts", "tests/unit/emitters/*-ir.test.ts", "src/scripts/counts.ts", "src/scripts/probe-factory-rt.ts"]
 }
