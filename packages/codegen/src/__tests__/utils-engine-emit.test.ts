@@ -13,7 +13,7 @@ describe('utils engine facade emission', () => {
 		expect(contents).toContain('export const methodsEngine = {');
 		expect(contents).toContain('export function withMethods<T extends object>(');
 		expect(contents).toContain('engine: typeof methodsEngine');
-		expect(contents).toContain('return withCommonMethods(node, engine);');
+		expect(contents).toContain('return withCommonMethods(node as unknown as T & AnyNodeData, engine)');
 		expect(contents).not.toContain('$render(this: AnyNodeData): string { return render(this); }');
 	});
 

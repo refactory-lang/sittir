@@ -56,6 +56,7 @@ return [
 }
 
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
+const triviaType = buildTriviaParamType(triviaTypeNames);
 return [
 'export function withMethods<T extends object>(',
 '  node: T,',
@@ -64,9 +65,16 @@ return [
 '  $render(): string;',
 '  $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
 '  $replace(target: { range(): ByteRange }): Edit;',
-`  $trivia(...args: ${buildTriviaParamType(triviaTypeNames)}[]): AnyNodeData;`,
+`  $trivia(...args: ${triviaType}[]): AnyNodeData;`,
 '} {',
-'  return withCommonMethods(node, engine);',
+'  // Grammar-local facade: T extends object to accept wrap.ts union-spread literals.',
+'  // Only factory/wrap output — which always satisfies AnyNodeData structurally — calls this.',
+'  return withCommonMethods(node as unknown as T & AnyNodeData, engine) as T & {',
+'    $render(): string;',
+'    $toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;',
+'    $replace(target: { range(): ByteRange }): Edit;',
+`    $trivia(...args: ${triviaType}[]): AnyNodeData;`,
+'  };',
 '}'
 ];
 }
