@@ -15,7 +15,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 
 		// JS fallback should have renderer methods
 		expect(typeof engine.render).toBe('function');
@@ -75,7 +75,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 
 		// Native engine should have both renderer and reader
 		expect(typeof engine.render).toBe('function');
@@ -162,7 +162,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 		const parsed = engine.reader?.parseAndRead('pub fn main');
 		expect(parsed).toBeDefined();
 		if (!parsed || !engine.reader) throw new Error('expected native engine reader');
@@ -220,7 +220,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 
 		// Phase D: $type must be numeric (TSKindId). String coexistence removed.
 		const node = {
@@ -288,7 +288,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 		const parsed = engine.reader?.parseAndRead('fn main() {}');
 		expect(parsed).toBeDefined();
 		if (!parsed) {
@@ -337,7 +337,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = await createEngine();
+		const engine = createEngine();
 		const rendered = engine.render({
 			$type: TSKindId.Identifier,
 			$source: 2 as const,
