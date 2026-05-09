@@ -8,7 +8,7 @@ import type { TreeHandle } from '@sittir/common';
 import type { AnyNodeData as _NodeData, AnyNodeData, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './types.js';
 import type * as T from './types.js';
-import { withMethods, coerceBooleanKeywordStorage, coerceBitflagStorage } from './utils.js';
+import { withMethods, methodsEngine, coerceBooleanKeywordStorage, coerceBitflagStorage } from './utils.js';
 import * as _factories from './factories.js';
 
 // Drill-in helpers — call back through `readTreeNode` so the same
@@ -55,7 +55,7 @@ export function wrap_AsPattern(data: T._AsPattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: (T.CasePattern | T.Identifier)) => wrap_AsPattern({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -66,7 +66,7 @@ export function wrapComprehensionClauses(data: T.ComprehensionClauses, tree: Tre
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.ForInClause | T.IfClause))[]) => wrapComprehensionClauses({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -77,7 +77,7 @@ export function wrap_ListPattern(data: T._ListPattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.CasePattern[]) => wrap_ListPattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -88,7 +88,7 @@ export function wrapMatchBlock(data: T.MatchBlock, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: T.MatchBlockBlock) => wrapMatchBlock({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -99,7 +99,7 @@ export function wrapSimplePatternNegative(data: T.SimplePatternNegative, tree: T
     $children: data.$children,
 
     $with: { $child: (v: (T.Integer | T.Float)) => wrapSimplePatternNegative({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -110,7 +110,7 @@ export function wrapSimpleStatements(data: T.SimpleStatements, tree: TreeHandle)
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.SimpleStatement>) => wrapSimpleStatements({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -121,7 +121,7 @@ export function wrap_TuplePattern(data: T._TuplePattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.CasePattern[]) => wrap_TuplePattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -132,7 +132,7 @@ export function wrap_WithClauseParen(data: T._WithClauseParen, tree: TreeHandle)
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrap_WithClauseParen({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -149,7 +149,7 @@ export function wrapAliasedImport(data: T.AliasedImport, tree: TreeHandle) {
       name: (v: NonNullable<T.AliasedImport['_name']>) => wrapAliasedImport({ ...data, _name: v }, tree),
       alias: (v: NonNullable<T.AliasedImport['_alias']>) => wrapAliasedImport({ ...data, _alias: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -160,7 +160,7 @@ export function wrapArgumentList(data: T.ArgumentList, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument))[]) => wrapArgumentList({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -177,7 +177,7 @@ export function wrapAsPattern(data: T.AsPattern, tree: TreeHandle) {
       expression: (v: NonNullable<T.AsPattern['_expression']>) => wrapAsPattern({ ...data, _expression: v }, tree),
       alias: (v: NonNullable<T.AsPattern['_alias']>) => wrapAsPattern({ ...data, _alias: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -188,7 +188,7 @@ export function wrapAssertStatement(data: T.AssertStatement, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapAssertStatement({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -204,7 +204,7 @@ export function wrapAssignment(data: T.Assignment, tree: TreeHandle) {
       left: (v: T.LeftHandSide) => wrapAssignment({ ...(data as any), _left: v }, tree),
       children: (...items: readonly [((T.AssignmentEq | T.AssignmentType | T.AssignmentTyped))]) => wrapAssignment({ ...(data as any), $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -221,7 +221,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle) {
       object: (v: NonNullable<T.Attribute['_object']>) => wrapAttribute({ ...data, _object: v }, tree),
       attribute: (v: NonNullable<T.Attribute['_attribute']>) => wrapAttribute({ ...data, _attribute: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -241,7 +241,7 @@ export function wrapAugmentedAssignment(data: T.AugmentedAssignment, tree: TreeH
       operator: (v: NonNullable<T.AugmentedAssignment['_operator']>) => wrapAugmentedAssignment({ ...data, _operator: v }, tree),
       right: (v: NonNullable<T.AugmentedAssignment['_right']>) => wrapAugmentedAssignment({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -255,7 +255,7 @@ export function wrapAwait(data: T.Await, tree: TreeHandle) {
     $with: {
       primaryExpression: (v: NonNullable<T.Await['_primary_expression']>) => wrapAwait({ ...data, _primary_expression: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -275,7 +275,7 @@ export function wrapBinaryOperator(data: T.BinaryOperator, tree: TreeHandle) {
       operator: (v: NonNullable<T.BinaryOperator['_operator']>) => wrapBinaryOperator({ ...data, _operator: v }, tree),
       right: (v: NonNullable<T.BinaryOperator['_right']>) => wrapBinaryOperator({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -286,7 +286,7 @@ export function wrapBlock(data: T.Block, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Statement[]) => wrapBlock({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -306,7 +306,7 @@ export function wrapBooleanOperator(data: T.BooleanOperator, tree: TreeHandle) {
       operator: (v: NonNullable<T.BooleanOperator['_operator']>) => wrapBooleanOperator({ ...data, _operator: v }, tree),
       right: (v: NonNullable<T.BooleanOperator['_right']>) => wrapBooleanOperator({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -323,7 +323,7 @@ export function wrapCall(data: T.Call, tree: TreeHandle) {
       function: (v: NonNullable<T.Call['_function']>) => wrapCall({ ...data, _function: v }, tree),
       arguments: (v: NonNullable<T.Call['_arguments']>) => wrapCall({ ...data, _arguments: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -342,7 +342,7 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle) {
       consequence: (v: NonNullable<T.CaseClause['_consequence']>) => wrapCaseClause({ ...data, _consequence: v }, tree),
       children: (...items: NonEmptyArray<T.CasePattern>) => wrapCaseClause({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -353,7 +353,7 @@ export function wrapCasePattern(data: T.CasePattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: (T._AsPattern | T.KeywordPattern | T.SimplePattern)) => wrapCasePattern({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -367,7 +367,7 @@ export function wrapChevron(data: T.Chevron, tree: TreeHandle) {
     $with: {
       expression: (v: NonNullable<T.Chevron['_expression']>) => wrapChevron({ ...data, _expression: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -390,7 +390,7 @@ export function wrapClassDefinition(data: T.ClassDefinition, tree: TreeHandle) {
       superclasses: (v: NonNullable<T.ClassDefinition['_superclasses']>) => wrapClassDefinition({ ...data, _superclasses: v }, tree),
       body: (v: NonNullable<T.ClassDefinition['_body']>) => wrapClassDefinition({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -407,7 +407,7 @@ export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle) {
       dottedName: (v: NonNullable<T.ClassPattern['_dotted_name']>) => wrapClassPattern({ ...data, _dotted_name: v }, tree),
       arguments: (...v: NonNullable<T.ClassPattern['_arguments']>[number][]) => wrapClassPattern({ ...data, _arguments: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -426,7 +426,7 @@ export function wrapComparisonOperator(data: T.ComparisonOperator, tree: TreeHan
       operators: (v: NonNullable<T.ComparisonOperator['_operators']>) => wrapComparisonOperator({ ...data, _operators: v }, tree),
       children: (...items: NonEmptyArray<T.PrimaryExpression>) => wrapComparisonOperator({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -445,7 +445,7 @@ export function wrapComplexPattern(data: T.ComplexPattern, tree: TreeHandle) {
       imaginary: (v: NonNullable<T.ComplexPattern['_imaginary']>) => wrapComplexPattern({ ...data, _imaginary: v }, tree),
       children: (...items: readonly [((T.Integer | T.Float))]) => wrapComplexPattern({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -456,7 +456,7 @@ export function wrapConcatenatedString(data: T.ConcatenatedString, tree: TreeHan
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.String>) => wrapConcatenatedString({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -476,7 +476,7 @@ export function wrapConditionalExpression(data: T.ConditionalExpression, tree: T
       condition: (v: NonNullable<T.ConditionalExpression['_condition']>) => wrapConditionalExpression({ ...data, _condition: v }, tree),
       alternative: (v: NonNullable<T.ConditionalExpression['_alternative']>) => wrapConditionalExpression({ ...data, _alternative: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -493,7 +493,7 @@ export function wrapConstrainedType(data: T.ConstrainedType, tree: TreeHandle) {
       baseType: (v: NonNullable<T.ConstrainedType['_base_type']>) => wrapConstrainedType({ ...data, _base_type: v }, tree),
       constraint: (v: NonNullable<T.ConstrainedType['_constraint']>) => wrapConstrainedType({ ...data, _constraint: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -509,7 +509,7 @@ export function wrapDecoratedDefinition(data: T.DecoratedDefinition, tree: TreeH
       definition: (v: NonNullable<T.DecoratedDefinition['_definition']>) => wrapDecoratedDefinition({ ...data, _definition: v }, tree),
       children: (...items: NonEmptyArray<T.Decorator>) => wrapDecoratedDefinition({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -526,7 +526,7 @@ export function wrapDecorator(data: T.Decorator, tree: TreeHandle) {
       expression: (v: NonNullable<T.Decorator['_expression']>) => wrapDecorator({ ...data, _expression: v }, tree),
       newline: (v: NonNullable<T.Decorator['_newline']>) => wrapDecorator({ ...data, _newline: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -543,7 +543,7 @@ export function wrapDefaultParameter(data: T.DefaultParameter, tree: TreeHandle)
       name: (v: NonNullable<T.DefaultParameter['_name']>) => wrapDefaultParameter({ ...data, _name: v }, tree),
       value: (v: NonNullable<T.DefaultParameter['_value']>) => wrapDefaultParameter({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -554,7 +554,7 @@ export function wrapDeleteStatement(data: T.DeleteStatement, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: T.Expressions) => wrapDeleteStatement({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -565,7 +565,7 @@ export function wrapDictPattern(data: T.DictPattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.DictPatternKv[]) => wrapDictPattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -576,7 +576,7 @@ export function wrapDictionary(data: T.Dictionary, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.Pair | T.DictionarySplat))[]) => wrapDictionary({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -592,7 +592,7 @@ export function wrapDictionaryComprehension(data: T.DictionaryComprehension, tre
       body: (v: NonNullable<T.DictionaryComprehension['_body']>) => wrapDictionaryComprehension({ ...data, _body: v }, tree),
       children: (...items: readonly [T.ComprehensionClauses]) => wrapDictionaryComprehension({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -606,7 +606,7 @@ export function wrapDictionarySplat(data: T.DictionarySplat, tree: TreeHandle) {
     $with: {
       expression: (v: NonNullable<T.DictionarySplat['_expression']>) => wrapDictionarySplat({ ...data, _expression: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -617,7 +617,7 @@ export function wrapDictionarySplatPattern(data: T.DictionarySplatPattern, tree:
     $children: data.$children,
 
     $with: { $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => wrapDictionarySplatPattern({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -628,7 +628,7 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapDottedName({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -645,7 +645,7 @@ export function wrapElifClause(data: T.ElifClause, tree: TreeHandle) {
       condition: (v: NonNullable<T.ElifClause['_condition']>) => wrapElifClause({ ...data, _condition: v }, tree),
       consequence: (v: NonNullable<T.ElifClause['_consequence']>) => wrapElifClause({ ...data, _consequence: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -659,7 +659,7 @@ export function wrapElseClause(data: T.ElseClause, tree: TreeHandle) {
     $with: {
       body: (v: NonNullable<T.ElseClause['_body']>) => wrapElseClause({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -678,7 +678,7 @@ export function wrapExceptClause(data: T.ExceptClause, tree: TreeHandle) {
       alias: (v: NonNullable<T.ExceptClause['_alias']>) => wrapExceptClause({ ...data, _alias: v }, tree),
       children: (...items: readonly [T.Suite]) => wrapExceptClause({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -695,7 +695,7 @@ export function wrapExecStatement(data: T.ExecStatement, tree: TreeHandle) {
       code: (v: NonNullable<T.ExecStatement['_code']>) => wrapExecStatement({ ...data, _code: v }, tree),
       inClauses: (...v: NonEmptyArray<NonNullable<T.ExecStatement['_in_clause']>[number]>) => wrapExecStatement({ ...data, _in_clause: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -706,7 +706,7 @@ export function wrapExpressionList(data: T.ExpressionList, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapExpressionList({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -716,7 +716,7 @@ export function wrapExpressionStatementTuple(data: T.ExpressionStatementTuple, t
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Expression>) => wrapExpressionStatementTuple({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -729,7 +729,7 @@ export function wrapExpressionStatement(data: T.ExpressionStatement, tree: TreeH
     $with: {
       children: (...items: readonly [((T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield))]) => wrapExpressionStatement({ ...(data as any), $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -743,7 +743,7 @@ export function wrapFinallyClause(data: T.FinallyClause, tree: TreeHandle) {
     $with: {
       block: (v: NonNullable<T.FinallyClause['_block']>) => wrapFinallyClause({ ...data, _block: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -763,7 +763,7 @@ export function wrapForInClause(data: T.ForInClause, tree: TreeHandle) {
       left: (v: NonNullable<T.ForInClause['_left']>) => wrapForInClause({ ...data, _left: v }, tree),
       rights: (...v: NonEmptyArray<NonNullable<T.ForInClause['_right']>[number]>) => wrapForInClause({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -789,7 +789,7 @@ export function wrapForStatement(data: T.ForStatement, tree: TreeHandle) {
       body: (v: NonNullable<T.ForStatement['_body']>) => wrapForStatement({ ...data, _body: v }, tree),
       alternative: (v: NonNullable<T.ForStatement['_alternative']>) => wrapForStatement({ ...data, _alternative: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -800,7 +800,7 @@ export function wrapFormatSpecifier(data: T.FormatSpecifier, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Interpolation[]) => wrapFormatSpecifier({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -829,7 +829,7 @@ export function wrapFunctionDefinition(data: T.FunctionDefinition, tree: TreeHan
       returnType: (v: NonNullable<T.FunctionDefinition['_return_type']>) => wrapFunctionDefinition({ ...data, _return_type: v }, tree),
       body: (v: NonNullable<T.FunctionDefinition['_body']>) => wrapFunctionDefinition({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -843,7 +843,7 @@ export function wrapFutureImportStatement(data: T.FutureImportStatement, tree: T
     $with: {
       names: (...v: NonEmptyArray<NonNullable<T.FutureImportStatement['_name']>[number]>) => wrapFutureImportStatement({ ...data, _name: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -859,7 +859,7 @@ export function wrapGeneratorExpression(data: T.GeneratorExpression, tree: TreeH
       body: (v: NonNullable<T.GeneratorExpression['_body']>) => wrapGeneratorExpression({ ...data, _body: v }, tree),
       children: (...items: readonly [T.ComprehensionClauses]) => wrapGeneratorExpression({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -876,7 +876,7 @@ export function wrapGenericType(data: T.GenericType, tree: TreeHandle) {
       identifier: (v: NonNullable<T.GenericType['_identifier']>) => wrapGenericType({ ...data, _identifier: v }, tree),
       typeParameter: (v: NonNullable<T.GenericType['_type_parameter']>) => wrapGenericType({ ...data, _type_parameter: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -887,7 +887,7 @@ export function wrapGlobalStatement(data: T.GlobalStatement, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapGlobalStatement({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -901,7 +901,7 @@ export function wrapIfClause(data: T.IfClause, tree: TreeHandle) {
     $with: {
       expression: (v: NonNullable<T.IfClause['_expression']>) => wrapIfClause({ ...data, _expression: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -921,7 +921,7 @@ export function wrapIfStatement(data: T.IfStatement, tree: TreeHandle) {
       consequence: (v: NonNullable<T.IfStatement['_consequence']>) => wrapIfStatement({ ...data, _consequence: v }, tree),
       alternatives: (...v: NonNullable<T.IfStatement['_alternative']>[number][]) => wrapIfStatement({ ...data, _alternative: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -937,7 +937,7 @@ export function wrapImportFromStatement(data: T.ImportFromStatement, tree: TreeH
       moduleName: (v: NonNullable<T.ImportFromStatement['_module_name']>) => wrapImportFromStatement({ ...data, _module_name: v }, tree),
       children: (...items: NonEmptyArray<(T.WildcardImport | T.DottedName | T.AliasedImport)>) => wrapImportFromStatement({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -951,7 +951,7 @@ export function wrapImportStatement(data: T.ImportStatement, tree: TreeHandle) {
     $with: {
       names: (...v: NonEmptyArray<NonNullable<T.ImportStatement['_name']>[number]>) => wrapImportStatement({ ...data, _name: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -971,7 +971,7 @@ export function wrapInterpolation(data: T.Interpolation, tree: TreeHandle) {
       typeConversion: (v: NonNullable<T.Interpolation['_type_conversion']>) => wrapInterpolation({ ...data, _type_conversion: v }, tree),
       formatSpecifier: (v: NonNullable<T.Interpolation['_format_specifier']>) => wrapInterpolation({ ...data, _format_specifier: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -988,7 +988,7 @@ export function wrapKeywordArgument(data: T.KeywordArgument, tree: TreeHandle) {
       name: (v: NonNullable<T.KeywordArgument['_name']>) => wrapKeywordArgument({ ...data, _name: v }, tree),
       value: (v: NonNullable<T.KeywordArgument['_value']>) => wrapKeywordArgument({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1005,7 +1005,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle) {
       identifier: (v: NonNullable<T.KeywordPattern['_identifier']>) => wrapKeywordPattern({ ...data, _identifier: v }, tree),
       simplePattern: (v: NonNullable<T.KeywordPattern['_simple_pattern']>) => wrapKeywordPattern({ ...data, _simple_pattern: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1022,7 +1022,7 @@ export function wrapLambda(data: T.Lambda, tree: TreeHandle) {
       parameters: (v: NonNullable<T.Lambda['_parameters']>) => wrapLambda({ ...data, _parameters: v }, tree),
       body: (v: NonNullable<T.Lambda['_body']>) => wrapLambda({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1033,7 +1033,7 @@ export function wrapLambdaParameters(data: T.LambdaParameters, tree: TreeHandle)
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Parameter>) => wrapLambdaParameters({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1050,7 +1050,7 @@ export function wrapLambdaWithinForInClause(data: T.LambdaWithinForInClause, tre
       parameters: (v: NonNullable<T.LambdaWithinForInClause['_parameters']>) => wrapLambdaWithinForInClause({ ...data, _parameters: v }, tree),
       body: (v: NonNullable<T.LambdaWithinForInClause['_body']>) => wrapLambdaWithinForInClause({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1061,7 +1061,7 @@ export function wrapList(data: T.List, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapList({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1077,7 +1077,7 @@ export function wrapListComprehension(data: T.ListComprehension, tree: TreeHandl
       body: (v: NonNullable<T.ListComprehension['_body']>) => wrapListComprehension({ ...data, _body: v }, tree),
       children: (...items: readonly [T.ComprehensionClauses]) => wrapListComprehension({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1088,7 +1088,7 @@ export function wrapListPattern(data: T.ListPattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Pattern[]) => wrapListPattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1102,7 +1102,7 @@ export function wrapListSplat(data: T.ListSplat, tree: TreeHandle) {
     $with: {
       expression: (v: NonNullable<T.ListSplat['_expression']>) => wrapListSplat({ ...data, _expression: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1113,7 +1113,7 @@ export function wrapListSplatPattern(data: T.ListSplatPattern, tree: TreeHandle)
     $children: data.$children,
 
     $with: { $child: (v: (T.Identifier | T.KeywordIdentifier | T.Subscript | T.Attribute)) => wrapListSplatPattern({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1130,7 +1130,7 @@ export function wrapMatchStatement(data: T.MatchStatement, tree: TreeHandle) {
       subjects: (...v: NonEmptyArray<NonNullable<T.MatchStatement['_subject']>[number]>) => wrapMatchStatement({ ...data, _subject: v }, tree),
       body: (v: NonNullable<T.MatchStatement['_body']>) => wrapMatchStatement({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1147,7 +1147,7 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle) {
       baseType: (v: NonNullable<T.MemberType['_base_type']>) => wrapMemberType({ ...data, _base_type: v }, tree),
       identifier: (v: NonNullable<T.MemberType['_identifier']>) => wrapMemberType({ ...data, _identifier: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1158,7 +1158,7 @@ export function wrapModule(data: T.Module, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Statement[]) => wrapModule({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1175,7 +1175,7 @@ export function wrapNamedExpression(data: T.NamedExpression, tree: TreeHandle) {
       name: (v: NonNullable<T.NamedExpression['_name']>) => wrapNamedExpression({ ...data, _name: v }, tree),
       value: (v: NonNullable<T.NamedExpression['_value']>) => wrapNamedExpression({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1186,7 +1186,7 @@ export function wrapNonlocalStatement(data: T.NonlocalStatement, tree: TreeHandl
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Identifier>) => wrapNonlocalStatement({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1200,7 +1200,7 @@ export function wrapNotOperator(data: T.NotOperator, tree: TreeHandle) {
     $with: {
       argument: (v: NonNullable<T.NotOperator['_argument']>) => wrapNotOperator({ ...data, _argument: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1217,7 +1217,7 @@ export function wrapPair(data: T.Pair, tree: TreeHandle) {
       key: (v: NonNullable<T.Pair['_key']>) => wrapPair({ ...data, _key: v }, tree),
       value: (v: NonNullable<T.Pair['_value']>) => wrapPair({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1228,7 +1228,7 @@ export function wrapParameters(data: T.Parameters, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Parameter[]) => wrapParameters({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1239,7 +1239,7 @@ export function wrapParenthesizedExpression(data: T.ParenthesizedExpression, tre
     $children: data.$children,
 
     $with: { $child: (v: (T.Expression | T.Yield)) => wrapParenthesizedExpression({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1250,7 +1250,7 @@ export function wrapParenthesizedListSplat(data: T.ParenthesizedListSplat, tree:
     $children: data.$children,
 
     $with: { $child: (v: (T.ParenthesizedListSplat | T.ListSplat)) => wrapParenthesizedListSplat({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1261,7 +1261,7 @@ export function wrapPatternList(data: T.PatternList, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Pattern>) => wrapPatternList({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1277,7 +1277,7 @@ export function wrapPrintStatement(data: T.PrintStatement, tree: TreeHandle) {
       arguments: (...v: NonNullable<T.PrintStatement['_argument']>[number][]) => wrapPrintStatement({ ...data, _argument: v }, tree),
       children: (...items: readonly [T.Chevron]) => wrapPrintStatement({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1293,7 +1293,7 @@ export function wrapRaiseStatement(data: T.RaiseStatement, tree: TreeHandle) {
       cause: (v: NonNullable<T.RaiseStatement['_cause']>) => wrapRaiseStatement({ ...data, _cause: v }, tree),
       children: (...items: readonly [T.Expressions]) => wrapRaiseStatement({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1310,7 +1310,7 @@ export function wrapRelativeImport(data: T.RelativeImport, tree: TreeHandle) {
       importPrefix: (v: NonNullable<T.RelativeImport['_import_prefix']>) => wrapRelativeImport({ ...data, _import_prefix: v }, tree),
       dottedName: (v: NonNullable<T.RelativeImport['_dotted_name']>) => wrapRelativeImport({ ...data, _dotted_name: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1321,7 +1321,7 @@ export function wrapReturnStatement(data: T.ReturnStatement, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: T.Expressions) => wrapReturnStatement({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1332,7 +1332,7 @@ export function wrapSet(data: T.Set, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<(T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat)>) => wrapSet({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1348,7 +1348,7 @@ export function wrapSetComprehension(data: T.SetComprehension, tree: TreeHandle)
       body: (v: NonNullable<T.SetComprehension['_body']>) => wrapSetComprehension({ ...data, _body: v }, tree),
       children: (...items: readonly [T.ComprehensionClauses]) => wrapSetComprehension({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1368,7 +1368,7 @@ export function wrapSlice(data: T.Slice, tree: TreeHandle) {
       stop: (v: NonNullable<T.Slice['_stop']>) => wrapSlice({ ...data, _stop: v }, tree),
       step: (v: NonNullable<T.Slice['_step']>) => wrapSlice({ ...data, _step: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1382,7 +1382,7 @@ export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle) {
     $with: {
       identifier: (v: NonNullable<T.SplatPattern['_identifier']>) => wrapSplatPattern({ ...data, _identifier: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1396,7 +1396,7 @@ export function wrapSplatType(data: T.SplatType, tree: TreeHandle) {
     $with: {
       identifier: (v: NonNullable<T.SplatType['_identifier']>) => wrapSplatType({ ...data, _identifier: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1416,7 +1416,7 @@ export function wrapString(data: T.String, tree: TreeHandle) {
       contents: (...v: NonNullable<T.String['_content']>[number][]) => wrapString({ ...data, _content: v }, tree),
       stringEnd: (v: NonNullable<T.String['_string_end']>) => wrapString({ ...data, _string_end: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1427,7 +1427,7 @@ export function wrapStringContent(data: T.StringContent, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<(T.EscapeInterpolation | T.EscapeSequence | "\\" | T._StringContent)>) => wrapStringContent({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1444,7 +1444,7 @@ export function wrapSubscript(data: T.Subscript, tree: TreeHandle) {
       value: (v: NonNullable<T.Subscript['_value']>) => wrapSubscript({ ...data, _value: v }, tree),
       subscripts: (...v: NonEmptyArray<NonNullable<T.Subscript['_subscript']>[number]>) => wrapSubscript({ ...data, _subscript: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1467,7 +1467,7 @@ export function wrapTryStatement(data: T.TryStatement, tree: TreeHandle) {
       elseClause: (v: NonNullable<T.TryStatement['_else_clause']>) => wrapTryStatement({ ...data, _else_clause: v }, tree),
       finallyClause: (v: NonNullable<T.TryStatement['_finally_clause']>) => wrapTryStatement({ ...data, _finally_clause: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1478,7 +1478,7 @@ export function wrapTuple(data: T.Tuple, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: ((T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat))[]) => wrapTuple({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1489,7 +1489,7 @@ export function wrapTuplePattern(data: T.TuplePattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: T.Pattern[]) => wrapTuplePattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1500,7 +1500,7 @@ export function wrapType(data: T.Type, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: (T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType)) => wrapType({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1520,7 +1520,7 @@ export function wrapTypeAliasStatement(data: T.TypeAliasStatement, tree: TreeHan
       left: (v: NonNullable<T.TypeAliasStatement['_left']>) => wrapTypeAliasStatement({ ...data, _left: v }, tree),
       right: (v: NonNullable<T.TypeAliasStatement['_right']>) => wrapTypeAliasStatement({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1531,7 +1531,7 @@ export function wrapTypeParameter(data: T.TypeParameter, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.Type>) => wrapTypeParameter({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1551,7 +1551,7 @@ export function wrapTypedDefaultParameter(data: T.TypedDefaultParameter, tree: T
       type: (v: NonNullable<T.TypedDefaultParameter['_type']>) => wrapTypedDefaultParameter({ ...data, _type: v }, tree),
       value: (v: NonNullable<T.TypedDefaultParameter['_value']>) => wrapTypedDefaultParameter({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1567,7 +1567,7 @@ export function wrapTypedParameter(data: T.TypedParameter, tree: TreeHandle) {
       type: (v: NonNullable<T.TypedParameter['_type']>) => wrapTypedParameter({ ...data, _type: v }, tree),
       children: (...items: readonly [((T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern))]) => wrapTypedParameter({ ...data, $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1584,7 +1584,7 @@ export function wrapUnaryOperator(data: T.UnaryOperator, tree: TreeHandle) {
       operator: (v: NonNullable<T.UnaryOperator['_operator']>) => wrapUnaryOperator({ ...data, _operator: v }, tree),
       argument: (v: NonNullable<T.UnaryOperator['_argument']>) => wrapUnaryOperator({ ...data, _argument: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1595,7 +1595,7 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.SimplePattern>) => wrapUnionPattern({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1612,7 +1612,7 @@ export function wrapUnionType(data: T.UnionType, tree: TreeHandle) {
       left: (v: NonNullable<T.UnionType['_left']>) => wrapUnionType({ ...data, _left: v }, tree),
       right: (v: NonNullable<T.UnionType['_right']>) => wrapUnionType({ ...data, _right: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1632,7 +1632,7 @@ export function wrapWhileStatement(data: T.WhileStatement, tree: TreeHandle) {
       body: (v: NonNullable<T.WhileStatement['_body']>) => wrapWhileStatement({ ...data, _body: v }, tree),
       alternative: (v: NonNullable<T.WhileStatement['_alternative']>) => wrapWhileStatement({ ...data, _alternative: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1642,7 +1642,7 @@ export function wrapWithClauseBare(data: T.WithClauseBare, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrapWithClauseBare({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1652,7 +1652,7 @@ export function wrapWithClauseParen(data: T.WithClauseParen, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $children: (...vs: NonEmptyArray<T.WithItem>) => wrapWithClauseParen({ ...data, $children: vs }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1665,7 +1665,7 @@ export function wrapWithClause(data: T.WithClause, tree: TreeHandle) {
     $with: {
       children: (...items: readonly [((T.WithClauseBare | T._WithClauseParen))]) => wrapWithClause({ ...(data as any), $children: items }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1679,7 +1679,7 @@ export function wrapWithItem(data: T.WithItem, tree: TreeHandle) {
     $with: {
       value: (v: NonNullable<T.WithItem['_value']>) => wrapWithItem({ ...data, _value: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1699,7 +1699,7 @@ export function wrapWithStatement(data: T.WithStatement, tree: TreeHandle) {
       withClause: (v: NonNullable<T.WithStatement['_with_clause']>) => wrapWithStatement({ ...data, _with_clause: v }, tree),
       body: (v: NonNullable<T.WithStatement['_body']>) => wrapWithStatement({ ...data, _body: v }, tree),
     },
-  });
+  }, methodsEngine);
   return _node;
 }
 
@@ -1710,7 +1710,7 @@ export function wrapYield(data: T.Yield, tree: TreeHandle) {
     $children: data.$children,
 
     $with: { $child: (v: (T.Expression | T.Expressions)) => wrapYield({ ...data, $children: [v] }, tree) },
-  });
+  }, methodsEngine);
   return _node;
 }
 

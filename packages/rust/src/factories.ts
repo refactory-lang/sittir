@@ -3,7 +3,7 @@
 import type * as T from './types.js';
 import { TSKindId, kindIdFromName } from './types.js';
 import type { AnyNodeData, ConfigOf, FluentNode, NonEmptyArray } from '@sittir/types';
-import { coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage, withMethods } from './utils.js';
+import { withMethods, methodsEngine, coerceBitflagStorage, coerceBooleanKeywordStorage, coerceKindEnumStorage } from './utils.js';
 
 function _configChildren<T>(config: unknown, fallback: T): T {
   if (config === null || config === undefined || typeof config !== 'object') return fallback;
@@ -44,7 +44,7 @@ export function _arrayExpressionList(config: T.ArrayExpressionList.Config) {
       elements: (...values: T.Expression[]) => _arrayExpressionList({ ...config, elements: values }),
       children: (...items: T.AttributeItem[]) => _arrayExpressionList({ ...config, children: items } as unknown as Parameters<typeof _arrayExpressionList>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
@@ -66,7 +66,7 @@ export function _arrayExpressionSemi(config: T.ArrayExpressionSemi.Config) {
       elements: (value: T.Expression) => _arrayExpressionSemi({ ...config, elements: value }),
       length: (value: T.Expression) => _arrayExpressionSemi({ ...config, length: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config) {
@@ -84,7 +84,7 @@ export function _closureExpressionBlock(config: T.ClosureExpressionBlock.Config)
       returnType: (value?: T._Type) => _closureExpressionBlock({ ...config, returnType: value }),
       body: (value: T.Block) => _closureExpressionBlock({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config) {
@@ -98,7 +98,7 @@ export function _closureExpressionExpr(config: T._ClosureExpressionExpr.Config) 
     $with: {
       body: (value: T.Expression | "_") => _closureExpressionExpr({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _delimTokenTreeBrace(...children: T.DelimTokens[]) {
@@ -109,7 +109,7 @@ export function _delimTokenTreeBrace(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _delimTokenTreeBracket(...children: T.DelimTokens[]) {
@@ -120,7 +120,7 @@ export function _delimTokenTreeBracket(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
@@ -131,7 +131,7 @@ export function _delimTokenTreeParen(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => _delimTokenTreeParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
@@ -143,7 +143,7 @@ export function _expressionStatementBlockEnding(child: T.ExpressionEndingWithBlo
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.ExpressionEndingWithBlock) => _expressionStatementBlockEnding(v) },
-  });
+  }, methodsEngine);
 }
 
 export function _expressionStatementWithSemi(child: T.Expression) {
@@ -155,7 +155,7 @@ export function _expressionStatementWithSemi(child: T.Expression) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Expression) => _expressionStatementWithSemi(v) },
-  });
+  }, methodsEngine);
 }
 
 export function fieldIdentifier(child: T.Identifier) {
@@ -167,7 +167,7 @@ export function fieldIdentifier(child: T.Identifier) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Identifier) => fieldIdentifier(v) },
-  });
+  }, methodsEngine);
 }
 
 export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
@@ -185,7 +185,7 @@ export function _fieldPatternNamed(config: T.FieldPatternNamed.Config) {
       name: (value: T.FieldIdentifier) => _fieldPatternNamed({ ...config, name: value }),
       pattern: (value: T.Pattern) => _fieldPatternNamed({ ...config, pattern: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _fieldPatternShorthand(config: T._FieldPatternShorthand.Config) {
@@ -199,7 +199,7 @@ export function _fieldPatternShorthand(config: T._FieldPatternShorthand.Config) 
     $with: {
       name: (value: T.Identifier) => _fieldPatternShorthand({ ...config, name: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _foreignModItemBody(config: T._ForeignModItemBody.Config) {
@@ -213,7 +213,7 @@ export function _foreignModItemBody(config: T._ForeignModItemBody.Config) {
     $with: {
       body: (value: T.DeclarationList) => _foreignModItemBody({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function functionTypeFnForm(config?: T.FunctionTypeFnForm.Config) {
@@ -228,7 +228,7 @@ export function functionTypeFnForm(config?: T.FunctionTypeFnForm.Config) {
     $with: {
       children: (...items: readonly [T.FunctionModifiers]) => functionTypeFnForm({ ..._config, children: items } as unknown as Parameters<typeof functionTypeFnForm>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
@@ -242,7 +242,7 @@ export function functionTypeTraitForm(config: T.FunctionTypeTraitForm.Config) {
     $with: {
       trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => functionTypeTraitForm({ ...config, trait: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _implItemBody(config: T._ImplItemBody.Config) {
@@ -256,7 +256,7 @@ export function _implItemBody(config: T._ImplItemBody.Config) {
     $with: {
       body: (value: T.DeclarationList) => _implItemBody({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
@@ -268,7 +268,7 @@ export function letChain(child: (T.LetChain | T.LetCondition | T.Expression)) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: (T.LetChain | T.LetCondition | T.Expression)) => letChain(v) },
-  });
+  }, methodsEngine);
 }
 
 export function lineCommentContent(text: string) {
@@ -278,7 +278,7 @@ export function lineCommentContent(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
@@ -292,7 +292,7 @@ export function _lineCommentDoc(config: T.LineCommentDoc.Config) {
     $with: {
       doc: (value: T.LineDocContent) => _lineCommentDoc({ ...config, doc: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function lineCommentRegularDslash(text: string) {
@@ -302,7 +302,7 @@ export function lineCommentRegularDslash(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function _macroDefinitionBrace(config?: T._MacroDefinitionBrace.Config) {
@@ -317,7 +317,7 @@ export function _macroDefinitionBrace(config?: T._MacroDefinitionBrace.Config) {
     $with: {
       children: (...items: T.MacroRule[]) => _macroDefinitionBrace({ ..._config, children: items } as unknown as Parameters<typeof _macroDefinitionBrace>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _macroDefinitionBracket(config?: T._MacroDefinitionBracket.Config) {
@@ -332,7 +332,7 @@ export function _macroDefinitionBracket(config?: T._MacroDefinitionBracket.Confi
     $with: {
       children: (...items: T.MacroRule[]) => _macroDefinitionBracket({ ..._config, children: items } as unknown as Parameters<typeof _macroDefinitionBracket>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _macroDefinitionParen(config?: T._MacroDefinitionParen.Config) {
@@ -347,7 +347,7 @@ export function _macroDefinitionParen(config?: T._MacroDefinitionParen.Config) {
     $with: {
       children: (...items: T.MacroRule[]) => _macroDefinitionParen({ ..._config, children: items } as unknown as Parameters<typeof _macroDefinitionParen>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Config) {
@@ -361,7 +361,7 @@ export function _matchArmBlockEnding(config: T._MatchArmBlockEnding.Config) {
     $with: {
       value: (value: T.ExpressionEndingWithBlock) => _matchArmBlockEnding({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
@@ -375,7 +375,7 @@ export function _matchArmWithComma(config: T.MatchArmWithComma.Config) {
     $with: {
       value: (value: T.Expression) => _matchArmWithComma({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _modItemInline(config: T._ModItemInline.Config) {
@@ -389,7 +389,7 @@ export function _modItemInline(config: T._ModItemInline.Config) {
     $with: {
       body: (value: T.DeclarationList) => _modItemInline({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _orPatternBinary(config: T.OrPatternBinary.Config) {
@@ -407,7 +407,7 @@ export function _orPatternBinary(config: T.OrPatternBinary.Config) {
       left: (value: T.Pattern) => _orPatternBinary({ ...config, left: value }),
       right: (value: T.Pattern) => _orPatternBinary({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
@@ -421,7 +421,7 @@ export function _orPatternPrefix(config: T.OrPatternPrefix.Config) {
     $with: {
       right: (value: T.Pattern) => _orPatternPrefix({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _pointerTypeMut(_config?: T._PointerTypeMut.Config) {
@@ -434,7 +434,7 @@ export function _pointerTypeMut(_config?: T._PointerTypeMut.Config) {
     children() { return children; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangeExpressionBare(_config?: T._RangeExpressionBare.Config) {
@@ -447,7 +447,7 @@ export function _rangeExpressionBare(_config?: T._RangeExpressionBare.Config) {
     operator() { return _operator; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
@@ -469,7 +469,7 @@ export function _rangeExpressionBinary(config: T.RangeExpressionBinary.Config) {
       operator: (value: NonNullable<Parameters<typeof _rangeExpressionBinary>[0]>['operator']) => _rangeExpressionBinary({ ...config, operator: value }),
       end: (value: T.Expression) => _rangeExpressionBinary({ ...config, end: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config) {
@@ -486,7 +486,7 @@ export function _rangeExpressionPostfix(config: T.RangeExpressionPostfix.Config)
     $with: {
       start: (value: T.Expression) => _rangeExpressionPostfix({ ...config, start: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
@@ -503,7 +503,7 @@ export function _rangeExpressionPrefix(config: T.RangeExpressionPrefix.Config) {
     $with: {
       end: (value: T.Expression) => _rangeExpressionPrefix({ ...config, end: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.Config) {
@@ -517,7 +517,7 @@ export function _rangePatternLeftWithRight(config: T.RangePatternLeftWithRight.C
     $with: {
       right: (value: T.LiteralPattern | T.Path) => _rangePatternLeftWithRight({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
@@ -531,7 +531,7 @@ export function _rangePatternPrefix(config: T.RangePatternPrefix.Config) {
     $with: {
       right: (value: T.LiteralPattern | T.Path) => _rangePatternPrefix({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function referenceExpressionRawConst(text: string) {
@@ -541,7 +541,7 @@ export function referenceExpressionRawConst(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.Config) {
@@ -554,7 +554,7 @@ export function referenceExpressionRawMut(_config?: T.ReferenceExpressionRawMut.
     children() { return children; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function _structItemBrace(config: T.StructItemBrace.Config) {
@@ -572,7 +572,7 @@ export function _structItemBrace(config: T.StructItemBrace.Config) {
       body: (value: T.FieldDeclarationList) => _structItemBrace({ ...config, body: value }),
       children: (...items: readonly [T.WhereClause]) => _structItemBrace({ ...config, children: items } as unknown as Parameters<typeof _structItemBrace>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _structItemTuple(config: T.StructItemTuple.Config) {
@@ -590,7 +590,7 @@ export function _structItemTuple(config: T.StructItemTuple.Config) {
       body: (value: T.OrderedFieldDeclarationList) => _structItemTuple({ ...config, body: value }),
       children: (...items: readonly [T.WhereClause]) => _structItemTuple({ ...config, children: items } as unknown as Parameters<typeof _structItemTuple>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreeBrace(...children: T.Tokens[]) {
@@ -601,7 +601,7 @@ export function _tokenTreeBrace(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreeBracket(...children: T.Tokens[]) {
@@ -612,7 +612,7 @@ export function _tokenTreeBracket(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => _tokenTreeBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreeParen(...children: T.Tokens[]) {
@@ -623,7 +623,7 @@ export function _tokenTreeParen(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => _tokenTreeParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreePatternBrace(...children: T.TokenPattern[]) {
@@ -634,7 +634,7 @@ export function _tokenTreePatternBrace(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreePatternBracket(...children: T.TokenPattern[]) {
@@ -645,7 +645,7 @@ export function _tokenTreePatternBracket(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
@@ -656,7 +656,7 @@ export function _tokenTreePatternParen(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => _tokenTreePatternParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function typeIdentifier(child: T.Identifier) {
@@ -668,7 +668,7 @@ export function typeIdentifier(child: T.Identifier) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Identifier) => typeIdentifier(v) },
-  });
+  }, methodsEngine);
 }
 
 export function _visibilityModifierCrate(_config?: T._VisibilityModifierCrate.Config) {
@@ -681,7 +681,7 @@ export function _visibilityModifierCrate(_config?: T._VisibilityModifierCrate.Co
     children() { return children; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Config) {
@@ -698,7 +698,7 @@ export function _visibilityModifierInPath(config: T.VisibilityModifierInPath.Con
     $with: {
       children: (...items: readonly [T.Path]) => _visibilityModifierInPath({ ...config, children: items } as unknown as Parameters<typeof _visibilityModifierInPath>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config) {
@@ -716,7 +716,7 @@ export function _visibilityModifierPub(config?: T.VisibilityModifierPub.Config) 
     $with: {
       children: (...items: readonly [((T.Self | T.Super | T.Crate | T.VisibilityModifierInPath))]) => _visibilityModifierPub({ ..._config, children: items } as unknown as Parameters<typeof _visibilityModifierPub>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function abstractType(config: T.AbstractType.Config) {
@@ -734,7 +734,7 @@ export function abstractType(config: T.AbstractType.Config) {
       typeParameters: (value?: T.TypeParameters) => abstractType({ ...config, typeParameters: value }),
       trait: (value: T.TypeIdentifier | T.ScopedTypeIdentifier | T.RemovedTraitBound | T.GenericType | T.FunctionType | T.TupleType | T.BoundedType) => abstractType({ ...config, trait: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function arguments_(config: T.Arguments.Config) {
@@ -748,7 +748,7 @@ export function arguments_(config: T.Arguments.Config) {
     $with: {
       attributes: (...values: (T.AttributeItem | T.Expression)[]) => arguments_({ ...config, attributes: values }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function arrayExpression(config: ConfigOf<T.ArrayExpressionUFormSemi>): ReturnType<typeof arrayExpressionUFormSemi>;
@@ -777,7 +777,7 @@ export function arrayExpressionUFormSemi(config: Omit<ConfigOf<T.ArrayExpression
       elements: (value: T.Expression) => arrayExpressionUFormSemi({ ...config, elements: value } as Parameters<typeof arrayExpressionUFormSemi>[0]),
       length: (value: T.Expression) => arrayExpressionUFormSemi({ ...config, length: value } as Parameters<typeof arrayExpressionUFormSemi>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpressionUFormList>, '$variant'>) {
   const inner = _arrayExpressionList(config);
@@ -794,7 +794,7 @@ export function arrayExpressionUFormList(config: Omit<ConfigOf<T.ArrayExpression
       attributes: (...values: T.AttributeItem[]) => arrayExpressionUFormList({ ...config, attributes: values } as Parameters<typeof arrayExpressionUFormList>[0]),
       elements: (...values: T.Expression[]) => arrayExpressionUFormList({ ...config, elements: values } as Parameters<typeof arrayExpressionUFormList>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function arrayType(config: T.ArrayType.Config) {
@@ -812,7 +812,7 @@ export function arrayType(config: T.ArrayType.Config) {
       element: (value: T._Type) => arrayType({ ...config, element: value }),
       length: (value?: T.Expression) => arrayType({ ...config, length: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function assignmentExpression(config: T.AssignmentExpression.Config) {
@@ -830,7 +830,7 @@ export function assignmentExpression(config: T.AssignmentExpression.Config) {
       left: (value: T.Expression) => assignmentExpression({ ...config, left: value }),
       right: (value: T.Expression) => assignmentExpression({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function associatedType(config: T.AssociatedType.Config) {
@@ -856,7 +856,7 @@ export function associatedType(config: T.AssociatedType.Config) {
       bounds: (value?: T.TraitBounds) => associatedType({ ...config, bounds: value }),
       whereClause: (value?: T.WhereClause) => associatedType({ ...config, whereClause: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function asyncBlock(config: T.AsyncBlock.Config) {
@@ -874,7 +874,7 @@ export function asyncBlock(config: T.AsyncBlock.Config) {
       moveMarker: (value?: NonNullable<Parameters<typeof asyncBlock>[0]>['moveMarker']) => asyncBlock({ ...config, moveMarker: value }),
       block: (value: T.Block) => asyncBlock({ ...config, block: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function attribute(config: T.Attribute.Config) {
@@ -892,7 +892,7 @@ export function attribute(config: T.Attribute.Config) {
       path: (value: T.Path) => attribute({ ...config, path: value }),
       children: (...items: readonly [((T.Expression | T.DelimTokenTree))]) => attribute({ ...config, children: items } as unknown as Parameters<typeof attribute>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function attributeItem(attribute: T.AttributeItem.Config['attribute']) {
@@ -906,7 +906,7 @@ export function attributeItem(attribute: T.AttributeItem.Config['attribute']) {
     $with: {
       attribute: (value: T.AttributeItem.Config['attribute']) => attributeItem(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function awaitExpression(child: T.Expression) {
@@ -918,7 +918,7 @@ export function awaitExpression(child: T.Expression) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Expression) => awaitExpression(v) },
-  });
+  }, methodsEngine);
 }
 
 export function baseFieldInitializer(child: T.Expression) {
@@ -930,7 +930,7 @@ export function baseFieldInitializer(child: T.Expression) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Expression) => baseFieldInitializer(v) },
-  });
+  }, methodsEngine);
 }
 
 export function binaryExpression(config: T.BinaryExpression.Config) {
@@ -951,7 +951,7 @@ export function binaryExpression(config: T.BinaryExpression.Config) {
       left: (value: T.Expression) => binaryExpression({ ...config, left: value }),
       right: (value: T.Expression) => binaryExpression({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function block(config?: T.Block.Config) {
@@ -974,7 +974,7 @@ export function block(config?: T.Block.Config) {
       trailingExpression: (value?: T.Expression) => block({ ..._config, trailingExpression: value }),
       children: (...items: T.Statement[]) => block({ ..._config, children: items } as unknown as Parameters<typeof block>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function blockComment(config?: T.BlockComment.Config) {
@@ -993,7 +993,7 @@ export function blockComment(config?: T.BlockComment.Config) {
       doc: (value?: T.BlockCommentContent) => blockComment({ ..._config, doc: value }),
       children: (...items: readonly [((T.OuterBlockDocCommentMarker | T.InnerBlockDocCommentMarker))]) => blockComment({ ..._config, children: items } as unknown as Parameters<typeof blockComment>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function booleanLiteral(text: 'true' | 'false') {
@@ -1002,7 +1002,7 @@ export function booleanLiteral(text: 'true' | 'false') {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function boundedType(config: T.BoundedType.Config) {
@@ -1020,7 +1020,7 @@ export function boundedType(config: T.BoundedType.Config) {
       left: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, left: value }),
       right: (value: T.Lifetime | T._Type | T.UseBounds) => boundedType({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function bracketedType(child: (T._Type | T.QualifiedType)) {
@@ -1032,7 +1032,7 @@ export function bracketedType(child: (T._Type | T.QualifiedType)) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: (T._Type | T.QualifiedType)) => bracketedType(v) },
-  });
+  }, methodsEngine);
 }
 
 export function breakExpression(config?: T.BreakExpression.Config) {
@@ -1051,7 +1051,7 @@ export function breakExpression(config?: T.BreakExpression.Config) {
       label: (value?: T.Label) => breakExpression({ ..._config, label: value }),
       children: (...items: readonly [T.Expression]) => breakExpression({ ..._config, children: items } as unknown as Parameters<typeof breakExpression>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function callExpression(config: T.CallExpression.Config) {
@@ -1069,7 +1069,7 @@ export function callExpression(config: T.CallExpression.Config) {
       function: (value: T.ExpressionExceptRange) => callExpression({ ...config, function: value }),
       arguments: (value: T.Arguments) => callExpression({ ...config, arguments: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function capturedPattern(config: T.CapturedPattern.Config) {
@@ -1087,7 +1087,7 @@ export function capturedPattern(config: T.CapturedPattern.Config) {
       identifier: (value: T.Identifier) => capturedPattern({ ...config, identifier: value }),
       children: (...items: readonly [T.Pattern]) => capturedPattern({ ...config, children: items } as unknown as Parameters<typeof capturedPattern>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function charLiteral(text: string) {
@@ -1097,7 +1097,7 @@ export function charLiteral(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function closureExpressionExpr(body: T.ClosureExpressionExpr.Config['body']) {
@@ -1111,7 +1111,7 @@ export function closureExpressionExpr(body: T.ClosureExpressionExpr.Config['body
     $with: {
       body: (value: T.ClosureExpressionExpr.Config['body']) => closureExpressionExpr(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function closureExpression(config: ConfigOf<T.ClosureExpressionUFormBlock>): ReturnType<typeof closureExpressionUFormBlock>;
@@ -1154,7 +1154,7 @@ export function closureExpressionUFormBlock(config: Omit<ConfigOf<T.ClosureExpre
       returnType: (value?: T._Type) => closureExpressionUFormBlock({ ...config, returnType: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
       body: (value: T.Block) => closureExpressionUFormBlock({ ...config, body: value } as Parameters<typeof closureExpressionUFormBlock>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpressionUFormExpr>, '$variant'>) {
   const inner = _closureExpressionExpr(config);
@@ -1185,7 +1185,7 @@ export function closureExpressionUFormExpr(config: Omit<ConfigOf<T.ClosureExpres
       parameters: (value: T.ClosureParameters) => closureExpressionUFormExpr({ ...config, parameters: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
       body: (value: T.Expression | "_") => closureExpressionUFormExpr({ ...config, body: value } as Parameters<typeof closureExpressionUFormExpr>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
@@ -1196,7 +1196,7 @@ export function closureParameters(...children: (T.Pattern | T.Parameter)[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.Pattern | T.Parameter)[]) => closureParameters(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) {
@@ -1218,7 +1218,7 @@ export function compoundAssignmentExpr(config: T.CompoundAssignmentExpr.Config) 
       operator: (value: NonNullable<Parameters<typeof compoundAssignmentExpr>[0]>['operator']) => compoundAssignmentExpr({ ...config, operator: value }),
       right: (value: T.Expression) => compoundAssignmentExpr({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function constBlock(body: T.ConstBlock.Config['body']) {
@@ -1232,7 +1232,7 @@ export function constBlock(body: T.ConstBlock.Config['body']) {
     $with: {
       body: (value: T.ConstBlock.Config['body']) => constBlock(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function constItem(config: T.ConstItem.Config) {
@@ -1258,7 +1258,7 @@ export function constItem(config: T.ConstItem.Config) {
       type: (value: T._Type) => constItem({ ...config, type: value }),
       value: (value?: T.Expression) => constItem({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function constParameter(config: T.ConstParameter.Config) {
@@ -1280,7 +1280,7 @@ export function constParameter(config: T.ConstParameter.Config) {
       type: (value: T._Type) => constParameter({ ...config, type: value }),
       value: (value?: T.Block | T.Identifier | T.Literal | T.NegativeLiteral) => constParameter({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function continueExpression(label?: T.ContinueExpression.Config['label']) {
@@ -1294,7 +1294,7 @@ export function continueExpression(label?: T.ContinueExpression.Config['label'])
     $with: {
       label: (value?: T.ContinueExpression.Config['label']) => continueExpression(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function crate() {
@@ -1303,7 +1303,7 @@ export function crate() {
     $source: 2 as const,
     $named: true as const,
     $text: 'crate' as const,
-  });
+  }, methodsEngine);
 }
 
 export function declarationList(...children: T.DeclarationStatement[]) {
@@ -1314,7 +1314,7 @@ export function declarationList(...children: T.DeclarationStatement[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DeclarationStatement[]) => declarationList(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function delimTokenTreeParen(...children: T.DelimTokens[]) {
@@ -1325,7 +1325,7 @@ export function delimTokenTreeParen(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
@@ -1336,7 +1336,7 @@ export function delimTokenTreeBracket(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
@@ -1347,7 +1347,7 @@ export function delimTokenTreeBrace(...children: T.DelimTokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.DelimTokens[]) => delimTokenTreeBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function delimTokenTree(config: ConfigOf<T.DelimTokenTreeUFormParen>): ReturnType<typeof delimTokenTreeUFormParen>;
@@ -1371,7 +1371,7 @@ export function delimTokenTreeUFormParen(config?: Omit<ConfigOf<T.DelimTokenTree
     $variant: 'paren' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBracket>, '$variant'>) {
   const inner = _delimTokenTreeBracket(..._configChildren<Parameters<typeof _delimTokenTreeBracket>>(config, [] as unknown as Parameters<typeof _delimTokenTreeBracket>));
@@ -1383,7 +1383,7 @@ export function delimTokenTreeUFormBracket(config?: Omit<ConfigOf<T.DelimTokenTr
     $variant: 'bracket' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTreeUFormBrace>, '$variant'>) {
   const inner = _delimTokenTreeBrace(..._configChildren<Parameters<typeof _delimTokenTreeBrace>>(config, [] as unknown as Parameters<typeof _delimTokenTreeBrace>));
@@ -1395,7 +1395,7 @@ export function delimTokenTreeUFormBrace(config?: Omit<ConfigOf<T.DelimTokenTree
     $variant: 'brace' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function dynamicType(trait: T.DynamicType.Config['trait']) {
@@ -1409,7 +1409,7 @@ export function dynamicType(trait: T.DynamicType.Config['trait']) {
     $with: {
       trait: (value: T.DynamicType.Config['trait']) => dynamicType(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function elseClause(child: (T.Block | T.IfExpression)) {
@@ -1421,7 +1421,7 @@ export function elseClause(child: (T.Block | T.IfExpression)) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: (T.Block | T.IfExpression)) => elseClause(v) },
-  });
+  }, methodsEngine);
 }
 
 export function enumItem(config: T.EnumItem.Config) {
@@ -1451,7 +1451,7 @@ export function enumItem(config: T.EnumItem.Config) {
       whereClause: (value?: T.WhereClause) => enumItem({ ...config, whereClause: value }),
       body: (value: T.EnumVariantList) => enumItem({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function enumVariant(config: T.EnumVariant.Config) {
@@ -1477,7 +1477,7 @@ export function enumVariant(config: T.EnumVariant.Config) {
       body: (value?: T.FieldDeclarationList | T.OrderedFieldDeclarationList) => enumVariant({ ...config, body: value }),
       value: (value?: T.Expression) => enumVariant({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]) {
@@ -1488,7 +1488,7 @@ export function enumVariantList(...children: (T.AttributeItem | T.EnumVariant)[]
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.AttributeItem | T.EnumVariant)[]) => enumVariantList(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function escapeSequence(text: string) {
@@ -1498,7 +1498,7 @@ export function escapeSequence(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function expressionStatementWithSemi(child: T.Expression) {
@@ -1510,7 +1510,7 @@ export function expressionStatementWithSemi(child: T.Expression) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Expression) => expressionStatementWithSemi(v) },
-  });
+  }, methodsEngine);
 }
 
 export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBlock) {
@@ -1522,7 +1522,7 @@ export function expressionStatementBlockEnding(child: T.ExpressionEndingWithBloc
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.ExpressionEndingWithBlock) => expressionStatementBlockEnding(v) },
-  });
+  }, methodsEngine);
 }
 
 export function expressionStatement(config: ConfigOf<T.ExpressionStatementUFormWithSemi>): ReturnType<typeof expressionStatementUFormWithSemi>;
@@ -1545,7 +1545,7 @@ export function expressionStatementUFormWithSemi(config?: Omit<ConfigOf<T.Expres
     $variant: 'with_semi' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.ExpressionStatementUFormBlockEnding>, '$variant'>) {
   const _innerChildren = _configChildren<readonly [Parameters<typeof _expressionStatementBlockEnding>[0]] | []>(config, []);
@@ -1558,7 +1558,7 @@ export function expressionStatementUFormBlockEnding(config?: Omit<ConfigOf<T.Exp
     $variant: 'block_ending' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) {
@@ -1583,7 +1583,7 @@ export function externCrateDeclaration(config: T.ExternCrateDeclaration.Config) 
       name: (value: T.Identifier) => externCrateDeclaration({ ...config, name: value }),
       alias: (value?: T.Identifier) => externCrateDeclaration({ ...config, alias: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function externModifier(stringLiteral?: T.ExternModifier.Config['stringLiteral']) {
@@ -1597,7 +1597,7 @@ export function externModifier(stringLiteral?: T.ExternModifier.Config['stringLi
     $with: {
       stringLiteral: (value?: T.ExternModifier.Config['stringLiteral']) => externModifier(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fieldDeclaration(config: T.FieldDeclaration.Config) {
@@ -1619,7 +1619,7 @@ export function fieldDeclaration(config: T.FieldDeclaration.Config) {
       name: (value: T.FieldIdentifier) => fieldDeclaration({ ...config, name: value }),
       type: (value: T._Type) => fieldDeclaration({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDeclaration)[]) {
@@ -1630,7 +1630,7 @@ export function fieldDeclarationList(...children: (T.AttributeItem | T.FieldDecl
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.AttributeItem | T.FieldDeclaration)[]) => fieldDeclarationList(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function fieldExpression(config: T.FieldExpression.Config) {
@@ -1648,7 +1648,7 @@ export function fieldExpression(config: T.FieldExpression.Config) {
       value: (value: T.Expression) => fieldExpression({ ...config, value: value }),
       field: (value: T.FieldIdentifier | T.IntegerLiteral) => fieldExpression({ ...config, field: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fieldInitializer(config: T.FieldInitializer.Config) {
@@ -1670,7 +1670,7 @@ export function fieldInitializer(config: T.FieldInitializer.Config) {
       value: (value: T.Expression) => fieldInitializer({ ...config, value: value }),
       children: (...items: T.AttributeItem[]) => fieldInitializer({ ...config, children: items } as unknown as Parameters<typeof fieldInitializer>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fieldInitializerList(...children: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) {
@@ -1681,7 +1681,7 @@ export function fieldInitializerList(...children: (T.ShorthandFieldInitializer |
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer)[]) => fieldInitializerList(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function fieldPatternShorthand(name: T.FieldPatternShorthand.Config['name']) {
@@ -1695,7 +1695,7 @@ export function fieldPatternShorthand(name: T.FieldPatternShorthand.Config['name
     $with: {
       name: (value: T.FieldPatternShorthand.Config['name']) => fieldPatternShorthand(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fieldPattern(config: ConfigOf<T.FieldPatternUFormShorthand>): ReturnType<typeof fieldPatternUFormShorthand>;
@@ -1728,7 +1728,7 @@ export function fieldPatternUFormShorthand(config: Omit<ConfigOf<T.FieldPatternU
       mutableSpecifier: (value?: NonNullable<Parameters<typeof fieldPatternUFormShorthand>[0]>['mutableSpecifier']) => fieldPatternUFormShorthand({ ...config, mutableSpecifier: value } as Parameters<typeof fieldPatternUFormShorthand>[0]),
       name: (value: T.Identifier) => fieldPatternUFormShorthand({ ...config, name: value } as Parameters<typeof fieldPatternUFormShorthand>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUFormNamed>, '$variant'>) {
   const inner = _fieldPatternNamed(config);
@@ -1753,7 +1753,7 @@ export function fieldPatternUFormNamed(config: Omit<ConfigOf<T.FieldPatternUForm
       name: (value: T.FieldIdentifier) => fieldPatternUFormNamed({ ...config, name: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
       pattern: (value: T.Pattern) => fieldPatternUFormNamed({ ...config, pattern: value } as Parameters<typeof fieldPatternUFormNamed>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function forExpression(config: T.ForExpression.Config) {
@@ -1779,7 +1779,7 @@ export function forExpression(config: T.ForExpression.Config) {
       value: (value: T.Expression) => forExpression({ ...config, value: value }),
       body: (value: T.Block) => forExpression({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function forLifetimes(...children: T.Lifetime[]) {
@@ -1791,7 +1791,7 @@ export function forLifetimes(...children: T.Lifetime[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Lifetime[]) => forLifetimes(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function foreignModItemBody(body: T.ForeignModItemBody.Config['body']) {
@@ -1805,7 +1805,7 @@ export function foreignModItemBody(body: T.ForeignModItemBody.Config['body']) {
     $with: {
       body: (value: T.ForeignModItemBody.Config['body']) => foreignModItemBody(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function foreignModItem(config: ConfigOf<T.ForeignModItemUFormSemi>): ReturnType<typeof foreignModItemUFormSemi>;
@@ -1833,7 +1833,7 @@ export function foreignModItemUFormSemi(config: Omit<ConfigOf<T.ForeignModItemUF
       visibilityModifier: (value?: T.VisibilityModifier) => foreignModItemUFormSemi({ ...config, visibilityModifier: value }),
       externModifier: (value: T.ExternModifier) => foreignModItemUFormSemi({ ...config, externModifier: value }),
     },
-  });
+  }, methodsEngine);
 }
 export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUFormBody>, '$variant'>) {
   const inner = _foreignModItemBody(config);
@@ -1856,7 +1856,7 @@ export function foreignModItemUFormBody(config: Omit<ConfigOf<T.ForeignModItemUF
       externModifier: (value: T.ExternModifier) => foreignModItemUFormBody({ ...config, externModifier: value } as Parameters<typeof foreignModItemUFormBody>[0]),
       body: (value: T.DeclarationList) => foreignModItemUFormBody({ ...config, body: value } as Parameters<typeof foreignModItemUFormBody>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident' | 'item' | 'lifetime' | 'literal' | 'meta' | 'pat' | 'pat_param' | 'path' | 'stmt' | 'tt' | 'ty' | 'vis') {
@@ -1865,7 +1865,7 @@ export function fragmentSpecifier(text: 'block' | 'expr' | 'expr_2021' | 'ident'
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function functionItem(config: T.FunctionItem.Config) {
@@ -1907,7 +1907,7 @@ export function functionItem(config: T.FunctionItem.Config) {
       whereClause: (value?: T.WhereClause) => functionItem({ ...config, whereClause: value }),
       body: (value: T.Block) => functionItem({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function functionModifiers(config: T.FunctionModifiers.Config) {
@@ -1921,7 +1921,7 @@ export function functionModifiers(config: T.FunctionModifiers.Config) {
     $with: {
       modifiers: (...values: NonEmptyArray<"async" | "default" | "const" | "unsafe" | T.ExternModifier>) => functionModifiers({ ...config, modifier: values }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
@@ -1959,7 +1959,7 @@ export function functionSignatureItem(config: T.FunctionSignatureItem.Config) {
       returnType: (value?: T._Type) => functionSignatureItem({ ...config, returnType: value }),
       whereClause: (value?: T.WhereClause) => functionSignatureItem({ ...config, whereClause: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function functionType(config: T.FunctionType.Config) {
@@ -1985,7 +1985,7 @@ export function functionType(config: T.FunctionType.Config) {
       returnType: (value?: T._Type) => functionType({ ...config, returnType: value }),
       children: (...items: readonly [((T.FunctionTypeTraitForm | T.FunctionTypeFnForm))]) => functionType({ ...config, children: items } as unknown as Parameters<typeof functionType>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function genBlock(config: T.GenBlock.Config) {
@@ -2003,7 +2003,7 @@ export function genBlock(config: T.GenBlock.Config) {
       moveMarker: (value?: NonNullable<Parameters<typeof genBlock>[0]>['moveMarker']) => genBlock({ ...config, moveMarker: value }),
       block: (value: T.Block) => genBlock({ ...config, block: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function genericFunction(config: T.GenericFunction.Config) {
@@ -2021,7 +2021,7 @@ export function genericFunction(config: T.GenericFunction.Config) {
       function: (value: T.Identifier | T.ScopedIdentifier | T.FieldExpression) => genericFunction({ ...config, function: value }),
       typeArguments: (value: T.TypeArguments) => genericFunction({ ...config, typeArguments: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function genericPattern(config: T.GenericPattern.Config) {
@@ -2039,7 +2039,7 @@ export function genericPattern(config: T.GenericPattern.Config) {
       typeArguments: (value: T.TypeArguments) => genericPattern({ ...config, typeArguments: value }),
       children: (...items: readonly [((T.Identifier | T.ScopedIdentifier))]) => genericPattern({ ...config, children: items } as unknown as Parameters<typeof genericPattern>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function genericType(config: T.GenericType.Config) {
@@ -2057,7 +2057,7 @@ export function genericType(config: T.GenericType.Config) {
       type: (value: T.TypeIdentifier | T.ReservedIdentifier | T.ScopedTypeIdentifier) => genericType({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericType({ ...config, typeArguments: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Config) {
@@ -2078,7 +2078,7 @@ export function genericTypeWithTurbofish(config: T.GenericTypeWithTurbofish.Conf
       type: (value: T.TypeIdentifier | T.ScopedIdentifier) => genericTypeWithTurbofish({ ...config, type: value }),
       typeArguments: (value: T.TypeArguments) => genericTypeWithTurbofish({ ...config, typeArguments: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) {
@@ -2096,7 +2096,7 @@ export function higherRankedTraitBound(config: T.HigherRankedTraitBound.Config) 
       typeParameters: (value: T.TypeParameters) => higherRankedTraitBound({ ...config, typeParameters: value }),
       type: (value: T._Type) => higherRankedTraitBound({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function identifier(text: string) {
@@ -2106,7 +2106,7 @@ export function identifier(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function ifExpression(config: T.IfExpression.Config) {
@@ -2128,7 +2128,7 @@ export function ifExpression(config: T.IfExpression.Config) {
       consequence: (value: T.Block) => ifExpression({ ...config, consequence: value }),
       alternative: (value?: T.ElseClause) => ifExpression({ ...config, alternative: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function implItemBody(body: T.ImplItemBody.Config['body']) {
@@ -2142,7 +2142,7 @@ export function implItemBody(body: T.ImplItemBody.Config['body']) {
     $with: {
       body: (value: T.ImplItemBody.Config['body']) => implItemBody(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function implItem(config: ConfigOf<T.ImplItemUFormBody>): ReturnType<typeof implItemUFormBody>;
@@ -2191,7 +2191,7 @@ export function implItemUFormBody(config: Omit<ConfigOf<T.ImplItemUFormBody>, '$
       whereClause: (value?: T.WhereClause) => implItemUFormBody({ ...config, whereClause: value } as Parameters<typeof implItemUFormBody>[0]),
       body: (value: T.DeclarationList) => implItemUFormBody({ ...config, body: value } as Parameters<typeof implItemUFormBody>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$variant'>) {
   const _unsafe_marker = coerceBooleanKeywordStorage(config.unsafeMarker);
@@ -2225,7 +2225,7 @@ export function implItemUFormSemi(config: Omit<ConfigOf<T.ImplItemUFormSemi>, '$
       type: (value: T._Type) => implItemUFormSemi({ ...config, type: value }),
       whereClause: (value?: T.WhereClause) => implItemUFormSemi({ ...config, whereClause: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function indexExpression(config: T.IndexExpression.Config) {
@@ -2243,7 +2243,7 @@ export function indexExpression(config: T.IndexExpression.Config) {
       object: (value: T.Expression) => indexExpression({ ...config, object: value }),
       index: (value: T.Expression) => indexExpression({ ...config, index: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function innerAttributeItem(attribute: T.InnerAttributeItem.Config['attribute']) {
@@ -2257,7 +2257,7 @@ export function innerAttributeItem(attribute: T.InnerAttributeItem.Config['attri
     $with: {
       attribute: (value: T.InnerAttributeItem.Config['attribute']) => innerAttributeItem(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function integerLiteral(text: string) {
@@ -2267,7 +2267,7 @@ export function integerLiteral(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function label(identifier: T.Label.Config['identifier']) {
@@ -2281,7 +2281,7 @@ export function label(identifier: T.Label.Config['identifier']) {
     $with: {
       identifier: (value: T.Label.Config['identifier']) => label(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function lastMatchArm(config: T.LastMatchArm.Config) {
@@ -2303,7 +2303,7 @@ export function lastMatchArm(config: T.LastMatchArm.Config) {
       value: (value: T.Expression) => lastMatchArm({ ...config, value: value }),
       children: (...items: ((T.AttributeItem | T.InnerAttributeItem))[]) => lastMatchArm({ ...config, children: items } as unknown as Parameters<typeof lastMatchArm>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function letCondition(config: T.LetCondition.Config) {
@@ -2321,7 +2321,7 @@ export function letCondition(config: T.LetCondition.Config) {
       pattern: (value: T.Pattern) => letCondition({ ...config, pattern: value }),
       value: (value: T.Expression) => letCondition({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function letDeclaration(config: T.LetDeclaration.Config) {
@@ -2351,7 +2351,7 @@ export function letDeclaration(config: T.LetDeclaration.Config) {
       value: (value?: T.Expression) => letDeclaration({ ...config, value: value }),
       alternative: (value?: T.Block) => letDeclaration({ ...config, alternative: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function lifetime(identifier: T.Lifetime.Config['identifier']) {
@@ -2365,7 +2365,7 @@ export function lifetime(identifier: T.Lifetime.Config['identifier']) {
     $with: {
       identifier: (value: T.Lifetime.Config['identifier']) => lifetime(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function lifetimeParameter(config: T.LifetimeParameter.Config) {
@@ -2383,7 +2383,7 @@ export function lifetimeParameter(config: T.LifetimeParameter.Config) {
       name: (value: T.Lifetime) => lifetimeParameter({ ...config, name: value }),
       bounds: (value?: T.TraitBounds) => lifetimeParameter({ ...config, bounds: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function lineComment(config: ConfigOf<T.LineCommentUFormRegularDslash>): ReturnType<typeof lineCommentUFormRegularDslash>;
@@ -2409,7 +2409,7 @@ export function lineCommentUFormRegularDslash(config: Omit<ConfigOf<T.LineCommen
     $with: {
       children: (...items: readonly [T.LineCommentRegularDslash]) => lineCommentUFormRegularDslash({ ...config, children: items } as unknown as Parameters<typeof lineCommentUFormRegularDslash>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>, '$variant'>) {
   const inner = _lineCommentDoc(config);
@@ -2424,7 +2424,7 @@ export function lineCommentUFormDoc(config: Omit<ConfigOf<T.LineCommentUFormDoc>
     $with: {
       doc: (value: T.LineDocContent) => lineCommentUFormDoc({ ...config, doc: value } as Parameters<typeof lineCommentUFormDoc>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUFormContent>, '$variant'>) {
   const children = _configChildren<T.LineCommentUFormContent['$children']>(config, [] as unknown as T.LineCommentUFormContent['$children']);
@@ -2438,7 +2438,7 @@ export function lineCommentUFormContent(config: Omit<ConfigOf<T.LineCommentUForm
     $with: {
       children: (...items: readonly [T.LineCommentContent]) => lineCommentUFormContent({ ...config, children: items } as unknown as Parameters<typeof lineCommentUFormContent>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function loopExpression(config: T.LoopExpression.Config) {
@@ -2456,7 +2456,7 @@ export function loopExpression(config: T.LoopExpression.Config) {
       label: (value?: T.Label) => loopExpression({ ...config, label: value }),
       body: (value: T.Block) => loopExpression({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroDefinitionParen(config?: T.MacroDefinitionParen.Config) {
@@ -2471,7 +2471,7 @@ export function macroDefinitionParen(config?: T.MacroDefinitionParen.Config) {
     $with: {
       children: (...items: T.MacroRule[]) => macroDefinitionParen({ ..._config, children: items } as unknown as Parameters<typeof macroDefinitionParen>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroDefinitionBracket(config?: T.MacroDefinitionBracket.Config) {
@@ -2486,7 +2486,7 @@ export function macroDefinitionBracket(config?: T.MacroDefinitionBracket.Config)
     $with: {
       children: (...items: T.MacroRule[]) => macroDefinitionBracket({ ..._config, children: items } as unknown as Parameters<typeof macroDefinitionBracket>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroDefinitionBrace(config?: T.MacroDefinitionBrace.Config) {
@@ -2501,7 +2501,7 @@ export function macroDefinitionBrace(config?: T.MacroDefinitionBrace.Config) {
     $with: {
       children: (...items: T.MacroRule[]) => macroDefinitionBrace({ ..._config, children: items } as unknown as Parameters<typeof macroDefinitionBrace>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroDefinition(config: ConfigOf<T.MacroDefinitionUFormParen>): ReturnType<typeof macroDefinitionUFormParen>;
@@ -2530,7 +2530,7 @@ export function macroDefinitionUFormParen(config: Omit<ConfigOf<T.MacroDefinitio
     $with: {
       name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormParen({ ...config, name: value } as Parameters<typeof macroDefinitionUFormParen>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinitionUFormBracket>, '$variant'>) {
   const inner = _macroDefinitionBracket(..._configChildren<Parameters<typeof _macroDefinitionBracket>>(config, [] as unknown as Parameters<typeof _macroDefinitionBracket>));
@@ -2547,7 +2547,7 @@ export function macroDefinitionUFormBracket(config: Omit<ConfigOf<T.MacroDefinit
     $with: {
       name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormBracket({ ...config, name: value } as Parameters<typeof macroDefinitionUFormBracket>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitionUFormBrace>, '$variant'>) {
   const inner = _macroDefinitionBrace(..._configChildren<Parameters<typeof _macroDefinitionBrace>>(config, [] as unknown as Parameters<typeof _macroDefinitionBrace>));
@@ -2564,7 +2564,7 @@ export function macroDefinitionUFormBrace(config: Omit<ConfigOf<T.MacroDefinitio
     $with: {
       name: (value: T.Identifier | T.ReservedIdentifier) => macroDefinitionUFormBrace({ ...config, name: value } as Parameters<typeof macroDefinitionUFormBrace>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroInvocation(config: T.MacroInvocation.Config) {
@@ -2582,7 +2582,7 @@ export function macroInvocation(config: T.MacroInvocation.Config) {
       macro: (value: T.ScopedIdentifier | T.Identifier | T.ReservedIdentifier) => macroInvocation({ ...config, macro: value }),
       tokenTree: (value: T.DelimTokenTree) => macroInvocation({ ...config, tokenTree: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function macroRule(config: T.MacroRule.Config) {
@@ -2600,7 +2600,7 @@ export function macroRule(config: T.MacroRule.Config) {
       left: (value: T.TokenTreePattern) => macroRule({ ...config, left: value }),
       right: (value: T.TokenTree) => macroRule({ ...config, right: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function matchArmBlockEnding(value: T.MatchArmBlockEnding.Config['value']) {
@@ -2614,7 +2614,7 @@ export function matchArmBlockEnding(value: T.MatchArmBlockEnding.Config['value']
     $with: {
       value: (value: T.MatchArmBlockEnding.Config['value']) => matchArmBlockEnding(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function matchArm(config: ConfigOf<T.MatchArmUFormWithComma>): ReturnType<typeof matchArmUFormWithComma>;
@@ -2647,7 +2647,7 @@ export function matchArmUFormWithComma(config: Omit<ConfigOf<T.MatchArmUFormWith
       pattern: (value: T.MatchPattern) => matchArmUFormWithComma({ ...config, pattern: value } as Parameters<typeof matchArmUFormWithComma>[0]),
       value: (value: T.Expression) => matchArmUFormWithComma({ ...config, value: value } as Parameters<typeof matchArmUFormWithComma>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBlockEnding>, '$variant'>) {
   const inner = _matchArmBlockEnding(config);
@@ -2670,7 +2670,7 @@ export function matchArmUFormBlockEnding(config: Omit<ConfigOf<T.MatchArmUFormBl
       pattern: (value: T.MatchPattern) => matchArmUFormBlockEnding({ ...config, pattern: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
       value: (value: T.ExpressionEndingWithBlock) => matchArmUFormBlockEnding({ ...config, value: value } as Parameters<typeof matchArmUFormBlockEnding>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function matchBlock(config?: T.MatchBlock.Config) {
@@ -2685,7 +2685,7 @@ export function matchBlock(config?: T.MatchBlock.Config) {
     $with: {
       children: (...items: ((T.MatchArm | T.LastMatchArm))[]) => matchBlock({ ..._config, children: items } as unknown as Parameters<typeof matchBlock>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function matchExpression(config: T.MatchExpression.Config) {
@@ -2703,7 +2703,7 @@ export function matchExpression(config: T.MatchExpression.Config) {
       value: (value: T.Expression) => matchExpression({ ...config, value: value }),
       body: (value: T.MatchBlock) => matchExpression({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function matchPattern(config: T.MatchPattern.Config) {
@@ -2721,7 +2721,7 @@ export function matchPattern(config: T.MatchPattern.Config) {
       condition: (value?: T.Condition) => matchPattern({ ...config, condition: value }),
       children: (...items: readonly [T.Pattern]) => matchPattern({ ...config, children: items } as unknown as Parameters<typeof matchPattern>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function metavariable(text: string) {
@@ -2731,7 +2731,7 @@ export function metavariable(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function modItemInline(body: T.ModItemInline.Config['body']) {
@@ -2745,7 +2745,7 @@ export function modItemInline(body: T.ModItemInline.Config['body']) {
     $with: {
       body: (value: T.ModItemInline.Config['body']) => modItemInline(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function modItem(config: ConfigOf<T.ModItemUFormExternal>): ReturnType<typeof modItemUFormExternal>;
@@ -2773,7 +2773,7 @@ export function modItemUFormExternal(config: Omit<ConfigOf<T.ModItemUFormExterna
       visibilityModifier: (value?: T.VisibilityModifier) => modItemUFormExternal({ ...config, visibilityModifier: value }),
       name: (value: T.Identifier) => modItemUFormExternal({ ...config, name: value }),
     },
-  });
+  }, methodsEngine);
 }
 export function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, '$variant'>) {
   const inner = _modItemInline(config);
@@ -2796,7 +2796,7 @@ export function modItemUFormInline(config: Omit<ConfigOf<T.ModItemUFormInline>, 
       name: (value: T.Identifier) => modItemUFormInline({ ...config, name: value } as Parameters<typeof modItemUFormInline>[0]),
       body: (value: T.DeclarationList) => modItemUFormInline({ ...config, body: value } as Parameters<typeof modItemUFormInline>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function mutPattern(child: T.Pattern) {
@@ -2808,7 +2808,7 @@ export function mutPattern(child: T.Pattern) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Pattern) => mutPattern(v) },
-  });
+  }, methodsEngine);
 }
 
 export function mutableSpecifier() {
@@ -2817,7 +2817,7 @@ export function mutableSpecifier() {
     $source: 2 as const,
     $named: true as const,
     $text: 'mut' as const,
-  });
+  }, methodsEngine);
 }
 
 export function negativeLiteral(value: T.NegativeLiteral.Config['value']) {
@@ -2831,7 +2831,7 @@ export function negativeLiteral(value: T.NegativeLiteral.Config['value']) {
     $with: {
       value: (value: T.NegativeLiteral.Config['value']) => negativeLiteral(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function orPattern(config: ConfigOf<T.OrPatternUFormBinary>): ReturnType<typeof orPatternUFormBinary>;
@@ -2858,7 +2858,7 @@ export function orPatternUFormBinary(config: Omit<ConfigOf<T.OrPatternUFormBinar
       left: (value: T.Pattern) => orPatternUFormBinary({ ...config, left: value } as Parameters<typeof orPatternUFormBinary>[0]),
       right: (value: T.Pattern) => orPatternUFormBinary({ ...config, right: value } as Parameters<typeof orPatternUFormBinary>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefix>, '$variant'>) {
   const inner = _orPatternPrefix(config);
@@ -2873,7 +2873,7 @@ export function orPatternUFormPrefix(config: Omit<ConfigOf<T.OrPatternUFormPrefi
     $with: {
       right: (value: T.Pattern) => orPatternUFormPrefix({ ...config, right: value } as Parameters<typeof orPatternUFormPrefix>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationList.Config) {
@@ -2891,7 +2891,7 @@ export function orderedFieldDeclarationList(config: T.OrderedFieldDeclarationLis
       types: (...values: T._Type[]) => orderedFieldDeclarationList({ ...config, type: values }),
       children: (...items: ((T.AttributeItem | T.VisibilityModifier))[]) => orderedFieldDeclarationList({ ...config, children: items } as unknown as Parameters<typeof orderedFieldDeclarationList>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function parameter(config: T.Parameter.Config) {
@@ -2913,7 +2913,7 @@ export function parameter(config: T.Parameter.Config) {
       pattern: (value: T.Pattern | T.Self) => parameter({ ...config, pattern: value }),
       type: (value: T._Type) => parameter({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) {
@@ -2924,7 +2924,7 @@ export function parameters(...children: (T.AttributeItem | T.Parameter | T.SelfP
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.AttributeItem | T.Parameter | T.SelfParameter | T.VariadicParameter | T._Type)[]) => parameters(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function parenthesizedExpression(child: T.Expression) {
@@ -2936,7 +2936,7 @@ export function parenthesizedExpression(child: T.Expression) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Expression) => parenthesizedExpression(v) },
-  });
+  }, methodsEngine);
 }
 
 export function pointerTypeMut(_config?: T.PointerTypeMut.Config) {
@@ -2949,7 +2949,7 @@ export function pointerTypeMut(_config?: T.PointerTypeMut.Config) {
     children() { return children; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function pointerType(config: ConfigOf<T.PointerTypeUFormConst>): ReturnType<typeof pointerTypeUFormConst>;
@@ -2973,7 +2973,7 @@ export function pointerTypeUFormConst(config: Omit<ConfigOf<T.PointerTypeUFormCo
     $with: {
       type: (value: T._Type) => pointerTypeUFormConst({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>, '$variant'>) {
   const _innerChildren = _configChildren<readonly [Parameters<typeof _pointerTypeMut>[0]] | []>(config, []);
@@ -2991,7 +2991,7 @@ export function pointerTypeUFormMut(config: Omit<ConfigOf<T.PointerTypeUFormMut>
     $with: {
       type: (value: T._Type) => pointerTypeUFormMut({ ...config, type: value } as Parameters<typeof pointerTypeUFormMut>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function qualifiedType(config: T.QualifiedType.Config) {
@@ -3009,7 +3009,7 @@ export function qualifiedType(config: T.QualifiedType.Config) {
       type: (value: T._Type) => qualifiedType({ ...config, type: value }),
       alias: (value: T._Type) => qualifiedType({ ...config, alias: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function rangeExpressionBare(_config?: T.RangeExpressionBare.Config) {
@@ -3022,7 +3022,7 @@ export function rangeExpressionBare(_config?: T.RangeExpressionBare.Config) {
     operator() { return _operator; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function rangeExpression(config: ConfigOf<T.RangeExpressionUFormBinary>): ReturnType<typeof rangeExpressionUFormBinary>;
@@ -3055,7 +3055,7 @@ export function rangeExpressionUFormBinary(config: Omit<ConfigOf<T.RangeExpressi
       operator: (value: NonNullable<Parameters<typeof rangeExpressionUFormBinary>[0]>['operator']) => rangeExpressionUFormBinary({ ...config, operator: value } as Parameters<typeof rangeExpressionUFormBinary>[0]),
       end: (value: T.Expression) => rangeExpressionUFormBinary({ ...config, end: value } as Parameters<typeof rangeExpressionUFormBinary>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpressionUFormPostfix>, '$variant'>) {
   const inner = _rangeExpressionPostfix(config);
@@ -3071,7 +3071,7 @@ export function rangeExpressionUFormPostfix(config: Omit<ConfigOf<T.RangeExpress
     $with: {
       start: (value: T.Expression) => rangeExpressionUFormPostfix({ ...config, start: value } as Parameters<typeof rangeExpressionUFormPostfix>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressionUFormPrefix>, '$variant'>) {
   const inner = _rangeExpressionPrefix(config);
@@ -3087,7 +3087,7 @@ export function rangeExpressionUFormPrefix(config: Omit<ConfigOf<T.RangeExpressi
     $with: {
       end: (value: T.Expression) => rangeExpressionUFormPrefix({ ...config, end: value } as Parameters<typeof rangeExpressionUFormPrefix>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeExpressionUFormBare>, '$variant'>) {
   const inner = _rangeExpressionBare(config as Parameters<typeof _rangeExpressionBare>[0]);
@@ -3100,7 +3100,7 @@ export function rangeExpressionUFormBare(config?: Omit<ConfigOf<T.RangeExpressio
     $children: children,
     operator() { return inner.operator(); },
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function rangePattern(config: ConfigOf<T.RangePatternUFormPrefix>): ReturnType<typeof rangePatternUFormPrefix>;
@@ -3127,7 +3127,7 @@ export function rangePatternUFormPrefix(config: Omit<ConfigOf<T.RangePatternUFor
     $with: {
       right: (value: T.LiteralPattern | T.Path) => rangePatternUFormPrefix({ ...config, right: value } as Parameters<typeof rangePatternUFormPrefix>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatternUFormLeftWithRight>, '$variant'>) {
   const inner = _rangePatternLeftWithRight(config);
@@ -3146,7 +3146,7 @@ export function rangePatternUFormLeftWithRight(config: Omit<ConfigOf<T.RangePatt
       left: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftWithRight({ ...config, left: value } as Parameters<typeof rangePatternUFormLeftWithRight>[0]),
       right: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftWithRight({ ...config, right: value } as Parameters<typeof rangePatternUFormLeftWithRight>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUFormLeftBare>, '$variant'>) {
   const _left = config.left;
@@ -3160,7 +3160,7 @@ export function rangePatternUFormLeftBare(config: Omit<ConfigOf<T.RangePatternUF
     $with: {
       left: (value: T.LiteralPattern | T.Path) => rangePatternUFormLeftBare({ ...config, left: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function rawStringLiteral(config: T.RawStringLiteral.Config) {
@@ -3182,7 +3182,7 @@ export function rawStringLiteral(config: T.RawStringLiteral.Config) {
       stringContent: (value: T.RawStringLiteralContent) => rawStringLiteral({ ...config, stringContent: value }),
       rawStringLiteralEnd: (value?: string) => rawStringLiteral({ ...config, rawStringLiteralEnd: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function refPattern(child: T.Pattern) {
@@ -3194,7 +3194,7 @@ export function refPattern(child: T.Pattern) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T.Pattern) => refPattern(v) },
-  });
+  }, methodsEngine);
 }
 
 export function referenceExpression(config: T.ReferenceExpression.Config) {
@@ -3212,7 +3212,7 @@ export function referenceExpression(config: T.ReferenceExpression.Config) {
       value: (value: T.Expression) => referenceExpression({ ...config, value: value }),
       children: (...items: readonly [((T.ReferenceExpressionRawConst | T.ReferenceExpressionRawMut | T.MutableSpecifier))]) => referenceExpression({ ...config, children: items } as unknown as Parameters<typeof referenceExpression>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function referencePattern(config: T.ReferencePattern.Config) {
@@ -3230,7 +3230,7 @@ export function referencePattern(config: T.ReferencePattern.Config) {
       mutableSpecifier: (value?: NonNullable<Parameters<typeof referencePattern>[0]>['mutableSpecifier']) => referencePattern({ ...config, mutableSpecifier: value }),
       pattern: (value: T.Pattern) => referencePattern({ ...config, pattern: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function referenceType(config: T.ReferenceType.Config) {
@@ -3252,7 +3252,7 @@ export function referenceType(config: T.ReferenceType.Config) {
       mutableSpecifier: (value?: NonNullable<Parameters<typeof referenceType>[0]>['mutableSpecifier']) => referenceType({ ...config, mutableSpecifier: value }),
       type: (value: T._Type) => referenceType({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function removedTraitBound(child: T._Type) {
@@ -3264,7 +3264,7 @@ export function removedTraitBound(child: T._Type) {
     $children: children,
     children() { return children; },
     $with: { $child: (v: T._Type) => removedTraitBound(v) },
-  });
+  }, methodsEngine);
 }
 
 export function returnExpression(config?: T.ReturnExpression.Config) {
@@ -3279,7 +3279,7 @@ export function returnExpression(config?: T.ReturnExpression.Config) {
     $with: {
       children: (...items: readonly [T.Expression]) => returnExpression({ ..._config, children: items } as unknown as Parameters<typeof returnExpression>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
@@ -3297,7 +3297,7 @@ export function scopedIdentifier(config: T.ScopedIdentifier.Config) {
       path: (value?: T.Path | T.BracketedType | T.GenericTypeWithTurbofish) => scopedIdentifier({ ...config, path: value }),
       name: (value: T.Identifier | T.Super) => scopedIdentifier({ ...config, name: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
@@ -3315,7 +3315,7 @@ export function scopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config) {
       path: (value?: T.Path | T.GenericTypeWithTurbofish | T.BracketedType) => scopedTypeIdentifier({ ...config, path: value }),
       name: (value: T.TypeIdentifier) => scopedTypeIdentifier({ ...config, name: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIdentifierInExpressionPosition.Config) {
@@ -3333,7 +3333,7 @@ export function scopedTypeIdentifierInExpressionPosition(config: T.ScopedTypeIde
       path: (value?: T.Path | T.GenericTypeWithTurbofish) => scopedTypeIdentifierInExpressionPosition({ ...config, path: value }),
       name: (value: T.TypeIdentifier) => scopedTypeIdentifierInExpressionPosition({ ...config, name: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function scopedUseList(config: T.ScopedUseList.Config) {
@@ -3351,7 +3351,7 @@ export function scopedUseList(config: T.ScopedUseList.Config) {
       path: (value?: T.Path) => scopedUseList({ ...config, path: value }),
       list: (value: T.UseList) => scopedUseList({ ...config, list: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function self() {
@@ -3360,7 +3360,7 @@ export function self() {
     $source: 2 as const,
     $named: true as const,
     $text: 'self' as const,
-  });
+  }, methodsEngine);
 }
 
 export function selfParameter(config?: T.SelfParameter.Config) {
@@ -3386,7 +3386,7 @@ export function selfParameter(config?: T.SelfParameter.Config) {
       lifetime: (value?: T.Lifetime) => selfParameter({ ..._config, lifetime: value }),
       mutableSpecifier: (value?: NonNullable<Parameters<typeof selfParameter>[0]>['mutableSpecifier']) => selfParameter({ ..._config, mutableSpecifier: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function shebang(text: string) {
@@ -3396,7 +3396,7 @@ export function shebang(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Config) {
@@ -3414,7 +3414,7 @@ export function shorthandFieldInitializer(config: T.ShorthandFieldInitializer.Co
       attributes: (...values: T.AttributeItem[]) => shorthandFieldInitializer({ ...config, attributes: values }),
       identifier: (value: T.Identifier) => shorthandFieldInitializer({ ...config, identifier: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function slicePattern(...children: T.Pattern[]) {
@@ -3425,7 +3425,7 @@ export function slicePattern(...children: T.Pattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Pattern[]) => slicePattern(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function sourceFile(config: T.SourceFile.Config) {
@@ -3443,7 +3443,7 @@ export function sourceFile(config: T.SourceFile.Config) {
       shebang: (value?: T.Shebang) => sourceFile({ ...config, shebang: value }),
       statements: (...values: T.Statement[]) => sourceFile({ ...config, statements: values }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function staticItem(config: T.StaticItem.Config) {
@@ -3473,7 +3473,7 @@ export function staticItem(config: T.StaticItem.Config) {
       type: (value: T._Type) => staticItem({ ...config, type: value }),
       value: (value?: T.Expression) => staticItem({ ...config, value: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[]) {
@@ -3484,7 +3484,7 @@ export function stringLiteral(...children: (T.EscapeSequence | T.StringContent)[
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.EscapeSequence | T.StringContent)[]) => stringLiteral(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function structExpression(config: T.StructExpression.Config) {
@@ -3502,7 +3502,7 @@ export function structExpression(config: T.StructExpression.Config) {
       name: (value: T.TypeIdentifier | T.ScopedTypeIdentifierInExpressionPosition | T.GenericTypeWithTurbofish) => structExpression({ ...config, name: value }),
       body: (value: T.FieldInitializerList) => structExpression({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function structItem(config: ConfigOf<T.StructItemUFormBrace>): ReturnType<typeof structItemUFormBrace>;
@@ -3541,7 +3541,7 @@ export function structItemUFormBrace(config: Omit<ConfigOf<T.StructItemUFormBrac
       typeParameters: (value?: T.TypeParameters) => structItemUFormBrace({ ...config, typeParameters: value } as Parameters<typeof structItemUFormBrace>[0]),
       body: (value: T.FieldDeclarationList) => structItemUFormBrace({ ...config, body: value } as Parameters<typeof structItemUFormBrace>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemUFormTuple>, '$variant'>) {
   const inner = _structItemTuple(config);
@@ -3568,7 +3568,7 @@ export function structItemUFormTuple(config: Omit<ConfigOf<T.StructItemUFormTupl
       typeParameters: (value?: T.TypeParameters) => structItemUFormTuple({ ...config, typeParameters: value } as Parameters<typeof structItemUFormTuple>[0]),
       body: (value: T.OrderedFieldDeclarationList) => structItemUFormTuple({ ...config, body: value } as Parameters<typeof structItemUFormTuple>[0]),
     },
-  });
+  }, methodsEngine);
 }
 export function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUFormUnit>, '$variant'>) {
   const _visibility_modifier = config.visibilityModifier;
@@ -3590,7 +3590,7 @@ export function structItemUFormUnit(config: Omit<ConfigOf<T.StructItemUFormUnit>
       name: (value: T.TypeIdentifier) => structItemUFormUnit({ ...config, name: value }),
       typeParameters: (value?: T.TypeParameters) => structItemUFormUnit({ ...config, typeParameters: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function structPattern(config: T.StructPattern.Config) {
@@ -3608,7 +3608,7 @@ export function structPattern(config: T.StructPattern.Config) {
       type: (value: T.TypeIdentifier | T.ScopedTypeIdentifier) => structPattern({ ...config, type: value }),
       children: (...items: ((T.FieldPattern | T.RemainingFieldPattern))[]) => structPattern({ ...config, children: items } as unknown as Parameters<typeof structPattern>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function super_() {
@@ -3617,7 +3617,7 @@ export function super_() {
     $source: 2 as const,
     $named: true as const,
     $text: 'super' as const,
-  });
+  }, methodsEngine);
 }
 
 export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
@@ -3635,7 +3635,7 @@ export function tokenBindingPattern(config: T.TokenBindingPattern.Config) {
       name: (value: T.Metavariable) => tokenBindingPattern({ ...config, name: value }),
       type: (value: NonNullable<Parameters<typeof tokenBindingPattern>[0]>['type']) => tokenBindingPattern({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tokenRepetition(...children: T.Tokens[]) {
@@ -3646,7 +3646,7 @@ export function tokenRepetition(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => tokenRepetition(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
@@ -3657,7 +3657,7 @@ export function tokenRepetitionPattern(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => tokenRepetitionPattern(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreeParen(...children: T.Tokens[]) {
@@ -3668,7 +3668,7 @@ export function tokenTreeParen(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => tokenTreeParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreeBracket(...children: T.Tokens[]) {
@@ -3679,7 +3679,7 @@ export function tokenTreeBracket(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => tokenTreeBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreeBrace(...children: T.Tokens[]) {
@@ -3690,7 +3690,7 @@ export function tokenTreeBrace(...children: T.Tokens[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.Tokens[]) => tokenTreeBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTree(config: ConfigOf<T.TokenTreeUFormParen>): ReturnType<typeof tokenTreeUFormParen>;
@@ -3714,7 +3714,7 @@ export function tokenTreeUFormParen(config?: Omit<ConfigOf<T.TokenTreeUFormParen
     $variant: 'paren' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTreeUFormBracket>, '$variant'>) {
   const inner = _tokenTreeBracket(..._configChildren<Parameters<typeof _tokenTreeBracket>>(config, [] as unknown as Parameters<typeof _tokenTreeBracket>));
@@ -3726,7 +3726,7 @@ export function tokenTreeUFormBracket(config?: Omit<ConfigOf<T.TokenTreeUFormBra
     $variant: 'bracket' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace>, '$variant'>) {
   const inner = _tokenTreeBrace(..._configChildren<Parameters<typeof _tokenTreeBrace>>(config, [] as unknown as Parameters<typeof _tokenTreeBrace>));
@@ -3738,7 +3738,7 @@ export function tokenTreeUFormBrace(config?: Omit<ConfigOf<T.TokenTreeUFormBrace
     $variant: 'brace' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreePatternParen(...children: T.TokenPattern[]) {
@@ -3749,7 +3749,7 @@ export function tokenTreePatternParen(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternParen(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
@@ -3760,7 +3760,7 @@ export function tokenTreePatternBracket(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBracket(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
@@ -3771,7 +3771,7 @@ export function tokenTreePatternBrace(...children: T.TokenPattern[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.TokenPattern[]) => tokenTreePatternBrace(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tokenTreePattern(config: ConfigOf<T.TokenTreePatternUFormParen>): ReturnType<typeof tokenTreePatternUFormParen>;
@@ -3795,7 +3795,7 @@ export function tokenTreePatternUFormParen(config?: Omit<ConfigOf<T.TokenTreePat
     $variant: 'paren' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.TokenTreePatternUFormBracket>, '$variant'>) {
   const inner = _tokenTreePatternBracket(..._configChildren<Parameters<typeof _tokenTreePatternBracket>>(config, [] as unknown as Parameters<typeof _tokenTreePatternBracket>));
@@ -3807,7 +3807,7 @@ export function tokenTreePatternUFormBracket(config?: Omit<ConfigOf<T.TokenTreeP
     $variant: 'bracket' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.TokenTreePatternUFormBrace>, '$variant'>) {
   const inner = _tokenTreePatternBrace(..._configChildren<Parameters<typeof _tokenTreePatternBrace>>(config, [] as unknown as Parameters<typeof _tokenTreePatternBrace>));
@@ -3819,7 +3819,7 @@ export function tokenTreePatternUFormBrace(config?: Omit<ConfigOf<T.TokenTreePat
     $variant: 'brace' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) {
@@ -3831,7 +3831,7 @@ export function traitBounds(...children: (T._Type | T.Lifetime | T.HigherRankedT
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T._Type | T.Lifetime | T.HigherRankedTraitBound)[]) => traitBounds(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function traitItem(config: T.TraitItem.Config) {
@@ -3869,7 +3869,7 @@ export function traitItem(config: T.TraitItem.Config) {
       whereClause: (value?: T.WhereClause) => traitItem({ ...config, whereClause: value }),
       body: (value: T.DeclarationList) => traitItem({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tryBlock(block: T.TryBlock.Config['block']) {
@@ -3883,7 +3883,7 @@ export function tryBlock(block: T.TryBlock.Config['block']) {
     $with: {
       block: (value: T.TryBlock.Config['block']) => tryBlock(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tryExpression(value: T.TryExpression.Config['value']) {
@@ -3897,7 +3897,7 @@ export function tryExpression(value: T.TryExpression.Config['value']) {
     $with: {
       value: (value: T.TryExpression.Config['value']) => tryExpression(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tupleExpression(config: T.TupleExpression.Config) {
@@ -3915,7 +3915,7 @@ export function tupleExpression(config: T.TupleExpression.Config) {
       attributes: (...values: T.AttributeItem[]) => tupleExpression({ ...config, attributes: values }),
       elements: (...values: T.Expression[]) => tupleExpression({ ...config, elements: values }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
@@ -3926,7 +3926,7 @@ export function tuplePattern(...children: (T.Pattern | T.ClosureExpression)[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.Pattern | T.ClosureExpression)[]) => tuplePattern(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function tupleStructPattern(config: T.TupleStructPattern.Config) {
@@ -3944,7 +3944,7 @@ export function tupleStructPattern(config: T.TupleStructPattern.Config) {
       type: (value: T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish) => tupleStructPattern({ ...config, type: value }),
       children: (...items: T.Pattern[]) => tupleStructPattern({ ...config, children: items } as unknown as Parameters<typeof tupleStructPattern>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function tupleType(...children: T._Type[]) {
@@ -3956,7 +3956,7 @@ export function tupleType(...children: T._Type[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T._Type[]) => tupleType(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) {
@@ -3968,7 +3968,7 @@ export function typeArguments(...children: (T._Type | T.TypeBinding | T.Lifetime
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T._Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TraitBounds)[]) => typeArguments(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function typeBinding(config: T.TypeBinding.Config) {
@@ -3990,7 +3990,7 @@ export function typeBinding(config: T.TypeBinding.Config) {
       typeArguments: (value?: T.TypeArguments) => typeBinding({ ...config, typeArguments: value }),
       type: (value: T._Type) => typeBinding({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function typeCastExpression(config: T.TypeCastExpression.Config) {
@@ -4008,7 +4008,7 @@ export function typeCastExpression(config: T.TypeCastExpression.Config) {
       value: (value: T.Expression) => typeCastExpression({ ...config, value: value }),
       type: (value: T._Type) => typeCastExpression({ ...config, type: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function typeItem(config: T.TypeItem.Config) {
@@ -4042,7 +4042,7 @@ export function typeItem(config: T.TypeItem.Config) {
       type: (value: T._Type) => typeItem({ ...config, type: value }),
       trailingWhereClause: (value?: T.WhereClause) => typeItem({ ...config, trailingWhereClause: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function typeParameter(config: T.TypeParameter.Config) {
@@ -4064,7 +4064,7 @@ export function typeParameter(config: T.TypeParameter.Config) {
       bounds: (value?: T.TraitBounds) => typeParameter({ ...config, bounds: value }),
       defaultType: (value?: T._Type) => typeParameter({ ...config, defaultType: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function typeParameters(config: T.TypeParameters.Config) {
@@ -4078,7 +4078,7 @@ export function typeParameters(config: T.TypeParameters.Config) {
     $with: {
       attributes: (...values: (T.AttributeItem | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter)[]) => typeParameters({ ...config, attributes: values }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function unaryExpression(config: T.UnaryExpression.Config) {
@@ -4096,7 +4096,7 @@ export function unaryExpression(config: T.UnaryExpression.Config) {
       operator: (value: NonNullable<Parameters<typeof unaryExpression>[0]>['operator']) => unaryExpression({ ...config, operator: value }),
       operand: (value: T.Expression) => unaryExpression({ ...config, operand: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function unionItem(config: T.UnionItem.Config) {
@@ -4126,7 +4126,7 @@ export function unionItem(config: T.UnionItem.Config) {
       whereClause: (value?: T.WhereClause) => unionItem({ ...config, whereClause: value }),
       body: (value: T.FieldDeclarationList) => unionItem({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function unitExpression(text: string) {
@@ -4136,7 +4136,7 @@ export function unitExpression(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function unitType(text: string) {
@@ -4146,7 +4146,7 @@ export function unitType(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function unsafeBlock(block: T.UnsafeBlock.Config['block']) {
@@ -4160,7 +4160,7 @@ export function unsafeBlock(block: T.UnsafeBlock.Config['block']) {
     $with: {
       block: (value: T.UnsafeBlock.Config['block']) => unsafeBlock(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function useAsClause(config: T.UseAsClause.Config) {
@@ -4178,7 +4178,7 @@ export function useAsClause(config: T.UseAsClause.Config) {
       path: (value: T.Path) => useAsClause({ ...config, path: value }),
       alias: (value: T.Identifier) => useAsClause({ ...config, alias: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
@@ -4189,7 +4189,7 @@ export function useBounds(...children: (T.Lifetime | T.TypeIdentifier)[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: (T.Lifetime | T.TypeIdentifier)[]) => useBounds(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function useDeclaration(config: T.UseDeclaration.Config) {
@@ -4207,7 +4207,7 @@ export function useDeclaration(config: T.UseDeclaration.Config) {
       visibilityModifier: (value?: T.VisibilityModifier) => useDeclaration({ ...config, visibilityModifier: value }),
       argument: (value: T.UseClause) => useDeclaration({ ...config, argument: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function useList(...children: T.UseClause[]) {
@@ -4218,7 +4218,7 @@ export function useList(...children: T.UseClause[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.UseClause[]) => useList(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function useWildcard(path?: T.UseWildcard.Config['path']) {
@@ -4232,7 +4232,7 @@ export function useWildcard(path?: T.UseWildcard.Config['path']) {
     $with: {
       path: (value?: T.UseWildcard.Config['path']) => useWildcard(value),
     },
-  });
+  }, methodsEngine);
 }
 
 export function variadicParameter(config?: T.VariadicParameter.Config) {
@@ -4251,7 +4251,7 @@ export function variadicParameter(config?: T.VariadicParameter.Config) {
       mutableSpecifier: (value?: NonNullable<Parameters<typeof variadicParameter>[0]>['mutableSpecifier']) => variadicParameter({ ..._config, mutableSpecifier: value }),
       pattern: (value?: T.Pattern) => variadicParameter({ ..._config, pattern: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Config) {
@@ -4264,7 +4264,7 @@ export function visibilityModifierCrate(_config?: T.VisibilityModifierCrate.Conf
     children() { return children; },
     $with: {
     },
-  });
+  }, methodsEngine);
 }
 
 export function visibilityModifier(config: ConfigOf<T.VisibilityModifierUFormCrate>): ReturnType<typeof visibilityModifierUFormCrate>;
@@ -4289,7 +4289,7 @@ export function visibilityModifierUFormCrate(config?: Omit<ConfigOf<T.Visibility
     $variant: 'crate' as const,
     $children: children,
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityModifierUFormPub>, '$variant'>) {
   const inner = _visibilityModifierPub(config as Parameters<typeof _visibilityModifierPub>[0]);
@@ -4302,7 +4302,7 @@ export function visibilityModifierUFormPub(config?: Omit<ConfigOf<T.VisibilityMo
     $children: children,
     pub() { return inner.pub(); },
     $with: {},
-  });
+  }, methodsEngine);
 }
 export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.VisibilityModifierUFormInPath>, '$variant'>) {
   const inner = _visibilityModifierInPath(config as Parameters<typeof _visibilityModifierInPath>[0]);
@@ -4315,7 +4315,7 @@ export function visibilityModifierUFormInPath(config?: Omit<ConfigOf<T.Visibilit
     $children: children,
     in() { return inner.in(); },
     $with: {},
-  });
+  }, methodsEngine);
 }
 
 export function whereClause(...children: T.WherePredicate[]) {
@@ -4326,7 +4326,7 @@ export function whereClause(...children: T.WherePredicate[]) {
     $children: children,
     children() { return children; },
     $with: { $children: (...vs: T.WherePredicate[]) => whereClause(...vs) },
-  });
+  }, methodsEngine);
 }
 
 export function wherePredicate(config: T.WherePredicate.Config) {
@@ -4344,7 +4344,7 @@ export function wherePredicate(config: T.WherePredicate.Config) {
       left: (value: T.Lifetime | T.TypeIdentifier | T.ScopedTypeIdentifier | T.GenericType | T.ReferenceType | T.PointerType | T.TupleType | T.ArrayType | T.HigherRankedTraitBound | T.PrimitiveType) => wherePredicate({ ...config, left: value }),
       bounds: (value: T.TraitBounds) => wherePredicate({ ...config, bounds: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function whileExpression(config: T.WhileExpression.Config) {
@@ -4366,7 +4366,7 @@ export function whileExpression(config: T.WhileExpression.Config) {
       condition: (value: T.Condition) => whileExpression({ ...config, condition: value }),
       body: (value: T.Block) => whileExpression({ ...config, body: value }),
     },
-  });
+  }, methodsEngine);
 }
 
 export function yieldExpression(config?: T.YieldExpression.Config) {
@@ -4381,7 +4381,7 @@ export function yieldExpression(config?: T.YieldExpression.Config) {
     $with: {
       children: (...items: readonly [T.Expression]) => yieldExpression({ ..._config, children: items } as unknown as Parameters<typeof yieldExpression>[0]),
     },
-  });
+  }, methodsEngine);
 }
 
 export function stringContent(text: string) {
@@ -4391,7 +4391,7 @@ export function stringContent(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function rawStringLiteralContent(text: string) {
@@ -4401,7 +4401,7 @@ export function rawStringLiteralContent(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function floatLiteral(text: string) {
@@ -4411,7 +4411,7 @@ export function floatLiteral(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function outerBlockDocCommentMarker(text: string) {
@@ -4421,7 +4421,7 @@ export function outerBlockDocCommentMarker(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function innerBlockDocCommentMarker(text: string) {
@@ -4431,7 +4431,7 @@ export function innerBlockDocCommentMarker(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function lineDocContent(text: string) {
@@ -4441,7 +4441,7 @@ export function lineDocContent(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export function errorSentinel(text: string) {
@@ -4451,7 +4451,7 @@ export function errorSentinel(text: string) {
     $source: 2 as const,
     $named: true as const,
     $text: text,
-  });
+  }, methodsEngine);
 }
 
 export type FluentKindMap = {

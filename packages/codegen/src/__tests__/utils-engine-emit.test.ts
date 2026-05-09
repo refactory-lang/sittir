@@ -11,7 +11,7 @@ describe('utils engine facade emission', () => {
 		expect(contents).toContain("import { withMethods as withCommonMethods");
 		expect(contents).toContain("from '@sittir/common/utils'");
 		expect(contents).toContain('export const methodsEngine = {');
-		expect(contents).toContain('export function withMethods<T extends AnyNodeData>(');
+		expect(contents).toContain('export function withMethods<T extends object>(');
 		expect(contents).toContain('engine: typeof methodsEngine');
 		expect(contents).toContain('return withCommonMethods(node, engine);');
 		expect(contents).not.toContain('$render(this: AnyNodeData): string { return render(this); }');

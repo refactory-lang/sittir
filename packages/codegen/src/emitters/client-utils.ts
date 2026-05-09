@@ -27,10 +27,14 @@ lines.push("import type { NamespaceMap } from './types.js';");
 }
 lines.push("import { kindIdFromName } from './types.js';");
 lines.push("import { render, toEdit } from './boundary.ts';");
-lines.push("import { withMethods as withCommonMethods, isNodeData, isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage } from '@sittir/common/utils';");
+lines.push("import { withMethods as withCommonMethods, isNodeData as _isNodeData, isTreeNode as _isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage } from '@sittir/common/utils';");
 lines.push("import type { WithMethodsEngine } from '@sittir/common/utils';");
 lines.push('');
-lines.push('export { isNodeData, isTreeNode, hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage };');
+lines.push('export { hasKind, coerceBooleanKeywordStorage, coerceBitflagStorage };');
+lines.push('');
+lines.push(...emitIsNodeData());
+lines.push('');
+lines.push(...emitIsTreeNode());
 lines.push('');
 lines.push(...emitMethodsEngine());
 lines.push('');
@@ -53,7 +57,7 @@ return [
 
 function emitWithMethods(triviaTypeNames: readonly string[]): string[] {
 return [
-'export function withMethods<T extends AnyNodeData>(',
+'export function withMethods<T extends object>(',
 '  node: T,',
 '  engine: typeof methodsEngine',
 '): T & {',
@@ -65,6 +69,30 @@ return [
 '  return withCommonMethods(node, engine);',
 '}'
 ];
+}
+
+function emitIsNodeData(): string[] {
+  return [
+    'export function isNodeData<K extends keyof NamespaceMap>(',
+    "  v: NamespaceMap[K]['Node'] | NamespaceMap[K]['Loose'] | NamespaceMap[K]['Tree']",
+    "): v is NamespaceMap[K]['Node'];",
+    'export function isNodeData(v: unknown): v is AnyNodeData;',
+    'export function isNodeData(v: unknown): v is AnyNodeData {',
+    '  return _isNodeData(v);',
+    '}',
+  ];
+}
+
+function emitIsTreeNode(): string[] {
+  return [
+    'export function isTreeNode<K extends keyof NamespaceMap>(',
+    "  v: NamespaceMap[K]['Tree'] | NamespaceMap[K]['Node']",
+    "): v is NamespaceMap[K]['Tree'];",
+    'export function isTreeNode(v: unknown): v is AnyTreeNodeOf;',
+    'export function isTreeNode(v: unknown): v is AnyTreeNodeOf {',
+    '  return _isTreeNode(v);',
+    '}',
+  ];
 }
 
 function emitNodeGuards(): string[] {

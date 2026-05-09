@@ -4,7 +4,7 @@ export interface WithMethodsRuntime<T extends object = AnyNodeData> {
 	$render(): string;
 	$toEdit(startOrRange: number | ByteRange, endPos?: number): Edit;
 	$replace(target: { range(): ByteRange }): Edit;
-	$trivia(...args: unknown[]): T & WithMethodsRuntime<T>;
+	$trivia(...args: unknown[]): AnyNodeData;
 }
 
 export interface WithMethodsEngine {
@@ -12,7 +12,7 @@ export interface WithMethodsEngine {
 	toEdit(node: AnyNodeData, startOrRange: number | ByteRange, endPos?: number): Edit;
 }
 
-export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
+export function withMethods<T extends object>(node: T, engine: WithMethodsEngine): T & WithMethodsRuntime<T> {
 	return Object.assign(node, {
 		$render(this: AnyNodeData): string {
 			return engine.render(this);
@@ -23,9 +23,9 @@ export function withMethods<T extends AnyNodeData>(node: T, engine: WithMethodsE
 		$replace(this: AnyNodeData, target: { range(): ByteRange }): Edit {
 			return engine.toEdit(this, target.range());
 		},
-		$trivia(this: AnyNodeData, ...args: unknown[]) {
+		$trivia(this: AnyNodeData, ...args: unknown[]): AnyNodeData {
 			setTriviaData(this, toTriviaData(args));
-			return this as unknown as T & WithMethodsRuntime<T>;
+			return this as AnyNodeData;
 		}
 	});
 }
