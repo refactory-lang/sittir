@@ -2,10 +2,9 @@
 /**
  * Grammar-specific engine factory for @sittir/python.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine while the
- * JS backend implementation comes from @sittir/core/engine.
+ * Thin wrapper — native binding stays in @sittir/common/engine; the JS
+ * backend is loaded dynamically from @sittir/core/engine only when selected.
  */
-import { createJsEngine } from '@sittir/core/engine';
 import {
 	createNativeEngine,
 	type SittirEngineLike,
@@ -22,29 +21,42 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export type { EngineOptions };
 
 /**
+ * Dynamically load the JS backend from `@sittir/core/engine` and create an
+ * engine instance. Called only when the native backend is not available.
+ *
+ * @param templatesPath - Absolute path to the grammar's templates directory.
+ * @param options - Engine configuration (format, etc.)
+ * @returns A JS-backed engine implementing SittirEngineLike.
+ */
+async function loadJsBackend(templatesPath: string, options?: EngineOptions): Promise<SittirEngineLike> {
+	const { createJsEngine } = await import('@sittir/core/engine');
+	return createJsEngine({
+		templatesPath,
+		format: options?.format,
+		kindNames: KIND_NAMES,
+	});
+}
+
+/**
  * Create a grammar-specific engine instance.
  *
- * Attempts to use the native backend if available; falls back to the JS
- * engine otherwise.
+ * Attempts to use the native backend if available; dynamically loads the JS
+ * backend from `@sittir/core/engine` otherwise.
  *
  * @param options - Engine configuration (format, etc.)
- * @returns An engine implementing SittirEngineLike.
+ * @returns A promise resolving to an engine implementing SittirEngineLike.
  */
-export function createEngine(options?: EngineOptions): SittirEngineLike {
+export async function createEngine(options?: EngineOptions): Promise<SittirEngineLike> {
+	const templatesPath = join(__dirname, '..', 'templates');
 	return (
 		createNativeEngine(
 			{
-				templatesPath: join(__dirname, '..', 'templates'),
+				templatesPath,
 				kindNames: KIND_NAMES,
 				toNativeRenderTransport,
 				getActiveBackend,
 			},
 			options
-		) ??
-		createJsEngine({
-			templatesPath: join(__dirname, '..', 'templates'),
-			format: options?.format,
-			kindNames: KIND_NAMES,
-		})
+		) ?? (await loadJsBackend(templatesPath, options))
 	);
 }

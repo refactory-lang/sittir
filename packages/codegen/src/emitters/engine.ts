@@ -1,7 +1,7 @@
 /**
- * Emits a thin per-grammar `engine.ts` wrapper that delegates native fallback
- * to `createNativeEngine` from `@sittir/common/engine` and the JS backend to
- * `createJsEngine` from `@sittir/core/engine`.
+ * Emits a thin per-grammar `engine.ts` wrapper that delegates native execution
+ * to `createNativeEngine` from `@sittir/common/engine` and dynamically loads
+ * the JS backend from `@sittir/core/engine` only when needed.
  */
 
 export interface EmitEngineConfig {
@@ -11,8 +11,8 @@ export interface EmitEngineConfig {
 /**
  * Emit a per-grammar `engine.ts` that wires grammar-specific values
  * (KIND_NAMES, toNativeRenderTransport, getActiveBackend) into the shared
- * native wrapper from `@sittir/common/engine`, then falls back to the JS
- * backend from `@sittir/core/engine`.
+ * native wrapper from `@sittir/common/engine`, then dynamically loads the JS
+ * backend from `@sittir/core/engine` when native is not available.
  *
  * @param config - Grammar name (used in the JSDoc comment only).
  * @returns The full content of the emitted `engine.ts` file.
@@ -23,10 +23,9 @@ export function emitEngine(config: EmitEngineConfig): string {
 /**
  * Grammar-specific engine factory for @sittir/${grammar}.
  *
- * Thin wrapper — native binding stays in @sittir/common/engine while the
- * JS backend implementation comes from @sittir/core/engine.
+ * Thin wrapper — native binding stays in @sittir/common/engine; the JS
+ * backend is loaded dynamically from @sittir/core/engine only when selected.
  */
-import { createJsEngine } from '@sittir/core/engine';
 import {
 	createNativeEngine,
 	type SittirEngineLike,
@@ -43,30 +42,43 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export type { EngineOptions };
 
 /**
+ * Dynamically load the JS backend from \`@sittir/core/engine\` and create an
+ * engine instance. Called only when the native backend is not available.
+ *
+ * @param templatesPath - Absolute path to the grammar's templates directory.
+ * @param options - Engine configuration (format, etc.)
+ * @returns A JS-backed engine implementing SittirEngineLike.
+ */
+async function loadJsBackend(templatesPath: string, options?: EngineOptions): Promise<SittirEngineLike> {
+	const { createJsEngine } = await import('@sittir/core/engine');
+	return createJsEngine({
+		templatesPath,
+		format: options?.format,
+		kindNames: KIND_NAMES,
+	});
+}
+
+/**
  * Create a grammar-specific engine instance.
  *
- * Attempts to use the native backend if available; falls back to the JS
- * engine otherwise.
+ * Attempts to use the native backend if available; dynamically loads the JS
+ * backend from \`@sittir/core/engine\` otherwise.
  *
  * @param options - Engine configuration (format, etc.)
- * @returns An engine implementing SittirEngineLike.
+ * @returns A promise resolving to an engine implementing SittirEngineLike.
  */
-export function createEngine(options?: EngineOptions): SittirEngineLike {
+export async function createEngine(options?: EngineOptions): Promise<SittirEngineLike> {
+	const templatesPath = join(__dirname, '..', 'templates');
 	return (
 		createNativeEngine(
 			{
-				templatesPath: join(__dirname, '..', 'templates'),
+				templatesPath,
 				kindNames: KIND_NAMES,
 				toNativeRenderTransport,
 				getActiveBackend,
 			},
 			options
-		) ??
-		createJsEngine({
-			templatesPath: join(__dirname, '..', 'templates'),
-			format: options?.format,
-			kindNames: KIND_NAMES,
-		})
+		) ?? (await loadJsBackend(templatesPath, options))
 	);
 }
 `;

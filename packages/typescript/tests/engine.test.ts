@@ -15,7 +15,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine();
 
 		// JS fallback should have renderer methods
 		expect(typeof engine.render).toBe('function');
@@ -73,7 +73,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine();
 
 		// Native engine should have both renderer and reader
 		expect(typeof engine.render).toBe('function');
@@ -112,7 +112,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine();
 
 		const node = {
 			$type: TSKindId.Identifier,
@@ -177,7 +177,7 @@ describe('engine', () => {
 		}));
 
 		const { createEngine } = await import('../src/engine.js');
-		const engine = createEngine();
+		const engine = await createEngine();
 		const parsed = engine.reader?.parseAndRead('const x = 1;');
 		expect(parsed).toBeDefined();
 		if (!parsed) {
