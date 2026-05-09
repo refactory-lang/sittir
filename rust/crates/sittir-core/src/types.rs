@@ -485,6 +485,88 @@ pub enum FieldValue {
     Text(String),
 }
 
+/// A transport field that accepts either a single value or an array of values
+/// from JS.
+///
+/// The JS `readNode` path stores single-element `multiple:true` fields as
+/// scalars rather than length-1 arrays. Using `Vec<T>` for such fields causes
+/// napi-rs to fail with "Given napi value is not an array". `OneOrMany<T>`
+/// accepts both shapes in its `FromNapiValue` impl and always presents a
+/// `&[T]` slice to Rust callers (via `Deref`), so generated `render_*`
+/// functions can call `.iter()` uniformly.
+#[derive(Debug, Clone)]
+pub struct OneOrMany<T>(pub Vec<T>);
+
+impl<T> std::ops::Deref for OneOrMany<T> {
+    type Target = [T];
+    fn deref(&self) -> &[T] {
+        &self.0
+    }
+}
+
+impl<T> IntoIterator for OneOrMany<T> {
+    type Item = T;
+    type IntoIter = std::vec::IntoIter<T>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl<T> From<OneOrMany<T>> for Vec<T> {
+    fn from(v: OneOrMany<T>) -> Vec<T> {
+        v.0
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::FromNapiValue
+    for OneOrMany<T>
+{
+    unsafe fn from_napi_value(
+        env: napi::sys::napi_env,
+        napi_val: napi::sys::napi_value,
+    ) -> napi::Result<Self> {
+        let mut is_arr = false;
+        // SAFETY: env and napi_val are valid napi handles provided by the runtime.
+        unsafe { napi::sys::napi_is_array(env, napi_val, &mut is_arr) };
+        if is_arr {
+            let v = Vec::<T>::from_napi_value(env, napi_val)?;
+            Ok(OneOrMany(v))
+        } else {
+            let single = T::from_napi_value(env, napi_val)?;
+            Ok(OneOrMany(vec![single]))
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::ToNapiValue> napi::bindgen_prelude::ToNapiValue
+    for OneOrMany<T>
+{
+    unsafe fn to_napi_value(
+        env: napi::sys::napi_env,
+        val: Self,
+    ) -> napi::Result<napi::sys::napi_value> {
+        Vec::<T>::to_napi_value(env, val.0)
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: napi::bindgen_prelude::FromNapiValue> napi::bindgen_prelude::ValidateNapiValue
+    for OneOrMany<T>
+{
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T> napi::bindgen_prelude::TypeName for OneOrMany<T> {
+    fn type_name() -> &'static str {
+        "OneOrMany"
+    }
+    fn value_type() -> napi::ValueType {
+        napi::ValueType::Object
+    }
+}
+
 /// Byte-range for a `NodeData` within its source string. `start`/`end`
 /// are UTF-8 byte offsets (ast-grep / tree-sitter convention).
 /// `#[napi(object)]` (gated on napi-bindings feature) adds

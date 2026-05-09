@@ -39,6 +39,7 @@ import { renderModuleSrcDir, renderModuleTemplatesDir } from './render-module-pa
 import { type TransportLiteral } from './transport-projection.ts';
 import { getTransportProjection } from './transport-projection-cache.ts';
 import { buildSupertypeTransportSet, classifySlot, deriveChildrenKinds, type SlotClass } from './transport-common.ts';
+import { slotLiteralValues } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
 	collectKindEntries,
@@ -1789,6 +1790,17 @@ function buildFieldKindsByName(fields: readonly AssembledNonterminal[]): Readonl
 	return map;
 }
 
+/** Returns the set of field names whose slots contain mixed named+anonymous content. */
+function buildFieldMixedByName(fields: readonly AssembledNonterminal[]): ReadonlySet<string> {
+	const set = new Set<string>();
+	for (const f of fields) {
+		if (kindsOf(f).length > 0 && slotLiteralValues(f).length > 0) {
+			set.add(f.name);
+		}
+	}
+	return set;
+}
+
 /**
  * Classify the children slot of a node from its structural children list.
  * Merges kind sets across all child entries (a node can have multiple child
@@ -1824,10 +1836,11 @@ function renderTypedBranchFn(node: AssembledNode, struct: EmittedStruct, meta: M
 
 	// Build per-field kind maps for typed render call selection (Phase 1).
 	const fieldKindsByName = buildFieldKindsByName(structuralFieldsOf(node));
+	const fieldMixedByName = buildFieldMixedByName(structuralFieldsOf(node));
 	const childrenCls = classifySlotFromChildren(structuralChildrenOf(node), nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, childrenCls, nodeMap));
+	lines.push(...buildTypedTemplateBody(struct, separator, fieldKindsByName, fieldMixedByName, childrenCls, nodeMap));
 	lines.push(`}`);
 	lines.push('');
 
@@ -1923,10 +1936,11 @@ function renderTypedFormFn(
 
 	// Build per-field kind maps for typed render call selection (Phase 1).
 	const formFieldKindsByName = buildFieldKindsByName(form.fields);
+	const formFieldMixedByName = buildFieldMixedByName(form.fields);
 	const formChildrenCls = classifySlotFromChildren(form.children, nodeMap);
 
 	lines.push(`fn ${fnName}(node: &${structName}, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {`);
-	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator, formFieldKindsByName, formChildrenCls, nodeMap));
+	lines.push(...buildTypedTemplateBody(formEmittedStruct, separator, formFieldKindsByName, formFieldMixedByName, formChildrenCls, nodeMap));
 	lines.push(`}`);
 	lines.push('');
 
@@ -2062,6 +2076,10 @@ function emitListSlotBuffer(ident: string, required: boolean): string[] {
  * @param fieldKindsByName - per-field projection kinds (fieldName → kinds[]).
  *   Used to classify each field slot for typed render calls. Falls back to
  *   heterogeneous (Box<AnyTransport>) when a field name is absent.
+ * @param fieldMixedByName - set of field names whose slots have mixed named+anonymous
+ *   content. When a field is in this set, it is always classified as heterogeneous
+ *   (Box<AnyTransport>) regardless of what classifySlotForEmit returns, matching the
+ *   transport struct field type emitted by rustTransportFieldType.
  * @param childrenCls - slot classification for the children slot. Falls back
  *   to heterogeneous when not provided.
  */
@@ -2069,6 +2087,7 @@ function buildTypedTemplateBody(
 	struct: EmittedStruct,
 	separator: string,
 	fieldKindsByName: ReadonlyMap<string, readonly string[]> = new Map(),
+	fieldMixedByName: ReadonlySet<string> = new Set(),
 	childrenCls: SlotClass = { tag: 'heterogeneous' },
 	nodeMap: NodeMap | undefined = undefined
 ): string[] {
@@ -2079,8 +2098,12 @@ function buildTypedTemplateBody(
 
 	// Classify helper — use classifySlotForEmit when nodeMap is available so
 	// that supertype/multi single-kind slots fall back to heterogeneous (Phase 1).
-	const classify = (kinds: readonly string[]): SlotClass =>
-		nodeMap !== undefined ? classifySlotForEmit(kinds, nodeMap) : classifySlot(kinds);
+	// When fieldName is in fieldMixedByName, always return heterogeneous (matches
+	// the Box<AnyTransport> type emitted by rustTransportFieldType).
+	const classifyField = (fieldName: string, kinds: readonly string[]): SlotClass => {
+		if (fieldMixedByName.has(fieldName)) return { tag: 'heterogeneous', useBox: true };
+		return nodeMap !== undefined ? classifySlotForEmit(kinds, nodeMap) : classifySlot(kinds);
+	};
 
 	// Emit children-slot buffer. For list slots (Vec<T>) use emitListSlotBuffer;
 	// for single-child slots (T / Option<T>) use emitSingleChildBuffer which
@@ -2135,7 +2158,7 @@ function buildTypedTemplateBody(
 	for (const f of struct.fields) {
 		const rIdent = rustFieldIdent(f.name);
 		const kinds = fieldKindsByName.get(f.name) ?? [];
-		const cls = classify(kinds);
+		const cls = classifyField(f.name, kinds);
 		const isErased = cls.tag === 'heterogeneous';
 		if (f.view === 'list' || (f.view === 'field' && f.multiple)) {
 			// Always-list slot. Empty list when transport-field absent.
@@ -2463,7 +2486,7 @@ function commonRustUseImports(hasNumericDispatch: boolean): string {
 	lines.push('    OptionalNonterminalView,');
 	lines.push('};');
 	lines.push('use ::sittir_core::types::{');
-	lines.push('    NodeData, FieldValue, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
+	lines.push('    NodeData, FieldValue, OneOrMany, RenderableTransport, Source, Span, NodeTrivia, TransportTrivia,');
 	lines.push('};');
 	lines.push('');
 	if (hasNumericDispatch) {
@@ -3587,7 +3610,13 @@ type BridgeFieldClass =
 
 function bridgeClassForField(field: AssembledNonterminal, nodeMap: NodeMap | undefined): BridgeFieldClass {
 	if (nodeMap === undefined) return undefined;
-	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
+	const namedKinds = kindsOf(field);
+	// Apply the same hasMixedContent check used in rustTransportFieldType: if a slot
+	// mixes named kinds with anonymous literals (e.g. function_modifiers.modifier),
+	// it is heterogeneous regardless of what classifySlotForEmit says.
+	const hasMixedContent = namedKinds.length > 0 && slotLiteralValues(field).length > 0;
+	if (hasMixedContent) return undefined;
+	const cls = classifySlotForEmit(namedKinds, nodeMap);
 	if (cls.tag === 'concrete') return { kind: 'concrete', variant: rustTypeIdent(cls.typeName) };
 	if (cls.tag === 'supertype') {
 		return { kind: 'supertype', toAnyFn: `${rustSnakeIdent(cls.supertypeName)}_transport_to_any` };
@@ -3624,7 +3653,8 @@ function buildBridgeSingleRequired(field: AssembledNonterminal, access: string, 
  */
 function buildBridgeListRequired(field: AssembledNonterminal, access: string, nodeMap: NodeMap | undefined): string {
 	const bc = bridgeClassForField(field, nodeMap);
-	if (bc === undefined) return access;
+	// Heterogeneous (bc === undefined): field is OneOrMany<AnyTransport>; convert to Vec<AnyTransport>.
+	if (bc === undefined) return `${access}.into_iter().collect::<Vec<_>>()`;
 	if (bc.kind === 'concrete') {
 		return `${access}.into_iter().map(|v| AnyTransport::${bc.variant}(v)).collect::<Vec<_>>()`;
 	}
@@ -3656,7 +3686,8 @@ function buildBridgeOptionalSingle(
  */
 function buildBridgeOptionalList(field: AssembledNonterminal, valueExpr: string, nodeMap: NodeMap | undefined): string {
 	const bc = bridgeClassForField(field, nodeMap);
-	if (bc === undefined) return valueExpr;
+	// Heterogeneous (bc === undefined): field is OneOrMany<AnyTransport>; convert to Vec<AnyTransport>.
+	if (bc === undefined) return `${valueExpr}.into_iter().collect::<Vec<_>>()`;
 	if (bc.kind === 'concrete') {
 		return `${valueExpr}.into_iter().map(|v| AnyTransport::${bc.variant}(v)).collect::<Vec<_>>()`;
 	}
@@ -3709,8 +3740,8 @@ function renderTransportChildrenBinding(
 		if (childrenCls === undefined) return expr;
 		if (childrenCls.tag === 'heterogeneous') {
 			if (childrenCls.useBox === true) {
-				// Already Vec<AnyTransport> — pass through.
-				return expr;
+				// Children type is OneOrMany<AnyTransport>; convert to Vec<AnyTransport>.
+				return `${expr}.into_iter().collect::<Vec<_>>()`;
 			}
 			// Per-slot child enum: convert each variant to AnyTransport.
 			if (ownerTypeName !== undefined) {
@@ -3729,13 +3760,12 @@ function renderTransportChildrenBinding(
 	};
 
 	if (isMultipleSlot) {
-		// Vec<T> slot — iterate to build Vec<AnyTransport>.
-		// needsWrap: true if wrapVec() transforms the expression (i.e., type is not
-		// already Vec<AnyTransport>). Concrete, supertype, and per-slot child enum
-		// all need wrapping; only useBox=true heterogeneous (already AnyTransport) is pass-through.
-		const needsWrap =
-			childrenCls !== undefined &&
-			(childrenCls.tag !== 'heterogeneous' || (childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== true));
+		// OneOrMany<T> slot — convert to Vec<AnyTransport> for transport_children.
+		// needsWrap: true whenever wrapVec() must transform the expression (i.e., the
+		// type is not already the expected Vec<AnyTransport>). All classified slots
+		// (concrete, supertype, heterogeneous/useBox, per-slot child enum) need wrapping
+		// now that the generated field type is OneOrMany<T>.
+		const needsWrap = childrenCls !== undefined;
 		if (reqd) {
 			const bridged = wrapVec('transport.children');
 			return [`    let children = Some(transport_children(${bridged})?);`];
@@ -4227,20 +4257,30 @@ function renderTransportField(field: AssembledNonterminal, nodeMap: NodeMap): st
 }
 
 function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): string {
-	const cls = classifySlotForEmit(kindsOf(field), nodeMap);
+	// Bug fix: fields with both named-kind children AND anonymous literal children
+	// (e.g. `function_modifiers.modifier` which accepts `extern_modifier` OR bare
+	// keywords like `async`/`const`/`unsafe`) are heterogeneous in practice.
+	// `kindsOf()` intentionally skips TerminalValue entries, so without this check
+	// the slot would be misclassified as `concrete` (single named kind) and emit
+	// `Vec<ExternModifierTransport>` instead of `OneOrMany<AnyTransport>`.
+	const namedKinds = kindsOf(field);
+	const hasMixedContent = namedKinds.length > 0 && slotLiteralValues(field).length > 0;
+	const cls = hasMixedContent
+		? ({ tag: 'heterogeneous' } as const)
+		: classifySlotForEmit(namedKinds, nodeMap);
 	switch (cls.tag) {
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
 			if (base !== null) {
-				const inner = isMultiple(field) ? `Vec<${base}>` : base;
+				const inner = isMultiple(field) ? `OneOrMany<${base}>` : base;
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			// Unknown kind — fall back to AnyTransport.
-			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
+			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
 			// AnyTransport fields need Box<> to break recursive size cycles when
 			// the owning struct is itself a variant of AnyTransport.
 			if (isMultiple(field)) {
-				const inner = 'Vec<AnyTransport>';
+				const inner = 'OneOrMany<AnyTransport>';
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			const inner = 'Box<AnyTransport>';
@@ -4248,14 +4288,14 @@ function rustTransportFieldType(field: AssembledNonterminal, nodeMap: NodeMap): 
 		}
 		case 'supertype': {
 			const base = `${rustTypeIdent(cls.supertypeName)}Transport`;
-			const inner = isMultiple(field) ? `Vec<${base}>` : base;
+			const inner = isMultiple(field) ? `OneOrMany<${base}>` : base;
 			return isRequired(field) ? inner : `Option<${inner}>`;
 		}
 		case 'heterogeneous': {
-			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
+			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
 			// AnyTransport fields need Box<> to break recursive size cycles.
 			if (isMultiple(field)) {
-				const inner = 'Vec<AnyTransport>';
+				const inner = 'OneOrMany<AnyTransport>';
 				return isRequired(field) ? inner : `Option<${inner}>`;
 			}
 			const inner = 'Box<AnyTransport>';
@@ -4296,32 +4336,32 @@ function rustTransportChildrenType(
 		case 'concrete': {
 			const base = concreteTransportTypeName(cls.kind, nodeMap);
 			if (base !== null) {
-				if (multiple) return required ? `Vec<${base}>` : `Option<Vec<${base}>>`;
+				if (multiple) return required ? `OneOrMany<${base}>` : `Option<OneOrMany<${base}>>`;
 				return required ? base : `Option<${base}>`;
 			}
 			// Unknown kind — fall back to AnyTransport.
-			// Vec<AnyTransport> is safe (Vec provides indirection). Single-value
+			// OneOrMany<AnyTransport> is safe (Vec provides indirection). Single-value
 			// children need Box<> to break recursive size cycles.
-			if (multiple) return required ? 'Vec<AnyTransport>' : 'Option<Vec<AnyTransport>>';
+			if (multiple) return required ? 'OneOrMany<AnyTransport>' : 'Option<OneOrMany<AnyTransport>>';
 			return required ? 'Box<AnyTransport>' : 'Option<Box<AnyTransport>>';
 		}
 		case 'supertype': {
 			const base = `${rustTypeIdent(cls.supertypeName)}Transport`;
-			if (multiple) return required ? `Vec<${base}>` : `Option<Vec<${base}>>`;
+			if (multiple) return required ? `OneOrMany<${base}>` : `Option<OneOrMany<${base}>>`;
 			return required ? base : `Option<${base}>`;
 		}
 		case 'heterogeneous': {
 			// Multiple distinct kinds, no grammar supertype.
 			// If all child kinds are supertypes/polymorphs/multi, we cannot produce
 			// a concrete per-slot enum (it would be empty). Fall back to AnyTransport.
-			// Vec<AnyTransport> is safe. Single-value AnyTransport needs Box<> for
+			// OneOrMany<AnyTransport> is safe. Single-value AnyTransport needs Box<> for
 			// recursive size cycle-breaking.
 			if (!hasAnyConcreteChildKind(allKinds, nodeMap)) {
-				if (multiple) return required ? 'Vec<AnyTransport>' : 'Option<Vec<AnyTransport>>';
+				if (multiple) return required ? 'OneOrMany<AnyTransport>' : 'Option<OneOrMany<AnyTransport>>';
 				return required ? 'Box<AnyTransport>' : 'Option<Box<AnyTransport>>';
 			}
 			const enumName = perSlotEnumName(typeName);
-			if (multiple) return required ? `Vec<${enumName}>` : `Option<Vec<${enumName}>>`;
+			if (multiple) return required ? `OneOrMany<${enumName}>` : `Option<OneOrMany<${enumName}>>`;
 			return required ? enumName : `Option<${enumName}>`;
 		}
 		default:
