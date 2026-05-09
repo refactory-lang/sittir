@@ -1,0 +1,28 @@
+{
+	"name": "@sittir/validator",
+	"version": "0.1.0",
+	"description": "Canonical validation facade for sittir grammar packages",
+	"license": "MIT",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "pnpm run clean && tsgo -p tsconfig.build.json",
+		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
+		"test": "vitest run",
+		"type-check": "tsgo --noEmit"
+	},
+	"dependencies": {
+		"@sittir/codegen": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/node": "^25.6.0"
+	}
+}

@@ -5,6 +5,9 @@
  *
  * Usage: npx tsx packages/codegen/src/scripts/counts.ts [grammar...]
  * If no grammar args given, runs all three.
+ *
+ * Canonical facade: `@sittir/validator` — use `runFrom`, `runRt`,
+ * `runCoverage`, `runFactory` for external consumers.
  */
 
 import { resolve } from 'node:path';
@@ -45,3 +48,4 @@ for (const g of grammars) {
 		console.log(`${g}: ERROR ${(e as Error).message}`);
 	}
 }
+

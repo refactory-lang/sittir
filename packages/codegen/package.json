@@ -29,6 +29,26 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
+		},
+		"./validate/from": {
+			"types": "./dist/validate/from.d.ts",
+			"import": "./dist/validate/from.js",
+			"default": "./dist/validate/from.js"
+		},
+		"./validate/factory-render-parse": {
+			"types": "./dist/validate/factory-render-parse.d.ts",
+			"import": "./dist/validate/factory-render-parse.js",
+			"default": "./dist/validate/factory-render-parse.js"
+		},
+		"./validate/read-render-parse": {
+			"types": "./dist/validate/read-render-parse.d.ts",
+			"import": "./dist/validate/read-render-parse.js",
+			"default": "./dist/validate/read-render-parse.js"
+		},
+		"./validate/template-coverage": {
+			"types": "./dist/validate/template-coverage.d.ts",
+			"import": "./dist/validate/template-coverage.js",
+			"default": "./dist/validate/template-coverage.js"
 		}
 	},
 	"scripts": {

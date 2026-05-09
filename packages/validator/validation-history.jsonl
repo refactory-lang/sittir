@@ -1,0 +1,1 @@
+{"schema":"v1","description":"sittir validation history — append-only, one JSON entry per run","fields":["ts","grammar","backend","fromPass","fromTotal","covPass","covTotal","rtPass","rtTotal","rtAstMatchPass","factoryPass","factoryTotal","factoryAstMatchPass"]}

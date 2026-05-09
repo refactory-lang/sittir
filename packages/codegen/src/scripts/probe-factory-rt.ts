@@ -1,3 +1,8 @@
+/**
+ * Probe factory-render-parse failures across all grammars using the native backend.
+ *
+ * Canonical facade: `@sittir/validator` — use `runFactory` for external consumers.
+ */
 import { validateFactoryRenderParse } from '../validate/factory-render-parse.ts';
 import { join } from 'node:path';
 
