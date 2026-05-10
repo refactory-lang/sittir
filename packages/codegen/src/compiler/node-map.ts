@@ -2978,6 +2978,32 @@ function hasHiddenExternalRef(
 			return hasExternalBoundaries(core, externals);
 		}
 	}
+	// All non-ignorable members are external terminals.
+	// If every one is a named field-wrapper (not a bare symbol), they can be
+	// rendered structurally by field name (e.g. raw_string_literal:
+	// field(start) + field(content) + field(end)).  Bare-symbol externals
+	// have no slot name and must fall back to $TEXT — these are excluded here
+	// so that python's `string` (boundary-only externals) is unaffected.
+	const nonIgnorable = core.members.filter((m) => !isIgnorableBoundaryExternal(m));
+	if (
+		nonIgnorable.length > 0 &&
+		nonIgnorable.every((m) => {
+			const fw = unwrapStructuralPassthroughs(m);
+			if (fw.type !== 'field') return false;
+			const inner = unwrapStructuralPassthroughs(fw.content);
+			// After assembly, external scanner tokens are replaced with
+			// pattern("") stubs. An underscore-prefixed external (anonymous in
+			// tree-sitter) maps to `_<fieldName>` in the externals set — it
+			// cannot be rendered structurally even when wrapped in `field(...)`.
+			if (inner.type === 'pattern' && inner.value === '') {
+				return !externals.has('_' + fw.name);
+			}
+			// Pre-assembly path: symbol reference with underscore prefix.
+			return inner.type !== 'symbol' || !inner.name.startsWith('_');
+		})
+	) {
+		return false;
+	}
 	return hasContent;
 }
 

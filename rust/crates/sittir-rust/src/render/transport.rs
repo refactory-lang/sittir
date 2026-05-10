@@ -5118,7 +5118,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionAsyncMarkerTran
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -5260,7 +5260,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ClosureExpressionStaticMarkerTra
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -5698,7 +5698,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForeignModItemSemiTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -5868,7 +5868,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemNegativeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -5948,7 +5948,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplItemSemiTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6028,7 +6028,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerLineDocCommentMarkerTranspo
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6108,7 +6108,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwAsyncMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6188,7 +6188,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwInTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6268,7 +6268,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwMoveMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6348,7 +6348,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwNegativeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6428,7 +6428,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwOperatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6508,7 +6508,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwPubTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6588,7 +6588,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwRefMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6668,7 +6668,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwStaticMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6748,7 +6748,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwTurbofishTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6828,7 +6828,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for KwUnsafeMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -6938,7 +6938,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentContentTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7050,7 +7050,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineCommentRegularDslashTranspor
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7280,7 +7280,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModItemExternalTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7390,7 +7390,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7470,7 +7470,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for _MutableSpecifierTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7580,7 +7580,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OperatorTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7722,7 +7722,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterLineDocCommentMarkerTranspo
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -7802,7 +7802,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PointerTypeConstTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -8154,7 +8154,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RangePatternLeftBareTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -8294,7 +8294,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -8374,7 +8374,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReferenceExpressionRawConstTrans
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -8578,7 +8578,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructItemUnitTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -9032,7 +9032,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeMarkerTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -9206,7 +9206,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WildcardPatternTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -10013,7 +10013,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CharLiteralTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -10462,7 +10462,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CrateTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -10855,7 +10855,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EmptyStatementTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -11039,7 +11039,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EscapeSequenceTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -12296,7 +12296,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IdentifierTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -12625,7 +12625,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IntegerLiteralTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -13590,7 +13590,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MetavariableTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -13839,7 +13839,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutableSpecifierTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -13949,7 +13949,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for NeverTypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -14915,7 +14915,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RemainingFieldPatternTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -15183,7 +15183,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for Self_Transport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -15299,7 +15299,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ShebangTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -15756,7 +15756,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SuperTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -16900,7 +16900,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitExpressionTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -16980,7 +16980,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnitTypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17565,7 +17565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StringContentTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17645,7 +17645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawStringLiteralContentTransport
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17725,7 +17725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FloatLiteralTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17805,7 +17805,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for OuterBlockDocCommentMarkerTransp
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17885,7 +17885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InnerBlockDocCommentMarkerTransp
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -17965,7 +17965,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LineDocContentTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18045,7 +18045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ErrorSentinelTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18125,7 +18125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BracketTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18205,7 +18205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBracketTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18285,7 +18285,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SemiTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18365,7 +18365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsyncTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18445,7 +18445,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ArrowTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18525,7 +18525,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AnonymousTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18605,7 +18605,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StaticTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18685,7 +18685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BraceTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18765,7 +18765,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseBraceTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18845,7 +18845,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ParenTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -18925,7 +18925,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CloseParenTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19005,7 +19005,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ColonTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19085,7 +19085,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FnTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19165,7 +19165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BangTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19245,7 +19245,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for InTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19325,7 +19325,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MoveTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19405,7 +19405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotdotTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19485,7 +19485,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PubTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19565,7 +19565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RefTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19645,7 +19645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnsafeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19725,7 +19725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AndandTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19805,7 +19805,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for CommaTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19885,7 +19885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MutTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -19965,7 +19965,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSqTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20045,7 +20045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AsTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20125,7 +20125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AwaitTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20205,7 +20205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for BreakTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20285,7 +20285,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ConstTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20365,7 +20365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ContinueTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20445,7 +20445,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DefaultTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20525,7 +20525,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EnumTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20605,7 +20605,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ForTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20685,7 +20685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GenTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20765,7 +20765,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for IfTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20845,7 +20845,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ImplTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -20925,7 +20925,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LetTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21005,7 +21005,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LoopTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21085,7 +21085,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MatchTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21165,7 +21165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ModTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21245,7 +21245,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ReturnTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21325,7 +21325,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StructTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21405,7 +21405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TraitTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21485,7 +21485,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TypeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21565,7 +21565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UnionTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21645,7 +21645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for UseTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21725,7 +21725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhereTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21805,7 +21805,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for WhileTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21885,7 +21885,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PipeTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -21965,7 +21965,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for SlashTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22045,7 +22045,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for RawTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22125,7 +22125,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EqTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22205,7 +22205,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for HashTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22285,7 +22285,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DotTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22365,7 +22365,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokSlashStarTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22445,7 +22445,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokStarSlashTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22525,7 +22525,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for PlusTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22605,7 +22605,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for LtTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22685,7 +22685,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for GtTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22765,7 +22765,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AtTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22845,7 +22845,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for DynTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -22925,7 +22925,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ElseTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23005,7 +23005,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for ExternTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23085,7 +23085,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for FatArrowTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23165,7 +23165,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for MinusTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23245,7 +23245,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for AmpTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23325,7 +23325,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for QuestionTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23405,7 +23405,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDqTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23485,7 +23485,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TokDollarTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23565,7 +23565,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for TryTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23645,7 +23645,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for StarTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23725,7 +23725,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for EllipsisTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(false),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -23805,7 +23805,7 @@ impl ::napi::bindgen_prelude::FromNapiValue for YieldTransport {
         };
         Ok(Self {
             transport_source: None,
-            transport_named: None,
+            transport_named: Some(true),
             transport_span: None,
             transport_node_handle: None,
             transport_child_index: None,
@@ -27156,6 +27156,7 @@ fn render_tuple_expression(node: &TupleExpressionTransport, dest: &mut dyn ::std
 
 fn render_tuple_pattern(node: &TuplePatternTransport, dest: &mut dyn ::std::fmt::Write) -> Result<(), ::askama::Error> {
     let children_buf: Vec<::sittir_core::filters::Renderable<'_>> = node.children.iter()
+        .filter(|t| t.transport_named().unwrap_or(true))
         .map(|t| ::sittir_core::filters::Renderable::Transport(t))
         .collect();
     let template = TuplePatternTemplate {
@@ -28565,6 +28566,331 @@ impl RenderableTransport for AnyTransport {
             AnyTransport::Literal18_3c_3d => dest.write_str("<=").map_err(::askama::Error::from),
             AnyTransport::Literal19_2e_2e_3d => dest.write_str("..=").map_err(::askama::Error::from),
             AnyTransport::Literal20_3a_3a => dest.write_str("::").map_err(::askama::Error::from),
+        }
+    }
+}
+
+impl AnyTransport {
+    #[inline]
+    pub fn transport_named(&self) -> Option<bool> {
+        match self {
+            Self::ArrayExpressionList(t) => t.transport_named,
+            Self::ArrayExpressionSemi(t) => t.transport_named,
+            Self::ClosureExpressionAsyncMarker(t) => t.transport_named,
+            Self::ClosureExpressionBlock(t) => t.transport_named,
+            Self::_ClosureExpressionExpr(t) => t.transport_named,
+            Self::ClosureExpressionStaticMarker(t) => t.transport_named,
+            Self::_DelimTokenTreeBrace(t) => t.transport_named,
+            Self::_DelimTokenTreeBracket(t) => t.transport_named,
+            Self::_DelimTokenTreeParen(t) => t.transport_named,
+            Self::_ExpressionStatementBlockEnding(t) => t.transport_named,
+            Self::_ExpressionStatementWithSemi(t) => t.transport_named,
+            Self::FieldIdentifier(t) => t.transport_named,
+            Self::FieldPatternNamed(t) => t.transport_named,
+            Self::_FieldPatternShorthand(t) => t.transport_named,
+            Self::_ForeignModItemBody(t) => t.transport_named,
+            Self::ForeignModItemSemi(t) => t.transport_named,
+            Self::FunctionTypeFnForm(t) => t.transport_named,
+            Self::FunctionTypeTraitForm(t) => t.transport_named,
+            Self::_ImplItemBody(t) => t.transport_named,
+            Self::ImplItemNegative(t) => t.transport_named,
+            Self::ImplItemSemi(t) => t.transport_named,
+            Self::InnerLineDocCommentMarker(t) => t.transport_named,
+            Self::KwAsyncMarker(t) => t.transport_named,
+            Self::KwIn(t) => t.transport_named,
+            Self::KwMoveMarker(t) => t.transport_named,
+            Self::KwNegative(t) => t.transport_named,
+            Self::KwOperator(t) => t.transport_named,
+            Self::KwPub(t) => t.transport_named,
+            Self::KwRefMarker(t) => t.transport_named,
+            Self::KwStaticMarker(t) => t.transport_named,
+            Self::KwTurbofish(t) => t.transport_named,
+            Self::KwUnsafeMarker(t) => t.transport_named,
+            Self::LetChain(t) => t.transport_named,
+            Self::LineCommentContent(t) => t.transport_named,
+            Self::LineCommentDoc(t) => t.transport_named,
+            Self::LineCommentRegularDslash(t) => t.transport_named,
+            Self::_MacroDefinitionBrace(t) => t.transport_named,
+            Self::_MacroDefinitionBracket(t) => t.transport_named,
+            Self::_MacroDefinitionParen(t) => t.transport_named,
+            Self::_MatchArmBlockEnding(t) => t.transport_named,
+            Self::MatchArmWithComma(t) => t.transport_named,
+            Self::ModItemExternal(t) => t.transport_named,
+            Self::_ModItemInline(t) => t.transport_named,
+            Self::MoveMarker(t) => t.transport_named,
+            Self::_MutableSpecifier(t) => t.transport_named,
+            Self::NonSpecialToken(t) => t.transport_named,
+            Self::Operator(t) => t.transport_named,
+            Self::OrPatternBinary(t) => t.transport_named,
+            Self::OrPatternPrefix(t) => t.transport_named,
+            Self::OuterLineDocCommentMarker(t) => t.transport_named,
+            Self::PointerTypeConst(t) => t.transport_named,
+            Self::_PointerTypeMut(t) => t.transport_named,
+            Self::_RangeExpressionBare(t) => t.transport_named,
+            Self::RangeExpressionBinary(t) => t.transport_named,
+            Self::RangeExpressionPostfix(t) => t.transport_named,
+            Self::RangeExpressionPrefix(t) => t.transport_named,
+            Self::RangePatternLeftBare(t) => t.transport_named,
+            Self::RangePatternLeftWithRight(t) => t.transport_named,
+            Self::RangePatternPrefix(t) => t.transport_named,
+            Self::RefMarker(t) => t.transport_named,
+            Self::ReferenceExpressionRawConst(t) => t.transport_named,
+            Self::ReferenceExpressionRawMut(t) => t.transport_named,
+            Self::ReservedIdentifier(t) => t.transport_named,
+            Self::StructItemBrace(t) => t.transport_named,
+            Self::StructItemTuple(t) => t.transport_named,
+            Self::StructItemUnit(t) => t.transport_named,
+            Self::_TokenTreeBrace(t) => t.transport_named,
+            Self::_TokenTreeBracket(t) => t.transport_named,
+            Self::_TokenTreeParen(t) => t.transport_named,
+            Self::_TokenTreePatternBrace(t) => t.transport_named,
+            Self::_TokenTreePatternBracket(t) => t.transport_named,
+            Self::_TokenTreePatternParen(t) => t.transport_named,
+            Self::TypeIdentifier(t) => t.transport_named,
+            Self::UnsafeMarker(t) => t.transport_named,
+            Self::_VisibilityModifierCrate(t) => t.transport_named,
+            Self::VisibilityModifierInPath(t) => t.transport_named,
+            Self::VisibilityModifierPub(t) => t.transport_named,
+            Self::WildcardPattern(t) => t.transport_named,
+            Self::AbstractType(t) => t.transport_named,
+            Self::Arguments(t) => t.transport_named,
+            Self::ArrayType(t) => t.transport_named,
+            Self::AssignmentExpression(t) => t.transport_named,
+            Self::AssociatedType(t) => t.transport_named,
+            Self::AsyncBlock(t) => t.transport_named,
+            Self::Attribute(t) => t.transport_named,
+            Self::AttributeItem(t) => t.transport_named,
+            Self::AwaitExpression(t) => t.transport_named,
+            Self::BaseFieldInitializer(t) => t.transport_named,
+            Self::BinaryExpression(t) => t.transport_named,
+            Self::Block(t) => t.transport_named,
+            Self::BlockComment(t) => t.transport_named,
+            Self::BoundedType(t) => t.transport_named,
+            Self::BracketedType(t) => t.transport_named,
+            Self::BreakExpression(t) => t.transport_named,
+            Self::CallExpression(t) => t.transport_named,
+            Self::CapturedPattern(t) => t.transport_named,
+            Self::CharLiteral(t) => t.transport_named,
+            Self::ClosureExpressionExpr(t) => t.transport_named,
+            Self::ClosureParameters(t) => t.transport_named,
+            Self::Comment(t) => t.transport_named,
+            Self::CompoundAssignmentExpr(t) => t.transport_named,
+            Self::ConstBlock(t) => t.transport_named,
+            Self::ConstItem(t) => t.transport_named,
+            Self::ConstParameter(t) => t.transport_named,
+            Self::ContinueExpression(t) => t.transport_named,
+            Self::Crate(t) => t.transport_named,
+            Self::DeclarationList(t) => t.transport_named,
+            Self::DelimTokenTreeParen(t) => t.transport_named,
+            Self::DelimTokenTreeBracket(t) => t.transport_named,
+            Self::DelimTokenTreeBrace(t) => t.transport_named,
+            Self::DynamicType(t) => t.transport_named,
+            Self::ElseClause(t) => t.transport_named,
+            Self::EmptyStatement(t) => t.transport_named,
+            Self::EnumItem(t) => t.transport_named,
+            Self::EnumVariant(t) => t.transport_named,
+            Self::EnumVariantList(t) => t.transport_named,
+            Self::EscapeSequence(t) => t.transport_named,
+            Self::ExpressionStatementWithSemi(t) => t.transport_named,
+            Self::ExpressionStatementBlockEnding(t) => t.transport_named,
+            Self::ExternCrateDeclaration(t) => t.transport_named,
+            Self::ExternModifier(t) => t.transport_named,
+            Self::FieldDeclaration(t) => t.transport_named,
+            Self::FieldDeclarationList(t) => t.transport_named,
+            Self::FieldExpression(t) => t.transport_named,
+            Self::FieldInitializer(t) => t.transport_named,
+            Self::FieldInitializerList(t) => t.transport_named,
+            Self::FieldPatternShorthand(t) => t.transport_named,
+            Self::ForExpression(t) => t.transport_named,
+            Self::ForLifetimes(t) => t.transport_named,
+            Self::ForeignModItemBody(t) => t.transport_named,
+            Self::FunctionItem(t) => t.transport_named,
+            Self::FunctionModifiers(t) => t.transport_named,
+            Self::FunctionSignatureItem(t) => t.transport_named,
+            Self::FunctionType(t) => t.transport_named,
+            Self::GenBlock(t) => t.transport_named,
+            Self::GenericFunction(t) => t.transport_named,
+            Self::GenericPattern(t) => t.transport_named,
+            Self::GenericType(t) => t.transport_named,
+            Self::GenericTypeWithTurbofish(t) => t.transport_named,
+            Self::HigherRankedTraitBound(t) => t.transport_named,
+            Self::Identifier(t) => t.transport_named,
+            Self::IfExpression(t) => t.transport_named,
+            Self::ImplItemBody(t) => t.transport_named,
+            Self::IndexExpression(t) => t.transport_named,
+            Self::InnerAttributeItem(t) => t.transport_named,
+            Self::IntegerLiteral(t) => t.transport_named,
+            Self::Label(t) => t.transport_named,
+            Self::LastMatchArm(t) => t.transport_named,
+            Self::LetCondition(t) => t.transport_named,
+            Self::LetDeclaration(t) => t.transport_named,
+            Self::Lifetime(t) => t.transport_named,
+            Self::LifetimeParameter(t) => t.transport_named,
+            Self::LoopExpression(t) => t.transport_named,
+            Self::MacroDefinitionParen(t) => t.transport_named,
+            Self::MacroDefinitionBracket(t) => t.transport_named,
+            Self::MacroDefinitionBrace(t) => t.transport_named,
+            Self::MacroInvocation(t) => t.transport_named,
+            Self::MacroRule(t) => t.transport_named,
+            Self::MatchArmBlockEnding(t) => t.transport_named,
+            Self::MatchBlock(t) => t.transport_named,
+            Self::MatchExpression(t) => t.transport_named,
+            Self::MatchPattern(t) => t.transport_named,
+            Self::Metavariable(t) => t.transport_named,
+            Self::ModItemInline(t) => t.transport_named,
+            Self::MutPattern(t) => t.transport_named,
+            Self::MutableSpecifier(t) => t.transport_named,
+            Self::NegativeLiteral(t) => t.transport_named,
+            Self::NeverType(t) => t.transport_named,
+            Self::OrderedFieldDeclarationList(t) => t.transport_named,
+            Self::Parameter(t) => t.transport_named,
+            Self::Parameters(t) => t.transport_named,
+            Self::ParenthesizedExpression(t) => t.transport_named,
+            Self::PointerTypeMut(t) => t.transport_named,
+            Self::QualifiedType(t) => t.transport_named,
+            Self::RangeExpressionBare(t) => t.transport_named,
+            Self::RawStringLiteral(t) => t.transport_named,
+            Self::RefPattern(t) => t.transport_named,
+            Self::ReferenceExpression(t) => t.transport_named,
+            Self::ReferencePattern(t) => t.transport_named,
+            Self::ReferenceType(t) => t.transport_named,
+            Self::RemainingFieldPattern(t) => t.transport_named,
+            Self::RemovedTraitBound(t) => t.transport_named,
+            Self::ReturnExpression(t) => t.transport_named,
+            Self::ScopedIdentifier(t) => t.transport_named,
+            Self::ScopedTypeIdentifier(t) => t.transport_named,
+            Self::ScopedTypeIdentifierInExpressionPosition(t) => t.transport_named,
+            Self::ScopedUseList(t) => t.transport_named,
+            Self::Self_(t) => t.transport_named,
+            Self::SelfParameter(t) => t.transport_named,
+            Self::Shebang(t) => t.transport_named,
+            Self::ShorthandFieldInitializer(t) => t.transport_named,
+            Self::SlicePattern(t) => t.transport_named,
+            Self::SourceFile(t) => t.transport_named,
+            Self::StaticItem(t) => t.transport_named,
+            Self::StringLiteral(t) => t.transport_named,
+            Self::StructExpression(t) => t.transport_named,
+            Self::StructPattern(t) => t.transport_named,
+            Self::Super(t) => t.transport_named,
+            Self::TokenBindingPattern(t) => t.transport_named,
+            Self::TokenRepetition(t) => t.transport_named,
+            Self::TokenRepetitionPattern(t) => t.transport_named,
+            Self::TokenTreeParen(t) => t.transport_named,
+            Self::TokenTreeBracket(t) => t.transport_named,
+            Self::TokenTreeBrace(t) => t.transport_named,
+            Self::TokenTreePatternParen(t) => t.transport_named,
+            Self::TokenTreePatternBracket(t) => t.transport_named,
+            Self::TokenTreePatternBrace(t) => t.transport_named,
+            Self::TraitBounds(t) => t.transport_named,
+            Self::TraitItem(t) => t.transport_named,
+            Self::TryBlock(t) => t.transport_named,
+            Self::TryExpression(t) => t.transport_named,
+            Self::TupleExpression(t) => t.transport_named,
+            Self::TuplePattern(t) => t.transport_named,
+            Self::TupleStructPattern(t) => t.transport_named,
+            Self::TupleType(t) => t.transport_named,
+            Self::TypeArguments(t) => t.transport_named,
+            Self::TypeBinding(t) => t.transport_named,
+            Self::TypeCastExpression(t) => t.transport_named,
+            Self::TypeItem(t) => t.transport_named,
+            Self::TypeParameter(t) => t.transport_named,
+            Self::TypeParameters(t) => t.transport_named,
+            Self::UnaryExpression(t) => t.transport_named,
+            Self::UnionItem(t) => t.transport_named,
+            Self::UnitExpression(t) => t.transport_named,
+            Self::UnitType(t) => t.transport_named,
+            Self::UnsafeBlock(t) => t.transport_named,
+            Self::UseAsClause(t) => t.transport_named,
+            Self::UseBounds(t) => t.transport_named,
+            Self::UseDeclaration(t) => t.transport_named,
+            Self::UseList(t) => t.transport_named,
+            Self::UseWildcard(t) => t.transport_named,
+            Self::VariadicParameter(t) => t.transport_named,
+            Self::VisibilityModifierCrate(t) => t.transport_named,
+            Self::WhereClause(t) => t.transport_named,
+            Self::WherePredicate(t) => t.transport_named,
+            Self::WhileExpression(t) => t.transport_named,
+            Self::YieldExpression(t) => t.transport_named,
+            Self::StringContent(t) => t.transport_named,
+            Self::RawStringLiteralContent(t) => t.transport_named,
+            Self::FloatLiteral(t) => t.transport_named,
+            Self::OuterBlockDocCommentMarker(t) => t.transport_named,
+            Self::InnerBlockDocCommentMarker(t) => t.transport_named,
+            Self::LineDocContent(t) => t.transport_named,
+            Self::ErrorSentinel(t) => t.transport_named,
+            Self::Bracket(t) => t.transport_named,
+            Self::CloseBracket(t) => t.transport_named,
+            Self::Semi(t) => t.transport_named,
+            Self::Async(t) => t.transport_named,
+            Self::Arrow(t) => t.transport_named,
+            Self::Anonymous(t) => t.transport_named,
+            Self::Static(t) => t.transport_named,
+            Self::Brace(t) => t.transport_named,
+            Self::CloseBrace(t) => t.transport_named,
+            Self::Paren(t) => t.transport_named,
+            Self::CloseParen(t) => t.transport_named,
+            Self::Colon(t) => t.transport_named,
+            Self::Fn(t) => t.transport_named,
+            Self::Bang(t) => t.transport_named,
+            Self::In(t) => t.transport_named,
+            Self::Move(t) => t.transport_named,
+            Self::Dotdot(t) => t.transport_named,
+            Self::Pub(t) => t.transport_named,
+            Self::Ref(t) => t.transport_named,
+            Self::Unsafe(t) => t.transport_named,
+            Self::Andand(t) => t.transport_named,
+            Self::Comma(t) => t.transport_named,
+            Self::Mut(t) => t.transport_named,
+            Self::TokSq(t) => t.transport_named,
+            Self::As(t) => t.transport_named,
+            Self::Await(t) => t.transport_named,
+            Self::Break(t) => t.transport_named,
+            Self::Const(t) => t.transport_named,
+            Self::Continue(t) => t.transport_named,
+            Self::Default(t) => t.transport_named,
+            Self::Enum(t) => t.transport_named,
+            Self::For(t) => t.transport_named,
+            Self::Gen(t) => t.transport_named,
+            Self::If(t) => t.transport_named,
+            Self::Impl(t) => t.transport_named,
+            Self::Let(t) => t.transport_named,
+            Self::Loop(t) => t.transport_named,
+            Self::Match(t) => t.transport_named,
+            Self::Mod(t) => t.transport_named,
+            Self::Return(t) => t.transport_named,
+            Self::Struct(t) => t.transport_named,
+            Self::Trait(t) => t.transport_named,
+            Self::Type(t) => t.transport_named,
+            Self::Union(t) => t.transport_named,
+            Self::Use(t) => t.transport_named,
+            Self::Where(t) => t.transport_named,
+            Self::While(t) => t.transport_named,
+            Self::Pipe(t) => t.transport_named,
+            Self::Slash(t) => t.transport_named,
+            Self::Raw(t) => t.transport_named,
+            Self::Eq(t) => t.transport_named,
+            Self::Hash(t) => t.transport_named,
+            Self::Dot(t) => t.transport_named,
+            Self::TokSlashStar(t) => t.transport_named,
+            Self::TokStarSlash(t) => t.transport_named,
+            Self::Plus(t) => t.transport_named,
+            Self::Lt(t) => t.transport_named,
+            Self::Gt(t) => t.transport_named,
+            Self::At(t) => t.transport_named,
+            Self::Dyn(t) => t.transport_named,
+            Self::Else(t) => t.transport_named,
+            Self::Extern(t) => t.transport_named,
+            Self::FatArrow(t) => t.transport_named,
+            Self::Minus(t) => t.transport_named,
+            Self::Amp(t) => t.transport_named,
+            Self::Question(t) => t.transport_named,
+            Self::TokDq(t) => t.transport_named,
+            Self::TokDollar(t) => t.transport_named,
+            Self::Try(t) => t.transport_named,
+            Self::Star(t) => t.transport_named,
+            Self::Ellipsis(t) => t.transport_named,
+            Self::Yield(t) => t.transport_named,
+            _ => None,
         }
     }
 }

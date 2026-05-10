@@ -1615,10 +1615,32 @@ function renderTypedDispatch(
 	lines.push(`}`);
 	lines.push('');
 
+	// ---- impl AnyTransport::transport_named --------------------------------
+	// Returns the inner transport struct's named flag so the children-slot
+	// filter (.filter(|t| t.transport_named().unwrap_or(true))) can skip
+	// anonymous fill items (e.g. duplicate commas in tuple_pattern).
+	// Unit-literal variants have no struct, so they return None (= include).
+	lines.push(`impl AnyTransport {`);
+	lines.push(`    #[inline]`);
+	lines.push(`    pub fn transport_named(&self) -> Option<bool> {`);
+	lines.push(`        match self {`);
+	for (const node of nodes) {
+		// Only transport structs carry the transport_named field.
+		// AssembledEnum nodes (perSlotEnum — e.g. RangeExpressionBinaryOperatorEnum) and
+		// polymorph nodes (e.g. ArrayExpressionTransport) generate Rust enums, not structs,
+		// and have no such field. Fall through to `_ => None` for those.
+		if (node instanceof AssembledEnum || node.modelType === 'polymorph') continue;
+		const variant = rustTransportVariantName(node);
+		lines.push(`            Self::${variant}(t) => t.transport_named,`);
+	}
+	lines.push(`            _ => None,`);
+	lines.push(`        }`);
+	lines.push(`    }`);
+	lines.push(`}`);
+	lines.push('');
+
 	return lines;
 }
-
-/** Rust function name for the typed render fn of a given typeName. */
 function rustTypedRenderFnName(typeName: string): string {
 	return `render_${rustSnakeIdent(typeName)}`;
 }
@@ -1982,13 +2004,16 @@ const RENDERABLE_PREFIX = '::sittir_core::filters::';
  * @param sourceExpr - The iterable expression to `.iter()` over
  * @param mapBody    - The closure body inside `.map(|t| ...)` (e.g. `Renderable::Transport(t)`)
  */
-function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string): string[] {
+function emitIterCollectBuffer(ident: string, sourceExpr: string, mapBody: string, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
-	return [
+	const lines: string[] = [
 		`    let ${ident}_buf: Vec<${R}Renderable<'_>> = ${sourceExpr}.iter()`,
-		`        .map(|t| ${mapBody})`,
-		`        .collect();`
 	];
+	if (filterAnon) {
+		lines.push(`        .filter(|t| t.transport_named().unwrap_or(true))`);
+	}
+	lines.push(`        .map(|t| ${mapBody})`, `        .collect();`);
+	return lines;
 }
 
 /**
@@ -2041,15 +2066,15 @@ function emitSingleChildBuffer(ident: string, required: boolean, cls: SlotClass 
  *   it is `Option<Vec<...>>` and needs `as_deref()`.
  * @returns Lines to splice into the parent function body.
  */
-function emitListSlotBuffer(ident: string, required: boolean): string[] {
+function emitListSlotBuffer(ident: string, required: boolean, filterAnon = false): string[] {
 	const R = RENDERABLE_PREFIX;
 	const mapBody = `${R}Renderable::Transport(t)`;
 	if (required) {
-		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody);
+		return emitIterCollectBuffer(ident, `node.${ident}`, mapBody, filterAnon);
 	}
 	return [
 		`    let ${ident}_owned = node.${ident}.as_deref().unwrap_or(&[]);`,
-		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody)
+		...emitIterCollectBuffer(ident, `${ident}_owned`, mapBody, filterAnon)
 	];
 }
 
@@ -2111,7 +2136,12 @@ function buildTypedTemplateBody(
 	if (struct.hasChildren) {
 		if (struct.transportHasChildren) {
 			if (struct.childrenMultiple) {
-				lines.push(...emitListSlotBuffer('children', struct.childrenRequired));
+				// Filter anonymous fill items only when the children slot is Vec<AnyTransport>
+				// (useBox !== false). Per-slot enum children ({TypeName}ChildTransport) do not
+				// have transport_named() and must not be filtered.
+				const filterAnon =
+					childrenCls.tag === 'heterogeneous' && childrenCls.useBox !== false;
+				lines.push(...emitListSlotBuffer('children', struct.childrenRequired, filterAnon));
 			} else {
 				lines.push(...emitSingleChildBuffer('children', struct.childrenRequired, childrenCls));
 			}
@@ -4036,7 +4066,9 @@ function renderTransportDataStruct(
 	//   - debug  (    debug-transport): JS sends full metadata object → read fields
 	// ToNapiValue is a stub in both modes — transport structs are receive-only.
 	if (isLeafNode) {
-		lines.push(...renderLeafTransportNapiImpls(structName));
+		// Tokens are anonymous (named=false); patterns and keywords are named (named=true).
+		const leafNamed = node.modelType !== 'token';
+		lines.push(...renderLeafTransportNapiImpls(structName, leafNamed));
 	}
 	return lines;
 }
@@ -4060,11 +4092,18 @@ function renderTransportDataStruct(
  * branch structs that embed these leaf types.
  *
  * @param structName - Rust struct name, e.g. `IdentifierTransport`.
+ * @param named - Whether this leaf node is named in tree-sitter. Tokens are always
+ *   anonymous (`false`); patterns and keywords are always named (`true`). Used to
+ *   hardcode `transport_named` in non-debug mode so the children filter
+ *   `.filter(|t| t.transport_named().unwrap_or(true))` works correctly without
+ *   needing to read `$named` from the JS object.
  */
-function renderLeafTransportNapiImpls(structName: string): string[] {
+function renderLeafTransportNapiImpls(structName: string, named: boolean): string[] {
 	const lines: string[] = [];
 
 	// Release mode: read plain JS string — no metadata round-trip.
+	// transport_named is hardcoded (not read from JS) because named/anonymous
+	// is a grammar-level fact that never changes at runtime.
 	lines.push(`#[cfg(all(feature = "napi-bindings", not(feature = "debug-transport")))]`);
 	lines.push(`impl ::napi::bindgen_prelude::FromNapiValue for ${structName} {`);
 	lines.push(`    unsafe fn from_napi_value(`);
@@ -4079,7 +4118,11 @@ function renderLeafTransportNapiImpls(structName: string): string[] {
 	lines.push(`        };`);
 	lines.push(`        Ok(Self {`);
 	for (const f of TRANSPORT_METADATA_FIELDS) {
-		lines.push(`            ${f.rustName}: None,`);
+		if (f.rustName === 'transport_named') {
+			lines.push(`            transport_named: Some(${named}),`);
+		} else {
+			lines.push(`            ${f.rustName}: None,`);
+		}
 	}
 	lines.push(`            text,`);
 	lines.push(`        })`);
